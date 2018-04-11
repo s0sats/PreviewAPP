@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -15,7 +15,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity implements Act043_Main_View {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View {
 
     private Act043_Main_Presenter_Impl mPresenter;
 
@@ -70,8 +70,6 @@ public class Act043_Main extends Base_Activity implements Act043_Main_View {
                 hmAux_Trans
         );
         //
-
-
     }
 
     private void recoverIntentsInfo() {
@@ -123,7 +121,6 @@ public class Act043_Main extends Base_Activity implements Act043_Main_View {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
-
 
 
 }

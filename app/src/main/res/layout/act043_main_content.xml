@@ -13,51 +13,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act042_mket_filter_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:hint="Search Desc - Trad"
-                android:inputType="text"
-                android:paddingLeft="10dp"
-                app:mBARCODE="false"
-                app:mNFC="false"
-                app:mOCR="false" />
-
-            <ImageView
-                android:id="@+id/act042_iv_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/namoa_icon_bg_states"
-                android:padding="10dp"
-                android:src="@drawable/ic_filter_black_24px"
-                android:tint="@color/namoa_color_gray_4" />
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/act042_lv_sos"
+            android:id="@+id/act043_main_ll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="4dp"
-            android:padding="5dp" />
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <include layout="@layout/footer_base" />
 
     </LinearLayout>
 
