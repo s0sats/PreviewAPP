@@ -68,6 +68,7 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -1764,12 +1765,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void callAct043(Context context) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
+        Intent mIntent = new Intent(context, Act043_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         //
-        bundle.putInt(SM_SODao.SO_PREFIX,mSm_so.getSo_prefix());
-        bundle.putInt(SM_SODao.SO_CODE,mSm_so.getSo_code());
+        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSm_so.getSo_prefix()));
+        bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

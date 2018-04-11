@@ -18,6 +18,7 @@ import java.util.List;
 public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View {
 
     private Act043_Main_Presenter_Impl mPresenter;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     }
 
     private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         //
         if (bundle != null) {
             //requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
@@ -110,7 +111,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     public void callAct027(Context context) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
+        //Bundle bundle = new Bundle();
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
