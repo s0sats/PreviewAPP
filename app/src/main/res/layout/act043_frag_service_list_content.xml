@@ -27,7 +27,7 @@
         android:padding="10dp">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act043_frag_service_mket_search_service"
+            android:id="@+id/act043_frag_service_mket_search_services_packs"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

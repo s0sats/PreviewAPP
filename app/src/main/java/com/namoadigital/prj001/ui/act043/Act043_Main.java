@@ -3,8 +3,12 @@ package com.namoadigital.prj001.ui.act043;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.WindowManager;
 
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -19,6 +23,12 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     private Act043_Main_Presenter_Impl mPresenter;
     private Bundle bundle;
+
+    private FragmentManager fm;
+
+    private String currentFrag = "";
+
+    private Act043_Frag_Service_List mServiceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,12 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     }
 
     private void iniSetup() {
+        context = Act043_Main.this;
+
+        hideKeyBoard();
+
+        fm = getSupportFragmentManager();
+
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -45,7 +61,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         );
 
         loadTranslation();
-
     }
 
     private void loadTranslation() {
@@ -71,6 +86,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                 hmAux_Trans
         );
         //
+        mServiceList = new Act043_Frag_Service_List();
+        //
+        setFrag(mServiceList, "FRAG_LIST");
     }
 
     private void recoverIntentsInfo() {
@@ -93,7 +111,20 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
 
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act043_main_ll, type, sTag);
+            ft.commit();
+            setCurrentFrag(sTag);
+        } else {
+        }
+    }
+
+    public void setCurrentFrag(String currentFrag) {
+        this.currentFrag = currentFrag;
     }
 
     @Override
@@ -121,6 +152,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    private void hideKeyBoard() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
 
