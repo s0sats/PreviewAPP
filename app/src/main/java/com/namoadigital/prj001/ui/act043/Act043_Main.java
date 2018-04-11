@@ -3,10 +3,15 @@ package com.namoadigital.prj001.ui.act043;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -17,8 +22,20 @@ import java.util.List;
 
 public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View {
 
-    private Act043_Main_Presenter_Impl mPresenter;
+    public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
+    public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
+
+
     private Bundle bundle;
+    private Act043_Main_Presenter_Impl mPresenter;
+    private android.support.v4.app.FragmentManager fm;
+    private String currentFrag;
+    private String ws_process;
+    private SM_SO mSm_so;
+    private SM_SODao sm_soDao;
+    //FRAGMENTS
+    private Act043_Frag_Preview act043_frag_preview;
+    private Act043_Frag_Service_List act043_frag_service_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +55,17 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     }
 
     private void iniSetup() {
+        //
+        fm = getSupportFragmentManager();
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
                 Constant.ACT043
         );
-
+        //
+        sm_soDao = new SM_SODao(context);
+        //
         loadTranslation();
 
     }
@@ -51,6 +73,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act043_title");
+        //FragPreview
+        transList.add("btn_search_service");
+        transList.add("services_tll");
+        transList.add("total_lbl");
+        transList.add("total_val");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -62,25 +89,75 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     }
 
+    private void recoverIntentsInfo() {
+        bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            if(bundle.containsKey(SM_SODao.SO_PREFIX) && bundle.containsKey(SM_SODao.SO_CODE)) {
+                mSm_so = loadSM_So(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                        Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+                );
+            }else{
+                //
+            }
+        } else {
+        }
+    }
+
+    private SM_SO loadSM_So(long customer_code, int so_prefix, int so_code) {
+        SM_SO sm_so = sm_soDao.getByString(
+                new SM_SO_Sql_001(
+                        customer_code,
+                        so_prefix,
+                        so_code
+                ).toSqlQuery()
+        );
+        //
+        return sm_so;
+    }
+
     private void initVars() {
+        //
         recoverIntentsInfo();
         //
         mPresenter = new Act043_Main_Presenter_Impl(
                 context,
                 this,
-                hmAux_Trans
+                hmAux_Trans,
+                sm_soDao
         );
         //
+        initFrags();
+        //
+        setFrag(act043_frag_preview,SELECTION_FRAG_PREVIEW);
     }
 
-    private void recoverIntentsInfo() {
-        bundle = getIntent().getExtras();
+    private void initFrags() {
+        act043_frag_preview = new Act043_Frag_Preview();
+        act043_frag_preview.setBaInfra(this);
+        act043_frag_preview.setHmAux_Trans(hmAux_Trans);
+        act043_frag_preview.setmSm_so(mSm_so);
         //
-        if (bundle != null) {
-            //requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
-        } else {
+        act043_frag_service_list = new Act043_Frag_Service_List();
+        act043_frag_service_list.setBaInfra(this);
+        act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
+        act043_frag_service_list.setmService(mSm_so);
+    }
+
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act043_main_ll, type, sTag);
+            ft.commit();
+            setCurrentFrag(sTag);
         }
     }
+    public void setCurrentFrag(String currentFrag) {
+        this.currentFrag = currentFrag;
+    }
+
 
     private void iniUIFooter() {
         iniFooter();

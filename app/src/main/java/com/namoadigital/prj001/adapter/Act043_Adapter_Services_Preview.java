@@ -18,7 +18,7 @@ import java.util.List;
  * Created by neomatrix on 28/11/17.
  */
 
-public class Act043_Adapter_Services_Packs extends BaseAdapter {
+public class Act043_Adapter_Services_Preview extends BaseAdapter {
 
     private Context context;
     //
@@ -32,7 +32,7 @@ public class Act043_Adapter_Services_Packs extends BaseAdapter {
     private HMAux hmAux_Trans;
     private String mResource_Code;
 
-    public Act043_Adapter_Services_Packs(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
+    public Act043_Adapter_Services_Preview(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
