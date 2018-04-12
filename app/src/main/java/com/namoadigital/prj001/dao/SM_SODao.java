@@ -114,6 +114,16 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN
     };
 
+    public SM_SODao(Context context) {
+        super(context,
+              ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+              Constant.DB_VERSION_CUSTOM,
+              Constant.DB_MODE_MULTI);
+
+        this.toContentValuesMapper = new SM_SOToContentValuesMapper();
+        this.toSM_SOMapper = new CursorSM_SOMapper();
+    }
+
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
