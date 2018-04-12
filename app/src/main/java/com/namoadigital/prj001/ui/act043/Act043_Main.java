@@ -80,6 +80,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act043_title");
+        //
         //FragPreview
         transList.add("btn_search_service");
         transList.add("services_tll");
@@ -87,6 +88,14 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("total_val");
         transList.add("dialog_service_search_ttl");
         transList.add("dialog_service_search_msg");
+        //
+        //Frag_Service_List
+        transList.add("alert_service_desc");
+        transList.add("alert_service_id");
+        transList.add("alert_service_qtd");
+        transList.add("alert_service_price");
+        transList.add("alert_service_comments");
+        transList.add("alert_service_remove");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -156,6 +165,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
         act043_frag_service_list.setmService(mSm_so);
+        act043_frag_service_list.setData(null); // Modigicar
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
