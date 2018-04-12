@@ -3,13 +3,10 @@ package com.namoadigital.prj001.ui.act043;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 
-import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
@@ -144,9 +141,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         initFrags();
         //
         setFrag(act043_frag_preview,SELECTION_FRAG_PREVIEW);
-        mServiceList = new Act043_Frag_Service_List();
+        //mServiceList = new Act043_Frag_Service_List();
         //
-        setFrag(mServiceList, "FRAG_LIST");
+        //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     private void initFrags() {
@@ -236,8 +233,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
-
-
+            setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
         }
         disableProgressDialog();
     }
@@ -246,12 +242,16 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         disableProgressDialog();
+        //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
+        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         disableProgressDialog();
+        //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
+        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     //Metodo chamado ao finalizar o download da atualização.
