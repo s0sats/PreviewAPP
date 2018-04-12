@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.ui.act043;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -95,6 +98,61 @@ public class Act043_Frag_Service_List extends BaseFragment {
         lv_services_packs.setAdapter(
                 mAdapter
         );
+    }
+
+    private void iniAction() {
+
+        lv_services_packs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showSercice_Pack_Details();
+            }
+        });
+
+    }
+
+    private void showSercice_Pack_Details() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act043_frag_service_list_form, null);
+        //
+        final MKEditTextNM mk_qtd = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        final MKEditTextNM mk_price = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        final MKEditTextNM mk_comments = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        //
+        builder
+                .setView(view)
+                .setCancelable(true)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                    }
+                });
+        //
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        bStatus = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadDataToScreen();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        loadScreenToData();
     }
 
     private ArrayList<HMAux> gerarData() {
@@ -186,31 +244,5 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
         return data;
     }
-
-    private void iniAction() {
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        bStatus = false;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        loadDataToScreen();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        loadScreenToData();
-    }
-
 
 }

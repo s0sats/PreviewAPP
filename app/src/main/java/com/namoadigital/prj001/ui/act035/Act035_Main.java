@@ -2431,6 +2431,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }else{
                 btn_form_ap.setVisibility(View.INVISIBLE);
             }
+
+            if (ToolBox_Inf.pkCustomerCode(roomFormAp.getPk()) != ToolBox_Con.getPreference_Customer_Code(context)){
+                btn_form_ap.setVisibility(View.INVISIBLE);
+            }
+
+
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
