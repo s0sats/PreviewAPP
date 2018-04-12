@@ -54,7 +54,6 @@ public class Act043_Frag_Preview extends BaseFragment {
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
-
     }
 
     @Nullable
