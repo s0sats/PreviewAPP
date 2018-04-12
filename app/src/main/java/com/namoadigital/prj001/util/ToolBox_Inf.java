@@ -4119,4 +4119,14 @@ public class ToolBox_Inf {
         return nick +  " (" + id + ")";
     }
 
+    public static long pkCustomerCode(String pk) {
+        try {
+            String[] pks = pk.replace("|", "#").replace(".", "#").split("#");
+            //
+            return Long.parseLong(pks[0]);
+        }catch (Exception e){
+            return -1L;
+        }
+    }
+
 }

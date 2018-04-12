@@ -52,6 +52,7 @@ import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
@@ -658,15 +659,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     } else {
                         if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
 
-                            List<HMAux> sessionsOn = userCustomerDao
-                                    .query_HM(
-                                            new EV_User_Customer_Sql_004(
-                                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                                    ToolBox_Con.getPreference_User_Code(context)
-                                            ).toSqlQuery()
-                                    );
-
-                            if (sessionsOn != null && sessionsOn.size() != 0) {
+                            if (existOthersSession()) {
                                 mView.callChangeCustomerProcess();
                             } else {
                                 mView.callLoginProcess();
@@ -898,15 +891,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public void stopChatServices() {
         //No logoff, verifica se era a ultima sessão ativa.
         //Caso fosse, parar serviços do chat e do screestatus
-        List<HMAux> sessionsOn = userCustomerDao
-                .query_HM(
-                        new EV_User_Customer_Sql_004(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery()
-                );
-
-        if (sessionsOn != null && sessionsOn.size() == 0) {
+        if (!existOthersSession()) {
             if (AppBackgroundService.isRunning) {
                 //
                 Intent socketService = new Intent(context, AppBackgroundService.class);
@@ -918,6 +903,32 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 context.stopService(screenService);
             }
         }
+    }
+
+    @Override
+    public boolean existOthersSession() {
+        List<HMAux> sessionsOn = userCustomerDao
+                .query_HM(
+                        new EV_User_Customer_Sql_004(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+
+        if (sessionsOn != null && sessionsOn.size() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void clearLocalSession() {
+        userCustomerDao.addUpdate(
+                new EV_User_Customer_Sql_005(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
     }
 
     @Override

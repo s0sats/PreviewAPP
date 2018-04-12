@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -121,6 +122,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
 
         tv_version.setText("v" + Constant.PRJ001_VERSION);
+        //Para serviço de chat
+        //Apenas segurança
+        Intent socketService = new Intent(context, AppBackgroundService.class);
+        context.stopService(socketService);
 
     }
 

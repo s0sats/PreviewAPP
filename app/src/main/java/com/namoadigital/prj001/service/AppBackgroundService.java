@@ -9,6 +9,7 @@ import android.util.Log;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -31,21 +32,28 @@ public class AppBackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.isRunning = true;
-        try {
-            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
-            if(intent != null) {
-                serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
+        if ( ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
+             && ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
+            ) {
+
+            try {
+                //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
+                if (intent != null) {
+                    serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
+                }
+                //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
+                Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: " + serviceLastCaller + " \n");
+                //
+                singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                //
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
+                //
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
-            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
-            Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n");
-            //
-            singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-            //
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
-            //
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        }else{
+            stopSelf();
         }
         return START_STICKY;
     }

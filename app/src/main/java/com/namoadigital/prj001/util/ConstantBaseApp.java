@@ -288,6 +288,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
     public static final String LOGIN_USER_EMAIL = "login_user_email";
+    public static final String LOGIN_STATUS = "login_status";
     public static final String LOGIN_USER_PWD = "login_user_pwd";
     public static final String LOGIN_USER_NFC = "login_user_nfc";
     public static final String LOGIN_LAST_USER_CODE_LOGGED = "last_user_logged";
@@ -338,6 +339,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String RETURN_SQL_OBJ = "RETURN_SQL_OBJ";
     public static final String RETURN_SQL_HM_AUX = "RETURN_SQL_HM_AUX";
     public static final String PARAM_KEY_TYPED_FILTER = "TYPED_FILTER";
+    public static final String LOGIN_STATUS_OK = "LOGIN_STATUS_OK";
+    public static final String LOGIN_STATUS_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
 
 
 

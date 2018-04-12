@@ -961,12 +961,15 @@ public class SingletonWebSocket {
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cErrorLogin.param -> "+ param +"\n", log_file);
                             switch (cError.getError_msg()) {
                                 case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
+                                    ToolBox_Con.setPreference_Status_Login(context,Constant.LOGIN_STATUS_SESSION_NOT_FOUND);
                                     stopChatService();
                                     break;
                                 case Constant.CHAT_ERROR_CHAT_SESSION_NOT_FOUND:
                                     initConnection();
                                     break;
                                 case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
+                                    stopChatService();
+                                    break;
                                 default:
                                     String tst = cError.getError_msg();
                                     String tst2 = tst + ";";
@@ -1014,12 +1017,15 @@ public class SingletonWebSocket {
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError.param -> "+ param +"\n", log_file);
                             switch (cError.getError_msg()) {
                                 case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
+                                    ToolBox_Con.setPreference_Status_Login(context,Constant.LOGIN_STATUS_SESSION_NOT_FOUND);
                                     stopChatService();
                                     break;
                                 case Constant.CHAT_ERROR_CHAT_SESSION_NOT_FOUND:
                                     initConnection();
                                     break;
                                 case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
+                                    stopChatService();
+                                    break;
                                 default:
                                     String tst = cError.getError_msg();
                                     //Erro de complicação do oracle, desce o serviço e depois reinicia

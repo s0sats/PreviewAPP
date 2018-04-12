@@ -196,10 +196,38 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
         //
-        chatReceiver = new BR_Chat();
+       /* chatReceiver = new BR_Chat();
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);*/
+       /*
+       * Desloga user se preferencia login_status != OK
+       */
+       if(!ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
+           forceLogoutBySessionNotFound();
+       }
+    }
+
+    private void forceLogoutBySessionNotFound() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_forced_logout_ttl"),
+                hmAux_Trans.get("alert_forced_logout_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Limpa a sessão local
+                        mPresenter.clearLocalSession();
+                        //
+                        if(mPresenter.existOthersSession()){
+                            changeCustomer();
+                        }else {
+                            processLogin();
+                        }
+                    }
+                },
+                0
+        );
     }
 
     @Override
@@ -334,6 +362,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_ws_general_error_msg");
         transList.add("alert_results_ttl");
         transList.add("alert_ws_serial_error_msg");
+        transList.add("alert_forced_logout_ttl");
+        transList.add("alert_forced_logout_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -671,7 +701,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private void changeCustomer() {
         ToolBox_Con.resetCustomerSiteOperationPreferences(context);
-
+        //
         callAct002(context);
 
     }
@@ -974,21 +1004,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     mPresenter.stopChatServices();
                     //
-                    EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(
-                            context,
-                            Constant.DB_FULL_BASE,
-                            Constant.DB_VERSION_BASE
-                    );
-                    //
-                    List<HMAux> sessionsOn = userCustomerDao
-                            .query_HM(
-                                    new EV_User_Customer_Sql_004(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                            ToolBox_Con.getPreference_User_Code(context)
-                                    ).toSqlQuery()
-                            );
-
-                    if (sessionsOn != null && sessionsOn.size() != 0) {
+                    if (mPresenter.existOthersSession()) {
+                        //
+                        cleanLocalSession();
+                        //
                         changeCustomer();
                     } else {
                         processLogin();
@@ -1014,6 +1033,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else {
             progressDialog.dismiss();
         }
+    }
+
+    private void cleanLocalSession() {
+
     }
 
     @Override
@@ -1630,7 +1653,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 case Constant.CHAT_BR_TYPE_ROOM:
-                    mPresenter.getMenuItens(hmAux_Trans);
+                   // mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 default:
             }

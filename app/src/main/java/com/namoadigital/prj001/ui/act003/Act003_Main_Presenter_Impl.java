@@ -114,6 +114,9 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                 e.printStackTrace();
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
+        }else{
+            Intent chatService = new Intent(context, AppBackgroundService.class);
+            context.stopService(chatService);
         }
     }
 

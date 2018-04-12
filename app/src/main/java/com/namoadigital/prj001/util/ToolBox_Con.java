@@ -271,6 +271,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region Status_Login
+    public static void setPreference_Status_Login(Context context, String status) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_STATUS,
+                status
+        ).apply();
+    }
+
+    public static String getPreference_Status_Login(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_STATUS,
+                ""
+        );
+    }
+    //endregion
+
     //region User_NFC
     public static void setPreference_User_NFC(Context context, String nfc) {
         SharedPreferences sharedPreferences =
@@ -866,6 +888,11 @@ public class ToolBox_Con {
         ).apply();
         //
         sharedPreferences.edit().putString(
+                Constant.LOGIN_STATUS,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
                 Constant.LOGIN_USER_NFC,
                 ""
         ).apply();
@@ -944,6 +971,7 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_Site_Code(context, "-1");
         ToolBox_Con.setPreference_Zone_Code(context, -1);
         ToolBox_Con.setPreference_Operation_Code(context, -1);
+        ToolBox_Con.setPreference_Status_Login(context, "");
 
     }
 
