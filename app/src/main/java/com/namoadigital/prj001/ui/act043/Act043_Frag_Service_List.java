@@ -49,6 +49,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
         //
         // Remover
         this.data = gerarData();
+        //
+        gerarExtraFields(this.data);
+    }
+
+    private void gerarExtraFields(ArrayList<HMAux> data) {
+        for (HMAux item : data) {
+            item.put("qtd", "");
+            item.put("informed_price", "");
+            item.put("comments", "");
+        }
     }
 
     @Override
@@ -106,7 +116,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         lv_services_packs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showSercice_Pack_Details();
+                showSercice_Pack_Details((HMAux) parent.getItemAtPosition(position));
             }
         });
 
@@ -122,7 +132,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         });
     }
 
-    private void showSercice_Pack_Details() {
+    private void showSercice_Pack_Details(final HMAux item) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -143,6 +153,31 @@ public class Act043_Frag_Service_List extends BaseFragment {
         final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
+        tv_desc.setText(item.get("pack_service_desc"));
+        tv_id_val.setText(item.get("pack_code") + " / " + item.get("service_code"));
+        mk_qtd_val.setText(item.get("qtd"));
+        //
+        if (item.get("manual_price").equals("1")) {
+            if (item.get("informed_price").isEmpty()) {
+                mk_price_val.setText(item.get("price"));
+            } else {
+                mk_price_val.setText(item.get("informed_price"));
+            }
+            //
+            mk_price_val.setEnabled(true);
+        } else {
+            mk_price_val.setText(item.get("price"));
+            mk_price_val.setEnabled(false);
+        }
+        //
+        mk_comments_val.setText(item.get("comments"));
+        //
+        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
+            cb_remove_val.setEnabled(false);
+        } else {
+            cb_remove_val.setEnabled(true);
+        }
+
         mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -183,9 +218,29 @@ public class Act043_Frag_Service_List extends BaseFragment {
             public void onClick(View v) {
                 dialog.dismiss();
                 //
+                checkFields(
+                        item,
+                        cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
+                        mk_price_val.getText().toString().trim(),
+                        mk_comments_val.getText().toString().trim()
+                );
 
             }
         });
+    }
+
+    private void checkFields(HMAux item, String qtd, String price, String comments) {
+        item.put("qtd", convertQtd(qtd) > 0 ? qtd : "");
+        item.put("price", price);
+        item.put("comments", comments);
+    }
+
+    private int convertQtd(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override
@@ -302,7 +357,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     HMAux item = new HMAux();
                     //
                     item.put("type_ps", obj.getString("type_ps"));
+                    item.put("customer_code", obj.getString("customer_code"));
+                    item.put("price_list_code", obj.getString("price_list_code"));
+                    item.put("pack_code", obj.getString("pack_code"));
+                    item.put("service_code", obj.getString("service_code"));
                     item.put("pack_service_desc", obj.getString("pack_service_desc"));
+                    item.put("pack_service_desc_full", obj.getString("pack_service_desc_full"));
+                    item.put("price", obj.getString("price"));
+                    item.put("manual_price", obj.getString("manual_price"));
+                    item.put("rating", obj.getString("rating"));
+                    item.put("rating_ref", obj.getString("rating_ref"));
                     //
                     data.add(item);
                 }

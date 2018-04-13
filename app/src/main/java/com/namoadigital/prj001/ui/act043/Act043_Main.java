@@ -165,7 +165,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
         act043_frag_service_list.setmService(mSm_so);
-        act043_frag_service_list.setData(null); // Modigicar
+        act043_frag_service_list.setData(null); // Modificar
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
