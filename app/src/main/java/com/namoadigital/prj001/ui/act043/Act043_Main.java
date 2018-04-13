@@ -243,7 +243,14 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
-            setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+            //
+            if(hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
+                mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
+                //
+                setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+            }else{
+                //DEFINIR MSG DE ERRO
+            }
         }
         disableProgressDialog();
     }
