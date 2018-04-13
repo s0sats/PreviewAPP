@@ -102,6 +102,7 @@ public class WS_SO_Service_Search extends IntentService {
                 resultado,
                 TSO_Service_Search_Rec.class
         );
+        String tst = "";
         //
         if (
                 !ToolBox_Inf.processWSCheckValidation(
@@ -121,14 +122,15 @@ public class WS_SO_Service_Search extends IntentService {
         }
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"), new HMAux(),"", "0");
-        //
         processSOServiceSearchReturn(rec);
     }
     //
-
     private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) {
-
+        HMAux auxReturn = new HMAux();
+        //
+        auxReturn.put(Constant.PARAM_KEY_WS_RETURN,rec.getData().toString());
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxReturn,"", "0");
     }
 
     private void loadTranslation() {
@@ -139,7 +141,7 @@ public class WS_SO_Service_Search extends IntentService {
         translist.add("msg_searching_sos");
         translist.add("msg_send_serial_data");
         translist.add("msg_end_serial_save");
-        translist.add("msg_end_so_download");
+        translist.add("msg_end_proccess");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

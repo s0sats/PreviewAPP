@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.model;
 
-import java.util.ArrayList;
-
 /**
  * Created by d.luche on 27/06/2017.
  */
@@ -11,7 +9,8 @@ public class TSO_Service_Search_Rec {
     private String validation;
     private String link_url;
     private String error_msg;
-    private ArrayList<SM_SO> so;
+    //private JSONArray data;
+    private String data;
 
     public String getApp() {
         return app;
@@ -45,12 +44,20 @@ public class TSO_Service_Search_Rec {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<SM_SO> getSo() {
-        return so;
+//    public JSONArray getData() {
+//        return data;
+//    }
+//
+//    public void setData(JSONArray data) {
+//        this.data = data;
+//    }
+
+
+    public String getData() {
+        return data;
     }
 
-    public void setSo(ArrayList<SM_SO> so) {
-        this.so = so;
+    public void setData(String data) {
+        this.data = data;
     }
-
 }
