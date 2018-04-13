@@ -38,15 +38,15 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_AP_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_ap.ws";
     public static final String WS_SO_PACK_EXPRESSION = "https://portal.namoadigital.com/ws/prj001/server_save_so_pack_express.ws";
 
-    public static final String WEB_SOCKET_CHAT = "https://chat.namoadigital.com";
-    public static final String WS_UPLOAD_NODE_CHAT = "https://chat.namoadigital.com/messageFile";
-    public static final String WS_CHAT_ROOM_INFO = "https://chat.namoadigital.com/roomMemberList";
-    public static final String WS_CHAT_MESSAGE_INFO = "https://chat.namoadigital.com/messageDeliverList";
-    public static final String WS_CHAT_ROOM_USER_LIST = "https://chat.namoadigital.com/userList";
-    public static final String WS_CHAT_MESSAGE_DIST = "https://chat.namoadigital.com/messageDist?";
-    public static final String WS_CHAT_POST_DELIVERED = "https://chat.namoadigital.com/delivered";
-    public static final String WS_CHAT_ROOM_PRIVATE = "https://chat.namoadigital.com/roomPrivateCustomer";
-    public static final String WS_CHAT_LEAVE_ROOM = "https://chat.namoadigital.com/leaveRoom";
-    public static final String WS_CHAT_ROOM_AP = "https://chat.namoadigital.com/joinFormAp";
+    public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
+    public static final String WS_UPLOAD_NODE_CHAT = "https://nchat.namoadigital.com/messageFile";
+    public static final String WS_CHAT_ROOM_INFO = "https://nchat.namoadigital.com/roomMemberList";
+    public static final String WS_CHAT_MESSAGE_INFO = "https://nchat.namoadigital.com/messageDeliverList";
+    public static final String WS_CHAT_ROOM_USER_LIST = "https://nchat.namoadigital.com/userList";
+    public static final String WS_CHAT_MESSAGE_DIST = "https://nchat.namoadigital.com/messageDist?";
+    public static final String WS_CHAT_POST_DELIVERED = "https://nchat.namoadigital.com/delivered";
+    public static final String WS_CHAT_ROOM_PRIVATE = "https://nchat.namoadigital.com/roomPrivateCustomer";
+    public static final String WS_CHAT_LEAVE_ROOM = "https://nchat.namoadigital.com/leaveRoom";
+    public static final String WS_CHAT_ROOM_AP = "https://nchat.namoadigital.com/joinFormAp";
 
 }

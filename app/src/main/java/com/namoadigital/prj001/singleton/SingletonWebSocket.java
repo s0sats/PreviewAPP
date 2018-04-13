@@ -198,7 +198,7 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_CONNECT, onConnectReturn);
 
             mSocket.on(Socket.EVENT_DISCONNECT, onDisconnectReturn);
-
+            Log.d("ChatEvent","Chat URL : " +Constant.WEB_SOCKET_CHAT);
             mSocket.connect();
             //NUNCA INICIALIZAR O mSocket_ID AQUI!!!!
             //mSocket_ID = mSocket.id();
