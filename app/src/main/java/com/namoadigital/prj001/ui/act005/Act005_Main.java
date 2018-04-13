@@ -203,7 +203,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
        /*
        * Desloga user se preferencia login_status != OK
        */
-       if(!ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
+       if(ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)){
            forceLogoutBySessionNotFound();
        }
     }
