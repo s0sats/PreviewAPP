@@ -19,10 +19,10 @@ import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Preview;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SM_SO_Pack;
-import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
+import com.namoadigital.prj001.sql.Sql_Act043_001;
+import com.namoadigital.prj001.sql.Sql_Act043_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -141,11 +141,13 @@ public class Act043_Frag_Preview extends BaseFragment {
                 tv_total_lbl.setText(hmAux_Trans.get("total_lbl"));
                 //
                 tv_total_val.setText(hmAux_Trans.get("total_val"));
+                tv_total_val.setText(getTotalPrice());
                 //
                 mAdapter = new Act043_Adapter_Services_Preview(
                         context,
                         R.layout.act043_adapter_services_preview_cell,
-                        getServicesAsHmAux(),
+                        //getServicesAsHmAux(),
+                        getPackServiceList(),
                         hmAux_Trans
                 );
                 //
@@ -161,21 +163,36 @@ public class Act043_Frag_Preview extends BaseFragment {
         }
     }
 
-    private ArrayList<HMAux> getServicesAsHmAux() {
-        ArrayList<HMAux> servicesList = new ArrayList<>();
+    private String getTotalPrice(){
+        String totalVal = "-1";
+
+        HMAux hmAux = mSm_So_ServiceDao.getByStringHM(
+                new Sql_Act043_002(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
         //
-        ArrayList<SM_SO_Pack> pack = mSm_so.getPack();
-        for(SM_SO_Service soService: pack.get(0).getService()){
-            HMAux  aux = new HMAux();
-            //
-            aux.put(SM_SO_ServiceDao.SERVICE_ID,soService.getService_id());
-            aux.put(SM_SO_ServiceDao.SERVICE_DESC,soService.getService_desc());
-            aux.put(SM_SO_ServiceDao.PRICE, String.valueOf(soService.getPrice()));
-            //
-            servicesList.add(aux);
+        if(hmAux != null && hmAux.size() > 0){
+            totalVal = hmAux.get(Sql_Act043_002.TOTAL_PRICE);
         }
         //
-        return servicesList;
+        return totalVal;
+    }
+
+    private ArrayList<HMAux> getPackServiceList(){
+        ArrayList<HMAux> packServiceList = new ArrayList<>();
+        //
+        packServiceList = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+                new Sql_Act043_001(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+        //
+        return packServiceList;
     }
 
     @Override

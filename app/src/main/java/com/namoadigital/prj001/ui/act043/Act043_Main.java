@@ -1,12 +1,19 @@
 package com.namoadigital.prj001.ui.act043;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
@@ -111,13 +118,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            if(bundle.containsKey(SM_SODao.SO_PREFIX) && bundle.containsKey(SM_SODao.SO_CODE)) {
+            if (bundle.containsKey(SM_SODao.SO_PREFIX) && bundle.containsKey(SM_SODao.SO_CODE)) {
                 mSm_so = loadSM_So(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
                         Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
                 );
-            }else{
+            } else {
                 //
             }
         } else {
@@ -149,7 +156,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //
         initFrags();
         //
-        setFrag(act043_frag_preview,SELECTION_FRAG_PREVIEW);
+        setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
         //mServiceList = new Act043_Frag_Service_List();
         //
         //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
@@ -175,6 +182,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
             setCurrentFrag(sTag);
         }
     }
+
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
     }
@@ -232,25 +240,118 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     }
 
     @Override
+    public void showServiceInfoDialog(final HMAux item) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act043_frag_service_list_form, null);
+        //
+        final TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
+        final TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
+        final TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
+        final TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
+        final MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        final TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
+        final MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        final TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
+        final MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        final CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        final Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
+        btn_cancelar.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
+        final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        tv_desc.setText(item.get("pack_service_desc"));
+        tv_id_val.setText(item.get("pack_code") + " / " + item.get("service_code"));
+        mk_qtd_val.setText(item.get("qtd"));
+        //
+        if (item.get("manual_price").equals("1")) {
+            if (item.get("informed_price").isEmpty()) {
+                mk_price_val.setText(item.get("price"));
+            } else {
+                mk_price_val.setText(item.get("informed_price"));
+            }
+            //
+            mk_price_val.setEnabled(true);
+        } else {
+            mk_price_val.setText(item.get("price"));
+            mk_price_val.setEnabled(false);
+        }
+        //
+        mk_comments_val.setText(item.get("comments"));
+        //
+        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
+            cb_remove_val.setEnabled(false);
+        } else {
+            cb_remove_val.setEnabled(true);
+        }
+
+        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if (s.isEmpty()) {
+                    cb_remove_val.setEnabled(false);
+                } else {
+                    cb_remove_val.setEnabled(true);
+                }
+            }
+        });
+        //
+        builder
+                .setView(view)
+                .setCancelable(true);
+//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                    }
+//                });
+        //
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        //
+        btn_cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+    }
+
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
+
     //region WS_Return
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
+        if (ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())) {
             //
-            if(hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
+            if (hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
                 //mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
                 //
                 act043_frag_service_list.setDataReturn(
                         mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN))
                 );
                 setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
-            }else{
+            } else {
                 //DEFINIR MSG DE ERRO
             }
         }

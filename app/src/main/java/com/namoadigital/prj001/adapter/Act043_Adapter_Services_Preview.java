@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.sql.Sql_Act043_001;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,9 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
             convertView = mInflater.inflate(resource_01, parent, false);
         }
 
-        final HMAux hmAux = data.get(position);
+        final HMAux hmAux = data.get(position);//
+        //
+        ImageView iv_type = (ImageView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_type);
         //
         TextView tv_service_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_service_desc);
         //
@@ -74,9 +77,21 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         //
         ImageView iv_info = (ImageView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
         //
-        tv_service_desc.setText(hmAux.get(SM_SO_ServiceDao.SERVICE_ID)+" - "+hmAux.get(SM_SO_ServiceDao.SERVICE_DESC));
+        tv_service_desc.setText(hmAux.get(Sql_Act043_001.PACK_SERVICE_DESC_FULL));
         //
         tv_service_price.setText(hmAux.get(SM_SO_ServiceDao.PRICE));
+        //
+        if(hmAux.get(Sql_Act043_001.TYPE_PS).equals(Sql_Act043_001.TYPE_PS_PACK)){
+            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_black_24dp));
+        }else{
+            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_file_black_24dp));
+        }
+        //
+        if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
+            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_info));
+        }else{
+            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_engrenagens_ns));
+        }
         //
         iv_info.setOnClickListener(new View.OnClickListener() {
             @Override
