@@ -111,13 +111,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            if(bundle.containsKey(SM_SODao.SO_PREFIX) && bundle.containsKey(SM_SODao.SO_CODE)) {
+            if (bundle.containsKey(SM_SODao.SO_PREFIX) && bundle.containsKey(SM_SODao.SO_CODE)) {
                 mSm_so = loadSM_So(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
                         Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
                 );
-            }else{
+            } else {
                 //
             }
         } else {
@@ -149,7 +149,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //
         initFrags();
         //
-        setFrag(act043_frag_preview,SELECTION_FRAG_PREVIEW);
+        setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
         //mServiceList = new Act043_Frag_Service_List();
         //
         //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
@@ -162,6 +162,21 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_preview.setmSm_so(mSm_so);
         //
         act043_frag_service_list = new Act043_Frag_Service_List();
+        act043_frag_service_list.setProgressAction(new Act043_Frag_Service_List.IAct043_Frag_Service_List() {
+            @Override
+            public void progressAction(String title, String message, String action) {
+                switch (action.toUpperCase()) {
+                    case "SHOW":
+                        showPD(title, message);
+                        break;
+                    case "HIDE":
+                        disableProgressDialog();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
         act043_frag_service_list.setmService(mSm_so);
@@ -175,6 +190,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
             setCurrentFrag(sTag);
         }
     }
+
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
     }
@@ -236,21 +252,21 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
+
     //region WS_Return
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
+        if (ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())) {
             //
-            if(hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
-                //mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
-                //
+            if (hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
+                act043_frag_service_list.setmService(mSm_so);
                 act043_frag_service_list.setDataReturn(
                         mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN))
                 );
                 setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
-            }else{
+            } else {
                 //DEFINIR MSG DE ERRO
             }
         }

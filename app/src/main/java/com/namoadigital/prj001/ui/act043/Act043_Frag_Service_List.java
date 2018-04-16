@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,23 +15,36 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SO_Save_Return;
+import com.namoadigital.prj001.model.TSO_SO_Service;
+import com.namoadigital.prj001.model.TSO_SO_Service_Env;
+import com.namoadigital.prj001.model.TSO_SO_Service_Item;
+import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act043_Frag_Service_List extends BaseFragment {
 
     private Context context;
     private boolean bStatus = false;
 
-    private SM_SO mService;
+    private SM_SO mSO_Service;
     private SM_SODao sm_so_serviceDao;
 
     private MKEditTextNM mk_desc;
@@ -39,14 +53,26 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private ArrayList<HMAux> data;
     private Button btn_save;
 
-    public void setmService(SM_SO mService) {
-        this.mService = mService;
+    private String mToken;
+
+    public void setmService(SM_SO mSO_Service) {
+        this.mSO_Service = mSO_Service;
     }
 
     public void setData(ArrayList<HMAux> data) {
         this.data = data;
         //
         gerarExtraFields(this.data);
+    }
+
+    public interface IAct043_Frag_Service_List {
+        void progressAction(String title, String message, String action);
+    }
+
+    private IAct043_Frag_Service_List delegate;
+
+    public void setProgressAction(IAct043_Frag_Service_List delegate) {
+        this.delegate = delegate;
     }
 
     public void setDataReturn(ArrayList<TSO_Service_Search_Obj> data) {
@@ -59,8 +85,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private void gerarExtraFields(ArrayList<HMAux> data) {
         for (HMAux item : data) {
-            item.put("qtd", "");
-            item.put("informed_price", "");
+            item.put("qty", "");
+            item.put("price_ref", "");
             item.put("comments", "");
         }
     }
@@ -70,6 +96,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
+        //
+        mToken = ToolBox_Inf.getToken(getActivity());
     }
 
     @Nullable
@@ -119,14 +147,36 @@ public class Act043_Frag_Service_List extends BaseFragment {
             @Override
             public void onClick(View v) {
                 ArrayList<HMAux> data_env = new ArrayList<>();
+                ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
                 for (int i = 0; i < data.size(); i++) {
-                    if (!data.get(i).get("qtd").isEmpty()){
+                    if (!data.get(i).get("qty").isEmpty()) {
                         data_env.add(data.get(i));
+                        //
+                        TSO_SO_Service_Item item = new TSO_SO_Service_Item();
+                        item.setType_ps(data.get(i).get("type_ps"));
+                        item.setCustomer_code(data.get(i).get("customer_code"));
+                        item.setPrice_list_code(data.get(i).get("price_list_code"));
+                        item.setPack_code(data.get(i).get("pack_code"));
+                        item.setService_code(data.get(i).get("service_code"));
+                        item.setPack_service_desc(data.get(i).get("pack_service_desc"));
+                        item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
+                        item.setPrice(data.get(i).get("price"));
+                        item.setManual_price(data.get(i).get("manual_price"));
+                        item.setRating(data.get(i).get("rating"));
+                        item.setRating_ref(data.get(i).get("rating_ref"));
+                        item.setQty(Integer.parseInt(data.get(i).get("qty")));
+                        item.setPrice_ref(Double.parseDouble(data.get(i).get("price")));
+                        item.setComments(data.get(i).get("comments"));
+                        //
+                        pack.add(item);
                     }
                 }
-
-                Log.d("TAMANHO", String.valueOf(data_env.size()));
+                //
+                if (pack.size() > 0) {
+                    new Service_Pack_MicroService().execute(pack);
+                } else {
+                }
             }
         });
     }
@@ -154,13 +204,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
         //
         tv_desc.setText(item.get("pack_service_desc"));
         tv_id_val.setText(item.get("pack_code") + " / " + item.get("service_code"));
-        mk_qtd_val.setText(item.get("qtd"));
+        mk_qtd_val.setText(item.get("qty"));
         //
         if (item.get("manual_price").equals("1")) {
-            if (item.get("informed_price").isEmpty()) {
+            if (item.get("price_ref").isEmpty()) {
                 mk_price_val.setText(item.get("price"));
             } else {
-                mk_price_val.setText(item.get("informed_price"));
+                mk_price_val.setText(item.get("price_ref"));
             }
             //
             mk_price_val.setEnabled(true);
@@ -229,7 +279,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     private void checkFields(HMAux item, String qtd, String price, String comments) {
-        item.put("qtd", convertQtd(qtd) > 0 ? qtd : "");
+        item.put("qty", convertQtd(qtd) > 0 ? qtd : "");
         item.put("price", price);
         item.put("comments", comments);
         //
@@ -310,6 +360,182 @@ public class Act043_Frag_Service_List extends BaseFragment {
         }
 
         return data;
+    }
+
+    private class Service_Pack_MicroService extends AsyncTask<ArrayList<TSO_SO_Service_Item>, Void, HMAux> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //
+            if (delegate != null) {
+                delegate.progressAction("Title - Trad", "Mensagem - Trad", "show");
+            }
+        }
+
+        @Override
+        protected HMAux doInBackground(ArrayList<TSO_SO_Service_Item>... pack) {
+
+            Gson gsonEnv = new Gson();
+            Gson gsonRec = new GsonBuilder().serializeNulls().create();
+
+            HMAux hmAux = null;
+
+            try {
+                TSO_SO_Service soService = new TSO_SO_Service();
+                soService.setCustomer_code(mSO_Service.getCustomer_code());
+                soService.setSo_prefix(mSO_Service.getSo_prefix());
+                soService.setSo_code(mSO_Service.getSo_code());
+                soService.setSo_scn(mSO_Service.getSo_scn());
+                soService.setPack(pack[0]);
+
+                TSO_SO_Service_Env env = new TSO_SO_Service_Env();
+                env.setApp_code(Constant.PRJ001_CODE);
+                env.setApp_version(Constant.PRJ001_VERSION);
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(getActivity()));
+                env.setToken(mToken);
+                env.getSo().add(soService);
+
+                String resultado = ToolBox_Con.connWebService(
+                        Constant.WS_SO_PACK_SERVICE,
+                        gsonEnv.toJson(env)
+                );
+
+                ToolBox.sendBCStatus(getActivity(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
+                //
+                TSO_SO_Service_Rec rec = gsonRec.fromJson(
+                        resultado,
+                        TSO_SO_Service_Rec.class
+                );
+                //
+                if (
+                        !ToolBox_Inf.processWSCheckValidation(
+                                getActivity(),
+                                rec.getValidation(),
+                                rec.getError_msg(),
+                                rec.getLink_url(),
+                                1,
+                                1)
+                                ||
+                                !ToolBox_Inf.processoOthersError(
+                                        getActivity(),
+                                        getResources().getString(R.string.generic_error_lbl),
+                                        rec.getError_msg())
+                        ) {
+                    return null;
+                }
+                //
+                for (SO_Save_Return so_ret : rec.getSo_return()) {
+                    String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
+                    //
+                    if (hmAux == null){
+                        hmAux = new HMAux();
+                    }
+                    //
+                    hmAux.put(so_pk, "0");
+                    //
+                    if (!so_ret.getRet_status().equalsIgnoreCase("OK")) {
+                        hmAux.put(so_pk, so_ret.getRet_msg());
+                    } else {
+                        hmAux.put(so_pk, "OK");
+                    }
+                }
+            } catch (Exception e) {
+
+                StringBuilder sb = new StringBuilder();
+                ToolBox_Inf.wsExceptionTreatment(getActivity(), e);
+
+                ToolBox_Inf.registerException(getClass().getName(), e);
+
+                ToolBox.sendBCStatus(getActivity(), "ERROR_1", sb.toString(), "", "0");
+            }
+
+            return hmAux;
+        }
+
+        @Override
+        protected void onPostExecute(HMAux hmAux) {
+            super.onPostExecute(hmAux);
+            //
+            if (delegate != null) {
+                delegate.progressAction("Title - Trad", "Mensagem - Trad", "hide");
+            }
+
+            if (hmAux != null){
+                showResults(hmAux);
+            }
+        }
+    }
+
+    private void showResults(HMAux so) {
+        ArrayList<HMAux> mSO = new ArrayList<>();
+
+        for (String sKey : so.keySet()) {
+            HMAux hmAux = new HMAux();
+            //
+            String sParts = sKey;
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "S.O. - Trad");
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "S.O. - Desc - Trad");
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, "???");
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, "S.O Status - Trad");
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, so.get(sKey));
+
+            mSO.add(hmAux);
+        }
+
+        showResultsDialog(mSO);
+    }
+
+    public void showResultsDialog(List<HMAux> so_express) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        String[] from = {"so_express_code", "so_express_result"};
+        int[] to = {R.id.act038_results_adapter_cell_tv_ttl, R.id.act038_results_adapter_cell_tv_msg_value};
+
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        so_express,
+                        Generic_Results_Adapter.CONFIG_3_ITENS_NEW,
+                        hmAux_Trans
+                )
+        );
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
     }
 
 }

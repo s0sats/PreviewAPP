@@ -152,7 +152,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
         //
         try {
-            int qtd = Integer.parseInt(hmAux.get("qtd"));
+            int qtd = Integer.parseInt(hmAux.get("qty"));
             //
             if (qtd > 0) {
                 ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
@@ -173,7 +173,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
         //
         try {
-            int qtd = Integer.parseInt(hmAux.get("qtd"));
+            int qtd = Integer.parseInt(hmAux.get("qty"));
             //
             if (qtd > 0) {
                 ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
