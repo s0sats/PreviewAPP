@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="20dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -57,6 +58,14 @@
         android:layout_weight="1"
         android:divider="@color/padrao_TRANSPARENT"
         android:dividerHeight="2dp" />
+
+    <Button
+        android:id="@+id/act043_frag_service_btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_namoa_main_states"
+        android:text="Salvar - Trad"
+        android:textColor="@color/padrao_WHITE" />
 
 
 </LinearLayout>
