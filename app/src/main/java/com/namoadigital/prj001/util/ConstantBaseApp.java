@@ -67,6 +67,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT040 = "act040";
     public static final String ACT041 = "act041";
     public static final String ACT042 = "act042";
+    public static final String ACT043 = "act043";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
@@ -339,6 +340,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String RETURN_SQL_OBJ = "RETURN_SQL_OBJ";
     public static final String RETURN_SQL_HM_AUX = "RETURN_SQL_HM_AUX";
     public static final String PARAM_KEY_TYPED_FILTER = "TYPED_FILTER";
+    public static final String PARAM_KEY_WS_RETURN = "WS_RETURN";
     public static final String LOGIN_STATUS_OK = "LOGIN_STATUS_OK";
     public static final String LOGIN_STATUS_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
 

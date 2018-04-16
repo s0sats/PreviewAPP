@@ -892,7 +892,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             }
         });
         //Seta visibilidade do botão de pendend do perfil do user
-        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE: View.INVISIBLE);
+        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE : View.INVISIBLE);
         //
         if (iv_join_ap.getVisibility() == View.VISIBLE){
             if (ToolBox_Inf.pkCustomerCode(item.get("pk")) != ToolBox_Con.getPreference_Customer_Code(context)){
@@ -1063,7 +1063,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             }
         });
         //Seta visibilidade do botão de pendend do perfil do user
-        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE: View.INVISIBLE);
+        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE : View.INVISIBLE);
         //
         if (iv_join_ap.getVisibility() == View.VISIBLE){
             if (ToolBox_Inf.pkCustomerCode(item.get("pk")) != ToolBox_Con.getPreference_Customer_Code(context)){
@@ -1110,5 +1110,4 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             return context.getResources().getDrawable(R.drawable.ic_clock_chat);
         }
     }
-
 }

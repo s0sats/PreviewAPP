@@ -68,6 +68,7 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -94,6 +95,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String SELECTION_PRODUCT_LIST = "PRODUCT_LIST";
     public static final String SELECTION_PRODUCT_EDIT = "PRODUCT_EDIT";
     public static final String SELECTION_PRODUCT_SELECTION = "PRODUCT_SELECTION";
+    public static final String SELECTION_SERVICE_EDITION = "SERVICE_EDITION";
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
@@ -211,6 +213,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         transList.add("exit_shortcut_ttl");
         transList.add("exit_shortcut_msg");
+        transList.add("alert_sync_before_edit_service_ttl");
+        transList.add("alert_sync_before_edit_service_msg");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -232,6 +236,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
+        transList.add("service_edition_ll_lbl");
 
         // ACT027_Approval Fragment
         transList.add("user_name_lbl");
@@ -1566,7 +1571,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 setFrag(act027_product_list_, Act027_Main.SELECTION_PRODUCT_LIST);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
-
             case Act027_Main.SELECTION_SERVICES:
                 setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1610,13 +1614,25 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 }
 
                 break;
+            case Act027_Main.SELECTION_SERVICE_EDITION:
+                if(mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !act027_opc_.isSoWithinTokenFile()) {
+                    callAct043(context);
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_sync_before_edit_service_ttl"),
+                            hmAux_Trans.get("alert_sync_before_edit_service_msg"),
+                            null,
+                            0
+                    );
+                }
+                break;
             default:
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
         }
     }
-
 
     @Override
     public void soSyncClick() {
@@ -1746,6 +1762,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         startActivity(mIntent);
 
         finish();
+    }
+
+    private void callAct043(Context context) {
+        Intent mIntent = new Intent(context, Act043_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSm_so.getSo_prefix()));
+        bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+
+        finish();
+
     }
 
     @Override
