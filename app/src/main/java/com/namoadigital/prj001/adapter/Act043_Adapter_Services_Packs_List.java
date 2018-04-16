@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -146,16 +147,42 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
     }
 
     private void processService(HMAux hmAux, View convertView) {
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_ll_background);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_desc);
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
+        //
+        try {
+            int qtd = Integer.parseInt(hmAux.get("qtd"));
+            //
+            if (qtd > 0) {
+                ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+            } else {
+                ll_background.setBackground(null);
+            }
+        } catch (Exception e) {
+            ll_background.setBackground(null);
+        }
         //
         tv_desc.setText(hmAux.get("pack_service_desc"));
         iv_foto.setImageResource(R.drawable.ic_adicionar2_ns);
     }
 
     private void processPack(HMAux hmAux, View convertView) {
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_ll_background);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_desc);
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
+        //
+        try {
+            int qtd = Integer.parseInt(hmAux.get("qtd"));
+            //
+            if (qtd > 0) {
+                ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+            } else {
+                ll_background.setBackground(null);
+            }
+        } catch (Exception e) {
+            ll_background.setBackground(null);
+        }
         //
         tv_desc.setText(hmAux.get("pack_service_desc"));
         iv_foto.setImageResource(R.drawable.ic_apagar);
@@ -183,7 +210,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
                 for (int i = 0; i < data_filtered.size(); i++) {
                     String user_nick = ToolBox.AccentMapper(data_filtered.get(i).get("pack_service_desc").toLowerCase());
                     String user_name = ToolBox.AccentMapper(data_filtered.get(i).get("pack_service_desc").toLowerCase());
-                    if ( user_nick.contains(constraint.toString().toLowerCase()) ||
+                    if (user_nick.contains(constraint.toString().toLowerCase()) ||
                             user_name.contains(constraint.toString().toLowerCase())
                             ) {
 

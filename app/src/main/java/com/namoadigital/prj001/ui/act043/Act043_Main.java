@@ -165,7 +165,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
         act043_frag_service_list.setmService(mSm_so);
-        act043_frag_service_list.setData(null); // Modificar
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
@@ -245,8 +244,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
             //
             if(hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
-                mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
+                //mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
                 //
+                act043_frag_service_list.setDataReturn(
+                        mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN))
+                );
                 setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
             }else{
                 //DEFINIR MSG DE ERRO

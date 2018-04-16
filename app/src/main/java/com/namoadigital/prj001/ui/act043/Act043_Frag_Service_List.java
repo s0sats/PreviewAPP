@@ -21,9 +21,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 
 import java.util.ArrayList;
 
@@ -39,6 +37,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private ListView lv_services_packs;
     private Act043_Adapter_Services_Packs_List mAdapter;
     private ArrayList<HMAux> data;
+    private Button btn_save;
 
     public void setmService(SM_SO mService) {
         this.mService = mService;
@@ -47,8 +46,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
     public void setData(ArrayList<HMAux> data) {
         this.data = data;
         //
-        // Remover
-        this.data = gerarData();
+        gerarExtraFields(this.data);
+    }
+
+    public void setDataReturn(ArrayList<TSO_Service_Search_Obj> data) {
+        this.data = new ArrayList<>();
+        //
+        this.data = gerarData(data);
         //
         gerarExtraFields(this.data);
     }
@@ -88,27 +92,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         mk_desc = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_mket_search_services_packs);
         lv_services_packs = (ListView) view.findViewById(R.id.act043_frag_service_lv_services);
         //
-        // Remover no de verdade vira da activity
-//        data = gerarData();
-//        //
-//        mAdapter = new Act043_Adapter_Services_Packs_List(
-//                context,
-//                R.layout.act043_adapter_services_pack_list_content_cell_service,
-//                R.layout.act043_adapter_services_pack_list_content_cell_pack,
-//                hmAux_Trans,
-//                data
-//        );
-        //
-//        mk_desc.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-//            @Override
-//            public void reportTextChange(String s) {
-//            }
-//
-//            @Override
-//            public void reportTextChange(String s, boolean b) {
-//                mAdapter.getFilter().filter(mk_desc.getText().toString().trim());
-//            }
-//        });
+        btn_save = (Button) view.findViewById(R.id.act043_frag_service_btn_save);
     }
 
     private void iniAction() {
@@ -128,6 +112,21 @@ public class Act043_Frag_Service_List extends BaseFragment {
             @Override
             public void reportTextChange(String s, boolean b) {
                 mAdapter.getFilter().filter(mk_desc.getText().toString().trim());
+            }
+        });
+
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<HMAux> data_env = new ArrayList<>();
+
+                for (int i = 0; i < data.size(); i++) {
+                    if (!data.get(i).get("qtd").isEmpty()){
+                        data_env.add(data.get(i));
+                    }
+                }
+
+                Log.d("TAMANHO", String.valueOf(data_env.size()));
             }
         });
     }
@@ -233,6 +232,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
         item.put("qtd", convertQtd(qtd) > 0 ? qtd : "");
         item.put("price", price);
         item.put("comments", comments);
+        //
+        mAdapter.notifyDataSetChanged();
     }
 
     private int convertQtd(String value) {
@@ -282,97 +283,27 @@ public class Act043_Frag_Service_List extends BaseFragment {
         loadScreenToData();
     }
 
-    private ArrayList<HMAux> gerarData() {
+    private ArrayList<HMAux> gerarData(ArrayList<TSO_Service_Search_Obj> dataRec) {
         ArrayList<HMAux> data = new ArrayList<>();
         try {
-            JSONObject root = new JSONObject("{\n" +
-                    "\t\"translate\": [{\n" +
-                    "\t\t\"module_code\": \"SM_\",\n" +
-                    "\t\t\"resource_code\": 101,\n" +
-                    "\t\t\"resource_name\": \"PC_SM_JSON.FC_CONTRACT_PACK_SERVICE_LIST\",\n" +
-                    "\t\t\"txt_list\": [{\n" +
-                    "\t\t\t\"txt_code\": \"COMMENT\",\n" +
-                    "\t\t\t\"txt_value\": \"Comentário\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"txt_code\": \"PACK_SERVICE_DESC\",\n" +
-                    "\t\t\t\"txt_value\": \"Pacote de Serviços\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"txt_code\": \"PRICE\",\n" +
-                    "\t\t\t\"txt_value\": \"Preço\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"txt_code\": \"QTY\",\n" +
-                    "\t\t\t\"txt_value\": \"Qtde\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"txt_code\": \"RATING\",\n" +
-                    "\t\t\t\"txt_value\": \"Classificação\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"txt_code\": \"TYPE_PS\",\n" +
-                    "\t\t\t\"txt_value\": \"Pacote\\/Serviço\"\n" +
-                    "\t\t}]\n" +
-                    "\t}],\n" +
-                    "\t\"data\": [{\n" +
-                    "\t\t\"type_ps\": \"S\",\n" +
-                    "\t\t\"customer_code\": \"1\",\n" +
-                    "\t\t\"price_list_code\": \"17\",\n" +
-                    "\t\t\"pack_code\": \"1\",\n" +
-                    "\t\t\"service_code\": \"17\",\n" +
-                    "\t\t\"pack_service_desc\": \"Polimento 01\",\n" +
-                    "\t\t\"pack_service_desc_full\": \"17 - Polimento 01\",\n" +
-                    "\t\t\"price\": \"70.00\",\n" +
-                    "\t\t\"manual_price\": \"0\",\n" +
-                    "\t\t\"rating\": \"21\",\n" +
-                    "\t\t\"rating_ref\": \"100\"\n" +
-                    "\t}, {\n" +
-                    "\t\t\"type_ps\": \"S\",\n" +
-                    "\t\t\"customer_code\": \"1\",\n" +
-                    "\t\t\"price_list_code\": \"17\",\n" +
-                    "\t\t\"pack_code\": \"1\",\n" +
-                    "\t\t\"service_code\": \"15\",\n" +
-                    "\t\t\"pack_service_desc\": \"Lavagem\",\n" +
-                    "\t\t\"pack_service_desc_full\": \"15 - Lavagem\",\n" +
-                    "\t\t\"price\": \"35.00\",\n" +
-                    "\t\t\"manual_price\": \"0\",\n" +
-                    "\t\t\"rating\": \"18\",\n" +
-                    "\t\t\"rating_ref\": \"85.71\"\n" +
-                    "\t}, {\n" +
-                    "\t\t\"type_ps\": \"S\",\n" +
-                    "\t\t\"customer_code\": \"1\",\n" +
-                    "\t\t\"price_list_code\": \"17\",\n" +
-                    "\t\t\"pack_code\": \"1\",\n" +
-                    "\t\t\"service_code\": \"16\",\n" +
-                    "\t\t\"pack_service_desc\": \"Martelinho 01\",\n" +
-                    "\t\t\"pack_service_desc_full\": \"16 - Martelinho 01\",\n" +
-                    "\t\t\"price\": \"123.45\",\n" +
-                    "\t\t\"manual_price\": \"1\",\n" +
-                    "\t\t\"rating\": \"12\",\n" +
-                    "\t\t\"rating_ref\": \"57.14\"\n" +
-                    "\t}]\n" +
-                    "}");
-
-            if (root.has("data")) {
-                JSONArray ja = root.getJSONArray("data");
+            for (TSO_Service_Search_Obj obj : dataRec) {
+                HMAux item = new HMAux();
                 //
-                for (int i = 0; i < ja.length(); i++) {
-                    JSONObject obj = ja.getJSONObject(i);
-                    HMAux item = new HMAux();
-                    //
-                    item.put("type_ps", obj.getString("type_ps"));
-                    item.put("customer_code", obj.getString("customer_code"));
-                    item.put("price_list_code", obj.getString("price_list_code"));
-                    item.put("pack_code", obj.getString("pack_code"));
-                    item.put("service_code", obj.getString("service_code"));
-                    item.put("pack_service_desc", obj.getString("pack_service_desc"));
-                    item.put("pack_service_desc_full", obj.getString("pack_service_desc_full"));
-                    item.put("price", obj.getString("price"));
-                    item.put("manual_price", obj.getString("manual_price"));
-                    item.put("rating", obj.getString("rating"));
-                    item.put("rating_ref", obj.getString("rating_ref"));
-                    //
-                    data.add(item);
-                }
-
-            } else {
+                item.put("type_ps", obj.getType_ps());
+                item.put("customer_code", obj.getCustomer_code());
+                item.put("price_list_code", obj.getPrice_list_code());
+                item.put("pack_code", obj.getPack_code());
+                item.put("service_code", obj.getService_code());
+                item.put("pack_service_desc", obj.getPack_service_desc());
+                item.put("pack_service_desc_full", obj.getPack_service_desc_full());
+                item.put("price", obj.getPrice());
+                item.put("manual_price", obj.getManual_price());
+                item.put("rating", obj.getRating());
+                item.put("rating_ref", obj.getRating_ref());
+                //
+                data.add(item);
             }
+
 
         } catch (Exception e) {
             Log.d("TESTE", e.toString());
