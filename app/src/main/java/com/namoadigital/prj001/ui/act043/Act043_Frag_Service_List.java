@@ -151,36 +151,40 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<HMAux> data_env = new ArrayList<>();
-                ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
+                if(ToolBox_Con.isOnline(context)) {
+                    ArrayList<HMAux> data_env = new ArrayList<>();
+                    ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
-                for (int i = 0; i < data.size(); i++) {
-                    if (!data.get(i).get("qty").isEmpty()) {
-                        data_env.add(data.get(i));
-                        //
-                        TSO_SO_Service_Item item = new TSO_SO_Service_Item();
-                        item.setType_ps(data.get(i).get("type_ps"));
-                        item.setCustomer_code(data.get(i).get("customer_code"));
-                        item.setPrice_list_code(data.get(i).get("price_list_code"));
-                        item.setPack_code(data.get(i).get("pack_code"));
-                        item.setService_code(data.get(i).get("service_code"));
-                        item.setPack_service_desc(data.get(i).get("pack_service_desc"));
-                        item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
-                        item.setPrice(data.get(i).get("price"));
-                        item.setManual_price(data.get(i).get("manual_price"));
-                        item.setRating(data.get(i).get("rating"));
-                        item.setRating_ref(data.get(i).get("rating_ref"));
-                        item.setQty(Integer.parseInt(data.get(i).get("qty")));
-                        item.setPrice_ref(Double.parseDouble(data.get(i).get("price")));
-                        item.setComments(data.get(i).get("comments"));
-                        //
-                        pack.add(item);
+                    for (int i = 0; i < data.size(); i++) {
+                        if (!data.get(i).get("qty").isEmpty()) {
+                            data_env.add(data.get(i));
+                            //
+                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
+                            item.setType_ps(data.get(i).get("type_ps"));
+                            item.setCustomer_code(data.get(i).get("customer_code"));
+                            item.setPrice_list_code(data.get(i).get("price_list_code"));
+                            item.setPack_code(data.get(i).get("pack_code"));
+                            item.setService_code(data.get(i).get("service_code"));
+                            item.setPack_service_desc(data.get(i).get("pack_service_desc"));
+                            item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
+                            item.setPrice(data.get(i).get("price"));
+                            item.setManual_price(data.get(i).get("manual_price"));
+                            item.setRating(data.get(i).get("rating"));
+                            item.setRating_ref(data.get(i).get("rating_ref"));
+                            item.setQty(Integer.parseInt(data.get(i).get("qty")));
+                            item.setPrice_ref(Double.parseDouble(data.get(i).get("price")));
+                            item.setComments(data.get(i).get("comments"));
+                            //
+                            pack.add(item);
+                        }
                     }
-                }
-                //
-                if (pack.size() > 0) {
-                    new Service_Pack_MicroService().execute(pack);
-                } else {
+                    //
+                    if (pack.size() > 0) {
+                        new Service_Pack_MicroService().execute(pack);
+                    } else {
+                    }
+                } else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
         });
@@ -283,7 +287,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         item,
                         cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
                         mk_price_val.getText().toString().trim(),
-                        mk_comments_val.getText().toString().trim()
+                        cb_remove_val.isChecked() ? "" : mk_comments_val.getText().toString().trim()
                 );
 
             }
