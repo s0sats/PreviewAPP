@@ -94,13 +94,22 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             switch (getItemViewType(position)) {
                 case 0:
                     convertView = mInflater.inflate(resource_01, parent, false);
-                    processFormItem(item, convertView);
+                    //processFormItem(item, convertView);
                     break;
                 case 1:
                     convertView = mInflater.inflate(resource_02, parent, false);
-                    processFormAPItem(item, convertView);
+                    //processFormAPItem(item, convertView);
                     break;
             }
+        }
+        //
+        switch (getItemViewType(position)) {
+            case 0:
+                processFormItem(item, convertView);
+                break;
+            case 1:
+                processFormAPItem(item, convertView);
+                break;
         }
         //
         return convertView;
