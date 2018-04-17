@@ -15,6 +15,8 @@ public class TSO_SO_Service_Rec {
     private String error_msg;
     @Expose
     private ArrayList<SO_Save_Return> so_return;
+    @Expose
+    private TSO_SO_Service_List so_list;
 
     public String getApp() {
         return app;
@@ -55,4 +57,14 @@ public class TSO_SO_Service_Rec {
     public void setSo_return(ArrayList<SO_Save_Return> so_return) {
         this.so_return = so_return;
     }
+
+    public TSO_SO_Service_List getSo_list() {
+        return so_list;
+    }
+
+    public void setSo_list(TSO_SO_Service_List so_list) {
+        this.so_list = so_list;
+    }
 }
+
+
