@@ -122,14 +122,16 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 tv_ttl.setVisibility(View.GONE);
                 iv_flag.setVisibility(View.GONE);
                 //
-                tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
+                tv_item1_ttl.setText(hmAux_Trans.get(item.get(LABEL_ITEM_1)));
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));
                 //
-                tv_item2_ttl.setText(item.get(LABEL_ITEM_2));
+                tv_item2_ttl.setText(hmAux_Trans.get(item.get(LABEL_ITEM_2)));
                 tv_item2_value.setText(item.get(VALUE_ITEM_2));
                 //
                 tv_item3_ttl.setVisibility(View.GONE);
                 tv_item3_value.setVisibility(View.GONE);
+                //
+                break;
 
             default:
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));

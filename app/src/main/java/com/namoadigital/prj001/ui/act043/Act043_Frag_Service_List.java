@@ -47,6 +47,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private SM_SO mSO_Service;
     private SM_SODao sm_so_serviceDao;
 
+    private TextView tv_title;
     private MKEditTextNM mk_desc;
     private ListView lv_services_packs;
     private Act043_Adapter_Services_Packs_List mAdapter;
@@ -117,10 +118,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
         //
+        tv_title = (TextView) view.findViewById(R.id.act043_frag_service_list_tv_lbl);
+        tv_title.setText(hmAux_Trans.get("tv_service_list_title"));
+        //
         mk_desc = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_mket_search_services_packs);
         lv_services_packs = (ListView) view.findViewById(R.id.act043_frag_service_lv_services);
         //
         btn_save = (Button) view.findViewById(R.id.act043_frag_service_btn_save);
+        btn_save.setText(hmAux_Trans.get("btn_save_service"));
     }
 
     private void iniAction() {
@@ -198,6 +203,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
         final MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
         final CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
         final Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
+        //
+        tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
+        tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
+        tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
+        tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
+        cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
+        //
         btn_cancelar.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
@@ -369,7 +381,11 @@ public class Act043_Frag_Service_List extends BaseFragment {
             super.onPreExecute();
             //
             if (delegate != null) {
-                delegate.progressAction("Title - Trad", "Mensagem - Trad", "show");
+                delegate.progressAction(
+                        hmAux_Trans.get("dialog_start_add_service_ttl"),
+                        hmAux_Trans.get("dialog_start_add_service_msg"),
+                        "show"
+                );
             }
         }
 
@@ -401,7 +417,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         gsonEnv.toJson(env)
                 );
 
-                ToolBox.sendBCStatus(getActivity(), "STATUS", "Recebendo Dados - Trad", "", "0");
+                ToolBox.sendBCStatus(getActivity(), "STATUS", hmAux_Trans.get("dialog_receiving_add_service_msg"), "", "0");
                 //
                 TSO_SO_Service_Rec rec = gsonRec.fromJson(
                         resultado,
@@ -440,7 +456,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 for (SO_Save_Return so_ret : rec.getSo_return()) {
                     String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
                     //
-                    if (hmAux == null){
+                    if (hmAux == null) {
                         hmAux = new HMAux();
                     }
                     //
@@ -470,10 +486,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
             super.onPostExecute(hmAux);
             //
             if (delegate != null) {
-                delegate.progressAction("Title - Trad", "Mensagem - Trad", "hide");
+                delegate.progressAction("", "", "hide");
             }
 
-            if (hmAux != null){
+            if (hmAux != null) {
                 showResults(hmAux);
             }
         }
@@ -487,10 +503,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
             //
             String sParts = sKey;
 
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "S.O. - Trad");
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
 
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "S.O. - Desc - Trad");
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, so.get(sKey));
 
             mSO.add(hmAux);
@@ -541,8 +557,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
             public void onClick(View v) {
                 show.dismiss();
                 //
-                if (so_express.size() > 0){
-                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")){
+                if (so_express.size() > 0) {
+                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
                         if (delegate != null) {
                             delegate.progressAction("", "", "reload_so");
                         }

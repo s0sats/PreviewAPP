@@ -97,12 +97,18 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("dialog_service_search_msg");
         //
         //Frag_Service_List
+        transList.add("tv_service_list_title");
+        transList.add("btn_save_service");
+        transList.add("dialog_start_add_service_ttl");
+        transList.add("dialog_start_add_service_msg");
+        transList.add("dialog_receiving_add_service_msg");
         transList.add("alert_service_desc");
         transList.add("alert_service_id");
         transList.add("alert_service_qtd");
         transList.add("alert_service_price");
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
+        transList.add("alert_so_status");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
