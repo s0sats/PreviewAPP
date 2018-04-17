@@ -203,7 +203,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         tv_desc.setText(item.get("pack_service_desc"));
-        tv_id_val.setText(item.get("pack_code") + " / " + item.get("service_code"));
+        tv_id_val.setText(item.get("pack_service_desc_full"));
         mk_qtd_val.setText(item.get("qty"));
         //
         if (item.get("manual_price").equals("1")) {
@@ -401,7 +401,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         gsonEnv.toJson(env)
                 );
 
-                ToolBox.sendBCStatus(getActivity(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
+                ToolBox.sendBCStatus(getActivity(), "STATUS", "Recebendo Dados - Trad", "", "0");
                 //
                 TSO_SO_Service_Rec rec = gsonRec.fromJson(
                         resultado,
@@ -424,6 +424,18 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         ) {
                     return null;
                 }
+                //
+                SM_SODao soDao = new SM_SODao(getActivity(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getActivity())), Constant.DB_VERSION_CUSTOM);
+                //
+                for (SM_SO sm_so : rec.getSo_list().getSo()) {
+                    //Apaga SO completa
+                    soDao.removeFull(sm_so);
+                    //
+                    sm_so.setPK();
+                    //
+                }
+                //
+                soDao.addUpdate(rec.getSo_list().getSo(), false);
                 //
                 for (SO_Save_Return so_ret : rec.getSo_return()) {
                     String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
@@ -479,10 +491,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
 
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "S.O. - Desc - Trad");
-            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, "???");
-
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, "S.O Status - Trad");
-            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, so.get(sKey));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, so.get(sKey));
 
             mSO.add(hmAux);
         }
@@ -490,7 +499,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         showResultsDialog(mSO);
     }
 
-    public void showResultsDialog(List<HMAux> so_express) {
+    public void showResultsDialog(final List<HMAux> so_express) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -508,14 +517,11 @@ public class Act043_Frag_Service_List extends BaseFragment {
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
-        String[] from = {"so_express_code", "so_express_result"};
-        int[] to = {R.id.act038_results_adapter_cell_tv_ttl, R.id.act038_results_adapter_cell_tv_msg_value};
-
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
                         context,
                         so_express,
-                        Generic_Results_Adapter.CONFIG_3_ITENS_NEW,
+                        Generic_Results_Adapter.CONFIG_2_ITENS,
                         hmAux_Trans
                 )
         );
@@ -534,6 +540,19 @@ public class Act043_Frag_Service_List extends BaseFragment {
             @Override
             public void onClick(View v) {
                 show.dismiss();
+                //
+                if (so_express.size() > 0){
+                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")){
+                        if (delegate != null) {
+                            delegate.progressAction("", "", "reload_so");
+                        }
+                    } else {
+                        if (delegate != null) {
+                            //delegate.progressAction("", "", "callact027");
+                            delegate.progressAction("", "", "reload_so");
+                        }
+                    }
+                }
             }
         });
     }

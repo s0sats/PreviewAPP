@@ -31,6 +31,17 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp">
 
+                    <ImageView
+                        android:id="@+id/act043_adapter_services_pack_list_content_cell_iv_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_person_black_24px"
+                        android:tint="@color/namoa_color_dark_blue" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="1dp" />
+
                     <TextView
                         android:id="@+id/act043_adapter_services_pack_list_content_cell_desc"
                         android:layout_width="0dp"
@@ -42,13 +53,32 @@
                         android:textSize="@dimen/font_size_title"
                         android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/act043_adapter_services_pack_list_content_cell_iv_type"
+                    <TextView
+                        android:id="@+id/act043_adapter_services_pack_list_content_cell_tv_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_person_black_24px" />
+                        android:padding="1dp"
+                        android:text="12.00"
+                        android:textColor="@color/lib_custom_cell_font_color"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold" />
+
 
                 </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/act043_adapter_services_pack_list_content_cell_pb_rating"
+                    style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:progressBackgroundTint="@color/namoa_color_gray3_lib"
+                    android:progressTint="@color/lib_custom_cell_font_color" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#4D000000" />
 
             </LinearLayout>
 

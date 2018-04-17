@@ -179,6 +179,22 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                     case "HIDE":
                         disableProgressDialog();
                         break;
+                    case "CALLACT027":
+                        callAct027(context);
+                        break;
+                    case "RELOAD_SO":
+                        mSm_so = loadSM_So(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+                        );
+                        //
+                        act043_frag_preview.setmSm_so(mSm_so);
+                        //
+                        setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
+
+                        break;
+
                     default:
                         break;
                 }

@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -150,7 +151,17 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_ll_background);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_desc);
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
+        ProgressBar pb_rating = (ProgressBar) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_pb_rating);
+        TextView tv_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_tv_price);
         //
+        try {
+            pb_rating.setProgress((int)Double.parseDouble(hmAux.get("rating_ref")));
+        } catch (Exception e) {
+            pb_rating.setProgress(0);
+        }
+
+        tv_price.setText(hmAux.get("price"));
+
         try {
             int qtd = Integer.parseInt(hmAux.get("qty"));
             //
@@ -164,13 +175,23 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         }
         //
         tv_desc.setText(hmAux.get("pack_service_desc"));
-        iv_foto.setImageResource(R.drawable.ic_adicionar2_ns);
+        iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
     }
 
     private void processPack(HMAux hmAux, View convertView) {
         LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_ll_background);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_desc);
         ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
+        ProgressBar pb_rating = (ProgressBar) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_pb_rating);
+        TextView tv_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_tv_price);
+        //
+        try {
+            pb_rating.setProgress((int)Double.parseDouble(hmAux.get("rating_ref")));
+        } catch (Exception e) {
+            pb_rating.setProgress(0);
+        }
+        //
+        tv_price.setText(hmAux.get("price"));
         //
         try {
             int qtd = Integer.parseInt(hmAux.get("qty"));
@@ -185,7 +206,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         }
         //
         tv_desc.setText(hmAux.get("pack_service_desc"));
-        iv_foto.setImageResource(R.drawable.ic_apagar);
+        iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
     }
 
     @Override

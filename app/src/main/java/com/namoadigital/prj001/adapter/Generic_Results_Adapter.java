@@ -30,7 +30,9 @@ public class Generic_Results_Adapter extends BaseAdapter {
     /*CONFIGURAÇÕES*/
     public static final String CONFIG_3_ITENS_NEW = "CONFIG_3_ITENS_NEW";
     public static final String CONFIG_3_ITENS = "CONFIG_3_ITENS";
+    public static final String CONFIG_2_ITENS = "CONFIG_2_ITENS";
     public static final String CONFIG_MENU_SEND_RET = "CONFIG_MENU_SEND_RET";
+
 
     private Context context;
     private int resource;
@@ -115,6 +117,20 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 //
                 break;
             case CONFIG_3_ITENS:
+            case CONFIG_2_ITENS:
+                tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
+                tv_ttl.setVisibility(View.GONE);
+                iv_flag.setVisibility(View.GONE);
+                //
+                tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
+                tv_item1_value.setText(item.get(VALUE_ITEM_1));
+                //
+                tv_item2_ttl.setText(item.get(LABEL_ITEM_2));
+                tv_item2_value.setText(item.get(VALUE_ITEM_2));
+                //
+                tv_item3_ttl.setVisibility(View.GONE);
+                tv_item3_value.setVisibility(View.GONE);
+
             default:
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
                 tv_ttl.setVisibility(View.GONE);
