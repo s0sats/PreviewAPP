@@ -82,9 +82,11 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         tv_service_price.setText(hmAux.get(SM_SO_ServiceDao.PRICE));
         //
         if(hmAux.get(Sql_Act043_001.TYPE_PS).equals(Sql_Act043_001.TYPE_PS_PACK)){
-            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_black_24dp));
+            //iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_black_24dp));
+            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_material_black_24dp));
         }else{
-            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_file_black_24dp));
+            //iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_file_black_24dp));
+            iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_insert_drive_file_black_24dp));
         }
         //
         if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
