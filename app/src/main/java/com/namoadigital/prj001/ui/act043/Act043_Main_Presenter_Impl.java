@@ -41,6 +41,14 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct027(context);
+        switch (mView.getCurrentFrag()){
+            case Act043_Main.SELECTION_FRAG_SERVICE_LIST:
+                mView.setFragByTag(Act043_Main.SELECTION_FRAG_PREVIEW);
+                break;
+            case Act043_Main.SELECTION_FRAG_PREVIEW:
+            default:
+                mView.callAct027(context);
+                break;
+        }
     }
 }

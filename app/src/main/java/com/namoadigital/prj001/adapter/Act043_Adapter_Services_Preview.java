@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -78,6 +79,7 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         ImageView iv_info = (ImageView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
         //
         tv_service_desc.setText(hmAux.get(Sql_Act043_001.PACK_SERVICE_DESC_FULL));
+        tv_service_desc.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(hmAux.get(SM_SO_ServiceDao.STATUS))));
         //
         tv_service_price.setText(hmAux.get(SM_SO_ServiceDao.PRICE));
         //
@@ -90,19 +92,19 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         }
         //
         if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
-            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_info));
+            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_edit_black_24dp));
         }else{
             iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_engrenagens_ns));
         }
         //
-        iv_info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(onInfoClickListner != null){
-                    onInfoClickListner.OnInfoClick(hmAux);
-                }
-            }
-        });
+//        iv_info.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(onInfoClickListner != null){
+//                    onInfoClickListner.OnInfoClick(hmAux);
+//                }
+//            }
+//        });
 
         return convertView;
     }

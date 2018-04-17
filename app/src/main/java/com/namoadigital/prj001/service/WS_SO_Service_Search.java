@@ -90,13 +90,13 @@ public class WS_SO_Service_Search extends IntentService {
         env.setSite_code(site_code);
         env.setOperation_code(operation_code);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SERVICE_SEARCH,
                 gson.toJson(env)
         );
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_services"), "", "0");
         //
         TSO_Service_Search_Rec rec = gson.fromJson(
                 resultado,
@@ -137,10 +137,8 @@ public class WS_SO_Service_Search extends IntentService {
         List<String> translist = new ArrayList<>();
 
         translist.add("msg_processing_list");
-        translist.add("msg_error_on_save_serial");
-        translist.add("msg_searching_sos");
-        translist.add("msg_send_serial_data");
-        translist.add("msg_end_serial_save");
+        translist.add("msg_searching_services");
+        translist.add("msg_receiving_services");
         translist.add("msg_end_proccess");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
