@@ -215,6 +215,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("exit_shortcut_msg");
         transList.add("alert_sync_before_edit_service_ttl");
         transList.add("alert_sync_before_edit_service_msg");
+        transList.add("alert_no_so_edit_profile_ttl");
+        transList.add("alert_no_so_edit_profile_msg");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -1615,13 +1617,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
                 break;
             case Act027_Main.SELECTION_SERVICE_EDITION:
-                if(mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !act027_opc_.isSoWithinTokenFile()) {
-                    callAct043(context);
+                if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+                    if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !act027_opc_.isSoWithinTokenFile()) {
+                        callAct043(context);
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_sync_before_edit_service_ttl"),
+                                hmAux_Trans.get("alert_sync_before_edit_service_msg"),
+                                null,
+                                0
+                        );
+                    }
                 }else{
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("alert_sync_before_edit_service_ttl"),
-                            hmAux_Trans.get("alert_sync_before_edit_service_msg"),
+                            hmAux_Trans.get("alert_no_so_edit_profile_ttl"),
+                            hmAux_Trans.get("alert_no_so_edit_profile_msg"),
                             null,
                             0
                     );

@@ -48,6 +48,8 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_approval;
     private LinearLayout ll_service_edition;
 
+    private View v_service_edtion;
+
     private TextView tv_so_label;
 
     private ImageView iv_so_sync;
@@ -197,6 +199,9 @@ public class Act027_Opc extends BaseFragment {
         //
         ll_service_edition = (LinearLayout) view.findViewById(R.id.act027_opc_ll_service_edition);
         ll_service_edition.setVisibility(View.VISIBLE);
+
+        v_service_edtion = view.findViewById(R.id.act027_opc_v_service_edition);
+        v_service_edtion.setVisibility(View.VISIBLE);
 
         tv_product_title = (TextView) view.findViewById(R.id.act027_opc_tv_product_title);
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
@@ -401,21 +406,17 @@ public class Act027_Opc extends BaseFragment {
                     ll_approval.setVisibility(View.GONE);
                 }
                 //Verifica se usr tem profile e se o status da S.O permite edição de Serviço
-                /*
-                * COMO O PARAMETRO DE PROFILE NÃO EXISTE AINDA ESTA USANDO COMO PARAMETRO O
-                * Constant.PROFILE_MENU_SO_PARAM_EXECUTION
-                *
-                * MODIFICAR ASSIM QUE O PARAMETRO CORRETO FOR CRIADO.
-                *
-                * */
-                if ( ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_EXECUTION) &&
+                if ( ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT) &&
                      (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) ||
                       mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))
 
                 ) {
                     ll_service_edition.setVisibility(View.VISIBLE);
+                    v_service_edtion.setVisibility(View.VISIBLE);
+
                 } else {
                     ll_service_edition.setVisibility(View.GONE);
+                    v_service_edtion.setVisibility(View.GONE);
                 }
                 //
 //                // Hugo Visibilidade
