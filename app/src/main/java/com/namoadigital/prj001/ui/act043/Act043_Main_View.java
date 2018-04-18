@@ -11,4 +11,6 @@ public interface Act043_Main_View {
     String getCurrentFrag();
 
     void setFragByTag(String tag);
+
+    boolean hasItemAdded();
 }

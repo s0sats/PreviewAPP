@@ -79,6 +79,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act043_title");
+        transList.add("alert_discard_services_ttl");
+        transList.add("alert_discard_services_msg");
         //
         //FragPreview
         transList.add("btn_search_service");
@@ -227,6 +229,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
             case  SELECTION_FRAG_SERVICE_LIST:
                 setFrag(act043_frag_service_list,SELECTION_FRAG_SERVICE_LIST);
                 break;
+        }
+    }
+
+    @Override
+    public boolean hasItemAdded() {
+        if(act043_frag_service_list != null){
+           return act043_frag_service_list.hasAnyItemAdded();
+        }else{
+            return false;
         }
     }
 

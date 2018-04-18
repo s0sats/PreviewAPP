@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 
@@ -43,7 +45,23 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     public void onBackPressedClicked() {
         switch (mView.getCurrentFrag()){
             case Act043_Main.SELECTION_FRAG_SERVICE_LIST:
-                mView.setFragByTag(Act043_Main.SELECTION_FRAG_PREVIEW);
+                if(mView.hasItemAdded()){
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_discard_services_ttl"),
+                            hmAux_Trans.get("alert_discard_services_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mView.setFragByTag(Act043_Main.SELECTION_FRAG_PREVIEW);
+                                }
+                            },
+                            1
+                    );
+                }else{
+                    mView.setFragByTag(Act043_Main.SELECTION_FRAG_PREVIEW);
+                }
+                //
                 break;
             case Act043_Main.SELECTION_FRAG_PREVIEW:
             default:
