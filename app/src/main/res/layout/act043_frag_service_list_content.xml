@@ -16,6 +16,7 @@
         android:layout_gravity="center"
         android:padding="5dp"
         android:text="Service to Add - Trad"
+        android:textColor="@color/namoa_color_blue_dark_chat"
         android:textSize="@dimen/font_size_title_dialog"
         android:textStyle="bold" />
 

@@ -87,7 +87,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private void gerarExtraFields(ArrayList<HMAux> data) {
         for (HMAux item : data) {
             item.put("qty", "");
-            item.put("price_ref", "");
+            item.put("price_ref", item.get("price"));
             item.put("comments", "");
         }
     }
@@ -119,7 +119,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
         context = getActivity();
         //
         tv_title = (TextView) view.findViewById(R.id.act043_frag_service_list_tv_lbl);
-        tv_title.setText(hmAux_Trans.get("tv_service_list_title"));
+        //tv_title.setText(hmAux_Trans.get("tv_service_list_title"));
+        tv_title.setText(String.valueOf(mSO_Service.getSo_prefix()) + "." + String.valueOf(mSO_Service.getSo_code()));
         //
         mk_desc = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_mket_search_services_packs);
         lv_services_packs = (ListView) view.findViewById(R.id.act043_frag_service_lv_services);
@@ -151,7 +152,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context)) {
                     ArrayList<HMAux> data_env = new ArrayList<>();
                     ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
@@ -172,7 +173,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             item.setRating(data.get(i).get("rating"));
                             item.setRating_ref(data.get(i).get("rating_ref"));
                             item.setQty(Integer.parseInt(data.get(i).get("qty")));
-                            item.setPrice_ref(Double.parseDouble(data.get(i).get("price")));
+                            item.setPrice_ref(Double.parseDouble(data.get(i).get("price_ref")));
                             item.setComments(data.get(i).get("comments"));
                             //
                             pack.add(item);
@@ -183,7 +184,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         new Service_Pack_MicroService().execute(pack);
                     } else {
                     }
-                } else{
+                } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
@@ -220,16 +221,25 @@ public class Act043_Frag_Service_List extends BaseFragment {
         //
         tv_desc.setText(item.get("pack_service_desc"));
         tv_id_val.setText(item.get("pack_service_desc_full"));
-        mk_qtd_val.setText(item.get("qty"));
+        //
+        if (!item.get("qty").isEmpty()) {
+            mk_qtd_val.setText(item.get("qty"));
+            cb_remove_val.setVisibility(View.VISIBLE);
+        } else {
+            mk_qtd_val.setText("1");
+            cb_remove_val.setVisibility(View.GONE);
+        }
         //
         if (item.get("manual_price").equals("1")) {
-            if (item.get("price_ref").isEmpty()) {
-                mk_price_val.setText(item.get("price"));
-            } else {
-                mk_price_val.setText(item.get("price_ref"));
-            }
+//            if (item.get("price_ref").isEmpty()) {
+//                mk_price_val.setText(item.get("price"));
+//            } else {
+//                mk_price_val.setText(item.get("price_ref"));
+//            }
+            mk_price_val.setText(item.get("price"));
             //
             mk_price_val.setEnabled(true);
+            mk_price_val.requestFocus();
         } else {
             mk_price_val.setText(item.get("price"));
             mk_price_val.setEnabled(false);
@@ -295,9 +305,15 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     private void checkFields(HMAux item, String qtd, String price, String comments) {
-        item.put("qty", convertQtd(qtd) > 0 ? qtd : "");
-        item.put("price", price);
-        item.put("comments", comments);
+        if (convertQtd(qtd) > 0) {
+            item.put("qty", qtd);
+            item.put("price", price);
+            item.put("comments", comments);
+        } else {
+            item.put("qty", "");
+            item.put("price", item.get("price_ref"));
+            item.put("comments", "");
+        }
         //
         mAdapter.notifyDataSetChanged();
     }
@@ -447,15 +463,17 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 //
                 SM_SODao soDao = new SM_SODao(getActivity(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getActivity())), Constant.DB_VERSION_CUSTOM);
                 //
-                for (SM_SO sm_so : rec.getSo_list().getSo()) {
-                    //Apaga SO completa
-                    soDao.removeFull(sm_so);
-                    //
-                    sm_so.setPK();
-                    //
-                }
                 //
-                soDao.addUpdate(rec.getSo_list().getSo(), false);
+                if (rec.getSo_list() != null) {
+                    for (SM_SO sm_so : rec.getSo_list().getSo()) {
+                        //Apaga SO completa
+                        soDao.removeFull(sm_so);
+                        //
+                        sm_so.setPK();
+                    }
+                    //
+                    soDao.addUpdate(rec.getSo_list().getSo(), false);
+                }
                 //
                 for (SO_Save_Return so_ret : rec.getSo_return()) {
                     String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
@@ -475,11 +493,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
             } catch (Exception e) {
 
                 StringBuilder sb = new StringBuilder();
+                sb.append("Error: " + e.toString());
+
                 ToolBox_Inf.wsExceptionTreatment(getActivity(), e);
 
                 ToolBox_Inf.registerException(getClass().getName(), e);
 
                 ToolBox.sendBCStatus(getActivity(), "ERROR_1", sb.toString(), "", "0");
+
+                return null;
+
             }
 
             return hmAux;
@@ -490,11 +513,11 @@ public class Act043_Frag_Service_List extends BaseFragment {
             super.onPostExecute(hmAux);
             //
             if (delegate != null) {
-                delegate.progressAction("", "", "hide");
-            }
-
-            if (hmAux != null) {
-                showResults(hmAux);
+                if (hmAux != null) {
+                    delegate.progressAction("", "", "hide");
+                    showResults(hmAux);
+                } else {
+                }
             }
         }
     }
@@ -534,8 +557,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
 
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+//        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+//        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
