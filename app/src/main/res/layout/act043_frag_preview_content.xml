@@ -24,7 +24,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text=" YYYY.XXX"
-                android:textSize="@dimen/font_size_title_md"
+                android:textSize="@dimen/font_size_title_dialog"
                 android:textStyle="bold"
                 />
 
