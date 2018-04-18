@@ -91,11 +91,14 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
             iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_insert_drive_file_black_24dp));
         }
         //
-        if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
-            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_edit_black_24dp));
-        }else{
-            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_engrenagens_ns));
-        }
+        //ESCONDE IV_INFO POIS POR HORA PERDEU O SENTIDO
+        //
+        iv_info.setVisibility(View.GONE);
+//        if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
+//            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_edit_black_24dp));
+//        }else{
+//            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_engrenagens_ns));
+//        }
         //
 //        iv_info.setOnClickListener(new View.OnClickListener() {
 //            @Override

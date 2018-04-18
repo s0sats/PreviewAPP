@@ -92,6 +92,15 @@ public class Act043_Frag_Service_List extends BaseFragment {
         }
     }
 
+    public boolean hasAnyItemAdded(){
+        for (int i = 0; i < data.size(); i++) {
+            if (!data.get(i).get("qty").isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

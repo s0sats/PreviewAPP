@@ -41,6 +41,7 @@ public class Act043_Frag_Preview extends BaseFragment {
     private SM_SO mSm_so;
     private SM_SO_ServiceDao mSm_So_ServiceDao;
     private Button btn_search_service;
+    private TextView tv_so_prefix_code;
     private TextView tv_service_pack_ttl;
     private TextView tv_total_lbl;
     private TextView tv_total_val;
@@ -88,9 +89,13 @@ public class Act043_Frag_Preview extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
         //
+        tv_so_prefix_code = (TextView) view.findViewById(R.id.act043_frag_preview_tv_so_prefix_code);
+        //
         btn_search_service = (Button) view.findViewById(R.id.act043_frag_preview_btn_search_service);
+        btn_search_service.setEnabled(false);
         //
         tv_service_pack_ttl = (TextView) view.findViewById(R.id.act043_frag_preview_tv_service_pack_ttl);
+        tv_service_pack_ttl.setVisibility(View.GONE);
         //
         tv_total_lbl = (TextView) view.findViewById(R.id.act043_frag_preview_tv_total_lbl);
         //
@@ -157,7 +162,16 @@ public class Act043_Frag_Preview extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (mSm_so != null) {
+                tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
+                //
                 btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
+                if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
+                    || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                ){
+                    btn_search_service.setEnabled(true);
+                }else{
+                    btn_search_service.setEnabled(false);
+                }
                 //
                 tv_service_pack_ttl.setText(hmAux_Trans.get("services_tll"));
                 //

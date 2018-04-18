@@ -328,7 +328,7 @@ public class Act027_Opc extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
 
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile()) {
+                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || mSm_so.getSync_required() == 1) {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
                 } else {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
@@ -406,9 +406,9 @@ public class Act027_Opc extends BaseFragment {
                     ll_approval.setVisibility(View.GONE);
                 }
                 //Verifica se usr tem profile e se o status da S.O permite edição de Serviço
-                if ( ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT) &&
+                if ( ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT) /*&&
                      (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) ||
-                      mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))
+                      mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))*/
 
                 ) {
                     ll_service_edition.setVisibility(View.VISIBLE);
