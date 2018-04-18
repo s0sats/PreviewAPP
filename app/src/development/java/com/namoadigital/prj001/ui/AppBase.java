@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui;
 import android.app.Application;
 import android.os.Environment;
 
+import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -28,11 +29,10 @@ import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
@@ -94,7 +94,10 @@ public class AppBase extends Application {
         DB_VERSION_CHAT = 5;
         DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
-        PKG_CLEAN = PKG_CLEAN_APP;
+        Constant.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
+        Constant.PRJ001_VERSION = BuildConfig.VERSION_NAME;
+
+        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION_CODE);
 
         String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
 
@@ -110,7 +113,5 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
-
-
     }
 }

@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 
+import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -94,7 +95,10 @@ public class AppBase extends Application {
         DB_VERSION_CHAT = 5;
         DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
-        PKG_CLEAN = PKG_CLEAN_APP;
+        Constant.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
+        Constant.PRJ001_VERSION = BuildConfig.VERSION_NAME;
+
+        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION_CODE);
 
         String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
 

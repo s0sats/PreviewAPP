@@ -88,12 +88,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         ToolBox_Inf.mkDirectory();
         //
-        try {
-            Constant.PRJ001_VERSION_NEW = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            Constant.PRJ001_VERSION_NUMBER = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-        } catch (Exception e) {
-        }
-        //
         mPresenter.checkLogin();
     }
 

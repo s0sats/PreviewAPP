@@ -196,6 +196,15 @@
             android:textColor="@color/namoa_color_dark_blue_lib"
             android:textSize="@dimen/font_size_title_md_lib" />
 
+        <TextView
+            android:id="@+id/footer_dialog_app_tv_version_number_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="1"
+            android:textColor="@color/namoa_color_dark_blue_lib"
+            android:textSize="@dimen/font_size_title_md_lib" />
+
     </LinearLayout>
 
 
