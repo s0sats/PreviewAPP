@@ -44,19 +44,20 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         this.hmAux_Trans = hmAux_Trans;
         //
         this.data = data;
-        this.data_filtered = data;
+        this.data_filtered = new ArrayList<>();
+        this.data_filtered.addAll(data);
         //
         getFilter();
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return data_filtered.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return data_filtered.get(position);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
     @Override
     public int getItemViewType(int position) {
         try {
-            HMAux item = data.get(position);
+            HMAux item = data_filtered.get(position);
 
             if (item.get("type_ps").equalsIgnoreCase("S")) {
                 return 0;
@@ -131,7 +132,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
             }
         }
 
-        HMAux hmAux = data.get(position);
+        HMAux hmAux = data_filtered.get(position);
 
         switch (getItemViewType(position)) {
             // Service
@@ -155,7 +156,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         TextView tv_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_tv_price);
         //
         try {
-            pb_rating.setProgress((int)Double.parseDouble(hmAux.get("rating_ref")));
+            pb_rating.setProgress((int) Double.parseDouble(hmAux.get("rating_ref")));
         } catch (Exception e) {
             pb_rating.setProgress(0);
         }
@@ -186,7 +187,7 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
         TextView tv_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_tv_price);
         //
         try {
-            pb_rating.setProgress((int)Double.parseDouble(hmAux.get("rating_ref")));
+            pb_rating.setProgress((int) Double.parseDouble(hmAux.get("rating_ref")));
         } catch (Exception e) {
             pb_rating.setProgress(0);
         }
@@ -228,32 +229,32 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 constraint = ToolBox.AccentMapper(constraint.toString());
                 //
-                for (int i = 0; i < data_filtered.size(); i++) {
-                    String user_nick = ToolBox.AccentMapper(data_filtered.get(i).get("pack_service_desc").toLowerCase());
-                    String user_name = ToolBox.AccentMapper(data_filtered.get(i).get("pack_service_desc").toLowerCase());
+                for (int i = 0; i < data.size(); i++) {
+                    String user_nick = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
+                    String user_name = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
                     if (user_nick.contains(constraint.toString().toLowerCase()) ||
                             user_name.contains(constraint.toString().toLowerCase())
                             ) {
 
-                        HMAux hmAux = new HMAux();
-                        hmAux.putAll(data_filtered.get(i));
+                        //HMAux hmAux = new HMAux();
+                        //hmAux.putAll(data.get(i));
 
-                        filterList.add(hmAux);
-
+                        //filterList.add(hmAux);
+                        filterList.add(data.get(i));
                     }
                 }
                 results.count = filterList.size();
                 results.values = filterList;
             } else {
-                results.count = data_filtered.size();
-                results.values = data_filtered;
+                results.count = data.size();
+                results.values = data;
             }
             return results;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            data = (ArrayList<HMAux>) results.values;
+            data_filtered = (ArrayList<HMAux>) results.values;
 
             notifyDataSetChanged();
         }

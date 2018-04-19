@@ -87,12 +87,20 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private void gerarExtraFields(ArrayList<HMAux> data) {
         for (HMAux item : data) {
             item.put("qty", "");
-            item.put("price_ref", item.get("price"));
+
+            // Hugo
+            if (item.get("manual_price").equalsIgnoreCase("1")) {
+                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_EMPTY));
+                item.put("price_ref", item.get("price"));
+            } else {
+                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_ZERO));
+                item.put("price_ref", item.get("price"));
+            }
             item.put("comments", "");
         }
     }
 
-    public boolean hasAnyItemAdded(){
+    public boolean hasAnyItemAdded() {
         for (int i = 0; i < data.size(); i++) {
             if (!data.get(i).get("qty").isEmpty()) {
                 return true;
@@ -162,12 +170,12 @@ public class Act043_Frag_Service_List extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (ToolBox_Con.isOnline(context)) {
-                    ArrayList<HMAux> data_env = new ArrayList<>();
+                    //ArrayList<HMAux> data_env = new ArrayList<>();
                     ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
                     for (int i = 0; i < data.size(); i++) {
                         if (!data.get(i).get("qty").isEmpty()) {
-                            data_env.add(data.get(i));
+                            //data_env.add(data.get(i));
                             //
                             TSO_SO_Service_Item item = new TSO_SO_Service_Item();
                             item.setType_ps(data.get(i).get("type_ps"));
@@ -177,12 +185,12 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             item.setService_code(data.get(i).get("service_code"));
                             item.setPack_service_desc(data.get(i).get("pack_service_desc"));
                             item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
-                            item.setPrice(data.get(i).get("price"));
+                            item.setPrice(convertValueEmptyZero(data.get(i).get("price"), CONVERT_TYPE_ZERO));
                             item.setManual_price(data.get(i).get("manual_price"));
                             item.setRating(data.get(i).get("rating"));
                             item.setRating_ref(data.get(i).get("rating_ref"));
                             item.setQty(Integer.parseInt(data.get(i).get("qty")));
-                            item.setPrice_ref(Double.parseDouble(data.get(i).get("price_ref")));
+                            item.setPrice_ref(convertDouble(data.get(i).get("price_ref")));
                             item.setComments(data.get(i).get("comments"));
                             //
                             pack.add(item);
@@ -221,6 +229,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
         tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
         tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
+        mk_price_val.setHint("Obrigatório - Trad");
         tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
         cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
         //
@@ -300,39 +309,44 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
-                //
-                checkFields(
+                if (checkFields(
                         item,
                         cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
                         mk_price_val.getText().toString().trim(),
                         cb_remove_val.isChecked() ? "" : mk_comments_val.getText().toString().trim()
-                );
-
+                )) {
+                    dialog.dismiss();
+                } else {
+                    mk_price_val.setText("");
+                }
             }
         });
     }
 
-    private void checkFields(HMAux item, String qtd, String price, String comments) {
+    private boolean checkFields(HMAux item, String qtd, String price, String comments) {
+        boolean results;
+
         if (convertQtd(qtd) > 0) {
             item.put("qty", qtd);
             item.put("price", price);
             item.put("comments", comments);
+            //
+            if (convertValueEmptyZero(price, CONVERT_TYPE_EMPTY).isEmpty()) {
+                results = false;
+            } else {
+                results = true;
+            }
         } else {
             item.put("qty", "");
             item.put("price", item.get("price_ref"));
             item.put("comments", "");
+            //
+            results = true;
         }
         //
         mAdapter.notifyDataSetChanged();
-    }
-
-    private int convertQtd(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception e) {
-            return -1;
-        }
+        //
+        return results;
     }
 
     @Override
@@ -607,6 +621,43 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 }
             }
         });
+    }
+
+    private static final String CONVERT_TYPE_EMPTY = "convert_type_empty";
+    private static final String CONVERT_TYPE_ZERO = "convert_type_zero";
+
+    private int convertQtd(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private double convertDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return -1.0;
+        }
+    }
+
+
+    private String convertValueEmptyZero(String value, String TYPE) {
+        try {
+            Double.parseDouble(value);
+            //
+            return value;
+        } catch (Exception e) {
+            switch (TYPE) {
+                case CONVERT_TYPE_EMPTY:
+                    return "";
+                case CONVERT_TYPE_ZERO:
+                    return "0";
+                default:
+                    return "";
+            }
+        }
     }
 
 }
