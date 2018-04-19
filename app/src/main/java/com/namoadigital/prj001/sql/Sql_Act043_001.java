@@ -124,7 +124,7 @@ public class Sql_Act043_001 implements Specification {
                         "                          ELSE 0\n" +
                         "                         END) STATUS ,\n" +
                         "                    COUNT(1) QTD_SERVICES,\n" +
-                        "                    MAX(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER\n" +
+                        "                    MIN(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER\n" +
                         "             FROM\n" +
                                             SM_SO_PackDao.TABLE +"  p,\n" +
                                             SM_SO_ServiceDao.TABLE +" s\n" +
