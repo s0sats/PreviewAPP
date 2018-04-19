@@ -229,7 +229,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
         tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
         tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
-        mk_price_val.setHint("Obrigatório - Trad");
+        mk_price_val.setHint(hmAux_Trans.get("alert_service_price_hint"));
         tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
         cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
         //
