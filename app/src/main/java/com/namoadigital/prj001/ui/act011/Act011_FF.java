@@ -43,7 +43,6 @@ public class Act011_FF extends Fragment {
         iniActions();
         //
         return view;
-
     }
 
     private void iniVars(View view) {
