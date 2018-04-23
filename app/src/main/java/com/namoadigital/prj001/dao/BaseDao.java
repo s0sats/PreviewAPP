@@ -57,8 +57,8 @@ public class BaseDao {
 
                     break;
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
         }
     }
