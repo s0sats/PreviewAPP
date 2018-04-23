@@ -200,7 +200,6 @@ public class WS_Serial_Search extends IntentService {
         return true;
     }
 
-
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 

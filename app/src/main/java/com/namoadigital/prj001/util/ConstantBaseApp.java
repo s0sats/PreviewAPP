@@ -14,13 +14,10 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "3.2.2";
-    public static final String PKG_CLEAN_APP = "84";
-
-    public static String PRJ001_VERSION_NEW = "";
-    public static int PRJ001_VERSION_NUMBER = -1;
-
-    //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
+    //As 3 variaveis abaixo são preenchidas pela classe AppBase
+    public static String PRJ001_VERSION = "";
+    public static int PRJ001_VERSION_CODE = -1;
+    public static String PKG_CLEAN_APP = "";
 
     /**
      * UI Module
@@ -67,6 +64,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT040 = "act040";
     public static final String ACT041 = "act041";
     public static final String ACT042 = "act042";
+    public static final String ACT043 = "act043";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
@@ -339,6 +337,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String RETURN_SQL_OBJ = "RETURN_SQL_OBJ";
     public static final String RETURN_SQL_HM_AUX = "RETURN_SQL_HM_AUX";
     public static final String PARAM_KEY_TYPED_FILTER = "TYPED_FILTER";
+    public static final String PARAM_KEY_WS_RETURN = "WS_RETURN";
     public static final String LOGIN_STATUS_OK = "LOGIN_STATUS_OK";
     public static final String LOGIN_STATUS_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
 
@@ -364,6 +363,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
+    public static final String PROFILE_MENU_SO_PARAM_EDIT = "EDIT";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";

@@ -325,6 +325,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
+        <activity
+            android:name=".ui.act043.Act043_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -530,8 +536,12 @@
         <service android:name=".service_chat.WS_Room_AP" />
 
         <receiver android:name=".receiver.WBR_SO_Pack_Express_Local" />
+
         <service android:name=".service.WS_SO_Pack_Express_Local" />
 
+        <receiver android:name=".receiver.WBR_SO_Service_Search" />
+
+        <service android:name=".service.WS_SO_Service_Search" />
 
     </application>
 

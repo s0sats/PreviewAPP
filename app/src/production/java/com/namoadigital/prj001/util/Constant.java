@@ -25,8 +25,10 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
     public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SO_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_so.ws";
+    public static final String WS_SO_SERVICE_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_list_app.ws";
 
     public static final String WS_SO_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_so.ws";
+    public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
     public static final String WS_SERIAL_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_serial.ws";
 
     public static final String WS_ENABLE_NFC = "https://portal.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";

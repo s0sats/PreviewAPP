@@ -46,6 +46,9 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_serial;
     private LinearLayout ll_header;
     private LinearLayout ll_approval;
+    private LinearLayout ll_service_edition;
+
+    private View v_service_edtion;
 
     private TextView tv_so_label;
 
@@ -91,6 +94,7 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_title;
     private TextView tv_header_title;
     private TextView tv_approval_title;
+    private TextView tv_service_edition_title;
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
@@ -192,12 +196,19 @@ public class Act027_Opc extends BaseFragment {
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
         ll_approval = (LinearLayout) view.findViewById(R.id.act027_opc_ll_approval);
         ll_approval.setVisibility(View.VISIBLE);
+        //
+        ll_service_edition = (LinearLayout) view.findViewById(R.id.act027_opc_ll_service_edition);
+        ll_service_edition.setVisibility(View.VISIBLE);
+
+        v_service_edtion = view.findViewById(R.id.act027_opc_v_service_edition);
+        v_service_edtion.setVisibility(View.VISIBLE);
 
         tv_product_title = (TextView) view.findViewById(R.id.act027_opc_tv_product_title);
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
         tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
         tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
         tv_approval_title = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
+        tv_service_edition_title = (TextView) view.findViewById(R.id.act027_opc_tv_service_edition_title);
     }
 
     private void iniAction() {
@@ -206,6 +217,7 @@ public class Act027_Opc extends BaseFragment {
         ll_serial.setOnClickListener(menuOnClickListener);
         ll_header.setOnClickListener(menuOnClickListener);
         ll_approval.setOnClickListener(menuOnClickListener);
+        ll_service_edition.setOnClickListener(menuOnClickListener);
 
         ll_so_sync.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,6 +248,9 @@ public class Act027_Opc extends BaseFragment {
                 case R.id.act027_opc_ll_approval:
                     SELECTION_TYPE = Act027_Main.SELECTION_APPROVAL;
                     break;
+                case R.id.act027_opc_ll_service_edition:
+                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICE_EDITION;
+                    break;
                 default:
                     SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
                     break;
@@ -263,6 +278,7 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
 
             case Act027_Main.SELECTION_SERVICES:
@@ -271,7 +287,7 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
-
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_SERIAL:
                 ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -279,6 +295,7 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_HEADER:
                 ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -286,6 +303,7 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_APPROVAL:
                 ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -293,6 +311,15 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                break;
+            case Act027_Main.SELECTION_SERVICE_EDITION:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_service_edition.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 break;
         }
     }
@@ -301,7 +328,7 @@ public class Act027_Opc extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
 
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile()) {
+                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || mSm_so.getSync_required() == 1) {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
                 } else {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
@@ -378,6 +405,19 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_approval.setVisibility(View.GONE);
                 }
+                //Verifica se usr tem profile e se o status da S.O permite edição de Serviço
+                if ( ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT) /*&&
+                     (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) ||
+                      mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))*/
+
+                ) {
+                    ll_service_edition.setVisibility(View.VISIBLE);
+                    v_service_edtion.setVisibility(View.VISIBLE);
+
+                } else {
+                    ll_service_edition.setVisibility(View.GONE);
+                    v_service_edtion.setVisibility(View.GONE);
+                }
                 //
 //                // Hugo Visibilidade
 //                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
@@ -426,6 +466,7 @@ public class Act027_Opc extends BaseFragment {
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
+                tv_service_edition_title.setText(hmAux_Trans.get("service_edition_ll_lbl"));
 
                 changeTabColor();
             }
@@ -445,7 +486,7 @@ public class Act027_Opc extends BaseFragment {
         return trackingList;
     }
 
-    private boolean isSoWithinTokenFile() {
+    public boolean isSoWithinTokenFile() {
         try {
             File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
             if (soToken.length > 0) {

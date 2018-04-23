@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/act043_frag_service_list_form_tv_desc_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Service Desc - Trad"
+            android:textSize="@dimen/font_size_title_dialog"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act043_frag_service_list_form_tv_id_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="2"
+                android:text="ID - Trad"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act043_frag_service_list_form_tv_id_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="6"
+                android:gravity="left"
+                android:text="Pack ID"
+                android:textSize="@dimen/font_size_item_md_lib" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act043_frag_service_list_form_tv_qtd_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="2"
+                android:text="Quantidade - Trad"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act043_frag_service_list_form_tv_qtd_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="1"
+                android:selectAllOnFocus="true"
+                android:inputType="text"
+                app:mInputType="NUMBER"
+                app:mBARCODE="false" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act043_frag_service_list_form_tv_price_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="2"
+                android:text="Preço - Trad"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act043_frag_service_list_form_tv_price_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:inputType="text"
+                app:mInputType="NUMBER"
+                app:mDecimal="2"
+                android:text="1200"
+                app:mBARCODE="false" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act043_frag_service_list_form_tv_comment_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="2"
+                android:text="Comentario - Trad"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act043_frag_service_list_form_tv_comment_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:text="Pack ID"
+            app:mBARCODE="false" />
+
+        <CheckBox
+            android:id="@+id/act043_frag_service_list_cb_remove_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Remove Service / Pack - Trad" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/act043_frag_service_list_btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_namoa_main_states"
+                android:text="Cancel - Trad"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/act043_frag_service_list_btn_ok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_namoa_main_states"
+                android:text="Ok - Trad"
+                android:textColor="@color/padrao_WHITE" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

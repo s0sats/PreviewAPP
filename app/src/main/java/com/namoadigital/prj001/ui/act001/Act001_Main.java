@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
+import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -44,6 +45,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        int version = BuildConfig.VERSION_CODE;
+        String name = BuildConfig.VERSION_NAME;
 
         // Hugo Remover
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
@@ -83,12 +87,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         );
         //
         ToolBox_Inf.mkDirectory();
-        //
-        try {
-            Constant.PRJ001_VERSION_NEW = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            Constant.PRJ001_VERSION_NUMBER = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-        } catch (Exception e) {
-        }
         //
         mPresenter.checkLogin();
     }
