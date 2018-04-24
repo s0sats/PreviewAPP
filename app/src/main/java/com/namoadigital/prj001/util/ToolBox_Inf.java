@@ -86,6 +86,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -2020,7 +2021,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean isUploadRunning() {
-        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING) {
+        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING) {
             return true;
         }
         return false;

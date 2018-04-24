@@ -54,14 +54,6 @@ public class WS_DownLoad_Picture extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            if (!ToolBox_Inf.isDownloadRunning()) {
-                //Log.v("WS_DownLoad_Picture","true");
-                //WBR_DownLoad_Picture.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
-            }
-
-            WBR_DownLoad_Picture.IS_RUNNING = true;
-
             Bundle bundle = intent.getExtras();
 
             /*
@@ -69,7 +61,7 @@ public class WS_DownLoad_Picture extends IntentService {
             * */
             //
             ArrayList<HMAux> dados = new ArrayList<>();
-            ArrayList<HMAux> dados_geral;
+            ArrayList<HMAux> dados_geral = new ArrayList<>();
             //
             GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
                     getApplicationContext(),
@@ -92,7 +84,128 @@ public class WS_DownLoad_Picture extends IntentService {
                             new GE_Custom_Form_Field_Local_Sql_001().toSqlQuery().toLowerCase()
                     )
             );
+            /**
+             *
+             * LISTAS VINCULADAS AS.O
+             *
+             */
+            SM_SO_Service_Exec_Task_FileDao taskFileDao = null;
+            ArrayList<HMAux> so_file_list = new ArrayList<>();
+            MD_ProductDao productDao = null;
+            ArrayList<HMAux> product_sketch_list = new ArrayList<>();
+            SM_SO_Product_EventDao eventDao = null;
+            ArrayList<HMAux> event_sketch_list = new ArrayList<>();
+            SM_SO_Product_Event_FileDao eventFileDao = null;
+            ArrayList<HMAux> event_file_list = new ArrayList<>();
+
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+                //
+                taskFileDao =
+                        new SM_SO_Service_Exec_Task_FileDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+
+                //Adiciona lista de task files para download
+                so_file_list.addAll(taskFileDao.query_HM(
+                        new SM_SO_Service_Exec_Task_File_Sql_003(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                        )
+                );
+                //CROQUIS
+                productDao = new MD_ProductDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
+                        new MD_Product_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                //CROQUIS PRODUTO EVENTO
+                eventDao = new SM_SO_Product_EventDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
+                        new SM_SO_Product_Event_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                /*
+                 * Download imagem dos PRODUTO EVENTO
+                 */
+                eventFileDao = new SM_SO_Product_Event_FileDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
+                        new SM_SO_Product_Event_File_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                //
+            }
+            /**
+             *
+             *
+             * Lista de download Chat
+             *
+             */
+            CH_RoomDao roomDao = null;
+            ArrayList<HMAux> roomImgList = new ArrayList<>();
+            CH_MessageDao messageDao = null;
+            ArrayList<HMAux> messageImgList = new ArrayList<>();
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+                // Room
+                roomDao = new CH_RoomDao(getApplicationContext());
+                //
+                roomImgList.addAll(roomDao.query_HM(
+                        new CH_Room_Sql_002().toSqlQuery()
+                ));
+                // Messages
+                messageDao = new CH_MessageDao(getApplicationContext());
+                //
+                messageImgList.addAll(messageDao.query_HM(
+                        new CH_Message_Sql_006().toSqlQuery()
+                ));
+                //
+            }
+            //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
+            //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
+            if(  dados_geral.size() == 0
+                 && so_file_list.size() == 0
+                 && product_sketch_list.size() == 0
+                 && event_sketch_list.size() == 0
+                 && event_file_list.size() == 0
+                 && roomImgList.size() == 0
+                 && messageImgList.size() == 0
+            ){
+                return;
+            }
+            //POSSUI ITEM NA LISTA, AI SIM VERIFICA NECESSIDADE DE NOTIFICAÇÃO E INICIA DOWNLOADS
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                //Log.v("WS_DownLoad_Picture","true");
+                //WBR_DownLoad_Picture.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
+            }
+            WBR_DownLoad_Picture.IS_RUNNING = true;
             //
+            // PROCESSAMENTO DAS LISTAS
+            //
+            /**
+             * Download de files do N-FORM
+             */
+            //region FORM
+            //BAIXANDO ITENS DO FORM
             for (HMAux hmAux : dados_geral) {
                 HMAux item = new HMAux();
                 item.put("custom_name", hmAux.get("custom_name").toLowerCase());
@@ -156,29 +269,14 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
 
             }
+            //endregion
 
             /**
-             *
              * Download de files do S.O
-             *
              */
-
+            //region S.O
+            //Download de files do S.O
             if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
-                //
-                SM_SO_Service_Exec_Task_FileDao taskFileDao =
-                        new SM_SO_Service_Exec_Task_FileDao(
-                                getApplicationContext(),
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                Constant.DB_VERSION_CUSTOM
-                        );
-                ArrayList<HMAux> so_file_list = new ArrayList<>();
-                //Adiciona lista de task files para download
-                so_file_list.addAll(taskFileDao.query_HM(
-                        new SM_SO_Service_Exec_Task_File_Sql_003(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                        ).toSqlQuery()
-                        )
-                );
                 //
                 for (HMAux hmAux : so_file_list) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
@@ -215,19 +313,6 @@ public class WS_DownLoad_Picture extends IntentService {
                 /*
                 * Download croquis de Produtos
                 */
-                MD_ProductDao productDao = new MD_ProductDao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                ArrayList<HMAux> product_sketch_list = new ArrayList<>();
-                //
-                product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
-                        new MD_Product_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                        ).toSqlQuery()
-                );
                 //
                 for (HMAux hmAux : product_sketch_list) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
@@ -251,23 +336,9 @@ public class WS_DownLoad_Picture extends IntentService {
                     );
                 }//FIM CROQUI
 
-
                 /*
                 * Download croqui dos eventos(croquis da sm_so_product_events)
                 */
-                SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                ArrayList<HMAux> event_sketch_list = new ArrayList<>();
-
-                event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
-                        new SM_SO_Product_Event_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                        ).toSqlQuery()
-                );
                 //
                 for (HMAux hmAux : event_sketch_list) {
                     String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4);
@@ -294,21 +365,8 @@ public class WS_DownLoad_Picture extends IntentService {
                     );
                 }//FIM Event File
                 /*
-                * Download imagem dos eventos
-                */
-                SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                ArrayList<HMAux> event_file_list = new ArrayList<>();
-
-                event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
-                        new SM_SO_Product_Event_File_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                        ).toSqlQuery()
-                );
+                 * Download da foto tirada no produto evento
+                 */
                 //
                 for (HMAux hmAux : event_file_list) {
                     String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4);
@@ -335,24 +393,14 @@ public class WS_DownLoad_Picture extends IntentService {
                             ).toSqlQuery()
                     );
                 }//FIM Event File
-
             }
             //fim SO
+            //endregion
             /**
-             *
              * Download de files do CHAT
-             *
              */
-
+            //region CHAT
             if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
-                //
-                // Room
-                CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
-
-                ArrayList<HMAux> roomImgList = new ArrayList<>();
-                roomImgList.addAll(roomDao.query_HM(
-                        new CH_Room_Sql_002().toSqlQuery()
-                ));
                 //
                 for (HMAux hmAux : roomImgList) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_CHAT_PATH)) {
@@ -388,15 +436,7 @@ public class WS_DownLoad_Picture extends IntentService {
                 }
 
                 // Messages
-                CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
-
-                ArrayList<HMAux> messageImgList = new ArrayList<>();
-                messageImgList.addAll(messageDao.query_HM(
-                        new CH_Message_Sql_006().toSqlQuery()
-                ));
-                //
                 for (HMAux hmAux : messageImgList) {
-
                     JSONObject jsonObject = new JSONObject(hmAux.get("msg_obj"));
                     JSONObject jsonObject1 = jsonObject.getJSONObject("message");
 
@@ -432,7 +472,7 @@ public class WS_DownLoad_Picture extends IntentService {
                 }
 
             }//FIM chat
-
+            //endregion
 
         } catch (Exception e) {
             String results = e.toString();
