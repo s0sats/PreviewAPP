@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.namoadigital.prj001.database.DatabaseHelperChat;
 import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
+import com.namoadigital.prj001.database.DatabaseManager;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -31,29 +32,34 @@ public class BaseDao {
     }
 
     public void openDB() {
+        DatabaseManager.getInstance();
+
         try {
             switch (mMode) {
                 case "MULTI":
-                    DatabaseHelperMulti SQLHelper_var_multi = new DatabaseHelperMulti(context, mDB_NAME,
-                            mDB_VERSION);
+                    DatabaseManager.setmDatabaseHelperMulti(DatabaseHelperMulti.getInstance(context, mDB_NAME,
+                            mDB_VERSION)
+                    );
 
-                    this.db = SQLHelper_var_multi.getWritableDatabase();
+                    this.db = DatabaseManager.getInstance().openDatabaseMulti();
 
                     break;
 
                 case Constant.DB_MODE_CHAT:
-                    DatabaseHelperChat SQLHelper_var_chat = new DatabaseHelperChat(context, mDB_NAME,
-                            mDB_VERSION);
+                    DatabaseManager.setmDatabaseHelperChat(DatabaseHelperChat.getInstance(context, mDB_NAME,
+                            mDB_VERSION)
+                    );
 
-                    this.db = SQLHelper_var_chat.getWritableDatabase();
+                    this.db = DatabaseManager.getInstance().openDatabaseChat();
 
                     break;
 
                 default:
-                    DatabaseHelperSingle SQLHelper_var_single = new DatabaseHelperSingle(context, mDB_NAME,
-                            mDB_VERSION);
+                    DatabaseManager.setmDatabaseHelperSingle(DatabaseHelperSingle.getInstance(context, mDB_NAME,
+                            mDB_VERSION)
+                    );
 
-                    this.db = SQLHelper_var_single.getWritableDatabase();
+                    this.db = DatabaseManager.getInstance().openDatabaseSingle();
 
                     break;
             }
@@ -64,10 +70,17 @@ public class BaseDao {
     }
 
     public void closeDB() {
-        if (this.db != null) {
-            this.db.close();
+        switch (mMode) {
+            case "MULTI":
+                DatabaseManager.getInstance().closeDatabaseMulti();
+                break;
+            case Constant.DB_MODE_CHAT:
+                DatabaseManager.getInstance().closeDatabaseChat();
+                break;
+            default:
+                DatabaseManager.getInstance().closeDatabaseSingle();
+                break;
         }
     }
-
 
 }

@@ -10,7 +10,22 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelperSingle extends SQLiteOpenHelper {
 
+    private static volatile DatabaseHelperSingle mInstance;
+
     private Context context;
+
+    public static synchronized DatabaseHelperSingle getInstance(Context context, String DB_NAME, int DB_VERSION) {
+        /**
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activitys
+         * context (see this article for more information:
+         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new DatabaseHelperSingle(context.getApplicationContext(), DB_NAME, DB_VERSION);
+        }
+        return mInstance;
+    }
 
     public DatabaseHelperSingle(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -31,8 +46,8 @@ public class DatabaseHelperSingle extends SQLiteOpenHelper {
             script.append("create table if not exists [ev_user_customer_parameters]([customer_code] INT NOT NULL, [parameter_code] TEXT NOT NULL DEFAULT '' COLLATE NOCASE, PRIMARY KEY([customer_code], [parameter_code]));");
             script.append("create table if not exists [fcmmessages] ([fcmmessage_code] INTEGER PRIMARY KEY AUTOINCREMENT, [customer] text not null DEFAULT '' COLLATE NOCASE, [type] text not null DEFAULT '' COLLATE NOCASE, [title] text not null DEFAULT '' COLLATE NOCASE, [msg_short] text not null DEFAULT '' COLLATE NOCASE, [msg_long] text not null DEFAULT '' COLLATE NOCASE, [module] text not null DEFAULT '' COLLATE NOCASE, [sender] text not null DEFAULT '' COLLATE NOCASE, [sync] text not null DEFAULT '' COLLATE NOCASE, [status] text not null DEFAULT '0' COLLATE NOCASE, [date_create] text not null DEFAULT '1900-01-01' COLLATE NOCASE, [date_create_ms] int not null );");
             //
-            String[] scripts        = script.toString().split(";");
-            String[] scripts_dados =  script_dados.toString().split(";");
+            String[] scripts = script.toString().split(";");
+            String[] scripts_dados = script_dados.toString().split(";");
             //
             for (int i = 0; i < scripts.length; i++) {
                 db.execSQL(scripts[i].toLowerCase());

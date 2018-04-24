@@ -11,7 +11,22 @@ import android.util.Log;
 
 public class DatabaseHelperMulti extends SQLiteOpenHelper {
 
+    private static volatile DatabaseHelperMulti mInstance;
+
     private Context context;
+
+    public static synchronized DatabaseHelperMulti getInstance(Context context, String DB_NAME, int DB_VERSION) {
+        /**
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activitys
+         * context (see this article for more information:
+         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new DatabaseHelperMulti(context.getApplicationContext(), DB_NAME, DB_VERSION);
+        }
+        return mInstance;
+    }
 
     public DatabaseHelperMulti(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, null, DB_VERSION);
