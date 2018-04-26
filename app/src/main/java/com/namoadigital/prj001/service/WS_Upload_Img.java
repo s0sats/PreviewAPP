@@ -35,17 +35,6 @@ public class WS_Upload_Img extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
 
-            if (!ToolBox_Inf.isUploadRunning()) {
-                //WBR_Upload_Img.IS_RUNNING = true;
-                //Chama notificação.
-                ToolBox_Inf.showNotification(
-                        getApplicationContext(),
-                        Constant.NOTIFICATION_UPLOAD
-                );
-            }
-
-            WBR_Upload_Img.IS_RUNNING = true;
-
             Gson gson = new Gson();
             TUploadImg_Env env = new TUploadImg_Env();
             env.setApp_code(Constant.PRJ001_CODE);
@@ -65,6 +54,21 @@ public class WS_Upload_Img extends IntentService {
             geFiles = (ArrayList<GE_File>) geFileDao.query(
                     new GE_File_Sql_001().toSqlQuery()
             );
+            //SE NENHUM ITEM A ENVIAR, SAI DO SERVIÇO SEM CHAMAR NOTIFICAÇÃO
+            if(geFiles.size() == 0){
+                return;
+            }
+            //Verifica necessida de notificação de upload
+            if (!ToolBox_Inf.isUploadRunning()) {
+                //WBR_Upload_Img.IS_RUNNING = true;
+                //Chama notificação.
+                ToolBox_Inf.showNotification(
+                        getApplicationContext(),
+                        Constant.NOTIFICATION_UPLOAD
+                );
+            }
+
+            WBR_Upload_Img.IS_RUNNING = true;
             //
             for (GE_File geFile : geFiles) {
 

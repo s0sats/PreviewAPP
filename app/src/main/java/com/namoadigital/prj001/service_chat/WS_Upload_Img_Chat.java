@@ -37,18 +37,6 @@ public class WS_Upload_Img_Chat extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-
-            if (!ToolBox_Inf.isUploadRunning()) {
-                //WBR_Upload_Img.IS_RUNNING = true;
-                //Chama notificação.
-                ToolBox_Inf.showNotification(
-                        getApplicationContext(),
-                        Constant.NOTIFICATION_UPLOAD
-                );
-            }
-
-            WBR_Upload_Img_Chat.IS_RUNNING = true;
-
             Gson gson = new Gson();
             TUploadImg_Chat_Env env = new TUploadImg_Chat_Env();
             //
@@ -67,6 +55,21 @@ public class WS_Upload_Img_Chat extends IntentService {
             chFiles = (ArrayList<CH_File>) chFileDao.query(
                     new CH_File_Sql_001().toSqlQuery()
             );
+            //Se lista vazia, não verifica necessidade de notificação de upload
+            if(chFiles.size() == 0){
+                return;
+            }
+            //
+            if (!ToolBox_Inf.isUploadRunning()) {
+                //WBR_Upload_Img.IS_RUNNING = true;
+                //Chama notificação.
+                ToolBox_Inf.showNotification(
+                        getApplicationContext(),
+                        Constant.NOTIFICATION_UPLOAD
+                );
+            }
+            //
+            WBR_Upload_Img_Chat.IS_RUNNING = true;
             //
             env.setApp_code(Constant.PRJ001_CODE);
             //

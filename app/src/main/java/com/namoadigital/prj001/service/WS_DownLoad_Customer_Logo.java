@@ -30,14 +30,6 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         try {
-            if(!ToolBox_Inf.isDownloadRunning()){
-                //Log.v("WS_Customer_Logo","true");
-                //WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
-            }
-
-            WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
-
             Bundle bundle = intent.getExtras();
 
             EV_User_CustomerDao userCustomerDao =
@@ -55,36 +47,48 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
                             ).toSqlQuery()
                     );
             String logo_prefix = "logo_c_" + userCustomer.getCustomer_code();
+            //Se imagem existir, sai do serviço sem acionar necessidade de notificação
+            if(ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png",Constant.IMG_PATH)){
+                return;
+            }
+            //Se não saiu, verifica necessidade de notificação.
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                //Log.v("WS_Customer_Logo","true");
+                //WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
+            }
 
+            WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
+            //
 
-                if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png",Constant.IMG_PATH)) {
+            if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png", Constant.IMG_PATH)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp",Constant.IMG_PATH);
-                    //
-                    ToolBox_Inf.downloadImagePDF(
-                            userCustomer.getLogo_url(),
-                            Constant.IMG_PATH + "/" + logo_prefix + ".tmp"
-                    );
+                ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp", Constant.IMG_PATH);
+                //
+                ToolBox_Inf.downloadImagePDF(
+                        userCustomer.getLogo_url(),
+                        Constant.IMG_PATH + "/" + logo_prefix + ".tmp"
+                );
 
-                    //Verfica se downlaod esta ok
-                    if(ToolBox_Inf.verifyImgIntegrity(Constant.IMG_PATH,logo_prefix + ".tmp")){
-                        //Extensão sempre .png ,
-                        //pois no android le a imagens independente da extensão
-                        ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH,logo_prefix,"",".png");
-                    }else{
-                      throw new Exception("ImgIntegrity");
-                    }
+                //Verfica se downlaod esta ok
+                if (ToolBox_Inf.verifyImgIntegrity(Constant.IMG_PATH, logo_prefix + ".tmp")) {
+                    //Extensão sempre .png ,
+                    //pois no android le a imagens independente da extensão
+                    ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH, logo_prefix, "", ".png");
+                } else {
+                    throw new Exception("ImgIntegrity");
                 }
+            }
 
         } catch (Exception e) {
             String results = e.toString();
-            ToolBox_Inf.registerException(getClass().getName(),e);
-        }finally {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
             WBR_DownLoad_Customer_Logo.IS_RUNNING = false;
             WBR_DownLoad_Customer_Logo.completeWakefulIntent(intent);
             //Log.v("WS_Customer_Logo","false");
-            if(!ToolBox_Inf.isDownloadRunning()){
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
         }
     }
@@ -102,7 +106,7 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
         });
         //
         if (files != null) {
-           return false;
+            return false;
         }
         //
         return true;

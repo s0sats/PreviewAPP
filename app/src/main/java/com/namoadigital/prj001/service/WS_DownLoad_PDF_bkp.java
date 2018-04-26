@@ -27,26 +27,37 @@ import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 28/10/16.
+ * bkp criado em 24/04/2018, modificando o original
+ * para exibir notificação somente se existir itens a serem baixados
  */
 
-public class WS_DownLoad_PDF extends IntentService {
+public class WS_DownLoad_PDF_bkp extends IntentService {
 
 
     private boolean mAp;
 
-    public WS_DownLoad_PDF() {
+    public WS_DownLoad_PDF_bkp() {
         super("WS_DownLoad_PDF");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                //Log.v("WS_DownLoad_PDF","true");
+                //WBR_DownLoad_PDF.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
+            }
+
+            WBR_DownLoad_PDF.IS_RUNNING = true;
+
             mAp = false;
 
             Bundle bundle = intent.getExtras();
-            //region GERAÇÃO DE LISTAS
+            //
             ArrayList<HMAux> dados = new ArrayList<>();
-            ArrayList<HMAux> dados_geral = new ArrayList<>();
+            ArrayList<HMAux> dados_geral;
             //
             GE_Custom_Form_BlobDao form_blobDao = new GE_Custom_Form_BlobDao(
                     getApplicationContext(),
@@ -68,62 +79,8 @@ public class WS_DownLoad_PDF extends IntentService {
                     (ArrayList<HMAux>) form_blob_localDao.query_HM(
                             new GE_Custom_Form_Blob_Local_Sql_002().toSqlQuery().toLowerCase()
                     )
-            );//fim N FORM
-            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
-            //
-            ArrayList<HMAux> formAplist = new ArrayList<>();
-            //
-            formAplist.addAll(
-                    formApDao.query_HM(
-                            new GE_Custom_Form_Ap_Sql_007(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                            ).toSqlQuery()
-
-                    )
             );
-            /**
-             * LISTA DE PDF DA S.O
-             */
-            SM_SO_FileDao soFileDao = null;
-            ArrayList<HMAux> so_file_list = new ArrayList<>();
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
-
-                soFileDao =
-                        new SM_SO_FileDao(
-                                getApplicationContext(),
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                Constant.DB_VERSION_CUSTOM
-                        );
-                //
-                so_file_list.addAll(
-                        soFileDao.query_HM(
-                                new SM_SO_File_Sql_003(
-                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                                ).toSqlQuery()
-                        )
-                );
-            }//END S.O
-            //endregion
-            //SE NÃO PDF PARA BAIXAR, SAI DO SERVIÇO
-            if( dados_geral.size() == 0
-                && formAplist.size() == 0
-                && so_file_list.size() == 0
-            ){
-                return;
-            }
-            //SE POSSUI ITENS PARA DOWNLOAD, VERIFICA NECESSIDA DE NOTIFICAÇÃO
-            if (!ToolBox_Inf.isDownloadRunning()) {
-                //Log.v("WS_DownLoad_PDF","true");
-                //WBR_DownLoad_PDF.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
-            }
-
-            WBR_DownLoad_PDF.IS_RUNNING = true;
-
-            /**
-             * Download de PDF do N-FORM
-             */
-            //region N FORM
+            //
             for (HMAux hmAux : dados_geral) {
                 HMAux item = new HMAux();
                 item.put("custom_name", hmAux.get("custom_name").toLowerCase());
@@ -170,12 +127,24 @@ public class WS_DownLoad_PDF extends IntentService {
                 );
 
             }
-            //endregion
-            /**
-             * Download de PDF Action Plan 01/03/2018
+            /*
+            *  Action Plan 01/03/2018
             */
-            //region FORM AP
+            //
             mAp = true;
+
+            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+            //
+            ArrayList<HMAux> formAplist = new ArrayList<>();
+            //
+            formAplist.addAll(
+                    formApDao.query_HM(
+                            new GE_Custom_Form_Ap_Sql_007(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ).toSqlQuery()
+
+                    )
+            );
             //
             for (HMAux hmAux : formAplist) {
                 if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
@@ -218,14 +187,29 @@ public class WS_DownLoad_PDF extends IntentService {
                 );
             }
             mAp = false;
-            //endregion
             /**
              *
-             * Download de PDF do Cabeçalho do S.O
+             * Download de files do Cabeçalho do S.O
              *
              */
-            //region S.O
+
             if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+
+                SM_SO_FileDao soFileDao =
+                        new SM_SO_FileDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+                ArrayList<HMAux> so_file_list = new ArrayList<>();
+                //Carrega lista de files do cabealho da SO
+                so_file_list.addAll(
+                        soFileDao.query_HM(
+                                new SM_SO_File_Sql_003(
+                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                ).toSqlQuery()
+                        )
+                );
                 //
                 String splitKey = "@#My#@Key#@";
                 for (HMAux hmAux : so_file_list) {
@@ -256,7 +240,6 @@ public class WS_DownLoad_PDF extends IntentService {
                     );
                 }
             }
-            //endregion
 
         } catch (Exception e) {
             String results = e.toString();
