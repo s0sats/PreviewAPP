@@ -1487,7 +1487,7 @@ public class ToolBox_Inf {
 
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
-        tv_version_code_value.setText("("+Constant.PRJ001_VERSION_CODE+")");
+        tv_version_code_value.setText("(" + Constant.PRJ001_VERSION_CODE + ")");
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.9f;
@@ -1625,6 +1625,7 @@ public class ToolBox_Inf {
      * do sincronismo e seus forms não serão mais enviado.
      * Sendo assim, os forms só serão "deletados" no proximo sincronismo.
      * Luche 26/03/2018
+     *
      * @param context
      */
     public static void cleanOldSyncChecklistData(Context context) {
@@ -2260,6 +2261,31 @@ public class ToolBox_Inf {
         return sdf.format(calendar.getTime());
     }
 
+    public static String convertDBToDeviceTMZ(String date_tmz) {
+        SimpleDateFormat sdfD = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
+        SimpleDateFormat sdfS = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
+        Calendar calendar = Calendar.getInstance();
+        StringBuilder sbFinal = new StringBuilder();
+
+        try {
+            String argOriginal[] = date_tmz.split(" ");
+            calendar.setTime(sdfD.parse(argOriginal[0] + " " + argOriginal[1] + " GMT" + argOriginal[2]));
+            String[] args = sdfS.format(calendar.getTime()).split(" ");
+            sbFinal.append(args[0]).append(" ").append(args[1]).append(" ");
+
+            for (int i = 0; i < args[2].length(); ++i) {
+                sbFinal.append(args[2].charAt(i));
+                if (i == 2) {
+                    sbFinal.append(":");
+                }
+            }
+        } catch (Exception e) {
+            return "";
+        }
+
+        return sbFinal.toString();
+    }
+
     /**
      * Devolve milisegundos de uma data
      *
@@ -2741,9 +2767,9 @@ public class ToolBox_Inf {
 
 
     public static void setExecStatusColor(Context context, TextView tv_status, String status) {
-                /*
-        * Tratativa de cor por Status
-        * */
+        /*
+         * Tratativa de cor por Status
+         * */
 //        switch (status) {
 //            case Constant.SYS_STATUS_PENDING:
 //                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
@@ -3351,10 +3377,10 @@ public class ToolBox_Inf {
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
-        if(Constant.DEVELOPMENT_BASE) {
+        if (Constant.DEVELOPMENT_BASE) {
             builder.setSound(Uri.parse("android.resource://"
                     + context.getPackageName() + "/" + R.raw.morfador));
-        }else {
+        } else {
             builder.setSound(alarmSound);
         }
 
@@ -3409,10 +3435,10 @@ public class ToolBox_Inf {
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
-        if(Constant.DEVELOPMENT_BASE) {
+        if (Constant.DEVELOPMENT_BASE) {
             builder.setSound(Uri.parse("android.resource://"
                     + context.getPackageName() + "/" + R.raw.morfador));
-        }else {
+        } else {
             builder.setSound(alarmSound);
         }
         builder.setContentIntent(pi);
@@ -3641,7 +3667,7 @@ public class ToolBox_Inf {
             } else {
                 return "";
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
@@ -4001,7 +4027,7 @@ public class ToolBox_Inf {
         return map;
     }
 
-    public static int deleteUnnecessaryAP(Context context){
+    public static int deleteUnnecessaryAP(Context context) {
         int deletedCounter = 0;
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
         //
@@ -4013,11 +4039,11 @@ public class ToolBox_Inf {
                         ).toSqlQuery()
                 );
         //
-        if(formList != null && formList.size()> 0){
-            for (GE_Custom_Form_Ap formAp:formList) {
+        if (formList != null && formList.size() > 0) {
+            for (GE_Custom_Form_Ap formAp : formList) {
                 boolean deleteAP = true;
                 //
-                if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)) {
+                if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
                     CH_RoomDao roomDao = new CH_RoomDao(context);
                     //
                     CH_Room chRoom = roomDao.getByString(
@@ -4031,7 +4057,7 @@ public class ToolBox_Inf {
                     }
                 }
                 //
-                if(deleteAP){
+                if (deleteAP) {
                     formApDao.remove(
                             new GE_Custom_Form_Ap_Sql_010(
                                     formAp.getCustomer_code(),
@@ -4050,7 +4076,7 @@ public class ToolBox_Inf {
         return deletedCounter;
     }
 
-    public static boolean checkForApExclusion(Context context,String customer_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code){
+    public static boolean checkForApExclusion(Context context, String customer_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code) {
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
         int user_code = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context));
         boolean deleteAP = false;
@@ -4066,11 +4092,11 @@ public class ToolBox_Inf {
                         GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
                 ).toSqlQuery()
         );
-        if(formAp != null) {
-            if ( formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
-                if(!formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+        if (formAp != null) {
+            if (formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
+                if (!formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                         && !formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
-                ) {
+                        ) {
                     if (formAp.getRoom_code() == null) {
                         deleteAP = true;
                     } else {
@@ -4112,13 +4138,13 @@ public class ToolBox_Inf {
         return false;
     }
 
-    public static String getFullNick(String nick, int id){
+    public static String getFullNick(String nick, int id) {
         return getFullNick(nick, String.valueOf(id));
     }
 
 
-    public static String getFullNick(String nick, String id){
-        return nick +  " (" + id + ")";
+    public static String getFullNick(String nick, String id) {
+        return nick + " (" + id + ")";
     }
 
     public static long pkCustomerCode(String pk) {
@@ -4126,7 +4152,7 @@ public class ToolBox_Inf {
             String[] pks = pk.replace("|", "#").replace(".", "#").split("#");
             //
             return Long.parseLong(pks[0]);
-        }catch (Exception e){
+        } catch (Exception e) {
             return -1L;
         }
     }

@@ -154,6 +154,9 @@ public class Act028_Task extends BaseFragment {
     public void setmTask(SM_SO_Service_Exec_Task mTask) {
         this.mTask = mTask;
         //
+        this.mTask.setStart_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getStart_date()));
+        this.mTask.setEnd_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getEnd_date()));
+        //
         StringBuilder sFiles = new StringBuilder();
 
         boolean bFirst = true;
@@ -326,10 +329,10 @@ public class Act028_Task extends BaseFragment {
                 //para o original(recebido via bundle)
                 soDao.addUpdate(
                         new SM_SO_Sql_020(
-                            mService.getCustomer_code(),
-                            mService.getSo_prefix(),
-                            mService.getSo_code(),
-                            mMain_new.getOriginal_update_required()
+                                mService.getCustomer_code(),
+                                mService.getSo_prefix(),
+                                mService.getSo_code(),
+                                mMain_new.getOriginal_update_required()
                         ).toSqlQuery()
                 );
             }
@@ -547,11 +550,11 @@ public class Act028_Task extends BaseFragment {
 
                     processTaskStatus();
 
-                }else{
+                } else {
                     /*
-                    * Esse else aplica a inibição dos campos
-                    * caso o usuario não possua profile de execução.
-                    */
+                     * Esse else aplica a inibição dos campos
+                     * caso o usuario não possua profile de execução.
+                     */
 
                     //
                     //Coloca dado na tela
@@ -639,7 +642,7 @@ public class Act028_Task extends BaseFragment {
                     tv_stepped_txt_min_lbl.setVisibility(View.GONE);
                     tv_stepped_txt_max_lbl.setVisibility(View.GONE);
                     //
-                    if(mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_START_STOP)){
+                    if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_START_STOP)) {
                         tv_stepped_txt_lbl.setVisibility(View.VISIBLE);
                         rb_stepped_perc.setVisibility(View.VISIBLE);
                         tv_stepped_txt_min_lbl.setVisibility(View.VISIBLE);
@@ -649,17 +652,17 @@ public class Act028_Task extends BaseFragment {
                     //Galeria
                     //
                     String files = null;
-                    try{
+                    try {
                         files = (String) iv_gallery.getTag();
-                    }catch (Exception e){
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
                     boolean turnOnGallery = files != null && files.length() > 0;
 
                     iv_gallery.setClickable(turnOnGallery);
                     iv_gallery.setEnabled(turnOnGallery);
                     //
-                    if(turnOnGallery){
+                    if (turnOnGallery) {
                         //configura icone
                         iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_marcada_ns));
                         //Redefine Listner para não deixar tirar nem editar foto
@@ -669,7 +672,7 @@ public class Act028_Task extends BaseFragment {
                                 callCamera(false);
                             }
                         });
-                    }else{
+                    } else {
                         //configura icone
                         iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_ns));
                         //Remove listner
@@ -699,7 +702,7 @@ public class Act028_Task extends BaseFragment {
     @Override
     public void loadScreenToData() {
         if (bStatus) {
-            if(mMain_new.hasExecutionProfile()) {
+            if (mMain_new.hasExecutionProfile()) {
                 tempValues.put("comments", mk_comments.getText().toString());
                 tempValues.put("img", (String) iv_gallery.getTag());
                 String sDTS = reverseB(mk_start_date.getText().toString());
@@ -1125,9 +1128,9 @@ public class Act028_Task extends BaseFragment {
     }
 
     private void setExecStatusColor(TextView tv_status, String status) {
-                /*
-        * Tratativa de cor por Status
-        * */
+        /*
+         * Tratativa de cor por Status
+         * */
         switch (status) {
             case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
@@ -1207,6 +1210,7 @@ public class Act028_Task extends BaseFragment {
                     iv_gallery.setEnabled(false);
                     mk_comments.setEnabled(false);
                     break;
+                case Constant.SYS_STATUS_INCONSISTENT:
                 case Constant.SYS_STATUS_CANCELLED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
@@ -1300,6 +1304,7 @@ public class Act028_Task extends BaseFragment {
                     iv_gallery.setEnabled(false);
                     mk_comments.setEnabled(false);
                     break;
+                case Constant.SYS_STATUS_INCONSISTENT:
                 case Constant.SYS_STATUS_CANCELLED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
@@ -1530,7 +1535,7 @@ public class Act028_Task extends BaseFragment {
 
                 } else {
 
-                    if (autoconf){
+                    if (autoconf) {
                         autoconf = false;
                         mk_end_date.setText("");
                         mk_end_hour.setText("");
@@ -1563,7 +1568,7 @@ public class Act028_Task extends BaseFragment {
 
                 } else {
 
-                    if (autoconf){
+                    if (autoconf) {
                         autoconf = false;
                         mk_end_date.setText("");
                         mk_end_hour.setText("");
