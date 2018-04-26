@@ -88,7 +88,7 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 24;
+        DB_VERSION_CUSTOM = 25;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -98,7 +98,7 @@ public class AppBase extends Application {
         Constant.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
         Constant.PRJ001_VERSION = BuildConfig.VERSION_NAME;
 
-        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION_CODE);
+        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION);
 
         String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
 
