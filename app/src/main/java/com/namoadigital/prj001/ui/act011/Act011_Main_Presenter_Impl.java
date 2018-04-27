@@ -377,23 +377,29 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
                     checkData(formData, geFiles);
                 } else {
-                    mView.showMsg(
-                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
-                            hmAux_Trans.get("alert_require_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
-                            1);
+//                    mView.showMsg(
+//                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
+//                            hmAux_Trans.get("alert_require_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
+//                            1);
+                    mView.callSignature();
                 }
 
                 break;
             default:
-                if (opc == 1) {
-                    checkData(formData, geFiles);
-                } else {
-                    mView.showMsg(
-                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
-                            hmAux_Trans.get("alert_optional_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
-                            3);
+                formData.setSignature("");
+                formData.setSignature_name("");
+                //
+                checkData(formData, geFiles);
 
-                }
+//                if (opc == 1) {
+//                    checkData(formData, geFiles);
+//                } else {
+//                    mView.showMsg(
+//                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
+//                            hmAux_Trans.get("alert_optional_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
+//                            3);
+//                    //
+//                }
                 break;
         }
 

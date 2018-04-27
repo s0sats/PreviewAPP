@@ -297,7 +297,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         sv_serial = (ScrollView) findViewById(R.id.act031_sv_serial);
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act031_mket_serial);
-        mket_serial_id.setmNFC(true);
+        //mket_serial_id.setmNFC(true);
+        mket_serial_id.setmBARCODE(true);
         controls_sta.add(mket_serial_id);
         mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
         //
