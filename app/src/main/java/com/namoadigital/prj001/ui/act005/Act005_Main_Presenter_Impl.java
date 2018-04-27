@@ -341,10 +341,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
+                        //Qtd de horas pra frente q deve ser consderada
+                        //na hora de contar itens no badge
+                        int forward_hour = 12;
                         try {
                             qty = customFormLocalDao.getByStringHM(
                                     new Sql_Act005_003(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            forward_hour
                                     ).toSqlQuery()
                             ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
                         } catch (Exception e) {
@@ -354,7 +358,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         try {
                             qtyAP = customFormApDao.getByStringHM(
                                     new Sql_Act005_006(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            forward_hour
                                     ).toSqlQuery()
                             ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
                         } catch (Exception e) {

@@ -17,11 +17,12 @@ public class Sql_Act005_006 implements Specification {
 
     public static final String BADGE_SCHEDULED_QTY = "scheduled_qty";
     private String customer_code;
+    private int forward_hour;
 
-    public Sql_Act005_006(String customer_code) {
+    public Sql_Act005_006(String customer_code, int forward_hour) {
         this.customer_code = customer_code;
+        this.forward_hour = forward_hour;
     }
-
 
     @Override
     public String toSqlQuery() {
@@ -35,7 +36,10 @@ public class Sql_Act005_006 implements Specification {
                         " WHERE\n" +
                         "   a.customer_code = '"+customer_code+"' \n" +
                         "   and a.ap_when is not null \n" +
-                        "   and (strftime('%s', a.ap_when)  * 1000 ) < (strftime('%s', 'now')  * 1000 )\n" +
+                        "   and (\n" +
+                        "           ((strftime('%s', a.ap_when)  * 1000 ) < (strftime('%s', 'now')  * 1000 ))\n" +
+                        "           or ((strftime('%s', a.ap_when)  * 1000 ) < (strftime('%s', 'now','+"+forward_hour+" hour')  * 1000 ))\n" +
+                        "       )\n" +
                         "   and a.ap_status not in('"+ Constant.SYS_STATUS_DONE+"','"+ Constant.SYS_STATUS_CANCELLED+"') \n")
                 .append(";"+ BADGE_SCHEDULED_QTY)
                 .toString();
