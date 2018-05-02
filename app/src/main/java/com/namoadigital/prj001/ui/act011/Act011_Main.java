@@ -317,19 +317,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         act011_ff_options.setOnTabSelectedListener(new Act011_FF_Options.ICustom_Form_FF_Options() {
             @Override
             public void tabSelected(int idtab, String link) {
-
-                ignoreUpdate = true;
-
-                index_old = index;
-                index = idtab;
-
-                resTabs = returnValidCheckTabs(String.valueOf(index_old));
-
-                act011_ff_options.tabsS(resTabs);
-
-                returnValidCheck(String.valueOf(index_old));
-
-                pager.setCurrentItem(idtab - 1);
+                tabSelectedAction(idtab);
                 //
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -388,74 +376,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             @Override
             public void check() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                /**
-                 * Atualizar tabs caso o usuário tente fazer um check().
-                 */
-                resTabs = returnValidCheckTabs("-1");
-                returnValidCheck("-1");
-                act011_ff_options.tabsS(resTabs);
-                //Fim
-
-                formData.setLocation_type("");
-                formData.setLocation_lat("");
-                formData.setLocation_lng("");
-
-                int sum = returnValidCheck(String.valueOf(-1));
-
-                if (sum == 0) {
-
-                    // Mudar Aqui
-                    ToolBox.alertMSG(
-                            Act011_Main.this,
-                            hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
-                            hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (formLocal.getRequire_location() == 1) {
-                                        enableProgressDialog(
-                                                hmAux_Trans.get("alert_location_info_title"),
-                                                hmAux_Trans.get("alert_location_info_required"),
-                                                hmAux_Trans.get("sys_alert_btn_cancel"),
-                                                hmAux_Trans.get("sys_alert_btn_ok")
-                                        );
-                                        //
-                                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
-
-                                    } else {
-                                        startCheckIN();
-                                    }
-                                }
-                            },
-                            1
-                    );
-
-//                    if (formLocal.getRequire_location() == 1) {
-//                        enableProgressDialog(
-//                                hmAux_Trans.get("alert_location_info_title"),
-//                                hmAux_Trans.get("alert_location_info_required"),
-//                                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                                hmAux_Trans.get("sys_alert_btn_ok")
-//                        );
-//                        //
-//                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
-//
-//                    } else {
-//                        startCheckIN();
-//                    }
-
-                } else {
-
-                    ToolBox.alertMSG(
-                            Act011_Main.this,
-                            hmAux_Trans.get("alert_error_on_finalize_title"),
-                            hmAux_Trans.get("alert_error_on_finalize_msg"),
-                            null,
-                            0
-                    );
-                }
+                checkAction();
             }
 
             @Override
@@ -558,6 +479,92 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mOperation_Code
         );
 
+    }
+
+    private void tabSelectedAction(int idtab) {
+        ignoreUpdate = true;
+
+        index_old = index;
+        index = idtab;
+
+        resTabs = returnValidCheckTabs(String.valueOf(index_old));
+
+        act011_ff_options.tabsS(resTabs);
+
+        returnValidCheck(String.valueOf(index_old));
+
+        pager.setCurrentItem(idtab - 1);
+    }
+
+    private void checkAction() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        /**
+         * Atualizar tabs caso o usuário tente fazer um check().
+         */
+        resTabs = returnValidCheckTabs("-1");
+        returnValidCheck("-1");
+        act011_ff_options.tabsS(resTabs);
+        //Fim
+
+        formData.setLocation_type("");
+        formData.setLocation_lat("");
+        formData.setLocation_lng("");
+
+        int sum = returnValidCheck(String.valueOf(-1));
+
+        if (sum == 0) {
+
+            // Mudar Aqui
+            ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
+                    hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (formLocal.getRequire_location() == 1) {
+                                enableProgressDialog(
+                                        hmAux_Trans.get("alert_location_info_title"),
+                                        hmAux_Trans.get("alert_location_info_required"),
+                                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                                        hmAux_Trans.get("sys_alert_btn_ok")
+                                );
+                                //
+                                ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+
+                            } else {
+                                startCheckIN();
+                            }
+                        }
+                    },
+                    1
+            );
+
+//                    if (formLocal.getRequire_location() == 1) {
+//                        enableProgressDialog(
+//                                hmAux_Trans.get("alert_location_info_title"),
+//                                hmAux_Trans.get("alert_location_info_required"),
+//                                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                                hmAux_Trans.get("sys_alert_btn_ok")
+//                        );
+//                        //
+//                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+//
+//                    } else {
+//                        startCheckIN();
+//                    }
+
+        } else {
+
+            ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_error_on_finalize_title"),
+                    hmAux_Trans.get("alert_error_on_finalize_msg"),
+                    null,
+                    0
+            );
+        }
     }
 
     private void nservCall() {
@@ -847,6 +854,34 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
                 custom_form_ff.setCustomFFs(customFFs, i);
+                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
+                    @Override
+                    public void openDrawer() {
+                        mDrawerLayout.openDrawer(GravityCompat.START);
+                    }
+
+                    @Override
+                    public void check() {
+                        checkAction();
+                    }
+
+                    @Override
+                    public void previosTab() {
+                        if ((index - 1) >= 1) {
+                            tabSelectedAction(index - 1);
+                        }
+                    }
+
+                    @Override
+                    public void nextTab() {
+                        if ((index + 1) <= pager.getAdapter().getCount()) {
+                            tabSelectedAction(index + 1);
+                        }
+
+                    }
+                });
+                //
+                custom_form_ff.setFormStatus(formData.getCustom_form_status());
                 //
                 screens.add(custom_form_ff);
             }

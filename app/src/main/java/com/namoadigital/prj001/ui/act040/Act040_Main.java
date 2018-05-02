@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -363,6 +364,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         btn_create_so.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (mket_serial.isValid()){
+                    Log.d("SERIAL_TEST", "VERDADEIRO");
+                } else {
+                    Log.d("SERIAL_TEST", "FALSO");
+                }
 
                 if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.getText().toString().trim().length() != 0) {
 

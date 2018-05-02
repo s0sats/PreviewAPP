@@ -336,7 +336,7 @@
                                 android:paddingTop="4dp"
                                 android:src="@drawable/ic_sprinter_ns" />
 
-                            <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:id="@+id/act028_task_content_mk_start_date"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -348,7 +348,7 @@
                                 app:mBARCODE="false"
                                 app:mInputType="DATE" />
 
-                            <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:id="@+id/act028_task_content_mk_start_hour"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -379,7 +379,7 @@
                                 android:paddingTop="4dp"
                                 android:src="@drawable/ic_bandeiras_ns" />
 
-                            <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:id="@+id/act028_task_content_mk_end_date"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -391,7 +391,7 @@
                                 app:mBARCODE="false"
                                 app:mInputType="DATE" />
 
-                            <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:id="@+id/act028_task_content_mk_end_hour"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -465,8 +465,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Nick"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:textColor="@color/lib_custom_cell_font_color"/>
+                        android:textColor="@color/lib_custom_cell_font_color"
+                        android:textSize="@dimen/font_size_item_md" />
 
                     <TextView
                         android:id="@+id/act028_task_content_tv_date"
@@ -475,9 +475,8 @@
                         android:layout_weight="1"
                         android:gravity="right"
                         android:text="01/01/2018"
-                        android:textSize="@dimen/font_size_item_md"
                         android:textColor="@color/lib_custom_cell_font_color"
-                        />
+                        android:textSize="@dimen/font_size_item_md" />
 
 
                 </LinearLayout>

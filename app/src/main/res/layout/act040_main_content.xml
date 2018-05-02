@@ -103,6 +103,7 @@
                     android:layout_weight="1"
                     android:hint="Serial"
                     android:inputType="text"
+                    app:mInputTypeValidator="SERIAL"
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false" />

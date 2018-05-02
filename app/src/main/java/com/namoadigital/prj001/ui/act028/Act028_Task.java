@@ -15,7 +15,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
-import com.namoa_digital.namoa_library.ctls.MKEditTextNMT;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -87,12 +86,12 @@ public class Act028_Task extends BaseFragment {
     private ImageView iv_gallery;
 
     //private TextView tv_start_date_lbl;
-    private MKEditTextNMT mk_start_date;
-    private MKEditTextNMT mk_start_hour;
+    private MKEditTextNM mk_start_date;
+    private MKEditTextNM mk_start_hour;
 
     //private TextView tv_end_date_lbl;
-    private MKEditTextNMT mk_end_date;
-    private MKEditTextNMT mk_end_hour;
+    private MKEditTextNM mk_end_date;
+    private MKEditTextNM mk_end_hour;
 
     private TextView tv_stepped_txt_min_lbl;
     private TextView tv_stepped_txt_max_lbl;
@@ -391,12 +390,12 @@ public class Act028_Task extends BaseFragment {
         iv_gallery = (ImageView) view.findViewById(R.id.act028_task_content_iv_gallery);
 
         //tv_start_date_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_start_date_lbl);
-        mk_start_date = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_start_date);
-        mk_start_hour = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_start_hour);
+        mk_start_date = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_start_date);
+        mk_start_hour = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_start_hour);
 
         //tv_end_date_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_end_date_lbl);
-        mk_end_date = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_end_date);
-        mk_end_hour = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_end_hour);
+        mk_end_date = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_end_date);
+        mk_end_hour = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_end_hour);
 
         tv_stepped_txt_min_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_stepped_txt_min_lbl);
         tv_stepped_txt_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_stepped_txt_lbl);
@@ -489,12 +488,19 @@ public class Act028_Task extends BaseFragment {
                     tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
 
                     //tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
-                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
-                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+//                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
+//                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+                    //
+                    mk_start_date.setText(ToolBox.reverseS(mTask.getStart_date()));
+                    mk_start_hour.setText(ToolBox.reverseSH(mTask.getStart_date()));
+
 
                     //tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
-                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
-                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+//                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
+//                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+
+                    mk_end_date.setText(ToolBox.reverseS(mTask.getEnd_date()));
+                    mk_end_hour.setText(ToolBox.reverseSH(mTask.getEnd_date()));
 
                     rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
 
@@ -521,10 +527,15 @@ public class Act028_Task extends BaseFragment {
 
                         //mk_comments.setText(tempValues.get("comments"));
 
-                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
-                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
-                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
-                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+//                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
+//                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
+//                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
+//                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+
+                        mk_start_date.setText(ToolBox.reverseS(tempValues.get("dts")));
+                        mk_start_hour.setText(ToolBox.reverseSH(tempValues.get("dts")));
+                        mk_end_date.setText(ToolBox.reverseS(tempValues.get("dte")));
+                        mk_end_hour.setText(ToolBox.reverseSH(tempValues.get("dte")));
 
                         rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
                         mk_qty_people.setText(tempValues.get("qty"));
@@ -572,12 +583,20 @@ public class Act028_Task extends BaseFragment {
                     tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
 
                     //tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
-                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
-                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+//                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
+//                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+
+                    mk_start_date.setText(ToolBox.reverseS(mTask.getStart_date()));
+                    mk_start_hour.setText(ToolBox.reverseSH(mTask.getStart_date()));
+
 
                     //tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
-                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
-                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+//                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
+//                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+
+                    mk_end_date.setText(ToolBox.reverseS(mTask.getEnd_date()));
+                    mk_end_hour.setText(ToolBox.reverseSH(mTask.getEnd_date()));
+
 
                     mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
                     mk_qty_people.setmMaxSize(5);
@@ -590,10 +609,16 @@ public class Act028_Task extends BaseFragment {
                             mk_comments.setText(tempValues.get("comments"));
                         }
 
-                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
-                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
-                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
-                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+//                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
+//                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
+//                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
+//                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+
+                        mk_start_date.setText(ToolBox.reverseS(tempValues.get("dts")));
+                        mk_start_hour.setText(ToolBox.reverseSH(tempValues.get("dts")));
+                        mk_end_date.setText(ToolBox.reverseS(tempValues.get("dte")));
+                        mk_end_hour.setText(ToolBox.reverseSH(tempValues.get("dte")));
+
 
                         rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
                         mk_qty_people.setText(tempValues.get("qty"));
@@ -1430,8 +1455,11 @@ public class Act028_Task extends BaseFragment {
             //
             autoconf = true;
             //
-            mk_end_date.setMaskedText(ToolBox.reverseS(sDT));
-            mk_end_hour.setMaskedText(ToolBox.reverseSH(sDT));
+//            mk_end_date.setMaskedText(ToolBox.reverseS(sDT));
+//            mk_end_hour.setMaskedText(ToolBox.reverseSH(sDT));
+
+            mk_end_date.setText(ToolBox.reverseS(sDT));
+            mk_end_hour.setText(ToolBox.reverseSH(sDT));
         }
 
         mErrorMSG = "";
