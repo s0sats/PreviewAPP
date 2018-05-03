@@ -671,10 +671,12 @@ public class SingletonWebSocket {
             if (args != null && args.length > 0) {
                 if (args[0] instanceof String) {
                     String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    String param_file = createMsgsFile(param,Constant.CHAT_EVENT_C_ROOM);
                     //
                     Intent cRoomIntent = new Intent(context, WBR_C_Room.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    //bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param_file);
                     cRoomIntent.putExtras(bundle);
                     context.sendBroadcast(cRoomIntent);
                 } else {

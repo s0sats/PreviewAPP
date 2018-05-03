@@ -73,11 +73,18 @@ public class WS_C_Room extends IntentService {
         Gson gson = new GsonBuilder().serializeNulls().create();
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
-        ArrayList<Chat_C_Room> rooms =
+        /*ArrayList<Chat_C_Room> rooms =
                 gson.fromJson(
                         json_param,
                         new TypeToken<ArrayList<Chat_C_Room>>() {
+                        }.getType());*/
+        File cRoomFile  = new File(json_param);
+        ArrayList<Chat_C_Room> rooms =
+                gson.fromJson(
+                        ToolBox_Inf.getContents(cRoomFile),
+                        new TypeToken<ArrayList<Chat_C_Room>>() {
                         }.getType());
+
         //
         ArrayList<CH_Room> chRooms = Chat_C_Room.toCH_RoomList(rooms);
         //
@@ -137,6 +144,11 @@ public class WS_C_Room extends IntentService {
         }
         //
         roomDao.addUpdate(chRooms, false);
+        //
+        //
+        if (cRoomFile != null){
+            cRoomFile.delete();
+        }
         //
         cleanUPRooms(chRooms);
         //Chama limpa Ap's desnecessarios.
