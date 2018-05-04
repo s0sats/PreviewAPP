@@ -269,6 +269,37 @@ public class Act027_Opc extends BaseFragment {
         //
         changeTabColor();
     }
+    //region IMPLEMENTS DRAWER AC043
+    public void serviceEditionColor(){
+        SELECTION_TYPE = Act027_Main.SELECTION_SERVICE_EDITION;
+        //
+        changeTabColor();
+    }
+    public void perfomClickInOption(String selection_type){
+
+        switch (selection_type){
+            case Act027_Main.SELECTION_PRODUCT_LIST:
+                ll_product.performClick();
+                break;
+            case Act027_Main.SELECTION_SERVICES:
+                ll_services.performClick();
+                break;
+            case Act027_Main.SELECTION_SERIAL:
+                ll_serial.performClick();
+                break;
+            case Act027_Main.SELECTION_HEADER:
+                ll_header.performClick();
+                break;
+            case Act027_Main.SELECTION_APPROVAL:
+                ll_approval.performClick();
+                break;
+            case Act027_Main.SELECTION_SYNC_SERVICE:
+                ll_services.performClick();
+                ll_so_sync.performClick();
+        }
+    }
+
+    //endregion
 
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
@@ -432,7 +463,8 @@ public class Act027_Opc extends BaseFragment {
                 //
                 ll_product.setVisibility(View.VISIBLE);
                 //
-                switch (mSm_so.getStatus()) {
+                tv_status_value.setTextColor(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus())));
+                /*switch (mSm_so.getStatus()) {
                     case Constant.SYS_STATUS_PENDING:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_light_blue_9));
                         break;
@@ -459,7 +491,7 @@ public class Act027_Opc extends BaseFragment {
                     default:
                         break;
 
-                }
+                }*/
 
                 tv_product_title.setText(hmAux_Trans.get("product_ll_lbl"));
                 tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
