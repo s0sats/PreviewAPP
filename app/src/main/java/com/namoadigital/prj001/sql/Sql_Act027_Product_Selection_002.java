@@ -1,12 +1,17 @@
 package com.namoadigital.prj001.sql;
 
 
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
+import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 07/11/2017.
  *
  * Query que seleciona produtos que aceitam novo serial
+ *
+ * DANIEL LUCHE ON 03/05/2018
+ * Modificado query para usarem as novas tabelas MD_All+*
  */
 
 public class Sql_Act027_Product_Selection_002 implements Specification {
@@ -39,9 +44,9 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             "    p.product_id || ' - ' || p.product_desc full_product_desc ,\n" +
                             "    'product' type \n" +
                             " FROM\n" +
-                            "    md_products p\n" +
+                            "    "+ MD_All_ProductDao.TABLE+" p\n" +
                             " LEFT JOIN\n" +
-                            "    md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
+                            "    "+ MD_All_Product_Group_ProductDao.TABLE+" as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
                             " WHERE\n" +
                             "    p.customer_code= " + s_customer_code + " \n" +
                             "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
@@ -60,9 +65,9 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             "        p.product_id || ' - ' || p.product_desc full_product_desc ,\n" +
                             "                               'product' type                          \n" +
                             "     FROM\n" +
-                            "        md_products p\n" +
+                            "        "+ MD_All_ProductDao.TABLE+" p\n" +
                             "     LEFT JOIN\n" +
-                            "        md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
+                            "        "+ MD_All_Product_Group_ProductDao.TABLE+" as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
                             "     WHERE   \n" +
                             "        pgp.customer_code= " + s_customer_code + "   \n" +
                             "        and pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +

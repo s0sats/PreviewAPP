@@ -15,14 +15,13 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_GroupDao;
-import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
+import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
+import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.sql.MD_Product_Sql_002;
+import com.namoadigital.prj001.sql.MD_All_Product_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_001;
 import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -50,8 +49,8 @@ public class Act027_Product_Selection extends BaseFragment {
     private HMAux currentIndex = new HMAux();
     private boolean loadAdapter = true;//old stopPropagation
     private boolean mkUpdate = true;
-    private MD_ProductDao productDao;
-    private MD_Product_GroupDao productGroupDao;
+    private MD_All_ProductDao allProductDao;
+    private MD_All_Product_GroupDao allProductGroupDao;
     private onProductClickListner onProductClickListner;
 
     public interface onProductClickListner {
@@ -91,9 +90,9 @@ public class Act027_Product_Selection extends BaseFragment {
         //
         iniCurrentIndex();
         //
-        productDao = new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        allProductDao = new MD_All_ProductDao(context);
         //
-        productGroupDao = new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        allProductGroupDao = new MD_All_Product_GroupDao(context);
         //
         mket_product_search = (MKEditTextNM) view.findViewById(R.id.act027_product_selection_mket_product_search);
         //
@@ -228,7 +227,7 @@ public class Act027_Product_Selection extends BaseFragment {
     }
 
     public void setAdapterData(long group_code, Long recursive_code, String filter) {
-        List<MD_Product> listProducts = getProductList();
+        List<MD_All_Product> listProducts = getProductList();
 
         // Mudar para salto automatico
         if (listProducts.size() == 1) {
@@ -237,7 +236,7 @@ public class Act027_Product_Selection extends BaseFragment {
             onProductClickListner.onProductClick((int) listProducts.get(0).getProduct_code());
         } else {
 
-            ArrayList<HMAux> groups = (ArrayList<HMAux>) productGroupDao.query_HM(
+            ArrayList<HMAux> groups = (ArrayList<HMAux>) allProductGroupDao.query_HM(
                     new Sql_Act027_Product_Selection_001(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                             String.valueOf(recursive_code),
@@ -245,7 +244,7 @@ public class Act027_Product_Selection extends BaseFragment {
                     ).toSqlQuery()
             );
 
-            ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
+            ArrayList<HMAux> products = (ArrayList<HMAux>) allProductDao.query_HM(
                     new Sql_Act027_Product_Selection_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                             String.valueOf(group_code),
@@ -285,9 +284,9 @@ public class Act027_Product_Selection extends BaseFragment {
         }
     }
 
-    public List<MD_Product> getProductList() {
-        List<MD_Product> listProducts =
-                productDao.query(new MD_Product_Sql_002(
+    public List<MD_All_Product> getProductList() {
+        List<MD_All_Product> listProducts =
+                allProductDao.query(new MD_All_Product_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         ).toSqlQuery()
                 );

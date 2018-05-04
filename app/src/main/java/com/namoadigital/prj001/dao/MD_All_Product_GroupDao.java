@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_All_Product_Group;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -35,6 +36,17 @@ public class MD_All_Product_GroupDao extends BaseDao implements Dao<MD_All_Produ
 
     public MD_All_Product_GroupDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
+        //
+        this.toContentValuesMapper = new MD_All_Product_GroupDao.MD_ProductGroupToContentValuesMapper();
+        this.toMD_ProductGroupMapper = new MD_All_Product_GroupDao.CursorMD_All_Product_GroupMapper();
+    }
+
+    public MD_All_Product_GroupDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
         //
         this.toContentValuesMapper = new MD_All_Product_GroupDao.MD_ProductGroupToContentValuesMapper();
         this.toMD_ProductGroupMapper = new MD_All_Product_GroupDao.CursorMD_All_Product_GroupMapper();

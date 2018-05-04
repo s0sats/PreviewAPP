@@ -29,6 +29,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
+import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
+import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
@@ -67,6 +70,9 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Operation;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
+import com.namoadigital.prj001.model.MD_All_Product;
+import com.namoadigital.prj001.model.MD_All_Product_Group;
+import com.namoadigital.prj001.model.MD_All_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Brand;
 import com.namoadigital.prj001.model.MD_Brand_Color;
 import com.namoadigital.prj001.model.MD_Brand_Model;
@@ -104,6 +110,9 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_All_Product_Group_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_All_Product_Group_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_All_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
@@ -475,6 +484,9 @@ public class WS_Sync extends IntentService {
             MD_DepartmentDao departmentDao = new MD_DepartmentDao(getApplicationContext());
             MD_UserDao mdUserDao = new MD_UserDao(getApplicationContext());
             GE_Custom_Form_ApDao geCustomFormApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+            MD_All_ProductDao allProductDao = new MD_All_ProductDao(getApplicationContext());
+            MD_All_Product_GroupDao allProductGroupDao = new MD_All_Product_GroupDao(getApplicationContext());
+            MD_All_Product_Group_ProductDao allProductGroupProductDao = new MD_All_Product_Group_ProductDao(getApplicationContext());
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -485,6 +497,10 @@ public class WS_Sync extends IntentService {
             departmentDao.remove(new MD_Department_Sql_Truncate().toSqlQuery());
             mdUserDao.remove(new MD_User_Sql_Truncate().toSqlQuery());
             //geCustomFormApDao.remove(new GE_Custom_Form_Ap_Sql_Truncate().toSqlQuery());
+            allProductDao.remove(new MD_All_Product_Sql_Truncate().toSqlQuery());
+            allProductGroupDao.remove(new MD_All_Product_Group_Sql_Truncate().toSqlQuery());
+            allProductGroupProductDao.remove(new MD_All_Product_Group_Product_Sql_Truncate().toSqlQuery());
+
             //
             // Processamento Operation
             //
@@ -873,6 +889,60 @@ public class WS_Sync extends IntentService {
                 int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
                 Log.d("FORM_AP", "AP's del: " + qtyDel);
             }
+            //
+            // Processamento ALL Product
+            //
+
+            File[] files_all_product = ToolBox_Inf.getListOfFiles_v2("md_all_product-");
+
+            for (File _file : files_all_product) {
+
+                ArrayList<MD_All_Product> allProducts = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_All_Product>>() {
+                        }.getType()
+                );
+
+                allProductDao.addUpdate(allProducts, false);
+            }
+            //
+            // Processamento ALL Product Group
+            //
+
+            File[] files_all_product_group = ToolBox_Inf.getListOfFiles_v2("md_all_product_group-");
+
+            for (File _file : files_all_product_group) {
+
+                ArrayList<MD_All_Product_Group> allProductGroups = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_All_Product_Group>>() {
+                        }.getType()
+                );
+
+                allProductGroupDao.addUpdate(allProductGroups, false);
+            }
+            //
+            // Processamento ALL Product Group
+            //
+            File[] files_all_product_group_product = ToolBox_Inf.getListOfFiles_v2("md_all_product_group_product-");
+
+            for (File _file : files_all_product_group_product) {
+
+                ArrayList<MD_All_Product_Group_Product> allProductGroupProducts = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_All_Product_Group_Product>>() {
+                        }.getType()
+                );
+
+                allProductGroupProductDao.addUpdate(allProductGroupProducts, false);
+            }
+
         }
 
         //

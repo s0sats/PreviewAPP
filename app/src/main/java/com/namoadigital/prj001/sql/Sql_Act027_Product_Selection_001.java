@@ -1,11 +1,15 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 07/11/2017.
  *
  * Query que seleciona grupo de produtos dos produtos que aceitam novo serial
+ *
+ * DANIEL LUCHE ON 03/05/2018
+ * Modificado query para usarem as novas tabelas MD_All+* *
  */
 
 public class Sql_Act027_Product_Selection_001 implements Specification {
@@ -37,7 +41,7 @@ public class Sql_Act027_Product_Selection_001 implements Specification {
                         "                                  'group' type\n" +
                         "                  \n" +
                         "        FROM\n" +
-                        "           md_product_groups pg \n" +
+                        "          "+ MD_All_Product_GroupDao.TABLE + "  pg \n" +
                         "        WHERE\n" +
                         "           pg.customer_code = " + s_customer_code  + "\n" +
                         "        ) T\n" +
