@@ -20,7 +20,11 @@ public class MD_Product {
     private Integer sketch_columns;
     private String sketch_color;
     private int flag_offline;
-
+    private int local_control;
+    private int io_control;
+    private String serial_rule;
+    private Integer serial_min_length;
+    private Integer serial_max_length;
 
     public long getCustomer_code() {
         return customer_code;
@@ -132,5 +136,45 @@ public class MD_Product {
 
     public void setFlag_offline(int flag_offline) {
         this.flag_offline = flag_offline;
+    }
+
+    public int getLocal_control() {
+        return local_control;
+    }
+
+    public void setLocal_control(int local_control) {
+        this.local_control = local_control;
+    }
+
+    public int getIo_control() {
+        return io_control;
+    }
+
+    public void setIo_control(int io_control) {
+        this.io_control = io_control;
+    }
+
+    public String getSerial_rule() {
+        return serial_rule;
+    }
+
+    public void setSerial_rule(String serial_rule) {
+        this.serial_rule = serial_rule;
+    }
+
+    public Integer getSerial_min_length() {
+        return serial_min_length;
+    }
+
+    public void setSerial_min_length(Integer serial_min_length) {
+        this.serial_min_length = serial_min_length;
+    }
+
+    public Integer getSerial_max_length() {
+        return serial_max_length;
+    }
+
+    public void setSerial_max_length(Integer serial_max_length) {
+        this.serial_max_length = serial_max_length;
     }
 }

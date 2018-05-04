@@ -38,10 +38,16 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String SKETCH_COLUMNS = "sketch_columns";
     public static final String SKETCH_COLOR = "sketch_color";
     public static final String FLAG_OFFLINE = "flag_offline";
+    public static final String LOCAL_CONTROL = "local_control";
+    public static final String IO_CONTROL = "io_control" ;
+    public static final String SERIAL_RULE = "serial_rule";
+    public static final String SERIAL_MIN_LENGTH = "serial_min_length" ;
+    public static final String SERIAL_MAX_LENGTH = "serial_max_length" ;
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
-            SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE
+            SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE, LOCAL_CONTROL, IO_CONTROL,
+            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH
     };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -323,6 +329,23 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
                 md_product.setSketch_color(cursor.getString(cursor.getColumnIndex(SKETCH_COLOR)));
             }
             md_product.setFlag_offline(cursor.getInt(cursor.getColumnIndex(FLAG_OFFLINE)));
+            md_product.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
+            md_product.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_RULE))){
+                md_product.setSerial_rule(null);
+            }else {
+                md_product.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))){
+                md_product.setSerial_min_length(null);
+            }else {
+                md_product.setSerial_min_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MIN_LENGTH)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))){
+                md_product.setSerial_max_length(null);
+            }else {
+                md_product.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
+            }
 
             return md_product;
         }
@@ -366,6 +389,15 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             if (md_product.getFlag_offline() > -1) {
                 contentValues.put(FLAG_OFFLINE, md_product.getFlag_offline());
             }
+            if (md_product.getLocal_control() > -1) {
+                contentValues.put(LOCAL_CONTROL, md_product.getLocal_control());
+            }
+            if (md_product.getIo_control() > -1) {
+                contentValues.put(IO_CONTROL, md_product.getIo_control());
+            }
+            contentValues.put(SERIAL_RULE, md_product.getSerial_rule());
+            contentValues.put(SERIAL_MIN_LENGTH, md_product.getSerial_min_length());
+            contentValues.put(SERIAL_MAX_LENGTH, md_product.getSerial_max_length());
 
             return contentValues;
 
