@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -96,9 +97,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String SELECTION_PRODUCT_EDIT = "PRODUCT_EDIT";
     public static final String SELECTION_PRODUCT_SELECTION = "PRODUCT_SELECTION";
     public static final String SELECTION_SERVICE_EDITION = "SERVICE_EDITION";
+    public static final String SELECTION_SYNC_SERVICE= "SYNC_SERVICE";
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
+    public static final String REQUEST_SET_FRAG = "REQUEST_SET_FRAG";
 
     public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
@@ -155,6 +158,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private MD_ProductDao productDao;
     private ArrayList<HMAux> nFormProductList = new ArrayList<>();
     private HMAux nFormProductSelected = new HMAux();
+    private String request_set_frag = "";
     //private long nFormProductSelected = -1;
 
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
@@ -607,7 +611,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         controls_frags.add(act027_serial_);
         //
-        setFrag(act027_services_, "SERVICES");
+        if(request_set_frag.trim().length() == 0) {
+            setFrag(act027_services_, "SERVICES");
+        }else{
+            act027_opc_.perfomClickInOption(request_set_frag);
+        }
         //
         syncChecklistDao = new Sync_ChecklistDao(
                 context,
@@ -625,6 +633,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         resetHmAuxProdutcSelected();
         //
         checkSOAttachExists();
+        //Linha abaixo ser apenas quando o frag product_list for setado via act043
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void loadNFormProductList() {
@@ -726,6 +736,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             if (lastServiceReturned.trim().length() > 0) {
                 startDownloadServices();
             }
+            //Ajuste para clique no drawer da act043
+            request_set_frag = bundle.getString(REQUEST_SET_FRAG,"");
         } else {
             mSm_so = null;
         }
@@ -929,7 +941,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     0
             );
         }
-
     }
 
     public void refreshUI() {

@@ -4,7 +4,7 @@ package com.namoadigital.prj001.model;
  * Created by neomatrix on 8/9/16.
  */
 
-public class MD_Product {
+public class MD_All_Product {
 
     private long customer_code;
     private long product_code;

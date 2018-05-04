@@ -167,6 +167,7 @@ public class Act043_Frag_Preview extends BaseFragment {
                 btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
                 if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                     || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                    || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
                 ){
                     btn_search_service.setEnabled(true);
                 }else{

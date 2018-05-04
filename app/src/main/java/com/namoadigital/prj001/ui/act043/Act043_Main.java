@@ -3,20 +3,28 @@ package com.namoadigital.prj001.ui.act043;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Opc;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,7 +32,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc {
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
@@ -35,13 +43,14 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private String ws_process;
     private SM_SO mSm_so;
     private SM_SODao sm_soDao;
+    private DrawerLayout mDrawerLayout;
     //FRAGMENTS
     private Act043_Frag_Preview act043_frag_preview;
     private Act043_Frag_Service_List act043_frag_service_list;
-
+    private Act027_Opc act027_opc_;
     private String currentFrag = "";
-
     private Act043_Frag_Service_List mServiceList;
+    private HMAux hmAux_TransDrawer = new HMAux();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +115,28 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
         transList.add("alert_so_status");
+        //Drawer
+        List<String> transListdrawer = new ArrayList<String>();
+        transListdrawer.add("so_lbl");
+        transListdrawer.add("so_id_lbl");
+        transListdrawer.add("so_code_lbl");
+        transListdrawer.add("product_lbl");
+        transListdrawer.add("product_id_lbl");
+        transListdrawer.add("product_header_lbl");
+        transListdrawer.add("product_id_header_lbl");
+
+        transListdrawer.add("product_description_lbl");
+        transListdrawer.add("serial_lbl");
+        transListdrawer.add("deadline_lbl");
+        transListdrawer.add("status_lbl");
+        transListdrawer.add("priority_lbl");
+
+        transListdrawer.add("product_ll_lbl");
+        transListdrawer.add("approval_ll_lbl");
+        transListdrawer.add("services_ll_lbl");
+        transListdrawer.add("serial_ll_lbl");
+        transListdrawer.add("header_ll_lbl");
+        transListdrawer.add("service_edition_ll_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -114,6 +145,19 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+        //
+        hmAux_TransDrawer = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT027
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transListdrawer
+        );
+
 
     }
 
@@ -148,7 +192,42 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     private void initVars() {
         //
+        mDrawerLayout = (DrawerLayout)
+                findViewById(R.id.act027_drawer);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                Act043_Main.this,
+                mDrawerLayout,
+                R.string.act005_drawer_opened,
+                R.string.act005_drawer_closed
+        ) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                act027_opc_.loadDataToScreen();
+
+                ActivityCompat.invalidateOptionsMenu(Act043_Main.this);
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+
+                ActivityCompat.invalidateOptionsMenu(Act043_Main.this);
+
+            }
+        };
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        //
         recoverIntentsInfo();
+        //
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
         //
         mPresenter = new Act043_Main_Presenter_Impl(
                 context,
@@ -166,6 +245,19 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     }
 
     private void initFrags() {
+        // Drawer Opc
+        act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
+        // Dialog Acess
+        act027_opc_.setBaInfra(this);
+        // Translation Access
+        act027_opc_.setHmAux_Trans(hmAux_TransDrawer);
+        // SO Acess
+        act027_opc_.setmSm_so(mSm_so);
+        //
+        act027_opc_.setOnMenuOptionsSelected(this);
+        //
+        act027_opc_.serviceEditionColor();
+        //
         act043_frag_preview = new Act043_Frag_Preview();
         act043_frag_preview.setBaInfra(this);
         act043_frag_preview.setHmAux_Trans(hmAux_Trans);
@@ -217,6 +309,119 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         }
     }
 
+    @Override
+    public void menuOptionsSelected(String type) {
+        switch (type.toUpperCase()) {
+            case Act027_Main.SELECTION_PRODUCT_LIST:
+                callAct027(context, Act027_Main.SELECTION_PRODUCT_LIST);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_SERVICES:
+                callAct027(context, Act027_Main.SELECTION_SERVICES);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_SERIAL:
+                callAct027(context, Act027_Main.SELECTION_SERIAL);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_HEADER:
+                callAct027(context, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_APPROVAL:
+
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
+
+                    if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
+                            callAct027(context, Act027_Main.SELECTION_APPROVAL);
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_no_profile_ttl"),
+                                    hmAux_Trans.get("alert_no_profile_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                    } else {
+                        callAct027(context, Act027_Main.SELECTION_APPROVAL);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    }
+
+                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
+                    callAct027(context, Act027_Main.SELECTION_APPROVAL);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    callAct027(context, Act027_Main.SELECTION_APPROVAL);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+
+                break;
+            case Act027_Main.SELECTION_SERVICE_EDITION:
+                if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+                    if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !act027_opc_.isSoWithinTokenFile()) {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_sync_before_edit_service_ttl"),
+                                hmAux_Trans.get("alert_sync_before_edit_service_msg"),
+                                null,
+                                0
+                        );
+                    }
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_so_edit_profile_ttl"),
+                            hmAux_Trans.get("alert_no_so_edit_profile_msg"),
+                            null,
+                            0
+                    );
+                }
+                break;
+            default:
+                callAct027(context, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+        }
+    }
+
+    @Override
+    public void soSyncClick() {
+        callAct027(context,Act027_Main.SELECTION_SYNC_SERVICE);
+//        ToolBox.alertMSG(
+//                context,
+//                hmAux_Trans.get("alert_so_sync_ttl"),
+//                hmAux_Trans.get("alert_so_sync_msg"),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (ToolBox_Con.isOnline(context)) {
+//                            //Seta S.O como update required.
+//                            /*sm_soDao.addUpdate(
+//                                    new SM_SO_Sql_009(
+//                                            ToolBox_Con.getPreference_Customer_Code(context),
+//                                            mSm_so.getSo_prefix(),
+//                                            mSm_so.getSo_code()
+//                                    ).toSqlQuery()
+//                            );*/
+//                            //
+//                            setWs_process(WBR_SO_Search.class.getName());
+//                            //
+//                            executeSoSync();
+//                        } else {
+//                            ToolBox_Inf.showNoConnectionDialog(context);
+//                        }
+//                    }
+//                },
+//                1
+//        );
+
+    }
+
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
     }
@@ -261,6 +466,23 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         );
     }
 
+//    private void executeSoSync(){
+//        setWs_process(WBR_SO_Search.class.getName());
+//        //
+//        showPD(
+//            hmAux_Trans.get("progress_so_sync_ttl"),
+//            hmAux_Trans.get("progress_so_sync_msg")
+//        );
+//        //
+//        Intent mIntent = new Intent(context, WBR_SO_Search.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, String.valueOf(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code()));
+//        //
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//    }
+
     private void iniUIFooter() {
         iniFooter();
         //
@@ -295,6 +517,16 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         finish();
     }
 
+    public void callAct027(Context context, String type) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Bundle bundle = new Bundle();
+        bundle.putString(Act027_Main.REQUEST_SET_FRAG,type);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     private void hideKeyBoard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -321,9 +553,58 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
             } else {
                 //DEFINIR MSG DE ERRO
             }
+        }else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
+         //   processSoDownloadResult(hmAux);
         }
         disableProgressDialog();
     }
+//
+//      AVALIAR QUAL METODO SERÁ USADO, CLIQUE NO SYNC CHAMADA ACT027
+//      OU SE CHAMA WS DIRETAMENTE DESTA ACT
+//
+//    private void processSoDownloadResult(HMAux so_download_result) {
+//        if (so_download_result.containsKey(WS_SO_Search.SO_PREFIX_CODE) && so_download_result.containsKey(WS_SO_Search.SO_LIST_QTY)) {
+//            if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 0) {
+//                //
+//                ToolBox.alertMSG(
+//                        context,
+//                        hmAux_Trans.get("alert_so_invalid_status_ttl"),
+//                        hmAux_Trans.get("alert_so_invalid_status_msg"),
+//                        null,
+//                        0
+//                );
+//
+//            } else if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 1) {
+//                //
+//                ToolBox.alertMSG(
+//                        context,
+//                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
+//                        hmAux_Trans.get("alert_so_sync_ok_msg"),
+//                        null,
+//                        0
+//                );
+//
+//            } else {
+//                //
+//                ToolBox.alertMSG(
+//                        context,
+//                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
+//                        hmAux_Trans.get("alert_so_sync_ok_msg"),
+//                        null,
+//                        0
+//                );
+//            }
+//        } else {
+//            // ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_so_sync_param_error_ttl"),
+//                    hmAux_Trans.get("alert_so_sync_param_error_msg"),
+//                    null,
+//                    0
+//            );
+//        }
+//    }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
