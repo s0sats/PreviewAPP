@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 
 import java.util.ArrayList;
@@ -19,13 +18,13 @@ public interface Act040_Main_View {
 
     void loadMD_Partner(MD_Partner md_partner);
 
-    void loadMD_Product(MD_Product md_product);
+    //void loadMD_Product(MD_Product md_product);
 
     void callAct005(Context context);
 
-    void callAct041(Context context);
+    //void callAct041(Context context);
 
-    void jumpToOne();
+    //void jumpToOne();
 
     void automationCleanForm();
 

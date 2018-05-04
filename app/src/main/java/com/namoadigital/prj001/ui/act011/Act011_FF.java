@@ -171,6 +171,11 @@ public class Act011_FF extends Fragment {
                 }
             }
 
+            if (tabIndex == customFFs.get(customFFs.size() - 1).getmPage() && customFFs.get(0).getmPage() == customFFs.get(customFFs.size() - 1).getmPage()){
+                ll_nex.setVisibility(View.GONE);
+                ll_pre.setVisibility(View.GONE);
+            }
+
             if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                     formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                     ) {

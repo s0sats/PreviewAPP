@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +40,6 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act041.Act041_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -65,10 +63,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private MD_Site md_site;
     private MD_Operation md_operation;
 
-    private MD_Product mdProduct;
-
-    private MKEditTextNM mket_produto;
-    private ImageView iv_search_produto;
+    //private MKEditTextNM mket_produto;
+    //private ImageView iv_search_produto;
 
     private MKEditTextNM mket_serial;
     private ImageView iv_search_serial;
@@ -79,6 +75,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private boolean connectionStatusAlter;
 
     private TextView tv_status;
+    private TextView tv_prod_desc;
     private SearchableSpinner ss_partner;
 
     private Button btn_create_so;
@@ -205,22 +202,24 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 ).toSqlQuery()
         );
         //
-        mket_produto = (MKEditTextNM) findViewById(R.id.act040_mket_product);
-        iv_search_produto = (ImageView) findViewById(R.id.act040_iv_search_product);
-        mket_produto.setHint(hmAux_Trans.get("tv_product_hint"));
+//        mket_produto = (MKEditTextNM) findViewById(R.id.act040_mket_product);
+//        iv_search_produto = (ImageView) findViewById(R.id.act040_iv_search_product);
+//        mket_produto.setHint(hmAux_Trans.get("tv_product_hint"));
+        //
+        mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
+        iv_search_barcode = (ImageView) findViewById(R.id.act040_iv_search_barcode);
+        mket_barcode.setHint(hmAux_Trans.get("tv_barcode_hint"));
+        mket_barcode.requestFocus();
         //
         mket_serial = (MKEditTextNM) findViewById(R.id.act040_mket_serial);
         iv_search_serial = (ImageView) findViewById(R.id.act040_iv_search_serial);
         mket_serial.setHint(hmAux_Trans.get("tv_serial_hint"));
         //
-        mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
-        iv_search_barcode = (ImageView) findViewById(R.id.act040_iv_search_barcode);
-        mket_barcode.setHint(hmAux_Trans.get("tv_barcode_hint"));
-        //
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
         btn_create_so.setText(hmAux_Trans.get("btn_create_so"));
         //
         tv_status = (TextView) findViewById(R.id.act040_tv_status);
+        tv_prod_desc = (TextView) findViewById(R.id.act040_tv_prod_desc);
         //
         ss_partner = (SearchableSpinner) findViewById(R.id.act040_ss_partner);
         ss_partner.setmShowLabel(false);
@@ -228,7 +227,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         ss_partner.setmTitle(hmAux_Trans.get("ss_partner_ttl"));
         //
         //Add controles no array list.
-        controls_sta.add(mket_produto);
+        //controls_sta.add(mket_produto);
         controls_sta.add(mket_serial);
         controls_sta.add(mket_barcode);
         //
@@ -253,10 +252,34 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if (mSo_pack_express != null) {
             tv_status.setText(mSo_pack_express.getPack_desc());
             //
+            MD_ProductDao mdProductDao = new MD_ProductDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            md_product = mdProductDao.getByString(
+                    new MD_Product_Sql_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            mSo_pack_express.getProduct_code()
+                    ).toSqlQuery()
+            );
+            //
+            if (md_product == null) {
+                tv_prod_desc.setText("");
+            } else {
+                tv_prod_desc.setText(md_product.getProduct_desc());
+            }
+            //
+            mket_serial.setmInputTypeValidator(md_product.getSerial_rule());
+            mket_serial.setmRequired(true);
+            //
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mket_barcode.getWindowToken(), 0);
         } else {
-            if (md_product == null || express_code.isEmpty()) {
+            tv_prod_desc.setText("");
+
+            if (express_code.isEmpty()) {
                 tv_status.setText("");
             } else {
                 tv_status.setText(hmAux_Trans.get("status_no_pack_msg"));
@@ -278,18 +301,18 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         this.ss_partner.setmValue(md_partner_hm);
     }
 
-    @Override
-    public void loadMD_Product(MD_Product md_product) {
-        this.md_product = md_product;
-        //
-        mPresenter.setSO_Pack_Express(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
-                ToolBox_Con.getPreference_Operation_Code(context),
-                md_product.getProduct_code(),
-                mket_barcode.getText().toString().trim()
-        );
-    }
+//    @Override
+//    public void loadMD_Product(MD_Product md_product) {
+//        this.md_product = md_product;
+//        //
+//        mPresenter.setSO_Pack_Express(
+//                ToolBox_Con.getPreference_Customer_Code(context),
+//                Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
+//                ToolBox_Con.getPreference_Operation_Code(context),
+//                md_product.getProduct_code(),
+//                mket_barcode.getText().toString().trim()
+//        );
+//    }
 
     @Override
     public void setPartnerList(ArrayList<HMAux> partnerList) {
@@ -316,12 +339,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private void initActions() {
 
-        iv_search_produto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callAct041(context);
-            }
-        });
+//        iv_search_produto.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                callAct041(context);
+//            }
+//        });
 
         mket_barcode.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
@@ -333,9 +356,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 if (b) {
                     mPresenter.setSO_Pack_Express(
                             ToolBox_Con.getPreference_Customer_Code(context),
-                            Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
-                            ToolBox_Con.getPreference_Operation_Code(context),
-                            md_product != null ? md_product.getProduct_code() : -1,
                             s
                     );
                 } else {
@@ -365,13 +385,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
 
-                if (mket_serial.isValid()){
-                    Log.d("SERIAL_TEST", "VERDADEIRO");
-                } else {
-                    Log.d("SERIAL_TEST", "FALSO");
-                }
-
-                if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.getText().toString().trim().length() != 0) {
+                if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(mket_serial.getText().toString())) {
 
                     ToolBox.alertMSG(
                             context,
@@ -404,7 +418,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         result = hmAux_Trans.get("status_no_partner_msg");
                     } else if (md_product == null) {
                         result = hmAux_Trans.get("status_no_product_msg");
-                    } else if (mket_serial.getText().toString().trim().length() == 0) {
+                    } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(mket_serial.getText().toString())) {
+                        result = "Serial e Pack Code Iguais - Trad";
+                    } else if (!mket_serial.isValid()) {
                         result = hmAux_Trans.get("status_no_serial_msg");
                     } else {
                         result = "";
@@ -432,72 +448,76 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         finish();
     }
 
-    @Override
-    public void jumpToOne() {
-        iv_search_produto.setVisibility(View.GONE);
-        callAct041(context);
-    }
+//    @Override
+//    public void jumpToOne() {
+//        iv_search_produto.setVisibility(View.GONE);
+//        callAct041(context);
+//    }
 
-    @Override
-    public void callAct041(Context context) {
-        Intent mIntent = new Intent(context, Act041_Main.class);
-        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = getIntent().getExtras();
+//    @Override
+//    public void callAct041(Context context) {
+//        Intent mIntent = new Intent(context, Act041_Main.class);
+//        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        Bundle bundle = getIntent().getExtras();
+//
+//        if (bundle == null) {
+//            bundle = new Bundle();
+//        }
+//
+//        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_PACK_EXPRESS);
+//        mIntent.putExtras(bundle);
+//
+//        startActivityForResult(mIntent, PROCESSO_PRODUCT_CODE);
+//    }
 
-        if (bundle == null) {
-            bundle = new Bundle();
-        }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        switch (requestCode) {
+//            case PROCESSO_PRODUCT_CODE:
+//                processProduct_Code(resultCode, data);
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
-        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_PACK_EXPRESS);
-        mIntent.putExtras(bundle);
-
-        startActivityForResult(mIntent, PROCESSO_PRODUCT_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PROCESSO_PRODUCT_CODE:
-                processProduct_Code(resultCode, data);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void processProduct_Code(int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            MD_ProductDao mdProductDao = new MD_ProductDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-            );
-            //
-            mdProduct = mdProductDao.getByString(
-                    new MD_Product_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            Long.parseLong(data.getStringExtra("product_code"))
-                    ).toSqlQuery()
-            );
-            //
-            if (mdProduct != null) {
-                mket_produto.setText(mdProduct.getProduct_desc());
-                //
-                loadMD_Product(mdProduct);
-            } else {
-                mket_produto.setText("");
-            }
-
-        } else {
-        }
-    }
+//    private void processProduct_Code(int resultCode, Intent data) {
+//        if (resultCode == RESULT_OK) {
+//            MD_ProductDao mdProductDao = new MD_ProductDao(
+//                    context,
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                    Constant.DB_VERSION_CUSTOM
+//            );
+//            //
+//            mdProduct = mdProductDao.getByString(
+//                    new MD_Product_Sql_001(
+//                            ToolBox_Con.getPreference_Customer_Code(context),
+//                            Long.parseLong(data.getStringExtra("product_code"))
+//                    ).toSqlQuery()
+//            );
+//            //
+//            if (mdProduct != null) {
+//                mket_produto.setText(mdProduct.getProduct_desc());
+//                //
+//                loadMD_Product(mdProduct);
+//            } else {
+//                mket_produto.setText("");
+//            }
+//
+//        } else {
+//        }
+//    }
 
     @Override
     public void automationCleanForm() {
-        mket_serial.setText("");
         mket_barcode.setText("");
+        mket_serial.setText("");
+        mket_serial.setmInputTypeValidator("");
         //
-        mket_serial.requestFocus();
+        mSo_pack_express = null;
+        md_product = null;
+        //
+        mket_barcode.requestFocus();
     }
 
     @Override

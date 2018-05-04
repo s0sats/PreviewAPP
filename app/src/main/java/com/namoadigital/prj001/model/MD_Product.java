@@ -20,7 +20,11 @@ public class MD_Product {
     private Integer sketch_columns;
     private String sketch_color;
     private int flag_offline;
+    private String serial_rule;
 
+    public MD_Product() {
+        this.serial_rule = "SERIAL";
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -132,5 +136,13 @@ public class MD_Product {
 
     public void setFlag_offline(int flag_offline) {
         this.flag_offline = flag_offline;
+    }
+
+    public String getSerial_rule() {
+        return serial_rule;
+    }
+
+    public void setSerial_rule(String serial_rule) {
+        this.serial_rule = serial_rule;
     }
 }

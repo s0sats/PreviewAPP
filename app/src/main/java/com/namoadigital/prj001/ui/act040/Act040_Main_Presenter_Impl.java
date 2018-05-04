@@ -23,7 +23,7 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_001;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -53,15 +53,28 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         this.md_partnerDao = md_partnerDao;
     }
 
+//    @Override
+//    public void setSO_Pack_Express(long customer_code, long site_code, long operation_code, long product_code, String express_code) {
+//        mView.loadSO_Pack_Express(
+//                so_pack_expressDao.getByString(
+//                        new SO_Pack_Express_Sql_001(
+//                                customer_code,
+//                                site_code,
+//                                operation_code,
+//                                product_code,
+//                                express_code
+//                        ).toSqlQuery()
+//                ),
+//                express_code
+//        );
+//    }
+
     @Override
-    public void setSO_Pack_Express(long customer_code, long site_code, long operation_code, long product_code, String express_code) {
+    public void setSO_Pack_Express(long customer_code, String express_code) {
         mView.loadSO_Pack_Express(
                 so_pack_expressDao.getByString(
-                        new SO_Pack_Express_Sql_001(
+                        new SO_Pack_Express_Sql_005(
                                 customer_code,
-                                site_code,
-                                operation_code,
-                                product_code,
                                 express_code
                         ).toSqlQuery()
                 ),
@@ -102,7 +115,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         if (qtd == 0) {
 
         } else if (qtd == 1) {
-            mView.jumpToOne();
+            //mView.jumpToOne();
         } else {
         }
     }

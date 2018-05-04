@@ -39,89 +39,42 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/border_back"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="10dp">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:background="@drawable/border_back"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:paddingBottom="5dp"-->
+                <!--android:paddingLeft="5dp"-->
+                <!--android:paddingRight="5dp"-->
+                <!--android:paddingTop="10dp">-->
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act040_mket_product"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:hint="Produto"
-                    android:inputType="text"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false" />
+                <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+                    <!--android:id="@+id/act040_mket_product"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:enabled="false"-->
+                    <!--android:hint="Produto"-->
+                    <!--android:inputType="text"-->
+                    <!--app:mBARCODE="false"-->
+                    <!--app:mNFC="false"-->
+                    <!--app:mOCR="false" />-->
 
-                <ImageView
-                    android:id="@+id/act040_iv_search_product"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="7dp"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_lupa_states" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/act040_iv_search_product"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:focusable="false"-->
+                    <!--android:paddingBottom="4dp"-->
+                    <!--android:paddingLeft="15dp"-->
+                    <!--android:paddingRight="15dp"-->
+                    <!--android:paddingTop="4dp"-->
+                    <!--android:src="@drawable/ic_lupa_states" />-->
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="5dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/border_back"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="10dp">
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act040_mket_serial"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Serial"
-                    android:inputType="text"
-                    app:mInputTypeValidator="SERIAL"
-                    app:mBARCODE="true"
-                    app:mNFC="false"
-                    app:mOCR="false" />
-
-                <ImageView
-                    android:id="@+id/act040_iv_search_serial"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="7dp"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_lupa_states"
-                    android:visibility="gone" />
-
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
         </LinearLayout>
 
@@ -171,12 +124,118 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act040_mket_serial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Serial"
+                    android:inputType="textMultiLine"
+                    app:mInputTypeValidator="SERIAL"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+                <ImageView
+                    android:id="@+id/act040_iv_search_serial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:focusable="false"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="4dp"
+                    android:src="@drawable/ic_lupa_states"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="5dp">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:background="@drawable/border_back"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:paddingBottom="5dp"-->
+                <!--android:paddingLeft="5dp"-->
+                <!--android:paddingRight="5dp"-->
+                <!--android:paddingTop="10dp">-->
+
+                <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+                    <!--android:id="@+id/act040_mket_barcode"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:hint="BarCode"-->
+                    <!--android:inputType="text"-->
+                    <!--app:mBARCODE="true"-->
+                    <!--app:mNFC="false"-->
+                    <!--app:mOCR="false" />-->
+
+                <!--<ImageView-->
+                    <!--android:id="@+id/act040_iv_search_barcode"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:focusable="false"-->
+                    <!--android:paddingBottom="4dp"-->
+                    <!--android:paddingLeft="15dp"-->
+                    <!--android:paddingRight="15dp"-->
+                    <!--android:paddingTop="4dp"-->
+                    <!--android:src="@drawable/ic_lupa_states"-->
+                    <!--android:visibility="gone" />-->
+
+            <!--</LinearLayout>-->
+
+        <!--</LinearLayout>-->
+
         <TextView
+            android:layout_marginTop="10dp"
             android:id="@+id/act040_tv_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text=""
+            android:textSize="@dimen/font_size_title_md" />
+
+        <TextView
+            android:id="@+id/act040_tv_prod_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:text=""
+            android:textColor="@color/namoa_color_danger_red"
             android:textSize="@dimen/font_size_title_md" />
 
 

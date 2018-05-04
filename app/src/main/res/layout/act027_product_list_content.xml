@@ -9,12 +9,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:clickable="false"
         android:focusable="false"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="2dp">
+        android:orientation="horizontal">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act027_product_list_content_mket_product"
@@ -25,16 +23,13 @@
             android:inputType="text"
             app:mBARCODE="false"
             app:mNFC="false"
-            app:mOCR="false"
-
-            />
+            app:mOCR="false" />
 
         <ImageView
             android:id="@+id/act027_product_list_content_iv_new_event"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:padding="0dp"
             android:src="@drawable/ic_adicionar_filled_states" />
 
     </LinearLayout>
