@@ -26,19 +26,19 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Gallery_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
 import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
@@ -81,13 +81,13 @@ public class Act027_Product_Edit extends BaseFragment {
     private TextView tv_nick;
     private TextView tv_date;
 
-    private MD_ProductDao md_productDao;
+    private MD_All_ProductDao md_all_productDao;
     private SM_SO_Product_EventDao sm_so_product_eventDao;
     private SM_SO_Product_Event_FileDao sm_so_product_event_fileDao;
     private SM_SO_Product_Event_SketchDao sm_so_product_event_sketchDao;
 
     private SM_SO mSm_so;
-    private MD_Product md_product;
+    private MD_All_Product md_all_product;
     private SM_SO_Product_Event mSm_so_product_event;
 
     private int mProductCode = -1;
@@ -204,11 +204,7 @@ public class Act027_Product_Edit extends BaseFragment {
         tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
         tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
 
-        md_productDao = new MD_ProductDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
+        md_all_productDao = new MD_All_ProductDao(context);
 
         sm_so_product_eventDao = new SM_SO_Product_EventDao(
                 context,
@@ -239,8 +235,8 @@ public class Act027_Product_Edit extends BaseFragment {
             );
 
         } else {
-            md_product = md_productDao.getByString(
-                    new MD_Product_Sql_001(
+            md_all_product = md_all_productDao.getByString(
+                    new MD_All_Product_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             (long) mProductCode
 
@@ -264,21 +260,21 @@ public class Act027_Product_Edit extends BaseFragment {
             mSm_so_product_event.setSo_code(mSm_so.getSo_code());
             mSm_so_product_event.setSeq(0);
             mSm_so_product_event.setSeq_tmp(seq_tmp);
-            mSm_so_product_event.setProduct_code((int) md_product.getProduct_code());
-            mSm_so_product_event.setProduct_id(md_product.getProduct_id());
-            mSm_so_product_event.setProduct_desc(md_product.getProduct_desc());
-            mSm_so_product_event.setUn(md_product.getUn());
+            mSm_so_product_event.setProduct_code((int) md_all_product.getProduct_code());
+            mSm_so_product_event.setProduct_id(md_all_product.getProduct_id());
+            mSm_so_product_event.setProduct_desc(md_all_product.getProduct_desc());
+            mSm_so_product_event.setUn(md_all_product.getUn());
             mSm_so_product_event.setFlag_apply(0);
             mSm_so_product_event.setFlag_repair(0);
             mSm_so_product_event.setFlag_inspection(0);
             mSm_so_product_event.setQty_apply("");
-            mSm_so_product_event.setSketch_code(md_product.getSketch_code());
-            mSm_so_product_event.setSketch_name(md_product.getSketch_url_local());
-            mSm_so_product_event.setSketch_url(md_product.getSketch_url());
-            mSm_so_product_event.setSketch_url_local(md_product.getSketch_url_local());
-            mSm_so_product_event.setSketch_lines(md_product.getSketch_lines());
-            mSm_so_product_event.setSketch_columns(md_product.getSketch_columns());
-            mSm_so_product_event.setSketch_color(md_product.getSketch_color());
+            mSm_so_product_event.setSketch_code(md_all_product.getSketch_code());
+            mSm_so_product_event.setSketch_name(md_all_product.getSketch_url_local());
+            mSm_so_product_event.setSketch_url(md_all_product.getSketch_url());
+            mSm_so_product_event.setSketch_url_local(md_all_product.getSketch_url_local());
+            mSm_so_product_event.setSketch_lines(md_all_product.getSketch_lines());
+            mSm_so_product_event.setSketch_columns(md_all_product.getSketch_columns());
+            mSm_so_product_event.setSketch_color(md_all_product.getSketch_color());
             mSm_so_product_event.setComments("");
             mSm_so_product_event.setStatus("");
             mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));

@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
@@ -23,6 +24,8 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
+import com.namoadigital.prj001.sql.MD_All_Product_Sql_004;
+import com.namoadigital.prj001.sql.MD_All_Product_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_004;
@@ -62,6 +65,10 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             ArrayList<HMAux> dados = new ArrayList<>();
             ArrayList<HMAux> dados_geral = new ArrayList<>();
+            MD_ProductDao productDao = null;
+            ArrayList<HMAux> product_sketch_list = new ArrayList<>();
+            MD_All_ProductDao allProductDao = null;
+            ArrayList<HMAux> all_product_sketch_list = new ArrayList<>();
             //
             GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
                     getApplicationContext(),
@@ -84,6 +91,26 @@ public class WS_DownLoad_Picture extends IntentService {
                             new GE_Custom_Form_Field_Local_Sql_001().toSqlQuery().toLowerCase()
                     )
             );
+            //CROQUIS MD Products
+            productDao = new MD_ProductDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
+                    new MD_Product_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //CROQUIS MD ALL Products
+            allProductDao = new MD_All_ProductDao(getApplicationContext());
+            //
+            all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
+                    new MD_All_Product_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
             /**
              *
              * LISTAS VINCULADAS AS.O
@@ -91,8 +118,6 @@ public class WS_DownLoad_Picture extends IntentService {
              */
             SM_SO_Service_Exec_Task_FileDao taskFileDao = null;
             ArrayList<HMAux> so_file_list = new ArrayList<>();
-            MD_ProductDao productDao = null;
-            ArrayList<HMAux> product_sketch_list = new ArrayList<>();
             SM_SO_Product_EventDao eventDao = null;
             ArrayList<HMAux> event_sketch_list = new ArrayList<>();
             SM_SO_Product_Event_FileDao eventFileDao = null;
@@ -113,18 +138,6 @@ public class WS_DownLoad_Picture extends IntentService {
                                 ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                         ).toSqlQuery()
                         )
-                );
-                //CROQUIS
-                productDao = new MD_ProductDao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
-                        new MD_Product_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                        ).toSqlQuery()
                 );
                 //CROQUIS PRODUTO EVENTO
                 eventDao = new SM_SO_Product_EventDao(
@@ -184,6 +197,7 @@ public class WS_DownLoad_Picture extends IntentService {
             if(  dados_geral.size() == 0
                  && so_file_list.size() == 0
                  && product_sketch_list.size() == 0
+                 && all_product_sketch_list.size() == 0
                  && event_sketch_list.size() == 0
                  && event_file_list.size() == 0
                  && roomImgList.size() == 0
@@ -271,6 +285,56 @@ public class WS_DownLoad_Picture extends IntentService {
             }
             //endregion
 
+            //region MD Product
+            /*
+             * Download croquis de MD Produtos e MD ALL Products
+             */
+            //
+            for (HMAux hmAux : product_sketch_list) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            hmAux.get(MD_ProductDao.SKETCH_URL),
+                            Constant.CACHE_PATH + "/" + hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                }
+                //Atualiza campo com url local
+                productDao.addUpdate(
+                        new MD_Product_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                hmAux.get(MD_ProductDao.PRODUCT_CODE),
+                                hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
+                        ).toSqlQuery()
+                );
+            }
+
+            for (HMAux hmAux : all_product_sketch_list) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            hmAux.get(MD_All_ProductDao.SKETCH_URL),
+                            Constant.CACHE_PATH + "/" + hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                }
+                //Atualiza campo com url local
+                allProductDao.addUpdate(
+                        new MD_All_Product_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                hmAux.get(MD_All_ProductDao.PRODUCT_CODE),
+                                hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
+                        ).toSqlQuery()
+                );
+            }//FIM CROQUI
+            //endregion  MD Product
+
             /**
              * Download de files do S.O
              */
@@ -310,32 +374,6 @@ public class WS_DownLoad_Picture extends IntentService {
                     );
                 }
                 //
-                /*
-                * Download croquis de Produtos
-                */
-                //
-                for (HMAux hmAux : product_sketch_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
-
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(MD_ProductDao.SKETCH_URL),
-                                Constant.CACHE_PATH + "/" + hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
-                        );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
-                    }
-                    //Atualiza campo com url local
-                    productDao.addUpdate(
-                            new MD_Product_Sql_005(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                    hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
-                            ).toSqlQuery()
-                    );
-                }//FIM CROQUI
-
                 /*
                 * Download croqui dos eventos(croquis da sm_so_product_events)
                 */
