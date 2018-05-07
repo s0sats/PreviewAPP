@@ -262,12 +262,17 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             //
             if (md_product == null) {
                 tv_prod_desc.setText("");
+                mket_serial.setmInputTypeValidator(null);
+                mket_serial.setmRequired(true);
+                mket_serial.setmMinSize(null);
+                mket_serial.setmMaxSize(null);
             } else {
                 tv_prod_desc.setText(md_product.getProduct_desc());
+                mket_serial.setmInputTypeValidator(md_product.getSerial_rule());
+                mket_serial.setmRequired(true);
+                mket_serial.setmMinSize(md_product.getSerial_min_length());
+                mket_serial.setmMaxSize(md_product.getSerial_max_length());
             }
-            //
-            mket_serial.setmInputTypeValidator(md_product.getSerial_rule());
-            mket_serial.setmRequired(true);
             //
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mket_barcode.getWindowToken(), 0);
@@ -393,9 +398,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     } else if (md_product == null) {
                         result = hmAux_Trans.get("status_no_product_msg");
                     } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(mket_serial.getText().toString())) {
-                        result = "Serial e Pack Code Iguais - Trad";
+                        result = hmAux_Trans.get("pack_equals_serial_msg");
                     } else if (!mket_serial.isValid()) {
-                        result = hmAux_Trans.get("status_no_serial_msg");
+                        //result = hmAux_Trans.get("status_no_serial_msg");
+                        result = mket_serial.getmErrorMSG();
                     } else {
                         result = "";
                     }
