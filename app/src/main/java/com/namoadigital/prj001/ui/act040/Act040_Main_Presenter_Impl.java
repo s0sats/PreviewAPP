@@ -79,11 +79,6 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public boolean processValidation(SO_Pack_Express mSo_pack_express, long partner_code, long product_code, String serial) {
-        return false;
-    }
-
-    @Override
     public void checkJump(long customer_code) {
         int qtd = 0;
 
