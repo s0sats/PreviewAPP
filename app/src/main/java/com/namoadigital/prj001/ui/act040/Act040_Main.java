@@ -202,10 +202,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 ).toSqlQuery()
         );
         //
-//        mket_produto = (MKEditTextNM) findViewById(R.id.act040_mket_product);
-//        iv_search_produto = (ImageView) findViewById(R.id.act040_iv_search_product);
-//        mket_produto.setHint(hmAux_Trans.get("tv_product_hint"));
-        //
         mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
         iv_search_barcode = (ImageView) findViewById(R.id.act040_iv_search_barcode);
         mket_barcode.setHint(hmAux_Trans.get("tv_barcode_hint"));
@@ -227,7 +223,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         ss_partner.setmTitle(hmAux_Trans.get("ss_partner_ttl"));
         //
         //Add controles no array list.
-        //controls_sta.add(mket_produto);
         controls_sta.add(mket_serial);
         controls_sta.add(mket_barcode);
         //
@@ -301,19 +296,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         this.ss_partner.setmValue(md_partner_hm);
     }
 
-//    @Override
-//    public void loadMD_Product(MD_Product md_product) {
-//        this.md_product = md_product;
-//        //
-//        mPresenter.setSO_Pack_Express(
-//                ToolBox_Con.getPreference_Customer_Code(context),
-//                Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
-//                ToolBox_Con.getPreference_Operation_Code(context),
-//                md_product.getProduct_code(),
-//                mket_barcode.getText().toString().trim()
-//        );
-//    }
-
     @Override
     public void setPartnerList(ArrayList<HMAux> partnerList) {
         ss_partner.setmOption(partnerList);
@@ -338,14 +320,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private void initActions() {
-
-//        iv_search_produto.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                callAct041(context);
-//            }
-//        });
-
         mket_barcode.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -447,66 +421,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         startActivity(mIntent);
         finish();
     }
-
-//    @Override
-//    public void jumpToOne() {
-//        iv_search_produto.setVisibility(View.GONE);
-//        callAct041(context);
-//    }
-
-//    @Override
-//    public void callAct041(Context context) {
-//        Intent mIntent = new Intent(context, Act041_Main.class);
-//        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        Bundle bundle = getIntent().getExtras();
-//
-//        if (bundle == null) {
-//            bundle = new Bundle();
-//        }
-//
-//        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_PACK_EXPRESS);
-//        mIntent.putExtras(bundle);
-//
-//        startActivityForResult(mIntent, PROCESSO_PRODUCT_CODE);
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        switch (requestCode) {
-//            case PROCESSO_PRODUCT_CODE:
-//                processProduct_Code(resultCode, data);
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    private void processProduct_Code(int resultCode, Intent data) {
-//        if (resultCode == RESULT_OK) {
-//            MD_ProductDao mdProductDao = new MD_ProductDao(
-//                    context,
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                    Constant.DB_VERSION_CUSTOM
-//            );
-//            //
-//            mdProduct = mdProductDao.getByString(
-//                    new MD_Product_Sql_001(
-//                            ToolBox_Con.getPreference_Customer_Code(context),
-//                            Long.parseLong(data.getStringExtra("product_code"))
-//                    ).toSqlQuery()
-//            );
-//            //
-//            if (mdProduct != null) {
-//                mket_produto.setText(mdProduct.getProduct_desc());
-//                //
-//                loadMD_Product(mdProduct);
-//            } else {
-//                mket_produto.setText("");
-//            }
-//
-//        } else {
-//        }
-//    }
 
     @Override
     public void automationCleanForm() {

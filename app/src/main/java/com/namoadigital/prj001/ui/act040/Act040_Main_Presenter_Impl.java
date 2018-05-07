@@ -53,22 +53,6 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         this.md_partnerDao = md_partnerDao;
     }
 
-//    @Override
-//    public void setSO_Pack_Express(long customer_code, long site_code, long operation_code, long product_code, String express_code) {
-//        mView.loadSO_Pack_Express(
-//                so_pack_expressDao.getByString(
-//                        new SO_Pack_Express_Sql_001(
-//                                customer_code,
-//                                site_code,
-//                                operation_code,
-//                                product_code,
-//                                express_code
-//                        ).toSqlQuery()
-//                ),
-//                express_code
-//        );
-//    }
-
     @Override
     public void setSO_Pack_Express(long customer_code, String express_code) {
         mView.loadSO_Pack_Express(

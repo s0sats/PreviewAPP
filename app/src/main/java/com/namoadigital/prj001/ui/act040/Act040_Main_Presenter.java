@@ -24,8 +24,6 @@ public interface Act040_Main_Presenter {
 
     void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, MD_Site md_site, MD_Operation md_operation, boolean connectionStatusAlter);
 
-    boolean processValidation(SO_Pack_Express mSo_pack_express, long partner_code, long product_code, String serial);
-
     void executeSO_Pack_Express_Local(boolean connectionStatusAlter);
 
 }
