@@ -232,13 +232,13 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                     switch (v.getId()) {
                         case R.id.act021_iv_search_serial:
                             //
-                            if (mket_serial.getText().toString().trim().length() > 0) {
+                            if (ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()).length() > 0) {
                                 search_pressed = R.id.act021_iv_search_serial;
                                 //Limpa campo tracking
                                 mket_tracking.setText("");
                                 //Chama Ws que consulta Seriais
                                 mPresenter.executeSerialTracking(
-                                        mket_serial.getText().toString().trim(),
+                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
                                         mket_tracking.getText().toString().trim()
                                 );
 
@@ -256,7 +256,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                                 mket_serial.setText("");
                                 //Chama Ws que consulta Seriais
                                 mPresenter.executeSerialTracking(
-                                        mket_serial.getText().toString().trim(),
+                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
                                         mket_tracking.getText().toString().trim()
                                 );
                             } else {

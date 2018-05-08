@@ -364,7 +364,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
 
-                if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(mket_serial.getText().toString())) {
+                if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()))) {
 
                     ToolBox.alertMSG(
                             context,
@@ -377,7 +377,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                             mSo_pack_express,
                                             md_partner,
                                             md_product,
-                                            mket_serial.getText().toString().trim(),
+                                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
                                             md_site,
                                             md_operation,
                                             connectionStatusAlter
@@ -397,7 +397,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         result = hmAux_Trans.get("status_no_partner_msg");
                     } else if (md_product == null) {
                         result = hmAux_Trans.get("status_no_product_msg");
-                    } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(mket_serial.getText().toString())) {
+                    } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()))) {
                         result = hmAux_Trans.get("pack_equals_serial_msg");
                     } else if (!mket_serial.isValid()) {
                         //result = hmAux_Trans.get("status_no_serial_msg");

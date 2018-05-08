@@ -4158,4 +4158,8 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String removeAllLineBreaks(String text){
+        return text.trim().replaceAll("\\r|\\n","");
+    }
+
 }

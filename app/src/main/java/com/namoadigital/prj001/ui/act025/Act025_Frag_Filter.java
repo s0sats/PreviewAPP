@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -122,7 +123,7 @@ public class Act025_Frag_Filter extends Fragment {
                 if (delegate != null){
                     delegate.onIvSearchClick(
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim(),
+                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
                             mket_tracking.getText().toString().trim()
 
                     );

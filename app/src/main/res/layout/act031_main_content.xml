@@ -214,7 +214,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/namoa_bg_1"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:textSize="@dimen/font_size_title"
                 app:mNFC="false"

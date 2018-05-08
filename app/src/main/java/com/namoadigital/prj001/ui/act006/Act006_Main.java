@@ -199,10 +199,10 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             public void onClick(View v) {
                 ToolBox_Inf.hideSoftKeyboard(Act006_Main.this);
                 //
-                if (mket_serial.getText().toString().trim().length() > 0) {
+                if (ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()).length() > 0) {
                     //Chama Ws que consulta Seriais
                     mPresenter.executeSerialSearch(
-                            mket_serial.getText().toString().trim()
+                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim())
                     );
 
                 } else {

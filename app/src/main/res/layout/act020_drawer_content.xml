@@ -106,7 +106,7 @@
                 android:id="@+id/act020_drawer_content_mket_serial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:paddingLeft="10dp"
                 app:mBARCODE="true"
                 app:mNFC="false"

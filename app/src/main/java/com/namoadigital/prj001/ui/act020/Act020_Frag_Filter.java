@@ -135,7 +135,7 @@ public class Act020_Frag_Filter extends Fragment {
                     delegate.onIvSearchClick(
                             //mket_product.getText().toString().trim(),
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim(),
+                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
                             mket_tracking.getText().toString().trim()
                     );
                 }
