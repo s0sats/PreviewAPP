@@ -431,6 +431,15 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         mket_serial_id.setText(bundle_serial_id);
         //
+        if(new_serial && !mket_serial_id.isValid()){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("act031_title"),
+                    mket_serial_id.getmErrorMSG(),
+                    null,
+                    0
+            );
+        }
         mPresenter.saveNewSerialInfo(serialObj);
 //        if (new_serial) {
 //            mPresenter.saveNewSerialInfo(product_code, bundle_serial_id);
@@ -492,7 +501,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         iv_action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mket_text = mket_tracking.getText().toString().trim().toUpperCase();
+                String mket_text =  mket_tracking.getText().toString().trim().toUpperCase();
 
                 if (mket_text.length() > 0) {
 
@@ -788,36 +797,42 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         listnerSearchSO = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //validateSerialProperties esta comentado , mas seráa validação oficial no futuro.
-                //if(validateSerialProperties(serialProperties)) {
-                if (validadeSerialLocation()) {
-                    if (checkSerialChangesV2(serialProperties)) {
-                        if(ToolBox_Con.isOnline(context)) {
-                            mket_serial_id.setEnabled(false);
-                            //
-                            buildSerialFull();
-                            //
-                            serialObj.setSerial_id(mket_serial_id.getText().toString().trim());
-                            //
-                            mPresenter.updateSerialInfo(serialObj);
-                        }else{
+                if(!new_serial || mket_serial_id.isValid()) {
+                    //validateSerialProperties esta comentado , mas seráa validação oficial no futuro.
+                    //if(validateSerialProperties(serialProperties)) {
+                    if (validadeSerialLocation()) {
+                        if (checkSerialChangesV2(serialProperties)) {
+                            if (ToolBox_Con.isOnline(context)) {
+                                mket_serial_id.setEnabled(false);
+                                //
+                                buildSerialFull();
+                                //
+                                serialObj.setSerial_id(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()));
+                                //
+                                mPresenter.updateSerialInfo(serialObj);
+                            } else {
+                                showAlertDialog(
+                                        hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+                                        hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                                );
+                            }
+                        } else {
+                            //mPresenter.executeSaveSerial(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
                             showAlertDialog(
-                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
-                                    hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                                    hmAux_Trans.get("alert_no_data_changes_ttl"),
+                                    hmAux_Trans.get("alert_no_data_changes_msg")
                             );
                         }
                     } else {
-                        //mPresenter.executeSaveSerial(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
                         showAlertDialog(
-                                hmAux_Trans.get("alert_no_data_changes_ttl"),
-                                hmAux_Trans.get("alert_no_data_changes_msg")
+                                hmAux_Trans.get("alert_invalid_serial_local_ttl"),
+                                hmAux_Trans.get("alert_invalid_serial_local_msg")
                         );
                     }
-                } else {
+                }else{
                     showAlertDialog(
-                            hmAux_Trans.get("alert_invalid_serial_local_ttl"),
-                            hmAux_Trans.get("alert_invalid_serial_local_msg")
+                            hmAux_Trans.get("act031_title"),
+                            mket_serial_id.getmErrorMSG()
                     );
                 }
             }
@@ -1087,6 +1102,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         if (md_product.getAllow_new_serial_cl() == 1) {
             tv_allow_new_val.setText("(" + hmAux_Trans.get("YES").toUpperCase() + ")");
         }
+        //
+        mket_serial_id.setmInputTypeValidator(product.getSerial_rule());
+        mket_serial_id.setmMinSize(product.getSerial_min_length());
+        mket_serial_id.setmMaxSize(product.getSerial_max_length());
     }
 
     @Override
