@@ -13,6 +13,10 @@ import com.namoadigital.prj001.database.Specification;
  * Após a mudança do obj md_product, foi necessario adicionar os campos
  * un, sketch_code, sketch_url, sketch_url_local, sketch_lines, sketch_columns e sketch_olor
  * com valores chumbados para q o obj gerado pela query não desse NULL
+ * 08/05/2018
+ * Após nova mudança do obj md_product, foi necessario adicionar os campos
+ * local_control , io_control , serial_rule , serial_min_length , serial_max_length
+ * * com valores chumbados para q o obj gerado pela query não desse NULL
  */
 
 public class Sql_Act008_002 implements Specification {
@@ -45,7 +49,7 @@ public class Sql_Act008_002 implements Specification {
                         "   l.custom_product_desc product_desc,\n" +
                         "   l.require_serial,\n" +
                         "   l.allow_new_serial_cl,\n" +
-                        "   '0' flag_offline,\n" +
+                        //"   '0' flag_offline,\n" +
                         "   'TST' un,\n" +
                         "   0 sketch_code,\n" +
                         "   '' sketch_url,\n" +
@@ -53,7 +57,12 @@ public class Sql_Act008_002 implements Specification {
                         "   0 sketch_lines,\n" +
                         "   0 sketch_columns,\n" +
                         "   '#FFFFFF' sketch_color\n," +
-                        "   1 flag_offline\n" +
+                        "   1 flag_offline,\n" +
+                        "   0 local_control,\n" +
+                        "   0 io_control,\n" +
+                        "   null serial_rule,\n" +
+                        "   null serial_min_length,\n" +
+                        "   null serial_max_length\n" +
                         " FROM\n " +
                         GE_Custom_Form_LocalDao.TABLE + " l \n" +
                         " \n" +
