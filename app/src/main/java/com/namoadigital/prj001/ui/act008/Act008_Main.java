@@ -242,11 +242,25 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             @Override
             public void onClick(View view) {
                 //
-                mPresenter.validateSerial(
-                        mket_serial_id.getText().toString(),
-                        serial_required,
-                        serial_allow_new
-                );
+//                if (mket_serial_id.isValid()) {
+                    mPresenter.validateSerial(
+                            ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()),
+                            serial_required,
+                            serial_allow_new
+                    );
+//                } else {
+//                    String result = mket_serial_id.getmErrorMSG();
+//                    //
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_serial_invalid_ttl"),
+//                            result,
+//                            null,
+//                            -1,
+//                            false
+//                    );
+//
+//                }
             }
         });
 
@@ -269,9 +283,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         serial_required = md_product.getRequire_serial();
         serial_allow_new = md_product.getAllow_new_serial_cl();
         //
+        mket_serial_id.setmInputTypeValidator(md_product.getSerial_rule());
+        mket_serial_id.setmMinSize(md_product.getSerial_min_length());
+        mket_serial_id.setmMaxSize(md_product.getSerial_max_length());
+        //
         tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
         if( md_product.getRequire_serial() == 1){
+            mket_serial_id.setmRequired(true);
             tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+        } else {
+            mket_serial_id.setmRequired(false);
         }
         //
         tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
@@ -324,7 +345,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }else{
 
             if(serial_allow_new == 0 &&
-               mket_serial_id.getText().toString().trim().length() > 0
+                    ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()).length() > 0
             ){
                 title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
                 msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
@@ -361,7 +382,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             mPresenter.defineFlow();
         }else {
             if (serial_allow_new == 0 &&
-                    mket_serial_id.getText().toString().trim().length() > 0
+                    ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()).length() > 0
                     ) {
                 title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
                 msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
@@ -446,7 +467,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             Intent mIntent =  new Intent(context, Act009_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+            bundle.putString(Constant.ACT008_SERIAL_ID,ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
             bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
 
@@ -467,7 +488,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct011(Context context) {
         Intent mIntent =  new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+        bundle.putString(Constant.ACT008_SERIAL_ID,ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()));
 
         mIntent.putExtras(bundle);
 
@@ -505,7 +526,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         disableProgressDialog();
         //Atualiza data na tabela de produtos loca
         mPresenter.updateSyncChecklist();
-        mPresenter.proceedToSerialProcess(mket_serial_id.getText().toString().trim() , serial_required);
+        mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
 
     }
     //TRATA MSG SESSION NOT FOUND
