@@ -42,6 +42,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String REQUIRED = "required";
     public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
+    public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
     public static final String CUSTOM_FORM_FIELD_DESC = "custom_form_field_desc";
 
     public GE_Custom_Form_Field_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -342,6 +343,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setAutomatic(cursor.getString(cursor.getColumnIndex(AUTOMATIC)));
 
             custom_form_field_local.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+
+            custom_form_field_local.setRequire_photo_on_nc(cursor.getString(cursor.getColumnIndex(REQUIRE_PHOTO_ON_NC)));
+
             custom_form_field_local.setCustom_form_field_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_FIELD_DESC)));
 
             return custom_form_field_local;
@@ -404,6 +408,11 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             if (custom_form_field_local.getComment() != null) {
                 contentValues.put(COMMENT, custom_form_field_local.getComment());
             }
+
+            if (custom_form_field_local.getRequire_photo_on_nc() != null){
+                contentValues.put(REQUIRE_PHOTO_ON_NC, custom_form_field_local.getRequire_photo_on_nc());
+            }
+
             if (custom_form_field_local.getCustom_form_field_desc() != null) {
                 contentValues.put(CUSTOM_FORM_FIELD_DESC, custom_form_field_local.getCustom_form_field_desc());
             }
@@ -435,6 +444,8 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             contentValues.put(REQUIRED, hmAux.get(REQUIRED));
             contentValues.put(AUTOMATIC, hmAux.get(AUTOMATIC));
             contentValues.put(COMMENT, hmAux.get(COMMENT));
+            contentValues.put(REQUIRE_PHOTO_ON_NC, hmAux.get(REQUIRE_PHOTO_ON_NC));
+
             //contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get(CUSTOM_FORM_FIELD_DESC));
             contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get("TXT_VALUE".toLowerCase()));
 
