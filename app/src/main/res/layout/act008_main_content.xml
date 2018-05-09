@@ -214,7 +214,7 @@
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act008_mket_serial"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/namoa_bg_1"
                 android:inputType="textMultiLine"
                 android:padding="10dp"

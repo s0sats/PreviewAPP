@@ -286,6 +286,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mket_serial_id.setmInputTypeValidator(md_product.getSerial_rule());
         mket_serial_id.setmMinSize(md_product.getSerial_min_length());
         mket_serial_id.setmMaxSize(md_product.getSerial_max_length());
+        mket_serial_id.setmIgnoreMaxMinSize(true);
         //
         tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
         if( md_product.getRequire_serial() == 1){
