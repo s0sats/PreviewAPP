@@ -977,6 +977,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmDots_txt_app(cf.get("comment"));
 
         mkEditTextNMFF.setId(View.generateViewId());
+        mkEditTextNMFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         mkEditTextNMFF.setmLabel(cf.get("custom_form_field_desc"));
         mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1054,6 +1055,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         comboBoxFF.setmDots_txt_app(cf.get("comment"));
 
         comboBoxFF.setId(View.generateViewId());
+        comboBoxFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         comboBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         comboBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         comboBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1100,6 +1102,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmDots_txt_app(cf.get("comment"));
 
         checkBoxFF.setId(View.generateViewId());
+        checkBoxFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         checkBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         checkBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         checkBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1139,6 +1142,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmDots_txt_app(cf.get("comment"));
 
         ratingImageFF.setId(View.generateViewId());
+        ratingImageFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         ratingImageFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingImageFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         ratingImageFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1174,6 +1178,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingBarFF.setmDots_txt_app(cf.get("comment"));
 
         ratingBarFF.setId(View.generateViewId());
+        ratingBarFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         ratingBarFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingBarFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         ratingBarFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1207,6 +1212,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmDots_txt_app(cf.get("comment"));
 
         pictureFF.setId(View.generateViewId());
+        pictureFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         pictureFF.setmLabel(cf.get("custom_form_field_desc"));
         pictureFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         pictureFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
@@ -1241,6 +1247,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         photoFF.setmDots_txt_app(cf.get("comment"));
 
         photoFF.setId(View.generateViewId());
+        photoFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
         photoFF.setmLabel(cf.get("custom_form_field_desc"));
         photoFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         photoFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));

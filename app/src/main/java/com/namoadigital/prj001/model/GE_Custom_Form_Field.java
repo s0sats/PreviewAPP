@@ -21,6 +21,7 @@ public class GE_Custom_Form_Field {
     private int required;
     private String automatic;
     private String comment;
+    private String require_photo_on_nc;
 
     public GE_Custom_Form_Field() {
         this.custom_form_local_link = "";
@@ -144,5 +145,13 @@ public class GE_Custom_Form_Field {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getRequire_photo_on_nc() {
+        return require_photo_on_nc;
+    }
+
+    public void setRequire_photo_on_nc(String require_photo_on_nc) {
+        this.require_photo_on_nc = require_photo_on_nc;
     }
 }

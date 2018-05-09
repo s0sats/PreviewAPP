@@ -23,6 +23,7 @@ public class GE_Custom_Form_Field_Local {
     private int required;
     private String automatic;
     private String comment;
+    private String require_photo_on_nc;
     private String custom_form_field_desc;
 
     public long getCustomer_code() {
@@ -159,6 +160,14 @@ public class GE_Custom_Form_Field_Local {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getRequire_photo_on_nc() {
+        return require_photo_on_nc;
+    }
+
+    public void setRequire_photo_on_nc(String require_photo_on_nc) {
+        this.require_photo_on_nc = require_photo_on_nc;
     }
 
     public String getCustom_form_field_desc() {

@@ -38,6 +38,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String REQUIRED = "required";
     public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
+    public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
 
     public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -279,6 +280,8 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             custom_form_field.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
+            custom_form_field.setRequire_photo_on_nc(cursor.getString(cursor.getColumnIndex(REQUIRE_PHOTO_ON_NC)));
+
             return custom_form_field;
         }
     }
@@ -332,6 +335,9 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_field.getComment() != null) {
                 contentValues.put(COMMENT, custom_form_field.getComment());
+            }
+            if (custom_form_field.getRequire_photo_on_nc() != null){
+                contentValues.put(REQUIRE_PHOTO_ON_NC, custom_form_field.getRequire_photo_on_nc());
             }
 
             return contentValues;
