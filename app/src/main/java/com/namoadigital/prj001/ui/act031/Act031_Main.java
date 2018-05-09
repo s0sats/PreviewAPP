@@ -136,6 +136,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     private HMAux oldSite = new HMAux();
     private HMAux oldZone = new HMAux();
     private HMAux oldLocal = new HMAux();
+    private boolean serialIdChanged = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -430,6 +431,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         mPresenter.getProductInfo();
         //
         mket_serial_id.setText(bundle_serial_id);
+        mket_serial_id.setTag(bundle_serial_id);
         //
         if(new_serial && !mket_serial_id.isValid()){
             ToolBox.alertMSG(
@@ -590,6 +592,19 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         ss_segment.setmEnabled(false);
         ss_category_price.setmEnabled(false);
         ss_site_owner.setmEnabled(false);*/
+
+        mket_serial_id.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s){
+                serialIdChanged = true;
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                serialIdChanged = true;
+            }
+        });
+        //
         ss_site_owner.setVisibility(View.GONE);
         //
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
@@ -955,6 +970,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
      * @return
      */
     private boolean checkSerialChangesV2(ArrayList<Object> properties) {
+        if(!mket_serial_id.getText().toString().equals(mket_serial_id.getTag())){
+            serialInfoChanges = true;
+            return true;
+        }
+
         if (trackingListChanged) {
             serialInfoChanges = true;
             return true;
