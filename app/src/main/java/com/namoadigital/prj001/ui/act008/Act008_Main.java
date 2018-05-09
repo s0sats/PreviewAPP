@@ -393,8 +393,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //callAct009(context);
-                        mPresenter.defineFlow();
+                        //Aplicado 09/05/2018
+                        //Caso seja criação de serial, usa serial_rule para validá-lo
+                        if(mket_serial_id.isValid()) {
+                            mPresenter.defineFlow();
+                        }else{
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_serial_invalid_ttl"),
+                                    mket_serial_id.getmErrorMSG()
+                            );
+                        }
                     }
                 };
             }
@@ -444,10 +452,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processSerialNExist();
 
         disableProgressDialog();
-
-        //callAct009(context);
-        mPresenter.defineFlow();
-
+        //Aplicado 09/05/2018
+        //Caso seja criação de serial, usa serial_rule para validá-lo
+        if(mket_serial_id.isValid()) {
+            mPresenter.defineFlow();
+        }else{
+            showAlertDialog(
+                hmAux_Trans.get("alert_serial_invalid_ttl"),
+                mket_serial_id.getmErrorMSG()
+            );
+        }
     }
     //Trata retorno de serial OK
     @Override
