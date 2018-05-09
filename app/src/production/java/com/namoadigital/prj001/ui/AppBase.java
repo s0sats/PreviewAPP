@@ -32,7 +32,6 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
@@ -88,7 +87,7 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 25;
+        DB_VERSION_CUSTOM = 26;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

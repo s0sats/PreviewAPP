@@ -1106,6 +1106,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         mket_serial_id.setmInputTypeValidator(product.getSerial_rule());
         mket_serial_id.setmMinSize(product.getSerial_min_length());
         mket_serial_id.setmMaxSize(product.getSerial_max_length());
+        mket_serial_id.setmIgnoreMaxMinSize(true);
     }
 
     @Override

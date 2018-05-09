@@ -266,12 +266,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 mket_serial.setmRequired(true);
                 mket_serial.setmMinSize(null);
                 mket_serial.setmMaxSize(null);
+                mket_serial.setmIgnoreMaxMinSize(true);
             } else {
                 tv_prod_desc.setText(md_product.getProduct_desc());
                 mket_serial.setmInputTypeValidator(md_product.getSerial_rule());
                 mket_serial.setmRequired(true);
                 mket_serial.setmMinSize(md_product.getSerial_min_length());
                 mket_serial.setmMaxSize(md_product.getSerial_max_length());
+                mket_serial.setmIgnoreMaxMinSize(true);
             }
             //
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
