@@ -286,6 +286,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mket_serial_id.setmInputTypeValidator(md_product.getSerial_rule());
         mket_serial_id.setmMinSize(md_product.getSerial_min_length());
         mket_serial_id.setmMaxSize(md_product.getSerial_max_length());
+        mket_serial_id.setmIgnoreMaxMinSize(true);
         //
         tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
         if( md_product.getRequire_serial() == 1){
@@ -393,8 +394,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //callAct009(context);
-                        mPresenter.defineFlow();
+                        //Aplicado 09/05/2018
+                        //Caso seja criação de serial, usa serial_rule para validá-lo
+                        if(mket_serial_id.isValid()) {
+                            mPresenter.defineFlow();
+                        }else{
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_serial_invalid_ttl"),
+                                    mket_serial_id.getmErrorMSG()
+                            );
+                        }
                     }
                 };
             }
@@ -444,10 +453,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processSerialNExist();
 
         disableProgressDialog();
-
-        //callAct009(context);
-        mPresenter.defineFlow();
-
+        //Aplicado 09/05/2018
+        //Caso seja criação de serial, usa serial_rule para validá-lo
+        if(mket_serial_id.isValid()) {
+            mPresenter.defineFlow();
+        }else{
+            showAlertDialog(
+                hmAux_Trans.get("alert_serial_invalid_ttl"),
+                mket_serial_id.getmErrorMSG()
+            );
+        }
     }
     //Trata retorno de serial OK
     @Override
