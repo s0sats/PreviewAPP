@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui.act044;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -9,6 +11,8 @@ import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.ui.act041.Act041_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -69,6 +73,8 @@ public class Act044_Main extends Base_Activity_NFC_Geral implements Act044_Main_
 
     private void initVars() {
         bundle = new Bundle();
+        //
+        btn_search = (Button) findViewById(R.id.act044_btn_tst);
 
     }
     private void hideSoftKeyboard() {
@@ -76,7 +82,7 @@ public class Act044_Main extends Base_Activity_NFC_Geral implements Act044_Main_
     }
 
     private void iniUIFooter() {
-        iniFooter();
+        /*iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT044;
@@ -85,7 +91,7 @@ public class Act044_Main extends Base_Activity_NFC_Geral implements Act044_Main_
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
-        setFooter();
+        setFooter();*/
     }
 
     @Override
@@ -95,6 +101,32 @@ public class Act044_Main extends Base_Activity_NFC_Geral implements Act044_Main_
     }
 
     private void initActions() {
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testeNewAct();
+            }
+        });
+    }
 
+    private void testeNewAct() {
+        Intent mIntent = new Intent(context,Act041_Main.class);
+        startActivityForResult(mIntent,666);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //
+        if(requestCode == 666){
+            if(resultCode == RESULT_OK){
+                Bundle retBundle = data.getExtras();
+                //
+                MD_Product mdProduct = (MD_Product) retBundle.getSerializable(MD_Product.class.getName());
+                String tst = mdProduct.getProduct_desc();
+
+            }
+
+        }
     }
 }

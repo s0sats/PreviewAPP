@@ -1,11 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
+
 /**
  * Created by neomatrix on 8/9/16.
  */
 
-public class MD_Product {
-
+public class MD_Product implements Serializable {
+    private static final long serialVersionUID = 3795156977263223642L;
+    
     private long customer_code;
     private long product_code;
     private String product_id;
