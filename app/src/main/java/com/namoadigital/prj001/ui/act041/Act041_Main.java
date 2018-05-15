@@ -21,6 +21,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -216,7 +217,7 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                 resetSearch();
             }
         } else {
-            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
+            //ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
 
     }
@@ -324,11 +325,28 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
-                    mPresenter.onCategoryProductClicked(item.get("code"));
+                    //mPresenter.onCategoryProductClicked(item.get("code"));
+                    for (MD_Product md_product: mPresenter.getProductList()) {
+                        if(md_product.getCustomer_code()== ToolBox_Con.getPreference_Customer_Code(context) &&
+                           md_product.getProduct_code() == ToolBox_Inf.mIntegerParse(item.get("code"))
+                        ){
+                            sendResult(md_product);
+                            break;
+                        }
+                    }
                 }
             }
         });
 
+    }
+
+    private void sendResult(MD_Product md_product) {
+        Intent data = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MD_Product.class.getName(),md_product);
+        data.putExtras(bundle);
+        setResult(RESULT_OK,data);
+        finish();
     }
 
     @Override
@@ -362,7 +380,8 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+        super.onBackPressed();
+        //mPresenter.onBackPressedClicked();
     }
 
     @Override
