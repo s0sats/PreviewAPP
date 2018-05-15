@@ -171,6 +171,10 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_date_schedule_start_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_lbl);
         TextView tv_date_schedule_start_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_val);
 
+        TextView tv_date_schedule_end_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_end_lbl);
+        TextView tv_date_schedule_end_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_end_val);
+
+
         tv_list.add(tv_date_schedule_start_lbl);
         tv_list.add(tv_date_schedule_start_val);
 
@@ -181,12 +185,16 @@ public class Local_Data_List_Adapter extends BaseAdapter {
             tv_date_schedule_start_lbl.setVisibility(View.VISIBLE);
             tv_date_schedule_start_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
 
+            tv_date_schedule_end_lbl.setVisibility(View.VISIBLE);
+            tv_date_schedule_end_lbl.setText(hmAux_Trans.get("lbl_date_schedule_end") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
         } else {
             tv_data_serv_lbl.setVisibility(View.GONE);
             tv_data_serv_lbl.setText("");
             //
             tv_date_schedule_start_lbl.setVisibility(View.GONE);
             tv_date_schedule_start_lbl.setText("");
+            tv_date_schedule_end_lbl.setVisibility(View.GONE);
+            tv_date_schedule_end_val.setText("");
         }
         TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_lbl);
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_val);
@@ -239,7 +247,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                 //llBackground.setBackground(llDrawable);
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
                 tv_status_val.setTextColor(
-                       context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_PROCESS))
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_PROCESS))
                 );
 
                 break;
@@ -281,7 +289,6 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         return convertView;
     }
 
-
     private void loadTranslation() {
         List<String> translateList = new ArrayList<>();
         translateList.add("lbl_date");
@@ -295,6 +302,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("lbl_form");
         translateList.add("lbl_data_serv");
         translateList.add("lbl_date_schedule_start");
+        translateList.add("lbl_date_schedule_end");
         translateList.add("lbl_so_code");
         translateList.add("lbl_status");
 
