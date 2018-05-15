@@ -81,7 +81,6 @@ public class AppBase extends Application {
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
         CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
-
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 8;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
