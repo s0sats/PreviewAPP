@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 
@@ -35,9 +37,17 @@ public class Act011_FF extends Fragment {
     private transient LinearLayout ll_drawer;
     private transient LinearLayout ll_check;
 
+    private transient TextView tv_drawer;
+    private transient TextView tv_check;
+    private HMAux hmAux_Trans;
+
     private String formStatus = "";
 
     private int tabIndex = 0;
+
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        this.hmAux_Trans = hmAux_Trans;
+    }
 
     public void setCustomFFs(List<CustomFF> customFFs, int indice) {
         this.customFFs = customFFs;
@@ -87,6 +97,11 @@ public class Act011_FF extends Fragment {
         ll_nex = (LinearLayout) view.findViewById(R.id.act011_ff_ll_nex);
         ll_drawer = (LinearLayout) view.findViewById(R.id.act011_ff_ll_drawer);
         ll_check = (LinearLayout) view.findViewById(R.id.act011_ff_ll_check);
+        tv_drawer = (TextView) view.findViewById(R.id.act011_ff_tv_drawer);
+        tv_check = (TextView) view.findViewById(R.id.act011_ff_tv_check);
+        //
+        tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
+        tv_check.setText(hmAux_Trans.get("btn_check"));
         //
         loadControls(ll_controls);
     }
