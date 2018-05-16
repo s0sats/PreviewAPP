@@ -8,6 +8,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Class;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class MD_ClassDao extends BaseDao implements Dao<MD_Class> {
     private final Mapper<MD_Class, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Class> toMD_ClassMapper;
     //
-    public static final String TABLE = "md_classs";
+    public static final String TABLE = "md_classes";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CLASS_CODE = "class_code";
     public static final String CLASS_ID = "class_id";
@@ -32,8 +34,18 @@ public class MD_ClassDao extends BaseDao implements Dao<MD_Class> {
                                 };
 
 
-    public MD_ClassDao(Context context, String mDB_NAME, int mDB_VERSION, String mMode) {
-        super(context, mDB_NAME, mDB_VERSION, mMode);
+    public MD_ClassDao(Context context) {
+        super(  context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+        this.toContentValuesMapper = new MD_ClassToContentValuesMapper();
+        this.toMD_ClassMapper = new CursorMD_ClassMapper();
+    }
+
+    public MD_ClassDao(Context context, String mDB_NAME, int mDB_VERSION) {
+        super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new MD_ClassToContentValuesMapper();
         this.toMD_ClassMapper = new CursorMD_ClassMapper();
