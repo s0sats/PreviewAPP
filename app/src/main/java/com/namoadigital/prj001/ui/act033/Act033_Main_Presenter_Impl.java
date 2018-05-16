@@ -44,7 +44,7 @@ public class Act033_Main_Presenter_Impl implements Act033_Main_Presenter {
      */
     @Override
     public void accessToSoModule(int back_action) {
-        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})){
             getZones();
         }else{
            if(back_action == 1){

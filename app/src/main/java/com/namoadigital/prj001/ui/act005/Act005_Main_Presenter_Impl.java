@@ -163,15 +163,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     String[][] parameter = {
             {""},
             {""},
-            {Constant.PARAM_SO, Constant.PARAM_SO_MOV},
+            {Constant.PARAM_SO},//{Constant.PARAM_SO, Constant.PARAM_SO_MOV}
             {Constant.PARAM_SCHEDULE_CHECKLIST},
-            {Constant.PARAM_SO_MOV},
+            {""},//{Constant.PARAM_SO_MOV},
             {""},
             {""},
             {""},
             {""},
-            // {""},
-            {Constant.PARAM_CHAT},
+            {""},//{Constant.PARAM_CHAT},
             {""}
     };
 

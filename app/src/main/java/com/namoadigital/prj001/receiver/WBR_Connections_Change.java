@@ -43,7 +43,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     }
 
     private void activeChatService(Context context) {
-        if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context) ){
+        if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && */ToolBox_Inf.isUsrAppLogged(context) ){
             if(ToolBox_Inf.isScreenOn(context)){
                 if(!AppBackgroundService.isRunning){
                     Intent chatService = new Intent(context, AppBackgroundService.class);

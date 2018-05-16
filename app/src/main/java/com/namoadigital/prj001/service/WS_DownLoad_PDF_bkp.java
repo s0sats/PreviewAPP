@@ -193,7 +193,7 @@ public class WS_DownLoad_PDF_bkp extends IntentService {
              *
              */
 
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
 
                 SM_SO_FileDao soFileDao =
                         new SM_SO_FileDao(

@@ -23,7 +23,7 @@ public class WBR_BootCompleted extends BroadcastReceiver {
         ToolBox_Inf.reprogramAlarms(context);
         ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
-        if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
+        if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && */ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
             if(!AppBackgroundService.isRunning) {
 //                try {
 //                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
@@ -48,7 +48,7 @@ public class WBR_BootCompleted extends BroadcastReceiver {
             }
         }
 
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK) && !ScreenStatusService.isRunning) {
+        if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK) && !ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
             context.startService(mIntent);
         }

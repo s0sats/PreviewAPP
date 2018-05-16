@@ -227,8 +227,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         }
         //Seta visibilidade do btn de chat.
         mView.showBtnChatNav(
-                ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)
-                        && !status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                /*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)
+                        &&*/ !status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                         && !status.equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
         );
     }

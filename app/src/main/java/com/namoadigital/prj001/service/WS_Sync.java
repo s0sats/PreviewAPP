@@ -273,7 +273,7 @@ public class WS_Sync extends IntentService {
         }
         //Verifica se customer possui acesso ao SO
         //adiciona parametro no sincronismo.
-        if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SO = new ArrayList<>();
             dataPackage.setSO(SO);

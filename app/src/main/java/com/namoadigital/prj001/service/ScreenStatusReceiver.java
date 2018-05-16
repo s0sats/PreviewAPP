@@ -39,8 +39,8 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                 //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n___________________________________>DISPLAY_ON<____________________________________\n.", log_file);
                 //
                 if (
-                    ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)
-                    && ToolBox_Inf.isUsrAppLogged(context)
+                    /*ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)
+                    &&*/ ToolBox_Inf.isUsrAppLogged(context)
                     && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)
                 ){
                     if(!AppBackgroundService.isRunning) {

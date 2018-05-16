@@ -123,7 +123,7 @@ public class WS_DownLoad_Picture extends IntentService {
             SM_SO_Product_Event_FileDao eventFileDao = null;
             ArrayList<HMAux> event_file_list = new ArrayList<>();
 
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
                 //
                 taskFileDao =
                         new SM_SO_Service_Exec_Task_FileDao(
@@ -177,7 +177,7 @@ public class WS_DownLoad_Picture extends IntentService {
             ArrayList<HMAux> roomImgList = new ArrayList<>();
             CH_MessageDao messageDao = null;
             ArrayList<HMAux> messageImgList = new ArrayList<>();
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
                 // Room
                 roomDao = new CH_RoomDao(getApplicationContext());
                 //
@@ -191,7 +191,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         new CH_Message_Sql_006().toSqlQuery()
                 ));
                 //
-            }
+            //}
             //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
             //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
             if(  dados_geral.size() == 0
@@ -340,7 +340,7 @@ public class WS_DownLoad_Picture extends IntentService {
              */
             //region S.O
             //Download de files do S.O
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
                 //
                 for (HMAux hmAux : so_file_list) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
@@ -438,7 +438,7 @@ public class WS_DownLoad_Picture extends IntentService {
              * Download de files do CHAT
              */
             //region CHAT
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
                 //
                 for (HMAux hmAux : roomImgList) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_CHAT_PATH)) {
@@ -509,7 +509,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     ToolBox_Inf.sendBRChatDownloadUpdate(getApplicationContext(), hmAux);
                 }
 
-            }//FIM chat
+            //}//FIM chat
             //endregion
 
         } catch (Exception e) {

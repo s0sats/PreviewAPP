@@ -165,7 +165,7 @@ public class WS_DownLoad_Picture_bkp extends IntentService {
              *
              */
 
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
                 //
                 SM_SO_Service_Exec_Task_FileDao taskFileDao =
                         new SM_SO_Service_Exec_Task_FileDao(

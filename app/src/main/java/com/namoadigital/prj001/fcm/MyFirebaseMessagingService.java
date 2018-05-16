@@ -132,8 +132,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
-                if (  ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
-                      && ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
+                if (  /*ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
+                      &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
                       && ToolBox_Inf.isUsrAppLogged(getApplicationContext())
                     ) {
                     String param = "";
