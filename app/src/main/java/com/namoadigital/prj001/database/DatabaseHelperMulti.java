@@ -105,6 +105,8 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             script.append("create table if not exists [md_product_brands]([customer_code] int not null,[product_code] int not null,[brand_code] int not null,constraint [pk_md_product_brands] primary key([customer_code],[product_code],[brand_code]));");
             script.append("create table if not exists [md_product_segments]([customer_code] int not null,[product_code] int not null,[segment_code] int not null,constraint [pk_md_product_segments] primary key([customer_code],[product_code],[segment_code]));");
             script.append("create table if not exists [md_product_category_prices]([customer_code] int not null,[product_code] int not null,[category_price_code] int not null,constraint [pk_md_product_category_prices] primary key([customer_code],[product_code],[category_price_code]));");
+            script.append("create table if not exists [md_brands]([customer_code] int not null,[brand_code] int not null,[brand_id] text not null collate nocase,[brand_desc] text not null collate nocase,constraint [pk_md_brands] primary key([customer_code],[brand_code]));");
+            script.append("create table if not exists [md_classes]([customer_code] int not null, [class_code] int not null, [class_id] text not null collate nocase, [class_type] text not null collate nocase, [class_color] text not null collate nocase, [class_available] int not null,constraint [pk_md_classes] primary key([customer_code],[class_code]));");
             //tabelas ActionPlan
             script.append("create table if not exists [md_departments]([customer_code] int not null,[department_code] int not null,[department_id] text not null COLLATE NOCASE,[department_desc] text not null COLLATE NOCASE,constraint pk_md_departments primary key(customer_code,department_code));");
             script.append("create table if not exists [md_users]([customer_code] int not null,[user_code] int not null,[user_nick] text not null COLLATE NOCASE,[user_name] text not null COLLATE NOCASE,[ap] int not null default 0,constraint pk_md_users primary key(customer_code,user_code));");
@@ -180,10 +182,22 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
 
         script.append("drop table if exists [md_segments];");
         script.append("drop table if exists [md_category_prices];");
-        script.append("drop table if exists [md_brands]([customer_code];");
-        script.append("drop table if exists [md_brand_models]([customer_code];");
-        script.append("drop table if exists [md_brand_colors]([customer_code];");
-        script.append("drop table if exists [md_partners]([customer_code];");
+        script.append("drop table if exists [md_brands];");
+        script.append("drop table if exists [md_brand_models];");
+        script.append("drop table if exists [md_brand_colors];");
+        script.append("drop table if exists [md_partners];");
+        script.append("drop table if exists [md_classes];");
+        script.append("drop table if exists ev_profiles;");
+        script.append("drop table if exists md_product_serial_trackings;");
+        script.append("drop table if exists md_all_products;");
+        script.append("drop table if exists md_all_product_groups;");
+        script.append("drop table if exists md_all_product_group_products;");
+        script.append("drop table if exists sm_so_product_events;");
+        script.append("drop table if exists sm_so_product_event_files ;");
+        script.append("drop table if exists sm_so_product_event_sketchs;");
+        script.append("drop table if exists md_product_brands;");
+        script.append("drop table if exists md_product_segments;");
+        script.append("drop table if exists md_product_category_prices;");
 
         //Table ActionPlan
         script.append("drop table if exists [md_departments];");
