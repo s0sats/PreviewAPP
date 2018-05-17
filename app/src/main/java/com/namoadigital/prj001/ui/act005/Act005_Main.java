@@ -208,9 +208,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
        if(ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)){
            forceLogoutBySessionNotFound();
        }
-       //
-       // Testes. Deve ser removido.
-        call_Act_Product_Selection();
     }
 
     private void forceLogoutBySessionNotFound() {
@@ -1668,36 +1665,5 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
-    }
-
-    private static boolean bteste = false;
-
-    // Testes. Deve ser removido.
-    private void call_Act_Product_Selection(){
-        Intent mIntent = new Intent(context, Act_Product_Selection.class);
-        Bundle mBundle = new Bundle();
-        mBundle.putString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP, "true");
-
-        bteste = !bteste;
-
-        mBundle.putString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH, bteste ? "btt4" : "btt");
-
-        mIntent.putExtras(mBundle);
-
-        startActivityForResult(mIntent, 100);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        MD_Product pAux = null;
-
-        if (resultCode == RESULT_OK) {
-
-            pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-
-            Log.d("PRODUTO", pAux.getProduct_desc());
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
