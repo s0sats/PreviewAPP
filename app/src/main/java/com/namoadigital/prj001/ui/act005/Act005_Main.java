@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +43,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -75,7 +73,7 @@ import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
+import com.namoadigital.prj001.view.act.test.Test;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -1519,6 +1517,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
+        //Menu Teste
+        menu.add(0, TOOLBAR_SUPPORT+1, Menu.FIRST + 3, "Teste");
+        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Teste");
+
+
         return true;
     }
 
@@ -1574,6 +1579,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 };*/
                 break;
+
+            case TOOLBAR_SUPPORT+1:
+                Intent mIntent = new Intent(context, Test.class);
+                startActivity(mIntent);
+                finish();
             default:
                 return true;
         }

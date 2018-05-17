@@ -66,7 +66,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT_PRODUCTION_SELECTION
+                Constant.ACT_PRODUCT_SELECTION
         );
 
         loadTranslation();
@@ -181,8 +181,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT_PRODUCTION_SELECTION;
-        mAct_Title = Constant.ACT_PRODUCTION_SELECTION + "_" + "title";
+        mAct_Info = Constant.ACT_PRODUCT_SELECTION;
+        mAct_Title = Constant.ACT_PRODUCT_SELECTION + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);

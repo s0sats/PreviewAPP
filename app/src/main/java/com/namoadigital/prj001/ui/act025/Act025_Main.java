@@ -418,6 +418,7 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
     @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
+
         if (!status) {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
