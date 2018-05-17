@@ -3,9 +3,9 @@ package com.namoadigital.prj001.ui.act005;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MenuMainNamoa;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface Act005_Main_View {
 
-    void loadMenu(List<HMAux> menus);
+    void loadMenuV2(ArrayList<MenuMainNamoa> menus);
 
     void showPD();
 

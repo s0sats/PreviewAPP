@@ -9,22 +9,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by DANIEL.LUCHE on 23/01/2017.
  */
 
-public class Act005_Adapter extends BaseAdapter {
+public class Act005_Adapter_Bkp extends BaseAdapter {
     private Context context;
     private int resource;
-    private ArrayList<MenuMainNamoa> source;
+    private List<HMAux> source;
 
-    public Act005_Adapter(Context context, int resource, ArrayList<MenuMainNamoa> source) {
+    public Act005_Adapter_Bkp(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -46,11 +48,12 @@ public class Act005_Adapter extends BaseAdapter {
     }
 
     public int getBadgeQty(String menu_id){
-        for (MenuMainNamoa menu:source) {
-            if(menu.getMenu_id().equalsIgnoreCase(menu_id)){
-                return menu.getBadge1();
+        for (HMAux hmAux:source) {
+            if(hmAux.get(Act005_Main.MENU_ID).equalsIgnoreCase(menu_id) ){
+                return ToolBox_Inf.convertStringToInt(hmAux.get(Act005_Main.MENU_BADGE));
             }
         }
+        //
         return 0;
     }
 
@@ -70,20 +73,18 @@ public class Act005_Adapter extends BaseAdapter {
         TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
         TextView tvBadge2 = (TextView) convertView.findViewById(R.id.menu_tvBadge2);
 
-        //HashMap<String, String> item = source.get(position);
-        MenuMainNamoa item = source.get(position);
+        HashMap<String, String> item = source.get(position);
 
-        ivIcon.setImageDrawable(context.getResources().getDrawable(item.getIcon()));
-        //tvTitle.setText(item.get(Act005_Main.MENU_DESC));
-        tvTitle.setText(item.getMenu_desc());
+        ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get(Act005_Main.MENU_ICON))));
+        tvTitle.setText(item.get(Act005_Main.MENU_DESC));
 
-        //int badgeNum = item.getBadge1();
-        //int badge2Num = item.getBadge2();
+        int badgeNum = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE));
+        int badge2Num = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE2));
 
         //Se chave Badge tiver preenchida exibe no menu
-        if (item.getBadge1() > 0) {
+        if (badgeNum > 0) {
             tvBadge.setVisibility(View.VISIBLE);
-            String qty = String.valueOf(item.getBadge1());
+            String qty = String.valueOf(badgeNum);
 
             if (qty.length() == 1) {
                 qty = " " + qty + " ";
@@ -94,10 +95,10 @@ public class Act005_Adapter extends BaseAdapter {
             tvBadge.setText(" ");
         }
 
-        if(item.getMenu_id().equals(Act005_Main.MENU_ID_CHAT)){
+        if(item.get(Act005_Main.MENU_ID).equals(Act005_Main.MENU_ID_CHAT)){
             tvBadge.setVisibility(View.GONE);
             //
-            if(item.getBadge1() == 1) {
+            if(badgeNum == 1) {
                 //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
                 ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
             }else{
@@ -107,9 +108,9 @@ public class Act005_Adapter extends BaseAdapter {
         }
 
         //Se chave Badge2 tiver preenchida exibe no menu
-        if (item.getBadge2() > 0) {
+        if (badge2Num > 0) {
             tvBadge2.setVisibility(View.VISIBLE);
-            String qty = String.valueOf(item.getBadge2());
+            String qty = String.valueOf(badge2Num);
 
             if (qty.length() == 1) {
                 qty = " " + qty + " ";
