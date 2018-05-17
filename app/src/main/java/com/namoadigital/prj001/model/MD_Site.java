@@ -10,6 +10,7 @@ public class MD_Site {
     private String site_code;
     private String site_id;
     private String site_desc;
+    private int io_control;
 
     public long getCustomer_code() {
         return customer_code;
@@ -43,4 +44,11 @@ public class MD_Site {
         this.site_desc = site_desc;
     }
 
+    public int getIo_control() {
+        return io_control;
+    }
+
+    public void setIo_control(int io_control) {
+        this.io_control = io_control;
+    }
 }

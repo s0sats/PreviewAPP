@@ -58,8 +58,8 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
 
     @Override
     public void startChatService() {
-        //Se Possui Acesso ao Chat, inicia serviço
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
+//        //Se Possui Acesso ao Chat, inicia serviço
+//        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
             try {
                 //
                 if (!ScreenStatusService.isRunning) {
@@ -114,10 +114,10 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                 e.printStackTrace();
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
-        }else{
-            Intent chatService = new Intent(context, AppBackgroundService.class);
-            context.stopService(chatService);
-        }
+//        }else{
+//            Intent chatService = new Intent(context, AppBackgroundService.class);
+//            context.stopService(chatService);
+//        }
     }
 
     @Override

@@ -150,7 +150,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         //
         tv_zone_val.setVisibility(View.GONE);
         //Se customer tem acesso ao modulo de serviço, busca qual a zona selecionada e a exibe
-        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
                             context,

@@ -24,22 +24,37 @@ public class MD_Product_Serial implements Serializable {
     private String serial_id;
     @Expose
     private Integer site_code;
+    private String site_id;
+    private String site_desc;
     @Expose
     private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
     @Expose
     private Integer local_code;
+    private String local_id;
     @Expose
     private Integer site_code_owner;
     @Expose
     private Integer brand_code;
+    private String brand_id;
+    private String brand_desc;
     @Expose
     private Integer model_code;
+    private String model_id;
+    private String model_desc;
     @Expose
     private Integer color_code;
+    private String color_id;
+    private String color_desc;
     @Expose
     private Integer segment_code;
+    private String segment_id;
+    private String segment_desc;
     @Expose
     private Integer category_price_code;
+    private String category_price_id;
+    private String category_price_desc;
     @Expose
     private String add_inf1;
     @Expose
@@ -55,6 +70,27 @@ public class MD_Product_Serial implements Serializable {
     private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
     private int flag_offline;
     private int sync_process;
+    @Expose
+    private Integer class_code;
+    private String class_id;
+    private String class_type;
+    private String class_color;
+    private Integer class_available;
+    private Integer inbound_code;
+    private String inbound_id;
+    private String inbound_invoice_number;
+    private String inbound_from_type;
+    private String inbound_from_desc;
+    private String inbound_conf_date;
+    private Integer move_prefix;
+    private Integer move_code;
+    private Integer move_group_code;
+    private Integer outbound_code;
+    private String outbound_id;
+    private String outbound_invoice_number;
+    private String outbound_to_type;
+    private String outbound_to_desc;
+    private String outbound_conf_date;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -244,6 +280,286 @@ public class MD_Product_Serial implements Serializable {
 
     public void setSync_process(int sync_process) {
         this.sync_process = sync_process;
+    }
+
+    public String getSite_id() {
+        return site_id;
+    }
+
+    public void setSite_id(String site_id) {
+        this.site_id = site_id;
+    }
+
+    public String getSite_desc() {
+        return site_desc;
+    }
+
+    public void setSite_desc(String site_desc) {
+        this.site_desc = site_desc;
+    }
+
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
+    }
+
+    public String getLocal_id() {
+        return local_id;
+    }
+
+    public void setLocal_id(String local_id) {
+        this.local_id = local_id;
+    }
+
+    public String getBrand_id() {
+        return brand_id;
+    }
+
+    public void setBrand_id(String brand_id) {
+        this.brand_id = brand_id;
+    }
+
+    public String getBrand_desc() {
+        return brand_desc;
+    }
+
+    public void setBrand_desc(String brand_desc) {
+        this.brand_desc = brand_desc;
+    }
+
+    public String getModel_id() {
+        return model_id;
+    }
+
+    public void setModel_id(String model_id) {
+        this.model_id = model_id;
+    }
+
+    public String getModel_desc() {
+        return model_desc;
+    }
+
+    public void setModel_desc(String model_desc) {
+        this.model_desc = model_desc;
+    }
+
+    public String getColor_id() {
+        return color_id;
+    }
+
+    public void setColor_id(String color_id) {
+        this.color_id = color_id;
+    }
+
+    public String getColor_desc() {
+        return color_desc;
+    }
+
+    public void setColor_desc(String color_desc) {
+        this.color_desc = color_desc;
+    }
+
+    public String getSegment_id() {
+        return segment_id;
+    }
+
+    public void setSegment_id(String segment_id) {
+        this.segment_id = segment_id;
+    }
+
+    public String getSegment_desc() {
+        return segment_desc;
+    }
+
+    public void setSegment_desc(String segment_desc) {
+        this.segment_desc = segment_desc;
+    }
+
+    public String getCategory_price_id() {
+        return category_price_id;
+    }
+
+    public void setCategory_price_id(String category_price_id) {
+        this.category_price_id = category_price_id;
+    }
+
+    public String getCategory_price_desc() {
+        return category_price_desc;
+    }
+
+    public void setCategory_price_desc(String category_price_desc) {
+        this.category_price_desc = category_price_desc;
+    }
+
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
+    }
+
+    public String getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(String class_id) {
+        this.class_id = class_id;
+    }
+
+    public String getClass_type() {
+        return class_type;
+    }
+
+    public void setClass_type(String class_type) {
+        this.class_type = class_type;
+    }
+
+    public String getClass_color() {
+        return class_color;
+    }
+
+    public void setClass_color(String class_color) {
+        this.class_color = class_color;
+    }
+
+    public Integer getClass_available() {
+        return class_available;
+    }
+
+    public void setClass_available(Integer class_available) {
+        this.class_available = class_available;
+    }
+
+    public Integer getInbound_code() {
+        return inbound_code;
+    }
+
+    public void setInbound_code(Integer inbound_code) {
+        this.inbound_code = inbound_code;
+    }
+
+    public String getInbound_id() {
+        return inbound_id;
+    }
+
+    public void setInbound_id(String inbound_id) {
+        this.inbound_id = inbound_id;
+    }
+
+    public String getInbound_invoice_number() {
+        return inbound_invoice_number;
+    }
+
+    public void setInbound_invoice_number(String inbound_invoice_number) {
+        this.inbound_invoice_number = inbound_invoice_number;
+    }
+
+    public String getInbound_from_type() {
+        return inbound_from_type;
+    }
+
+    public void setInbound_from_type(String inbound_from_type) {
+        this.inbound_from_type = inbound_from_type;
+    }
+
+    public String getInbound_from_desc() {
+        return inbound_from_desc;
+    }
+
+    public void setInbound_from_desc(String inbound_from_desc) {
+        this.inbound_from_desc = inbound_from_desc;
+    }
+
+    public String getInbound_conf_date() {
+        return inbound_conf_date;
+    }
+
+    public void setInbound_conf_date(String inbound_conf_date) {
+        this.inbound_conf_date = inbound_conf_date;
+    }
+
+    public Integer getMove_prefix() {
+        return move_prefix;
+    }
+
+    public void setMove_prefix(Integer move_prefix) {
+        this.move_prefix = move_prefix;
+    }
+
+    public Integer getMove_code() {
+        return move_code;
+    }
+
+    public void setMove_code(Integer move_code) {
+        this.move_code = move_code;
+    }
+
+    public Integer getMove_group_code() {
+        return move_group_code;
+    }
+
+    public void setMove_group_code(Integer move_group_code) {
+        this.move_group_code = move_group_code;
+    }
+
+    public Integer getOutbound_code() {
+        return outbound_code;
+    }
+
+    public void setOutbound_code(Integer outbound_code) {
+        this.outbound_code = outbound_code;
+    }
+
+    public String getOutbound_id() {
+        return outbound_id;
+    }
+
+    public void setOutbound_id(String outbound_id) {
+        this.outbound_id = outbound_id;
+    }
+
+    public String getOutbound_invoice_number() {
+        return outbound_invoice_number;
+    }
+
+    public void setOutbound_invoice_number(String outbound_invoice_number) {
+        this.outbound_invoice_number = outbound_invoice_number;
+    }
+
+    public String getOutbound_to_type() {
+        return outbound_to_type;
+    }
+
+    public void setOutbound_to_type(String outbound_to_type) {
+        this.outbound_to_type = outbound_to_type;
+    }
+
+    public String getOutbound_to_desc() {
+        return outbound_to_desc;
+    }
+
+    public void setOutbound_to_desc(String outbound_to_desc) {
+        this.outbound_to_desc = outbound_to_desc;
+    }
+
+    public String getOutbound_conf_date() {
+        return outbound_conf_date;
+    }
+
+    public void setOutbound_conf_date(String outbound_conf_date) {
+        this.outbound_conf_date = outbound_conf_date;
     }
 
     /**

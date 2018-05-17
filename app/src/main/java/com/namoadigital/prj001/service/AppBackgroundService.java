@@ -32,8 +32,8 @@ public class AppBackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.isRunning = true;
-        if ( ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
-             && ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
+        if ( /*ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
+             &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
             ) {
 
             try {

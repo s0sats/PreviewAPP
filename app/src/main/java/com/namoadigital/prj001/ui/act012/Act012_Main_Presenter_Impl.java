@@ -65,7 +65,7 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         );
         //
         pendencies.addAll(NFormAPPendencies);
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             //Seleciona "pendencias do usr"
             HMAux soMyPendencies = soDao.getByStringHM(
                     new Sql_Act005_004(

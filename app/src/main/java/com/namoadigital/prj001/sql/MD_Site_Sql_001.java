@@ -26,7 +26,8 @@ public class MD_Site_Sql_001 implements Specification {
                         "      s.customer_code,\n" +
                         "      s.site_code,\n" +
                         "      s.site_id,\n" +
-                        "      s.site_id||' - '||s.site_desc site_desc\n" +
+                        "      s.site_id||' - '||s.site_desc site_desc\n," +
+                        "      s.io_control\n" +
                         " FROM "  +
                         MD_SiteDao.TABLE + " s" +
                         " WHERE " +

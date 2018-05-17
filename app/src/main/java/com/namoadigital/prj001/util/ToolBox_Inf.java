@@ -1586,7 +1586,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_ZONE_LBL, "");
         hmAux.put(Constant.FOOTER_ZONE, "");
 
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
                             context,
@@ -4052,7 +4052,7 @@ public class ToolBox_Inf {
             for (GE_Custom_Form_Ap formAp : formList) {
                 boolean deleteAP = true;
                 //
-                if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
+                //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
                     CH_RoomDao roomDao = new CH_RoomDao(context);
                     //
                     CH_Room chRoom = roomDao.getByString(
@@ -4064,7 +4064,7 @@ public class ToolBox_Inf {
                     if (chRoom != null && chRoom.getRoom_code().length() > 0) {
                         deleteAP = false;
                     }
-                }
+                //}
                 //
                 if (deleteAP) {
                     formApDao.remove(
@@ -4109,7 +4109,7 @@ public class ToolBox_Inf {
                     if (formAp.getRoom_code() == null) {
                         deleteAP = true;
                     } else {
-                        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
+                        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
                             CH_RoomDao roomDao = new CH_RoomDao(context);
                             //
                             CH_Room chRoom = roomDao.getByString(
@@ -4121,9 +4121,9 @@ public class ToolBox_Inf {
                             if (chRoom == null) {
                                 deleteAP = true;
                             }
-                        } else {
-                            deleteAP = true;
-                        }
+//                        } else {
+//                            deleteAP = true;
+//                        }
                     }
                 }
             }

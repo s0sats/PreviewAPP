@@ -36,6 +36,7 @@ import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_Category_PriceDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_DepartmentDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
@@ -77,6 +78,7 @@ import com.namoadigital.prj001.model.MD_Brand;
 import com.namoadigital.prj001.model.MD_Brand_Color;
 import com.namoadigital.prj001.model.MD_Brand_Model;
 import com.namoadigital.prj001.model.MD_Category_Price;
+import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Partner;
@@ -87,7 +89,6 @@ import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -117,6 +118,7 @@ import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Class_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Department_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_Truncate;
@@ -271,7 +273,7 @@ public class WS_Sync extends IntentService {
         }
         //Verifica se customer possui acesso ao SO
         //adiciona parametro no sincronismo.
-        if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SO = new ArrayList<>();
             dataPackage.setSO(SO);
@@ -463,7 +465,7 @@ public class WS_Sync extends IntentService {
         /**
          *    VARIAVEIS DE PROFILE PARA OPERATION E SITE
          *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN
-         *  é necessario verificar se a operação e site das preferencias, ainda
+         *  é necessario verificar se a operação,site e zona das preferencias, ainda
          *  existem na lista enviado pelo server.
          *  Caso um deles não exista, após processar todas as tabelas envia msg
          *  e envia para change customer.
@@ -471,6 +473,8 @@ public class WS_Sync extends IntentService {
         boolean operationExist = ToolBox_Con.getPreference_Operation_Code(getApplicationContext()) == -1L;
         //Se for site externo, seta true, senão false.
         boolean siteExist = ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("-1");
+        //
+        boolean zoneExist = ToolBox_Con.getPreference_Zone_Code(getApplicationContext()) == -1;
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
             //Cria DAOs das tabelas MAIN
@@ -487,6 +491,17 @@ public class WS_Sync extends IntentService {
             MD_All_ProductDao allProductDao = new MD_All_ProductDao(getApplicationContext());
             MD_All_Product_GroupDao allProductGroupDao = new MD_All_Product_GroupDao(getApplicationContext());
             MD_All_Product_Group_ProductDao allProductGroupProductDao = new MD_All_Product_Group_ProductDao(getApplicationContext());
+            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_BrandDao productBrandDao = new MD_Product_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_SegmentDao productSegmentDao = new MD_Product_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -500,6 +515,17 @@ public class WS_Sync extends IntentService {
             allProductDao.remove(new MD_All_Product_Sql_Truncate().toSqlQuery());
             allProductGroupDao.remove(new MD_All_Product_Group_Sql_Truncate().toSqlQuery());
             allProductGroupProductDao.remove(new MD_All_Product_Group_Product_Sql_Truncate().toSqlQuery());
+            siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+            siteZoneLocalDao.remove(new MD_Site_Zone_Local_Sql_Truncate().toSqlQuery());
+            segmentDao.remove(new MD_Segment_Sql_Truncate().toSqlQuery());
+            categoryPriceDao.remove(new MD_Category_Price_Sql_Truncate().toSqlQuery());
+            brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
+            brandModelDao.remove(new MD_Brand_Model_Sql_Truncate().toSqlQuery());
+            brandColorDao.remove(new MD_Brand_Color_Sql_Truncate().toSqlQuery());
+            productBrandDao.remove(new MD_Product_Brand_Sql_Truncate().toSqlQuery());
+            productSegmentDao.remove(new MD_Product_Segment_Sql_Truncate().toSqlQuery());
+            productCategoryPriceDao.remove(new MD_Product_Category_Price_Sql_Truncate().toSqlQuery());
+            classDao.remove(new MD_Class_Sql_Truncate().toSqlQuery());
 
             //
             // Processamento Operation
@@ -774,60 +800,61 @@ public class WS_Sync extends IntentService {
                 }
             }
             //FIM DO PROCESSAMENTO DO SERIAL
-
+            //region Tracking
             //
             // Processamento Tracking do serial
             //
             //HmAux que contem como chave a pk do serial ja deletados.
-            HMAux serialAlreadyDeleted = new HMAux();
-
-            File[] files_serial_tracking = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tracking-");
-
-            for (File _file : files_serial_tracking) {
-
-                ArrayList<MD_Product_Serial_Tracking> trackingList = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial_Tracking>>() {
-                        }.getType()
-                );
-                //
-                for (MD_Product_Serial_Tracking tracking : trackingList){
-                    String pk = tracking.getCustomer_code()+"."+
-                                tracking.getProduct_code()+"."+
-                                tracking.getSerial_code();
-                    //Seleciona o serial do tracking para descobrir o serial_tmp
-                    MD_Product_Serial dbSerial = serialDao.getByString(
-                            new MD_Product_Serial_Sql_009(
-                                    tracking.getCustomer_code(),
-                                    tracking.getProduct_code(),
-                                    (int) tracking.getSerial_code()
-                            ).toSqlQuery()
-                    );
-                    //
-                    if(dbSerial != null && dbSerial.getSerial_code() > 0){
-                        if(!serialAlreadyDeleted.containsValue(pk)) {
-                            //Remove todos os trackings do serial
-                            trackingDao.remove(
-                                    new MD_Product_Serial_Tracking_Sql_004(
-                                            tracking.getCustomer_code(),
-                                            tracking.getProduct_code(),
-                                            tracking.getSerial_code()
-                                    ).toSqlQuery());
-                            //
-                            serialAlreadyDeleted.put(MD_Product_Serial_TrackingDao.SERIAL_CODE,pk);
-                        }
-                        //Atualiza serial_tmp no obj tracking e depois no banco
-                        tracking.setSerial_tmp(dbSerial.getSerial_tmp());
-                        //
-                        trackingDao.addUpdate(tracking);
-                    }else{
-                        //Devemos tratar?
-                        String s = "deu ruim";
-                    }
-                }
-            }
+//            HMAux serialAlreadyDeleted = new HMAux();
+//
+//            File[] files_serial_tracking = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tracking-");
+//
+//            for (File _file : files_serial_tracking) {
+//
+//                ArrayList<MD_Product_Serial_Tracking> trackingList = gson.fromJson(
+//                        ToolBox.jsonFromOracle(
+//                                ToolBox_Inf.getContents(_file)
+//                        ),
+//                        new TypeToken<ArrayList<MD_Product_Serial_Tracking>>() {
+//                        }.getType()
+//                );
+//                //
+//                for (MD_Product_Serial_Tracking tracking : trackingList){
+//                    String pk = tracking.getCustomer_code()+"."+
+//                                tracking.getProduct_code()+"."+
+//                                tracking.getSerial_code();
+//                    //Seleciona o serial do tracking para descobrir o serial_tmp
+//                    MD_Product_Serial dbSerial = serialDao.getByString(
+//                            new MD_Product_Serial_Sql_009(
+//                                    tracking.getCustomer_code(),
+//                                    tracking.getProduct_code(),
+//                                    (int) tracking.getSerial_code()
+//                            ).toSqlQuery()
+//                    );
+//                    //
+//                    if(dbSerial != null && dbSerial.getSerial_code() > 0){
+//                        if(!serialAlreadyDeleted.containsValue(pk)) {
+//                            //Remove todos os trackings do serial
+//                            trackingDao.remove(
+//                                    new MD_Product_Serial_Tracking_Sql_004(
+//                                            tracking.getCustomer_code(),
+//                                            tracking.getProduct_code(),
+//                                            tracking.getSerial_code()
+//                                    ).toSqlQuery());
+//                            //
+//                            serialAlreadyDeleted.put(MD_Product_Serial_TrackingDao.SERIAL_CODE,pk);
+//                        }
+//                        //Atualiza serial_tmp no obj tracking e depois no banco
+//                        tracking.setSerial_tmp(dbSerial.getSerial_tmp());
+//                        //
+//                        trackingDao.addUpdate(tracking);
+//                    }else{
+//                        //Devemos tratar?
+//                        String s = "deu ruim";
+//                    }
+//                }
+//            }
+            //endregion
             //
             // Processamento Department
             //
@@ -941,6 +968,227 @@ public class WS_Sync extends IntentService {
                 );
 
                 allProductGroupProductDao.addUpdate(allProductGroupProducts, false);
+            }
+            //
+            // Processamento Site Zone
+            //
+            File[] files_site_zone = ToolBox_Inf.getListOfFiles_v2("md_site_zone-");
+
+            for (File _file : files_site_zone) {
+
+                ArrayList<MD_Site_Zone> mdSiteZones = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone>>() {
+                        }.getType()
+                );
+                /*
+                 * Se o siteExist false, não existe mais a zona
+                 * selecionada também.
+                 * Caso contrario,
+                 * verifica se zona das preferencias
+                 * esta na lista de zona enviadas.
+                 * Se não tiver, ao final do processo desloga usr.
+                 */
+                if (!siteExist) {
+                    zoneExist = false;
+                } else {
+                    if (!zoneExist) {
+                        for (MD_Site_Zone zone : mdSiteZones) {
+                            if (ToolBox_Con.getPreference_Site_Code(getApplicationContext())
+                                    .equalsIgnoreCase(String.valueOf(zone.getSite_code()))
+                                    &&
+                                    ToolBox_Con
+                                            .getPreference_Zone_Code(getApplicationContext())
+                                            == zone.getZone_code()
+                                    ) {
+                                zoneExist = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                siteZoneDao.addUpdate(mdSiteZones, false);
+            }
+
+            //
+            // Processamento Site Zone Local
+            //
+            File[] files_site_zone_local = ToolBox_Inf.getListOfFiles_v2("md_site_zone_local-");
+
+            for (File _file : files_site_zone_local) {
+
+                ArrayList<MD_Site_Zone_Local> mdSiteZoneLocals = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone_Local>>() {
+                        }.getType()
+                );
+
+                siteZoneLocalDao.addUpdate(mdSiteZoneLocals, false);
+            }
+
+            //
+            // Processamento Segment
+            //
+            File[] files_segment = ToolBox_Inf.getListOfFiles_v2("md_segment-");
+
+            for (File _file : files_segment) {
+
+                ArrayList<MD_Segment> mdSegments = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Segment>>() {
+                        }.getType()
+                );
+
+                segmentDao.addUpdate(mdSegments, false);
+            }
+
+            //
+            // Processamento MD_Category_Price
+            //
+            File[] files_category_price = ToolBox_Inf.getListOfFiles_v2("md_category_price-");
+
+            for (File _file : files_category_price) {
+
+                ArrayList<MD_Category_Price> mdCategoryPrices = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Category_Price>>() {
+                        }.getType()
+                );
+
+                categoryPriceDao.addUpdate(mdCategoryPrices, false);
+            }
+
+            //
+            // Processamento Brand
+            //
+            File[] files_brand = ToolBox_Inf.getListOfFiles_v2("md_brand-");
+
+            for (File _file : files_brand) {
+
+                ArrayList<MD_Brand> mdBrands = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand>>() {
+                        }.getType()
+                );
+
+                brandDao.addUpdate(mdBrands, false);
+            }
+
+            //
+            // Processamento Brand Model
+            //
+            File[] files_brand_model = ToolBox_Inf.getListOfFiles_v2("md_brand_model-");
+
+            for (File _file : files_brand_model) {
+
+                ArrayList<MD_Brand_Model> mdBrandModels = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Model>>() {
+                        }.getType()
+                );
+
+                brandModelDao.addUpdate(mdBrandModels, false);
+            }
+
+            //
+            // Processamento Brand Color
+            //
+            File[] files_brand_color = ToolBox_Inf.getListOfFiles_v2("md_brand_color-");
+
+            for (File _file : files_brand_color) {
+
+                ArrayList<MD_Brand_Color> mdBrandColors = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Color>>() {
+                        }.getType()
+                );
+
+                brandColorDao.addUpdate(mdBrandColors, false);
+            }
+
+            //
+            // Processamento Product Brand
+            //
+            File[] files_product_brand = ToolBox_Inf.getListOfFiles_v2("md_product_brand-");
+
+            for (File _file : files_product_brand) {
+
+                ArrayList<MD_Product_Brand> mdProductBrands = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Brand>>() {
+                        }.getType()
+                );
+
+                productBrandDao.addUpdate(mdProductBrands, false);
+            }
+            //
+            // Processamento Product Segment
+            //
+            File[] files_product_segment = ToolBox_Inf.getListOfFiles_v2("md_product_segment-");
+
+            for (File _file : files_product_segment) {
+
+                ArrayList<MD_Product_Segment> mdProductSegments = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Segment>>() {
+                        }.getType()
+                );
+
+                productSegmentDao.addUpdate(mdProductSegments, false);
+            }
+
+            //
+            // Processamento Product Category Price
+            //
+            File[] files_product_category_price = ToolBox_Inf.getListOfFiles_v2("md_product_category_price-");
+
+            for (File _file : files_product_category_price) {
+
+                ArrayList<MD_Product_Category_Price> mdProductCategoryPrices = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Category_Price>>() {
+                        }.getType()
+                );
+
+                productCategoryPriceDao.addUpdate(mdProductCategoryPrices, false);
+            }
+            //
+            // Processamento MD Class
+            //
+            File[] files_classes = ToolBox_Inf.getListOfFiles_v2("md_class-");
+
+            for (File _file : files_classes) {
+
+                ArrayList<MD_Class> md_classes = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Class>>() {
+                        }.getType()
+                );
+
+                classDao.addUpdate(md_classes, false);
             }
 
         }
@@ -1346,201 +1594,12 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do SO
         //
-
-        /**
-         *    VARIAVEIS DE PROFILE PARA ZONA
-         *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN OU DATA_PACKAGE_SO
-         *  é necessario verificar se a zona das preferencias, ainda
-         *  existe na lista enviado pelo server.
-         *  Caso um não exista, após processar todas as tabelas envia msg
-         *  e envia para change customer.
-         */
-        boolean zoneExist = ToolBox_Con.getPreference_Zone_Code(getApplicationContext()) == -1;
-
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)) {
-            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_BrandDao productBrandDao = new MD_Product_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_SegmentDao productSegmentDao = new MD_Product_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-
             SO_Pack_ExpressDao so_pack_expressDao = new SO_Pack_ExpressDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-
             //apaga tabelas
-            siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
-            siteZoneLocalDao.remove(new MD_Site_Zone_Local_Sql_Truncate().toSqlQuery());
-            segmentDao.remove(new MD_Segment_Sql_Truncate().toSqlQuery());
-            categoryPriceDao.remove(new MD_Category_Price_Sql_Truncate().toSqlQuery());
-            brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
-            brandModelDao.remove(new MD_Brand_Model_Sql_Truncate().toSqlQuery());
-            brandColorDao.remove(new MD_Brand_Color_Sql_Truncate().toSqlQuery());
             partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
-            productBrandDao.remove(new MD_Product_Brand_Sql_Truncate().toSqlQuery());
-            productSegmentDao.remove(new MD_Product_Segment_Sql_Truncate().toSqlQuery());
-            productCategoryPriceDao.remove(new MD_Product_Category_Price_Sql_Truncate().toSqlQuery());
-
             so_pack_expressDao.remove(new SO_Pack_Express_Sql_Truncate().toSqlQuery());
-
-            //
-            // Processamento Site Zone
-            //
-            File[] files_site_zone = ToolBox_Inf.getListOfFiles_v2("md_site_zone-");
-
-            for (File _file : files_site_zone) {
-
-                ArrayList<MD_Site_Zone> mdSiteZones = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Site_Zone>>() {
-                        }.getType()
-                );
-
-
-               /*
-                * Se o siteExist false, não existe mais a zona
-                * selecionada também.
-                * Caso contrario,
-                * verifica se zona das preferencias
-                * esta na lista de zona enviadas.
-                * Se não tiver, ao final do processo desloga usr.
-                */
-                if (!siteExist) {
-                    zoneExist = false;
-                } else {
-                    if (!zoneExist) {
-                        for (MD_Site_Zone zone : mdSiteZones) {
-                            if (ToolBox_Con.getPreference_Site_Code(getApplicationContext())
-                                    .equalsIgnoreCase(String.valueOf(zone.getSite_code()))
-                                    &&
-                                    ToolBox_Con
-                                            .getPreference_Zone_Code(getApplicationContext())
-                                            == zone.getZone_code()
-                                    ) {
-                                zoneExist = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                siteZoneDao.addUpdate(mdSiteZones, false);
-            }
-
-            //
-            // Processamento Site Zone Local
-            //
-            File[] files_site_zone_local = ToolBox_Inf.getListOfFiles_v2("md_site_zone_local-");
-
-            for (File _file : files_site_zone_local) {
-
-                ArrayList<MD_Site_Zone_Local> mdSiteZoneLocals = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Site_Zone_Local>>() {
-                        }.getType()
-                );
-
-                siteZoneLocalDao.addUpdate(mdSiteZoneLocals, false);
-            }
-
-            //
-            // Processamento Segment
-            //
-            File[] files_segment = ToolBox_Inf.getListOfFiles_v2("md_segment-");
-
-            for (File _file : files_segment) {
-
-                ArrayList<MD_Segment> mdSegments = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Segment>>() {
-                        }.getType()
-                );
-
-                segmentDao.addUpdate(mdSegments, false);
-            }
-
-            //
-            // Processamento MD_Category_Price
-            //
-            File[] files_category_price = ToolBox_Inf.getListOfFiles_v2("md_category_price-");
-
-            for (File _file : files_category_price) {
-
-                ArrayList<MD_Category_Price> mdCategoryPrices = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Category_Price>>() {
-                        }.getType()
-                );
-
-                categoryPriceDao.addUpdate(mdCategoryPrices, false);
-            }
-
-            //
-            // Processamento Brand
-            //
-            File[] files_brand = ToolBox_Inf.getListOfFiles_v2("md_brand-");
-
-            for (File _file : files_brand) {
-
-                ArrayList<MD_Brand> mdBrands = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Brand>>() {
-                        }.getType()
-                );
-
-                brandDao.addUpdate(mdBrands, false);
-            }
-
-            //
-            // Processamento Brand Model
-            //
-            File[] files_brand_model = ToolBox_Inf.getListOfFiles_v2("md_brand_model-");
-
-            for (File _file : files_brand_model) {
-
-                ArrayList<MD_Brand_Model> mdBrandModels = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Brand_Model>>() {
-                        }.getType()
-                );
-
-                brandModelDao.addUpdate(mdBrandModels, false);
-            }
-
-            //
-            // Processamento Brand Color
-            //
-            File[] files_brand_color = ToolBox_Inf.getListOfFiles_v2("md_brand_color-");
-
-            for (File _file : files_brand_color) {
-
-                ArrayList<MD_Brand_Color> mdBrandColors = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Brand_Color>>() {
-                        }.getType()
-                );
-
-                brandColorDao.addUpdate(mdBrandColors, false);
-            }
-
             //
             // Processamento Partner
             //
@@ -1558,60 +1617,6 @@ public class WS_Sync extends IntentService {
 
                 partnerDao.addUpdate(mdPartners, false);
             }
-
-            //
-            // Processamento Product Brand
-            //
-            File[] files_product_brand = ToolBox_Inf.getListOfFiles_v2("md_product_brand-");
-
-            for (File _file : files_product_brand) {
-
-                ArrayList<MD_Product_Brand> mdProductBrands = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Brand>>() {
-                        }.getType()
-                );
-
-                productBrandDao.addUpdate(mdProductBrands, false);
-            }
-            //
-            // Processamento Product Segment
-            //
-            File[] files_product_segment = ToolBox_Inf.getListOfFiles_v2("md_product_segment-");
-
-            for (File _file : files_product_segment) {
-
-                ArrayList<MD_Product_Segment> mdProductSegments = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Segment>>() {
-                        }.getType()
-                );
-
-                productSegmentDao.addUpdate(mdProductSegments, false);
-            }
-
-            //
-            // Processamento Product Category Price
-            //
-            File[] files_product_category_price = ToolBox_Inf.getListOfFiles_v2("md_product_category_price-");
-
-            for (File _file : files_product_category_price) {
-
-                ArrayList<MD_Product_Category_Price> mdProductCategoryPrices = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Category_Price>>() {
-                        }.getType()
-                );
-
-                productCategoryPriceDao.addUpdate(mdProductCategoryPrices, false);
-            }
-
             //
             // Processamento SO_Pack_Express
             //

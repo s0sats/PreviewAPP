@@ -225,7 +225,7 @@ public class WS_Upload_Support extends IntentService {
         }
 
         //Se customer com acesso ao Chat gera arquivo com status do chat
-        if(ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+        //if(ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
             File chat_status = new File(Constant.SUPPORT_PATH, "chat_status.txt");
             String chatStatusParam = "";
             //
@@ -235,7 +235,7 @@ public class WS_Upload_Support extends IntentService {
             chatStatusParam += "Socket id: " + (SingletonWebSocket.isSocketSetted() ? SingletonWebSocket.mSocket.id() : "Socket não setado") + "\n";
             //
             ToolBox_Inf.writeIn(chatStatusParam, chat_status);
-        }
+        //}
         //Envia broadcast e monta zip
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_data"), "", "0");
 
