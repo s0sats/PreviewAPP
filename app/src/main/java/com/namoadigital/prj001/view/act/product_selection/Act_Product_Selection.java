@@ -1,11 +1,9 @@
-package com.namoadigital.prj001.ui.act041;
+package com.namoadigital.prj001.view.act.product_selection;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +14,9 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
+import com.namoadigital.prj001.adapter.Act_Product_Selectio_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -27,20 +25,15 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * Created by d.luche on 22/06/2017.
- */
-
-public class Act041_Main extends Base_Activity implements Act041_Main_View {
+public class Act_Product_Selection extends Base_Activity_NFC implements Act_Product_Selection_Contract.I_View {
 
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
 
-    private Act041_Main_Presenter mPresenter;
+    private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
     private ListView lv_groups_products;
     private Button btn_back;
@@ -48,15 +41,14 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
     private Stack<HMAux> mStack = new Stack<>();
     private HMAux currentIndex = new HMAux();
     private Bundle bundle;
-    private boolean loadAdapter = true;//old stopPropagation
     private boolean mkUpdate = true;
-    private String requesting_process;
+
+    private boolean returnOnFound;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.act041_main);
+        setContentView(R.layout.act_product_selection);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,7 +66,7 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT007
+                Constant.ACT_PRODUCTION_SELECTION
         );
 
         loadTranslation();
@@ -98,50 +90,30 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
-
-        HMAux hmAux_TransACT041 = ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                ToolBox_Inf.getResourceCode(
-                        context,
-                        mModule_Code,
-                        Constant.ACT041
-                ),
-                ToolBox_Con.getPreference_Translate_Code(context),
-                transList
-        );
-
-        hmAux_Trans.put(Constant.ACT041, hmAux_TransACT041.get(Constant.ACT041));
-        hmAux_Trans.put(Constant.ACT041 + "_" + "title", hmAux_TransACT041.get(Constant.ACT041 + "_" + "title"));
-
-        ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.ACT007
-        );
     }
 
     private void initVars() {
 
         iniCurrentIndex();
         //
-        mPresenter = new Act041_Main_Presenter_Impl(
-                context,
-                this,
-                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        );
+//        mPresenter = new Act_Product_Selection_Presenter(
+//                context,
+//                this,
+//                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+//                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+//                returnOnFound
+//        );
         //
-        mket_product_search = (MKEditTextNM) findViewById(R.id.act041_mket_product_search);
+        mket_product_search = (MKEditTextNM) findViewById(R.id.act_product_selection_mket_product_search);
         mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
         //
-        lv_groups_products = (ListView) findViewById(R.id.act041_lv_groups_products);
+        lv_groups_products = (ListView) findViewById(R.id.act_product_selection_lv_groups_products);
         //
-        btn_back = (Button) findViewById(R.id.act041_btn_back);
+        btn_back = (Button) findViewById(R.id.act_product_selection_btn_back);
         btn_back.setTag("btn_back");
         btn_back.setVisibility(View.INVISIBLE);
         //
-        btn_home = (Button) findViewById(R.id.act041_btn_home);
+        btn_home = (Button) findViewById(R.id.act_product_selection_btn_home);
         btn_home.setTag("btn_home");
         //
         views.add(btn_back);
@@ -151,10 +123,32 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
         //
         recoverIntentsInfo();
         //
-        if (loadAdapter) {
-            callSetAdapterData(mket_product_search.getText().toString().trim());
+        mPresenter = new Act_Product_Selection_Presenter(
+                context,
+                this,
+                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                returnOnFound
+        );
+        //
+        callSetAdapterData(mket_product_search.getText().toString().trim());
+    }
+
+    private void recoverIntentsInfo() {
+        bundle = getIntent().getExtras();
+
+        resetSearch();
+
+        if (bundle != null) {
+
+
+            String tt = bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP);
+
+            returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
+            mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
         }
 
+        //callSetAdapterData(mket_product_search.getText().toString().trim());
     }
 
     private void callSetAdapterData(String search) {
@@ -172,57 +166,7 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
         currentIndex.put(INDEX_RECURSIVE_CODE, "0");
     }
 
-    private void recoverIntentsInfo() {
-        bundle = getIntent().getExtras();
-        //Sempre deve existir bundle, pois pelo menos o parametro
-        //ACT022_REQUESTING_PROCESS deve existir
-        if (bundle != null && bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)) {
-            //
-            requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS);
-            //Seta valora do requesting_process no presenter.
-            mPresenter.setRequesting_process(requesting_process);
-            //Se existe ACT022_MSTACKVALUES, significa que foi o clique de
-            //voltar na proxima ela.
-            if (bundle.containsKey(Constant.MAIN_MSTACKVALUES)) {
-                if (mPresenter.getProductList().size() == 1) {
-                    loadAdapter = false;
-                    //callAct006(context);
-                } else {
-
-                    try {
-                        //Por causa do Bug no Cast de ArrayList para Stack
-                        //é necessario receber dados da pilha como ArrayList
-                        //e depois adicionar todos na pilha usando addAll()
-                        ArrayList<HMAux> teste = (ArrayList<HMAux>) bundle.getSerializable(Constant.MAIN_MSTACKVALUES);
-                        //
-                        mStack.addAll(teste);
-                        //Atualiza indice atual pegando o ultimo item da pilha
-                        currentIndex.putAll(mStack.pop());
-                        //
-                        mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
-                        //
-                        if (mStack.size() != 0) {
-                            btn_back.setVisibility(View.VISIBLE);
-                        }
-
-                    } catch (EmptyStackException stackExcep) {
-                        resetSearch();
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-                }
-
-            } else {
-                resetSearch();
-            }
-        } else {
-            //ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
-        }
-
-    }
-
     private void resetSearch() {
-        //Se não significa que iniciou fluxo de busca de produto.
         iniCurrentIndex();
         //
         mStack.clear();
@@ -237,8 +181,8 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT041;
-        mAct_Title = Constant.ACT041 + "_" + "title";
+        mAct_Info = Constant.ACT_PRODUCTION_SELECTION;
+        mAct_Title = Constant.ACT_PRODUCTION_SELECTION + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
@@ -248,7 +192,6 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
 
     @Override
     protected void footerCreateDialog() {
-        //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
     }
 
@@ -273,7 +216,6 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
             @Override
             public void onClick(View v) {
                 try {
-                    //Recupera ultimo HMAux da pilha
                     currentIndex.putAll(mStack.pop());
                     //
                     mkUpdate = false;
@@ -287,7 +229,6 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                     callSetAdapterData(mket_product_search.getText().toString());
                 } catch (Exception e) {
                     ToolBox_Inf.registerException(getClass().getName(), e);
-                    mPresenter.onBackPressedClicked();
                 }
             }
         });
@@ -324,27 +265,26 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
-                    //mPresenter.onCategoryProductClicked(item.get("code"));
-                    for (MD_Product md_product: mPresenter.getProductList()) {
-                        if(md_product.getCustomer_code()== ToolBox_Con.getPreference_Customer_Code(context) &&
-                           md_product.getProduct_code() == ToolBox_Inf.mIntegerParse(item.get("code"))
-                        ){
-                            sendResult(md_product);
-                            break;
-                        }
+                    MD_Product pAux = mPresenter.getProduct(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            String.valueOf(item.get("code"))
+                    );
+
+                    if (pAux != null) {
+                        sendResult(pAux);
                     }
                 }
             }
         });
-
     }
 
-    private void sendResult(MD_Product md_product) {
+    @Override
+    public void sendResult(MD_Product md_product) {
         Intent data = new Intent();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MD_Product.class.getName(),md_product);
+        bundle.putSerializable(MD_Product.class.getName(), md_product);
         data.putExtras(bundle);
-        setResult(RESULT_OK,data);
+        setResult(RESULT_OK, data);
         finish();
     }
 
@@ -352,9 +292,9 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
     public void loadGroups_Products(List<HMAux> groups_products) {
 
         lv_groups_products.setAdapter(
-                new Act007_Adapter_Groups_Products(
+                new Act_Product_Selectio_Adapter_Groups_Products(
                         context,
-                        R.layout.act007_main_content_cell_01,
+                        R.layout.act_product_selection_content_cell_01,
                         groups_products,
                         hmAux_Trans
                 )
@@ -362,25 +302,8 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
     }
 
     @Override
-    public void callAct040(Context context, String product_code) {
-        Log.d("PRODUCT", product_code.isEmpty() ? "sem nada" : product_code);
-        //
-        if (product_code.isEmpty()) {
-            finish();
-        } else {
-            Intent mIntent = new Intent();
-            mIntent.putExtra("product_code", product_code);
-            //
-            setResult(RESULT_OK, mIntent);
-            //
-            finish();
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //mPresenter.onBackPressedClicked();
     }
 
     @Override
@@ -397,5 +320,9 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+    }
+
+    @Override
+    protected void nfcData(boolean b, String s) {
     }
 }

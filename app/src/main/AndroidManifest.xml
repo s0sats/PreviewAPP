@@ -308,8 +308,13 @@
             android:name=".ui.act044.Act044_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".view.act.product_selection.Act_Product_Selection"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
 

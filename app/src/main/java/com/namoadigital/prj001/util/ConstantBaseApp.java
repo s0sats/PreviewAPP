@@ -67,6 +67,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT043 = "act043";
     public static final String ACT044 = "act044";
 
+    public static final String ACT_PRODUCTION_SELECTION = "act_production_selection";
+
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
     public static final String WBR_BOOTCOMPLETED = "WBR_BootCompleted";
@@ -101,6 +103,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT027_IS_SHORTCUT = "ACT027_IS_SHORTCUT";
     public static final String ACT027_ORIGINAL_UPDATE_REQUIRED = "ACT027_ORIGINAL_UPDATE_REQUIRED";
     public static final String ACT028_SERVICE_UPDATED = "ACT028_SERVICE_UPDATED";
+
+    public static final String ACT_PRODUCT_SELECTION_PRODUCT_SEARCH = "product_search";
+    public static final String ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP = "product_search_found_jump";
 
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
@@ -343,7 +348,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_STATUS_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
 
 
-
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
     public static final String PARAM_CHECKLIST = "CHECKLIST";// "CHECKLIST";
@@ -371,7 +375,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_AP_PARAM_EDIT = "EDIT";
 
 
-
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
@@ -381,7 +384,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_SO_PACK_EXPRESS = "MODULE_SO_PACK_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
-
 
 
     //Constantes Status da SO
@@ -452,8 +454,8 @@ public class ConstantBaseApp extends ConstantBase {
 //    public static final String SYS_STATUS_SENT = "SENT";
 
     /*
-    * Constantes CHAT
-    */
+     * Constantes CHAT
+     */
     //Eventos Client
     public static final String CHAT_EVENT_C_LOGIN = "cLogin";
     public static final String CHAT_EVENT_C_ROOM = "cRoom";

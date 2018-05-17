@@ -23,14 +23,14 @@ public class MD_Product_Sql_001 implements Specification {
 
         return sb.append(
                 " SELECT " +
-                "     * " +
-                "  FROM " +
-                MD_ProductDao.TABLE +
-                "  WHERE " +
-                MD_ProductDao.CUSTOMER_CODE + " = '"+ customer_code+"' " +
-                " AND " + MD_ProductDao.PRODUCT_CODE +  " = '"+product_code+"' " +
-                "  ORDER BY " +
-                "     product_code").toString();
+                        "     * " +
+                        "  FROM " +
+                        MD_ProductDao.TABLE +
+                        "  WHERE " +
+                        MD_ProductDao.CUSTOMER_CODE + " = '" + customer_code + "' " +
+                        " AND " + MD_ProductDao.PRODUCT_CODE + " = '" + product_code + "' " +
+                        "  ORDER BY " +
+                        "     product_code").toString();
 
     }
 }

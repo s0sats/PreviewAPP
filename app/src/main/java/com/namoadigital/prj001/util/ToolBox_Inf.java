@@ -2549,6 +2549,14 @@ public class ToolBox_Inf {
         }
     }
 
+    public static Long mLongParse(String integer) {
+        try {
+            return Long.parseLong(integer);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void alertBundleNotFound(final Base_Activity act, HMAux hmAux_Trans) {
         //
         Exception e = new Exception("Bundle parameters not found.");
