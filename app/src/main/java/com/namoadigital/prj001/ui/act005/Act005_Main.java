@@ -43,6 +43,8 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -200,12 +202,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);*/
-       /*
-       * Desloga user se preferencia login_status != OK
-       */
-       if(ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)){
-           forceLogoutBySessionNotFound();
-       }
+        /*
+         * Desloga user se preferencia login_status != OK
+         */
+        if (ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)) {
+            forceLogoutBySessionNotFound();
+        }
     }
 
     private void forceLogoutBySessionNotFound() {
@@ -219,9 +221,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         //Limpa a sessão local
                         mPresenter.clearLocalSession();
                         //
-                        if(mPresenter.existOthersSession()){
+                        if (mPresenter.existOthersSession()) {
                             changeCustomer();
-                        }else {
+                        } else {
                             processLogin();
                         }
                     }
@@ -436,7 +438,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 )
         );
         //
-        mPresenter.getMenuItens(hmAux_Trans);
+        //mPresenter.getMenuItens(hmAux_Trans);
+        mPresenter.getMenuItensV2(hmAux_Trans);
         //
         syncAfterSave = false;
         //
@@ -710,24 +713,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.accessMenuItem(item.get(Act005_Main.MENU_ID), 0);
+                MenuMainNamoa item = (MenuMainNamoa) parent.getItemAtPosition(position);
+                mPresenter.accessMenuItem(item.getMenu_id(), 0);
             }
         });
 
     }
 
-    @Override
-    public void loadMenu(List<HMAux> menus) {
-        //Traduz menus
-        for (HMAux item : menus) {
-            if (hmAux_Trans.get(item.get(Act005_Main.MENU_DESC)) != null) {
-                item.put(Act005_Main.MENU_DESC, hmAux_Trans.get(item.get(Act005_Main.MENU_DESC)));
-            } else {
-                item.put(Act005_Main.MENU_DESC, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(Act005_Main.MENU_DESC)));
-            }
-        }
-
+    public void loadMenuV2(ArrayList<MenuMainNamoa> menus) {
         mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
         gv_menu.setAdapter(mAdapter);
     }
@@ -1021,7 +1014,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Atualiza traduções
                     loadTranslation();
                     //Atualiza menu e os badges
-                    mPresenter.getMenuItens(hmAux_Trans);
+                    //mPresenter.getMenuItens(hmAux_Trans);
+                    mPresenter.getMenuItensV2(hmAux_Trans);
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
@@ -1140,7 +1134,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
                     HMAux aux = new HMAux();
-                    String [] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);;
+                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                    ;
                     String status = item.getValue();
                     String soInfo = pk[0];
                     //
@@ -1156,7 +1151,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 }
             }
             //
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
             if (wsResults.size() > 0) {
@@ -1173,7 +1169,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         } else {
             setWsSoProcess("");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
             if (wsResults.size() > 0) {
@@ -1323,14 +1320,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 //
                 mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
             } else {
-                mPresenter.getMenuItens(hmAux_Trans);
+                //mPresenter.getMenuItens(hmAux_Trans);
+                mPresenter.getMenuItensV2(hmAux_Trans);
             }
 
         } else {
             setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
             super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
         }
     }
 
@@ -1341,37 +1340,43 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_so_express"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_send_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
@@ -1608,7 +1613,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         ToolBox_Inf.mkDirectory();
         //
-        mPresenter.getMenuItens(hmAux_Trans);
+        //mPresenter.getMenuItens(hmAux_Trans);
+        mPresenter.getMenuItensV2(hmAux_Trans);
     }
 
     public void startDownloadServices() {
@@ -1647,7 +1653,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mPresenter.getMenuItens(hmAux_Trans);
+            //mPresenter.getMenuItens(hmAux_Trans);
+            mPresenter.getMenuItensV2(hmAux_Trans);
         }
     }
 
@@ -1664,7 +1671,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 case Constant.CHAT_BR_TYPE_ROOM:
-                   // mPresenter.getMenuItens(hmAux_Trans);
+                    // mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 default:
             }

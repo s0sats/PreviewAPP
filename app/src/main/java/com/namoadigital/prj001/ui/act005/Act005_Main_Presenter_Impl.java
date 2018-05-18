@@ -32,6 +32,7 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
@@ -96,12 +97,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
-
     private String logoutList = "";
     private transient Dialog logoutDialog;
     private Act005_Logout_Adapter mAdapter;
     private ListView lv_customer;
     private List<HMAux> customer_list;
+    //
+    private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
 
     public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao) {
         this.context = context;
@@ -113,91 +115,145 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.soDao = soDao;
         this.customFormApDao = customFormApDao;
         this.soPackExpressLocalDao = soPackExpressLocalDao;
+        buildMenuList();
     }
 
-    String[] menuId = {
-            Act005_Main.MENU_ID_CHECKLIST,
-            Act005_Main.MENU_ID_FORM_AP,
-            Act005_Main.MENU_ID_SERVICE,
-            Act005_Main.MENU_ID_SCHEDULE_DATA,
-            Act005_Main.MENU_ID_SERIAL,
-            Act005_Main.MENU_ID_PENDING_DATA,
-            Act005_Main.MENU_ID_HISTORIC_DATA,
-            Act005_Main.MENU_ID_MESSAGES,
-            Act005_Main.MENU_ID_SEND_DATA,
-            //       Act005_Main.MENU_ID_SYNC_DATA,
-            Act005_Main.MENU_ID_CHAT,
-            Act005_Main.MENU_ID_CLOSE
-    };
+    /*Montagem novo menu*/
+    private void buildMenuList() {
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_CHECKLIST,
+                        Constant.PROFILE_PRJ001_CHECKLIST,
+                        "lbl_checklist",
+                        "lbl_checklist",
+                        R.drawable.ic_n_form
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_FORM_AP,
+                        Constant.PROFILE_PRJ001_AP,
+                        "lbl_form_ap",
+                        "lbl_form_ap",
+                        R.drawable.ic_n_action_plan
 
-    String[] menuDesc = {
-            "lbl_checklist",
-            "lbl_form_ap",
-            "lbl_so",
-            "lbl_schedule_data",
-            "lbl_serial_data",
-            "lbl_pending_data",
-            "lbl_historic_data",
-            "lbl_messages",
-            "lbl_send_data",
-            //        "lbl_sync_data",
-            "lbl_chat",
-            "lbl_close_app"
-    };
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SERVICE,
+                        Constant.PROFILE_PRJ001_SO,
+                        "lbl_so",
+                        "lbl_so",
+                        R.drawable.ic_n_service2_24x24
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SCHEDULE_DATA,
+                        Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST,
+                        "lbl_schedule_data",
+                        "lbl_schedule_data",
+                        R.drawable.ic_calendario
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SERIAL,
+                        Constant.PROFILE_PRJ001_PRODUCT_SERIAL,
+                        "lbl_serial_data",
+                        "lbl_serial_data",
+                        R.drawable.ic_serial_24x24
 
-    String[] icon = {
-            String.valueOf(R.drawable.ic_n_form),
-            String.valueOf(R.drawable.ic_n_action_plan),
-            String.valueOf(R.drawable.ic_n_service2_24x24),
-            String.valueOf(R.drawable.ic_calendario),
-            String.valueOf(R.drawable.ic_serial_24x24),
-            String.valueOf(R.drawable.ic_pendente),
-            String.valueOf(R.drawable.ic_historico),
-            String.valueOf(R.drawable.ic_notificacao),
-            String.valueOf(R.drawable.ic_enviar),
-            //       String.valueOf(R.drawable.ic_sincronizar),
-            String.valueOf(R.drawable.ic_n_chat),//old R.drawable.ic_chat_24x24
-            String.valueOf(R.drawable.ic_sair)
-    };
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_PENDING_DATA,
+                        "",
+                        "lbl_pending_data",
+                        "lbl_pending_data",
+                        R.drawable.ic_pendente
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_HISTORIC_DATA,
+                        "",
+                        "lbl_historic_data",
+                        "lbl_historic_data",
+                        R.drawable.ic_historico
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_MESSAGES,
+                        "",
+                        "lbl_messages",
+                        "lbl_messages",
+                        R.drawable.ic_notificacao
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SEND_DATA,
+                        "",
+                        "lbl_send_data",
+                        "lbl_send_data",
+                        R.drawable.ic_enviar
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_CHAT,
+                        "",
+                        "lbl_chat",
+                        "lbl_chat",
+                        R.drawable.ic_n_chat
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_CLOSE,
+                        "",
+                        "lbl_close_app",
+                        "lbl_close_app",
+                        R.drawable.ic_sair
+                )
+        );
+    }
 
-    String[][] parameter = {
-            {""},
-            {""},
-            {Constant.PARAM_SO},//{Constant.PARAM_SO, Constant.PARAM_SO_MOV}
-            {Constant.PARAM_SCHEDULE_CHECKLIST},
-            {""},//{Constant.PARAM_SO_MOV},
-            {""},
-            {""},
-            {""},
-            {""},
-            {""},//{Constant.PARAM_CHAT},
-            {""}
-    };
-
-
-    @Override
-    public void getMenuItens(HMAux hmAux_Trans) {
-        List<HMAux> menuList = new ArrayList<>();
-
-        for (int i = 0; i < menuId.length; i++) {
-            //SÓ exibe item de menu se menu não requer param
-            //ou se customer possui acesso ao param
-            boolean showMenu = parameter[i][0].equals("") || ToolBox_Inf.parameterExists(context, parameter[i]);
+    public void getMenuItensV2(HMAux hmAux_Trans) {
+        for (MenuMainNamoa menu : menuList) {
+            boolean showMenu = menu.getMenu_code().equals("") || ToolBox_Inf.profileExists(context, menu.getMenu_code(), null);
             //
             if (showMenu) {
-                HMAux Aux = new HMAux();
                 String qty = "";
                 String qtySO = "";
                 String qtyAP = "";
                 String qtySO_Express = "";
                 String qtyBadge2 = "";
-
-                Aux.put(Act005_Main.MENU_ID, menuId[i]);
-                Aux.put(Act005_Main.MENU_ICON, icon[i]);
-                Aux.put(Act005_Main.MENU_DESC, menuDesc[i]);
-
-                switch (menuId[i]) {
-
+                //Reseta valores do badge cada vez que metodo for chamado
+                menu.resetBadges();
+                //Traduz label do menu
+                menu.setMenu_desc(hmAux_Trans.get(menu.getMenu_lbl()));
+                /*if (hmAux_Trans.get(menu.getMenu_desc()) != null) {
+                    menu.setMenu_desc(hmAux_Trans.get(menu.getMenu_desc()));
+                } else {
+                    menu.setMenu_desc(ToolBox.setNoTrans(mModule_Code, mResource_Code, menu.getMenu_desc()));
+                }*/
+                //
+                switch (menu.getMenu_id()) {
                     case Act005_Main.MENU_ID_SERVICE:
                         try {
                             qty = soDao.getByStringHM(
@@ -221,8 +277,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtyBadge2 = "0";
                         }
                         //
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtyBadge2);
                         break;
 
                     case Act005_Main.MENU_ID_PENDING_DATA:
@@ -265,12 +321,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtySO_Express = "0";
                         }
                         //Soma Qtd de n-form ,n_service, n_form_ap e so_express
-                        qty = String.valueOf(
-                                Integer.parseInt(qty)
-                                        + Integer.parseInt(qtySO)
-                                        + Integer.parseInt(qtyAP)
-                                        + Integer.parseInt(qtySO_Express)
-                        );
+                        menu.addInBadge1(qty);
+                        menu.addInBadge1(qtySO);
+                        menu.addInBadge1(qtyAP);
+                        menu.addInBadge1(qtySO_Express);
+//                        qty = String.valueOf(
+//                                Integer.parseInt(qty)
+//                                        + Integer.parseInt(qtySO)
+//                                        + Integer.parseInt(qtyAP)
+//                                        + Integer.parseInt(qtySO_Express)
+//                        );
                         //
                         //
                         try {
@@ -284,8 +344,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtyBadge2 = "0";
                         }
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
+                        menu.addInBadge2(qtyBadge2);
                         break;
 
                     case Act005_Main.MENU_ID_SEND_DATA:
@@ -327,16 +386,21 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         }
 
                         //Soma Qtd de n-form e n_service e form_ap
-                        qty = String.valueOf(
-                                ToolBox_Inf.convertStringToInt(qty) +
-                                        ToolBox_Inf.convertStringToInt(qtySO) +
-                                        isSoWithinTokenFile() +
-                                        isSerialWithinTokenFile() +
-                                        ToolBox_Inf.convertStringToInt(qtyAP) +
-                                        ToolBox_Inf.convertStringToInt(qtySO_Express)
-                        );
+                        menu.addInBadge1(qty);
+                        menu.addInBadge1(qtySO);
+                        menu.addInBadge1(isSoWithinTokenFile());
+                        menu.addInBadge1(isSerialWithinTokenFile());
+                        menu.addInBadge1(qtyAP);
+                        menu.addInBadge1(qtySO_Express);
+//                        qty = String.valueOf(
+//                                ToolBox_Inf.convertStringToInt(qty) +
+//                                        ToolBox_Inf.convertStringToInt(qtySO) +
+//                                        isSoWithinTokenFile() +
+//                                        isSerialWithinTokenFile() +
+//                                        ToolBox_Inf.convertStringToInt(qtyAP) +
+//                                        ToolBox_Inf.convertStringToInt(qtySO_Express)
+//                        );
                         //
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -364,12 +428,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtyAP = "0";
                         }
-                        qty = String.valueOf(
-                                ToolBox_Inf.convertStringToInt(qty) +
-                                        ToolBox_Inf.convertStringToInt(qtyAP)
-                        );
+                        menu.addInBadge1(qty);
+                        menu.addInBadge1(qtyAP);
+//                        qty = String.valueOf(
+//                                ToolBox_Inf.convertStringToInt(qty) +
+//                                        ToolBox_Inf.convertStringToInt(qtyAP)
+//                        );
                         //
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
                     case Act005_Main.MENU_ID_MESSAGES:
@@ -380,12 +445,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qty = "0";
                         }
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        menu.addInBadge1(qty);
                         break;
 
                     case Act005_Main.MENU_ID_CHAT:
                         qty = "1";
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        menu.addInBadge1(qty);
                         break;
                     case Act005_Main.MENU_ID_FORM_AP:
                         try {
@@ -408,20 +473,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtyBadge2 = "0";
                         }
                         //
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtyBadge2);
 
                         break;
                     default:
-                        Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGE2, qtySO);
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtySO);
                         break;
                 }
 
-                menuList.add(Aux);
             }
         }
-        mView.loadMenu(menuList);
+        //
+        mView.loadMenuV2(menuList);
     }
 
     @Override

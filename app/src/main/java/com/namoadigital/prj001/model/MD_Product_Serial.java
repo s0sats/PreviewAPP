@@ -78,19 +78,12 @@ public class MD_Product_Serial implements Serializable {
     private Integer class_available;
     private Integer inbound_code;
     private String inbound_id;
-    private String inbound_invoice_number;
-    private String inbound_from_type;
-    private String inbound_from_desc;
     private String inbound_conf_date;
     private Integer move_prefix;
     private Integer move_code;
     private Integer move_group_code;
     private Integer outbound_code;
     private String outbound_id;
-    private String outbound_invoice_number;
-    private String outbound_to_type;
-    private String outbound_to_desc;
-    private String outbound_conf_date;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -458,30 +451,6 @@ public class MD_Product_Serial implements Serializable {
         this.inbound_id = inbound_id;
     }
 
-    public String getInbound_invoice_number() {
-        return inbound_invoice_number;
-    }
-
-    public void setInbound_invoice_number(String inbound_invoice_number) {
-        this.inbound_invoice_number = inbound_invoice_number;
-    }
-
-    public String getInbound_from_type() {
-        return inbound_from_type;
-    }
-
-    public void setInbound_from_type(String inbound_from_type) {
-        this.inbound_from_type = inbound_from_type;
-    }
-
-    public String getInbound_from_desc() {
-        return inbound_from_desc;
-    }
-
-    public void setInbound_from_desc(String inbound_from_desc) {
-        this.inbound_from_desc = inbound_from_desc;
-    }
-
     public String getInbound_conf_date() {
         return inbound_conf_date;
     }
@@ -530,37 +499,6 @@ public class MD_Product_Serial implements Serializable {
         this.outbound_id = outbound_id;
     }
 
-    public String getOutbound_invoice_number() {
-        return outbound_invoice_number;
-    }
-
-    public void setOutbound_invoice_number(String outbound_invoice_number) {
-        this.outbound_invoice_number = outbound_invoice_number;
-    }
-
-    public String getOutbound_to_type() {
-        return outbound_to_type;
-    }
-
-    public void setOutbound_to_type(String outbound_to_type) {
-        this.outbound_to_type = outbound_to_type;
-    }
-
-    public String getOutbound_to_desc() {
-        return outbound_to_desc;
-    }
-
-    public void setOutbound_to_desc(String outbound_to_desc) {
-        this.outbound_to_desc = outbound_to_desc;
-    }
-
-    public String getOutbound_conf_date() {
-        return outbound_conf_date;
-    }
-
-    public void setOutbound_conf_date(String outbound_conf_date) {
-        this.outbound_conf_date = outbound_conf_date;
-    }
 
     /**
      * Monta Obj TProduct_Serial baseado nas informações da classe.

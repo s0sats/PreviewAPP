@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act005_Main_Presenter {
 
-    void getMenuItens(HMAux hmAux_Trans);
+    void getMenuItensV2(HMAux hmAux_Trans);
 
     void executeSyncProcess(int jump_validation_UR);
 

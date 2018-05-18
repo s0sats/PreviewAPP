@@ -17,6 +17,7 @@ public class EV_User_Customer {
     private String session_app;
     private int pending;
     private String logo_url;
+    private int tracking;
 
     public long getUser_code() {
         return user_code;
@@ -112,5 +113,13 @@ public class EV_User_Customer {
 
     public void setLogo_url(String logo_url) {
         this.logo_url = logo_url;
+    }
+
+    public int getTracking() {
+        return tracking;
+    }
+
+    public void setTracking(int tracking) {
+        this.tracking = tracking;
     }
 }
