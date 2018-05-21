@@ -1,20 +1,26 @@
 package com.namoadigital.prj001.view.frag;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 
 import java.util.ArrayList;
 
@@ -28,10 +34,10 @@ public class Frg_Serial_Search extends Fragment {
     public static final String SERIAL = "serial";
     public static final String TRACKING = "tracking";
 
-
     private ButtonNFC btn_nfc_reader;
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
+    private ImageView iv_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
     private TextView tv_tracking;
@@ -39,6 +45,7 @@ public class Frg_Serial_Search extends Fragment {
 
     private HMAux hmAux_Trans;
     private boolean showHint;
+    private boolean showTree = true;
 
     private Button btn_option_01;
     private Button btn_option_02;
@@ -97,6 +104,8 @@ public class Frg_Serial_Search extends Fragment {
         //
         tv_product_id = (TextView) view.findViewById(R.id.frg_serial_search_tv_product_id);
         mket_product_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_product_id);
+        iv_product_id = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_id);
+        //
         controls_sta.add(mket_product_id);
         //
         tv_serial = (TextView) view.findViewById(R.id.frg_serial_search_tv_serial);
@@ -119,6 +128,12 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     private void iniAction() {
+        iv_product_id.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callAct_Product_Selection(getActivity());
+            }
+        });
 
         btn_option_01.setOnClickListener(btnActionListener);
         btn_option_02.setOnClickListener(btnActionListener);
@@ -148,9 +163,9 @@ public class Frg_Serial_Search extends Fragment {
             }
 
             HMAux values = new HMAux();
-            values.put(PRODUCT_ID, mket_product_id.getText().toString().trim());
-            values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()));
-            values.put(TRACKING, mket_tracking.getText().toString().trim());
+            values.put(PRODUCT_ID, mket_product_id.getText().toString().trim().isEmpty() ? "" : mket_product_id.getText().toString().trim());
+            values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
+            values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
             if (delegate != null) {
                 delegate.onSearchClick(
@@ -158,9 +173,23 @@ public class Frg_Serial_Search extends Fragment {
                         values
                 );
             }
-
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        loadDataToScreen();
+    }
+
+    private void loadDataToScreen() {
+        if (showTree) {
+            iv_product_id.setVisibility(View.VISIBLE);
+        } else {
+            iv_product_id.setVisibility(View.GONE);
+        }
+    }
 
     // General Methods
     public void setNFCText(String text) {
@@ -235,6 +264,10 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
+    public void setShowTree(boolean showTree) {
+        this.showTree = showTree;
+    }
+
     public ArrayList<MKEditTextNM> getControlsSta() {
         return controls_sta;
     }
@@ -251,5 +284,39 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
         btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
         btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case 20:
+                processResult(resultCode, data);
+                break;
+            default:
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void processResult(int resultCode, Intent data) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
+            mket_product_id.setText(String.valueOf(pAux.getProduct_code()));
+        } else {
+            mket_product_id.setText("Não achou");
+        }
+    }
+
+    public void callAct_Product_Selection(Context context) {
+        Intent mIntent = new Intent(context, Act_Product_Selection.class);
+        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivityForResult(mIntent, 20);
     }
 }

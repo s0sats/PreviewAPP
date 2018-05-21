@@ -68,7 +68,6 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             CUSTOM_FORM_URL_LOCAL, LAST_UPDATE
     };
 
-
     public GE_Custom_Form_ApDao(Context context) {
         super(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

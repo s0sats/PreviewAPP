@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -45,7 +46,7 @@ public class Test extends Base_Activity_Frag_NFC_Geral {
                 Constant.FRG_SERIAL_SEARCH
         );
         //
-        loadTranslationFrg_Serial_Search ();
+        loadTranslationFrg_Serial_Search();
         //
         frgSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.test_frg_search);
         frgSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
@@ -56,14 +57,17 @@ public class Test extends Base_Activity_Frag_NFC_Geral {
             @Override
             public void onSearchClick(String btn_Action, HMAux optionsInfo) {
 
-                callAct_Product_Selection(context);
+                // Remover. Apenas Teste
+                //Log.d("HMAUX", optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).isEmpty() ? "Foi ruim" : optionsInfo.get(Frg_Serial_Search.PRODUCT_ID) );
+
+                Log.d("HMAUX", optionsInfo.get(Frg_Serial_Search.PRODUCT_ID) );
 
             }
         });
 
     }
 
-    private void loadTranslationFrg_Serial_Search () {
+    private void loadTranslationFrg_Serial_Search() {
         List<String> transList = new ArrayList<String>();
         transList.add("btn_enable_nfc");
         transList.add("product_lbl");
@@ -109,7 +113,7 @@ public class Test extends Base_Activity_Frag_NFC_Geral {
 
     public void callAct_Product_Selection(Context context) {
         Intent mIntent = new Intent(context, Act_Product_Selection.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
         //
@@ -187,5 +191,20 @@ public class Test extends Base_Activity_Frag_NFC_Geral {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case 20:
+                // Remover. Apenas Teste
+                Log.d("VAI", "PROCESSO DE CHAMADA");
+                break;
+            default:
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
