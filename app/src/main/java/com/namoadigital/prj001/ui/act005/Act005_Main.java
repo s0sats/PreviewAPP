@@ -76,6 +76,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.test.Test;
+import com.namoadigital.prj001.view.act.test2.Teste2;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -1528,6 +1529,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Teste");
 
+        //Menu Teste
+        menu.add(0, TOOLBAR_SUPPORT+2, Menu.FIRST + 3, "Teste 2");
+        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Teste 2");
+
 
         return true;
     }
@@ -1589,6 +1596,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 Intent mIntent = new Intent(context, Test.class);
                 startActivity(mIntent);
                 finish();
+                break;
+            case TOOLBAR_SUPPORT+2:
+                Intent mIntent2 = new Intent(context, Teste2.class);
+                startActivity(mIntent2);
+                finish();
+                break;
             default:
                 return true;
         }
