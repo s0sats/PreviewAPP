@@ -82,6 +82,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String MOVE_GROUP_CODE = "move_group_code";
     public static final String OUTBOUND_CODE = "outbound_code";
     public static final String OUTBOUND_ID = "outbound_id";
+    public static final String PRODUCT_IO_CONTROL = "product_io_control";
+    public static final String LOCAL_CONTROL = "local_control";
+    public static final String SITE_IO_CONTROL = "site_io_control";
+    public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
@@ -90,7 +94,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             SYNC_PROCESS, SITE_ID, SITE_DESC, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
-            OUTBOUND_CODE, OUTBOUND_ID
+            OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -754,6 +758,26 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             } else {
                 md_product_serial.setOutbound_id(cursor.getString(cursor.getColumnIndex(OUTBOUND_ID)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(PRODUCT_IO_CONTROL))) {
+                md_product_serial.setProduct_io_control(null);
+            } else {
+                md_product_serial.setProduct_io_control(cursor.getInt(cursor.getColumnIndex(PRODUCT_IO_CONTROL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LOCAL_CONTROL))) {
+                md_product_serial.setLocal_control(null);
+            } else {
+                md_product_serial.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SITE_IO_CONTROL))) {
+                md_product_serial.setSite_io_control(null);
+            } else {
+                md_product_serial.setSite_io_control(cursor.getInt(cursor.getColumnIndex(SITE_IO_CONTROL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(INBOUND_AUTO_CREATE))) {
+                md_product_serial.setInbound_auto_create(null);
+            } else {
+                md_product_serial.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
+            }
             //
             return md_product_serial;
         }
@@ -848,6 +872,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(MOVE_GROUP_CODE, md_product_serial.getMove_group_code());
             contentValues.put(OUTBOUND_CODE, md_product_serial.getOutbound_code());
             contentValues.put(OUTBOUND_ID, md_product_serial.getOutbound_id());
+            contentValues.put(PRODUCT_IO_CONTROL, md_product_serial.getProduct_io_control());
+            contentValues.put(LOCAL_CONTROL, md_product_serial.getLocal_control());
+            contentValues.put(SITE_IO_CONTROL, md_product_serial.getSite_io_control());
+            contentValues.put(INBOUND_AUTO_CREATE, md_product_serial.getInbound_auto_create());
 
             return contentValues;
         }
