@@ -22,16 +22,23 @@ public class MD_Site_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   site_code "+ SearchableSpinner.ID +", " +
-                        "   site_id , " +
-                        "   site_desc "+ SearchableSpinner.DESCRIPTION +
-                        " FROM " +
-                        MD_SiteDao.TABLE +
-                        " WHERE " +
-                        MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
-                       " ORDER BY " +
+                        "   site_code " + SearchableSpinner.ID + ", \n" +
+                        "   site_id ,\n " +
+                        "   site_desc, " + SearchableSpinner.DESCRIPTION + ", \n" +
+                        "   io_control,\n " +
+                        "   inbound_auto_create \n " +
+                        " FROM \n" +
+                        MD_SiteDao.TABLE +"\n"+
+                        " WHERE \n" +
+                        MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
+                        " ORDER BY \n" +
                         "      site_id,site_desc;")
-                .append(SearchableSpinner.ID + "#site_id#"+SearchableSpinner.DESCRIPTION )
+                .append(SearchableSpinner.ID + "#" +
+                        MD_SiteDao.SITE_ID + "#" +
+                        SearchableSpinner.DESCRIPTION + "#" +
+                        MD_SiteDao.IO_CONTROL + "#" +
+                        MD_SiteDao.INBOUND_AUTO_CREATE
+                )
                 .toString();
     }
 }
