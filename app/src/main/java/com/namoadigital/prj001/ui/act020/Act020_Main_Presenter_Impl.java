@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -55,7 +56,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     //
     private boolean downloadStarted = false;
-    private TProduct_Serial tProductSerial;
+    private MD_Product_Serial tProductSerial;
 
     public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao) {
         this.context = context;
@@ -113,7 +114,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
         } else {
-            ArrayList<TProduct_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
             mView.closeDrawer();
             //
@@ -140,7 +141,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
     }
 
-    private ArrayList<TProduct_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
+    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
         ArrayList<HMAux> serial_list = (ArrayList<HMAux>)
                 serialDao.query_HM(
                         new Sql_Act020_002(
@@ -151,11 +152,11 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                         ).toSqlQuery()
                 );
         //
-        ArrayList<TProduct_Serial> tSerialList = new ArrayList<>();
+        ArrayList<MD_Product_Serial> tSerialList = new ArrayList<>();
         //
         if (serial_list != null && serial_list.size() > 0) {
             for (HMAux hmAux : serial_list) {
-                TProduct_Serial auxObj = new TProduct_Serial();
+                MD_Product_Serial auxObj = new MD_Product_Serial();
                 //
                 auxObj.setCustomer_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.CUSTOMER_CODE)));
                 auxObj.setProduct_code(Long.valueOf(hmAux.get(MD_Product_SerialDao.PRODUCT_CODE)));
@@ -184,7 +185,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     @Override
-    public void defineFlow(TProduct_Serial productSerial) {
+    public void defineFlow(MD_Product_Serial productSerial) {
         //
         tProductSerial = productSerial;
         //
@@ -397,8 +398,14 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
     }
 
+    // New
+
+
+
+
     @Override
     public void onBackPressedClicked() {
         mView.callAct006(context);
     }
+
 }

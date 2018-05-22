@@ -22,5 +22,4 @@ public interface Act006_Main_View {
     void showMsg(String title, String msg);
 
     void showPD(String title, String msg);
-
 }

@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act020;
 
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 /**
  * Created by d.luche on 17/05/2017.
@@ -14,7 +14,7 @@ public interface Act020_Main_Presenter {
 
     void executeSerialSearch(String product_id, String serial, String tracking);
 
-    void defineFlow(TProduct_Serial productSerial);
+    void defineFlow(MD_Product_Serial productSerial);
 
     void updateSyncChecklist();
 

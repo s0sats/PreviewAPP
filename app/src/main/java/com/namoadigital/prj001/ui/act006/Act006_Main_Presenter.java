@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act006;
 
-import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -17,15 +16,12 @@ public interface Act006_Main_Presenter {
 
     void checkPendenciesFlow(int pendencies_qty);
 
-    void defineFlow(HMAux item);
-
-    void executeSerialSearch(String serial_id);
-
-    /*void defineSearchResultFlow(String result);*/
+    void executeSerialSearch(String product_id, String serial_id, String tracking);
 
     void extractSearchResult(String result);
 
-    void defineSearchResultFlowV2(ArrayList<TProduct_Serial> serial_list);
+    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list);
 
+    String searchProductInfo(String product_code,String product_id);
 
 }

@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_004;
@@ -155,7 +155,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
                 result,
                 TSerial_Search_Rec.class);
         //
-        ArrayList<TProduct_Serial> serial_list = rec.getRecord();
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
         if(serial_list == null || serial_list.size() == 0){
             //
@@ -165,14 +165,14 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
             );
         }else{
             if(serial_list.size() == 1){
-                TProduct_Serial productSerial = serial_list.get(0);
+                MD_Product_Serial productSerial = serial_list.get(0);
                 //
                 Bundle bundle = new Bundle();
                 //
                 bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS);
                 bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
                 bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial.getMDProductSerial());
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
                 //
                 mView.callAct023(context,bundle);
             }else{

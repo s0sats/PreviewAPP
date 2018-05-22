@@ -26,6 +26,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -61,7 +62,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
-    private ArrayList<TProduct_Serial> serial_list = new ArrayList<>();
+    private ArrayList<MD_Product_Serial> serial_list = new ArrayList<>();
 
 
     @Override
@@ -257,7 +258,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
-                serial_list = (ArrayList<TProduct_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             }
 //            if (bundle.containsKey(Constant.MAIN_SERIAL_TRACKING)) {
 //                tracking_searched = bundle.getString(Constant.MAIN_SERIAL_TRACKING, "");
@@ -294,7 +295,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
+                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
 
                 mPresenter.defineFlow(productSerial);
             }
@@ -379,7 +380,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
-    public void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list) {
+    public void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list) {
         //Esconde tv com msg de nenhum busca feita
         //e ll com informações de limite de excedido.
         tv_no_result.setVisibility(View.GONE);

@@ -10,7 +10,7 @@ public class TSerial_Search_Rec {
 
     private String app;
     private String validation;
-    private ArrayList<TProduct_Serial> record;
+    private ArrayList<MD_Product_Serial> record;
     private long record_count;
     private long record_page;
     private String link_url;
@@ -32,11 +32,11 @@ public class TSerial_Search_Rec {
         this.validation = validation;
     }
 
-    public ArrayList<TProduct_Serial> getRecord() {
+    public ArrayList<MD_Product_Serial> getRecord() {
         return record;
     }
 
-    public void setRecord(ArrayList<TProduct_Serial> record) {
+    public void setRecord(ArrayList<MD_Product_Serial> record) {
         this.record = record;
     }
 

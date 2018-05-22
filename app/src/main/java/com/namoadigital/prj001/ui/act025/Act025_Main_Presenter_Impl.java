@@ -10,7 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
@@ -55,33 +55,33 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
 //            defineFlow(rec.getRecord().get(0));
 //
 //        }else {
-            //Seta qtd de registro
-            mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-            //chama
-            mView.loadProductSerialList(rec.getRecord());
-            //
-            //Se qtd 1, chama proxima define flow
-            if (rec.getRecord_count() == 1) {
-                defineFlow(rec.getRecord().get(0));
-                //Se qtd de registro maior que o total retornado,
-                //exibe msg para refinar a busca.
-            }else if (rec.getRecord_count() > rec.getRecord_page()) {
-                mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-            }
-       // }
+        //Seta qtd de registro
+        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
+        //chama
+        mView.loadProductSerialList(rec.getRecord());
+        //
+        //Se qtd 1, chama proxima define flow
+        if (rec.getRecord_count() == 1) {
+            defineFlow(rec.getRecord().get(0));
+            //Se qtd de registro maior que o total retornado,
+            //exibe msg para refinar a busca.
+        } else if (rec.getRecord_count() > rec.getRecord_page()) {
+            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
+        }
+        // }
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id,String tracking) {
+    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
 
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE,"");
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
@@ -91,25 +91,25 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
     @Override
-    public void defineFlow(TProduct_Serial productSerial) {
+    public void defineFlow(MD_Product_Serial productSerial) {
         Bundle bundle = new Bundle();
         //
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
         bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
         bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
-        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial.getMDProductSerial());
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
         //
-        mView.callAct023(context,bundle);
+        mView.callAct023(context, bundle);
     }
 
     @Override
-    public String searchProductInfo(String product_code,String product_id) {
+    public String searchProductInfo(String product_code, String product_id) {
         MD_Product md_product = productDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -118,7 +118,7 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if(md_product != null){
+        if (md_product != null) {
             return md_product.getProduct_id();
         }
         //
@@ -133,7 +133,7 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
                 ).toSqlQuery()
         );
         //Se só um produto, chama metodo que carrega info na tela.
-        if(products != null && products.size() == 1){
+        if (products != null && products.size() == 1) {
             mView.setProductInfo(products.get(0));
         }
 

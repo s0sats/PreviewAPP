@@ -10,7 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
@@ -104,12 +104,12 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public void defineFlow(TProduct_Serial productSerial,boolean new_serial) {
+    public void defineFlow(MD_Product_Serial productSerial, boolean new_serial) {
         Bundle bundle = new Bundle();
         //
 //        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
 //        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
-        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial.getMDProductSerial());
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
         if(new_serial){
             bundle.putBoolean(Act030_Main.NEW_SERIAL, new_serial);
         }
@@ -150,7 +150,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         //
         if (md_product != null && md_product.getCustomer_code() > -1) {
             //if(productAllowNewSerial(md_product)){
-                TProduct_Serial tProductSerial = new TProduct_Serial();
+                MD_Product_Serial tProductSerial = new MD_Product_Serial();
                 //
                 tProductSerial.setCustomer_code(md_product.getCustomer_code());
                 tProductSerial.setProduct_code(md_product.getProduct_code());

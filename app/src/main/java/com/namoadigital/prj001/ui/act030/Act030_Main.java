@@ -26,6 +26,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act031.Act031_Main;
@@ -60,7 +61,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
-    private TProduct_Serial serial;
+    private MD_Product_Serial serial;
     private Bundle bundle;
 
     @Override
@@ -293,7 +294,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (ToolBox_Con.isOnline(context)) {
-                    TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
+                    MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
                     //
                     mPresenter.defineFlow(productSerial,false);
                 } else {
@@ -311,7 +312,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     @Override
-    public void setTProductSerial(TProduct_Serial serial) {
+    public void setTProductSerial(MD_Product_Serial serial) {
         this.serial = serial;
     }
 
@@ -365,7 +366,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     @Override
-    public void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list) {
+    public void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list) {
         //Esconde tv com msg de nenhum busca feita
         //e ll com informações de limite de excedido.
         tv_no_result.setVisibility(View.GONE);

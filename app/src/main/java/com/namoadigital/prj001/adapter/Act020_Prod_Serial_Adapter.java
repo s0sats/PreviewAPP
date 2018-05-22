@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,13 +25,13 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
 
     private Context context;
     private int resource;
-    private List<TProduct_Serial> source;
+    private List<MD_Product_Serial> source;
     private HMAux hmAux_Trans;
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "act020_prod_serial_adapter";
 
-    public Act020_Prod_Serial_Adapter(Context context, int resource, List<TProduct_Serial> source) {
+    public Act020_Prod_Serial_Adapter(Context context, int resource, List<MD_Product_Serial> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -63,7 +63,7 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
 
         }
         //
-        TProduct_Serial auxObj = source.get(position);
+        MD_Product_Serial auxObj = source.get(position);
         //
         TextView tv_rec_num = (TextView) convertView.findViewById(R.id.act020_cell_tv_rec_num);
         //

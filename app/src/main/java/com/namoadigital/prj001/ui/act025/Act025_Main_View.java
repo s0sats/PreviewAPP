@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public interface Act025_Main_View {
 
     void setRecordInfo(long record_size, long record_page);
 
-    void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list);
+    void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list);
 
     void showQtyExceededMsg(long record_page ,long record_count);
 

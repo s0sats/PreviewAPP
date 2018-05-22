@@ -139,6 +139,14 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_02.setOnClickListener(btnActionListener);
         btn_option_03.setOnClickListener(btnActionListener);
 
+        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+
+            @Override
+            public void reportTextBySpecialist(String s) {
+                btn_option_01.performClick();
+            }
+        });
+
     }
 
     private View.OnClickListener btnActionListener = new View.OnClickListener() {
@@ -224,16 +232,40 @@ public class Frg_Serial_Search extends Fragment {
         setHmAux_Trans(hmAux_Trans, true);
     }
 
-    public void setBtnOption01(String label) {
+    public void setBtn_Option_01_Label(String label) {
         btn_option_01.setText(label);
     }
 
-    public void setBtnOption02(String label) {
+    public void setBtn_Option_01_BackGround(int status) {
+        btn_option_01.setBackground(getActivity().getDrawable(status));
+    }
+
+    public void setBtn_Option_01_Visibility(int status) {
+        btn_option_01.setVisibility(status);
+    }
+
+    public void setBtn_Option_02_Label(String label) {
         btn_option_02.setText(label);
     }
 
-    public void setBtnOption03(String label) {
+    public void setBtn_Option_02_BackGround(int status) {
+        btn_option_02.setBackground(getActivity().getDrawable(status));
+    }
+
+    public void setBtn_Option_02_Visibility(int status) {
+        btn_option_02.setVisibility(status);
+    }
+
+    public void setBtn_Option_03_Label(String label) {
         btn_option_03.setText(label);
+    }
+
+    public void setBtn_Option_03_BackGround(int status) {
+        btn_option_03.setBackground(getActivity().getDrawable(status));
+    }
+
+    public void setBtn_Option_03_Visibility(int status) {
+        btn_option_03.setVisibility(status);
     }
 
     public void setHmAux_Trans(HMAux hmAux_Trans, boolean showHint) {
@@ -249,9 +281,9 @@ public class Frg_Serial_Search extends Fragment {
         tv_serial.setText(hmAux_Trans.get("serial_lbl"));
         tv_tracking.setText(hmAux_Trans.get("tracking_lbl"));
         //
-        btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
-        btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
-        btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
+        //btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
+        //btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
+        //btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
         //
         if (showHint) {
             mket_product_id.setHint(hmAux_Trans.get("product_hint"));
@@ -281,9 +313,9 @@ public class Frg_Serial_Search extends Fragment {
         //
         mket_tracking.setText("");
         //
-        btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
-        btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
-        btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
+        //btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
+        //btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
+        //btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
     }
 
     @Override
@@ -303,9 +335,10 @@ public class Frg_Serial_Search extends Fragment {
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-            mket_product_id.setText(String.valueOf(pAux.getProduct_code()));
+            mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
+
         } else {
-            mket_product_id.setText("Não achou");
+            //mket_product_id.setText("Não achou");
         }
     }
 
