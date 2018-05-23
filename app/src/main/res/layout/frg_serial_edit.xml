@@ -541,7 +541,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Inbound - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -564,7 +564,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Inbound Date Conf - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -587,7 +587,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Move - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -610,7 +610,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Move Group - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -633,7 +633,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="OutBond - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM

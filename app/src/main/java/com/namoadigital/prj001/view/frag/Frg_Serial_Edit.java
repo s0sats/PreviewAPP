@@ -59,6 +59,8 @@ public class Frg_Serial_Edit extends Fragment {
 
     private Context context;
     private HMAux hmAux_Trans;
+    private String mModule_Code;
+    private String mResource_Code;
     private ArrayList<MKEditTextNM> controls_sta;
     private ScrollView sv_serial;
     private TextView tv_product_code_label;
@@ -140,8 +142,34 @@ public class Frg_Serial_Edit extends Fragment {
     private MKEditTextNM mket_move_group_val;
     private TextView tv_outbound_lbl;
     private MKEditTextNM mket_outbound_id;
+    private I_Frg_Serial_Edit delegate;
+
+    //region Interfaces
+    public interface I_Frg_Serial_Edit{
+        void onActionButtonClick(
+                MD_Product_Serial md_product_serial,
+                boolean serial_id_changes,
+                boolean serial_properties_changes
+                );
+    }
+    //endregion
 
     //region GETTERS SETTERS
+
+    public void setOnActionButtonClick(I_Frg_Serial_Edit delegate){
+        this.delegate = delegate;
+    }
+
+    public void setBtnActionLabel(String label){btn_action.setText(label);}
+
+    public void setmModule_Code(String mModule_Code) {
+        this.mModule_Code = mModule_Code;
+    }
+
+    public void setmResource_Code(String mResource_Code) {
+        this.mResource_Code = mResource_Code;
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
         setTranslation();
@@ -232,6 +260,8 @@ public class Frg_Serial_Edit extends Fragment {
         for (View view : views) {
             if (view != null && hmAux_Trans.get((String) view.getTag()) != null) {
                 ((TextView) view).setText(hmAux_Trans.get((String) view.getTag()));
+            }else{
+                ((TextView) view).setText(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String)view.getTag()));
             }
         }
     }
@@ -260,7 +290,6 @@ public class Frg_Serial_Edit extends Fragment {
         sv_serial = (ScrollView) view.findViewById(R.id.frg_serial_edit_sv_serial);
         //
         mket_serial_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_serial);
-        //mket_serial_id.setmNFC(true);
         mket_serial_id.setmBARCODE(true);
         controls_sta.add(mket_serial_id);
         //
@@ -429,6 +458,7 @@ public class Frg_Serial_Edit extends Fragment {
 
     private void setSerialData() {
         mket_serial_id.setText(mdProductSerial.getSerial_id());
+        mket_serial_id.setTag(mdProductSerial.getSerial_id());
         //
         if (!new_serial) {
             mket_serial_id.setmBARCODE(false);
@@ -464,7 +494,7 @@ public class Frg_Serial_Edit extends Fragment {
                 true,
                 MD_SiteDao.SITE_ID, mdProductSerial.getSite_id(),
                 MD_SiteDao.IO_CONTROL, String.valueOf(mdProductSerial.getSite_io_control()),
-                MD_SiteDao.INBOUND_AUTO_CREATE,String.valueOf(mdProductSerial.getInbound_auto_create())
+                MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(mdProductSerial.getInbound_auto_create())
         );
         //endregion
         //region SS Site Zone
@@ -473,7 +503,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getZone_code()),
                 mdProductSerial.getZone_desc(),
                 true,
-                MD_Site_ZoneDao.ZONE_ID,mdProductSerial.getSite_id()
+                MD_Site_ZoneDao.ZONE_ID, mdProductSerial.getSite_id()
         );
         //endregion
         //region SS Site Zone
@@ -482,7 +512,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getZone_code()),
                 mdProductSerial.getZone_desc(),
                 true,
-                MD_Site_ZoneDao.ZONE_ID,mdProductSerial.getSite_id()
+                MD_Site_ZoneDao.ZONE_ID, mdProductSerial.getSite_id()
         );
         //endregion
         //region SS Site Zone Local
@@ -491,10 +521,10 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getLocal_code()),
                 mdProductSerial.getLocal_id(),
                 true,
-                MD_Site_Zone_LocalDao.SITE_CODE,String.valueOf(mdProductSerial.getSite_code()),
-                MD_SiteDao.SITE_DESC,mdProductSerial.getSite_desc(),
-                MD_Site_Zone_LocalDao.ZONE_CODE,String.valueOf(mdProductSerial.getZone_code()),
-                MD_Site_ZoneDao.ZONE_DESC,mdProductSerial.getZone_desc()
+                MD_Site_Zone_LocalDao.SITE_CODE, String.valueOf(mdProductSerial.getSite_code()),
+                MD_SiteDao.SITE_DESC, mdProductSerial.getSite_desc(),
+                MD_Site_Zone_LocalDao.ZONE_CODE, String.valueOf(mdProductSerial.getZone_code()),
+                MD_Site_ZoneDao.ZONE_DESC, mdProductSerial.getZone_desc()
         );
         //endregion
         //region SS Brand
@@ -503,7 +533,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getBrand_code()),
                 mdProductSerial.getBrand_desc(),
                 true,
-                MD_BrandDao.BRAND_ID,mdProductSerial.getBrand_id()
+                MD_BrandDao.BRAND_ID, mdProductSerial.getBrand_id()
         );
         //endregion
         //region SS Brand Model
@@ -512,7 +542,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getModel_code()),
                 mdProductSerial.getModel_desc(),
                 true,
-                MD_Brand_ModelDao.MODEL_ID,mdProductSerial.getModel_id()
+                MD_Brand_ModelDao.MODEL_ID, mdProductSerial.getModel_id()
         );
         //endregion
         //region SS Brand color
@@ -521,7 +551,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getColor_code()),
                 mdProductSerial.getColor_desc(),
                 true,
-                MD_Product_SerialDao.COLOR_ID,mdProductSerial.getColor_id()
+                MD_Product_SerialDao.COLOR_ID, mdProductSerial.getColor_id()
         );
         //endregion
         //region SS Segment
@@ -530,7 +560,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getSegment_code()),
                 mdProductSerial.getSegment_desc(),
                 true,
-                MD_Product_SerialDao.COLOR_ID,mdProductSerial.getSegment_id()
+                MD_Product_SerialDao.COLOR_ID, mdProductSerial.getSegment_id()
         );
         //endregion
         //region SS Category
@@ -539,7 +569,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getCategory_price_code()),
                 mdProductSerial.getCategory_price_desc(),
                 true,
-                MD_Product_SerialDao.COLOR_ID,mdProductSerial.getCategory_price_id()
+                MD_Product_SerialDao.COLOR_ID, mdProductSerial.getCategory_price_id()
         );
         //endregion
         //region SS Category
@@ -548,7 +578,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(mdProductSerial.getCategory_price_code()),
                 mdProductSerial.getCategory_price_desc(),
                 true,
-                MD_Product_SerialDao.COLOR_ID,mdProductSerial.getCategory_price_id()
+                MD_Product_SerialDao.COLOR_ID, mdProductSerial.getCategory_price_id()
         );
         //endregion
         //region Add Info
@@ -557,28 +587,41 @@ public class Frg_Serial_Edit extends Fragment {
         mket_info3.setText(mdProductSerial.getAdd_inf3());
         //endregion
         //region I/O Info
-        if(mdProduct.getIo_control() == 1){
+        if (mdProduct.getIo_control() == 1) {
             mket_inbound_id.setText(mdProductSerial.getInbound_id());
             mket_inbound_id.setVisibility(mdProductSerial.getInbound_id() == null ? View.GONE : View.VISIBLE);
-            mket_inbound_date_conf_val.setText(mdProductSerial.getInbound_conf_date());
+            tv_inbound_lbl.setVisibility(mket_inbound_id.getVisibility());
+
+            mket_inbound_date_conf_val.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds( mdProductSerial.getInbound_conf_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
             mket_inbound_date_conf_val.setVisibility(mdProductSerial.getInbound_conf_date() == null ? View.GONE : View.VISIBLE);
-            mket_move_code_val.setText(mdProductSerial.getMove_prefix()+"."+mdProductSerial.getMove_code());
+            tv_inbound_date_conf_lbl.setVisibility(mket_inbound_date_conf_val.getVisibility());
+
+            mket_move_code_val.setText(mdProductSerial.getMove_prefix() + "." + mdProductSerial.getMove_code());
             mket_move_code_val.setVisibility(mdProductSerial.getMove_prefix() == null ? View.GONE : View.VISIBLE);
-            mket_move_group_val.setText(mdProductSerial.getMove_group_code());
+            tv_move_code_lbl.setVisibility(mket_move_code_val.getVisibility());
+
+            mket_move_group_val.setText(String.valueOf(mdProductSerial.getMove_group_code()));
             mket_move_group_val.setVisibility(mdProductSerial.getMove_group_code() == null ? View.GONE : View.VISIBLE);
+            tv_move_group_lbl.setVisibility(mket_move_group_val.getVisibility());
+
             mket_outbound_id.setText(mdProductSerial.getOutbound_id());
             mket_outbound_id.setVisibility(mdProductSerial.getOutbound_id() == null ? View.GONE : View.VISIBLE);
+            tv_outbound_lbl.setVisibility(mket_outbound_id.getVisibility());
             //
-            if(
-                mket_inbound_id.getVisibility() == View.GONE &&
-                mket_inbound_date_conf_val.getVisibility() == View.GONE &&
-                mket_move_code_val.getVisibility() == View.GONE &&
-                mket_move_group_val.getVisibility() == View.GONE &&
-                mket_outbound_id.getVisibility() == View.GONE
-            ){
+            if (
+                    mket_inbound_id.getVisibility() == View.GONE &&
+                            mket_inbound_date_conf_val.getVisibility() == View.GONE &&
+                            mket_move_code_val.getVisibility() == View.GONE &&
+                            mket_move_group_val.getVisibility() == View.GONE &&
+                            mket_outbound_id.getVisibility() == View.GONE
+                    ) {
                 ll_io_info.setVisibility(View.GONE);
             }
-        }else{
+        } else {
             ll_io_info.setVisibility(View.GONE);
         }
         //endregion
@@ -587,7 +630,7 @@ public class Frg_Serial_Edit extends Fragment {
     private boolean checkDbValInOption(SearchableSpinner ssComponent, String value) {
         //Se o value passado for null,
         //Considera q resultado ja existe, dessa form não será inserido pela rotina
-        if(value == null || value.equalsIgnoreCase("null")){
+        if (value == null || value.equalsIgnoreCase("null")) {
             return true;
         }
         //
@@ -646,6 +689,20 @@ public class Frg_Serial_Edit extends Fragment {
     }
 
     private void iniAction() {
+
+        btn_action.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(delegate != null){
+                    delegate.onActionButtonClick(
+                            mdProductSerial,
+                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag()),
+                            false
+                    );
+
+                }
+            }
+        });
 
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -887,14 +944,14 @@ public class Frg_Serial_Edit extends Fragment {
     }
 
     private void setClassIcon(HMAux item) {
-        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR)!= null ) {
+        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
             iv_class_icon.setVisibility(View.VISIBLE);
             if (item.get(MD_ClassDao.CLASS_AVAILABLE).equals("1")) {
                 Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
                 iv_class_icon.setImageDrawable(drawable);
             } else {
-                Drawable drawable = context.getDrawable(R.drawable.ic_thumbs_down_black_24dp);
+                Drawable drawable = context.getDrawable(R.drawable.ic_ban_black_24dp);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
                 iv_class_icon.setImageDrawable(drawable);
             }

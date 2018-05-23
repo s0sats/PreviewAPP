@@ -144,12 +144,15 @@ public class Teste2 extends Base_Activity {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+
+        long product_code = 53;
+        String serial_di = "s1";
         MD_ProductDao productDao = new MD_ProductDao(context);
 
         MD_Product mdProduct = productDao.getByString(
                     new MD_Product_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
-                            44
+                            product_code
                     ) .toSqlQuery()
         );
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
@@ -157,15 +160,19 @@ public class Teste2 extends Base_Activity {
         MD_Product_Serial mdProductSerial = serialDao.getByString(
                 new MD_Product_Serial_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        44,
-                        "promo"
+                        product_code,
+                        serial_di
                 ) .toSqlQuery()
         );
         //
         frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.test_frg_edit);
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
+        frgSerialEdit.setmModule_Code(mModule_Code);
+        frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_frg_serial_edit);
+        frgSerialEdit.setNew_serial(true);
+        frgSerialEdit.setBtnActionLabel("TEste");
 
     }
 
