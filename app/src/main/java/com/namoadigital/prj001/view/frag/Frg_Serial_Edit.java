@@ -388,26 +388,31 @@ public class Frg_Serial_Edit extends Fragment {
         tv_inbound_lbl.setTag("inbound_lbl");
         //
         mket_inbound_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_inbound_id);
+        mket_inbound_id.setEnabled(false);
         //
         tv_inbound_date_conf_lbl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_inbound_date_conf_lbl);
         tv_inbound_date_conf_lbl.setTag("inbound_date_conf_lbl");
         //
         mket_inbound_date_conf_val = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_inbound_date_conf_val);
+        mket_inbound_date_conf_val.setEnabled(false);
         //
         tv_move_code_lbl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_move_code_lbl);
         tv_move_code_lbl.setTag("move_code_lbl");
         //
         mket_move_code_val = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_move_code_val);
+        mket_move_code_val.setEnabled(false);
         //
         tv_move_group_lbl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_move_group_lbl);
         tv_move_group_lbl.setTag("move_group_lbl");
         //
         mket_move_group_val = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_move_group_val);
+        mket_move_group_val.setEnabled(false);
         //
         tv_outbound_lbl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_outbound_lbl);
         tv_outbound_lbl.setTag("outbound_lbl");
         //
         mket_outbound_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_outbound_id);
+        mket_outbound_id.setEnabled(false);
         //
         //Adiciona Views na lista de tradução
         views.add(tv_required_lbl);
@@ -1103,6 +1108,7 @@ public class Frg_Serial_Edit extends Fragment {
         mket_info1.setEnabled(false);
         mket_info2.setEnabled(false);
         mket_info3.setEnabled(false);
+
     }
 
     private void setClassIcon(HMAux item) {

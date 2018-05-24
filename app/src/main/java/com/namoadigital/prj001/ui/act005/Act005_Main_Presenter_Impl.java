@@ -234,6 +234,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     public void getMenuItensV2(HMAux hmAux_Trans) {
+        ArrayList<MenuMainNamoa> grantedMenus = new ArrayList<>();
         for (MenuMainNamoa menu : menuList) {
             boolean showMenu = menu.getMenu_code().equals("") || ToolBox_Inf.profileExists(context, menu.getMenu_code(), null);
             //
@@ -482,11 +483,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge2(qtySO);
                         break;
                 }
-
+                grantedMenus.add(menu);
             }
         }
         //
-        mView.loadMenuV2(menuList);
+        //mView.loadMenuV2(menuList);
+        mView.loadMenuV2(grantedMenus);
     }
 
     @Override
