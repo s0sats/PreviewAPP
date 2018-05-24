@@ -17,8 +17,6 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_014;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
@@ -41,6 +39,10 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_ProductDao productDao;
 
+    private MD_Product mdProduct;
+    private String mSerial_id;
+    private String mTracking;
+
     public Act006_Main_Presenter_Impl(Context context, Act006_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
@@ -48,7 +50,6 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         this.productDao = productDao;
         this.hmAux_Trans = hmAux_Trans;
         this.serialDao = new MD_Product_SerialDao(context);
-
     }
 
     @Override
@@ -90,24 +91,12 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         }
     }
 
-//    @Override
-//    public void defineFlow(HMAux item) {
-//
-//        switch (item.get(Act006_Main.NEW_OPT_ID)) {
-//            case Act006_Main.NEW_OPT_TP_PRODUCT:
-//                mView.callAct007(context);
-//                break;
-//            case Act006_Main.NEW_OPT_TP_SERIAL:
-//                mView.callAct020(context, null);
-//                break;
-//            case Act006_Main.NEW_OPT_TP_LOCATION:
-//            default:
-//                break;
-//        }
-//    }
-
     @Override
     public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+        mdProduct = searchProduct(product_id);
+        mSerial_id = serial_id;
+        mTracking = tracking;
+
         if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
@@ -128,13 +117,17 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
         } else {
-            //ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(serial_id);
             ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
             if (serial_list.size() > 0) {
                 defineSearchResultFlow(serial_list);
             } else {
-                ToolBox_Inf.showNoConnectionDialog(context);
+                if (mdProduct == null || mdProduct.getAllow_new_serial_cl() == 0) {
+                    // mudar mensagem
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                } else {
+                    defineSearchResultFlow(serial_list);
+                }
             }
         }
     }
@@ -196,58 +189,115 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 
     @Override
     public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list) {
-        if (serial_list == null || serial_list.size() == 0) {
-            //
+        if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
                     hmAux_Trans.get("alert_no_serial_found_msg")
             );
         } else {
+
+            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+
             Bundle bundle = new Bundle();
-            //bundle.putString(Constant.MAIN_SERIAL_TRACKING,"");
-            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-            //bundle.putString(Act006_Main.WS_RETURN_STRING, result);
+            bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
+
+            if (results.size() != 0) {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+            } else {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            }
+
             mView.callAct020(context, bundle);
         }
     }
 
-    private ArrayList<MD_Product_Serial> hasLocalSerial(String serial) {
-        ArrayList<MD_Product_Serial> serial_list = (ArrayList<MD_Product_Serial>)
-                serialDao.query(
-                        new MD_Product_Serial_Sql_014(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                serial
-                        ).toSqlQuery()
-                );
-        //
-        ArrayList<MD_Product_Serial> tSerialList = new ArrayList<>();
-        //
-        if (serial_list != null && serial_list.size() > 0) {
-            for (MD_Product_Serial product_serial : serial_list) {
-                MD_Product_Serial auxObj = product_serial;
-                //
-                MD_Product product = productDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_serial.getProduct_code()
-                        ).toSqlQuery()
-                );
-                //
-                if (product != null && product.getProduct_code() > 0) {
-                    auxObj.setProduct_id(product.getProduct_id());
-                    auxObj.setProduct_desc(product.getProduct_desc());
+    private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
+        ArrayList<MD_Product_Serial> results = new ArrayList<>();
+
+        if (mdProduct == null) {
+            return results;
+        } else {
+
+            for (MD_Product_Serial psAux : serial_list) {
+                String res = "";
+
+                if (!mdProduct.getProduct_id().equalsIgnoreCase(psAux.getProduct_id())) {
+                    continue;
+                } else {
+                    res += "1";
                 }
                 //
-                tSerialList.add(auxObj);
+                if (mSerial_id.isEmpty()) {
+                    res += "1";
+                } else {
+                    if (mSerial_id.equalsIgnoreCase(psAux.getSerial_id())) {
+                        res += "1";
+                    } else {
+                        res += "0";
+                    }
+                }
+                //
+                if (mTracking.isEmpty()) {
+                    res += "1";
+                } else {
+                    int mSize = psAux.getTracking_list().size();
+
+                    if (mSize == 0) {
+                        res += "0";
+                    } else {
+                        for (int i = 0; i < mSize; i++) {
+                            if (mTracking.equalsIgnoreCase(psAux.getTracking_list().get(i).getTracking())) {
+                                res += "1";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (res.equalsIgnoreCase("111")) {
+                    results.add(psAux);
+                }
             }
+
+            return results;
         }
-
-
-        return tSerialList;
     }
 
-    // New
-
+//    private ArrayList<MD_Product_Serial> hasLocalSerial(String serial) {
+//        ArrayList<MD_Product_Serial> serial_list = (ArrayList<MD_Product_Serial>)
+//                serialDao.query(
+//                        new MD_Product_Serial_Sql_014(
+//                                ToolBox_Con.getPreference_Customer_Code(context),
+//                                serial
+//                        ).toSqlQuery()
+//                );
+//        //
+//        ArrayList<MD_Product_Serial> tSerialList = new ArrayList<>();
+//        //
+//        if (serial_list != null && serial_list.size() > 0) {
+//            for (MD_Product_Serial product_serial : serial_list) {
+//                MD_Product_Serial auxObj = product_serial;
+//                //
+//                MD_Product product = productDao.getByString(
+//                        new MD_Product_Sql_001(
+//                                ToolBox_Con.getPreference_Customer_Code(context),
+//                                product_serial.getProduct_code()
+//                        ).toSqlQuery()
+//                );
+//                //
+//                if (product != null && product.getProduct_code() > 0) {
+//                    auxObj.setProduct_id(product.getProduct_id());
+//                    auxObj.setProduct_desc(product.getProduct_desc());
+//                }
+//                //
+//                tSerialList.add(auxObj);
+//            }
+//        }
+//
+//        return tSerialList;
+//    }
 
     @Override
     public String searchProductInfo(String product_code, String product_id) {
@@ -267,13 +317,20 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
+    public MD_Product searchProduct(String product_id) {
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        return md_product;
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }
-
-    String[] opcs = {
-            "new",
-            //  "barcode",
-            "checklist"
-    };
 }

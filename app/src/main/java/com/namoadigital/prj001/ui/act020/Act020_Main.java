@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,8 +27,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -63,6 +65,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
     private ArrayList<MD_Product_Serial> serial_list = new ArrayList<>();
+
+    private Button btn_no_serial;
+    private Button btn_create_serial;
+
+    private MD_Product md_product;
+
 
 
     @Override
@@ -167,6 +175,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 )
         );
         //
+        btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
+        //
+        btn_create_serial = (Button) findViewById(R.id.act020_btn_create_serial);
+        //
         tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
         ll_records = (LinearLayout) findViewById(R.id.act020_ll_limit_exceeded);
@@ -180,9 +192,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
         tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
         //
+        if (md_product != null) {
+            if (md_product.getRequire_serial() == 1) {
+                btn_no_serial.setVisibility(View.GONE);
+            } else {
+                btn_no_serial.setVisibility(View.VISIBLE);
+            }
+            //
+            if (md_product.getAllow_new_serial_cl() == 1) {
+                btn_create_serial.setVisibility(View.VISIBLE);
+            } else {
+                btn_create_serial.setVisibility(View.GONE);
+            }
+        } else {
+            btn_no_serial.setVisibility(View.GONE);
+            btn_create_serial.setVisibility(View.GONE);
+        }
+
+        //
         /*
-        * Drawer setup
-        */
+         * Drawer setup
+         */
         mDrawerLayout = (DrawerLayout) findViewById(R.id.act020_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -247,9 +277,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
 
         });
-       /*
-        * Drawer setup end
-        */
+        /*
+         * Drawer setup end
+         */
         hideSoftKeyboard();
     }
 
@@ -259,12 +289,20 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                 serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
-            }
-//            if (bundle.containsKey(Constant.MAIN_SERIAL_TRACKING)) {
-//                tracking_searched = bundle.getString(Constant.MAIN_SERIAL_TRACKING, "");
-//            }
-        }
 
+                MD_ProductDao mdProductDao = new MD_ProductDao(context);
+
+                String product_id = bundle.getString(MD_ProductDao.PRODUCT_ID);
+
+                md_product = mdProductDao.getByString(
+                        new MD_Product_Sql_003(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                "",
+                                product_id
+                        ).toSqlQuery()
+                );
+            }
+        }
     }
 
     private void hideSoftKeyboard() {
@@ -308,18 +346,23 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             //
             loadProductSerialList(serial_list);
             //
-            if(serial_list.size() == 1){
+            if (serial_list.size() == 1) {
                 lv_prod_serial_list.performItemClick(
                         lv_prod_serial_list.getAdapter().getView(0, null, null),
                         0,
                         lv_prod_serial_list.getAdapter().getItemId(0)
                 );
+            } else {
+
             }
         } else {
-            //Abre drawer ao carregar a tela
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            //Sincroniza icone do hambuguer
-            mDrawerToggle.syncState();
+
+
+
+//            //Abre drawer ao carregar a tela
+//            mDrawerLayout.openDrawer(GravityCompat.START);
+//            //Sincroniza icone do hambuguer
+//            mDrawerToggle.syncState();
         }
 
     }

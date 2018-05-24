@@ -17,7 +17,9 @@ import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
@@ -281,10 +283,6 @@ public class Frg_Serial_Search extends Fragment {
         tv_serial.setText(hmAux_Trans.get("serial_lbl"));
         tv_tracking.setText(hmAux_Trans.get("tracking_lbl"));
         //
-        //btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
-        //btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
-        //btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
-        //
         if (showHint) {
             mket_product_id.setHint(hmAux_Trans.get("product_hint"));
             mket_serial.setHint(hmAux_Trans.get("serial_hint"));
@@ -312,10 +310,6 @@ public class Frg_Serial_Search extends Fragment {
         mket_serial.setText("");
         //
         mket_tracking.setText("");
-        //
-        //btn_option_01.setText(hmAux_Trans.get("btn_option_01"));
-        //btn_option_02.setText(hmAux_Trans.get("btn_option_02"));
-        //btn_option_03.setText(hmAux_Trans.get("btn_option_03"));
     }
 
     @Override
@@ -336,9 +330,7 @@ public class Frg_Serial_Search extends Fragment {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
-
         } else {
-            //mket_product_id.setText("Não achou");
         }
     }
 
@@ -351,5 +343,31 @@ public class Frg_Serial_Search extends Fragment {
         mIntent.putExtras(bundle);
         //
         startActivityForResult(mIntent, 20);
+    }
+
+    public MD_Product productValidCheck() {
+        return productValidCheck(null);
+    }
+
+    public MD_Product productValidCheck(String product_id) {
+        String mProductId = null;
+
+        if (product_id == null || product_id.isEmpty()) {
+            mProductId = mket_product_id.getText().toString().trim();
+        } else {
+            mProductId = product_id;
+        }
+
+        MD_ProductDao productDao = new MD_ProductDao(getActivity());
+
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                        "",
+                        product_id
+                ).toSqlQuery()
+        );
+
+        return md_product;
     }
 }

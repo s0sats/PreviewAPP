@@ -23,17 +23,18 @@ public class MD_Site_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      s.customer_code,\n" +
-                        "      s.site_code,\n" +
-                        "      s.site_id,\n" +
-                        "      s.site_id||' - '||s.site_desc site_desc\n," +
-                        "      s.io_control\n" +
-                        " FROM "  +
+                        "      s.customer_code,\n " +
+                        "      s.site_code,\n " +
+                        "      s.site_id,\n " +
+                        "      s.site_id||' - '||s.site_desc site_desc,\n " +
+                        "      s.io_control,\n " +
+                        "      s.inbound_auto_create\n " +
+                        " FROM " +
                         MD_SiteDao.TABLE + " s" +
                         " WHERE " +
-                        MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
-                        "AND " +MD_SiteDao.SITE_CODE +" = '"+s_site_code+"' ")
-                        .toString();
+                        MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
+                        "AND " + MD_SiteDao.SITE_CODE + " = '" + s_site_code + "' ")
+                .toString();
     }
 
 }
