@@ -5,14 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -138,6 +144,13 @@ public class Teste2 extends Base_Activity {
         //
         transList.add("alert_offline_data_not_saved_ttl");
         transList.add("alert_offline_data_not_saved_msg");
+        //
+        //NOVAS TRADUÇÕES ADD NO RECURSO \/
+        transList.add("btn_check_exists");
+        transList.add("alert_serial_exists_ttl");
+        transList.add("alert_serial_exists_msg");
+        transList.add("alert_serial_not_exists_ttl");
+        transList.add("alert_serial_not_exists_msg");
 
         hmAux_Trans_frg_serial_edit = ToolBox_Inf.setLanguage(
                 context,
@@ -174,10 +187,22 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_frg_serial_edit);
         frgSerialEdit.setNew_serial(true);
+        controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setBtnActionLabel("TEste");
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
+
             @Override
-            public void onActionButtonClick(MD_Product_Serial md_product_serial, boolean serial_id_changes, boolean serial_properties_changes) {
+            public void onCheckButtonClick(String product_id, String serial_id, String tracking) {
+                executeSerialSearch(
+                        product_id,
+                        serial_id,
+                        tracking
+                );
+            }
+
+            @Override
+            public void onSaveButtonClick(MD_Product_Serial md_product_serial, boolean serial_id_changes, boolean serial_properties_changes) {
+
 
             }
 
@@ -192,7 +217,7 @@ public class Teste2 extends Base_Activity {
     private void initActions() {
 
     }
-    public void showPD(String title, String msg) {
+    private void showPD(String title, String msg) {
         enableProgressDialog(
                 title,
                 msg,
@@ -200,7 +225,47 @@ public class Teste2 extends Base_Activity {
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
-    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
+
+    private void executeSerialSearch( String product_id,String serial_id, String tracking){
+        if (ToolBox_Con.isOnline(context)) {
+            wsProcess = WS_Serial_Search.class.getName();
+            showPD(
+                   "Search - Trad",// hmAux_Trans.get("dialog_serial_search_ttl"),
+                    "Search ms - Trad"//hmAux_Trans.get("dialog_serial_search_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
+        } else {
+            /*ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            //
+            if (serial_list.size() > 0) {
+                defineSearchResultFlow(serial_list);
+            } else {
+                if (mdProduct == null || mdProduct.getAllow_new_serial_cl() == 0) {
+                    // mudar mensagem
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                } else {
+                    defineSearchResultFlow(serial_list);
+                }
+            }*/
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+
+    }
+
+    private void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
         wsProcess = WS_Serial_Tracking_Search.class.getName();
         //
         showPD(
@@ -220,6 +285,29 @@ public class Teste2 extends Base_Activity {
         context.sendBroadcast(mIntent);
     }
 
+    private void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        if(serial_list != null){
+            if(serial_list.size() == 0){
+                frgSerialEdit.reApplySerialId();
+            }else if(serial_list.size() == 1){
+                frgSerialEdit.applyReceivedSerial(serial_list.get(0));
+            }else{
+                //FUDEU
+            }
+        }else{
+            //FUDEU 2
+        }
+        //
+        //defineSearchResultFlow(serial_list);
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -227,13 +315,33 @@ public class Teste2 extends Base_Activity {
         if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
             frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
+        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+            //frgSerialEdit.processTrackingResult(hmAux);
+            disableProgressDialog();
+        }
+    }
+
+    @Override
+    protected void processCloseACT(String result, String mRequired) {
+        super.processCloseACT(result, mRequired);
+        //
+        if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
+           // frgSerialEdit.processTrackingResult(hmAux);
+            disableProgressDialog();
+        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+            extractSearchResult(result);
+            //
+            disableProgressDialog();
         }
     }
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
-        disableProgressDialog();
+        if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+            //frgSerialEdit.processTrackingResult(hmAux);
+            disableProgressDialog();
+        }
     }
 
     @Override
