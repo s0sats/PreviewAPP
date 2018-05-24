@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
@@ -184,6 +185,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         );
 
         mPresenter.getPendencies();
+        mPresenter.getMD_Products();
     }
 
     private void processSerialSearch(HMAux optionsInfo) {
@@ -236,7 +238,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     @Override
     public void setPendenciesQty(int qty) {
         pendencies_qty = qty;
-        String btn_dependency_qty_text = hmAux_Trans.get("btn_pendencies") +  " (" + pendencies_qty + ")";
+        String btn_dependency_qty_text = hmAux_Trans.get("btn_pendencies") + " (" + pendencies_qty + ")";
 
         mFrgSerialSearch.setBtn_Option_02_Label(btn_dependency_qty_text);
     }
@@ -250,6 +252,21 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 null,
                 0
         );
+    }
+
+    @Override
+    public void setProduto(ArrayList<MD_Product> list) {
+        if (list.size() > 1) {
+            mFrgSerialSearch.setProductIdText("Todos - Trad");
+            mFrgSerialSearch.setShowTree(false);
+            mFrgSerialSearch.setShowAll(true);
+        } else if (list.size() == 1) {
+            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
+            mFrgSerialSearch.setShowTree(false);
+            mFrgSerialSearch.setShowAll(false);
+        } else {
+            mFrgSerialSearch.setProductIdText("");
+        }
     }
 
     @Override

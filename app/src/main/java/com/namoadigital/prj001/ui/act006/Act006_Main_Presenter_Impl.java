@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
@@ -64,6 +65,17 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         int qty = Integer.parseInt(pendencies.get(0).get(GE_Custom_Form_Local_Sql_008.PENDING_QTY));
 
         mView.setPendenciesQty(qty);
+    }
+
+    @Override
+    public void getMD_Products() {
+        ArrayList<MD_Product> productList = (ArrayList<MD_Product>) productDao.query(
+                new MD_Product_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        mView.setProduto(productList);
     }
 
     @Override
@@ -133,46 +145,18 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
-        ArrayList<HMAux> serial_list = (ArrayList<HMAux>)
-                serialDao.query_HM(
+        ArrayList<MD_Product_Serial> serial_list =
+                (ArrayList<MD_Product_Serial>) serialDao.query(
                         new Sql_Act020_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context),
                                 product_id,
                                 serial_id,
                                 tracking
                         ).toSqlQuery()
                 );
-        //
-        ArrayList<MD_Product_Serial> tSerialList = new ArrayList<>();
-        //
-        if (serial_list != null && serial_list.size() > 0) {
-            for (HMAux hmAux : serial_list) {
-                MD_Product_Serial auxObj = new MD_Product_Serial();
-                //
-                auxObj.setCustomer_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.CUSTOMER_CODE)));
-                auxObj.setProduct_code(Long.valueOf(hmAux.get(MD_Product_SerialDao.PRODUCT_CODE)));
-                auxObj.setProduct_id(hmAux.get(MD_ProductDao.PRODUCT_ID));
-                auxObj.setProduct_desc(hmAux.get(MD_ProductDao.PRODUCT_DESC));
-                auxObj.setSerial_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.SERIAL_CODE)));
-                auxObj.setSerial_id(hmAux.get(MD_Product_SerialDao.SERIAL_ID));
-                auxObj.setSite_code(!hmAux.get(MD_Product_SerialDao.SITE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.SITE_CODE)) : null);
-                auxObj.setZone_code(!hmAux.get(MD_Product_SerialDao.ZONE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.ZONE_CODE)) : null);
-                auxObj.setLocal_code(!hmAux.get(MD_Product_SerialDao.LOCAL_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.LOCAL_CODE)) : null);
-                auxObj.setAdd_inf1(!hmAux.get(MD_Product_SerialDao.ADD_INF1).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF1) : null);
-                auxObj.setAdd_inf2(!hmAux.get(MD_Product_SerialDao.ADD_INF2).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF2) : null);
-                auxObj.setAdd_inf3(!hmAux.get(MD_Product_SerialDao.ADD_INF3).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF3) : null);
-                auxObj.setSite_code_owner(!hmAux.get(MD_Product_SerialDao.SITE_CODE_OWNER).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SITE_CODE_OWNER) : null);
-                auxObj.setBrand_code(!hmAux.get(MD_Product_SerialDao.BRAND_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.BRAND_CODE) : null);
-                auxObj.setModel_code(!hmAux.get(MD_Product_SerialDao.MODEL_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.MODEL_CODE) : null);
-                auxObj.setColor_code(!hmAux.get(MD_Product_SerialDao.COLOR_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.COLOR_CODE) : null);
-                auxObj.setSegment_code(!hmAux.get(MD_Product_SerialDao.SEGMENT_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SEGMENT_CODE) : null);
-                auxObj.setCategory_price_code(!hmAux.get(MD_Product_SerialDao.CATEGORY_PRICE_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.CATEGORY_PRICE_CODE) : null);
-                //
-                tSerialList.add(auxObj);
-            }
-        }
-        //
-        return tSerialList;
+
+        return serial_list;
     }
 
     @Override

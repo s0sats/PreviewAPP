@@ -19,9 +19,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
-import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -230,16 +230,30 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         finish();
     }
 
-    @Override
-    public void callAct020(Context context) {
+//    @Override
+//    public void callAct020(Context context) {
+//
+//        Intent mIntent = new Intent(context, Act020_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+//        bundle.remove(Constant.ACT008_SERIAL_ID);
+//        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+//        bundle.remove(Constant.BACK_ACTION);
+//        mIntent.putExtras(bundle);
+//        startActivity(mIntent);
+//        finish();
+//    }
 
-        Intent mIntent = new Intent(context, Act020_Main.class);
+    @Override
+    public void callAct006(Context context) {
+
+        Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-        bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(Constant.ACT008_PRODUCT_DESC);
-        bundle.remove(Constant.BACK_ACTION);
-        mIntent.putExtras(bundle);
+//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+//        bundle.remove(Constant.ACT008_SERIAL_ID);
+//        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+//        bundle.remove(Constant.BACK_ACTION);
+//        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

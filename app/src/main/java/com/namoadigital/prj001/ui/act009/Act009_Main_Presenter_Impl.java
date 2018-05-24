@@ -67,7 +67,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
 
         switch (actResqueting){
             case Constant.ACT020:
-                mView.callAct020(context);
+                mView.callAct006(context);
                 break;
             case Constant.ACT027:
                 mView.callAct027(context);

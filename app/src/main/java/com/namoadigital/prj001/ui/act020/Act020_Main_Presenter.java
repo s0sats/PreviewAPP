@@ -12,11 +12,11 @@ public interface Act020_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void executeSerialSearch(String product_id, String serial, String tracking);
+    //void executeSerialSearch(String product_id, String serial, String tracking);
 
     void defineFlow(MD_Product_Serial productSerial);
 
-    void updateSyncChecklist();
+    //void updateSyncChecklist();
 
     void prepareAct009();
 

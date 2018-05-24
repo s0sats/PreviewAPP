@@ -13,6 +13,8 @@ public interface Act006_Main_Presenter {
 
     void getPendencies();
 
+    void getMD_Products();
+
     void onBackPressedClicked();
 
     void checkPendenciesFlow(int pendencies_qty);

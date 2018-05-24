@@ -58,9 +58,22 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:paddingLeft="10dp"
-                    app:mBARCODE="true"
+                    app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
+
+                <ImageView
+                    android:id="@+id/frg_serial_search_iv_product_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:focusable="false"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="4dp"
+                    android:src="@drawable/ic_arrow_drop_down_24px" />
+
 
                 <ImageView
                     android:id="@+id/frg_serial_search_iv_product_id"
@@ -72,6 +85,7 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="4dp"
+                    android:visibility="gone"
                     android:src="@drawable/ic_lupa_states" />
 
 

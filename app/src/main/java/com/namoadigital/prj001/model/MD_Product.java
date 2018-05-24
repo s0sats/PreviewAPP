@@ -28,6 +28,7 @@ public class MD_Product implements Serializable {
     private String serial_rule;
     private Integer serial_min_length;
     private Integer serial_max_length;
+    private int site_restriction;
 
     public long getCustomer_code() {
         return customer_code;
@@ -179,5 +180,13 @@ public class MD_Product implements Serializable {
 
     public void setSerial_max_length(Integer serial_max_length) {
         this.serial_max_length = serial_max_length;
+    }
+
+    public int getSite_restriction() {
+        return site_restriction;
+    }
+
+    public void setSite_restriction(int site_restriction) {
+        this.site_restriction = site_restriction;
     }
 }

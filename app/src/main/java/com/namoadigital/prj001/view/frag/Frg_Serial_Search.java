@@ -39,6 +39,7 @@ public class Frg_Serial_Search extends Fragment {
     private ButtonNFC btn_nfc_reader;
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
+    private ImageView iv_product_change;
     private ImageView iv_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
@@ -47,7 +48,8 @@ public class Frg_Serial_Search extends Fragment {
 
     private HMAux hmAux_Trans;
     private boolean showHint;
-    private boolean showTree = true;
+    private boolean showTree = false;
+    private boolean showAll = false;
 
     private Button btn_option_01;
     private Button btn_option_02;
@@ -106,6 +108,7 @@ public class Frg_Serial_Search extends Fragment {
         //
         tv_product_id = (TextView) view.findViewById(R.id.frg_serial_search_tv_product_id);
         mket_product_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_product_id);
+        iv_product_change = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_change);
         iv_product_id = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_id);
         //
         controls_sta.add(mket_product_id);
@@ -130,6 +133,15 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     private void iniAction() {
+        iv_product_change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setShowTree(true);
+                setShowAll(false);
+                mket_product_id.setText("");
+            }
+        });
+
         iv_product_id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +172,9 @@ public class Frg_Serial_Search extends Fragment {
             switch (v.getId()) {
                 case R.id.frg_serial_search_btn_option_01:
                     btnAction = BTN_OPTION_01;
+                    if (iv_product_change.getVisibility() == View.VISIBLE) {
+
+                    }
                     break;
                 case R.id.frg_serial_search_btn_option_02:
                     btnAction = BTN_OPTION_02;
@@ -173,7 +188,7 @@ public class Frg_Serial_Search extends Fragment {
             }
 
             HMAux values = new HMAux();
-            values.put(PRODUCT_ID, mket_product_id.getText().toString().trim().isEmpty() ? "" : mket_product_id.getText().toString().trim());
+            values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
             values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
             values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
@@ -194,11 +209,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     private void loadDataToScreen() {
-        if (showTree) {
-            iv_product_id.setVisibility(View.VISIBLE);
-        } else {
-            iv_product_id.setVisibility(View.GONE);
-        }
+        customSettings();
     }
 
     // General Methods
@@ -296,6 +307,35 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setShowTree(boolean showTree) {
         this.showTree = showTree;
+        //
+        customSettings();
+    }
+
+    public void setShowAll(boolean showAll) {
+        this.showAll = showAll;
+        //
+        customSettings();
+    }
+
+    private void customSettings() {
+        if (showTree) {
+            iv_product_change.setVisibility(View.GONE);
+            iv_product_id.setVisibility(View.VISIBLE);
+            mket_product_id.setmBARCODE(true);
+            mket_product_id.setEnabled(true);
+        } else {
+            if (showAll) {
+                iv_product_change.setVisibility(View.VISIBLE);
+                iv_product_id.setVisibility(View.GONE);
+                mket_product_id.setmBARCODE(false);
+                mket_product_id.setEnabled(false);
+            } else {
+                iv_product_change.setVisibility(View.GONE);
+                iv_product_id.setVisibility(View.GONE);
+                mket_product_id.setmBARCODE(false);
+                mket_product_id.setEnabled(false);
+            }
+        }
     }
 
     public ArrayList<MKEditTextNM> getControlsSta() {

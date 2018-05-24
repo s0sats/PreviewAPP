@@ -39,15 +39,16 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String SKETCH_COLOR = "sketch_color";
     public static final String FLAG_OFFLINE = "flag_offline";
     public static final String LOCAL_CONTROL = "local_control";
-    public static final String IO_CONTROL = "io_control" ;
+    public static final String IO_CONTROL = "io_control";
     public static final String SERIAL_RULE = "serial_rule";
-    public static final String SERIAL_MIN_LENGTH = "serial_min_length" ;
-    public static final String SERIAL_MAX_LENGTH = "serial_max_length" ;
+    public static final String SERIAL_MIN_LENGTH = "serial_min_length";
+    public static final String SERIAL_MAX_LENGTH = "serial_max_length";
+    public static final String SITE_RESTRICTION = "site_restriction";
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
             SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE, LOCAL_CONTROL, IO_CONTROL,
-            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH
+            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH, SITE_RESTRICTION
     };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -117,7 +118,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -170,7 +171,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -198,7 +199,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -224,7 +225,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -252,7 +253,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
 
         } finally {
         }
@@ -279,7 +280,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -300,52 +301,53 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             md_product.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
             md_product.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
             md_product.setUn(cursor.getString(cursor.getColumnIndex(UN)));
-            if(cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))) {
                 md_product.setSketch_code(null);
-            }else{
+            } else {
                 md_product.setSketch_code(cursor.getInt(cursor.getColumnIndex(SKETCH_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SKETCH_URL))){
+            if (cursor.isNull(cursor.getColumnIndex(SKETCH_URL))) {
                 md_product.setSketch_url(null);
-            }else{
+            } else {
                 md_product.setSketch_url(cursor.getString(cursor.getColumnIndex(SKETCH_URL)));
             }
 
             md_product.setSketch_url_local(cursor.getString(cursor.getColumnIndex(SKETCH_URL_LOCAL)));
 
-            if(cursor.isNull(cursor.getColumnIndex(SKETCH_LINES))){
+            if (cursor.isNull(cursor.getColumnIndex(SKETCH_LINES))) {
                 md_product.setSketch_lines(null);
-            }else{
+            } else {
                 md_product.setSketch_lines(cursor.getInt(cursor.getColumnIndex(SKETCH_LINES)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SKETCH_COLUMNS))){
+            if (cursor.isNull(cursor.getColumnIndex(SKETCH_COLUMNS))) {
                 md_product.setSketch_columns(null);
-            }else{
+            } else {
                 md_product.setSketch_columns(cursor.getInt(cursor.getColumnIndex(SKETCH_COLUMNS)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SKETCH_COLOR))){
+            if (cursor.isNull(cursor.getColumnIndex(SKETCH_COLOR))) {
                 md_product.setSketch_color(null);
-            }else{
+            } else {
                 md_product.setSketch_color(cursor.getString(cursor.getColumnIndex(SKETCH_COLOR)));
             }
             md_product.setFlag_offline(cursor.getInt(cursor.getColumnIndex(FLAG_OFFLINE)));
             md_product.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
             md_product.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
-            if(cursor.isNull(cursor.getColumnIndex(SERIAL_RULE))){
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_RULE))) {
                 md_product.setSerial_rule(null);
-            }else {
+            } else {
                 md_product.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))){
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))) {
                 md_product.setSerial_min_length(null);
-            }else {
+            } else {
                 md_product.setSerial_min_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MIN_LENGTH)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))){
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))) {
                 md_product.setSerial_max_length(null);
-            }else {
+            } else {
                 md_product.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
             }
+            md_product.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
 
             return md_product;
         }
@@ -378,14 +380,14 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             if (md_product.getUn() != null) {
                 contentValues.put(UN, md_product.getUn());
             }
-            contentValues.put(SKETCH_CODE,md_product.getSketch_code());
-            contentValues.put(SKETCH_URL,md_product.getSketch_url());
+            contentValues.put(SKETCH_CODE, md_product.getSketch_code());
+            contentValues.put(SKETCH_URL, md_product.getSketch_url());
             if (md_product.getSketch_url_local() != null) {
                 contentValues.put(SKETCH_URL_LOCAL, md_product.getSketch_url_local());
             }
-            contentValues.put(SKETCH_LINES,md_product.getSketch_lines());
-            contentValues.put(SKETCH_COLUMNS,md_product.getSketch_columns());
-            contentValues.put(SKETCH_COLOR,md_product.getSketch_color());
+            contentValues.put(SKETCH_LINES, md_product.getSketch_lines());
+            contentValues.put(SKETCH_COLUMNS, md_product.getSketch_columns());
+            contentValues.put(SKETCH_COLOR, md_product.getSketch_color());
             if (md_product.getFlag_offline() > -1) {
                 contentValues.put(FLAG_OFFLINE, md_product.getFlag_offline());
             }
@@ -398,11 +400,11 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             contentValues.put(SERIAL_RULE, md_product.getSerial_rule());
             contentValues.put(SERIAL_MIN_LENGTH, md_product.getSerial_min_length());
             contentValues.put(SERIAL_MAX_LENGTH, md_product.getSerial_max_length());
+            if (md_product.getSite_restriction() > -1) {
+                contentValues.put(SITE_RESTRICTION, md_product.getSite_restriction());
+            }
 
             return contentValues;
-
         }
     }
-
-
 }

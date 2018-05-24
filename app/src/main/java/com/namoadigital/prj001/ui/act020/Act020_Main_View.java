@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface Act020_Main_View {
 
-    void showPD();
+    //void showPD();
 
     void setRecordInfo(long record_size, long record_page);
 
@@ -27,8 +27,8 @@ public interface Act020_Main_View {
 
     void callAct011(Context context, Bundle bundle);
 
-    void setWs_process(String ws_process);
+    //void setWs_process(String ws_process);
 
-    void closeDrawer();
+    //void closeDrawer();
 
 }
