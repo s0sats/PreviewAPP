@@ -376,12 +376,16 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";
     public static final String PROFILE_MENU_AP_PARAM_EDIT = "EDIT";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS = "CHANGE_CLASS";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION= "CHANGE_LOCATION";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT = "EDIT";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
     public static final String PROFILE_PRJ001_AP = "PRJ001_AP";
     public static final String PROFILE_PRJ001_SO = "PRJ001_SO";
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
+
 
 
 

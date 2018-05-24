@@ -86,6 +86,10 @@ public class MD_Product_Serial implements Serializable {
     private Integer move_group_code;
     private Integer outbound_code;
     private String outbound_id;
+    private Integer product_io_control;
+    private Integer local_control;
+    private Integer site_io_control;
+    private Integer inbound_auto_create;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -517,6 +521,37 @@ public class MD_Product_Serial implements Serializable {
         this.outbound_id = outbound_id;
     }
 
+    public Integer getProduct_io_control() {
+        return product_io_control;
+    }
+
+    public void setProduct_io_control(Integer product_io_control) {
+        this.product_io_control = product_io_control;
+    }
+
+    public Integer getLocal_control() {
+        return local_control;
+    }
+
+    public void setLocal_control(Integer local_control) {
+        this.local_control = local_control;
+    }
+
+    public Integer getSite_io_control() {
+        return site_io_control;
+    }
+
+    public void setSite_io_control(Integer site_io_control) {
+        this.site_io_control = site_io_control;
+    }
+
+    public Integer getInbound_auto_create() {
+        return inbound_auto_create;
+    }
+
+    public void setInbound_auto_create(Integer inbound_auto_create) {
+        this.inbound_auto_create = inbound_auto_create;
+    }
 
     /**
      * Monta Obj TProduct_Serial baseado nas informações da classe.

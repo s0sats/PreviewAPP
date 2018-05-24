@@ -12,6 +12,8 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -29,7 +31,7 @@ public class Teste2 extends Base_Activity {
     private Frg_Serial_Edit frgSerialEdit;
 
     private HMAux hmAux_Trans_frg_serial_edit;
-
+    private String wsProcess = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,12 +146,15 @@ public class Teste2 extends Base_Activity {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+
+        long product_code = 53;
+        String serial_di = "s1";
         MD_ProductDao productDao = new MD_ProductDao(context);
 
         MD_Product mdProduct = productDao.getByString(
                     new MD_Product_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
-                            44
+                            product_code
                     ) .toSqlQuery()
         );
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
@@ -157,20 +162,78 @@ public class Teste2 extends Base_Activity {
         MD_Product_Serial mdProductSerial = serialDao.getByString(
                 new MD_Product_Serial_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        44,
-                        "promo"
+                        product_code,
+                        serial_di
                 ) .toSqlQuery()
         );
         //
         frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.test_frg_edit);
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
+        frgSerialEdit.setmModule_Code(mModule_Code);
+        frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_frg_serial_edit);
+        frgSerialEdit.setNew_serial(true);
+        frgSerialEdit.setBtnActionLabel("TEste");
+        frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
+            @Override
+            public void onActionButtonClick(MD_Product_Serial md_product_serial, boolean serial_id_changes, boolean serial_properties_changes) {
+
+            }
+
+            @Override
+            public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
+                executeTrackingSearch(product_code,serial_code,tracking,site_code);
+            }
+        });
 
     }
 
     private void initActions() {
 
+    }
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
+        wsProcess = WS_Serial_Tracking_Search.class.getName();
+        //
+        showPD(
+                "Title -trad",//hmAux_Trans.get("progress_tracking_search_ttl"),
+                "Msg - Trad"//hmAux_Trans.get("progress_tracking_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Tracking_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
+            frgSerialEdit.processTrackingResult(hmAux);
+            disableProgressDialog();
+        }
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        disableProgressDialog();
     }
 
     @Override
