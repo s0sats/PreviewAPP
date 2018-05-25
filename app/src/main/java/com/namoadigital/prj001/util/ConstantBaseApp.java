@@ -95,6 +95,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
     public static final String ACT020_BACK_FLOW = "back_flow";
+    public static final String ACT020_PRODUCT_CODE = "product_code";
+    public static final String ACT020_PRODUCT_DESC = "product_desc";
+    public static final String ACT020_SERIAL_ID = "serial_id";
 
     public static final String ACT022_REQUESTING_PROCESS = "requesting_process";
     public static final String ACT022_MSTACKVALUES = "act022_mstackvalues";
@@ -368,7 +371,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String APPROVAL_TYPE = "approval_type";
     public static final String PROFILE_MENU_SO = "PRJ001_SO";
-    public static final String PROFILE_MENU_SO_EXPRESS = "PRJ001_SO_PACK_EXPRESS";
+    //public static final String PROFILE_MENU_SO_EXPRESS = "PRJ001_SO_PACK_EXPRESS";
+    public static final String PROFILE_MENU_SO_EXPRESS = "PACK_EXPRESS";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
@@ -378,7 +382,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";
     public static final String PROFILE_MENU_AP_PARAM_EDIT = "EDIT";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS = "CHANGE_CLASS";
-    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION= "CHANGE_LOCATION";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION = "CHANGE_LOCATION";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT = "EDIT";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
@@ -386,8 +390,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_SO = "PRJ001_SO";
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
-
-
 
 
     //Modulos

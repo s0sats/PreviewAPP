@@ -257,6 +257,24 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void initActions() {
+
+        btn_no_serial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle mBundle = new Bundle();
+                mBundle.putString(Constant.ACT020_SERIAL_ID, "");
+                mBundle.putString(Constant.ACT020_PRODUCT_DESC, md_product.getProduct_desc());
+                mBundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(md_product.getProduct_code()));
+                callAct009(context, mBundle);
+            }
+        });
+
+        btn_create_serial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

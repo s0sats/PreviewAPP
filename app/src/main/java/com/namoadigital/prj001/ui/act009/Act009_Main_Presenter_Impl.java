@@ -76,7 +76,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                 mView.callAct028(context);
                 break;
             default:
-                mView.callAct008(context);
+                mView.callAct006(context);
         }
     }
 }

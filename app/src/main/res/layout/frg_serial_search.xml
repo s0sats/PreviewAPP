@@ -180,6 +180,36 @@
                 android:text="Option 03"
                 android:textColor="@color/padrao_WHITE" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <Button
+                android:id="@+id/frg_serial_search_btn_option_04"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 04"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <Button
+                android:id="@+id/frg_serial_search_btn_option_05"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 05"
+                android:textColor="@color/padrao_WHITE" />
+
 
         </LinearLayout>
 

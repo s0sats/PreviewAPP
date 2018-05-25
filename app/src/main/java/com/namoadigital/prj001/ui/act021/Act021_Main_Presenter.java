@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act021;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MD_Product;
 
 /**
  * Created by d.luche on 21/06/2017.
@@ -11,6 +12,8 @@ public interface Act021_Main_Presenter {
     boolean checkForSoToSend();
 
     void getPendencies();
+
+    void getMD_Products();
 
     void getSync();
 
@@ -23,4 +26,8 @@ public interface Act021_Main_Presenter {
     void onBackPressedClicked();
 
     void checkSOExpressProfile();
+
+    String searchProductInfo(String product_code, String product_id);
+
+    MD_Product searchProduct(String product_id);
 }

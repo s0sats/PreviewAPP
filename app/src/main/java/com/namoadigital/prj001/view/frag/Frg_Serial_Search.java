@@ -31,6 +31,8 @@ public class Frg_Serial_Search extends Fragment {
     public static final String BTN_OPTION_01 = "btn_option_01";
     public static final String BTN_OPTION_02 = "btn_option_02";
     public static final String BTN_OPTION_03 = "btn_option_03";
+    public static final String BTN_OPTION_04 = "btn_option_04";
+    public static final String BTN_OPTION_05 = "btn_option_05";
 
     public static final String PRODUCT_ID = "product_id";
     public static final String SERIAL = "serial";
@@ -54,6 +56,8 @@ public class Frg_Serial_Search extends Fragment {
     private Button btn_option_01;
     private Button btn_option_02;
     private Button btn_option_03;
+    private Button btn_option_04;
+    private Button btn_option_05;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -124,6 +128,8 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_01 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_01);
         btn_option_02 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_02);
         btn_option_03 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_03);
+        btn_option_04 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_04);
+        btn_option_05 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_05);
 
         if (supportNFC) {
             btn_nfc_reader.setVisibility(View.VISIBLE);
@@ -152,6 +158,8 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_01.setOnClickListener(btnActionListener);
         btn_option_02.setOnClickListener(btnActionListener);
         btn_option_03.setOnClickListener(btnActionListener);
+        btn_option_04.setOnClickListener(btnActionListener);
+        btn_option_05.setOnClickListener(btnActionListener);
 
         mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
 
@@ -172,9 +180,6 @@ public class Frg_Serial_Search extends Fragment {
             switch (v.getId()) {
                 case R.id.frg_serial_search_btn_option_01:
                     btnAction = BTN_OPTION_01;
-                    if (iv_product_change.getVisibility() == View.VISIBLE) {
-
-                    }
                     break;
                 case R.id.frg_serial_search_btn_option_02:
                     btnAction = BTN_OPTION_02;
@@ -182,6 +187,13 @@ public class Frg_Serial_Search extends Fragment {
                 case R.id.frg_serial_search_btn_option_03:
                     btnAction = BTN_OPTION_03;
                     break;
+                case R.id.frg_serial_search_btn_option_04:
+                    btnAction = BTN_OPTION_04;
+                    break;
+                case R.id.frg_serial_search_btn_option_05:
+                    btnAction = BTN_OPTION_05;
+                    break;
+
                 default:
                     btnAction = "";
                     break;
@@ -281,6 +293,30 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_03.setVisibility(status);
     }
 
+    public void setBtn_Option_04_Label(String label) {
+        btn_option_04.setText(label);
+    }
+
+    public void setBtn_Option_04_BackGround(int status) {
+        btn_option_04.setBackground(getActivity().getDrawable(status));
+    }
+
+    public void setBtn_Option_04_Visibility(int status) {
+        btn_option_04.setVisibility(status);
+    }
+
+    public void setBtn_Option_05_Label(String label) {
+        btn_option_05.setText(label);
+    }
+
+    public void setBtn_Option_05_BackGround(int status) {
+        btn_option_05.setBackground(getActivity().getDrawable(status));
+    }
+
+    public void setBtn_Option_05_Visibility(int status) {
+        btn_option_05.setVisibility(status);
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans, boolean showHint) {
         this.hmAux_Trans = hmAux_Trans;
         this.showHint = showHint;
@@ -315,6 +351,16 @@ public class Frg_Serial_Search extends Fragment {
         this.showAll = showAll;
         //
         customSettings();
+    }
+
+    public void setShowHideTracking(boolean status) {
+        if (status) {
+            tv_tracking.setVisibility(View.VISIBLE);
+            mket_tracking.setVisibility(View.VISIBLE);
+        } else {
+            tv_tracking.setVisibility(View.GONE);
+            mket_tracking.setVisibility(View.GONE);
+        }
     }
 
     private void customSettings() {

@@ -111,8 +111,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            product_code = Long.parseLong(bundle.getString(Constant.ACT020_PRODUCT_CODE));
+            serial_id = bundle.getString(Constant.ACT020_SERIAL_ID, "");
             //back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
             actResqueting = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
             back_action = bundle.getInt(Constant.BACK_ACTION, 0);

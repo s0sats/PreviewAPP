@@ -3,6 +3,10 @@ package com.namoadigital.prj001.ui.act021;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.model.MD_Product;
+
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 21/06/2017.
  */
@@ -10,6 +14,8 @@ import android.os.Bundle;
 public interface Act021_Main_View {
 
     void setPendencies(int qty, String qtyMyPendencies);
+
+    void setProduto(ArrayList<MD_Product> list);
 
     void setSync(int qty);
 

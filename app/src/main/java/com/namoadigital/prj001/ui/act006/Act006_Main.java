@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -166,6 +167,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
 
         mPresenter = new Act006_Main_Presenter_Impl(
                 context,
@@ -183,6 +186,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 hmAux_Trans
 
         );
+
+        hideSoftKeyboard();
 
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
@@ -233,6 +238,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void initActions() {
+    }
+
+    private void hideSoftKeyboard() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override

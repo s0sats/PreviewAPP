@@ -7,10 +7,14 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Product_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act021_001;
@@ -28,17 +32,18 @@ import java.util.ArrayList;
 
 public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 
-
     private Context context;
     private Act021_Main_View mView;
     private SM_SODao soDao;
+    private MD_ProductDao productDao;
     private HMAux hmAux_Trans;
 
 
-    public Act021_Main_Presenter_Impl(Context context, Act021_Main_View mView, SM_SODao soDao, HMAux hmAux_Trans) {
+    public Act021_Main_Presenter_Impl(Context context, Act021_Main_View mView, SM_SODao soDao, MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.soDao = soDao;
+        this.productDao = productDao;
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -62,7 +67,18 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
 
         //
-        mView.setPendencies(qty,qtyMyPendencies);
+        mView.setPendencies(qty, qtyMyPendencies);
+    }
+
+    @Override
+    public void getMD_Products() {
+        ArrayList<MD_Product> productList = (ArrayList<MD_Product>) productDao.query(
+                new MD_Product_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        mView.setProduto(productList);
     }
 
     @Override
@@ -93,11 +109,11 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         boolean hasTokenFile = false;
         try {
             File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
-            if(soToken != null  && soToken.length > 0){
+            if (soToken != null && soToken.length > 0) {
                 hasTokenFile = true;
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
         //Se tiver pendente ou existir arquivo de token exibe msg.
         if (qty == 0 && !hasTokenFile) {
@@ -115,7 +131,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
                 mView.callAct022(context);
                 break;
             case Act021_Main.NEW_OPT_TP_SERIAL:
-                mView.callAct025(context,null);
+                mView.callAct025(context, null);
                 break;
             case Act021_Main.NEW_OPT_TP_LOCATION:
             default:
@@ -126,7 +142,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     @Override
     public void executeSerialTracking(String serial, String tracking) {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
@@ -142,7 +158,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -157,14 +173,14 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        if(serial_list == null || serial_list.size() == 0){
+        if (serial_list == null || serial_list.size() == 0) {
             //
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
                     hmAux_Trans.get("alert_no_serial_found_msg")
             );
-        }else{
-            if(serial_list.size() == 1){
+        } else {
+            if (serial_list.size() == 1) {
                 MD_Product_Serial productSerial = serial_list.get(0);
                 //
                 Bundle bundle = new Bundle();
@@ -174,13 +190,13 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
                 bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
                 bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
                 //
-                mView.callAct023(context,bundle);
-            }else{
+                mView.callAct023(context, bundle);
+            } else {
                 Bundle bundle = new Bundle();
-                bundle.putString(Constant.MAIN_SERIAL_TRACKING,tracking);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,serial_list);
+                bundle.putString(Constant.MAIN_SERIAL_TRACKING, tracking);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
                 //
-                mView.callAct025(context,bundle);
+                mView.callAct025(context, bundle);
 
             }
         }
@@ -190,9 +206,39 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     public void checkSOExpressProfile() {
         boolean hasExpressProfile;
         //
-        hasExpressProfile = ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null);
+        hasExpressProfile = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_EXPRESS);
         //
         mView.setSoExpressVisibility(hasExpressProfile);
+    }
+
+    @Override
+    public String searchProductInfo(String product_code, String product_id) {
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if (md_product != null) {
+            return md_product.getProduct_id();
+        }
+        //
+        return "";
+    }
+
+    @Override
+    public MD_Product searchProduct(String product_id) {
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        return md_product;
     }
 
     @Override

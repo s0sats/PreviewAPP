@@ -2,10 +2,10 @@ package com.namoadigital.prj001.ui.act021;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,18 +14,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
@@ -40,6 +40,7 @@ import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ import java.util.List;
  * Created by d.luche on 21/06/2017.
  */
 
-public class Act021_Main extends Base_Activity implements Act021_Main_View {
+public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_Main_View {
 
     public static final String NEW_OPT_ID = "new_opt_id";
     public static final String NEW_OPT_LABEL = "new_opt_label";
@@ -62,15 +63,23 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
 
     private Act021_Main_Presenter mPresenter;
-    private Button btn_load;
-    private Button btn_pendencies;
-    private Button btn_so_express;
-    private Button btn_sync;
 
-    private MKEditTextNM mket_serial;
-    private ImageView iv_search_serial;
-    private MKEditTextNM mket_tracking;
-    private ImageView iv_search_tracking;
+    private FragmentManager fm;
+    private Frg_Serial_Search mFrgSerialSearch;
+
+    private HMAux hmAux_Trans_frg_serial_search;
+    protected String mResource_CodeSS = "0";
+
+//    private Button btn_load;
+//    private Button btn_pendencies;
+//    private Button btn_so_express;
+//    private Button btn_sync;
+
+//    private MKEditTextNM mket_serial;
+//    private ImageView iv_search_serial;
+//    private MKEditTextNM mket_tracking;
+//    private ImageView iv_search_tracking;
+
     private int pendencies_qty;
     private int syncs_qty;
 
@@ -101,7 +110,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         iniUIFooter();
         //
         initActions();
-
     }
 
     private void iniSetup() {
@@ -113,6 +121,14 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         );
         //
         loadTranslation();
+
+        mResource_CodeSS = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.FRG_SERIAL_SEARCH
+        );
+        //
+        loadTranslationFrg_Serial_Search();
     }
 
     private void loadTranslation() {
@@ -156,243 +172,296 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+    }
 
+    private void loadTranslationFrg_Serial_Search() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("btn_enable_nfc");
+        transList.add("product_lbl");
+        transList.add("serial_lbl");
+        transList.add("tracking_lbl");
+        transList.add("btn_option_01");
+        transList.add("btn_option_02");
+        transList.add("btn_option_03");
+        transList.add("product_hint");
+        transList.add("serial_hint");
+        transList.add("tracking_hint");
+
+        hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_CodeSS,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
     }
 
     private void initVars() {
-
         soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(
                         ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        //
+        fm = getSupportFragmentManager();
+        //
+        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act021_frg_serial_search);
+        mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
+        mFrgSerialSearch.setSupportNFC(supportNFC);
+        controls_sta.addAll(mFrgSerialSearch.getControlsSta());
+        mFrgSerialSearch.setClickListener(actionBTN);
+        mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
+            @Override
+            public void onSearchClick(String btn_Action, HMAux optionsInfo) {
+
+                switch (btn_Action) {
+                    case Frg_Serial_Search.BTN_OPTION_01:
+                        //processSerialSearch(optionsInfo);
+                        break;
+                    case Frg_Serial_Search.BTN_OPTION_02:
+                        //processPendencies(optionsInfo);
+                        break;
+                    case Frg_Serial_Search.BTN_OPTION_03:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        //
+        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
+        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_load_so"));
+        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies_so"));
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));
+        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_sync_so"));
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
 
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,
                 this,
                 soDao,
-//                new SM_SODao(
-//                        context,
-//                        ToolBox_Con.customDBPath(
-//                                ToolBox_Con.getPreference_Customer_Code(context)
-//                        ),
-//                        Constant.DB_VERSION_CUSTOM
-//                ),
+                new MD_ProductDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
                 hmAux_Trans
         );
-        //
-        btn_load = (Button) findViewById(R.id.act021_btn_load);
-        btn_load.setTag("btn_load_so");
-        views.add(btn_load);
-        //
-        btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
-        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
-        //
-        btn_so_express = (Button) findViewById(R.id.act021_btn_so_express);
-        btn_so_express.setTag("btn_so_express");
-        views.add(btn_so_express);
-        //
-        btn_sync = (Button) findViewById(R.id.act021_btn_sync);
-        btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
-        //
-        mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
-        mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
-        iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
-        iv_search_serial.setEnabled(false);
-        //
-        mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
-        mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
-        iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
-        iv_search_tracking.setEnabled(false);
-        //Add controles no array list.
-        controls_sta.add(mket_serial);
-        controls_sta.add(mket_tracking);
-        //
-        searchListner = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
-                //
-                if (mPresenter.checkForSoToSend()) {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_to_send_ttl"),
-                            hmAux_Trans.get("alert_so_to_send_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct005(context);
-                                }
-                            },
-                            0
-                    );
-                } else {
-                    //
-                    switch (v.getId()) {
-                        case R.id.act021_iv_search_serial:
-                            //
-                            if (ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()).length() > 0) {
-                                search_pressed = R.id.act021_iv_search_serial;
-                                //Limpa campo tracking
-                                mket_tracking.setText("");
-                                //Chama Ws que consulta Seriais
-                                mPresenter.executeSerialTracking(
-                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
-                                        mket_tracking.getText().toString().trim()
-                                );
-
-                            } else {
-                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-                            }
-                            //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.id.act021_iv_search_tracking:
-
-                            if (mket_tracking.getText().toString().trim().length() > 0) {
-                                search_pressed = R.id.act021_iv_search_tracking;
-                                //Limpa campo Serial
-                                mket_serial.setText("");
-                                //Chama Ws que consulta Seriais
-                                mPresenter.executeSerialTracking(
-                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
-                                        mket_tracking.getText().toString().trim()
-                                );
-                            } else {
-                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-                            }
-                            //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        };
+//        //
+//        btn_load = (Button) findViewById(R.id.act021_btn_load);
+//        btn_load.setTag("btn_load_so");
+//        views.add(btn_load);
+//        //
+//        btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
+//        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
+//        //
+//        btn_so_express = (Button) findViewById(R.id.act021_btn_so_express);
+//        btn_so_express.setTag("btn_so_express");
+//        views.add(btn_so_express);
+//        //
+//        btn_sync = (Button) findViewById(R.id.act021_btn_sync);
+//        btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
+//        //
+//        mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
+//        mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
+//        iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
+//        iv_search_serial.setEnabled(false);
+//        //
+//        mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
+//        mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
+//        iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
+//        iv_search_tracking.setEnabled(false);
+//        //Add controles no array list.
+//        controls_sta.add(mket_serial);
+//        controls_sta.add(mket_tracking);
+//        //
+//        searchListner = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
+//                //
+//                if (mPresenter.checkForSoToSend()) {
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_so_to_send_ttl"),
+//                            hmAux_Trans.get("alert_so_to_send_msg"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    callAct005(context);
+//                                }
+//                            },
+//                            0
+//                    );
+//                } else {
+//                    //
+//                    switch (v.getId()) {
+//                        case R.id.act021_iv_search_serial:
+//                            //
+//                            if (ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()).length() > 0) {
+//                                search_pressed = R.id.act021_iv_search_serial;
+//                                //Limpa campo tracking
+//                                mket_tracking.setText("");
+//                                //Chama Ws que consulta Seriais
+//                                mPresenter.executeSerialTracking(
+//                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
+//                                        mket_tracking.getText().toString().trim()
+//                                );
+//
+//                            } else {
+//                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+//                                        hmAux_Trans.get("alert_no_value_filled_msg"));
+//                            }
+//                            //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
+//                            break;
+//                        case R.id.act021_iv_search_tracking:
+//
+//                            if (mket_tracking.getText().toString().trim().length() > 0) {
+//                                search_pressed = R.id.act021_iv_search_tracking;
+//                                //Limpa campo Serial
+//                                mket_serial.setText("");
+//                                //Chama Ws que consulta Seriais
+//                                mPresenter.executeSerialTracking(
+//                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
+//                                        mket_tracking.getText().toString().trim()
+//                                );
+//                            } else {
+//                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+//                                        hmAux_Trans.get("alert_no_value_filled_msg"));
+//                            }
+//                            //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                }
+//            }
+//        };
         //
         hideSoftKeyboard();
         //
         mPresenter.checkSOExpressProfile();
         mPresenter.getPendencies();
+        mPresenter.getMD_Products();
         mPresenter.getSync();
     }
 
     private void initActions() {
-        btn_load.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //showNewOptDialog();
-                if (mPresenter.checkForSoToSend()) {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_to_send_ttl"),
-                            hmAux_Trans.get("alert_so_to_send_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct005(context);
-                                }
-                            },
-                            0
-                    );
-                } else {
-                    showNewOptDialog();
-                }
-            }
-        });
-
-        btn_pendencies.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (pendencies_qty > 0) {
-                    callAct026(context);
-                } else {
-                    showMsg();
-                }
-
-
-            }
-        });
-
-        btn_so_express.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                callAct040(context);
-
-            }
-        });
-
-        btn_sync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (ToolBox_Con.isOnline(context)) {
-
-                    executeSoSave();
-
-                } else {
-                    ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
-                }
-
-            }
-        });
-
-        //Interface acionando quando o usuário digita na caixa.
-        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-
-            }
-
-            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
-            @Override
-            public void reportTextChange(String text, boolean hasText) {
-                if (hasText) {
-                    iv_search_serial.setEnabled(hasText);
-                } else {
-                    iv_search_serial.setEnabled(hasText);
-                }
-            }
-        });
-        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
-        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-            @Override
-            public void reportTextBySpecialist(String s) {
-                iv_search_serial.performClick();
-            }
-        });
-        //Interface acionando quando o usuário digita na caixa.
-        mket_tracking.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-
-            }
-
-            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
-            @Override
-            public void reportTextChange(String text, boolean hasText) {
-                if (hasText) {
-                    iv_search_tracking.setEnabled(hasText);
-                } else {
-                    iv_search_tracking.setEnabled(hasText);
-                }
-            }
-        });
-        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
-        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-            @Override
-            public void reportTextBySpecialist(String s) {
-                iv_search_tracking.performClick();
-            }
-        });
-        //
-        iv_search_serial.setOnClickListener(searchListner);
-        //
-        iv_search_tracking.setOnClickListener(searchListner);
+//        btn_load.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //showNewOptDialog();
+//                if (mPresenter.checkForSoToSend()) {
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_so_to_send_ttl"),
+//                            hmAux_Trans.get("alert_so_to_send_msg"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    callAct005(context);
+//                                }
+//                            },
+//                            0
+//                    );
+//                } else {
+//                    showNewOptDialog();
+//                }
+//            }
+//        });
+//
+//        btn_pendencies.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if (pendencies_qty > 0) {
+//                    callAct026(context);
+//                } else {
+//                    showMsg();
+//                }
+//
+//
+//            }
+//        });
+//
+//        btn_so_express.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                callAct040(context);
+//
+//            }
+//        });
+//
+//        btn_sync.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if (ToolBox_Con.isOnline(context)) {
+//
+//                    executeSoSave();
+//
+//                } else {
+//                    ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
+//                }
+//
+//            }
+//        });
+//
+//        //Interface acionando quando o usuário digita na caixa.
+//        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+//            @Override
+//            public void reportTextChange(String s) {
+//
+//            }
+//
+//            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
+//            @Override
+//            public void reportTextChange(String text, boolean hasText) {
+//                if (hasText) {
+//                    iv_search_serial.setEnabled(hasText);
+//                } else {
+//                    iv_search_serial.setEnabled(hasText);
+//                }
+//            }
+//        });
+//        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
+//        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+//            @Override
+//            public void reportTextBySpecialist(String s) {
+//                iv_search_serial.performClick();
+//            }
+//        });
+//        //Interface acionando quando o usuário digita na caixa.
+//        mket_tracking.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+//            @Override
+//            public void reportTextChange(String s) {
+//
+//            }
+//
+//            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
+//            @Override
+//            public void reportTextChange(String text, boolean hasText) {
+//                if (hasText) {
+//                    iv_search_tracking.setEnabled(hasText);
+//                } else {
+//                    iv_search_tracking.setEnabled(hasText);
+//                }
+//            }
+//        });
+//        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
+//        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+//            @Override
+//            public void reportTextBySpecialist(String s) {
+//                iv_search_tracking.performClick();
+//            }
+//        });
+//        //
+//        iv_search_serial.setOnClickListener(searchListner);
+//        //
+//        iv_search_tracking.setOnClickListener(searchListner);
 
     }
 
@@ -436,26 +505,40 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     @Override
     public void setPendencies(int qty, String qtyMyPendencies) {
-        pendencies_qty = qty;
-        String btn_text =
-                hmAux_Trans.get("btn_pendencies_so") + " (" +
-                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
-                        pendencies_qty + ")";
-        btn_pendencies.setText(btn_text);
+//        pendencies_qty = qty;
+//        String btn_text =
+//                hmAux_Trans.get("btn_pendencies_so") + " (" +
+//                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
+//                        pendencies_qty + ")";
+//        btn_pendencies.setText(btn_text);
+    }
+
+    @Override
+    public void setProduto(ArrayList<MD_Product> list) {
+        if (list.size() > 1) {
+            mFrgSerialSearch.setProductIdText("Todos - Trad");
+            mFrgSerialSearch.setShowTree(false);
+            mFrgSerialSearch.setShowAll(true);
+        } else if (list.size() == 1) {
+            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
+            mFrgSerialSearch.setShowTree(false);
+            mFrgSerialSearch.setShowAll(false);
+        } else {
+            mFrgSerialSearch.setProductIdText("");
+        }
     }
 
     @Override
     public void setSync(int qty) {
-        if (qty > 0) {
-            syncs_qty = qty;
-            String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
-
-            btn_sync.setVisibility(View.VISIBLE);
-            btn_sync.setText(btn_text);
-        } else {
-            btn_sync.setVisibility(View.GONE);
-        }
-
+//        if (qty > 0) {
+//            syncs_qty = qty;
+//            String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
+//
+//            btn_sync.setVisibility(View.VISIBLE);
+//            btn_sync.setText(btn_text);
+//        } else {
+//            btn_sync.setVisibility(View.GONE);
+//        }
     }
 
     @Override
@@ -531,7 +614,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     @Override
     public void setSoExpressVisibility(boolean isVisible) {
-        btn_so_express.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+//        btn_so_express.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -540,7 +623,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         progressDialog.dismiss();
         //
-        mPresenter.defineSearchResultFlow(result, mket_tracking.getText().toString().trim());
+//        mPresenter.defineSearchResultFlow(result, mket_tracking.getText().toString().trim());
     }
 
     //Tratativa SESSION NOT FOUND
@@ -957,5 +1040,67 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //super.processNotification_close(mValue, mActivity);
     }
 
+    // NFC Processing Data
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
 
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            ToolBox.alertMSG(
+                    context,
+                    "Erro:",
+                    value[0],
+                    null,
+                    0
+            );
+
+        } else {
+            mFrgSerialSearch.cleanFields();
+            String product_id = "";
+            //
+            switch (value[0]) {
+                case PRODUCT:
+                    product_id = mPresenter.searchProductInfo(value[2], "");
+                    //
+                    if (!product_id.equals("")) {
+                        mFrgSerialSearch.setProductIdText(product_id);
+                        //mPresenter.executeSerialSearch(product_id, "", "");
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
+                        );
+                    }
+                    break;
+                case SERIAL:
+                    product_id = mPresenter.searchProductInfo(value[2], "");
+                    //
+                    if (!product_id.equals("")) {
+                        mFrgSerialSearch.setProductIdText(product_id);
+                        mFrgSerialSearch.setSerialIdText(value[3]);
+                        mFrgSerialSearch.setTrackingText("");
+                        //mPresenter.executeSerialSearch(product_id, value[3], "");
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
+                        );
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 }

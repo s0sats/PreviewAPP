@@ -214,7 +214,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                 }
                 //
                 if (mSerial_id.isEmpty()) {
-                    res += "1";
+                    res += "0";
                 } else {
                     if (mSerial_id.equalsIgnoreCase(psAux.getSerial_id())) {
                         res += "1";
