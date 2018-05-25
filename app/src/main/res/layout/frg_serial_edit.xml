@@ -665,7 +665,7 @@
             android:layout_margin="15dp"
             android:background="@color/namoa_dark_blue"
             android:backgroundTint="@color/namoa_dark_blue"
-            android:src="@drawable/ic_tag_black_24dp"
+            android:src="@drawable/ic_swap_vert_black_25dp"
             android:tint="@color/padrao_WHITE" />
     </FrameLayout>
 </LinearLayout>

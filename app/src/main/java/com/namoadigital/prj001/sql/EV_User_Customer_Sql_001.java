@@ -21,20 +21,30 @@ public class EV_User_Customer_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT " +
-                        "      customer_code, " +
-                        "      customer_name, " +
-                        "      translate_code, " +
-                        "      blocked, " +
-                        "      session_app," +
-                        "      pending ," +
-                        "      translate_code , " +
-                        "      nls_date_format" +
-                        " FROM ")
+                        "      customer_code,\n " +
+                        "      customer_name,\n " +
+                        "      translate_code,\n " +
+                        "      blocked,\n " +
+                        "      session_app,\n " +
+                        "      pending ,\n " +
+                        "      translate_code ,\n " +
+                        "      nls_date_format,\n " +
+                        "      tracking" +
+                        " FROM \n ")
                 .append(EV_User_CustomerDao.TABLE)
-                .append(" WHERE " +
-                             EV_User_CustomerDao.USER_CODE +" = '"+s_user_code+"' " +
+                .append(" WHERE \n " +
+                             EV_User_CustomerDao.USER_CODE +" = '"+s_user_code+"' \n " +
                         " ORDER by customer_name;")
-                .append("customer_code#customer_name#translate_code#blocked#session_app#pending#translate_code#nls_date_format")
+                .append("customer_code#" +
+                        "customer_name#" +
+                        "translate_code#" +
+                        "blocked#" +
+                        "session_app#" +
+                        "pending#" +
+                        "translate_code#" +
+                        "nls_date_format#" +
+                        "tracking"
+                )
                 .toString();
     }
 }
