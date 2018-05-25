@@ -22,6 +22,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * "Filtro Minhas Pendencias"
  * A query "base" dessa é Sql_Act027_002, porem sem os campos que calculam
  * qual icone e qual ação existe naquela service.
+ *
+ * Created by d.luche on 25/05/2018.(Sim, exatamento 1 ano depois)
+ * Comentado lefts join de marca, modelo e cor, pois agora as informações
+ * vem da tabela de seria.
+ *
  */
 
 public class Sql_Act026_001 implements Specification {
@@ -228,16 +233,16 @@ public class Sql_Act026_001 implements Specification {
                         "      ) "+QTD_SERVICES+" ,\n" +
                         "       s3.*,\n" +
                         "      '"+Constant.PARAM_KEY_TYPE_SO+"' " + Constant.PARAM_KEY_TYPE+" \n," +
-                                MD_BrandDao.BRAND_DESC+" ,\n" +
-                                MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
-                                MD_Brand_ColorDao.COLOR_DESC+" \n" +
+                        "      ps."+ MD_BrandDao.BRAND_DESC+" ,\n" +
+                        "      ps."+MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
+                        "      ps."+MD_Brand_ColorDao.COLOR_DESC+" \n" +
                         " FROM\n" +
                         "  "+SM_SODao.TABLE+" s3\n" +
                         "  LEFT JOIN\n" +
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s3.customer_code\n" +
                         "                             and ps.product_code = s3.product_code \n" +
                         "                             and ps.serial_code = s3.serial_code\n" +
-                        " LEFT JOIN\n" +
+                        /*" LEFT JOIN\n" +
                         MD_BrandDao.TABLE +" b on ps.customer_code = b.customer_code\n" +
                         "                    and ps.brand_code = b.brand_code\n" +
                         " LEFT JOIN\n" +
@@ -247,7 +252,7 @@ public class Sql_Act026_001 implements Specification {
                         " LEFT JOIN\n" +
                         MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
                         "                       and ps.brand_code = c.brand_code\n" +
-                        "                       and ps.color_code = c.color_code\n" +
+                        "                       and ps.color_code = c.color_code\n" +*/
                         " WHERE\n" +
                         "   s3.customer_code = '"+customer_code+"'\n" +
                         "   and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "') \n")
