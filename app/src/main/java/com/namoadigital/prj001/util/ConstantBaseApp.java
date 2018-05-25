@@ -300,6 +300,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_USER_NFC = "login_user_nfc";
     public static final String LOGIN_LAST_USER_CODE_LOGGED = "last_user_logged";
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
+    public static final String LOGIN_CUSTOMER_USES_TRACKING = "login_customer_uses_tracking";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String LOGIN_SITE_CODE = "login_site_code";
     public static final String LOGIN_ZONE_CODE = "login_zone_code";

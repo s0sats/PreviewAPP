@@ -383,6 +383,29 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region Tracking
+    public static void setPreference_Customer_Uses_Tracking(Context context, int tracking) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_CUSTOMER_USES_TRACKING,
+                tracking
+        ).apply();
+    }
+
+    public static int getPreference_Customer_Uses_Tracking(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getInt(
+                Constant.LOGIN_CUSTOMER_USES_TRACKING,
+                -1
+        );
+    }
+
+    //endregion
+
     //region Chat_Msg_Code
     public static void setPreference_Chat_Msg_Code(Context context, long chat_msg_code) {
         SharedPreferences sharedPreferences =
@@ -911,6 +934,11 @@ public class ToolBox_Con {
                 Constant.USER_CUSTOMER_TRANSLATE_CODE,
                 ""
         ).apply();
+        //
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_CUSTOMER_USES_TRACKING,
+                -1
+        );
         //
         sharedPreferences.edit().putString(
                 Constant.LOGIN_USER_CODE_NICK,

@@ -140,6 +140,7 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Translate_Code(getApplicationContext(), String.valueOf(userCustomer.getTranslate_code()));
         ToolBox_Con.setPreference_Session_App(getApplicationContext(),rec.getSession_app());
         ToolBox_Con.setPreference_Status_Login(getApplicationContext(),Constant.LOGIN_STATUS_OK);
+        ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), userCustomer.getTracking());
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
     }
