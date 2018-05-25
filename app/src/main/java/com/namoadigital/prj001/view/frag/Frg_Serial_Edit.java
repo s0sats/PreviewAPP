@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,8 +57,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 
 public class Frg_Serial_Edit extends Fragment {
+    //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
+    //SE FOR ALTERAR AVISAR CESAR CALDI
     public static final String VIEW_FULL_EDIT = "VIEW_FULL_EDIT";
-    public static final String VIEW_PARTIAL_DESC = "VIEW_PARTIAL_DESC";
+    public static final String VIEW_SO_EDIT = "VIEW_SO_EDIT";
 
     private Context context;
     private boolean bStatus;
@@ -65,6 +68,7 @@ public class Frg_Serial_Edit extends Fragment {
     private String mModule_Code;
     private String mResource_Code;
     private ArrayList<MKEditTextNM> controls_sta;
+    private String viewMode = "";
     private ScrollView sv_serial;
     private TextView tv_product_code_label;
     private TextView tv_product_id_label;
@@ -94,6 +98,7 @@ public class Frg_Serial_Edit extends Fragment {
     private SearchableSpinner ss_brand_color;
     private SearchableSpinner ss_segment;
     private SearchableSpinner ss_category_price;
+    private LinearLayout ll_serial_class;
     private SearchableSpinner ss_class;
     private ImageView iv_class_icon;
     private FloatingActionButton fab_anchor;
@@ -122,6 +127,11 @@ public class Frg_Serial_Edit extends Fragment {
     private HMAux oldLocal = new HMAux();
     private boolean serialIdChanged = false;
     private boolean pausedByScan = false;
+    //VIEW_SO_EDIT
+    private TextView tv_brand_model_color;
+    private ImageView iv_serial_dialog_info;
+    private String brand_model_color_lbl;
+    private boolean showCategorySegmentoInfo = true;
     //
     private String sql_ss_site;
     private String sql_ss_site_zone;
@@ -210,6 +220,22 @@ public class Frg_Serial_Edit extends Fragment {
 
     public ArrayList<MKEditTextNM> getControlsSta() {
         return controls_sta;
+    }
+
+    public String getViewMode() {
+        return viewMode;
+    }
+
+    public void setViewMode(String viewMode) {
+        this.viewMode = viewMode;
+    }
+
+    public boolean isShowCategorySegmentoInfo() {
+        return showCategorySegmentoInfo;
+    }
+
+    public void setShowCategorySegmentoInfo(boolean showCategorySegmentoInfo) {
+        this.showCategorySegmentoInfo = showCategorySegmentoInfo;
     }
 
     public void reApplySerialId(){
@@ -418,6 +444,8 @@ public class Frg_Serial_Edit extends Fragment {
         //
         ss_category_price = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_category_price);
         //
+        ll_serial_class = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_class);
+        //
         ss_class = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_class);
         //
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
@@ -460,6 +488,9 @@ public class Frg_Serial_Edit extends Fragment {
         //
         mket_outbound_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_outbound_id);
         mket_outbound_id.setEnabled(false);
+        //COMPONENTS VIEW_SO_EDIT
+        tv_brand_model_color = (TextView) view.findViewById(R.id.frg_serial_edit_tv_brand_model_color);
+        iv_serial_dialog_info = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_serial_dialog_info);
         //
         //Adiciona Views na lista de tradução
         views.add(tv_required_lbl);
@@ -512,8 +543,11 @@ public class Frg_Serial_Edit extends Fragment {
             sqlInitializer();
             //
             spinnersInitializer();
+            //
+            applyViewMode();
         }
     }
+
 
     private void setProductData() {
         tv_product_id_label.setText(hmAux_Trans.get("product_lbl"));
@@ -523,6 +557,7 @@ public class Frg_Serial_Edit extends Fragment {
     }
 
     private void setSerialData() {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         mket_serial_id.setTag(mdProductSerial.getSerial_id());
         mket_serial_id.setText(mdProductSerial.getSerial_id());
         //
@@ -620,6 +655,20 @@ public class Frg_Serial_Edit extends Fragment {
                 MD_Product_SerialDao.COLOR_ID, mdProductSerial.getColor_id()
         );
         //endregion
+        //region BrandModelColor
+        brand_model_color_lbl =  mdProductSerial.getBrand_desc() == null ? "" : "| " + mdProductSerial.getBrand_desc() + " ";
+        brand_model_color_lbl += mdProductSerial.getModel_desc() == null ? "" : "| " + mdProductSerial.getModel_desc() + " ";
+        brand_model_color_lbl += mdProductSerial.getColor_desc() == null  ? "" : "| " + mdProductSerial.getColor_desc() + " ";
+        //
+        if( brand_model_color_lbl.length() > 0){
+            brand_model_color_lbl = brand_model_color_lbl.substring(1,brand_model_color_lbl.length());
+            tv_brand_model_color.setText(brand_model_color_lbl);
+            tv_brand_model_color.setVisibility(View.VISIBLE);
+        }else{
+            tv_brand_model_color.setText("");
+            tv_brand_model_color.setVisibility(View.GONE);
+        }
+
         //region SS Segment
         ToolBox_Inf.setSSmValue(
                 ss_segment,
@@ -995,6 +1044,13 @@ public class Frg_Serial_Edit extends Fragment {
                 Toast.makeText(context,"Anchora?",Toast.LENGTH_LONG).show();
             }
         });
+        //
+        iv_serial_dialog_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSerialInfoDialog();
+            }
+        });
     }
 
     private void showTrackingDialog() {
@@ -1068,7 +1124,138 @@ public class Frg_Serial_Edit extends Fragment {
                 show.dismiss();
             }
         });
+    }
 
+    private void showSerialInfoDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_serial_more_info,null);
+        //
+        /*
+         * IniVar
+         */
+        TextView tv_dialog_ttl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_ttl);
+        //
+        LinearLayout ll_category = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_category);
+        TextView tv_category_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_category_lbl);
+        TextView tv_category_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_category_val);
+        //
+        LinearLayout ll_segment = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_segment);
+        TextView tv_segment_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_segment_lbl);
+        TextView tv_segment_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_segment_val);
+        //
+        LinearLayout ll_add_info1 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info1);
+        TextView tv_add_info1_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info1_lbl);
+        TextView tv_add_info1_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info1_val);
+        //
+        LinearLayout ll_add_info2 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info2);
+        TextView tv_add_info2_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info2_lbl);
+        TextView tv_add_info2_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info2_val);
+        //
+        LinearLayout ll_add_info3 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info3);
+        TextView tv_add_info3_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info3_lbl);
+        TextView tv_add_info3_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info3_val);
+        //
+        LinearLayout ll_io_info = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_io_info);
+        LinearLayout ll_inbound = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_inbound);
+        TextView tv_inbound_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_inbound_lbl);
+        TextView tv_inbound_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_inbound_val);
+        //
+        LinearLayout ll_inbound_date = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_inbound_date);
+        TextView tv_inbound_date_conf_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_inbound_date_conf_lbl);
+        TextView tv_inbound_date_conf_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_inbound_date_conf_val);
+        //
+        LinearLayout ll_move = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_move);
+        TextView tv_move_code_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_move_code_lbl);
+        TextView tv_move_code_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_move_code_val);
+        //
+        LinearLayout ll_move_group = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_move_group);
+        TextView tv_move_group_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_move_group_lbl);
+        TextView tv_move_group_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_move_group_val);
+        //
+        LinearLayout ll_outbound = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_outbound);
+        TextView tv_outbound_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_outbound_lbl);
+        TextView tv_outbound_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_outbound_val);
+        //
+        /*
+         *Add valores
+         */
+        tv_dialog_ttl.setText(hmAux_Trans.get("dialog_serial_info_ttl"));
+        //
+        if(showCategorySegmentoInfo) {
+            tv_category_lbl.setText(hmAux_Trans.get("dialog_serial_category_price_lbl"));
+            tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
+            //
+            tv_segment_lbl.setText(hmAux_Trans.get("dialog_serial_segment_lbl"));
+            tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
+            ll_category.setVisibility(View.VISIBLE);
+            ll_segment.setVisibility(View.VISIBLE);
+        }else{
+            ll_category.setVisibility(View.GONE);
+            ll_segment.setVisibility(View.GONE);
+        }
+        //
+        tv_add_info1_lbl.setText(hmAux_Trans.get("dialog_serial_add_info1_lbl"));
+        tv_add_info1_val.setText(mdProductSerial.getAdd_inf1());
+        //
+        tv_add_info2_lbl.setText(hmAux_Trans.get("dialog_serial_add_info2_lbl"));
+        tv_add_info2_val.setText(mdProductSerial.getAdd_inf2());
+        //
+        tv_add_info3_lbl.setText(hmAux_Trans.get("dialog_serial_add_info3_lbl"));
+        tv_add_info3_val.setText(mdProductSerial.getAdd_inf3());
+        //IO Info, somente se produto controlar I/O
+        if( mdProductSerial.getInbound_id() == null
+                && mdProductSerial.getInbound_conf_date() == null
+                && mdProductSerial.getMove_code() == null
+                && mdProductSerial.getMove_group_code() == null
+                && mdProductSerial.getOutbound_id() == null)
+        {
+            ll_io_info.setVisibility(View.GONE);
+        }else {
+            if (mdProductSerial.getInbound_id() != null) {
+                tv_inbound_lbl.setText(hmAux_Trans.get("dialog_serial_inbound_lbl"));
+                tv_inbound_val.setText(mdProductSerial.getInbound_id());
+            } else {
+                ll_inbound.setVisibility(View.GONE);
+            }
+            //
+            if (mdProductSerial.getInbound_conf_date() != null) {
+                tv_inbound_date_conf_lbl.setText(hmAux_Trans.get("dialog_serial_inbound_date_lbl"));
+                tv_inbound_date_conf_val.setText(ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(mdProductSerial.getInbound_conf_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                );
+            } else {
+                ll_inbound_date.setVisibility(View.GONE);
+            }
+            //
+            if (mdProductSerial.getMove_code() != null) {
+                tv_move_code_lbl.setText(hmAux_Trans.get("dialog_serial_move_lbl"));
+                tv_move_code_val.setText(mdProductSerial.getMove_prefix() + "." + mdProductSerial.getMove_code());
+            } else {
+                ll_move.setVisibility(View.GONE);
+            }
+            //
+            if (mdProductSerial.getMove_group_code() != null) {
+                tv_move_group_lbl.setText(hmAux_Trans.get("dialog_serial_move_group_lbl"));
+                tv_move_group_val.setText(mdProductSerial.getMove_group_code());
+            } else {
+                ll_move_group.setVisibility(View.GONE);
+            }
+            //
+            if (mdProductSerial.getOutbound_id() != null) {
+                tv_outbound_lbl.setText(hmAux_Trans.get("dialog_serial_outbound_lbl"));
+                tv_outbound_val.setText(mdProductSerial.getOutbound_id());
+            } else {
+                ll_outbound.setVisibility(View.GONE);
+            }
+        }
+        //
+        builder.setView(view);
+        //
+        AlertDialog dialog = builder.show();
 
     }
 
@@ -1242,6 +1429,43 @@ public class Frg_Serial_Edit extends Fragment {
         } else {
             iv_class_icon.setImageDrawable(null);
             iv_class_icon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void applyViewMode() {
+        switch (viewMode){
+            case VIEW_FULL_EDIT:
+                tv_brand_model_color.setVisibility(View.GONE);
+                iv_serial_dialog_info.setVisibility(View.GONE);
+                ll_serial_class.setVisibility(View.VISIBLE);
+                ll_serial_location.setVisibility(View.VISIBLE);
+                ll_serial_properties.setVisibility(View.VISIBLE);
+                ll_serial_add_info.setVisibility(View.VISIBLE);
+                ll_io_info.setVisibility(View.VISIBLE);
+                btn_action.setVisibility(View.VISIBLE);
+                fab_anchor.setVisibility(View.VISIBLE);
+                break;
+            case VIEW_SO_EDIT:
+                tv_brand_model_color.setVisibility(View.VISIBLE);
+                iv_serial_dialog_info.setVisibility(View.VISIBLE);
+                ll_serial_class.setVisibility(View.VISIBLE);
+                ll_serial_location.setVisibility(View.VISIBLE);
+                ll_serial_properties.setVisibility(View.GONE);
+                ll_serial_add_info.setVisibility(View.GONE);
+                ll_io_info.setVisibility(View.GONE);
+                btn_action.setVisibility(View.VISIBLE);
+                fab_anchor.setVisibility(View.GONE);
+                break;
+            default:
+                tv_brand_model_color.setVisibility(View.GONE);
+                iv_serial_dialog_info.setVisibility(View.GONE);
+                ll_serial_class.setVisibility(View.GONE);
+                ll_serial_location.setVisibility(View.GONE);
+                ll_serial_properties.setVisibility(View.GONE);
+                ll_serial_add_info.setVisibility(View.GONE);
+                ll_io_info.setVisibility(View.GONE);
+                btn_action.setVisibility(View.GONE);
+                fab_anchor.setVisibility(View.GONE);
         }
     }
 

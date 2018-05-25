@@ -172,7 +172,7 @@
                             app:mOCR="false" />
 
                         <ImageView
-                            android:id="@+id/frg_serial_edit_iv_serial_add_info"
+                            android:id="@+id/frg_serial_edit_iv_serial_dialog_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
