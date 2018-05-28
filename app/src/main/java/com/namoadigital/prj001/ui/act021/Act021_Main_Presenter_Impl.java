@@ -97,7 +97,6 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 
     @Override
     public boolean checkForSoToSend() {
-        //
         HMAux hmAux = soDao.getByStringHM(
                 new Sql_Act021_001(
                         ToolBox_Con.getPreference_Customer_Code(context)

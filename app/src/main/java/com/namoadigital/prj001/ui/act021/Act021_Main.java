@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act021;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -217,12 +218,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
-                        //processSerialSearch(optionsInfo);
+                        processLoadSO(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        //processPendencies(optionsInfo);
+                        processPendencies(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
+                        processExpress(optionsInfo);
+                        break;
+                    case Frg_Serial_Search.BTN_OPTION_04:
+                        processSyncro(optionsInfo);
                         break;
                     default:
                         break;
@@ -342,10 +347,42 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         //
         hideSoftKeyboard();
         //
-        mPresenter.checkSOExpressProfile();
-        mPresenter.getPendencies();
         mPresenter.getMD_Products();
+        mPresenter.getPendencies();
+        mPresenter.checkSOExpressProfile();
         mPresenter.getSync();
+    }
+
+    private void processLoadSO(HMAux optionsInfo) {
+        if (mPresenter.checkForSoToSend()) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_to_send_ttl"),
+                    hmAux_Trans.get("alert_so_to_send_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callAct005(context);
+                        }
+                    },
+                    0
+            );
+        } else {
+            //showNewOptDialog();
+
+        }
+    }
+
+    private void processPendencies(HMAux optionsInfo) {
+
+    }
+
+    private void processExpress(HMAux optionsInfo) {
+
+    }
+
+    private void processSyncro(HMAux optionsInfo) {
+
     }
 
     private void initActions() {
@@ -505,12 +542,13 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void setPendencies(int qty, String qtyMyPendencies) {
-//        pendencies_qty = qty;
-//        String btn_text =
-//                hmAux_Trans.get("btn_pendencies_so") + " (" +
-//                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
-//                        pendencies_qty + ")";
-//        btn_pendencies.setText(btn_text);
+        pendencies_qty = qty;
+        String btn_text =
+                hmAux_Trans.get("btn_pendencies_so") + " (" +
+                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
+                        pendencies_qty + ")";
+
+        mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
     }
 
     @Override
@@ -530,15 +568,15 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void setSync(int qty) {
-//        if (qty > 0) {
-//            syncs_qty = qty;
-//            String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
-//
-//            btn_sync.setVisibility(View.VISIBLE);
-//            btn_sync.setText(btn_text);
-//        } else {
-//            btn_sync.setVisibility(View.GONE);
-//        }
+        if (qty > 0) {
+            syncs_qty = qty;
+            String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
+
+            mFrgSerialSearch.setBtn_Option_04_Label(btn_text);
+            mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
+        } else {
+            mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+        }
     }
 
     @Override
@@ -552,7 +590,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         /**
          * Ini Vars
          */
-
         ListView lv_opt = (ListView) view.findViewById(R.id.act006_dialog_opt_lv_opt);
 
         String[] from = {NEW_OPT_LABEL};
@@ -574,7 +611,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         /**
          * Ini Action
          */
-
         lv_opt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -614,7 +650,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void setSoExpressVisibility(boolean isVisible) {
-//        btn_so_express.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        mFrgSerialSearch.setBtn_Option_03_Visibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     @Override
