@@ -103,6 +103,7 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_012;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
+import com.namoadigital.prj001.sql.EV_Profile_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
@@ -4168,6 +4169,25 @@ public class ToolBox_Inf {
 
     public static String removeAllLineBreaks(String text){
         return text.trim().replaceAll("\\r|\\n","");
+    }
+
+    public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code){
+        ArrayList<HMAux> profiles = new ArrayList<>();
+        //
+        EV_ProfileDao profileDao = new EV_ProfileDao(
+                                        context,
+                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                        Constant.DB_VERSION_CUSTOM
+        );
+        //
+        profiles = (ArrayList<HMAux>) profileDao.query_HM(
+                new EV_Profile_Sql_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        menu_code
+                ).toSqlQuery()
+        );
+        //
+        return profiles;
     }
 
 }

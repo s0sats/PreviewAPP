@@ -22,6 +22,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -167,7 +168,7 @@ public class Teste2 extends Base_Activity {
         );
 
         long product_code = 53;
-        String serial_di = "s1";
+        String serial_di = "s2";
         MD_ProductDao productDao = new MD_ProductDao(context);
 
         MD_Product mdProduct = productDao.getByString(
@@ -197,6 +198,11 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setBtnActionLabel("TEste");
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(true);
+        frgSerialEdit.setSql_ss_site(
+                new MD_Site_Sql_SS_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery());
+
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override

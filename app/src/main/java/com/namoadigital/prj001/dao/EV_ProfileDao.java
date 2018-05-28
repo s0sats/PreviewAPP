@@ -29,7 +29,7 @@ public class EV_ProfileDao extends BaseDao implements Dao<EV_Profile> {
     public static final String MENU_CODE = "menu_code";
     public static final String PARAMETER_CODE = "parameter_code";
 
-    private String[] columns = {CUSTOMER_CODE, MENU_CODE, PARAMETER_CODE};
+    public static final String[] columns = {CUSTOMER_CODE, MENU_CODE, PARAMETER_CODE};
 
     public EV_ProfileDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);

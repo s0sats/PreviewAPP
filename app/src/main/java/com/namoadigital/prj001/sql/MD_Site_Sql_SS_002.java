@@ -5,13 +5,15 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
- * Created by DANIEL.LUCHE on 26/01/2017.
+ * Created by DANIEL.LUCHE on 28/05/2018.
+ * Seleciona sites que io_control  = 0 ou io_control = 1 e inbound_auto_create 1
+ *
  */
 
-public class MD_Site_Sql_SS implements Specification {
+public class MD_Site_Sql_SS_002 implements Specification {
     private String s_customer_code;
 
-    public MD_Site_Sql_SS(String s_customer_code) {
+    public MD_Site_Sql_SS_002(String s_customer_code) {
         this.s_customer_code = s_customer_code;
     }
 
@@ -31,6 +33,7 @@ public class MD_Site_Sql_SS implements Specification {
                         MD_SiteDao.TABLE +"\n"+
                         " WHERE \n" +
                         MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
+                        "   AND (io_control = 0 OR (io_control = 1 and inbound_auto_create = 1)) " +
                         " ORDER BY \n" +
                         "      site_id,site_desc;")
                 .append(SearchableSpinner.ID + "#" +
