@@ -151,7 +151,13 @@ public class Teste2 extends Base_Activity {
         transList.add("alert_serial_exists_msg");
         transList.add("alert_serial_not_exists_ttl");
         transList.add("alert_serial_not_exists_msg");
-
+        transList.add("alert_serial_not_exists_msg");
+        transList.add("dialog_serial_inbound_lbl");
+        transList.add("dialog_serial_inbound_date_lbl");
+        transList.add("dialog_serial_move_lbl");
+        transList.add("dialog_serial_move_group_lbl");
+        transList.add("dialog_serial_outbound_lbl");
+        //
         hmAux_Trans_frg_serial_edit = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -189,6 +195,8 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setNew_serial(true);
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setBtnActionLabel("TEste");
+        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
+        frgSerialEdit.setShowCategorySegmentoInfo(true);
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override

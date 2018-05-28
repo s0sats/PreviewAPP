@@ -10,7 +10,7 @@
         android:id="@+id/dialog_serial_info_tv_ttl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:text="Serial More Info"
         android:textSize="@dimen/font_size_title_dialog"
         android:textStyle="bold" />
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -162,6 +162,152 @@
                     android:textColor="@color/namoa_light_blue"
                     android:layout_marginStart="5dp"
                     />
+            </LinearLayout>
+            <!--I /O-->
+            <LinearLayout
+                android:id="@+id/dialog_serial_info_ll_io_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!--Inbound Code-->
+                <LinearLayout
+                    android:id="@+id/dialog_serial_info_ll_inbound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_inbound_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Inbound ID - Trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_inbound_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="77 - 77"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginStart="5dp"
+                        />
+                </LinearLayout>
+                <!--Inbound Date Conf-->
+                <LinearLayout
+                    android:id="@+id/dialog_serial_info_ll_inbound_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_inbound_date_conf_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Inbound date_conf- Trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_inbound_date_conf_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="25/05/2018 00:59 - trad"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginStart="5dp"
+                        />
+                </LinearLayout>
+
+                <!--Move Code-->
+                <LinearLayout
+                    android:id="@+id/dialog_serial_info_ll_move"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_move_code_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Move - Trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_move_code_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="XXXX.XXX - trad"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginStart="5dp"
+                        />
+                </LinearLayout>
+
+                <!--Move Group-->
+                <LinearLayout
+                    android:id="@+id/dialog_serial_info_ll_move_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_move_group_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Move Group - Trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_move_group_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Group 152 - trad"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginStart="5dp"
+                        />
+                </LinearLayout>
+
+                <!--Outbound -->
+                <LinearLayout
+                    android:id="@+id/dialog_serial_info_ll_outbound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="15dp">
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_outbound_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Outbound - Trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_serial_info_tv_outbound_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="125 - 125"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginStart="5dp"
+                        />
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
