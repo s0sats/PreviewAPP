@@ -195,7 +195,7 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setNew_serial(true);
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setBtnActionLabel("TEste");
-        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
+        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(true);
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 

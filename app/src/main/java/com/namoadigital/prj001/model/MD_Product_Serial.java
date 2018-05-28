@@ -90,6 +90,12 @@ public class MD_Product_Serial implements Serializable {
     private Integer local_control;
     private Integer site_io_control;
     private Integer inbound_auto_create;
+    @Expose
+    private String edit_mode;
+    @Expose
+    private String profile;
+    @Expose
+    private String log_date;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -551,6 +557,30 @@ public class MD_Product_Serial implements Serializable {
 
     public void setInbound_auto_create(Integer inbound_auto_create) {
         this.inbound_auto_create = inbound_auto_create;
+    }
+
+    public String getEdit_mode() {
+        return edit_mode;
+    }
+
+    public void setEdit_mode(String edit_mode) {
+        this.edit_mode = edit_mode;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getLog_date() {
+        return log_date;
+    }
+
+    public void setLog_date(String log_date) {
+        this.log_date = log_date;
     }
 
     /**
