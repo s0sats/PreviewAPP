@@ -37,6 +37,8 @@ public interface Act021_Main_View {
 
     void showPD(String ttl, String msg);
 
+    void showNoCoPendencies();
+
     void setSoExpressVisibility(boolean isVisible);
 
 }

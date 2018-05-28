@@ -14,16 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -70,16 +67,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     private HMAux hmAux_Trans_frg_serial_search;
     protected String mResource_CodeSS = "0";
-
-//    private Button btn_load;
-//    private Button btn_pendencies;
-//    private Button btn_so_express;
-//    private Button btn_sync;
-
-//    private MKEditTextNM mket_serial;
-//    private ImageView iv_search_serial;
-//    private MKEditTextNM mket_tracking;
-//    private ImageView iv_search_tracking;
 
     private int pendencies_qty;
     private int syncs_qty;
@@ -187,6 +174,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         transList.add("product_hint");
         transList.add("serial_hint");
         transList.add("tracking_hint");
+        transList.add("product_all_lbl");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
@@ -204,9 +192,9 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                         ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-        //
+
         fm = getSupportFragmentManager();
-        //
+
         mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act021_frg_serial_search);
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
         mFrgSerialSearch.setSupportNFC(supportNFC);
@@ -234,7 +222,8 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 }
             }
         });
-        //
+
+
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_load_so"));
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
@@ -254,34 +243,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 ),
                 hmAux_Trans
         );
-//        //
-//        btn_load = (Button) findViewById(R.id.act021_btn_load);
-//        btn_load.setTag("btn_load_so");
-//        views.add(btn_load);
-//        //
-//        btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
-//        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
-//        //
-//        btn_so_express = (Button) findViewById(R.id.act021_btn_so_express);
-//        btn_so_express.setTag("btn_so_express");
-//        views.add(btn_so_express);
-//        //
-//        btn_sync = (Button) findViewById(R.id.act021_btn_sync);
-//        btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
-//        //
-//        mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
-//        mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
-//        iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
-//        iv_search_serial.setEnabled(false);
-//        //
-//        mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
-//        mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
-//        iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
-//        iv_search_tracking.setEnabled(false);
-//        //Add controles no array list.
-//        controls_sta.add(mket_serial);
-//        controls_sta.add(mket_tracking);
-//        //
 //        searchListner = new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -344,9 +305,9 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 //                }
 //            }
 //        };
-        //
+
         hideSoftKeyboard();
-        //
+
         mPresenter.getMD_Products();
         mPresenter.getPendencies();
         mPresenter.checkSOExpressProfile();
@@ -368,21 +329,50 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     0
             );
         } else {
-            //showNewOptDialog();
+            processSerialSearch(optionsInfo);
+        }
+    }
 
+    private void processSerialSearch(HMAux optionsInfo) {
+        if (optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() > 0
+                || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
+                || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
+
+                ) {
+            mPresenter.executeSerialSearch(
+                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
+                    optionsInfo.get(Frg_Serial_Search.SERIAL),
+                    optionsInfo.get(Frg_Serial_Search.TRACKING)
+            );
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_no_value_filled_ttl"),
+                    hmAux_Trans.get("alert_no_value_filled_msg"),
+                    null,
+                    0
+            );
         }
     }
 
     private void processPendencies(HMAux optionsInfo) {
-
+        if (pendencies_qty > 0) {
+            callAct026(context);
+        } else {
+            showMsg();
+        }
     }
 
     private void processExpress(HMAux optionsInfo) {
-
+        callAct040(context);
     }
 
     private void processSyncro(HMAux optionsInfo) {
-
+        if (ToolBox_Con.isOnline(context)) {
+            executeSoSave();
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
+        }
     }
 
     private void initActions() {
@@ -503,7 +493,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     }
 
     public void showMsg() {
-
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_no_pendencies_title"),
@@ -511,7 +500,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 null,
                 0
         );
-
     }
 
     @Override
@@ -523,7 +511,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 null,
                 0
         );
-
     }
 
     @Override
@@ -534,6 +521,32 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
+    }
+
+    @Override
+    public void showNoCoPendencies() {
+        if (pendencies_qty > 0) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("no_connection_ttl"),
+                    hmAux_Trans.get("go_so_pendencies_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            processPendencies(null);
+                        }
+                    },
+                    1
+            );
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("no_connection_ttl"),
+                    hmAux_Trans.get("no_so_pendencies_msg"),
+                    null,
+                    0
+            );
+        }
     }
 
     private void hideSoftKeyboard() {
@@ -554,7 +567,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     @Override
     public void setProduto(ArrayList<MD_Product> list) {
         if (list.size() > 1) {
-            mFrgSerialSearch.setProductIdText("Todos - Trad");
+            mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
         } else if (list.size() == 1) {
@@ -659,7 +672,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         //
         progressDialog.dismiss();
         //
-//        mPresenter.defineSearchResultFlow(result, mket_tracking.getText().toString().trim());
+        mPresenter.extractSearchResult(result);
     }
 
     //Tratativa SESSION NOT FOUND
@@ -882,84 +895,60 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 0
         );
 
-//        String sync[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-//
-//        if (sync.length > 0 && !sync[0].isEmpty()) {
-//            for (int i = 0; i < sync.length; i++) {
-//                String fields[] = sync[i].split(Constant.MAIN_CONCAT_STRING_2);
-//                //
-//                HMAux mHmAux = new HMAux();
-//                mHmAux.put("label", fields[0]);
-//                mHmAux.put("status", fields[1]);
-//                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-//                //
-//                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                    wsResults.add(mHmAux);
-//                }
-//            }
-//        } else {
-//        }
-//
-//        if (wsResults.size() > 1) {
-//            showResults(wsResults);
-//        } else {
-//            showSuccessDialog();
-//        }
-
         mPresenter.getSync();
     }
 
-    public void showResults(List<HMAux> res) {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
-
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-
-        lv_results.setAdapter(
-                new Act028_Results_Adapter(
-                        context,
-                        R.layout.act028_results_adapter_cell,
-                        res
-                )
-        );
-
-        builder.setView(view);
-        builder.setCancelable(false);
-
-        final AlertDialog show = builder.show();
-
-        /**
-         * Ini Action
-         */
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
-
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-        });
-    }
-
-    private void showSuccessDialog() {
-        ToolBox.alertMSG(
-                Act021_Main.this,
-                hmAux_Trans.get("alert_sync_finish_ttl"),
-                hmAux_Trans.get("alert_sync_finish_msg"),
-                null,
-                0
-        );
-    }
+//    public void showResults(List<HMAux> res) {
+//
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+//
+//        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+//        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+//        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+//
+//        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+//        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+//
+//        lv_results.setAdapter(
+//                new Act028_Results_Adapter(
+//                        context,
+//                        R.layout.act028_results_adapter_cell,
+//                        res
+//                )
+//        );
+//
+//        builder.setView(view);
+//        builder.setCancelable(false);
+//
+//        final AlertDialog show = builder.show();
+//
+//        /**
+//         * Ini Action
+//         */
+//        btn_ok.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                show.dismiss();
+//
+//                if (progressDialog != null && progressDialog.isShowing()) {
+//                    progressDialog.dismiss();
+//                }
+//            }
+//        });
+//    }
+//
+//    private void showSuccessDialog() {
+//        ToolBox.alertMSG(
+//                Act021_Main.this,
+//                hmAux_Trans.get("alert_sync_finish_ttl"),
+//                hmAux_Trans.get("alert_sync_finish_msg"),
+//                null,
+//                0
+//        );
+//    }
 
 
     @Override
@@ -986,69 +975,58 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     public void executeSoSave() {
         setWs_process(WS_PROCESS_SO_SAVE);
-        //
+
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
-        //
+
         enableProgressDialog(
                 hmAux_Trans.get("progress_so_save_ttl"),
                 hmAux_Trans.get("progress_so_save_msg"),
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
-//        enableProgressDialog(
-//                "So Save",
-//                "Processando So Save",
-//                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                hmAux_Trans.get("sys_alert_btn_ok")
-//        );
-        //
+
         Intent mIntent = new Intent(context, WBR_SO_Save.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
-        //
+
         mIntent.putExtras(bundle);
-        //
+
         context.sendBroadcast(mIntent);
     }
 
     public void executeSoSaveApproval() {
         setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
-        //
+
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.setTitle(hmAux_Trans.get("progress_so_save_approval_ttl"));
             progressDialog.setMessage(hmAux_Trans.get("progress_so_save_approval_msg"));
-//            progressDialog.setTitle("So Approval");
-//            progressDialog.setMessage("Processando So Approval");
-
         }
-        //
+
         Intent mIntent = new Intent(context, WBR_SO_Approval.class);
         Bundle bundle = new Bundle();
-        //
+
         mIntent.putExtras(bundle);
-        //
+
         context.sendBroadcast(mIntent);
     }
 
     public void executeSoSync() {
         setWs_process(WS_PROCESS_SO_SYNC);
-        //
+
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.setTitle(hmAux_Trans.get("progress_so_sync_ttl"));
             progressDialog.setMessage(hmAux_Trans.get("progress_so_sync_msg"));
-//            progressDialog.setTitle("So Sync");
-//            progressDialog.setMessage("Processando So Sync");
         }
-        //
+
         ArrayList<HMAux> sos = (ArrayList<HMAux>) soDao.query_HM(
                 new SM_SO_Sql_019(
                         ToolBox_Con.getPreference_Customer_Code(context)
 
                 ).toSqlQuery()
         );
-        //
+
         StringBuilder mSos = new StringBuilder();
         boolean mFirst = true;
 
@@ -1058,16 +1036,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             } else {
                 mSos.append("|");
             }
-            //
+
             mSos.append(aux.get("so"));
         }
-        //
+
         Intent mIntent = new Intent(context, WBR_SO_Search.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, mSos.toString());
-        //
+
         mIntent.putExtras(bundle);
-        //
+
         context.sendBroadcast(mIntent);
     }
 
@@ -1104,7 +1082,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     //
                     if (!product_id.equals("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
-                        //mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product_id, "", "");
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -1122,7 +1100,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
-                        //mPresenter.executeSerialSearch(product_id, value[3], "");
+                        mPresenter.executeSerialSearch(product_id, value[3], "");
                     } else {
                         ToolBox.alertMSG(
                                 context,

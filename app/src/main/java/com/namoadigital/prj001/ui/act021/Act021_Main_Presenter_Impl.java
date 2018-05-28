@@ -38,6 +38,9 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     private MD_ProductDao productDao;
     private HMAux hmAux_Trans;
 
+    private MD_Product mdProduct;
+    private String mSerial_id;
+    private String mTracking;
 
     public Act021_Main_Presenter_Impl(Context context, Act021_Main_View mView, SM_SODao soDao, MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
@@ -140,31 +143,96 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 
     @Override
     public void executeSerialTracking(String serial, String tracking) {
+//        if (ToolBox_Con.isOnline(context)) {
+//            mView.showPD(
+//                    hmAux_Trans.get("dialog_serial_search_ttl"),
+//                    hmAux_Trans.get("dialog_serial_search_start")
+//            );
+//
+//            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+//            Bundle bundle = new Bundle();
+//            //
+//            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial);
+//            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
+//            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+//            //
+//            mIntent.putExtras(bundle);
+//            //
+//            context.sendBroadcast(mIntent);
+//        } else {
+//            ToolBox_Inf.showNoConnectionDialog(context);
+//        }
+    }
+
+    @Override
+    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+        mdProduct = searchProduct(product_id);
+        mSerial_id = serial_id;
+        mTracking = tracking;
 
         if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
             );
-
+            //
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            mView.showNoCoPendencies();
         }
     }
 
     @Override
     public void defineSearchResultFlow(String result, String tracking) {
-        //
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+//        TSerial_Search_Rec rec = gson.fromJson(
+//                result,
+//                TSerial_Search_Rec.class);
+//        //
+//        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+//        //
+//        if (serial_list == null || serial_list.size() == 0) {
+//            //
+//            mView.showMsg(
+//                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+//                    hmAux_Trans.get("alert_no_serial_found_msg")
+//            );
+//        } else {
+//            if (serial_list.size() == 1) {
+//                MD_Product_Serial productSerial = serial_list.get(0);
+//                //
+//                Bundle bundle = new Bundle();
+//                //
+//                bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS);
+//                bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+//                bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+//                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
+//                //
+//                mView.callAct023(context, bundle);
+//            } else {
+//                Bundle bundle = new Bundle();
+//                bundle.putString(Constant.MAIN_SERIAL_TRACKING, tracking);
+//                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+//                //
+//                mView.callAct025(context, bundle);
+//
+//            }
+//        }
+    }
+
+    @Override
+    public void extractSearchResult(String result) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         TSerial_Search_Rec rec = gson.fromJson(
                 result,
@@ -172,32 +240,84 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        if (serial_list == null || serial_list.size() == 0) {
-            //
+        defineSearchResultFlow(serial_list);
+    }
+
+    @Override
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list) {
+        if ((serial_list == null || serial_list.size() == 0)) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
                     hmAux_Trans.get("alert_no_serial_found_msg")
             );
         } else {
-            if (serial_list.size() == 1) {
-                MD_Product_Serial productSerial = serial_list.get(0);
-                //
-                Bundle bundle = new Bundle();
-                //
-                bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS);
-                bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
-                bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
-                //
-                mView.callAct023(context, bundle);
-            } else {
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.MAIN_SERIAL_TRACKING, tracking);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                //
-                mView.callAct025(context, bundle);
 
+            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
+
+            if (results.size() != 0) {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+            } else {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             }
+
+            mView.callAct025(context, bundle);
+        }
+    }
+
+    private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
+        ArrayList<MD_Product_Serial> results = new ArrayList<>();
+
+        if (mdProduct == null) {
+            return results;
+        } else {
+
+            for (MD_Product_Serial psAux : serial_list) {
+                String res = "";
+
+                if (!mdProduct.getProduct_id().equalsIgnoreCase(psAux.getProduct_id())) {
+                    continue;
+                } else {
+                    res += "1";
+                }
+                //
+                if (mSerial_id.isEmpty()) {
+                    res += "0";
+                } else {
+                    if (mSerial_id.equalsIgnoreCase(psAux.getSerial_id())) {
+                        res += "1";
+                    } else {
+                        res += "0";
+                    }
+                }
+                //
+                if (mTracking.isEmpty()) {
+                    res += "1";
+                } else {
+                    int mSize = psAux.getTracking_list().size();
+
+                    if (mSize == 0) {
+                        res += "0";
+                    } else {
+                        for (int i = 0; i < mSize; i++) {
+                            if (mTracking.equalsIgnoreCase(psAux.getTracking_list().get(i).getTracking())) {
+                                res += "1";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (res.equalsIgnoreCase("111")) {
+                    results.add(psAux);
+                }
+            }
+
+            return results;
         }
     }
 

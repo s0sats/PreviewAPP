@@ -319,7 +319,8 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 mView.callAct022(context);
                 break;
             case Constant.MODULE_SO_SEARCH_SERIAL:
-                mView.callAct025(context);
+                //mView.callAct025(context);
+                mView.callAct021(context);
                 break;
             case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 mView.callAct021(context);

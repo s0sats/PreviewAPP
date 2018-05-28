@@ -125,6 +125,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("product_hint");
         transList.add("serial_hint");
         transList.add("tracking_hint");
+        transList.add("product_all_lbl");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
@@ -161,7 +162,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 }
             }
         });
-        //
+
+        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
@@ -266,7 +268,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     @Override
     public void setProduto(ArrayList<MD_Product> list) {
         if (list.size() > 1) {
-            mFrgSerialSearch.setProductIdText("Todos - Trad");
+            mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
         } else if (list.size() == 1) {
