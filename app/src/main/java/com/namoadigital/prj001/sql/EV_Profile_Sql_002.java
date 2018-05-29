@@ -34,6 +34,7 @@ public class EV_Profile_Sql_002 implements Specification {
                         "      p.customer_code = '"+customer_code+"'\n " +
                         "      and p.menu_code = '"+menu_code+"'\n "
                 )
+                .append(";")
                 .append(hmAuxFields)
                 .toString()
                 ;

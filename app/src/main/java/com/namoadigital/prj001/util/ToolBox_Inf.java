@@ -4190,4 +4190,24 @@ public class ToolBox_Inf {
         return profiles;
     }
 
+    public static String getMenuProfilesAsStringConcat(Context context, String menu_code,String concat){
+        ArrayList<HMAux> profileList = ToolBox_Inf.getMenuProfiles(context, menu_code);
+        String profile = "";
+        concat = concat == null || concat.isEmpty() ? "|" : concat;
+        //
+        for (HMAux hmAux : profileList) {
+            if (!hmAux.get(EV_ProfileDao.PARAMETER_CODE).isEmpty()) {
+                profile += hmAux.get(EV_ProfileDao.PARAMETER_CODE) + concat;
+            }
+        }
+        //Ajusta string removendo pipe no final
+        try {
+            profile = profile.substring(0, profile.length() - 1);
+        }catch (Exception e){
+            profile = "";
+        }
+        return profile;
+
+    }
+
 }
