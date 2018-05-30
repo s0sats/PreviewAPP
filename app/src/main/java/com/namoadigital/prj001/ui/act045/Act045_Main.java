@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act031.Act031_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -47,7 +49,9 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
 
     private MD_Product md_product;
     private boolean mJump;
-
+    private long record_count;
+    private long record_page;
+    private String serial_id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +83,14 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act045_title");
+        transList.add("records_display_limit_lbl");
+        transList.add("records_found_lbl");
+        transList.add("alert_qty_records_exceeded_ttl");
+        transList.add("alert_qty_records_exceeded_msg");
+        transList.add("alert_qty_records_founded");
+        transList.add("no_search_realized");
+        transList.add("showing_lbl");
+        transList.add("records_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -107,6 +119,7 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         btn_no_serial = (Button) findViewById(R.id.act045_btn_no_serial);
         //
         btn_create_serial = (Button) findViewById(R.id.act045_btn_create_serial);
+        btn_create_serial.setText("Criar Serial (" +  serial_id + ") - Trad");
         //
         tv_records = (TextView) findViewById(R.id.act045_tv_record_info);
         //
@@ -180,6 +193,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         } else {
         }
 
+        //
+        setRecordInfo(record_count, record_page);
     }
 
     private void recoverIntentsInfo() {
@@ -190,6 +205,9 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
 
                 mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
                 serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
+                record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
+                serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
 
                 MD_ProductDao mdProductDao = new MD_ProductDao(context);
 
@@ -228,8 +246,42 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         } else {
             tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
-
         }
+
+        if (record_count > record_page) {
+            showQtyExceededMsg(record_count, record_page);
+        }
+    }
+
+    @Override
+    public void showQtyExceededMsg(long record_page, long record_count) {
+        //
+        ll_records.setVisibility(View.VISIBLE);
+
+        tv_records_limit.setText(
+                hmAux_Trans.get("records_display_limit_lbl") + " " + record_page
+        );
+
+        tv_records_count.setText(
+                hmAux_Trans.get("records_found_lbl") + " " + record_count
+        );
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
+                null,
+                0);
+
+    }
+
+    @Override
+    public void callAct030(Context context) {
+        Intent mIntent = new Intent(context, Act030_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -240,5 +292,10 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         //
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        mPresenter.onBackPressedClicked();
     }
 }

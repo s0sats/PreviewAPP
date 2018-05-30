@@ -9,7 +9,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.util.Constant;
 
-public class Act045_Main_Presenter  implements Act045_Main_Contract.I_Presenter{
+public class Act045_Main_Presenter implements Act045_Main_Contract.I_Presenter {
 
     private Context context;
     private Act045_Main_Contract.I_View mView;
@@ -63,6 +63,6 @@ public class Act045_Main_Presenter  implements Act045_Main_Contract.I_Presenter{
 
     @Override
     public void onBackPressedClicked() {
-
+        mView.callAct030(context);
     }
 }

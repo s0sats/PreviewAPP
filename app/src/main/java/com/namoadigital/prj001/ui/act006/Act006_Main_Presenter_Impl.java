@@ -132,13 +132,13 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
             if (serial_list.size() > 0) {
-                defineSearchResultFlow(serial_list);
+                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
             } else {
                 if (mdProduct == null || mdProduct.getAllow_new_serial_cl() == 0) {
                     // mudar mensagem
                     ToolBox_Inf.showNoConnectionDialog(context);
                 } else {
-                    defineSearchResultFlow(serial_list);
+                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
                 }
             }
         }
@@ -168,11 +168,11 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        defineSearchResultFlow(serial_list);
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page());
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list) {
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -192,6 +192,10 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
                 bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             }
+
+            bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
 
             mView.callAct020(context, bundle);
         }

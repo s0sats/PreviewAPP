@@ -240,11 +240,11 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        defineSearchResultFlow(serial_list);
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page());
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list) {
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
         if ((serial_list == null || serial_list.size() == 0)) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -264,6 +264,9 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
                 bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             }
+
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
 
             mView.callAct025(context, bundle);
         }

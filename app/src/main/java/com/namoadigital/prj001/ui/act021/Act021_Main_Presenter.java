@@ -30,7 +30,7 @@ public interface Act021_Main_Presenter {
 
     void defineSearchResultFlow(String result, String tracking);
 
-    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list);
+    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
 
     void onBackPressedClicked();
 

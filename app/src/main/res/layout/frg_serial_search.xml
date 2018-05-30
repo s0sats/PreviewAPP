@@ -21,16 +21,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.namoa_digital.namoa_library.ctls.ButtonNFC
-                android:id="@+id/frg_serial_search_btn_nfc_reader"
-                style="@style/ButtonNFC_Style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="NFC" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
+            <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="5dp" />-->
 
             <TextView
                 android:id="@+id/frg_serial_search_tv_product_id"
@@ -38,13 +31,16 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="Prod Id"
-                android:textSize="@dimen/font_size_title_md" />
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone" />
 
+
+            <!--android:background="@drawable/border_back"-->
             <LinearLayout
+                android:id="@+id/frg_serial_search_ll_product_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/border_back"
                 android:orientation="horizontal"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -85,8 +81,8 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="4dp"
-                    android:visibility="gone"
-                    android:src="@drawable/ic_lupa_states" />
+                    android:src="@drawable/ic_lupa_states"
+                    android:visibility="gone" />
 
 
             </LinearLayout>
@@ -101,17 +97,27 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="Serial id"
-                android:textSize="@dimen/font_size_title_md" />
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone" />
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/frg_serial_search_mket_serial"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:paddingLeft="10dp"
-                app:mBARCODE="true"
-                app:mNFC="false"
-                app:mOCR="false" />
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_serial_search_mket_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:paddingLeft="10dp"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -123,17 +129,27 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="Tracking N"
-                android:textSize="@dimen/font_size_title_md" />
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone" />
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/frg_serial_search_mket_tracking"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:paddingLeft="10dp"
-                app:mBARCODE="true"
-                app:mNFC="false"
-                app:mOCR="false" />
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_serial_search_mket_tracking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -209,6 +225,13 @@
                 android:padding="20dp"
                 android:text="Option 05"
                 android:textColor="@color/padrao_WHITE" />
+
+            <com.namoa_digital.namoa_library.ctls.ButtonNFC
+                android:id="@+id/frg_serial_search_btn_nfc_reader"
+                style="@style/ButtonNFC_Style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NFC" />
 
 
         </LinearLayout>

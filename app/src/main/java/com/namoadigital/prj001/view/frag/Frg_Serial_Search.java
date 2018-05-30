@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
@@ -43,6 +44,7 @@ public class Frg_Serial_Search extends Fragment {
     private MKEditTextNM mket_product_id;
     private ImageView iv_product_change;
     private ImageView iv_product_id;
+    private LinearLayout ll_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
     private TextView tv_tracking;
@@ -114,6 +116,7 @@ public class Frg_Serial_Search extends Fragment {
         mket_product_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_product_id);
         iv_product_change = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_change);
         iv_product_id = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_id);
+        ll_product_id = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_product_id);
         //
         controls_sta.add(mket_product_id);
         //
@@ -355,10 +358,10 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setShowHideTracking(boolean status) {
         if (status) {
-            tv_tracking.setVisibility(View.VISIBLE);
+            //tv_tracking.setVisibility(View.VISIBLE);
             mket_tracking.setVisibility(View.VISIBLE);
         } else {
-            tv_tracking.setVisibility(View.GONE);
+            //tv_tracking.setVisibility(View.GONE);
             mket_tracking.setVisibility(View.GONE);
         }
     }
@@ -369,6 +372,7 @@ public class Frg_Serial_Search extends Fragment {
             iv_product_id.setVisibility(View.VISIBLE);
             mket_product_id.setmBARCODE(true);
             mket_product_id.setEnabled(true);
+            ll_product_id.setBackground(getActivity().getDrawable(R.drawable.border_back));
         } else {
             if (showAll) {
                 iv_product_change.setVisibility(View.VISIBLE);

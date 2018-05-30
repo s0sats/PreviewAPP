@@ -15,6 +15,10 @@ public interface Act045_Main_Contract {
 
         void setRecordInfo(long record_size, long record_page);
 
+        void showQtyExceededMsg(long record_page, long record_count);
+
+        void callAct030(Context context);
+
         void callAct031(Context context, Bundle bundle);
     }
 

@@ -60,6 +60,8 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
 
     private MD_Product md_product;
     private boolean mJump;
+    private long record_count;
+    private long record_page;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,7 +137,6 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
     }
 
     private void initVars() {
-        //
         recoverIntentsInfo();
         //
         mPresenter = new Act025_Main_Presenter_Impl(
@@ -253,6 +254,8 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
 
                 mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
                 serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
+                record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
 
                 MD_ProductDao mdProductDao = new MD_ProductDao(context);
 
@@ -337,6 +340,9 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
 //            //Sincroniza icone do hambuguer
 //            mDrawerToggle.syncState();
         }
+
+        //
+        setRecordInfo(record_count, record_page);
     }
 
     @Override
@@ -384,7 +390,10 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         } else {
             tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
+        }
 
+        if (record_count > record_page) {
+            showQtyExceededMsg(record_count, record_page);
         }
     }
 

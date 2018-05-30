@@ -68,6 +68,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     private MD_Product md_product;
     private boolean mJump;
+    private long record_count;
+    private long record_page;
+    private String serial_id;
 
 
     @Override
@@ -142,8 +145,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void initVars() {
-
-        //MAIN_MD_PRODUCT_SERIAL
         recoverIntentsInfo();
 
         mPresenter = new Act020_Main_Presenter_Impl(
@@ -173,8 +174,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         );
         //
         btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
+        btn_no_serial.setText("No Serial - Trad");
         //
         btn_create_serial = (Button) findViewById(R.id.act020_btn_create_serial);
+        btn_create_serial.setText("Criar Serial (" +  serial_id + ") - Trad");
         //
         tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
@@ -221,6 +224,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
                 mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
                 serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
+                record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
+                serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
 
                 MD_ProductDao mdProductDao = new MD_ProductDao(context);
 
@@ -288,7 +294,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if (serial_list != null && serial_list.size() != 0) {
             //fragFilters.setSerialIdText(serial_list.get(0).getSerial_id());
             //
-            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + serial_list.size() + " " + hmAux_Trans.get("records_lbl"));
+            //tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + serial_list.size() + " " + hmAux_Trans.get("records_lbl"));
             //
             loadProductSerialList(serial_list);
             //
@@ -302,6 +308,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
         } else {
         }
+        //
+        setRecordInfo(record_count, record_page);
     }
 
 //    @Override
@@ -355,7 +363,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         } else {
             tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
+        }
 
+        if (record_count > record_page) {
+            showQtyExceededMsg(record_count, record_page);
         }
     }
 

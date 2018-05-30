@@ -118,7 +118,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
     public static final String MAIN_SERIAL_ID = "main_serial_id";
     public static final String MAIN_MD_PRODUCT_SERIAL = "main_md_product_serial";
+    public static final String MAIN_MD_PRODUCT_SERIAL_ID = "main_md_product_serial_id";
     public static final String MAIN_MD_PRODUCT_SERIAL_JUMP = "main_md_product_serial_jump";
+    public static final String MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT = "main_md_product_serial_record_count";
+    public static final String MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE = "main_md_product_serial_record_page";
 
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";

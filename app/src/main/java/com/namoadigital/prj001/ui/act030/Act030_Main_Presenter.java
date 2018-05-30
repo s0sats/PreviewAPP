@@ -19,7 +19,7 @@ public interface Act030_Main_Presenter {
 
     void extractSearchResult(String result);
 
-    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list);
+    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
 
     void defineFlow(MD_Product_Serial productSerial, boolean new_serial);
 
