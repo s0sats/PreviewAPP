@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act031.Act031_Main;
+import com.namoadigital.prj001.ui.act045.Act045_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -317,6 +318,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 //         */
 
         hideSoftKeyboard();
+
+        mPresenter.getMD_Products();
     }
 
     private void processLoadSO(HMAux optionsInfo) {
@@ -325,36 +328,37 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
                 ) {
-//            mPresenter.executeSerialSearch(
-//                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-//                    optionsInfo.get(Frg_Serial_Search.SERIAL),
-//                    optionsInfo.get(Frg_Serial_Search.TRACKING)
-//            );
 
-            //Se somente tracking preenchido, chama Ws sem validar produto local
-            if (optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0 &&
-                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() == 0 &&
-                    optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() == 0) {
-                mPresenter.executeSerialSearch(
-                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-                        optionsInfo.get(Frg_Serial_Search.SERIAL),
-                        optionsInfo.get(Frg_Serial_Search.TRACKING)
-                );
-            } else {
-                //Se tudo preenchido, valida se produto existe
-                if (mPresenter.checkProductExists(
-                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim(),
-                        optionsInfo.get(Frg_Serial_Search.SERIAL).trim()
-                )
-                        ) {
-                    //
-                    mPresenter.executeSerialSearch(
-                            optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-                            optionsInfo.get(Frg_Serial_Search.SERIAL),
-                            optionsInfo.get(Frg_Serial_Search.TRACKING)
-                    );
-                }
-            }
+            mPresenter.executeSerialSearch(
+                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
+                    optionsInfo.get(Frg_Serial_Search.SERIAL),
+                    optionsInfo.get(Frg_Serial_Search.TRACKING)
+            );
+
+//            //Se somente tracking preenchido, chama Ws sem validar produto local
+//            if (optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0 &&
+//                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() == 0 &&
+//                    optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() == 0) {
+//                mPresenter.executeSerialSearch(
+//                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
+//                        optionsInfo.get(Frg_Serial_Search.SERIAL),
+//                        optionsInfo.get(Frg_Serial_Search.TRACKING)
+//                );
+//            } else {
+//                //Se tudo preenchido, valida se produto existe
+//                if (mPresenter.checkProductExists(
+//                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim(),
+//                        optionsInfo.get(Frg_Serial_Search.SERIAL).trim()
+//                )
+//                        ) {
+//                    //
+//                    mPresenter.executeSerialSearch(
+//                            optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
+//                            optionsInfo.get(Frg_Serial_Search.SERIAL),
+//                            optionsInfo.get(Frg_Serial_Search.TRACKING)
+//                    );
+//                }
+//            }
         } else {
             ToolBox.alertMSG(
                     context,
@@ -575,6 +579,16 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     @Override
+    public void callAct045(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act045_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
@@ -677,8 +691,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     @Override
-    protected void processCloseACT(final String ws_retorno, String mRequired) {
-        super.processCloseACT(ws_retorno, mRequired);
+    protected void processCloseACT(String result, String mRequired) {
+        super.processCloseACT(result, mRequired);
 
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
 //        //
@@ -694,7 +708,11 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
         progressDialog.dismiss();
         //
-        //mPresenter.extractSearchResult(result);
+        mPresenter.extractSearchResult(result);
+
+        //
+//        progressDialog.dismiss();
+//        mPresenter.extractSearchResult(result);
     }
 
     //Tratativa SESSION NOT FOUND

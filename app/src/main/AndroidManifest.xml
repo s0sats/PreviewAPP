@@ -310,6 +310,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.act045.Act045_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

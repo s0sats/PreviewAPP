@@ -28,6 +28,8 @@ public interface Act030_Main_View {
 
     void callAct031(Context context, Bundle bundle);
 
+    void callAct045(Context context, Bundle bundle);
+
     void setWs_process(String ws_process);
 
     void setProductInfoToDrawer(MD_Product md_product);

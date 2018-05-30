@@ -20,6 +20,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +34,26 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     private HMAux hmAux_Trans = new HMAux();
     private MD_ProductDao mdProductDao;
 
+    private MD_Product mdProduct;
+    private String mSerial_id;
+    private String mTracking;
+
     public Act030_Main_Presenter_Impl(Context context, Act030_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
+    }
+
+    @Override
+    public void getMD_Products() {
+        ArrayList<MD_Product> productList = (ArrayList<MD_Product>) mdProductDao.query(
+                new MD_Product_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        mView.setProduto(productList);
     }
 
     @Override
@@ -55,23 +71,23 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
 //            defineFlow(rec.getRecord().get(0),false);
 //
 //        }else {
-            //Seta qtd de registro
-            mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-            //chama
-            mView.loadProductSerialList(rec.getRecord());
-            //Se qtd 0, exibe msg de novo serial
-            //Se qtd de registro maior que o total retornado,
-            //exibe msg para refinar a busca.
-            if (rec.getRecord_count() == 0) {
-                mView.showNewSerialMsg();
+        //Seta qtd de registro
+        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
+        //chama
+        mView.loadProductSerialList(rec.getRecord());
+        //Se qtd 0, exibe msg de novo serial
+        //Se qtd de registro maior que o total retornado,
+        //exibe msg para refinar a busca.
+        if (rec.getRecord_count() == 0) {
+            mView.showNewSerialMsg();
 
-            } else if (rec.getRecord_count() == 1)  {
-                defineFlow(rec.getRecord().get(0),false);
+        } else if (rec.getRecord_count() == 1) {
+            defineFlow(rec.getRecord().get(0), false);
 
-            }else if (rec.getRecord_count() > rec.getRecord_page()) {
-                mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-            }
-       // }
+        } else if (rec.getRecord_count() > rec.getRecord_page()) {
+            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
+        }
+        // }
     }
 
     @Override
@@ -81,6 +97,10 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
 
     @Override
     public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+        mdProduct = searchProduct(product_id);
+        mSerial_id = serial_id;
+        mTracking = tracking;
+
         if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
@@ -104,13 +124,104 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        defineSearchResultFlow(serial_list);
+    }
+
+    @Override
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list) {
+        if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
+            mView.showNewSerialMsg();
+//                    .showMsg(
+//                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+//                    hmAux_Trans.get("alert_no_serial_found_msg")
+//            );
+        } else {
+
+            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
+
+            if (results.size() != 0) {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+            } else {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            }
+
+            mView.callAct045(context, bundle);
+        }
+    }
+
+    private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
+        ArrayList<MD_Product_Serial> results = new ArrayList<>();
+
+        if (mdProduct == null) {
+            return results;
+        } else {
+
+            for (MD_Product_Serial psAux : serial_list) {
+                String res = "";
+
+                if (!mdProduct.getProduct_id().equalsIgnoreCase(psAux.getProduct_id())) {
+                    continue;
+                } else {
+                    res += "1";
+                }
+                //
+                if (mSerial_id.isEmpty()) {
+                    res += "0";
+                } else {
+                    if (mSerial_id.equalsIgnoreCase(psAux.getSerial_id())) {
+                        res += "1";
+                    } else {
+                        res += "0";
+                    }
+                }
+                //
+                if (mTracking.isEmpty()) {
+                    res += "1";
+                } else {
+                    int mSize = psAux.getTracking_list().size();
+
+                    if (mSize == 0) {
+                        res += "0";
+                    } else {
+                        for (int i = 0; i < mSize; i++) {
+                            if (mTracking.equalsIgnoreCase(psAux.getTracking_list().get(i).getTracking())) {
+                                res += "1";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (res.equalsIgnoreCase("111")) {
+                    results.add(psAux);
+                }
+            }
+
+            return results;
+        }
+    }
+
+    @Override
     public void defineFlow(MD_Product_Serial productSerial, boolean new_serial) {
         Bundle bundle = new Bundle();
         //
 //        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
 //        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
-        if(new_serial){
+        if (new_serial) {
             bundle.putBoolean(Act030_Main.NEW_SERIAL, new_serial);
         }
         //
@@ -130,7 +241,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                 );
         if (listProducts != null && listProducts.size() == 1) {
             //if (productAllowNewSerial(listProducts.get(0))) {
-                mView.setProductInfoToDrawer(listProducts.get(0));
+            mView.setProductInfoToDrawer(listProducts.get(0));
             //}
         }
     }
@@ -150,21 +261,21 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         //
         if (md_product != null && md_product.getCustomer_code() > -1) {
             //if(productAllowNewSerial(md_product)){
-                MD_Product_Serial tProductSerial = new MD_Product_Serial();
-                //
-                tProductSerial.setCustomer_code(md_product.getCustomer_code());
-                tProductSerial.setProduct_code(md_product.getProduct_code());
-                tProductSerial.setProduct_id(md_product.getProduct_id());
-                tProductSerial.setProduct_desc(md_product.getProduct_desc());
-                tProductSerial.setSerial_id(serial);
-                //
-                mView.setTProductSerial(tProductSerial);
-                return true;
+            MD_Product_Serial tProductSerial = new MD_Product_Serial();
+            //
+            tProductSerial.setCustomer_code(md_product.getCustomer_code());
+            tProductSerial.setProduct_code(md_product.getProduct_code());
+            tProductSerial.setProduct_id(md_product.getProduct_id());
+            tProductSerial.setProduct_desc(md_product.getProduct_desc());
+            tProductSerial.setSerial_id(serial);
+            //
+            mView.setTProductSerial(tProductSerial);
+            return true;
 //            }else{
 //                return false;
 //            }
 
-        }else {
+        } else {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_product_not_found_ttl"),
@@ -222,7 +333,20 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public String searchProductInfo(String product_code,String product_id) {
+    public MD_Product searchProduct(String product_id) {
+        MD_Product md_product = mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        return md_product;
+    }
+
+    @Override
+    public String searchProductInfo(String product_code, String product_id) {
         MD_Product md_product = mdProductDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -231,15 +355,11 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if(md_product != null){
+        if (md_product != null) {
             return md_product.getProduct_id();
         }
         //
         return "";
     }
 
-    @Override
-    public void getMD_Products() {
-
-    }
 }

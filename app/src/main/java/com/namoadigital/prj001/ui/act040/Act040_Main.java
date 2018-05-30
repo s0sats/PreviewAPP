@@ -109,7 +109,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private void loadTranslation() {
-
         List<String> transList = new ArrayList<String>();
         transList.add("act040_title");
         transList.add("ss_partner_hint");

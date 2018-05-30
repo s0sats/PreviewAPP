@@ -275,6 +275,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
             }
         });
+
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

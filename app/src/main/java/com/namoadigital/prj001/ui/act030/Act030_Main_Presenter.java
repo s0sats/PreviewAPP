@@ -3,6 +3,8 @@ package com.namoadigital.prj001.ui.act030;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
+import java.util.ArrayList;
+
 /**
  * Created by neomatrix on 03/07/17.
  */
@@ -15,6 +17,10 @@ public interface Act030_Main_Presenter {
 
     void executeSerialSearch(String product_id, String serial_id, String tracking );
 
+    void extractSearchResult(String result);
+
+    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list);
+
     void defineFlow(MD_Product_Serial productSerial, boolean new_serial);
 
     void checkSingleProduct();
@@ -24,6 +30,8 @@ public interface Act030_Main_Presenter {
     boolean productAllowNewSerial(MD_Product md_product);
 
     boolean productAllowNewSerial(String product_code, String product_id);
+
+    MD_Product searchProduct(String product_id);
 
     String searchProductInfo(String product_code, String product_id );
 
