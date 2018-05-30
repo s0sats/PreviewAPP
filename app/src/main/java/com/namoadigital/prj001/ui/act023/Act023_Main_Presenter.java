@@ -11,12 +11,6 @@ public interface Act023_Main_Presenter {
 
     void getProductInfo();
 
-    void validadeSerialFlow(String serial , int required , int allow_new);
-
-    boolean hasSerial(String serial);
-
-    void defineForwardFlow(Object param);
-
     void defineBackFlow();
 
     void onBackPressedClicked();
