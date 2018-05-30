@@ -34,4 +34,6 @@ public interface Act030_Main_View {
 
     void setTProductSerial(MD_Product_Serial serial);
 
+    void setProduto(ArrayList<MD_Product> list);
+
 }

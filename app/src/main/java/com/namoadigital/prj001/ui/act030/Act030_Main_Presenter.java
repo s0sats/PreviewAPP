@@ -26,4 +26,6 @@ public interface Act030_Main_Presenter {
     boolean productAllowNewSerial(String product_code, String product_id);
 
     String searchProductInfo(String product_code, String product_id );
+
+    void getMD_Products();
 }
