@@ -237,4 +237,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         //
         return "";
     }
+
+    @Override
+    public void getMD_Products() {
+
+    }
 }
