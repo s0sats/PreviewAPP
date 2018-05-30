@@ -203,11 +203,6 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setBtnActionLabel("TEste");
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(true);
-        /*frgSerialEdit.setSql_ss_site(
-                new MD_Site_Sql_SS_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery());*/
-
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override

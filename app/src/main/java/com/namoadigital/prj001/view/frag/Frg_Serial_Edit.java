@@ -1495,16 +1495,6 @@ public class Frg_Serial_Edit extends Fragment {
         //
         mdProductSerial.setUpdate_required(1);
         //
-        /*ArrayList<HMAux> profileList = ToolBox_Inf.getMenuProfiles(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL);
-        String profile = "";
-        for (HMAux hmAux : profileList) {
-            if (!hmAux.get(EV_ProfileDao.PARAMETER_CODE).isEmpty()) {
-                profile += hmAux.get(EV_ProfileDao.PARAMETER_CODE) + "|";
-            }
-        }
-        //Ajusta string removendo pipe no final
-        profile = profile.substring(0, profile.length() - 1);*/
-        //
         String profile = ToolBox_Inf.getMenuProfilesAsStringConcat(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL,"|");
         mdProductSerial.setProfile(profile);
         //
