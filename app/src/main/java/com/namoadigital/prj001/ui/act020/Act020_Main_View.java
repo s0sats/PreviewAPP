@@ -25,6 +25,8 @@ public interface Act020_Main_View {
 
     void callAct009(Context context, Bundle bundle);
 
+    void callAct008(Context context, Bundle bundle);
+
     void callAct011(Context context, Bundle bundle);
 
     //void setWs_process(String ws_process);

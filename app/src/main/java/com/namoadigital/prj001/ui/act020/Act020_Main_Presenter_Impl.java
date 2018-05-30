@@ -345,6 +345,19 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     @Override
+    public void createNewSerialFlow(MD_Product mdProduct, String serial_id) {
+        MD_Product_Serial mdProductSerial = mdProduct.createNewSerialForThisProduct(serial_id);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+        bundle.putString(Constant.MAIN_SERIAL_ID,serial_id);
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+        //
+        mView.callAct008(context,bundle);
+    }
+
+    @Override
     public void prepareAct009() {
 
         if (checkFormXOperationExists()) {

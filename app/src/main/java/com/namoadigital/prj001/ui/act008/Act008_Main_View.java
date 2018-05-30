@@ -12,13 +12,13 @@ public interface Act008_Main_View {
 
     void setProductValues(MD_Product md_product);
 
-    void fieldFocus();
+//    void fieldFocus();
 
-    void showPD(String wsProcess);
+    void setWsProcess(String wsProcess);
+
+    void showPD(String title, String msg);
 
     void showAlertDialog(String title, String msg);
-
-    void continueOffline();
 
     void continueOfflineV2(boolean serial_offline);
 

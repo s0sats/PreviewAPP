@@ -18,7 +18,7 @@ public interface Act008_Main_Presenter {
 
     void proceedToSerialProcess(String serial, int serial_required);
 
-    void executeSerialProcess(String serial);
+    //void executeSerialProcess(String serial);
 
     void startDownloadServices();
 
@@ -27,5 +27,9 @@ public interface Act008_Main_Presenter {
     boolean checkFormXOperationExists();
 
     void defineFlow();
+
+    void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
+
+    void executeSerialSearch(String product_id, String serial_id);
 
 }

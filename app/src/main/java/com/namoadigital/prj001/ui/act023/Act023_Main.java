@@ -240,7 +240,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     }
 
     private void initFrag() {
-        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.test_frg_edit);
+        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.act023_frg_serial_edit);
         frgSerialEdit.setmModule_Code(mModule_Code);
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);

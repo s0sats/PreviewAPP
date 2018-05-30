@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act020;
 
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
 /**
@@ -17,6 +18,8 @@ public interface Act020_Main_Presenter {
     void defineFlow(MD_Product_Serial productSerial);
 
     //void updateSyncChecklist();
+
+    void createNewSerialFlow(MD_Product mdProduct, String serial_id);
 
     void prepareAct009();
 
