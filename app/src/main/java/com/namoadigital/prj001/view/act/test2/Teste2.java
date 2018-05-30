@@ -13,14 +13,18 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -157,6 +161,8 @@ public class Teste2 extends Base_Activity {
         transList.add("dialog_serial_move_lbl");
         transList.add("dialog_serial_move_group_lbl");
         transList.add("dialog_serial_outbound_lbl");
+        transList.add("alert_serial_validation_ttl");
+        transList.add("alert_invalid_site_change_msg");
         //
         hmAux_Trans_frg_serial_edit = ToolBox_Inf.setLanguage(
                 context,
@@ -167,7 +173,7 @@ public class Teste2 extends Base_Activity {
         );
 
         long product_code = 53;
-        String serial_di = "s1";
+        String serial_di = "s3";
         MD_ProductDao productDao = new MD_ProductDao(context);
 
         MD_Product mdProduct = productDao.getByString(
@@ -197,6 +203,11 @@ public class Teste2 extends Base_Activity {
         frgSerialEdit.setBtnActionLabel("TEste");
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(true);
+        /*frgSerialEdit.setSql_ss_site(
+                new MD_Site_Sql_SS_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery());*/
+
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override
@@ -209,9 +220,26 @@ public class Teste2 extends Base_Activity {
             }
 
             @Override
-            public void onSaveButtonClick(MD_Product_Serial md_product_serial, boolean serial_id_changes, boolean serial_properties_changes) {
+            public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_no_data_changes_ttl"),
+                        hmAux_Trans.get("alert_no_data_changes_msg"),
+                        null,
+                        0
 
+                );
+            }
 
+            @Override
+            public void onSaveWithChangesClick(MD_Product_Serial mdProductSerial, boolean serial_id_changes) {
+                saveSerialInDb(mdProductSerial);
+                //
+                if(ToolBox_Con.isOnline(context)) {
+                    executeSerialSave();
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
             }
 
             @Override
@@ -219,6 +247,43 @@ public class Teste2 extends Base_Activity {
                 executeTrackingSearch(product_code,serial_code,tracking,site_code);
             }
         });
+
+    }
+
+    private void saveSerialInDb(MD_Product_Serial mdProductSerial ) {
+        MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(context);
+        //Remove os tracking para reinserir os que ficaram
+        trackingDao.remove(new
+                MD_Product_Serial_Tracking_Sql_002(
+                        mdProductSerial.getCustomer_code(),
+                        mdProductSerial.getProduct_code(),
+                        mdProductSerial.getSerial_tmp()
+                ).toSqlQuery()
+        );
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //Salva dados alterados do S.O
+        serialDao.addUpdateTmp(mdProductSerial);
+        //
+    }
+
+    public void executeSerialSave() {
+        wsProcess = WS_Serial_Save.class.getName();
+        //
+        showPD(
+                "Title - Trad",//hmAux_Trans.get("progress_serial_save_ttl"),
+                "Msg - Trad"//hmAux_Trans.get("progress_serial_save_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+        Bundle bundle = new Bundle();
+//        bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,product_code);
+//        bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID,serial_id);
+//        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL,save_serial);
+//        bundle.putBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL,true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
 
     }
 
@@ -326,6 +391,10 @@ public class Teste2 extends Base_Activity {
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
             //frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
+        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
+            frgSerialEdit.setNew_serial(false);
+            frgSerialEdit.refreshUi();
+            disableProgressDialog();
         }
     }
 
@@ -351,6 +420,34 @@ public class Teste2 extends Base_Activity {
             disableProgressDialog();
         }
     }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+    }
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
 
     @Override
     public void onBackPressed() {
