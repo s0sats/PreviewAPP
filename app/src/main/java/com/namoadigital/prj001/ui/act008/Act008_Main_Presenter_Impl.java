@@ -16,8 +16,12 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.receiver.WBR_Serial;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
@@ -86,16 +90,23 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     );
 
         }
-
-        //Erro, produto não encontrado
-        if (md_product == null || md_product.getProduct_code() < 1) {
+        //
+        if (isValidProduct(md_product)) {
+            mView.setProductValues(md_product);
+        } else {
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
             );
-        } else {
-            mView.setProductValues(md_product);
         }
+    }
+
+    private boolean isValidProduct(MD_Product md_product) {
+        //Erro, produto não encontrado
+        if (md_product != null && md_product.getProduct_code() > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -104,30 +115,16 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         //Verifica se Serial foi preenchido
         if (serial.length() == 0 && required == 1) {
             //Se não foi e serial requerido, dispara alert de erro.
-            mView.fieldFocus();
+            //mView.fieldFocus();
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_no_serial_typed_title"),
                     hmAux_Trans.get("alert_no_serial_typed_msg")
             );
         } else {
-            //checkConnection(serial, required, allow_new);
             checkConnectionV2(serial, required, allow_new);
         }
-
-        // checkConnection(serial, required, allow_new);
-
     }
 
-    private void checkConnection(String serial, int required, int allow_new) {
-        //verifica se tem conexão.
-        if (ToolBox_Con.isOnline(context)) {
-            //Se tem, chama metodo que verifica se produto ja existe na tabela.
-            checkSyncChecklist(serial, required, allow_new);
-        } else {
-            //Se não tiver conexão, chama metodo para tratativa do offline.
-            mView.continueOffline();
-        }
-    }
     //region  NOVO_FLUXO
     private void checkConnectionV2(String serial, int required, int allow_new) {
         if (checkSyncChecklistV2()) {
@@ -170,7 +167,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     defineFlow();
                 } else {
                     if (ToolBox_Con.isOnline(context)) {
-                        executeSerialProcess(serial);
+                        //executeSerialProcess(serial);
                     } else {
                         mView.continueOfflineV2(checkForLocalSerial(product_code, serial));
                     }
@@ -222,7 +219,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             executeSyncProcess();
         } else {
             if (serial.length() > 0) {
-                executeSerialProcess(serial);
+               // executeSerialProcess(serial);
             } else {
                 if (required == 0) {
                     //mView.callAct009(context);
@@ -237,7 +234,13 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     private void executeSyncProcess() {
-
+        mView.setWsProcess(WS_Sync.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("alert_start_sync_title"),
+                hmAux_Trans.get("alert_start_sync_msg")
+        );
+        //
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //
@@ -252,36 +255,40 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        mView.showPD(Act008_Main.WS_PROCESS_SYNC);
-
     }
 
-    @Override
-    public void executeSerialProcess(String serial) {
-
-        MD_Product md_product =
-                mdProductDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code
-                        ).toSqlQuery()
-                );
-
-        Intent mIntent = new Intent(context, WBR_Serial.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.GS_SERIAL_PRODUCT_CODE, product_code);
-        bundle.putInt(Constant.GS_SERIAL_REQUIRED, md_product.getRequire_serial());
-        bundle.putInt(Constant.GS_SERIAL_ALLOW_NEW, md_product.getAllow_new_serial_cl());
-        bundle.putString(Constant.GS_SERIAL_ID, serial);
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-        bundle.putInt(Constant.GC_STATUS, 1);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        //
-        mView.showPD(Act008_Main.WS_PROCESS_SERIAL);
-    }
+//    @Override
+//    public void executeSerialProcess(String serial) {
+//        mView.setWsProcess(WS_Serial.class.getName());
+//
+//        mView.showPD(
+//                hmAux_Trans.get("alert_start_serial_title"),
+//                hmAux_Trans.get("alert_start_serial_msg")
+//                );
+//
+//        MD_Product md_product =
+//                mdProductDao.getByString(
+//                        new MD_Product_Sql_001(
+//                                ToolBox_Con.getPreference_Customer_Code(context),
+//                                product_code
+//                        ).toSqlQuery()
+//                );
+//
+//        Intent mIntent = new Intent(context, WBR_Serial.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putLong(Constant.GS_SERIAL_PRODUCT_CODE, product_code);
+//        bundle.putInt(Constant.GS_SERIAL_REQUIRED, md_product.getRequire_serial());
+//        bundle.putInt(Constant.GS_SERIAL_ALLOW_NEW, md_product.getAllow_new_serial_cl());
+//        bundle.putString(Constant.GS_SERIAL_ID, serial);
+//        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+//        bundle.putInt(Constant.GC_STATUS, 1);
+//        //
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        //
+//
+//    }
 
     @Override
     public void updateSyncChecklist() {
@@ -305,7 +312,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     public void proceedToSerialProcess(String serial, int serial_required) {
 
         if (serial.length() > 0) {
-            executeSerialProcess(serial);
+            //executeSerialProcess(serial);
         } else {
             if (serial.length() == 0 && serial_required == 0) {
                 //mView.callAct009(context);
@@ -320,7 +327,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     private void alertSerialEmpty() {
         //Se serial requerido, dispara alert de erro.
-        mView.fieldFocus();
+        //mView.fieldFocus();
         mView.showAlertDialog(
                 hmAux_Trans.get("alert_no_serial_typed_title"),
                 hmAux_Trans.get("alert_no_serial_typed_msg")
@@ -363,6 +370,50 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         }
 
         return true;
+    }
+
+    @Override
+    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
+        mView.setWsProcess(WS_Serial_Tracking_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_tracking_search_ttl"),
+                hmAux_Trans.get("progress_tracking_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Tracking_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSerialSearch(String product_id, String serial_id) {
+        mView.setWsProcess(WS_Serial_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_serial_search_ttl"),
+                hmAux_Trans.get("dialog_serial_search_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

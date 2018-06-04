@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -15,7 +12,6 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
@@ -137,113 +133,6 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     private boolean isValidProduct(MD_Product md_product) {
         //Erro, produto não encontrado
         if (md_product != null && md_product.getProduct_code() > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void validadeSerialFlow(String serial, int required, int allow_new) {
-
-        switch (requesting_process) {
-
-            case Constant.MODULE_CHECKLIST:
-                break;
-            case Constant.MODULE_SO:
-            case Constant.MODULE_SO_SEARCH_SERIAL:
-            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
-                serialSOFlow(serial);
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    /**
-     * Fluxo de Serial quando
-     *
-     * @param serial
-     */
-    private void serialSOFlow(String serial) {
-
-        if (hasSerial(serial)) {
-
-            if (ToolBox_Con.isOnline(context)) {
-                //
-                mView.showPD(
-                        hmAux_Trans.get("progress_serial_search_ttl"),
-                        hmAux_Trans.get("progress_serial_search_msg")
-                );
-                //
-                executeSerialSearch(product_code, serial);
-            } else {
-                ToolBox_Inf.showNoConnectionDialog(context);
-            }
-
-        } else {
-            //mView.fieldFocus();
-            mView.showAlertDialog(
-                    hmAux_Trans.get("alert_no_serial_typed_title"),
-                    hmAux_Trans.get("alert_no_serial_typed_msg")
-            );
-        }
-    }
-
-    @Override
-    public boolean hasSerial(String serial) {
-        //Verifica se Serial foi preenchido
-        if (serial.trim().length() > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void defineForwardFlow(Object param) {
-
-        switch (requesting_process) {
-
-            case Constant.MODULE_CHECKLIST:
-                //mView.callAct008(context,product_code);
-                break;
-
-            case Constant.MODULE_SO:
-            case Constant.MODULE_SO_SEARCH_SERIAL:
-            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
-                MD_Product_Serial serial = (MD_Product_Serial) param;
-                //
-                executeSoDownload(serial.getProduct_code(), serial.getSerial_id());
-                //
-
-
-//                if(checkSoListExists(soList)){
-//                   // bundle.putString(Constant.ACT023_SO_HEADER_LIST,soList);
-//                    //mView.callAct024(context,bundle);
-//
-//                }else {
-//                    //
-//                    mView.showAlertDialog(
-//                            hmAux_Trans.get("alert_no_so_found_ttl"),
-//                            hmAux_Trans.get("alert_no_so_found_msg")
-//                    );
-//                }
-                break;
-
-            default:
-                break;
-
-        }
-    }
-
-    private boolean checkSoListExists(String soList) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        ArrayList<SM_SO> sos = gson.fromJson(
-                soList,
-                new TypeToken<ArrayList<SM_SO>>() {
-                }.getType());
-        //
-        if (sos != null && sos.size() > 0) {
             return true;
         }
         return false;

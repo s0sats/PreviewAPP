@@ -240,7 +240,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     }
 
     private void initFrag() {
-        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.test_frg_edit);
+        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.act023_frg_serial_edit);
         frgSerialEdit.setmModule_Code(mModule_Code);
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
@@ -456,41 +456,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         }
         //
         progressDialog.dismiss();
-//        switch (requesting_process) {
-//
-//            case Constant.MODULE_CHECKLIST:
-//                //mView.callAct008(context,product_code);
-//                break;
-//
-//            case Constant.MODULE_SO:
-//            case Constant.MODULE_SO_SEARCH_SERIAL:
-//            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
-//                if (ws_process.equals(WS_Serial_Save.class.getName())) {
-//                    //
-//                    if (hmAux.size() > 0) {
-//                        mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
-//                    } else {
-//                        showSingleResultMsg(
-//                                hmAux_Trans.get("alert_save_serial_return_ttl"),
-//                                hmAux_Trans.get("alert_no_serial_return_msg")
-//                        );
-//                    }
-//                }
-//
-//                if (ws_process.equals(WS_SO_Search.class.getName())) {
-//                    //
-//                    mPresenter.processSoDownloadResult(hmAux);
-//                }
-//
-//                if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())){
-//                    //
-//                   // mPresenter.processTrackingResult(hmAux,mdProductSerial);
-//                }
-//
-//                break;
-//            default:
-//                break;
-//        }
     }
 
     @Override

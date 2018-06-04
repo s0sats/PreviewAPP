@@ -219,7 +219,9 @@ public class WS_Serial_Save extends IntentService {
                 hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
             } else {
                 //Setar para atualização novamente
-                serialAux.setUpdate_required(1);
+                if(!serialSaveReturn.getRet_status().toUpperCase().equals(Constant.SYS_STATUS_DENIED)) {
+                    serialAux.setUpdate_required(1);
+                }
                 serialDao.addUpdateTmp(serialAux);
                 //
                 hmAuxRet.put(hmKey, String.valueOf(serialSaveReturn != null ? serialSaveReturn.getRet_msg() : hmAux_Trans.get("msg_no_return_found")));

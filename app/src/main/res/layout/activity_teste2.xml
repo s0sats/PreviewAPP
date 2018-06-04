@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <fragment
-        android:id="@+id/test_frg_edit"
+        android:id="@+id/act023_frg_serial_edit"
         android:name="com.namoadigital.prj001.view.frag.Frg_Serial_Edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

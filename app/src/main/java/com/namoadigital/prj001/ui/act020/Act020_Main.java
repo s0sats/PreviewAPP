@@ -26,6 +26,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -278,7 +279,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mPresenter.createNewSerialFlow(md_product,"TstBtt");
             }
         });
 
@@ -413,6 +414,16 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct008(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act008_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
         finish();

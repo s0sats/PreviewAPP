@@ -192,7 +192,7 @@ public class Teste2 extends Base_Activity {
                 ) .toSqlQuery()
         );
         //
-        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.test_frg_edit);
+        frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.act023_frg_serial_edit);
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
         frgSerialEdit.setmModule_Code(mModule_Code);
