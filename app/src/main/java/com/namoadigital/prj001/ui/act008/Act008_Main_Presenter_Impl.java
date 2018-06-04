@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
@@ -16,13 +18,16 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
@@ -34,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -51,9 +57,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private GE_Custom_Form_OperationDao formOperationDao;
     private boolean isSchedule;
     private String requesting_process;
+    private MD_Product_SerialDao serialDao;
+    private MD_Product_Serial_TrackingDao trackingDao;
 
-
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -63,6 +70,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.formOperationDao = formOperationDao;
         this.isSchedule = isSchedule;
         this.requesting_process = requesting_process;
+        this.serialDao = serialDao;
+        this.trackingDao = trackingDao;
     }
 
     @Override
@@ -127,20 +136,50 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         }
     }
 
+    //region Fluxo pós modificação Serial
+    @Override
+    public void checkFlow() {
+        if (checkSyncChecklistV2()) {
+            checkNextStepV2();
+        } else {
+            if(isSchedule) {
+                checkNextStepV2();
+            }else {
+                if (ToolBox_Con.isOnline(context)) {
+                    executeSyncProcess();
+                }else {
+                    mView.showAlertDialog(
+                            hmAux_Trans.get("alert_no_form_found_ttl"),
+                            hmAux_Trans.get("alert_no_form_found_msg")
+                    );
+                }
+            }
+        }
+
+    }
+
+    public void checkNextStepV2() {
+        updateSyncChecklist();
+        //
+        defineFlow();
+    }
+
+    //endregion
+
     //region  NOVO_FLUXO
     private void checkConnectionV2(String serial, int required, int allow_new) {
         if (checkSyncChecklistV2()) {
             checkNextStep(serial, required, allow_new);
-        }else{
-           if(!isSchedule){
-               if(ToolBox_Con.isOnline(context)) {
-                   executeSyncProcess();
-               }else{
-                   mView.continueOfflineV2(false);
-               }
-           }else{
-               checkNextStep(serial, required, allow_new);
-           }
+        } else {
+            if (!isSchedule) {
+                if (ToolBox_Con.isOnline(context)) {
+                    executeSyncProcess();
+                } else {
+                    mView.continueOfflineV2(false);
+                }
+            } else {
+                checkNextStep(serial, required, allow_new);
+            }
         }
     }
 
@@ -161,30 +200,30 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     public void checkNextStep(String serial, int required, int allow_new) {
-            if (serial.length() > 0) {
-                if (checkForLocalSerial(product_code, serial)) {
-                    //Atualiza data na tabela de produtos local
-                    updateSyncChecklist();
-                    //
-                    defineFlow();
-                } else {
-                    if (ToolBox_Con.isOnline(context)) {
-                        //executeSerialProcess(serial);
-                    } else {
-                        mView.continueOfflineV2(checkForLocalSerial(product_code, serial));
-                    }
-                }
-
+        if (serial.length() > 0) {
+            if (checkForLocalSerial(product_code, serial)) {
+                //Atualiza data na tabela de produtos local
+                updateSyncChecklist();
+                //
+                defineFlow();
             } else {
-                if (required == 0) {
-                    //mView.callAct009(context);
-                    defineFlow();
-                    //Atualiza data na tabela de produtos local
-                    updateSyncChecklist();
+                if (ToolBox_Con.isOnline(context)) {
+                    //executeSerialProcess(serial);
                 } else {
-                    alertSerialEmpty();
+                    mView.continueOfflineV2(checkForLocalSerial(product_code, serial));
                 }
             }
+
+        } else {
+            if (required == 0) {
+                //mView.callAct009(context);
+                defineFlow();
+                //Atualiza data na tabela de produtos local
+                updateSyncChecklist();
+            } else {
+                alertSerialEmpty();
+            }
+        }
 
     }
 
@@ -221,7 +260,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             executeSyncProcess();
         } else {
             if (serial.length() > 0) {
-               // executeSerialProcess(serial);
+                // executeSerialProcess(serial);
             } else {
                 if (required == 0) {
                     //mView.callAct009(context);
@@ -358,7 +397,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public boolean checkFormXOperationExists() {
-
         String hasFormXOperation =
                 formOperationDao.getByStringHM(
                         new Sql_Form_x_Operation(
@@ -370,7 +408,22 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
             return false;
         }
-
+        return true;
+    }
+    //
+    //@Override
+    public boolean checkFormXSiteExists() {
+        String hasFormXOperation =
+                formOperationDao.getByStringHM(
+                        new Sql_Form_x_Operation(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code,
+                                ToolBox_Con.getPreference_Operation_Code(context)
+                        ).toSqlQuery()
+                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
+        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
+            return false;
+        }
         return true;
     }
 
@@ -416,6 +469,94 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSerialSave() {
+        mView.setWsProcess(WS_Serial_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_serial_save_ttl"),
+                hmAux_Trans.get("progress_serial_save_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
+        if (hmSaveResult.size() > 0) {
+            ArrayList<HMAux> returnList = new ArrayList<>();
+            String ttl = "";
+            String msg = "";
+            //
+            for (Map.Entry<String, String> item : hmSaveResult.entrySet()) {
+                HMAux aux = new HMAux();
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+
+                MD_Product mdProduct = mdProductDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Long.parseLong(pk[0])
+                        ).toSqlQuery()
+                );
+                //
+                if (mdProduct != null) {
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+                }
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+                returnList.add(aux);
+                //
+                if (product_code == Long.parseLong(pk[0])
+                        && serial_id.equals(pk[1])
+                        ) {
+
+                    if (status.equals("OK")) {
+                        ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                        msg = hmAux_Trans.get("alert_save_serial_ok_msg");
+                    } else {
+                        ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                        msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + status;
+
+                    }
+                }
+            }
+            //Atualiza dados dos serial na tela e spinners
+            // mView.refreshUI();
+            //
+            //if(returnList.size() == 1){
+            if (returnList.size() == 1) {
+                mView.showSingleResultMsg(ttl, msg);
+            } else {
+                mView.showSerialResults(returnList);
+            }
+        } else {
+            mView.showSingleResultMsg(
+                    hmAux_Trans.get("alert_save_serial_return_ttl"),
+                    hmAux_Trans.get("alert_no_serial_return_msg")
+            );
+        }
+    }
+
+    @Override
+    public void updateSerialData(MD_Product_Serial mdProductSerial) {
+        //Remove os tracking para reinserir os que ficaram
+        trackingDao.remove(new
+                        MD_Product_Serial_Tracking_Sql_002(
+                        mdProductSerial.getCustomer_code(),
+                        mdProductSerial.getProduct_code(),
+                        mdProductSerial.getSerial_tmp()
+                ).toSqlQuery()
+        );
+        //Salva dados alterados do S.O
+        serialDao.addUpdateTmp(mdProductSerial);
     }
 
     @Override

@@ -2,7 +2,10 @@ package com.namoadigital.prj001.ui.act008;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
+
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -31,5 +34,11 @@ public interface Act008_Main_View {
     void callAct017(Context context);
 
     void callAct006(Context context);
+
+    void showSingleResultMsg(String ttl, String msg);
+
+    void showSerialResults(ArrayList<HMAux> returnList);
+
+    void refreshUI();
 
 }

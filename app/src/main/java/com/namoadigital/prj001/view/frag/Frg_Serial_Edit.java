@@ -863,7 +863,7 @@ public class Frg_Serial_Edit extends Fragment {
                         //Valida se alteração de site é valida.
                         if (!siteChanged || validateSiteChange()) {
                             if (validadeSerialLocation()) {
-                                if (checkSerialChanges()) {
+                                if (new_serial ||checkSerialChanges()) {
                                     //
                                     setUIDataToSerialObj();
                                     //

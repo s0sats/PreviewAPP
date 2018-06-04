@@ -127,6 +127,12 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transList.add("alert_offline_data_not_saved_ttl");
         transList.add("alert_offline_data_not_saved_msg");
         //
+        transList.add("alert_save_serial_return_ttl");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_save_serial_error_msg");
+        transList.add("alert_save_serial_ok_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
