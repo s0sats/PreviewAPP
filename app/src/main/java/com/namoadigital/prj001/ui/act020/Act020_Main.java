@@ -134,6 +134,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("alert_no_form_for_operation_ttl");
         transList.add("alert_no_form_for_operation_msg");
         transList.add("drawer_tracking_lbl");
+        //
+        transList.add("btn_no_serial");
+        transList.add("btn_create_serial");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -175,10 +178,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         );
         //
         btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
-        btn_no_serial.setText("No Serial - Trad");
+        btn_no_serial.setText(hmAux_Trans.get("btn_no_serial"));
         //
         btn_create_serial = (Button) findViewById(R.id.act020_btn_create_serial);
-        btn_create_serial.setText("Criar Serial (" + serial_id + ") - Trad");
+        btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + serial_id + ")");
         //
         tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
@@ -214,6 +217,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)) {
                 btn_create_serial.setVisibility(View.GONE);
             }
+        }
+
+        if (serial_id.isEmpty()) {
+            btn_create_serial.setVisibility(View.GONE);
         }
     }
 

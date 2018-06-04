@@ -168,11 +168,10 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     @Override
     public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
-            mView.showNewSerialMsg();
-//                    .showMsg(
-//                    hmAux_Trans.get("alert_no_serial_found_ttl"),
-//                    hmAux_Trans.get("alert_no_serial_found_msg")
-//            );
+            mView.showMsg(
+                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+                    hmAux_Trans.get("alert_no_serial_found_msg")
+            );
         } else {
 
             ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);

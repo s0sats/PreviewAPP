@@ -143,8 +143,12 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("alert_local_product_not_found_msg");
         transList.add("alert_tracking_not_found_ttl");
         transList.add("alert_tracking_not_found_msg");
-
         //
+        transList.add("alert_no_serial_found_ttl");
+        transList.add("alert_no_serial_found_msg");
+        //
+        transList.add("btn_check_exists");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -203,7 +207,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label("busca - Trad"); //hmAux_Trans.get("btn_load_so"));
+        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
         mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
@@ -476,6 +480,17 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
             progressDialog.setTitle(title);
             progressDialog.setMessage(msg);
         }
+    }
+
+    @Override
+    public void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
     }
 
     @Override

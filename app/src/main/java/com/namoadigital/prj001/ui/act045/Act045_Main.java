@@ -143,6 +143,10 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
             btn_create_serial.setVisibility(View.GONE);
         }
 
+        if (serial_id.isEmpty()) {
+            btn_create_serial.setVisibility(View.GONE);
+        }
+
         hideSoftKeyboard();
     }
 
@@ -162,6 +166,12 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {

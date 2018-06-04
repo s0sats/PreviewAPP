@@ -16,6 +16,8 @@ public interface Act030_Main_View {
 
     void showPD();
 
+    void showMsg(String ttl,String msg);
+
     void setRecordInfo(long record_size, long record_page);
 
     void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list);
