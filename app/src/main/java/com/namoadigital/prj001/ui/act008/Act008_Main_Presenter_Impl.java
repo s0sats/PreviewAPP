@@ -50,9 +50,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private HMAux hmAux_Trans;
     private GE_Custom_Form_OperationDao formOperationDao;
     private boolean isSchedule;
+    private String requesting_process;
 
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -61,6 +62,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         this.formOperationDao = formOperationDao;
         this.isSchedule = isSchedule;
+        this.requesting_process = requesting_process;
     }
 
     @Override
@@ -418,22 +420,20 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-
         if (isSchedule) {
             mView.callAct011(context);
         } else {
             mView.callAct009(context);
         }
-
     }
 
     @Override
     public void onBackPressedClicked() {
-
         if (isSchedule) {
             mView.callAct017(context);
         } else {
-            mView.callAct007(context);
+            //mView.callAct007(context);
+            mView.callAct006(context);
         }
 
     }

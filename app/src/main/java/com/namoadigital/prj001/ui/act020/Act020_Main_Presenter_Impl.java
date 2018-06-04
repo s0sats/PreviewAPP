@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -13,21 +14,29 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -75,7 +84,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         mView.loadProductSerialList(rec.getRecord());
         //Se qtd 1, chama proxima define flow
         if (rec.getRecord().size() == 1) {
-            defineFlow(rec.getRecord().get(0));
+            defineFlow(rec.getRecord().get(0),false);
         } else if (rec.getRecord_count() > rec.getRecord_page()) {
             //Se qtd de registro maior que o total retornado,
             //exibe msg para refinar a busca.
@@ -176,20 +185,47 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 //    }
 
     @Override
-    public void defineFlow(MD_Product_Serial productSerial) {
+    public void defineFlow(MD_Product_Serial productSerial, boolean no_serial) {
         //
         tProductSerial = productSerial;
         //
-        List<HMAux> syncChecklists = checkSyncChecklist();
+        if (!hasSyncRegister()) {
+            if (ToolBox_Con.isOnline(context)) {
+                executeSyncProcess();
+            } else {
+                //ToolBox_Inf.showNoConnectionDialog(context);
+                if(no_serial) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
+                            hmAux_Trans.get("alert_no_form_found_msg"),
+                            null,
+                            0
+                    );
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_form_found_ttl"),
+                            hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    prepareAct008();
+                                }
+                            },
+                            1
+                    );
+                }
 
-        if (syncChecklists == null || syncChecklists.size() == 0) {
-//            if (ToolBox_Con.isOnline(context)) {
-//                executeSyncProcess();
-//            } else {
-//                ToolBox_Inf.showNoConnectionDialog(context);
-//            }
+            }
         } else {
-            prepareAct009();
+            //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
+            if(no_serial){
+                prepareAct009();
+            }else{
+                prepareAct008();
+            }
+
         }
         /**
          *  O TRECHO DE CODIGO ABAIXO, FOI COMENTADO EM 20/10/2017 POR DANIEL LUCHE
@@ -254,7 +290,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         return formsOpen;
     }
 
-    public List<HMAux> checkSyncChecklist() {
+    private List<HMAux> checkSyncChecklist() {
         List<HMAux> hmAuxList =
                 syncChecklistDao.query_HM(
                         new Sync_Checklist_Sql_002(
@@ -266,49 +302,63 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         return hmAuxList;
     }
 
-//    @Override
-//    public void updateSyncChecklist() {
-//        //Pega data atual
-//        Calendar cDate = Calendar.getInstance();
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        String last_update = dateFormat.format(cDate.getTime());
-//
-//        Sync_Checklist syncChecklist = new Sync_Checklist();
-//
-//        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-//        syncChecklist.setProduct_code(tProductSerial.getProduct_code());
-//        syncChecklist.setLast_update(last_update);
-//
-//        syncChecklistDao.addUpdate(syncChecklist);
-//        //
-//        startDownloadServices();
-//    }
+    @Override
+    public boolean hasSyncRegister() {
+        List<HMAux> syncChecklists = checkSyncChecklist();
 
-//    private void executeSyncProcess() {
-//
-//        if (ToolBox_Con.isOnline(context)) {
-//
-//            mView.setWs_process(Act020_Main.PROGRESS_WS_SYNC);
-//            mView.showPD();
-//
-//            ArrayList<String> data_package = new ArrayList<>();
-//            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-//            //
-//            Intent mIntent = new Intent(context, WBR_Sync.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
-//            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-//            bundle.putLong(Constant.GS_PRODUCT_CODE, tProductSerial.getProduct_code());
-//            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-//            bundle.putInt(Constant.GC_STATUS, 1);
-//
-//            mIntent.putExtras(bundle);
-//            //
-//            context.sendBroadcast(mIntent);
-//        } else {
-//            ToolBox_Inf.showNoConnectionDialog(context);
-//        }
-//    }
+        if (syncChecklists == null || syncChecklists.size() == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void updateSyncChecklist() {
+        //Pega data atual
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
+
+        Sync_Checklist syncChecklist = new Sync_Checklist();
+
+        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        syncChecklist.setProduct_code(tProductSerial.getProduct_code());
+        syncChecklist.setLast_update(last_update);
+
+        syncChecklistDao.addUpdate(syncChecklist);
+        //
+        startDownloadServices();
+    }
+
+    private void executeSyncProcess() {
+
+        if (ToolBox_Con.isOnline(context)) {
+
+            mView.setWs_process(WS_Sync.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_sync_title"),
+                    hmAux_Trans.get("progress_sync_msg")
+            );
+
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, tProductSerial.getProduct_code());
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
 
     @Override
     public boolean checkFormXOperationExists() {
@@ -345,6 +395,18 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     @Override
+    public void prepareAct008() {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+        bundle.putString(Constant.MAIN_SERIAL_ID,tProductSerial.getSerial_id());
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, tProductSerial);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
+        //
+        mView.callAct008(context,bundle);
+    }
+
+    @Override
     public void createNewSerialFlow(MD_Product mdProduct, String serial_id) {
         MD_Product_Serial mdProductSerial = mdProduct.createNewSerialForThisProduct(serial_id);
         Bundle bundle = new Bundle();
@@ -359,13 +421,19 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     @Override
     public void prepareAct009() {
-
+        /**
+         *
+         * CRIAR METODO QUE VALIDA SE EXISTE FORM NO SITE LOGADO
+         *
+         * checkFormXSiteExists
+         *
+         */
         if (checkFormXOperationExists()) {
             Bundle bundle = new Bundle();
             bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
-            bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
+            bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Act020_Main.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
 
             mView.callAct009(context, bundle);

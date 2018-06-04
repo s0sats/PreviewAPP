@@ -24,10 +24,12 @@ public interface Act008_Main_View {
 
     void callAct009(Context context);
 
-    void callAct007(Context context);
+    //void callAct007(Context context);
 
     void callAct011(Context context);
 
     void callAct017(Context context);
+
+    void callAct006(Context context);
 
 }

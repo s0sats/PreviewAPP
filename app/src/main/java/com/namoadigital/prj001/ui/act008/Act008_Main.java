@@ -25,7 +25,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Search;
-import com.namoadigital.prj001.ui.act007.Act007_Main;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -242,7 +242,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
-                isSchedule
+                isSchedule,
+                requesting_process
                 );
         //
         mPresenter.getProductInfo(bundle);
@@ -357,19 +358,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mdProduct = md_product;
     }
 
-    @Override
-    public void callAct007(Context context) {
-        Intent mIntent =  new Intent(context, Act007_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //Remove produto do bundle
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-
-        mIntent.putExtras(bundle);
-
-        startActivity(mIntent);
-        finish();
-
-    }
+//    @Override
+//    public void callAct007(Context context) {
+//        Intent mIntent =  new Intent(context, Act007_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        //Remove produto do bundle
+//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+//
+//        mIntent.putExtras(bundle);
+//
+//        startActivity(mIntent);
+//        finish();
+//
+//    }
 
 //    @Override
 //    public void fieldFocus() {
@@ -511,7 +512,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         startActivity(mIntent);
         finish();
+    }
 
+    @Override
+    public void callAct006(Context context) {
+        Intent mIntent =  new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
