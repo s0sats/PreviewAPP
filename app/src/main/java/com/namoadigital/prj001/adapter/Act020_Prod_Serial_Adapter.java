@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -30,6 +31,21 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "act020_prod_serial_adapter";
+    private long site_id_preference = -1L;
+
+    public long getSite_id_preference() {
+        return site_id_preference;
+    }
+
+    public void setSite_id_preference(String site_id_preference) {
+        try {
+            this.site_id_preference = Long.parseLong(site_id_preference);
+        } catch (Exception e) {
+            this.site_id_preference = -1L;
+        }
+        //
+        notifyDataSetChanged();
+    }
 
     public Act020_Prod_Serial_Adapter(Context context, int resource, List<MD_Product_Serial> source) {
         this.context = context;
@@ -65,6 +81,8 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         //
         MD_Product_Serial auxObj = source.get(position);
         //
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act020_cell_ll_background);
+        //
         TextView tv_rec_num = (TextView) convertView.findViewById(R.id.act020_cell_tv_rec_num);
         //
         TextView tv_prod_ttl = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_ttl);
@@ -76,7 +94,12 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         //TextView tv_serial_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_code);
         TextView tv_serial_id = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_id);
         //
-
+        if (auxObj.getSite_code() != null && auxObj.getSite_code() == site_id_preference) {
+            ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+        } else {
+            ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_6_states));
+        }
+        //
         tv_rec_num.setText(String.valueOf(position + 1));
         //
         tv_prod_ttl.setText(

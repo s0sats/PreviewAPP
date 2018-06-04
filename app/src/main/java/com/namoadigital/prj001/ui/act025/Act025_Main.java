@@ -410,6 +410,8 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
                 prod_serial_list
         );
         //
+        mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
+        //
         lv_prod_serial_list.setAdapter(mAdapter);
     }
 

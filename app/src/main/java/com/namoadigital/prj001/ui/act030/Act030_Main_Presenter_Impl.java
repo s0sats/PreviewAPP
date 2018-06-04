@@ -9,12 +9,14 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -32,6 +34,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     private Context context;
     private Act030_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
+    private MD_Product_SerialDao serialDao;
     private MD_ProductDao mdProductDao;
 
     private MD_Product mdProduct;
@@ -43,6 +46,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
+        this.serialDao = new MD_Product_SerialDao(context);
     }
 
     @Override
@@ -119,8 +123,34 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            //
+            if (serial_list.size() > 0) {
+                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+            } else {
+                if (mdProduct == null || mdProduct.getAllow_new_serial_cl() == 0) {
+                    // mudar mensagem
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                } else {
+                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+                }
+            }
         }
+    }
+
+    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
+        ArrayList<MD_Product_Serial> serial_list =
+                (ArrayList<MD_Product_Serial>) serialDao.query(
+                        new Sql_Act020_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context),
+                                product_id,
+                                serial_id,
+                                tracking
+                        ).toSqlQuery()
+                );
+
+        return serial_list;
     }
 
     @Override

@@ -105,6 +105,13 @@ public class Sql_Act020_002 implements Specification {
                                 "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +
                                 "     \n" +
                                 " ORDER BY\n" +
+
+                                "     CASE\n" +
+                                "         WHEN s.site_code is not null and s.site_code = '" + site_code + "'  THEN '1'\n" +
+                                "   	  WHEN s.site_code is not null and s.site_code != '" + site_code + "'  THEN '2'\n" +
+                                "   	  WHEN s.site_code is null THEN '3'\n" +
+                                "     END,\n" +
+
                                 "     p.product_id,\n" +
                                 "     s.serial_id,\n" +
                                 "     t.tracking\n" +

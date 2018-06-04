@@ -178,7 +178,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         btn_no_serial.setText("No Serial - Trad");
         //
         btn_create_serial = (Button) findViewById(R.id.act020_btn_create_serial);
-        btn_create_serial.setText("Criar Serial (" +  serial_id + ") - Trad");
+        btn_create_serial.setText("Criar Serial (" + serial_id + ") - Trad");
         //
         tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
@@ -279,7 +279,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.createNewSerialFlow(md_product,"TstBtt");
+                mPresenter.createNewSerialFlow(md_product, "TstBtt");
             }
         });
 
@@ -383,6 +383,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 R.layout.act020_cell,
                 prod_serial_list
         );
+        //
+        mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
         //
         lv_prod_serial_list.setAdapter(mAdapter);
     }

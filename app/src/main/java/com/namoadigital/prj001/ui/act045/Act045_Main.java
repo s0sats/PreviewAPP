@@ -119,7 +119,7 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         btn_no_serial = (Button) findViewById(R.id.act045_btn_no_serial);
         //
         btn_create_serial = (Button) findViewById(R.id.act045_btn_create_serial);
-        btn_create_serial.setText("Criar Serial (" +  serial_id + ") - Trad");
+        btn_create_serial.setText("Criar Serial (" + serial_id + ") - Trad");
         //
         tv_records = (TextView) findViewById(R.id.act045_tv_record_info);
         //
@@ -135,6 +135,13 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
         //
         btn_no_serial.setVisibility(View.GONE);
+
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+                && md_product != null) {
+            btn_create_serial.setVisibility(View.VISIBLE);
+        } else {
+            btn_create_serial.setVisibility(View.GONE);
+        }
 
         hideSoftKeyboard();
     }
@@ -236,6 +243,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
                 R.layout.act020_cell,
                 prod_serial_list
         );
+        //
+        mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
         //
         lv_prod_serial_list.setAdapter(mAdapter);
     }
