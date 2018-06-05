@@ -46,6 +46,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String REQUIRE_SERIAL = "require_serial";
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
     public static final String REQUIRE_LOCATION = "require_location";
+    public static final String ALL_SITE = "all_site";
+    public static final String ALL_OPERATION = "all_operation";
+    public static final String ALL_PRODUCT = "all_product";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -333,6 +336,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
             custom_form_local.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
             custom_form_local.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
+            custom_form_local.setAll_product(cursor.getInt(cursor.getColumnIndex(ALL_PRODUCT)));
+            custom_form_local.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
+            custom_form_local.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
 
             return custom_form_local;
         }
@@ -415,6 +421,15 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             if (custom_form_local.getRequire_location() > -1) {
                 contentValues.put(REQUIRE_LOCATION, custom_form_local.getRequire_location());
+            }
+            if (custom_form_local.getAll_product() > -1) {
+                contentValues.put(ALL_PRODUCT, custom_form_local.getAll_product());
+            }
+            if (custom_form_local.getAll_site() > -1) {
+                contentValues.put(ALL_SITE, custom_form_local.getAll_site());
+            }
+            if (custom_form_local.getAll_operation() > -1) {
+                contentValues.put(ALL_OPERATION, custom_form_local.getAll_operation());
             }
 
             return contentValues;
