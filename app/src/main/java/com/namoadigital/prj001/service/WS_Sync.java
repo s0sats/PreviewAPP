@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
@@ -70,6 +71,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Operation;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
+import com.namoadigital.prj001.model.GE_Custom_Form_Site;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_All_Product_Group;
@@ -109,6 +111,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Site_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_All_Product_Group_Product_Sql_Truncate;
@@ -459,6 +462,7 @@ public class WS_Sync extends IntentService {
         //  loadTranslation();
         //}
 
+        //region Processamento das tabelas do MAIN
         //
         //Processamento das tabelas do MAIN
         //
@@ -1192,7 +1196,8 @@ public class WS_Sync extends IntentService {
             }
 
         }
-
+        //endregion
+        //region Processamento das tabelas do Checklist
         //
         //Processamento das tabelas do Checklist
         //
@@ -1217,6 +1222,7 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_OperationDao customFormOperationDao = new GE_Custom_Form_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_SiteDao customFormSiteDao = new GE_Custom_Form_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
@@ -1225,6 +1231,7 @@ public class WS_Sync extends IntentService {
             customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
             customFormOperationDao.remove(new GE_Custom_Form_Operation_Sql_Trucate().toSqlQuery());
             customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
+            customFormSiteDao.remove(new GE_Custom_Form_Site_Sql_Trucate().toSqlQuery());
 
             //
             // Processamento Custom Form Product
@@ -1348,8 +1355,27 @@ public class WS_Sync extends IntentService {
 
                 customFormBlobDao.addUpdate(geCustomFormBlobs, false);
             }
+            //
+            // Processamento Custom Form Site
+            //
+            File[] files_cf_site = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_site-");
 
-        }
+            for (File _file : files_cf_site) {
+
+                ArrayList<GE_Custom_Form_Site> customFormSites = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<GE_Custom_Form_Site>>() {
+                        }.getType()
+                );
+
+                customFormSiteDao.addUpdate(customFormSites, false);
+            }
+
+        }//Fim processamento Checklist
+        //endregion
+        //region Processamento das tabelas do SCHEDULE
         //
         //Processamento das tabelas do SCHEDULE
         //
@@ -1590,7 +1616,8 @@ public class WS_Sync extends IntentService {
                 }
             }
         }
-
+        //endregion
+        //region Processamento das tabelas do SO
         //
         //Processamento das tabelas do SO
         //
@@ -1636,6 +1663,7 @@ public class WS_Sync extends IntentService {
             }
 
         }
+        //endregion
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
