@@ -15,9 +15,9 @@ public interface Act020_Main_Presenter {
 
     //void executeSerialSearch(String product_id, String serial, String tracking);
 
-    void defineFlow(MD_Product_Serial productSerial);
+    void defineFlow(MD_Product_Serial productSerial,boolean no_serial);
 
-    //void updateSyncChecklist();
+    void updateSyncChecklist();
 
     void createNewSerialFlow(MD_Product mdProduct, String serial_id);
 
@@ -28,4 +28,8 @@ public interface Act020_Main_Presenter {
     boolean checkFormXOperationExists();
 
     String searchProductInfo(String product_code,String product_id);
+
+    boolean hasSyncRegister();
+
+    void prepareAct008();
 }

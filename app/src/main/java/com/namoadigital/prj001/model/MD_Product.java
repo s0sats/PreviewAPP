@@ -192,7 +192,7 @@ public class MD_Product implements Serializable {
 
     public MD_Product_Serial createNewSerialForThisProduct(String serial_id){
         MD_Product_Serial mdProductSerial = null;
-        if(this.customer_code > -1 && this.product_code > 0 && this.product_id != null && serial_id != null && !serial_id.isEmpty() ) {
+        if(this.customer_code > -1 && this.product_code > 0 && this.product_id != null && serial_id != null && !serial_id.trim().isEmpty() ) {
             mdProductSerial = new MD_Product_Serial();
             //
             mdProductSerial.setCustomer_code(getCustomer_code());
@@ -201,7 +201,7 @@ public class MD_Product implements Serializable {
             mdProductSerial.setProduct_desc(getProduct_desc());
             mdProductSerial.setSerial_code(0);
             mdProductSerial.setSerial_tmp(0);
-            mdProductSerial.setSerial_id(serial_id);
+            mdProductSerial.setSerial_id(serial_id.toUpperCase());
             mdProductSerial.setProduct_io_control(getIo_control());
             mdProductSerial.setLocal_control(getLocal_control());
             mdProductSerial.setLocal_control(getLocal_control());
