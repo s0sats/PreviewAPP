@@ -6,6 +6,7 @@ import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -17,22 +18,77 @@ public class GE_Custom_Form_Sql_002 implements Specification {
     private long s_customer_code;
     private int s_form_type_code;
     private String s_translate_code;
-    private String product_code;
+    private String s_product_code;
     private long s_operation_code;
+    private String s_site_code;
 
-    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String product_code, long s_operation_code) {
+    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code) {
         this.s_customer_code = s_customer_code;
         this.s_form_type_code = s_form_type_code;
         this.s_translate_code = s_translate_code;
-        this.product_code = product_code;
+        this.s_product_code = s_product_code;
         this.s_operation_code = s_operation_code;
+        this.s_site_code = s_site_code;
     }
 
     @Override
     public String toSqlQuery() {
             StringBuilder sb =  new StringBuilder();
 
-        return  sb.append(
+            return  sb.append(
+                " SELECT\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+",\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+",\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+",\n" +
+                "      (SELECT txt_value\n" +
+                "       FROM "+ EV_Module_Res_Txt_TransDao.TABLE+" tr,\n" +
+                "            "+ EV_Module_Res_TxtDao.TABLE+" ts,\n" +
+                "            "+ EV_Module_ResDao.TABLE+" rs\n" +
+                "       WHERE \n" +
+                "         rs."+EV_Module_ResDao.MODULE_CODE+" = ts."+EV_Module_Res_TxtDao.MODULE_CODE+"\n" +
+                "         AND rs."+EV_Module_ResDao.RESOURCE_CODE+" = ts."+EV_Module_Res_TxtDao.RESOURCE_CODE+"\n" +
+                "         \n" +
+                "         AND ts."+EV_Module_Res_TxtDao.MODULE_CODE+" = tr."+EV_Module_Res_Txt_TransDao.MODULE_CODE+"\n" +
+                "         AND ts."+EV_Module_Res_TxtDao.RESOURCE_CODE+" = tr."+EV_Module_Res_Txt_TransDao.RESOURCE_CODE+"\n" +
+                "         AND ts."+EV_Module_Res_TxtDao.TXT_CODE+" = tr."+EV_Module_Res_Txt_TransDao.TXT_CODE+"\n" +
+                "       \n" +
+                "         AND rs."+EV_Module_ResDao.MODULE_CODE+" = 'CUST_FORM'\n" +
+                "         AND rs."+EV_Module_ResDao.RESOURCE_NAME+" = cf."+GE_Custom_FormDao.CUSTOMER_CODE+"||'|'||cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"||'|'||cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+"||'|'||cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+" \n" +
+                "         AND tr."+EV_Module_Res_Txt_TransDao.TRANSLATE_CODE+" = '" + s_translate_code +"'\n" +
+                "         AND tr."+EV_Module_Res_TxtDao.TXT_CODE+" = 'TITLE') "+GE_Custom_FormDao.CUSTOM_FORM_DESC+"\n" +
+                "    FROM\n" +
+                "       " +     GE_Custom_FormDao.TABLE +" CF \n" +
+                "    LEFT JOIN\n" +
+                "       "+     GE_Custom_Form_ProductDao.TABLE +" p on p.customer_code = cf.customer_code\n" +
+                "                             and p.custom_form_type = cf.custom_form_type\n" +
+                "                             and p.custom_form_code = cf.custom_form_code\n" +
+                "                             and p.custom_form_version = cf.custom_form_version  \n" +
+                "    LEFT JOIN\n" +
+                "       "+     GE_Custom_Form_OperationDao.TABLE +"  o on o.customer_code = cf.customer_code\n" +
+                "                             and o.custom_form_type = cf.custom_form_type\n" +
+                "                             and o.custom_form_code = cf.custom_form_code\n" +
+                "                             and o.custom_form_version = cf.custom_form_version     \n" +
+                "    LEFT JOIN\n" +
+                "       "+     GE_Custom_Form_SiteDao.TABLE +" s on s.customer_code = cf.customer_code\n" +
+                "                               and s.custom_form_type = cf.custom_form_type\n" +
+                "                               and s.custom_form_code = cf.custom_form_code\n" +
+                "                               and s.custom_form_version = cf.custom_form_version \n " +
+                "    WHERE\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
+                "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+" = '" + s_form_type_code +"'\n" +
+                "      AND (cf.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
+                "      AND (cf.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
+                "      AND (cf.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
+
+                "    \n" +
+                "    ORDER BY\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";" +
+                GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
+                .toString();
+
+        /*return  sb.append(
                 " SELECT\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+",\n" +
@@ -82,7 +138,7 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";" +
                 GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
-                .toString();
+                .toString();*/
 
     }
 }

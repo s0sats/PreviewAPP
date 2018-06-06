@@ -25,14 +25,16 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     private boolean back_act020;
     private int back_action;
     private String actResqueting;
+    private String site_code_form_param;
 
-    public Act009_Main_Presenter_Impl(Context context, Act009_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_Form_TypeDao custom_form_typeDao, String actResqueting, int back_action) {
+    public Act009_Main_Presenter_Impl(Context context, Act009_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_Form_TypeDao custom_form_typeDao, String actResqueting, int back_action, String site_code_form_param) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
         this.custom_form_typeDao = custom_form_typeDao;
         this.actResqueting = actResqueting;
         this.back_action = back_action;
+        this.site_code_form_param = site_code_form_param;
     }
 
     @Override
@@ -43,7 +45,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         ToolBox_Con.getPreference_Translate_Code(context),
-                        ToolBox_Con.getPreference_Operation_Code(context)
+                        ToolBox_Con.getPreference_Operation_Code(context),
+                        site_code_form_param
                 ).toSqlQuery()
         );
         //Se apenas um tipo, auto seleciona

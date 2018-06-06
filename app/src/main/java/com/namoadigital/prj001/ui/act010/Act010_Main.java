@@ -53,6 +53,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     //
     private String so_prefix;
     private String so_code;
+    //Revisão novo fluxo n-form 06/06/2018
+    private String site_code_form_param;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,6 +118,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 serial_id,
                 so_prefix,
                 so_code,
+                site_code_form_param,
                 hmAux_Trans
         );
 
@@ -150,6 +153,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             custom_form_type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
             so_prefix = bundle.getString(SM_SODao.SO_PREFIX,"");
             so_code = bundle.getString(SM_SODao.SO_CODE,"");
+            //Novo fluxo N-Form 06/06/2018
+            site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
 
         } else {
             so_prefix = "";

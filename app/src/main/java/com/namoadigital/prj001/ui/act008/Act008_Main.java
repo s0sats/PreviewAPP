@@ -134,8 +134,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("mket_search_hint");
         transList.add("product_label");
         transList.add("product_id_label");
-        transList.add("alert_no_form_for_operation_ttl");
-        transList.add("alert_no_form_for_operation_msg");
+        transList.add("alert_no_form_ttl");
         //Novas traduções
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
@@ -150,6 +149,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("dialog_result_msg_lbl");
         transList.add("alert_no_form_found_ttl");
         transList.add("alert_no_form_found_msg");
+        transList.add("alert_no_form_lbl");
+        transList.add("alert_no_form_for_product_msg");
+        transList.add("alert_no_form_for_operation_msg");
+        transList.add("alert_no_form_for_site_msg");
+
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -560,24 +564,37 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct009(Context context) {
-
-        if(mPresenter.checkFormXOperationExists()){
-
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),mdProduct.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context)
+        );
+        //if(mPresenter.checkFormXOperationExists()){
+        if(formXProductExist && formXOperationExists && formXSiteExists){
             Intent mIntent =  new Intent(context, Act009_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             bundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
             bundle.putString(Constant.ACT008_SERIAL_ID,ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, mdProduct.getProduct_desc().trim());
             bundle.putString(Constant.ACT008_PRODUCT_ID, mdProduct.getProduct_id().trim());
-
+            bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+            //
             mIntent.putExtras(bundle);
-
+            //
             startActivity(mIntent);
             finish();
         }else{
+            String msg = hmAux_Trans.get("alert_no_form_lbl");
+            msg += "\n";
+            msg = !formXProductExist ? msg + hmAux_Trans.get("alert_no_form_for_product_msg") + "\n" : msg;
+            msg = !formXOperationExists ? msg + hmAux_Trans.get("alert_no_form_for_operation_msg") + "\n" : msg;
+            msg = !formXSiteExists ? msg + hmAux_Trans.get("alert_no_form_for_site_msg") + "\n" : msg;
+
             showAlertDialog(
-                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
-                    hmAux_Trans.get("alert_no_form_for_operation_msg")
+                    hmAux_Trans.get("alert_no_form_ttl"),
+                    msg
             );
 
         }
