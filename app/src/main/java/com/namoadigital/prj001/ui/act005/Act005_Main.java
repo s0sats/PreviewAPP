@@ -1286,7 +1286,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
-            //super.processError_1(mLink, mRequired);
             mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
@@ -1298,7 +1297,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
-            //super.processError_1(mLink, mRequired);
             mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
@@ -1310,7 +1308,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             super.processError_1(mLink, mRequired);
             //
         } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-
             setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
             super.processError_1(mLink, mRequired);
             //

@@ -308,6 +308,7 @@ public class WS_Serial_Save extends IntentService {
         translist.add("msg_updating_serial");
         translist.add("msg_loading_serial_from_token");
         translist.add("msg_token_file_error");
+        translist.add("msg_end_ap_save");
         translist.add("msg_no_serial_to_update");
         translist.add("msg_no_return_found");
         //
