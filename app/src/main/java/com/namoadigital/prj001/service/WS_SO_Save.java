@@ -138,7 +138,6 @@ public class WS_SO_Save extends IntentService {
             callSO_Save_WS(env);
 
         } else {
-            //
             sos = (ArrayList<SM_SO>) soDao.query(
                     new SM_SO_Sql_005(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
@@ -672,10 +671,10 @@ public class WS_SO_Save extends IntentService {
                         //
                         eventDao.addUpdateTmp(event);
                         //Atualiza pk do sketch
-                        for(SM_SO_Product_Event_Sketch eventSketch : oldEvent.getSketch()){
+                        for (SM_SO_Product_Event_Sketch eventSketch : oldEvent.getSketch()) {
                             eventSketch.setPK(event);
                         }
-                        eventSketchDao.addUpdateTmp(oldEvent.getSketch(),false);
+                        eventSketchDao.addUpdateTmp(oldEvent.getSketch(), false);
                         //Valida se é re_send para saber qual será update_required
                         if (so_re_send) {
                             if (soReturn.getSo_update() == 1) {

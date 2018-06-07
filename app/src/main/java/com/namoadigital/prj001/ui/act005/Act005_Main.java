@@ -43,7 +43,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -1006,7 +1005,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         processLogin();
                     }
                 } else {
-                    // fechar drawer Hugo
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
@@ -1321,7 +1319,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 //
                 mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
             } else {
-                //mPresenter.getMenuItens(hmAux_Trans);
                 mPresenter.getMenuItensV2(hmAux_Trans);
             }
 
@@ -1329,7 +1326,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
             super.processError_1(mLink, mRequired);
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
         }
     }
@@ -1341,13 +1337,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
             progressDialog.dismiss();
@@ -1355,28 +1349,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_so_express"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             setRes(hmAux_Trans.get("lbl_send_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
@@ -1468,9 +1458,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         closeApp();
-
     }
 
     @Override
@@ -1496,9 +1484,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         //Menu Habilita nfc
         if (user.getNfc_blocked() == 1) {
-//            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
-//            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
-
             menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
             menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_nfc_green);
             menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1508,9 +1493,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         //Menu Cancela nfc
         if (user.getExist_nfc() == 1) {
-//            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
-//            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
-
             menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
             menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(R.drawable.ic_nfc_red);
             menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1524,17 +1506,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
         //Menu Teste
-        menu.add(0, TOOLBAR_SUPPORT+1, Menu.FIRST + 3, "Teste");
-        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Teste");
+        menu.add(0, TOOLBAR_SUPPORT + 1, Menu.FIRST + 3, "Teste");
+        menu.findItem(TOOLBAR_SUPPORT + 1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT + 1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT + 1).setTitle("Teste");
 
         //Menu Teste
-        menu.add(0, TOOLBAR_SUPPORT+2, Menu.FIRST + 3, "Teste 2");
-        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Teste 2");
-
+        menu.add(0, TOOLBAR_SUPPORT + 2, Menu.FIRST + 3, "Teste 2");
+        menu.findItem(TOOLBAR_SUPPORT + 1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT + 1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT + 1).setTitle("Teste 2");
 
         return true;
     }
@@ -1553,7 +1534,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         DialogInterface.OnClickListener listener = null;
 
         switch (id) {
-
             case TOOLBAR_NAMOA_LOGO:
                 return true;
 
@@ -1581,23 +1561,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             case TOOLBAR_SUPPORT:
                 mPresenter.showSupportDialog();
-                /*alertTitle = hmAux_Trans.get("alert_support_ttl");
-                alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.showSupportDialog();
-                        //mPresenter.executeSupport("MSG");
-                    }
-                };*/
                 break;
 
-            case TOOLBAR_SUPPORT+1:
+            case TOOLBAR_SUPPORT + 1:
                 Intent mIntent = new Intent(context, Test.class);
                 startActivity(mIntent);
                 finish();
                 break;
-            case TOOLBAR_SUPPORT+2:
+            case TOOLBAR_SUPPORT + 2:
                 Intent mIntent2 = new Intent(context, Teste2.class);
                 startActivity(mIntent2);
                 finish();
@@ -1617,7 +1588,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
 
         return true;
-        // return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -1626,7 +1596,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         ToolBox_Inf.mkDirectory();
         //
-        //mPresenter.getMenuItens(hmAux_Trans);
         mPresenter.getMenuItensV2(hmAux_Trans);
     }
 
@@ -1666,7 +1635,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
         }
     }
@@ -1678,13 +1646,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             switch (type) {
                 case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
-                    //mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
-                    //mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 case Constant.CHAT_BR_TYPE_ROOM:
-                    // mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 default:
             }
@@ -1694,6 +1659,5 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
-        //super.processNotification_close(mValue, mActivity);
     }
 }

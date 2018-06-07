@@ -139,7 +139,6 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             }
             //
             processSO_Pack_Express_Local_Return(rec, so_pack_express_List);
-            //
         }
 
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_express_save"), auxApReturned, "", "0");

@@ -91,6 +91,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         transList.add("no_search_realized");
         transList.add("showing_lbl");
         transList.add("records_lbl");
+        transList.add("btn_create_serial");
+        transList.add("no_search_realized");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -119,7 +121,7 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         btn_no_serial = (Button) findViewById(R.id.act045_btn_no_serial);
         //
         btn_create_serial = (Button) findViewById(R.id.act045_btn_create_serial);
-        btn_create_serial.setText("Criar Serial (" + serial_id + ") - Trad");
+        btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + serial_id + ")");
         //
         tv_records = (TextView) findViewById(R.id.act045_tv_record_info);
         //
@@ -179,7 +181,10 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mPresenter.defineFlow(
+                        md_product.createNewSerialForThisProduct(serial_id),
+                        true
+                );
             }
         });
 
