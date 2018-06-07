@@ -86,6 +86,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String LOCAL_CONTROL = "local_control";
     public static final String SITE_IO_CONTROL = "site_io_control";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
+    public static final String SITE_RESTRICTION = "site_restriction";
     public static final String EDIT_MODE = "edit_mode";
     public static final String PROFILE = "profile";
     public static final String LOG_DATE = "log_date";
@@ -98,7 +99,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             SYNC_PROCESS, SITE_ID, SITE_DESC, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
-            OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE,
+            OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
             EDIT_MODE, PROFILE, LOG_DATE
     };
 
@@ -783,6 +784,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             } else {
                 md_product_serial.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(SITE_RESTRICTION))) {
+                md_product_serial.setSite_restriction(null);
+            } else {
+                md_product_serial.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
+            }
             md_product_serial.setEdit_mode(cursor.getString(cursor.getColumnIndex(EDIT_MODE)));
             md_product_serial.setProfile(cursor.getString(cursor.getColumnIndex(PROFILE)));
             md_product_serial.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
@@ -884,6 +890,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(LOCAL_CONTROL, md_product_serial.getLocal_control());
             contentValues.put(SITE_IO_CONTROL, md_product_serial.getSite_io_control());
             contentValues.put(INBOUND_AUTO_CREATE, md_product_serial.getInbound_auto_create());
+            contentValues.put(SITE_RESTRICTION, md_product_serial.getSite_restriction());
             if (md_product_serial.getEdit_mode() != null) {
                 contentValues.put(EDIT_MODE, md_product_serial.getEdit_mode());
             }

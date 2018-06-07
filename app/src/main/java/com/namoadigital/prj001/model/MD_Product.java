@@ -204,7 +204,7 @@ public class MD_Product implements Serializable {
             mdProductSerial.setSerial_id(serial_id.toUpperCase());
             mdProductSerial.setProduct_io_control(getIo_control());
             mdProductSerial.setLocal_control(getLocal_control());
-            mdProductSerial.setLocal_control(getLocal_control());
+            mdProductSerial.setSite_restriction(getSite_restriction());
         }
         return mdProductSerial;
     }

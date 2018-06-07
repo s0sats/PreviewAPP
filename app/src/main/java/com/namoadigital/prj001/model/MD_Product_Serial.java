@@ -90,6 +90,7 @@ public class MD_Product_Serial implements Serializable {
     private Integer local_control;
     private Integer site_io_control;
     private Integer inbound_auto_create;
+    private Integer site_restriction;
     @Expose
     private String edit_mode;
     @Expose
@@ -557,6 +558,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setInbound_auto_create(Integer inbound_auto_create) {
         this.inbound_auto_create = inbound_auto_create;
+    }
+
+    public Integer getSite_restriction() {
+        return site_restriction;
+    }
+
+    public void setSite_restriction(Integer site_restriction) {
+        this.site_restriction = site_restriction;
     }
 
     public String getEdit_mode() {

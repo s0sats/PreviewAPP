@@ -1995,6 +1995,19 @@ public class Frg_Serial_Edit extends Fragment {
         );
         //Se Site atual controla IO,exibe apenas ele mesmo como opção.
         if (mdProductSerial.getSite_io_control() == null || mdProductSerial.getSite_io_control() == 0) {
+            //Se produto tem restrição de site, lita terá apenas o site atual e o site logado.
+            if(mdProductSerial.getSite_restriction() != null && mdProductSerial.getSite_restriction() == 1){
+                ArrayList<HMAux> siteListNew = new ArrayList<>();
+                for(HMAux aux: siteList){
+                    if(aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                        siteListNew.add(aux);
+                        break;
+                    }
+                }
+                //Ataualiza lista de opções de site.
+                siteList = siteListNew;
+            }
+            //Seta a lista
             ss_site.setmOption(siteList);
         } else {
             siteList.clear();
