@@ -25,8 +25,6 @@ public interface Act020_Main_Presenter {
 
     void startDownloadServices();
 
-    boolean checkFormXOperationExists();
-
     String searchProductInfo(String product_code,String product_id);
 
     boolean hasSyncRegister();
