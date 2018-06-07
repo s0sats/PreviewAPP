@@ -210,6 +210,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transListFrag.add("dialog_serial_outbound_lbl");
         transListFrag.add("alert_serial_validation_ttl");
         transListFrag.add("alert_invalid_site_change_msg");
+        transListFrag.add("btn_check_exists");
         //
         hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
                 context,
@@ -462,6 +463,13 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         }
         //
         progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
     }
 
     @Override
