@@ -171,6 +171,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("serial_hint");
         transList.add("tracking_hint");
         transList.add("product_all_lbl");
+        transList.add("alert_no_product_ttl");
+        transList.add("alert_no_product_msg");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,

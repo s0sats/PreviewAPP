@@ -59,8 +59,6 @@ public class WS_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
-
             formDataDao = new GE_Custom_Form_DataDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),

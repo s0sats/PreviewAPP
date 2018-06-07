@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -207,11 +208,33 @@ public class Frg_Serial_Search extends Fragment {
             values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
             values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
-            if (delegate != null) {
-                delegate.onSearchClick(
-                        btnAction,
-                        values
-                );
+            MD_Product mdProductAux = productValidCheck(values.get(PRODUCT_ID));
+
+            if (btnAction.equalsIgnoreCase(BTN_OPTION_01)) {
+
+                if (mdProductAux == null && !values.get(PRODUCT_ID).isEmpty()) {
+                    ToolBox.alertMSG(
+                            getActivity(),
+                            hmAux_Trans.get("alert_no_product_ttl"),
+                            hmAux_Trans.get("alert_no_product_msg"),
+                            null,
+                            0
+                    );
+                } else {
+                    if (delegate != null) {
+                        delegate.onSearchClick(
+                                btnAction,
+                                values
+                        );
+                    }
+                }
+            } else {
+                if (delegate != null) {
+                    delegate.onSearchClick(
+                            btnAction,
+                            values
+                    );
+                }
             }
         }
     };

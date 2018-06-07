@@ -51,6 +51,7 @@ import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
@@ -244,6 +245,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qtyAP = "";
                 String qtySO_Express = "";
                 String qtyBadge2 = "";
+
+
                 //Reseta valores do badge cada vez que metodo for chamado
                 menu.resetBadges();
                 //Traduz label do menu
@@ -563,10 +566,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 case Act005_Main.MENU_ID_SEND_DATA:
                     if (ToolBox_Con.isOnline(context)) {
                         mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                        mView.setWsSoProcess(Act005_Main.WS_PROCESS_SO_STATUS);
+                        mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
                         mView.showPD();
                         mView.cleanUpResults();
-                        executeSaveProcess();
+                        //executeSaveProcess();
+                        executeSerialSave();
                     } else {
                         mView.showNoConnectionDialog();
                     }
@@ -772,7 +776,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         logoutDialog.show();
     }
 
-    private void executeSaveProcess() {
+    @Override
+    public void executeSaveProcess() {
+        mView.setWsSoProcess(WS_Save.class.getSimpleName());
 
         Intent mIntent = new Intent(context, WBR_Save.class);
         Bundle bundle = new Bundle();

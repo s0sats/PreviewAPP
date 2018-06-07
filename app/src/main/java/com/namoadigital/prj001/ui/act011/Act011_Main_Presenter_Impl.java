@@ -16,10 +16,12 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
@@ -31,6 +33,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -62,12 +65,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GE_Custom_Form_BlobDao custom_form_blobDao;
     private GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao;
 
+    private MD_Product_SerialDao md_product_serialDao;
+
     private HMAux hmAux_Trans;
 
     private boolean bAgendado;
 
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, HMAux hmAux_Trans) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -79,6 +84,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.custom_form_field_LocalDao = custom_form_field_LocalDao;
         this.custom_form_blobDao = custom_form_blobDao;
         this.custom_form_blob_localDao = custom_form_blob_localDao;
+        this.md_product_serialDao = md_product_serialDao;
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -133,10 +139,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ).toSqlQuery().toString().toLowerCase()
             );
 
-            int hugo = 10;
-
         } else {
-
             bNew = true;
 
             index = 0;
@@ -237,7 +240,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 so_prefix,
                 so_code,
                 so_site_code,
-                so_operation_code
+                so_operation_code,
+                serial_id
         );
 
         if (bAgendado) {
@@ -258,7 +262,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
-    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
+    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {
 
         GE_Custom_Form_Data form_data = custom_form_dataDao
 
@@ -302,8 +306,33 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
-            form_data.setSite_code(so_site_code != null ? so_site_code : ToolBox_Con.getPreference_Site_Code(context));
-            form_data.setOperation_code(so_operation_code != null ? so_operation_code :ToolBox_Con.getPreference_Operation_Code(context));
+
+            if (serial_id == null || serial_id.isEmpty()) {
+                form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
+                form_data.setZone_code(null);
+                form_data.setLocal_code(null);
+            } else {
+                MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                        new MD_Product_Serial_Sql_002(
+                                customer_code,
+                                product_code,
+                                serial_id
+                        ).toSqlQuery()
+                );
+
+                if (md_product_serialAux != null) {
+                    form_data.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+                    form_data.setZone_code(md_product_serialAux.getZone_code());
+                    form_data.setLocal_code(md_product_serialAux.getLocal_code());
+                } else {
+                    // Erro Nao deve Acontecer
+                    form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
+                    form_data.setZone_code(null);
+                    form_data.setLocal_code(null);
+                }
+            }
+
+            form_data.setOperation_code(so_operation_code != null ? so_operation_code : ToolBox_Con.getPreference_Operation_Code(context));
             form_data.setSignature("");
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);
@@ -359,7 +388,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-         /*Fim da fila de upload */
+        /*Fim da fila de upload */
         //
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",

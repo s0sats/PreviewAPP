@@ -52,6 +52,7 @@ import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
@@ -988,7 +989,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        //progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
@@ -1007,7 +1007,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 } else {
                 }
             } else {
-                if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+                if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
                     progressDialog.dismiss();
                     showSuccessDialog();
                     //Atualiza traduções
@@ -1019,7 +1019,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
                     //setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
-                    mPresenter.executeSoSave();
+                    //mPresenter.executeSoSave();
+
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", "N-FORM");
+                    mHmAux.put("type", "N-FORM");
+                    mHmAux.put("status", "OK");
+                    mHmAux.put("final_status", "");
+
+                    processCloseACT(mLink, mRequired, mHmAux);
                 }
             }
         } else {
@@ -1035,74 +1043,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-
-            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-
-            if (so.length > 0 && !so[0].isEmpty()) {
-                for (int i = 0; i < so.length; i++) {
-                    String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
-                    //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "" + fields[0]);
-                    mHmAux.put("type", "S.O.");
-                    mHmAux.put("status", fields[1]);
-                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-                    //
-                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-                        wsResults.add(mHmAux);
-                    }
-                }
-            } else {
-            }
-
-            mPresenter.executeSoSaveApproval();
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-            setWsSoProcess("");
-
-            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-
-            if (approval.length > 0 && !approval[0].isEmpty()) {
-                for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
-                    //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "S.O.");
-                    mHmAux.put("status", fields[1]);
-                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-                    //
-                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-                        wsResults.add(mHmAux);
-                    }
-                }
-            } else {
-            }
-
-            mPresenter.executeApSave();
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-            setWsSoProcess("");
-
-            for (String sKey : hmAux.keySet()) {
-                HMAux mHmAux = new HMAux();
-                //
-                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
-
-                mHmAux.put("label", res[0]);
-                mHmAux.put("type", "A.P.");
-                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
-                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
-                //
-                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-                    wsResults.add(mHmAux);
-                }
-            }
-            //
-            mPresenter.executeSerialSave();
-            //
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             //
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
@@ -1121,11 +1062,44 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
                     }
-
                 }
             }
+
+            mPresenter.executeSaveProcess();
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            setWsSoProcess("");
             //
-            mPresenter.executeSOPackExpress();
+            if (!hmAux.isEmpty() && hmAux.size() > 0) {
+                HMAux mHmAux = new HMAux();
+                mHmAux.putAll(hmAux);
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
+            }
+
+            mPresenter.executeApSave(); // 3
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+
+            for (String sKey : hmAux.keySet()) {
+                HMAux mHmAux = new HMAux();
+                //
+                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
+
+                mHmAux.put("label", res[0]);
+                mHmAux.put("type", "A.P.");
+                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
+                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
+            }
+
+            mPresenter.executeSOPackExpress();  // 4
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setWsSoProcess("");
@@ -1149,8 +1123,53 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 }
             }
-            //
-            //mPresenter.getMenuItens(hmAux_Trans);
+
+            mPresenter.executeSoSave();  // 5
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
+            setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", fields[0]);
+                    mHmAux.put("type", "S.O.");
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
+
+            mPresenter.executeSoSaveApproval();  // 6
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", fields[0]);
+                    mHmAux.put("type", "S.O.");
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
+
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
@@ -1168,7 +1187,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         } else {
             setWsSoProcess("");
-            //mPresenter.getMenuItens(hmAux_Trans);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
@@ -1179,6 +1197,156 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             }
         }
     }
+
+
+//    @Override
+//    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+//        super.processCloseACT(mLink, mRequired, hmAux);
+//
+//        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+//
+//            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+//
+//            if (so.length > 0 && !so[0].isEmpty()) {
+//                for (int i = 0; i < so.length; i++) {
+//                    String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+//                    //
+//                    HMAux mHmAux = new HMAux();
+//                    mHmAux.put("label", "" + fields[0]);
+//                    mHmAux.put("type", "S.O.");
+//                    mHmAux.put("status", fields[1]);
+//                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+//                    //
+//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                        wsResults.add(mHmAux);
+//                    }
+//                }
+//            } else {
+//            }
+//
+//            mPresenter.executeSoSaveApproval();
+//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+//            setWsSoProcess("");
+//
+//            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+//
+//            if (approval.length > 0 && !approval[0].isEmpty()) {
+//                for (int i = 0; i < approval.length; i++) {
+//                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+//                    //
+//                    HMAux mHmAux = new HMAux();
+//                    mHmAux.put("label", fields[0]);
+//                    mHmAux.put("type", "S.O.");
+//                    mHmAux.put("status", fields[1]);
+//                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+//                    //
+//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                        wsResults.add(mHmAux);
+//                    }
+//                }
+//            } else {
+//            }
+//
+//            mPresenter.executeApSave();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+//            setWsSoProcess("");
+//
+//            for (String sKey : hmAux.keySet()) {
+//                HMAux mHmAux = new HMAux();
+//                //
+//                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
+//
+//                mHmAux.put("label", res[0]);
+//                mHmAux.put("type", "A.P.");
+//                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
+//                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
+//                //
+//                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                    wsResults.add(mHmAux);
+//                }
+//            }
+//            //
+//            mPresenter.executeSerialSave();
+//            //
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+//            setWsSoProcess("");
+//            //
+//            if (!hmAux.isEmpty() && hmAux.size() > 0) {
+//                for (Map.Entry<String, String> item : hmAux.entrySet()) {
+//                    HMAux aux = new HMAux();
+//                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+//                    String status = item.getValue();
+//                    String productInfo = mPresenter.getProductInfo(Long.parseLong(pk[0]));
+//                    //
+//                    HMAux mHmAux = new HMAux();
+//                    mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+//                    mHmAux.put("type", "SERIAL");
+//                    mHmAux.put("status", status);
+//                    mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
+//                    //
+//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                        wsResults.add(mHmAux);
+//                    }
+//
+//                }
+//            }
+//            //
+//            mPresenter.executeSOPackExpress();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
+//            setWsSoProcess("");
+//            //
+//            if (!hmAux.isEmpty() && hmAux.size() > 0) {
+//                for (Map.Entry<String, String> item : hmAux.entrySet()) {
+//                    HMAux aux = new HMAux();
+//                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+//                    ;
+//                    String status = item.getValue();
+//                    String soInfo = pk[0];
+//                    //
+//                    HMAux mHmAux = new HMAux();
+//                    mHmAux.put("label", "" + soInfo + "  -  " + pk[2] + "\n" + pk[1]);
+//                    mHmAux.put("type", "SO_EXPRESS");
+//                    mHmAux.put("status", status);
+//                    mHmAux.put("final_status", soInfo + " / " + status);
+//                    //
+//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                        wsResults.add(mHmAux);
+//                    }
+//                }
+//            }
+//            //
+//            //mPresenter.getMenuItens(hmAux_Trans);
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//            if (wsResults.size() > 0) {
+//                showResults(wsResults);
+//            } else {
+//                if (syncAfterSave) {
+//                    setSyncAfterSave(false);
+//                    //
+//                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+//                } else {
+//                    showSuccessDialog();
+//                }
+//            }
+//
+//        } else {
+//            setWsSoProcess("");
+//            //mPresenter.getMenuItens(hmAux_Trans);
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//            if (wsResults.size() > 0) {
+//                showResults(wsResults);
+//            } else {
+//                showSuccessDialog();
+//            }
+//        }
+//    }
 
     public void showResults(List<HMAux> res) {
 
@@ -1265,7 +1433,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
+            super.processError_1(mLink, mRequired);
+            //
+            if (syncAfterSave) {
+                setSyncAfterSave(false);
+                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+            } else {
+                mPresenter.getMenuItensV2(hmAux_Trans);
+            }
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+
             setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
 
             enableProgressDialog(
@@ -1275,49 +1455,31 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
 
-            mPresenter.executeSoSave();
-
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
-            //
-            enableProgressDialog(
-                    hmAux_Trans.get("progress_ap_save_ttl"),
-                    hmAux_Trans.get("progress_ap_save_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            mPresenter.executeApSave();
-
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-            //
-            enableProgressDialog(
-                    hmAux_Trans.get("progress_ap_save_ttl"),
-                    hmAux_Trans.get("progress_ap_save_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            mPresenter.executeApSave();
-
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
             super.processError_1(mLink, mRequired);
-            //
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
             super.processError_1(mLink, mRequired);
-            //
-        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            super.processError_1(mLink, mRequired);
-            //
-            if (syncAfterSave) {
-                setSyncAfterSave(false);
-                //
-                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-            } else {
-                mPresenter.getMenuItensV2(hmAux_Trans);
-            }
+        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
 
         } else {
             setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
@@ -1325,53 +1487,123 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItensV2(hmAux_Trans);
         }
+
+
+//        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+//            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
+//
+//            enableProgressDialog(
+//                    hmAux_Trans.get("progress_so_save_ttl"),
+//                    hmAux_Trans.get("progress_so_save_msg"),
+//                    hmAux_Trans.get("sys_alert_btn_cancel"),
+//                    hmAux_Trans.get("sys_alert_btn_ok")
+//            );
+//
+//            mPresenter.executeSoSave();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+//            //
+//            enableProgressDialog(
+//                    hmAux_Trans.get("progress_ap_save_ttl"),
+//                    hmAux_Trans.get("progress_ap_save_msg"),
+//                    hmAux_Trans.get("sys_alert_btn_cancel"),
+//                    hmAux_Trans.get("sys_alert_btn_ok")
+//            );
+//            mPresenter.executeApSave();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+//            //
+//            enableProgressDialog(
+//                    hmAux_Trans.get("progress_ap_save_ttl"),
+//                    hmAux_Trans.get("progress_ap_save_msg"),
+//                    hmAux_Trans.get("sys_alert_btn_cancel"),
+//                    hmAux_Trans.get("sys_alert_btn_ok")
+//            );
+//            mPresenter.executeApSave();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+//            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
+//            super.processError_1(mLink, mRequired);
+//            //
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
+//            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
+//            super.processError_1(mLink, mRequired);
+//            //
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+//            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
+//            super.processError_1(mLink, mRequired);
+//            //
+//            if (syncAfterSave) {
+//                setSyncAfterSave(false);
+//                //
+//                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+//            } else {
+//                mPresenter.getMenuItensV2(hmAux_Trans);
+//            }
+//
+//        } else {
+//            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
+//
+//            super.processError_1(mLink, mRequired);
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//        }
     }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
-        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-            setWsSoProcess("");
-            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            progressDialog.dismiss();
-
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-            setWsSoProcess("");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
-            progressDialog.dismiss();
-
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-            setWsSoProcess("");
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            progressDialog.dismiss();
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-            setWsSoProcess("");
-            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            progressDialog.dismiss();
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
-            setWsSoProcess("");
-            setRes(hmAux_Trans.get("lbl_so_express"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            progressDialog.dismiss();
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-            setWsSoProcess("");
-            setRes(hmAux_Trans.get("lbl_send_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            mPresenter.getMenuItensV2(hmAux_Trans);
-            progressDialog.dismiss();
-
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+            processError_1(mLink, mRequired);
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
             changeCustomer();
         } else {
             progressDialog.dismiss();
         }
+
+//        else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+//            setWsSoProcess("");
+//            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+//            setWsSoProcess("");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+//            progressDialog.dismiss();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+//            setWsSoProcess("");
+//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+//            setWsSoProcess("");
+//            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
+//            setWsSoProcess("");
+//            setRes(hmAux_Trans.get("lbl_so_express"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//        }
+//        else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+//            setWsSoProcess("");
+//            setRes(hmAux_Trans.get("lbl_send_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+//            progressDialog.dismiss();
+//
+//        } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
+//            changeCustomer();
+//        } else {
+//            progressDialog.dismiss();
+//        }
     }
 
     private void showSuccessDialog() {
@@ -1409,7 +1641,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 break;
 
         }
-        //Reseta variavel.
+
         wsProcess = "";
 
         ToolBox.alertMSG(

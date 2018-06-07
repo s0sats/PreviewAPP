@@ -24,6 +24,8 @@ public interface Act005_Main_Presenter {
 
     void showSupportDialog();
 
+    void executeSaveProcess();
+
     void executeSoSave();
 
     void executeSoSaveApproval();
