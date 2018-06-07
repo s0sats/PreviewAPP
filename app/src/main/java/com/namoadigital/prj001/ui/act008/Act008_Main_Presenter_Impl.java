@@ -30,7 +30,6 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
-import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -397,7 +396,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public boolean checkFormXOperationExists() {
-        String hasFormXOperation =
+        /*String hasFormXOperation =
                 formOperationDao.getByStringHM(
                         new Sql_Form_x_Operation(
                                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -408,12 +407,13 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
             return false;
         }
+        return true;*/
         return true;
     }
     //
     //@Override
-    public boolean checkFormXSiteExists() {
-        String hasFormXOperation =
+    /*public boolean checkFormXSiteExists() {
+        /*String hasFormXOperation =
                 formOperationDao.getByStringHM(
                         new Sql_Form_x_Operation(
                                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -425,7 +425,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             return false;
         }
         return true;
-    }
+    }*/
 
     @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {

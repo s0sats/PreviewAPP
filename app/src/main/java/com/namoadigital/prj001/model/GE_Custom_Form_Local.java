@@ -29,6 +29,9 @@ public class GE_Custom_Form_Local {
     private long schedule_date_end_format_ms;
     private int require_serial;
     private int allow_new_serial_cl;
+    private int all_site;
+    private int all_operation;
+    private int all_product;
 
     public long getCustomer_code() {
         return customer_code;
@@ -212,5 +215,29 @@ public class GE_Custom_Form_Local {
 
     public void setAllow_new_serial_cl(int allow_new_serial_cl) {
         this.allow_new_serial_cl = allow_new_serial_cl;
+    }
+
+    public int getAll_site() {
+        return all_site;
+    }
+
+    public void setAll_site(int all_site) {
+        this.all_site = all_site;
+    }
+
+    public int getAll_operation() {
+        return all_operation;
+    }
+
+    public void setAll_operation(int all_operation) {
+        this.all_operation = all_operation;
+    }
+
+    public int getAll_product() {
+        return all_product;
+    }
+
+    public void setAll_product(int all_product) {
+        this.all_product = all_product;
     }
 }

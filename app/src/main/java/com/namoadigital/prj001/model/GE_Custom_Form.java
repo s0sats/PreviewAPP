@@ -13,6 +13,9 @@ public class GE_Custom_Form {
     private int require_signature;
     private int require_location;
     private String automatic_fill;
+    private int all_site;
+    private int all_operation;
+    private int all_product;
 
     public long getCustomer_code() {
         return customer_code;
@@ -68,5 +71,29 @@ public class GE_Custom_Form {
 
     public void setAutomatic_fill(String automatic_fill) {
         this.automatic_fill = automatic_fill;
+    }
+
+    public int getAll_site() {
+        return all_site;
+    }
+
+    public void setAll_site(int all_site) {
+        this.all_site = all_site;
+    }
+
+    public int getAll_operation() {
+        return all_operation;
+    }
+
+    public void setAll_operation(int all_operation) {
+        this.all_operation = all_operation;
+    }
+
+    public int getAll_product() {
+        return all_product;
+    }
+
+    public void setAll_product(int all_product) {
+        this.all_product = all_product;
     }
 }

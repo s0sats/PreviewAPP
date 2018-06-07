@@ -28,9 +28,10 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private String serial_id;
     private String so_prefix;
     private String so_code;
+    private String site_code_form_param;
     private HMAux hmAux_Trans = new HMAux();
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, HMAux hmAux_Trans) {
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.custom_formDao = custom_formDao;
@@ -39,6 +40,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         this.serial_id = serial_id;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
+        this.site_code_form_param = site_code_form_param;
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -52,7 +54,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 custom_form_type,
                                 ToolBox_Con.getPreference_Translate_Code(context),
                                 String.valueOf(this.product_code),
-                                ToolBox_Con.getPreference_Operation_Code(context)
+                                ToolBox_Con.getPreference_Operation_Code(context),
+                                site_code_form_param
                         ).toSqlQuery()
                 );
         //

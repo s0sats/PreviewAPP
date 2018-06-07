@@ -57,6 +57,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -123,6 +126,9 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
+import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
+import com.namoadigital.prj001.sql.Sql_Form_x_Product;
+import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -4210,4 +4216,67 @@ public class ToolBox_Inf {
 
     }
 
+    public static boolean checkFormXProductExists(Context context, long customer_code,long product_code){
+        GE_Custom_Form_ProductDao formProductDao =
+                new GE_Custom_Form_ProductDao(
+                        context,
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        HMAux aux =
+                formProductDao.getByStringHM(
+                        new Sql_Form_x_Product(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code
+                        ).toSqlQuery()
+                );
+        String hasFormXProduct = aux == null ? "null" : aux.get(Sql_Form_x_Product.FORM_PRODUCT_PROFILE);
+        if  (hasFormXProduct.equals("0") || hasFormXProduct.equals("null")) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkFormXOperationExists(Context context, long customer_code,long operation_code){
+        GE_Custom_Form_OperationDao formOperationDao =
+                new GE_Custom_Form_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        HMAux aux =
+                formOperationDao.getByStringHM(
+                        new Sql_Form_x_Operation(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                operation_code
+                        ).toSqlQuery());
+        String hasFormXOperation = aux == null ? "null" : aux.get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
+        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkFormXSiteExists(Context context, long customer_code,String site_code){
+        GE_Custom_Form_SiteDao formSiteDao =
+                new GE_Custom_Form_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        HMAux aux =
+                formSiteDao.getByStringHM(
+                        new Sql_Form_x_Site(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                site_code
+                        ).toSqlQuery());
+        String hasFormXSite = aux == null ? "null" : aux.get(Sql_Form_x_Site.FORM_SITE_PROFILE);
+        if (hasFormXSite.equals("0") || hasFormXSite.equals("null")) {
+            return false;
+        }
+        return true;
+    }
 }

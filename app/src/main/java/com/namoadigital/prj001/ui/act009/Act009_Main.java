@@ -45,10 +45,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Lib_Custom_Cell_Adapter mAdapter;
     //private boolean back_act020 = false;
     private int back_action;
-
     private Integer mSo_Prefix;
     private Integer mSo_Code;
     private String actResqueting="";
+    //Revisão novo fluxo n-form 06/06/2018
+    private String site_code_form_param;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +100,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 actResqueting,
-                back_action
+                back_action,
+                site_code_form_param
         );
 
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
@@ -116,6 +118,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             //back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
             actResqueting = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
             back_action = bundle.getInt(Constant.BACK_ACTION, 0);
+            //Novo fluxo N-Form 06/06/2018
+            site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             //
         } else {
 

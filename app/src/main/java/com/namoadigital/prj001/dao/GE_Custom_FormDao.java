@@ -30,6 +30,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String REQUIRE_SIGNATURE = "require_signature";
     public static final String REQUIRE_LOCATION = "require_location";
     public static final String AUTOMATIC_FILL = "automatic_fill";
+    public static final String ALL_SITE = "all_site";
+    public static final String ALL_OPERATION = "all_operation";
+    public static final String ALL_PRODUCT = "all_product";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
 
@@ -252,6 +255,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
             custom_form.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
             custom_form.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
+            custom_form.setAll_product(cursor.getInt(cursor.getColumnIndex(ALL_PRODUCT)));
+            custom_form.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
+            custom_form.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
 
             return custom_form;
         }
@@ -282,6 +288,15 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             }
             if (custom_form.getAutomatic_fill() != null) {
                 contentValues.put(AUTOMATIC_FILL, custom_form.getAutomatic_fill());
+            }
+            if (custom_form.getAll_product() > -1) {
+                contentValues.put(ALL_PRODUCT, custom_form.getAll_product());
+            }
+            if (custom_form.getAll_site() > -1) {
+                contentValues.put(ALL_SITE, custom_form.getAll_site());
+            }
+            if (custom_form.getAll_operation() > -1) {
+                contentValues.put(ALL_OPERATION, custom_form.getAll_operation());
             }
 
             return contentValues;
