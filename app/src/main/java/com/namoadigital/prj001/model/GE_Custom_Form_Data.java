@@ -76,6 +76,10 @@ public class GE_Custom_Form_Data {
 
     @Expose
     private Integer so_code;
+    @Expose
+    private Integer zone_code;
+    @Expose
+    private Integer local_code;
 
     private List<GE_Custom_Form_Data_Field> dataFields;
 
@@ -103,6 +107,8 @@ public class GE_Custom_Form_Data {
         this.location_lng = "";
         this.so_prefix = null;
         this.so_code = null;
+        this.zone_code = null;
+        this.local_code = null;
     }
 
     public long getCustomer_code() {
@@ -279,6 +285,22 @@ public class GE_Custom_Form_Data {
 
     public void setSo_code(Integer so_code) {
         this.so_code = so_code;
+    }
+
+    public Integer getZone_code() {
+        return zone_code;
+    }
+
+    public void setZone_code(Integer zone_code) {
+        this.zone_code = zone_code;
+    }
+
+    public Integer getLocal_code() {
+        return local_code;
+    }
+
+    public void setLocal_code(Integer local_code) {
+        this.local_code = local_code;
     }
 
     public List<GE_Custom_Form_Data_Field> getDataFields() {

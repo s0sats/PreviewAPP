@@ -360,23 +360,6 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     @Override
-    public boolean checkFormXOperationExists() {
-        /*String hasFormXOperation =
-                formOperationDao.getByStringHM(
-                        new Sql_Form_x_Operation(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                tProductSerial.getProduct_code(),
-                                ToolBox_Con.getPreference_Operation_Code(context)
-                        ).toSqlQuery()
-                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
-        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
-            return false;
-        }*/
-
-        return true;
-    }
-
-    @Override
     public String searchProductInfo(String product_code, String product_id) {
         MD_Product md_product = productDao.getByString(
                 new MD_Product_Sql_003(
@@ -420,28 +403,37 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     @Override
     public void prepareAct009() {
-        /**
-         *
-         * CRIAR METODO QUE VALIDA SE EXISTE FORM NO SITE LOGADO
-         *
-         * checkFormXSiteExists
-         *
-         */
-        if (checkFormXOperationExists()) {
+
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),tProductSerial.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+        );
+        //
+        if(formXProductExist && formXOperationExists && formXSiteExists){
             Bundle bundle = new Bundle();
             bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
             bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Act020_Main.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
+            bundle.putString(Constant.ACT008_SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
 
             mView.callAct009(context, bundle);
         } else {
-            //
+
+            String msg = hmAux_Trans.get("alert_no_form_lbl");
+            msg += "\n";
+            msg = !formXProductExist ? msg + hmAux_Trans.get("alert_no_form_for_product_msg") + "\n" : msg;
+            msg = !formXOperationExists ? msg + hmAux_Trans.get("alert_no_form_for_operation_msg") + "\n" : msg;
+            msg = !formXSiteExists ? msg + hmAux_Trans.get("alert_no_form_for_site_msg") + "\n" : msg;
+
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
-                    hmAux_Trans.get("alert_no_form_for_operation_msg"),
+                    hmAux_Trans.get("alert_no_form_ttl"),
+                    msg,
                     null,
                     0
             );

@@ -46,6 +46,8 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String USER_CODE_END = "user_code_end";
     public static final String SO_PREFIX = "so_prefix";
     public static final String SO_CODE = "so_code";
+    public static final String ZONE_CODE = "zone_code";
+    public static final String LOCAL_CODE = "local_code";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -283,7 +285,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             custom_form_data.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
             custom_form_data.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
-            custom_form_data.setSite_code(cursor.getString(cursor.getColumnIndex(SITE_CODE)));
             custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
 
             if (cursor.isNull(cursor.getColumnIndex(SIGNATURE))) {
@@ -328,6 +329,21 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setSo_code(null);
             } else {
                 custom_form_data.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SITE_CODE))) {
+                custom_form_data.setSignature(null);
+            } else {
+                custom_form_data.setSite_code(cursor.getString(cursor.getColumnIndex(SITE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
+                custom_form_data.setZone_code(null);
+            } else {
+                custom_form_data.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LOCAL_CODE))) {
+                custom_form_data.setLocal_code(null);
+            } else {
+                custom_form_data.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
             }
 
             return custom_form_data;
@@ -375,9 +391,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getUser_code() > -1) {
                 contentValues.put(USER_CODE, custom_form_data.getUser_code());
             }
-            if (custom_form_data.getSite_code() != null) {
-                contentValues.put(SITE_CODE, custom_form_data.getSite_code());
-            }
             if (custom_form_data.getOperation_code() > -1) {
                 contentValues.put(OPERATION_CODE, custom_form_data.getOperation_code());
             }
@@ -405,6 +418,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getSo_code() != null) {
                 contentValues.put(SO_CODE, custom_form_data.getSo_code());
             }
+            //if (custom_form_data.getSite_code() != null) {
+            contentValues.put(SITE_CODE, custom_form_data.getSite_code());
+            //}
+            contentValues.put(ZONE_CODE, custom_form_data.getZone_code());
+            contentValues.put(LOCAL_CODE, custom_form_data.getLocal_code());
 
             return contentValues;
         }

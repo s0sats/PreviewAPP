@@ -1270,10 +1270,16 @@ public class Frg_Serial_Edit extends Fragment {
         //
         if (showCategorySegmentoInfo) {
             tv_category_lbl.setText(hmAux_Trans.get("dialog_serial_category_price_lbl"));
-            tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
+            tv_category_val.setText("");
+            if(mdProductSerial.getCategory_price_id() != null && !mdProductSerial.getCategory_price_id().isEmpty() ){
+                tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
+            }
             //
             tv_segment_lbl.setText(hmAux_Trans.get("dialog_serial_segment_lbl"));
-            tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
+            tv_segment_val.setText("");
+            if(mdProductSerial.getSegment_id() != null && !mdProductSerial.getSegment_id().isEmpty() ){
+                tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
+            }
             ll_category.setVisibility(View.VISIBLE);
             ll_segment.setVisibility(View.VISIBLE);
         } else {

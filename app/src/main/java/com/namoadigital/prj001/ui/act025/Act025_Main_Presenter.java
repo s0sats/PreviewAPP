@@ -20,11 +20,4 @@ public interface Act025_Main_Presenter {
 
     void checkSingleProduct();
 
-   /* void updateSyncChecklist();
-
-    void prepareAct009();
-
-    void startDownloadServices();
-
-    boolean checkFormXOperationExists();*/
 }
