@@ -35,6 +35,7 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -135,7 +136,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("product_label");
         transList.add("product_id_label");
         transList.add("alert_no_form_ttl");
-        //Novas traduções
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
         transList.add("alert_save_serial_return_ttl");
@@ -153,7 +153,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_no_form_for_product_msg");
         transList.add("alert_no_form_for_operation_msg");
         transList.add("alert_no_form_for_site_msg");
-
+        //Novas traduções
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -233,6 +235,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transListFrag.add("dialog_serial_outbound_lbl");
         transListFrag.add("alert_serial_validation_ttl");
         transListFrag.add("alert_invalid_site_change_msg");
+        transListFrag.add("btn_check_exists");
         //
         hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
                 context,
@@ -658,6 +661,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         hmAux_Trans.get("alert_no_serial_return_msg")
                 );
             }
+        } else if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+            frgSerialEdit.processTrackingResult(hmAux);
         }
         //
         disableProgressDialog();
@@ -680,6 +685,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
          }
 
     }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
     /*
     * MOVER PARA O PRESENTER
     *

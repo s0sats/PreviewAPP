@@ -159,6 +159,7 @@ public class Frg_Serial_Edit extends Fragment {
     private MKEditTextNM mket_outbound_id;
     private I_Frg_Serial_Edit delegate;
     private boolean useTracking;
+    private String btn_action_translation = "";
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -193,7 +194,8 @@ public class Frg_Serial_Edit extends Fragment {
     }
 
     public void setBtnActionLabel(String label) {
-        btn_action.setText(label);
+        btn_action_translation = label;
+        btn_action.setText(btn_action_translation);
     }
 
     public void setmModule_Code(String mModule_Code) {
@@ -251,6 +253,7 @@ public class Frg_Serial_Edit extends Fragment {
 
     public void reApplySerialId() {
         mket_serial_id.setTag(mket_serial_id.getText().toString());
+        btn_action.setText(btn_action_translation);
         //
         mdProductSerial.setSerial_code(0);
         mdProductSerial.setSerial_tmp(0);
@@ -281,6 +284,7 @@ public class Frg_Serial_Edit extends Fragment {
         serialIdChanged = false;
         setNew_serial(false);
         setMdProductSerial(received_serial);
+        btn_action.setText(btn_action_translation);
         //
         showAlertDialog(
                 hmAux_Trans.get("alert_serial_exists_ttl"),
@@ -1035,7 +1039,7 @@ public class Frg_Serial_Edit extends Fragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
-                if (ss_site.getmValue().get(SearchableSpinner.ID) == null) {
+                if (ss_site.getmValue().get(SearchableSpinner.ID) == null || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")) {
                     //Seta var para impedir que a troca de valores nos spinners dispare
                     //o evento.
                     skip_validation = true;
@@ -1598,7 +1602,7 @@ public class Frg_Serial_Edit extends Fragment {
                 tv_brand_model_color.setVisibility(View.GONE);
                 iv_serial_dialog_info.setVisibility(View.GONE);
                 ll_serial_class.setVisibility(View.VISIBLE);
-                ll_serial_location.setVisibility(View.VISIBLE);
+                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
                 ll_serial_properties.setVisibility(View.VISIBLE);
                 ll_serial_add_info.setVisibility(View.VISIBLE);
                 setIoVisibility();
@@ -1609,7 +1613,7 @@ public class Frg_Serial_Edit extends Fragment {
                 tv_brand_model_color.setVisibility(View.VISIBLE);
                 iv_serial_dialog_info.setVisibility(View.VISIBLE);
                 ll_serial_class.setVisibility(View.VISIBLE);
-                ll_serial_location.setVisibility(View.VISIBLE);
+                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
                 ll_serial_properties.setVisibility(View.GONE);
                 ll_serial_add_info.setVisibility(View.GONE);
                 ll_io_info.setVisibility(View.GONE);
@@ -1991,6 +1995,19 @@ public class Frg_Serial_Edit extends Fragment {
         );
         //Se Site atual controla IO,exibe apenas ele mesmo como opção.
         if (mdProductSerial.getSite_io_control() == null || mdProductSerial.getSite_io_control() == 0) {
+            //Se produto tem restrição de site, lita terá apenas o site atual e o site logado.
+            if(mdProductSerial.getSite_restriction() != null && mdProductSerial.getSite_restriction() == 1){
+                ArrayList<HMAux> siteListNew = new ArrayList<>();
+                for(HMAux aux: siteList){
+                    if(aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                        siteListNew.add(aux);
+                        break;
+                    }
+                }
+                //Ataualiza lista de opções de site.
+                siteList = siteListNew;
+            }
+            //Seta a lista
             ss_site.setmOption(siteList);
         } else {
             siteList.clear();

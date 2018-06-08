@@ -1282,6 +1282,22 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<GE_Custom_Form>>() {
                         }.getType()
                 );
+                //
+                //VALIDAÇÃO INSERIA EM 07/06/2018 APÓS MUDANÇA NO FLUXO DO N-FORM DEVIDO A IMPLANTAÇAO
+                //DE SERIAL COMPLETO TB NO N-FORM
+                //
+                //Se controle de produto existe for false,
+                //Verifica se ao menos um form é all_product = 1, ou seja, atende a qualquer produto
+                if (!productExist) {
+                    //Verifica se algum formulario atende a all_products
+                    for (GE_Custom_Form ge_custom_form : customForms) {
+                        if (ge_custom_form.getAll_product() == 1) {
+                            //Se encontrou seta variavel pra true e finaliza o loop
+                            productExist = true;
+                            break;
+                        }
+                    }
+                }
 
                 customFormDao.addUpdate(customForms, false);
             }
