@@ -67,6 +67,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act005_005;
 import com.namoadigital.prj001.sql.Sql_Act005_006;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
+import com.namoadigital.prj001.sql.Sql_Act005_008;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -95,6 +96,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private FCMMessageDao fcmMessageDao;
     private SM_SODao soDao;
     private GE_Custom_Form_ApDao customFormApDao;
+    private MD_ProductDao mdProductDao;
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
@@ -106,7 +108,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     //
     private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -116,6 +118,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.soDao = soDao;
         this.customFormApDao = customFormApDao;
         this.soPackExpressLocalDao = soPackExpressLocalDao;
+        this.mdProductDao = mdProductDao;
         buildMenuList();
     }
 
@@ -942,6 +945,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     private int isSerialWithinTokenFile() {
+        int qty;
+
+        try {
+            qty = Integer.parseInt(mdProductDao.getByStringHM(
+                    new Sql_Act005_008(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY));
+        } catch (Exception e) {
+            qty = 0;
+        }
+
         try {
             File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
             if (serialToken.length > 0) {
@@ -953,14 +968,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 TSerial_Save_Env.class
                         ).getSerial();
                 //
-                return token_serial_list.size();
+                return token_serial_list.size() + qty;
             } else {
-                return 0;
+                return 0 + qty;
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
-            return 0;
+            return 0 + qty;
         }
     }
 

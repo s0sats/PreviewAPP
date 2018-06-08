@@ -37,6 +37,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -423,8 +424,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                ),
+                new MD_ProductDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
-
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
@@ -1435,52 +1440,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processError_1(String mLink, String mRequired) {
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            super.processError_1(mLink, mRequired);
-            //
-            if (syncAfterSave) {
-                setSyncAfterSave(false);
-                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-            } else {
-                mPresenter.getMenuItensV2(hmAux_Trans);
-            }
-
+            setSyncAfterSave(false);
         } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
-
             setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-
-            enableProgressDialog(
-                    hmAux_Trans.get("progress_so_save_ttl"),
-                    hmAux_Trans.get("progress_so_save_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-
+            setSyncAfterSave(false);
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-            super.processError_1(mLink, mRequired);
+            setSyncAfterSave(false);
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
             super.processError_1(mLink, mRequired);
+            setSyncAfterSave(false);
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
-
-            enableProgressDialog(
-                    hmAux_Trans.get("progress_ap_save_ttl"),
-                    hmAux_Trans.get("progress_ap_save_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-
+            setSyncAfterSave(false);
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
             setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-
-            enableProgressDialog(
-                    hmAux_Trans.get("progress_ap_save_ttl"),
-                    hmAux_Trans.get("progress_ap_save_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-
+            setSyncAfterSave(false);
         } else {
             setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
@@ -1488,6 +1464,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItensV2(hmAux_Trans);
         }
 
+        if (syncAfterSave) {
+            setSyncAfterSave(false);
+            mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+        } else {
+            mPresenter.getMenuItensV2(hmAux_Trans);
+        }
 
 //        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
 //            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");

@@ -23,10 +23,11 @@ public class MD_Site_Sql_003 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      s.customer_code,\n" +
-                        "      s.site_code,\n" +
-                        "      s.site_id,\n" +
-                        "      s.site_desc\n" +
+//                        "      s.customer_code,\n" +
+//                        "      s.site_code,\n" +
+//                        "      s.site_id,\n" +
+//                        "      s.site_desc\n" +
+                        "s.* " +
                         " FROM "  +
                         MD_SiteDao.TABLE + " s" +
                         " WHERE " +
