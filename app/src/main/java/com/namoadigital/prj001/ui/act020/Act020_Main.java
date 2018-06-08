@@ -78,6 +78,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private boolean serial_creation = false;
     private boolean no_serial = false;
 
+    private String fragProduct_ID;
+    private String fragSerial_ID;
+    private String fragTracking;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -235,6 +238,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if (serial_id.isEmpty()) {
             btn_create_serial.setVisibility(View.GONE);
         }
+
+        if (btn_create_serial.getVisibility() == View.VISIBLE){
+            btn_no_serial.setVisibility(View.GONE);
+        }
+
     }
 
     private void recoverIntentsInfo() {
@@ -248,6 +256,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
                 record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
                 serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
+
+                fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
+                fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
+                fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
 
                 MD_ProductDao mdProductDao = new MD_ProductDao(context);
 
@@ -428,8 +440,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     @Override
     public void callAct006(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
+        bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
+        bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
+
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
         finish();

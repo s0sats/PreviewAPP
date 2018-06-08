@@ -49,6 +49,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private HMAux hmAux_Trans_frg_serial_search;
     protected String mResource_CodeSS = "0";
 
+    private String fragProduct_ID;
+    private String fragSerial_ID;
+    private String fragTracking;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +144,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void initVars() {
+        recoverIntentsInfo();
+        //
         fm = getSupportFragmentManager();
         //
         mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act006_frg_serial_search);
@@ -196,6 +202,30 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
+
+        if (!fragProduct_ID.isEmpty()) {
+            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            mFrgSerialSearch.setShowTree(true);
+        }
+
+        if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
+            mFrgSerialSearch.setSerialIdText(fragSerial_ID);
+            mFrgSerialSearch.setTrackingText(fragTracking);
+        }
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
+            fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
+            fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+        } else {
+            fragProduct_ID = "";
+            fragSerial_ID = "";
+            fragTracking = "";
+        }
     }
 
     private void processSerialSearch(HMAux optionsInfo) {

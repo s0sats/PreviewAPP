@@ -196,6 +196,10 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
+            //
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProduct != null ? mdProduct.getProduct_id() : "");
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
+            bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
 
             mView.callAct020(context, bundle);
         }
