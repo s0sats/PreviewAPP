@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -15,6 +17,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -244,6 +247,49 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         return false;
     }
     //endregion
+
+
+    @Override
+    public void searchLocalSerial(long product_code, String serial_id) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //
+        MD_Product_Serial objSerial = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+        if (objSerial != null && objSerial.getSerial_code() > -1) {
+            mView.applyReceivedSerialToFrag(objSerial);
+        }else{
+            mView.reApplySerialIdToFrag();
+        }
+    }
+
+    @Override
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        if(serial_list != null){
+            if(serial_list.size() == 0){
+                mView.reApplySerialIdToFrag();
+            }else if(serial_list.size() == 1){
+                mView.applyReceivedSerialToFrag(serial_list.get(0));
+            }else{
+                //FUDEU
+            }
+        }else{
+            //FUDEU 2
+        }
+        //
+    }
 
     @Override
     public void checkSyncChecklist(String serial, int required, int allow_new) {

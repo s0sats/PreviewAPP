@@ -43,4 +43,8 @@ public interface Act008_Main_Presenter {
 
     void checkFlow();
 
+    void extractSearchResult(String result);
+
+    void searchLocalSerial(long product_code, String serial_id);
+
 }

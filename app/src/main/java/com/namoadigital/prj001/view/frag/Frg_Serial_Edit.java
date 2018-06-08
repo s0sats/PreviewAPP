@@ -56,6 +56,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Frg_Serial_Edit extends Fragment {
     //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
@@ -105,8 +106,6 @@ public class Frg_Serial_Edit extends Fragment {
     private FloatingActionButton fab_anchor;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
-    private int serial_required;
-    private int serial_allow_new;
     private ArrayList<Object> serialProperties;
     private boolean skip_validation = false;
     private boolean serialInfoChanges = false;
@@ -261,6 +260,7 @@ public class Frg_Serial_Edit extends Fragment {
         mdProductSerial.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>());
         //
         serialIdChanged = false;
+        trackingListChanged = false;
         //
         setUIDataToSerialObj();
         //
@@ -282,6 +282,7 @@ public class Frg_Serial_Edit extends Fragment {
     public void applyReceivedSerial(MD_Product_Serial received_serial) {
         //
         serialIdChanged = false;
+        trackingListChanged = false;
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
@@ -867,18 +868,25 @@ public class Frg_Serial_Edit extends Fragment {
                         //Valida se alteração de site é valida.
                         if (!siteChanged || validateSiteChange()) {
                             if (validadeSerialLocation()) {
-                                if (new_serial ||checkSerialChanges()) {
-                                    //
-                                    setUIDataToSerialObj();
-                                    //
-                                    delegate.onSaveWithChangesClick(
-                                            mdProductSerial,
-                                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                    );
-                                } else {
-                                    delegate.onSaveNoChangesClick(
-                                            mdProductSerial,
-                                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                if(validateSiteRestriction()) {
+                                    if (new_serial || checkSerialChanges()) {
+                                        //
+                                        setUIDataToSerialObj();
+                                        //
+                                        delegate.onSaveWithChangesClick(
+                                                mdProductSerial,
+                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                        );
+                                    } else {
+                                        delegate.onSaveNoChangesClick(
+                                                mdProductSerial,
+                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                        );
+                                    }
+                                }else{
+                                    showAlertDialog(
+                                            hmAux_Trans.get("alert_serial_validation_ttl"),
+                                            hmAux_Trans.get("alert_site_restriction_violation_msg")
                                     );
                                 }
                             } else {
@@ -1563,7 +1571,6 @@ public class Frg_Serial_Edit extends Fragment {
         if (mdProduct.getLocal_control() == 0) {
             ll_serial_location.setVisibility(View.GONE);
         }
-
         //Por fim aplica "profile do customer" se deve ou não exibir os dados de tracking
         if (!useTracking) {
             ll_tracking.setVisibility(View.GONE);
@@ -1738,6 +1745,27 @@ public class Frg_Serial_Edit extends Fragment {
 
         return false;
     }
+    /**
+     * VALIDA SE SITE RESTRICTION DO PRODUTO FOI RESPEITADA
+     * */
+
+    private boolean validateSiteRestriction() {
+        if(mdProduct.getSite_restriction() == 0){
+            return true;
+        }else{
+            if( //mdProductSerial.getSite_code() != null
+                ss_site.getmValue() != null
+                && ss_site.getmValue().containsKey(SearchableSpinner.ID)
+                && !ss_site.getmValue().get(SearchableSpinner.ID).equalsIgnoreCase("null")
+                && ss_site.getmValue().get(SearchableSpinner.ID).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
 
     /**
      * Faz loop no arraylist de itens verificando se
@@ -1784,20 +1812,6 @@ public class Frg_Serial_Edit extends Fragment {
     }
     //endregion
 
-    /*public void saveSerialInDb(){
-        MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(context);
-        //Remove os tracking para reinserir os que ficaram
-        trackingDao.remove(new
-                MD_Product_Serial_Tracking_Sql_002(
-                        mdProductSerial.getCustomer_code(),
-                    mdProductSerial.getProduct_code(),
-                    mdProductSerial.getSerial_tmp()
-                ).toSqlQuery()
-        );
-        //Salva dados alterados do S.O
-        md.addUpdateTmp(productSerial);
-
-    }*/
     private void spinnersInitializer() {
         // Site
         loadSiteSS(false);
@@ -2006,6 +2020,12 @@ public class Frg_Serial_Edit extends Fragment {
                 }
                 //Ataualiza lista de opções de site.
                 siteList = siteListNew;
+                //
+                //
+                if(new_serial){
+                    ss_site.setmValue(siteListNew.get(0));
+                    ss_site.setmEnabled(false);
+                }
             }
             //Seta a lista
             ss_site.setmOption(siteList);
@@ -2058,11 +2078,21 @@ public class Frg_Serial_Edit extends Fragment {
         }
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        //USA LISTA DE OPÇÕES DE SITE PARA EXIBIR SOMENTE OS LOCAIS DESSES SITES.
+        String site_restriction = "" ;
+        if(ss_site.getmOption() != null) {
+            for (HMAux aux : ss_site.getmOption()) {
+                site_restriction += aux.get(SearchableSpinner.ID) +",";
+            }
+            //
+            site_restriction = site_restriction.substring(0,site_restriction.length()-1);
+        }
         //
         ArrayList<HMAux> localList = (ArrayList<HMAux>) siteZoneLocalDao.query_HM(new MD_Site_Zone_Local_Sql_SS(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                 ss_site.getmValue().get(SearchableSpinner.ID),
-                ss_site_zone.getmValue().get(SearchableSpinner.ID)
+                ss_site_zone.getmValue().get(SearchableSpinner.ID),
+                site_restriction
         ).toSqlQuery());
         //
         ss_site_zone_local.setmOption(localList);
@@ -2079,6 +2109,85 @@ public class Frg_Serial_Edit extends Fragment {
         }
 
     }
+
+    //region Variaveis de tradução.
+    public static List<String> getFragTranslationsVars(){
+        List<String> transListFrag = new ArrayList<String>();
+        //
+        transListFrag.add("product_label");
+        transListFrag.add("product_desc_label");
+        transListFrag.add("mket_hint_label");
+        transListFrag.add("btn_create");
+        transListFrag.add("chk_required");
+        transListFrag.add("chk_allow_new");
+        transListFrag.add("alert_no_connection_title");
+        transListFrag.add("alert_no_connection_msg");
+        transListFrag.add("alert_product_not_found_title");
+        transListFrag.add("alert_product_not_found_msg");
+        transListFrag.add("product_ttl");
+        transListFrag.add("product_id_label");
+        transListFrag.add("mket_search_hint");
+        transListFrag.add("serial_ttl");
+        transListFrag.add("serial_location_ttl");
+        transListFrag.add("site_lbl");
+        transListFrag.add("site_zone_lbl");
+        transListFrag.add("site_zone_local_lbl");
+        transListFrag.add("serial_add_info_ttl");
+        transListFrag.add("add_info1_lbl");
+        transListFrag.add("add_info2_lbl");
+        transListFrag.add("add_info3_lbl");
+        transListFrag.add("serial_properties_ttl");
+        transListFrag.add("brand_lbl");
+        transListFrag.add("brand_model_lbl");
+        transListFrag.add("brand_color_lbl");
+        transListFrag.add("segment_lbl");
+        transListFrag.add("category_price_lbl");
+        transListFrag.add("site_owner_lbl");
+        transListFrag.add("searchable_spinner_lbl");
+        transListFrag.add("alert_invalid_serial_local_ttl");
+        transListFrag.add("alert_invalid_serial_local_msg");
+        transListFrag.add("tracking_ttl");
+        transListFrag.add("dialog_tracking_ttl");
+        transListFrag.add("alert_tracking_unavailable_ttl");
+        transListFrag.add("alert_tracking_unavailable_msg");
+        transListFrag.add("alert_tracking_already_listed_ttl");
+        transListFrag.add("alert_tracking_already_listed_msg");
+        transListFrag.add("alert_no_site_selected_ttl");
+        transListFrag.add("alert_no_site_selected_msg");
+        transListFrag.add("alert_keep_tracking_list_ttl");
+        transListFrag.add("alert_keep_tracking_list_msg");
+        transListFrag.add("alert_clear_tracking_list_ttl");
+        transListFrag.add("alert_clear_tracking_list_msg");
+        transListFrag.add("alert_serial_exists_ttl");
+        transListFrag.add("alert_serial_exists_msg");
+        transListFrag.add("alert_serial_not_exists_ttl");
+        transListFrag.add("alert_serial_not_exists_msg");
+        transListFrag.add("dialog_serial_inbound_lbl");
+        transListFrag.add("dialog_serial_inbound_date_lbl");
+        transListFrag.add("dialog_serial_move_lbl");
+        transListFrag.add("dialog_serial_move_group_lbl");
+        transListFrag.add("dialog_serial_outbound_lbl");
+        transListFrag.add("alert_serial_validation_ttl");
+        transListFrag.add("alert_invalid_site_change_msg");
+        transListFrag.add("alert_serial_exists_ttl");
+        transListFrag.add("alert_serial_exists_msg");
+        transListFrag.add("alert_serial_not_exists_ttl");
+        transListFrag.add("alert_serial_not_exists_msg");
+        transListFrag.add("alert_serial_not_exists_msg");
+        transListFrag.add("dialog_serial_inbound_lbl");
+        transListFrag.add("dialog_serial_inbound_date_lbl");
+        transListFrag.add("dialog_serial_move_lbl");
+        transListFrag.add("dialog_serial_move_group_lbl");
+        transListFrag.add("dialog_serial_outbound_lbl");
+        transListFrag.add("alert_serial_validation_ttl");
+        transListFrag.add("alert_invalid_site_change_msg");
+        transListFrag.add("btn_check_exists");
+        transListFrag.add("alert_site_restriction_ttl");
+        transListFrag.add("alert_site_restriction_violation_msg");
+        //
+        return transListFrag;
+    }
+    //endregion
 
     //region FragLifeCycle
     @Override
