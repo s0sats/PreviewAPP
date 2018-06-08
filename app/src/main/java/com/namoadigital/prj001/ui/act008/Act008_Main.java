@@ -17,8 +17,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -31,7 +29,6 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -156,6 +153,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //Novas traduções
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
+        transList.add("alert_site_restriction_violation_msg");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -166,83 +164,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 transList
         );
         //
-        List<String> transListFrag = new ArrayList<String>();
-
-        transListFrag.add("product_label");
-        transListFrag.add("product_desc_label");
-        transListFrag.add("mket_hint_label");
-        transListFrag.add("btn_create");
-        transListFrag.add("chk_required");
-        transListFrag.add("chk_allow_new");
-        transListFrag.add("alert_no_connection_title");
-        transListFrag.add("alert_no_connection_msg");
-        transListFrag.add("alert_product_not_found_title");
-        transListFrag.add("alert_product_not_found_msg");
-        transListFrag.add("product_ttl");
-        transListFrag.add("product_id_label");
-        transListFrag.add("mket_search_hint");
-        transListFrag.add("serial_ttl");
-        transListFrag.add("serial_location_ttl");
-        transListFrag.add("site_lbl");
-        transListFrag.add("site_zone_lbl");
-        transListFrag.add("site_zone_local_lbl");
-        transListFrag.add("serial_add_info_ttl");
-        transListFrag.add("add_info1_lbl");
-        transListFrag.add("add_info2_lbl");
-        transListFrag.add("add_info3_lbl");
-        transListFrag.add("serial_properties_ttl");
-        transListFrag.add("brand_lbl");
-        transListFrag.add("brand_model_lbl");
-        transListFrag.add("brand_color_lbl");
-        transListFrag.add("segment_lbl");
-        transListFrag.add("category_price_lbl");
-        transListFrag.add("site_owner_lbl");
-        transListFrag.add("searchable_spinner_lbl");
-        transListFrag.add("alert_invalid_serial_local_ttl");
-        transListFrag.add("alert_invalid_serial_local_msg");
-        transListFrag.add("tracking_ttl");
-        transListFrag.add("dialog_tracking_ttl");
-        transListFrag.add("alert_tracking_unavailable_ttl");
-        transListFrag.add("alert_tracking_unavailable_msg");
-        transListFrag.add("alert_tracking_already_listed_ttl");
-        transListFrag.add("alert_tracking_already_listed_msg");
-        transListFrag.add("alert_no_site_selected_ttl");
-        transListFrag.add("alert_no_site_selected_msg");
-        transListFrag.add("alert_keep_tracking_list_ttl");
-        transListFrag.add("alert_keep_tracking_list_msg");
-        transListFrag.add("alert_clear_tracking_list_ttl");
-        transListFrag.add("alert_clear_tracking_list_msg");
-        transListFrag.add("alert_serial_exists_ttl");
-        transListFrag.add("alert_serial_exists_msg");
-        transListFrag.add("alert_serial_not_exists_ttl");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("dialog_serial_inbound_lbl");
-        transListFrag.add("dialog_serial_inbound_date_lbl");
-        transListFrag.add("dialog_serial_move_lbl");
-        transListFrag.add("dialog_serial_move_group_lbl");
-        transListFrag.add("dialog_serial_outbound_lbl");
-        transListFrag.add("alert_serial_validation_ttl");
-        transListFrag.add("alert_invalid_site_change_msg");
-        transListFrag.add("alert_serial_exists_ttl");
-        transListFrag.add("alert_serial_exists_msg");
-        transListFrag.add("alert_serial_not_exists_ttl");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("dialog_serial_inbound_lbl");
-        transListFrag.add("dialog_serial_inbound_date_lbl");
-        transListFrag.add("dialog_serial_move_lbl");
-        transListFrag.add("dialog_serial_move_group_lbl");
-        transListFrag.add("dialog_serial_outbound_lbl");
-        transListFrag.add("alert_serial_validation_ttl");
-        transListFrag.add("alert_invalid_site_change_msg");
-        transListFrag.add("btn_check_exists");
-        //
         hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code_Frag,
                 ToolBox_Con.getPreference_Translate_Code(context),
-                transListFrag
+                //transListFrag
+                Frg_Serial_Edit.getFragTranslationsVars()
         );
     }
 
@@ -299,24 +227,31 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onCheckButtonClick(String product_id, String serial_id, String tracking) {
-                mPresenter.executeSerialSearch(
-                        product_id,
-                        serial_id
-                );
+                if(ToolBox_Con.isOnline(context)) {
+                    mPresenter.executeSerialSearch(
+                            product_id,
+                            serial_id
+                    );
+                }else{
+                    mPresenter.searchLocalSerial(mdProduct.getProduct_code(),serial_id);
+                }
             }
 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
+                //Atualiza obj da tela com o do frag.
+                mdProductSerial = md_product_serial;
                 //Salva os dados do serial no banco local.
-                //mPresenter.updateSerialData(mdProductSerial);
+                mPresenter.updateSerialData(mdProductSerial);
                 //
-                //mPresenter.executeSoDownload(mdProduct.getProduct_code(),mdProductSerial.getSerial_id());
                 mPresenter.checkFlow();
             }
 
             @Override
-            public void onSaveWithChangesClick(MD_Product_Serial mdProductSerial, boolean serial_id_changes) {
-                mPresenter.updateSerialData(mdProductSerial);
+            public void onSaveWithChangesClick(MD_Product_Serial mdProductSerialFrag, boolean serial_id_changes) {
+                mPresenter.updateSerialData(mdProductSerialFrag);
+                //
+                mdProductSerial = mdProductSerialFrag;
                 //
                 if(ToolBox_Con.isOnline(context)) {
                     mPresenter.executeSerialSave();
@@ -491,7 +426,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+                        mPresenter.checkFlow();
                     }
                 },
                 0
@@ -574,8 +509,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context)
         );
-        //if(mPresenter.checkFormXOperationExists()){
-        if(formXProductExist && formXOperationExists && formXSiteExists){
+        boolean producSiteRestXSite = false;
+        if( mdProduct.getSite_restriction() == 1){
+            if(mdProductSerial.getSite_code() != null
+            && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
+            ){
+                producSiteRestXSite = true;
+            }
+        }else{
+            producSiteRestXSite = true;
+        }
+        //Se existir form para o produto,site e operação e a regra de restrição de site respeitada,
+        //avança para o form
+        if(formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite){
             Intent mIntent =  new Intent(context, Act009_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             bundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
@@ -594,6 +540,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             msg = !formXProductExist ? msg + hmAux_Trans.get("alert_no_form_for_product_msg") + "\n" : msg;
             msg = !formXOperationExists ? msg + hmAux_Trans.get("alert_no_form_for_operation_msg") + "\n" : msg;
             msg = !formXSiteExists ? msg + hmAux_Trans.get("alert_no_form_for_site_msg") + "\n" : msg;
+            msg = !producSiteRestXSite ? msg + hmAux_Trans.get("alert_site_restriction_violation_msg") + "\n" : msg;
 
             showAlertDialog(
                     hmAux_Trans.get("alert_no_form_ttl"),
@@ -675,7 +622,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         disableProgressDialog();
          if(ws_process.equalsIgnoreCase(WS_Serial_Search.class.getName())){
-            extractSearchResult(result);
+             mPresenter.extractSearchResult(result);
             //
             disableProgressDialog();
         }else {
@@ -693,31 +640,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         disableProgressDialog();
     }
 
-    /*
-    * MOVER PARA O PRESENTER
-    *
-    * */
-    private void extractSearchResult(String result) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        TSerial_Search_Rec rec = gson.fromJson(
-                result,
-                TSerial_Search_Rec.class);
-        //
-        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
-        //
-        if(serial_list != null){
-            if(serial_list.size() == 0){
-                frgSerialEdit.reApplySerialId();
-            }else if(serial_list.size() == 1){
-                frgSerialEdit.applyReceivedSerial(serial_list.get(0));
-            }else{
-                //FUDEU
-            }
-        }else{
-            //FUDEU 2
-        }
-        //
+    @Override
+    public void reApplySerialIdToFrag(){
+        frgSerialEdit.reApplySerialId();
     }
+    @Override
+    public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned){
+        mdProductSerial = serial_returned;
+        frgSerialEdit.applyReceivedSerial(serial_returned);
+    }
+
     //TRATA MSG SESSION NOT FOUND
     @Override
     protected void processLogin() {
