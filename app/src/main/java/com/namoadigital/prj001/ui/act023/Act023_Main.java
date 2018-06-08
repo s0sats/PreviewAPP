@@ -141,85 +141,12 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 transList
         );
         //
-        List<String> transListFrag = new ArrayList<String>();
-
-        transListFrag.add("product_label");
-        transListFrag.add("product_desc_label");
-        transListFrag.add("mket_hint_label");
-        transListFrag.add("btn_create");
-        transListFrag.add("chk_required");
-        transListFrag.add("chk_allow_new");
-        transListFrag.add("alert_no_connection_title");
-        transListFrag.add("alert_no_connection_msg");
-        transListFrag.add("alert_product_not_found_title");
-        transListFrag.add("alert_product_not_found_msg");
-        transListFrag.add("product_ttl");
-        transListFrag.add("product_id_label");
-        transListFrag.add("mket_search_hint");
-        transListFrag.add("serial_ttl");
-        transListFrag.add("serial_location_ttl");
-        transListFrag.add("site_lbl");
-        transListFrag.add("site_zone_lbl");
-        transListFrag.add("site_zone_local_lbl");
-        transListFrag.add("serial_add_info_ttl");
-        transListFrag.add("add_info1_lbl");
-        transListFrag.add("add_info2_lbl");
-        transListFrag.add("add_info3_lbl");
-        transListFrag.add("serial_properties_ttl");
-        transListFrag.add("brand_lbl");
-        transListFrag.add("brand_model_lbl");
-        transListFrag.add("brand_color_lbl");
-        transListFrag.add("segment_lbl");
-        transListFrag.add("category_price_lbl");
-        transListFrag.add("site_owner_lbl");
-        transListFrag.add("searchable_spinner_lbl");
-        transListFrag.add("alert_invalid_serial_local_ttl");
-        transListFrag.add("alert_invalid_serial_local_msg");
-        transListFrag.add("tracking_ttl");
-        transListFrag.add("dialog_tracking_ttl");
-        transListFrag.add("alert_tracking_unavailable_ttl");
-        transListFrag.add("alert_tracking_unavailable_msg");
-        transListFrag.add("alert_tracking_already_listed_ttl");
-        transListFrag.add("alert_tracking_already_listed_msg");
-        transListFrag.add("alert_no_site_selected_ttl");
-        transListFrag.add("alert_no_site_selected_msg");
-        transListFrag.add("alert_keep_tracking_list_ttl");
-        transListFrag.add("alert_keep_tracking_list_msg");
-        transListFrag.add("alert_clear_tracking_list_ttl");
-        transListFrag.add("alert_clear_tracking_list_msg");
-        transListFrag.add("alert_serial_exists_ttl");
-        transListFrag.add("alert_serial_exists_msg");
-        transListFrag.add("alert_serial_not_exists_ttl");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("dialog_serial_inbound_lbl");
-        transListFrag.add("dialog_serial_inbound_date_lbl");
-        transListFrag.add("dialog_serial_move_lbl");
-        transListFrag.add("dialog_serial_move_group_lbl");
-        transListFrag.add("dialog_serial_outbound_lbl");
-        transListFrag.add("alert_serial_validation_ttl");
-        transListFrag.add("alert_invalid_site_change_msg");
-        transListFrag.add("alert_serial_exists_ttl");
-        transListFrag.add("alert_serial_exists_msg");
-        transListFrag.add("alert_serial_not_exists_ttl");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("alert_serial_not_exists_msg");
-        transListFrag.add("dialog_serial_inbound_lbl");
-        transListFrag.add("dialog_serial_inbound_date_lbl");
-        transListFrag.add("dialog_serial_move_lbl");
-        transListFrag.add("dialog_serial_move_group_lbl");
-        transListFrag.add("dialog_serial_outbound_lbl");
-        transListFrag.add("alert_serial_validation_ttl");
-        transListFrag.add("alert_invalid_site_change_msg");
-        transListFrag.add("btn_check_exists");
-        transListFrag.add("alert_site_restriction_ttl");
-        transListFrag.add("alert_site_restriction_violation_msg");
-        //
         hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code_Frag,
                 ToolBox_Con.getPreference_Translate_Code(context),
-                transListFrag
+                Frg_Serial_Edit.getFragTranslationsVars()
         );
     }
 
