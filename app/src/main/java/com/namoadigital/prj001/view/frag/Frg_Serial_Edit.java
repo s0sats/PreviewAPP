@@ -2050,32 +2050,37 @@ public class Frg_Serial_Edit extends Fragment {
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
-        //Se Site atual controla IO,exibe apenas ele mesmo como opção.
-        if (mdProductSerial.getSite_io_control() == null || mdProductSerial.getSite_io_control() == 0) {
-            //Se produto tem restrição de site, lita terá apenas o site atual e o site logado.
-            if(mdProductSerial.getSite_restriction() != null && mdProductSerial.getSite_restriction() == 1){
-                ArrayList<HMAux> siteListNew = new ArrayList<>();
-                for(HMAux aux: siteList){
-                    if(aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
-                        siteListNew.add(aux);
-                        break;
+        //
+        if(mdProduct.getIo_control() == 1) {
+            //Se Site atual controla IO,exibe apenas ele mesmo como opção.
+            if (mdProductSerial.getSite_io_control() == null || mdProductSerial.getSite_io_control() == 0) {
+                //Se produto tem restrição de site, lita terá apenas o site atual e o site logado.
+                if (mdProductSerial.getSite_restriction() != null && mdProductSerial.getSite_restriction() == 1) {
+                    ArrayList<HMAux> siteListNew = new ArrayList<>();
+                    for (HMAux aux : siteList) {
+                        if (aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                            siteListNew.add(aux);
+                            break;
+                        }
+                    }
+                    //Ataualiza lista de opções de site.
+                    siteList = siteListNew;
+                    //
+                    if (new_serial) {
+                        ss_site.setmValue(siteListNew.get(0));
+                        ss_site.setmEnabled(false);
                     }
                 }
-                //Ataualiza lista de opções de site.
-                siteList = siteListNew;
-                //
-                //
-                if(new_serial){
-                    ss_site.setmValue(siteListNew.get(0));
-                    ss_site.setmEnabled(false);
-                }
+                //Seta a lista
+                ss_site.setmOption(siteList);
+            } else {
+                siteList.clear();
+                ss_site.setmOption(null);
+                //ss_site.setmEnabled(false);
             }
+        }else{
             //Seta a lista
             ss_site.setmOption(siteList);
-        } else {
-            siteList.clear();
-            ss_site.setmOption(null);
-            //ss_site.setmEnabled(false);
         }
         //
         if (ss_site.getmValue() != null && ss_site.getmValue().size() > 0 && !checkDbValInOption(ss_site, String.valueOf(mdProductSerial.getSite_code()))) {
