@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -48,6 +49,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
@@ -58,21 +60,27 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -88,6 +96,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
@@ -169,6 +178,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private Integer mSo_Code;
     private String mSite_Code;
     private Integer mOperation_Code;
+
+    private String wsSoProcess;
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
+
+    public void setWsSoProcess(String wsSoProcess) {
+        this.wsSoProcess = wsSoProcess;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -1606,11 +1622,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                             hmAux_Trans.get("sys_alert_btn_ok")
                                     );
 
-                                    executeSaveProcess();
+                                    executeSerialSave();
+                                    //executeSaveProcess();
 
                                 } else {
                                     flowControl();
-
                                 }
 
                             }
@@ -2112,14 +2128,67 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         progressDialog.dismiss();
     }
 
-    @Override
-    protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired);
+    private void executeSerialSave() {
+        setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
 
-        flowControl();
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            //
+            if (!hmAux.isEmpty() && hmAux.size() > 0) {
+                for (Map.Entry<String, String> item : hmAux.entrySet()) {
+                    HMAux aux = new HMAux();
+                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                    String status = item.getValue();
+                    String productInfo = getProductInfo(Long.parseLong(pk[0]));
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+                    mHmAux.put("type", "SERIAL");
+                    mHmAux.put("status", status);
+                    mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
+
+            executeSaveProcess();
+        }
+    }
+
+    private String getProductInfo(Long product_code) {
+        MD_ProductDao mdProductDao = new MD_ProductDao(context);
+        MD_Product mdProduct = mdProductDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code
+                ).toSqlQuery()
+        );
+        //
+        if (mdProduct != null) {
+            return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();
+        } else {
+            return "";
+        }
     }
 
     private void executeSaveProcess() {
+        setWsSoProcess(WS_Save.class.getSimpleName());
+        //
         Intent mIntent = new Intent(context, WBR_Save.class);
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
@@ -2130,7 +2199,90 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         context.sendBroadcast(mIntent);
         ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+    }
 
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+
+        if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            if (wsResults.size() > 0) {
+                showResults(wsResults);
+            } else {
+                flowControl();
+            }
+        }
+    }
+
+    public void showResults(List<HMAux> res) {
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        List<HMAux> gAdapterRes = new ArrayList<>();
+        for (HMAux item : res) {
+            HMAux hmAux = new HMAux();
+            //
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("status"));
+            //
+            switch (item.get("type")) {
+                case "SERIAL":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_serial_data"));
+                    break;
+                case "A.P.":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));
+                    break;
+                case "S.O.":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so"));
+                    break;
+                case "SO_EXPRESS":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
+                    break;
+
+            }
+            //
+            gAdapterRes.add(hmAux);
+        }
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        gAdapterRes,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final android.support.v7.app.AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                    //
+                    flowControl();
+                }
+            }
+        });
     }
 
     //Metodo chamado ao finalizar o download da atualização.

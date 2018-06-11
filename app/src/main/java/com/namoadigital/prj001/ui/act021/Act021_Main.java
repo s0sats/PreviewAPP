@@ -163,28 +163,27 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-        List<String> transList = new ArrayList<String>();
-        transList.add("btn_enable_nfc");
-        transList.add("product_lbl");
-        transList.add("serial_lbl");
-        transList.add("tracking_lbl");
-        transList.add("btn_option_01");
-        transList.add("btn_option_02");
-        transList.add("btn_option_03");
-        transList.add("product_hint");
-        transList.add("serial_hint");
-        transList.add("tracking_hint");
-        transList.add("product_all_lbl");
-        transList.add("alert_no_product_ttl");
-        transList.add("alert_no_product_msg");
-
+//        List<String> transList = new ArrayList<String>();
+//        transList.add("btn_enable_nfc");
+//        transList.add("product_lbl");
+//        transList.add("serial_lbl");
+//        transList.add("tracking_lbl");
+//        transList.add("btn_option_01");
+//        transList.add("btn_option_02");
+//        transList.add("btn_option_03");
+//        transList.add("product_hint");
+//        transList.add("serial_hint");
+//        transList.add("tracking_hint");
+//        transList.add("product_all_lbl");
+//        transList.add("alert_no_product_ttl");
+//        transList.add("alert_no_product_msg");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_CodeSS,
                 ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+                mFrgSerialSearch.getFragTranslationsVars()
         );
     }
 
@@ -226,7 +225,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             }
         });
 
-
+        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_load_so"));
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);

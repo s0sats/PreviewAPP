@@ -159,27 +159,27 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-        List<String> transList = new ArrayList<String>();
-        transList.add("btn_enable_nfc");
-        transList.add("product_lbl");
-        transList.add("serial_lbl");
-        transList.add("tracking_lbl");
-        transList.add("btn_option_01");
-        transList.add("btn_option_02");
-        transList.add("btn_option_03");
-        transList.add("product_hint");
-        transList.add("serial_hint");
-        transList.add("tracking_hint");
-        transList.add("product_all_lbl");
-        transList.add("alert_no_product_ttl");
-        transList.add("alert_no_product_msg");
+//        List<String> transList = new ArrayList<String>();
+//        transList.add("btn_enable_nfc");
+//        transList.add("product_lbl");
+//        transList.add("serial_lbl");
+//        transList.add("tracking_lbl");
+//        transList.add("btn_option_01");
+//        transList.add("btn_option_02");
+//        transList.add("btn_option_03");
+//        transList.add("product_hint");
+//        transList.add("serial_hint");
+//        transList.add("tracking_hint");
+//        transList.add("product_all_lbl");
+//        transList.add("alert_no_product_ttl");
+//        transList.add("alert_no_product_msg");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_CodeSS,
                 ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+                mFrgSerialSearch.getFragTranslationsVars()
         );
     }
 

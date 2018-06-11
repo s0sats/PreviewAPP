@@ -118,28 +118,27 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-        List<String> transList = new ArrayList<String>();
-        transList.add("btn_enable_nfc");
-        transList.add("product_lbl");
-        transList.add("serial_lbl");
-        transList.add("tracking_lbl");
-        transList.add("btn_option_01");
-        transList.add("btn_option_02");
-        transList.add("btn_option_03");
-        transList.add("product_hint");
-        transList.add("serial_hint");
-        transList.add("tracking_hint");
-        transList.add("product_all_lbl");
-        transList.add("alert_no_product_ttl");
-        transList.add("alert_no_product_msg");
-
+//        List<String> transList = new ArrayList<String>();
+//        transList.add("btn_enable_nfc");
+//        transList.add("product_lbl");
+//        transList.add("serial_lbl");
+//        transList.add("tracking_lbl");
+//        transList.add("btn_option_01");
+//        transList.add("btn_option_02");
+//        transList.add("btn_option_03");
+//        transList.add("product_hint");
+//        transList.add("serial_hint");
+//        transList.add("tracking_hint");
+//        transList.add("product_all_lbl");
+//        transList.add("alert_no_product_ttl");
+//        transList.add("alert_no_product_msg");
 
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_CodeSS,
                 ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+                mFrgSerialSearch.getFragTranslationsVars()
         );
     }
 
@@ -159,6 +158,21 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
+//                        if (ToolBox_Con.isOnline(context)) {
+//                            if (ToolBox_Inf.checkSerialTokenURStatus(context)) {
+//                                ToolBox.alertMSG(
+//                                        context,
+//                                        "Seriais Pendentes - Trad",
+//                                        "Seriais Pendentes. Envie os seriais pendentes para poder realizar a pesquisa - Trad",
+//                                        null,
+//                                        0
+//                                );
+//                            } else {
+//                                processSerialSearch(optionsInfo);
+//                            }
+//                        } else {
+//                            processSerialSearch(optionsInfo);
+//                        }
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:

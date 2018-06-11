@@ -8,11 +8,13 @@ import com.namoadigital.prj001.database.Specification;
  * Seleciona todos Seriais com flag de atualização
  */
 
-public class MD_Product_Serial_Sql_004 implements Specification {
+public class MD_Product_Serial_Sql_015 implements Specification {
+
+    public static final String IN_TOKEN_UR_QTY = "in_token_ur_qty";
 
     private long customer_code;
 
-    public MD_Product_Serial_Sql_004(long customer_code) {
+    public MD_Product_Serial_Sql_015(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -22,12 +24,13 @@ public class MD_Product_Serial_Sql_004 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "    s.*\n" +
+                        "   count(1) " + IN_TOKEN_UR_QTY + " \n" +
                         " FROM\n" +
                         MD_Product_SerialDao.TABLE + " s\n" +
                         " WHERE\n" +
                         "  s.customer_code = '" + customer_code + "'\n" +
                         "  and s.update_required = 1  ")
+                .append(";" + IN_TOKEN_UR_QTY)
                 .toString();
     }
 }

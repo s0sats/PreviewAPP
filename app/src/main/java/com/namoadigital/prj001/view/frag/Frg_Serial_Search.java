@@ -27,6 +27,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Frg_Serial_Search extends Fragment {
 
@@ -49,6 +50,7 @@ public class Frg_Serial_Search extends Fragment {
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
     private TextView tv_tracking;
+    private LinearLayout ll_tracking;
     private MKEditTextNM mket_tracking;
 
     private HMAux hmAux_Trans;
@@ -126,6 +128,7 @@ public class Frg_Serial_Search extends Fragment {
         controls_sta.add(mket_serial);
         //
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_search_tv_tracking);
+        ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_tracking);
         mket_tracking = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_tracking);
         controls_sta.add(mket_tracking);
         //
@@ -217,6 +220,15 @@ public class Frg_Serial_Search extends Fragment {
                             getActivity(),
                             hmAux_Trans.get("alert_no_product_ttl"),
                             hmAux_Trans.get("alert_no_product_msg"),
+                            null,
+                            0
+                    );
+
+                } else if (ToolBox_Con.isOnline(getActivity()) && ToolBox_Inf.checkSerialTokenURStatus(getActivity())) {
+                    ToolBox.alertMSG(
+                            getActivity(),
+                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                            hmAux_Trans.get("alert_serial_pendencies_msg"),
                             null,
                             0
                     );
@@ -382,10 +394,10 @@ public class Frg_Serial_Search extends Fragment {
     public void setShowHideTracking(boolean status) {
         if (status) {
             //tv_tracking.setVisibility(View.VISIBLE);
-            mket_tracking.setVisibility(View.VISIBLE);
+            ll_tracking.setVisibility(View.VISIBLE);
         } else {
             //tv_tracking.setVisibility(View.GONE);
-            mket_tracking.setVisibility(View.GONE);
+            ll_tracking.setVisibility(View.GONE);
         }
     }
 
@@ -482,5 +494,27 @@ public class Frg_Serial_Search extends Fragment {
         );
 
         return md_product;
+    }
+
+    public static List<String> getFragTranslationsVars() {
+        List<String> transListFrag = new ArrayList<String>();
+        //
+        transListFrag.add("btn_enable_nfc");
+        transListFrag.add("product_lbl");
+        transListFrag.add("serial_lbl");
+        transListFrag.add("tracking_lbl");
+        transListFrag.add("btn_option_01");
+        transListFrag.add("btn_option_02");
+        transListFrag.add("btn_option_03");
+        transListFrag.add("product_hint");
+        transListFrag.add("serial_hint");
+        transListFrag.add("tracking_hint");
+        transListFrag.add("product_all_lbl");
+        transListFrag.add("alert_no_product_ttl");
+        transListFrag.add("alert_no_product_msg");
+        transListFrag.add("alert_serial_pendencies_ttl");
+        transListFrag.add("alert_serial_pendencies_msg");
+        //
+        return transListFrag;
     }
 }

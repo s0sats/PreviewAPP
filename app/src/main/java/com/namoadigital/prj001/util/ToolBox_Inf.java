@@ -61,6 +61,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -122,6 +123,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
@@ -4060,17 +4062,17 @@ public class ToolBox_Inf {
                 boolean deleteAP = true;
                 //
                 //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
-                    CH_RoomDao roomDao = new CH_RoomDao(context);
-                    //
-                    CH_Room chRoom = roomDao.getByString(
-                            new CH_Room_Sql_001(
-                                    formAp.getRoom_code()
-                            ).toSqlQuery()
-                    );
-                    //
-                    if (chRoom != null && chRoom.getRoom_code().length() > 0) {
-                        deleteAP = false;
-                    }
+                CH_RoomDao roomDao = new CH_RoomDao(context);
+                //
+                CH_Room chRoom = roomDao.getByString(
+                        new CH_Room_Sql_001(
+                                formAp.getRoom_code()
+                        ).toSqlQuery()
+                );
+                //
+                if (chRoom != null && chRoom.getRoom_code().length() > 0) {
+                    deleteAP = false;
+                }
                 //}
                 //
                 if (deleteAP) {
@@ -4117,17 +4119,17 @@ public class ToolBox_Inf {
                         deleteAP = true;
                     } else {
                         //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
-                            CH_RoomDao roomDao = new CH_RoomDao(context);
-                            //
-                            CH_Room chRoom = roomDao.getByString(
-                                    new CH_Room_Sql_001(
-                                            formAp.getRoom_code()
-                                    ).toSqlQuery()
-                            );
-                            //
-                            if (chRoom == null) {
-                                deleteAP = true;
-                            }
+                        CH_RoomDao roomDao = new CH_RoomDao(context);
+                        //
+                        CH_Room chRoom = roomDao.getByString(
+                                new CH_Room_Sql_001(
+                                        formAp.getRoom_code()
+                                ).toSqlQuery()
+                        );
+                        //
+                        if (chRoom == null) {
+                            deleteAP = true;
+                        }
 //                        } else {
 //                            deleteAP = true;
 //                        }
@@ -4173,17 +4175,17 @@ public class ToolBox_Inf {
         }
     }
 
-    public static String removeAllLineBreaks(String text){
-        return text.trim().replaceAll("\\r|\\n","");
+    public static String removeAllLineBreaks(String text) {
+        return text.trim().replaceAll("\\r|\\n", "");
     }
 
-    public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code){
+    public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code) {
         ArrayList<HMAux> profiles = new ArrayList<>();
         //
         EV_ProfileDao profileDao = new EV_ProfileDao(
-                                        context,
-                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                                        Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
         //
         profiles = (ArrayList<HMAux>) profileDao.query_HM(
@@ -4196,7 +4198,7 @@ public class ToolBox_Inf {
         return profiles;
     }
 
-    public static String getMenuProfilesAsStringConcat(Context context, String menu_code,String concat){
+    public static String getMenuProfilesAsStringConcat(Context context, String menu_code, String concat) {
         ArrayList<HMAux> profileList = ToolBox_Inf.getMenuProfiles(context, menu_code);
         String profile = "";
         concat = concat == null || concat.isEmpty() ? "|" : concat;
@@ -4209,14 +4211,14 @@ public class ToolBox_Inf {
         //Ajusta string removendo pipe no final
         try {
             profile = profile.substring(0, profile.length() - 1);
-        }catch (Exception e){
+        } catch (Exception e) {
             profile = "";
         }
         return profile;
 
     }
 
-    public static boolean checkFormXProductExists(Context context, long customer_code,long product_code){
+    public static boolean checkFormXProductExists(Context context, long customer_code, long product_code) {
         GE_Custom_Form_ProductDao formProductDao =
                 new GE_Custom_Form_ProductDao(
                         context,
@@ -4232,13 +4234,13 @@ public class ToolBox_Inf {
                         ).toSqlQuery()
                 );
         String hasFormXProduct = aux == null ? "null" : aux.get(Sql_Form_x_Product.FORM_PRODUCT_PROFILE);
-        if  (hasFormXProduct.equals("0") || hasFormXProduct.equals("null")) {
+        if (hasFormXProduct.equals("0") || hasFormXProduct.equals("null")) {
             return false;
         }
         return true;
     }
 
-    public static boolean checkFormXOperationExists(Context context, long customer_code,long operation_code){
+    public static boolean checkFormXOperationExists(Context context, long customer_code, long operation_code) {
         GE_Custom_Form_OperationDao formOperationDao =
                 new GE_Custom_Form_OperationDao(
                         context,
@@ -4259,7 +4261,7 @@ public class ToolBox_Inf {
         return true;
     }
 
-    public static boolean checkFormXSiteExists(Context context, long customer_code,String site_code){
+    public static boolean checkFormXSiteExists(Context context, long customer_code, String site_code) {
         GE_Custom_Form_SiteDao formSiteDao =
                 new GE_Custom_Form_SiteDao(
                         context,
@@ -4279,4 +4281,44 @@ public class ToolBox_Inf {
         }
         return true;
     }
+
+
+    /**
+     * Verifica se existem tokens de seriais ou registros no MD_Product_Serial com status de UPDATE_REQUIRED = 1
+     *
+     * @param context
+     * @return existem arquivos ou registros
+     */
+    public static boolean checkSerialTokenURStatus(Context context) {
+        MD_Product_SerialDao productSerialDao = new MD_Product_SerialDao(context);
+        //
+        int qty_file_token;
+        int qty_UR;
+
+        File[] files = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+
+        if (files != null && files.length > 0) {
+            qty_file_token = files.length;
+        } else {
+            qty_file_token = 0;
+        }
+
+        try {
+            qty_UR = Integer.parseInt(productSerialDao.getByStringHM(
+                    new MD_Product_Serial_Sql_015(
+                            ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+                    ).get(MD_Product_Serial_Sql_015.IN_TOKEN_UR_QTY)
+            );
+            //
+        } catch (Exception e) {
+            qty_UR = 0;
+        }
+
+        if ((qty_file_token + qty_UR) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
