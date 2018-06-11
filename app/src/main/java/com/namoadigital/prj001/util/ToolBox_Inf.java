@@ -76,6 +76,7 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SM_SO_Service;
@@ -4278,5 +4279,13 @@ public class ToolBox_Inf {
             return false;
         }
         return true;
+    }
+
+    public static boolean isValidProduct(MD_Product md_product) {
+        //Erro, produto não encontrado
+        if (md_product != null && md_product.getProduct_code() > 0) {
+            return true;
+        }
+        return false;
     }
 }

@@ -36,6 +36,7 @@ import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,22 +105,16 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         }
         //
-        if (isValidProduct(md_product)) {
+        if (ToolBox_Inf.isValidProduct(md_product)) {
             mView.setProductValues(md_product);
         } else {
+            mView.setProductValues(null);
+            //
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
             );
         }
-    }
-
-    private boolean isValidProduct(MD_Product md_product) {
-        //Erro, produto não encontrado
-        if (md_product != null && md_product.getProduct_code() > 0) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -441,39 +436,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public boolean checkFormXOperationExists() {
-        /*String hasFormXOperation =
-                formOperationDao.getByStringHM(
-                        new Sql_Form_x_Operation(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code,
-                                ToolBox_Con.getPreference_Operation_Code(context)
-                        ).toSqlQuery()
-                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
-        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
-            return false;
-        }
-        return true;*/
-        return true;
-    }
-    //
-    //@Override
-    /*public boolean checkFormXSiteExists() {
-        /*String hasFormXOperation =
-                formOperationDao.getByStringHM(
-                        new Sql_Form_x_Operation(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code,
-                                ToolBox_Con.getPreference_Operation_Code(context)
-                        ).toSqlQuery()
-                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
-        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
-            return false;
-        }
-        return true;
-    }*/
-
-    @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
         mView.setWsProcess(WS_Serial_Tracking_Search.class.getName());
         //
@@ -575,7 +537,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            // mView.refreshUI();
+            refreshMdProductSerialReference(product_code, serial_id);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
@@ -589,6 +551,29 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     hmAux_Trans.get("alert_no_serial_return_msg")
             );
         }
+    }
+
+    private void refreshMdProductSerialReference(long product_code, String serial_id) {
+        mView.updateProductSerialValues(
+                getSerialInfo(
+                        product_code,
+                        serial_id
+                )
+        );
+        //
+        mView.refreshUI();
+    }
+
+    public MD_Product_Serial getSerialInfo(Long product_code, String serial_id) {
+        MD_Product_Serial serialObjDb = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+        return serialObjDb;
     }
 
     @Override
