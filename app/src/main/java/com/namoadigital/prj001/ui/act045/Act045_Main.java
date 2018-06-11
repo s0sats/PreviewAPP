@@ -53,6 +53,10 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
     private long record_page;
     private String serial_id;
 
+    private String fragProduct_ID;
+    private String fragSerial_ID;
+    private String fragTracking;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,6 +239,10 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
                 record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
                 serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
 
+                fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
+                fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
+                fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+
                 MD_ProductDao mdProductDao = new MD_ProductDao(context);
 
                 String product_id = bundle.getString(MD_ProductDao.PRODUCT_ID);
@@ -305,8 +313,14 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
 
     @Override
     public void callAct030(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
+        bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
+        bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
+
         Intent mIntent = new Intent(context, Act030_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
         finish();

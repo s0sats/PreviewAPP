@@ -51,7 +51,11 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     private MD_Product_Serial serial;
-    private Bundle bundle;
+    //private Bundle bundle;
+
+    private String fragProduct_ID;
+    private String fragSerial_ID;
+    private String fragTracking;
 
     //    private String ws_process;
     //    private Act020_Prod_Serial_Adapter mAdapter;
@@ -184,7 +188,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     private void initVars() {
-        bundle = new Bundle();
+        recoverIntentsInfo();
+//        bundle = new Bundle();
 
         fm = getSupportFragmentManager();
 
@@ -326,6 +331,30 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         hideSoftKeyboard();
 
         mPresenter.getMD_Products();
+
+        if (!fragProduct_ID.isEmpty()) {
+            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            mFrgSerialSearch.setShowTree(true);
+        }
+
+        if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
+            mFrgSerialSearch.setSerialIdText(fragSerial_ID);
+            mFrgSerialSearch.setTrackingText(fragTracking);
+        }
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
+            fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
+            fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+        } else {
+            fragProduct_ID = "";
+            fragSerial_ID = "";
+            fragTracking = "";
+        }
     }
 
     private void processLoadSO(HMAux optionsInfo) {
