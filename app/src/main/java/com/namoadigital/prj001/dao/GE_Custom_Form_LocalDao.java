@@ -50,6 +50,26 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String ALL_OPERATION = "all_operation";
     public static final String ALL_PRODUCT = "all_product";
 
+    public static final String SITE_CODE = "site_code";
+    public static final String SITE_ID = "site_id";
+    public static final String SITE_DESC = "site_desc";
+
+    public static final String IO_CONTROL = "io_control";
+    public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
+
+    public static final String OPERATION_CODE = "operation_code";
+    public static final String OPERATION_ID = "operation_id";
+    public static final String OPERATION_DESC = "operation_desc";
+
+    public static final String LOCAL_CONTROL = "local_control";
+
+    public static final String PRODUCT_IO_CONTROL = "product_io_control";
+
+    public static final String SITE_RESTRICTION = "site_restriction";
+    public static final String SERIAL_RULE = "serial_rule";
+    public static final String SERIAL_MIN_LENGTH = "serial_min_length";
+    public static final String SERIAL_MAX_LENGTH = "serial_max_length";
+
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -119,7 +139,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -183,7 +203,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -206,7 +226,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
 
         } finally {
         }
@@ -235,7 +255,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -261,7 +281,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -289,7 +309,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -310,9 +330,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             custom_form_local.setCustom_form_pre(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_PRE)));
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
-            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))){
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
                 custom_form_local.setCustom_form_data_serv(null);
-            }else{
+            } else {
                 custom_form_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
             }
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
@@ -323,14 +343,14 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
             custom_form_local.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT))) {
                 custom_form_local.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
-            }else{
+            } else {
                 custom_form_local.setSchedule_date_start_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT))) {
                 custom_form_local.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
-            }else{
+            } else {
                 custom_form_local.setSchedule_date_end_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT)));
             }
             custom_form_local.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
@@ -340,6 +360,31 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
             custom_form_local.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
 
+            custom_form_local.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
+            custom_form_local.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
+            custom_form_local.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            custom_form_local.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
+            custom_form_local.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
+            custom_form_local.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
+            custom_form_local.setOperation_id(cursor.getString(cursor.getColumnIndex(OPERATION_ID)));
+            custom_form_local.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
+            custom_form_local.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
+            custom_form_local.setProduct_io_control(cursor.getInt(cursor.getColumnIndex(PRODUCT_IO_CONTROL)));
+            custom_form_local.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
+            custom_form_local.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
+
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))) {
+                custom_form_local.setSerial_min_length(null);
+            } else {
+                custom_form_local.setSerial_min_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MIN_LENGTH)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))) {
+                custom_form_local.setSerial_max_length(null);
+            } else {
+                custom_form_local.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
+            }
+            //
             return custom_form_local;
         }
     }
@@ -399,12 +444,12 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             if (custom_form_local.getSchedule_date_start_format() != null) {
                 contentValues.put(SCHEDULE_DATE_START_FORMAT, custom_form_local.getSchedule_date_start_format());
-            }else{
+            } else {
                 contentValues.put(SCHEDULE_DATE_START_FORMAT, "1900-01-01 00:00:00 +00:00");
             }
             if (custom_form_local.getSchedule_date_end_format() != null) {
                 contentValues.put(SCHEDULE_DATE_END_FORMAT, custom_form_local.getSchedule_date_end_format());
-            }else{
+            } else {
                 contentValues.put(SCHEDULE_DATE_END_FORMAT, "1900-01-01 00:00:00 +00:00");
             }
             if (custom_form_local.getSchedule_date_start_format_ms() > -1) {
@@ -431,6 +476,46 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             if (custom_form_local.getAll_operation() > -1) {
                 contentValues.put(ALL_OPERATION, custom_form_local.getAll_operation());
             }
+
+            if (custom_form_local.getSite_code() > -1) {
+                contentValues.put(SITE_CODE, custom_form_local.getSite_code());
+            }
+            if (custom_form_local.getSite_id() != null) {
+                contentValues.put(SITE_ID, custom_form_local.getSite_id());
+            }
+            if (custom_form_local.getSite_desc() != null) {
+                contentValues.put(SITE_DESC, custom_form_local.getSite_desc());
+            }
+            if (custom_form_local.getIo_control() > -1) {
+                contentValues.put(IO_CONTROL, custom_form_local.getIo_control());
+            }
+            if (custom_form_local.getInbound_auto_create() > -1) {
+                contentValues.put(INBOUND_AUTO_CREATE, custom_form_local.getInbound_auto_create());
+            }
+            if (custom_form_local.getOperation_code() > -1) {
+                contentValues.put(OPERATION_CODE, custom_form_local.getOperation_code());
+            }
+            if (custom_form_local.getOperation_id() != null) {
+                contentValues.put(OPERATION_ID, custom_form_local.getOperation_id());
+            }
+            if (custom_form_local.getOperation_desc() != null) {
+                contentValues.put(OPERATION_DESC, custom_form_local.getOperation_desc());
+            }
+            if (custom_form_local.getLocal_control() > -1) {
+                contentValues.put(LOCAL_CONTROL, custom_form_local.getLocal_control());
+            }
+            if (custom_form_local.getProduct_io_control() > -1) {
+                contentValues.put(PRODUCT_IO_CONTROL, custom_form_local.getProduct_io_control());
+            }
+            if (custom_form_local.getSite_restriction() > -1) {
+                contentValues.put(SITE_RESTRICTION, custom_form_local.getSite_restriction());
+            }
+            if (custom_form_local.getSerial_rule() != null) {
+                contentValues.put(SERIAL_RULE, custom_form_local.getSerial_rule());
+            }
+
+            contentValues.put(SERIAL_MIN_LENGTH, custom_form_local.getSerial_min_length());
+            contentValues.put(SERIAL_MAX_LENGTH, custom_form_local.getSerial_max_length());
 
             return contentValues;
         }

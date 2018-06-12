@@ -235,14 +235,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
         }
 
-        if (serial_id.isEmpty()) {
+        if (serial_id.equals("")) {
             btn_create_serial.setVisibility(View.GONE);
+        } else {
+            btn_no_serial.setVisibility(View.GONE);
         }
 
         if (btn_create_serial.getVisibility() == View.VISIBLE){
             btn_no_serial.setVisibility(View.GONE);
         }
-
     }
 
     private void recoverIntentsInfo() {

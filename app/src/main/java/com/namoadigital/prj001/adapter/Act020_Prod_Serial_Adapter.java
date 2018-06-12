@@ -97,7 +97,7 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         if (auxObj.getSite_code() != null && auxObj.getSite_code() == site_id_preference) {
             ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
         } else {
-            ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_6_states));
+            ll_background.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
         }
         //
         tv_rec_num.setText(String.valueOf(position + 1));

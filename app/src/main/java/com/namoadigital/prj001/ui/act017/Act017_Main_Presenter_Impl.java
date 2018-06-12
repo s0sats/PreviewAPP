@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -42,7 +43,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap) {
         ArrayList<HMAux> schedules = new ArrayList<>();
 
-        if(filter_form || (!filter_form && !filter_form_ap)) {
+        if (filter_form || (!filter_form && !filter_form_ap)) {
             ArrayList<HMAux> schedulesForm =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act017_001(
@@ -51,12 +52,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                                     selected_date
                             ).toSqlQuery()
                     );
-            if(schedulesForm != null){
+            if (schedulesForm != null) {
                 schedules.addAll(schedulesForm);
             }
         }
         //
-        if(filter_form_ap || (!filter_form && !filter_form_ap)){
+        if (filter_form_ap || (!filter_form && !filter_form_ap)) {
             ArrayList<HMAux> schedulesFormAP =
                     (ArrayList<HMAux>) formApDao.query_HM(
                             new Sql_Act017_002(
@@ -65,7 +66,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                                     selected_date
                             ).toSqlQuery()
                     );
-            if(schedulesFormAP != null){
+            if (schedulesFormAP != null) {
                 schedules.addAll(schedulesFormAP);
             }
         }
@@ -75,27 +76,40 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     @Override
     public void checkScheduleFlow(HMAux item) {
 
-        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
 
             case Constant.MODULE_CHECKLIST:
-                if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
-                    if (isAnyFormInProcessing(item)) {
+                if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
+                    if (item.get("site_code") != null &&
+                            !item.get("site_code").equalsIgnoreCase("null") &&
+                            !item.get("site_code").equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
+
+
+                        ToolBox.alertMSG(
+                                context,
+                                "Site Status - Trad",
+                                 "Site Agendado != Site Logado!!",
+                                null,
+                                0
+                        );
+
+                    } else if (isAnyFormInProcessing(item)) {
                         mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
                     } else {
                         mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
                     }
-                }else{
+                } else {
                     boolean hasSerial = false;
-                    if(item.get(GE_Custom_Form_LocalDao.SERIAL_ID).length() > 0){
+                    if (item.get(GE_Custom_Form_LocalDao.SERIAL_ID).length() > 0) {
                         hasSerial = true;
                     }
                     prepareOpenForm(item, hasSerial);
                 }
 
-            break;
+                break;
 
             case Constant.MODULE_FORM_AP:
-                    prepareOpenFormAP(item);
+                prepareOpenFormAP(item);
                 break;
 
         }
@@ -112,7 +126,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
         //
-        mView.callAct038(context,bundle);
+        mView.callAct038(context, bundle);
     }
 
     @Override
@@ -126,20 +140,21 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putString(Constant.ACT007_PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
         bundle.putString(Constant.ACT008_PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+        bundle.putString(Constant.ACT008_PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
         bundle.putString(Constant.ACT008_SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
         bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
-        bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
-        bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
+        bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+        bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
 
-        if(hasSerial){
-            mView.callAct011(context,bundle);
-        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
-            mView.callAct011(context,bundle);
-        }else{
-            mView.callAct008(context,bundle);
+        if (hasSerial) {
+            mView.callAct011(context, bundle);
+        } else if (!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
+            mView.callAct011(context, bundle);
+        } else {
+            mView.callAct008(context, bundle);
         }
 
         //mView.callAct011(context,bundle);
@@ -180,7 +195,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                         ).toSqlQuery()
                 );
 
-        if(customFormLocal != null){
+        if (customFormLocal != null) {
             return true;
         }
         return false;

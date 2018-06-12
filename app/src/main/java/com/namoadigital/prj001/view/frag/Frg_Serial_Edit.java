@@ -2133,7 +2133,11 @@ public class Frg_Serial_Edit extends Fragment {
                 site_restriction += aux.get(SearchableSpinner.ID) +",";
             }
             //
-            site_restriction = site_restriction.substring(0,site_restriction.length()-1);
+            if (site_restriction.length() > 0) {
+                site_restriction = site_restriction.substring(0, site_restriction.length() - 1);
+            } else {
+                site_restriction = "";
+            }
         }
         //
         ArrayList<HMAux> localList = (ArrayList<HMAux>) siteZoneLocalDao.query_HM(new MD_Site_Zone_Local_Sql_SS(

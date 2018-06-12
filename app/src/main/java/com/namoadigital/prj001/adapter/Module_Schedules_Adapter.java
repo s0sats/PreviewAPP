@@ -36,6 +36,22 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     private String mResource_Code;
     private HMAux hmAux_Trans;
 
+    private long site_id_preference = -1L;
+
+    public long getSite_id_preference() {
+        return site_id_preference;
+    }
+
+    public void setSite_id_preference(String site_id_preference) {
+        try {
+            this.site_id_preference = Long.parseLong(site_id_preference);
+        } catch (Exception e) {
+            this.site_id_preference = -1L;
+        }
+        //
+        notifyDataSetChanged();
+    }
+
     public Module_Schedules_Adapter(Context context, int resource_01, int resource_02, List<HMAux> source) {
         this.context = context;
         this.resource_01 = resource_01;
@@ -312,6 +328,13 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_val);
         tv_status_lbl.setText(hmAux_Trans.get("lbl_status"));
 
+        //
+        // Aguardando definicao
+        if (item.get("site_code") != null && !item.get("site_code").equalsIgnoreCase("null") && Long.parseLong(item.get("site_code")) == site_id_preference) {
+            llBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+        } else {
+            llBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+        }
         //
         Drawable llDrawable = null;
 

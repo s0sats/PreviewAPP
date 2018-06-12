@@ -149,11 +149,13 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
             btn_create_serial.setVisibility(View.GONE);
         }
 
-        if (serial_id.isEmpty()) {
+        if (serial_id.equals("")) {
             btn_create_serial.setVisibility(View.GONE);
+        } else {
+            btn_no_serial.setVisibility(View.GONE);
         }
 
-        if (btn_create_serial.getVisibility() == View.VISIBLE){
+        if (btn_create_serial.getVisibility() == View.VISIBLE) {
             btn_no_serial.setVisibility(View.GONE);
         }
 

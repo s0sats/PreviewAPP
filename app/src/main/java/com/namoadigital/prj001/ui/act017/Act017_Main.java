@@ -99,9 +99,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,false);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,false);
-        }else{
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, false);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, false);
+        } else {
             filter_form = false;
             filter_form_ap = false;
         }
@@ -126,11 +126,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 translateList
         );
 
-  /*
-        * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
-        * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
-        * DO RECURSO DA ACT005
-        * */
+        /*
+         * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+         * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+         * DO RECURSO DA ACT005
+         * */
         List<String> transList_Extra = new ArrayList<String>();
         transList_Extra.add("lbl_checklist");
         transList_Extra.add("lbl_form_ap");
@@ -270,12 +270,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 schedules
         );
         //
+        mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
+        //
         lv_schedules.setAdapter(mAdapter);
         //
-        if(schedules.size() == 0){
+        if (schedules.size() == 0) {
             lv_schedules.setVisibility(View.GONE);
             tv_no_result.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             tv_no_result.setVisibility(View.GONE);
             lv_schedules.setVisibility(View.VISIBLE);
         }
@@ -283,10 +285,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder alert =  new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
         //
-        LayoutInflater inflater =  this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.module_filter_dialog,null);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.module_filter_dialog, null);
         //
         TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
@@ -318,11 +320,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date,filter_form, filter_form_ap);
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap);
         //
-        if(filter_form||filter_form_ap){
+        if (filter_form || filter_form_ap) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        }else{
+        } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
@@ -462,8 +464,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         Intent mIntent = new Intent(context, Act016_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -483,9 +485,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         Intent mIntent = new Intent(context, Act038_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Adicionan schedule_date no bundle
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE,scheduled_date);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
+        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

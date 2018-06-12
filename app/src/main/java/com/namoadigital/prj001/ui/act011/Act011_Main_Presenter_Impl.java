@@ -245,6 +245,33 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
 
         if (bAgendado) {
+            if (serial_id == null || serial_id.isEmpty()) {
+                formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                formData.setZone_code(null);
+                formData.setLocal_code(null);
+            } else {
+                MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                        new MD_Product_Serial_Sql_002(
+                                Long.parseLong(customer_code),
+                                Long.parseLong(product_code),
+                                serial_id
+                        ).toSqlQuery()
+                );
+
+                if (md_product_serialAux != null) {
+                    formData.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+                    formData.setZone_code(md_product_serialAux.getZone_code());
+                    formData.setLocal_code(md_product_serialAux.getLocal_code());
+                } else {
+                    // Erro Nao deve Acontecer
+                    formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                    formData.setZone_code(null);
+                    formData.setLocal_code(null);
+                }
+            }
+
+            formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+            //
             custom_form_dataDao.addUpdate(formData);
             custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
         }

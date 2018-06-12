@@ -33,6 +33,21 @@ public class GE_Custom_Form_Local {
     private int all_operation;
     private int all_product;
 
+    private int site_code;
+    private String site_id;
+    private String site_desc;
+    private int io_control;
+    private int inbound_auto_create;
+    private int operation_code;
+    private String operation_id;
+    private String operation_desc;
+    private int local_control;
+    private int product_io_control;
+    private int site_restriction;
+    private String serial_rule;
+    private Integer serial_min_length;
+    private Integer serial_max_length;
+
     public long getCustomer_code() {
         return customer_code;
     }
@@ -239,5 +254,117 @@ public class GE_Custom_Form_Local {
 
     public void setAll_product(int all_product) {
         this.all_product = all_product;
+    }
+
+    public int getSite_code() {
+        return site_code;
+    }
+
+    public void setSite_code(int site_code) {
+        this.site_code = site_code;
+    }
+
+    public String getSite_id() {
+        return site_id;
+    }
+
+    public void setSite_id(String site_id) {
+        this.site_id = site_id;
+    }
+
+    public String getSite_desc() {
+        return site_desc;
+    }
+
+    public void setSite_desc(String site_desc) {
+        this.site_desc = site_desc;
+    }
+
+    public int getIo_control() {
+        return io_control;
+    }
+
+    public void setIo_control(int io_control) {
+        this.io_control = io_control;
+    }
+
+    public int getInbound_auto_create() {
+        return inbound_auto_create;
+    }
+
+    public void setInbound_auto_create(int inbound_auto_create) {
+        this.inbound_auto_create = inbound_auto_create;
+    }
+
+    public int getOperation_code() {
+        return operation_code;
+    }
+
+    public void setOperation_code(int operation_code) {
+        this.operation_code = operation_code;
+    }
+
+    public String getOperation_id() {
+        return operation_id;
+    }
+
+    public void setOperation_id(String operation_id) {
+        this.operation_id = operation_id;
+    }
+
+    public String getOperation_desc() {
+        return operation_desc;
+    }
+
+    public void setOperation_desc(String operation_desc) {
+        this.operation_desc = operation_desc;
+    }
+
+    public int getLocal_control() {
+        return local_control;
+    }
+
+    public void setLocal_control(int local_control) {
+        this.local_control = local_control;
+    }
+
+    public int getProduct_io_control() {
+        return product_io_control;
+    }
+
+    public void setProduct_io_control(int product_io_control) {
+        this.product_io_control = product_io_control;
+    }
+
+    public int getSite_restriction() {
+        return site_restriction;
+    }
+
+    public void setSite_restriction(int site_restriction) {
+        this.site_restriction = site_restriction;
+    }
+
+    public String getSerial_rule() {
+        return serial_rule;
+    }
+
+    public void setSerial_rule(String serial_rule) {
+        this.serial_rule = serial_rule;
+    }
+
+    public Integer getSerial_min_length() {
+        return serial_min_length;
+    }
+
+    public void setSerial_min_length(Integer serial_min_length) {
+        this.serial_min_length = serial_min_length;
+    }
+
+    public Integer getSerial_max_length() {
+        return serial_max_length;
+    }
+
+    public void setSerial_max_length(Integer serial_max_length) {
+        this.serial_max_length = serial_max_length;
     }
 }
