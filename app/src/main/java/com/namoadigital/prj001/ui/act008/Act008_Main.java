@@ -207,7 +207,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mPresenter.getProductInfo(bundle);
         //
         initFrag();
-
     }
 
     private void initFrag() {
@@ -226,7 +225,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override
-            public void onCheckButtonClick(String product_id, String serial_id, String tracking) {
+            public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
                 if(ToolBox_Con.isOnline(context)) {
                     mPresenter.executeSerialSearch(
                             product_id,
@@ -269,6 +268,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
                 mPresenter.executeTrackingSearch(product_code,serial_code,tracking,site_code);
+            }
+
+            @Override
+            public void onProductOrSerialNull() {
+                mPresenter.onBackPressedClicked();
             }
         });
     }
@@ -330,7 +334,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mdProduct = md_product;
     }
 
-//    @Override
+    @Override
+    public void updateProductSerialValues(MD_Product_Serial mdProductSerial) {
+        this.mdProductSerial = mdProductSerial;
+        frgSerialEdit.setMdProductSerial(this.mdProductSerial);
+    }
+    //    @Override
 //    public void callAct007(Context context) {
 //        Intent mIntent =  new Intent(context, Act007_Main.class);
 //        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -426,6 +435,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        frgSerialEdit.scrollToTop();
+                        //
                         mPresenter.checkFlow();
                     }
                 },
@@ -599,7 +610,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
         }else if(ws_process.equals(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
-            frgSerialEdit.refreshUi();
+            //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
                 mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
             } else {

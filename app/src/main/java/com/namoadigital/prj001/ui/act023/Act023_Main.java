@@ -191,7 +191,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override
-            public void onCheckButtonClick(String product_id, String serial_id, String tracking) {
+            public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
                 /*executeSerialSearch(
                         product_id,
                         serial_id,
@@ -221,6 +221,11 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
                mPresenter.executeTrackingSearch(product_code,serial_code,tracking,site_code);
+            }
+
+            @Override
+            public void onProductOrSerialNull() {
+                mPresenter.onBackPressedClicked();
             }
         });
     }

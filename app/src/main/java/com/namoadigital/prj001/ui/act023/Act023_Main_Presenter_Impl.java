@@ -22,7 +22,6 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -45,7 +44,6 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     private Long product_code;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
-    private boolean downloadStarted = false;
 
     public Act023_Main_Presenter_Impl(Context context, Act023_Main mView, String requesting_process, Bundle bundle, HMAux hmAux_Trans, MD_ProductDao mdProductDao, String product_code, MD_Product_SerialDao serialDao,MD_Product_Serial_TrackingDao trackingDao) {
         this.context = context;
@@ -64,46 +62,16 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         MD_Product md_product = null;
         md_product = getMDProduct();
         //
-        if (isValidProduct(md_product)) {
+        if (ToolBox_Inf.isValidProduct(md_product)) {
             mView.setProductValues(md_product);
         } else {
+            mView.setProductValues(null);
+            //
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
             );
         }
-    }
-
-//    private void getNFormProductInfoFlow() {
-//        MD_Product md_product = null;
-//        if (isSchedule) {
-//            md_product = getScheduledProductInfo();
-//
-//        } else {
-//            md_product = getMDProduct();
-//        }
-//        //
-//        if (isValidProduct(md_product)) {
-//            mView.setProductValues(md_product);
-//        } else {
-//            mView.showAlertDialog(
-//                    hmAux_Trans.get("alert_product_not_found_title"),
-//                    hmAux_Trans.get("alert_product_not_found_msg")
-//            );
-//        }
-//    }
-
-    private MD_Product getScheduledProductInfo() {
-
-        return mdProductDao.getByString(
-                new Sql_Act008_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
-                        bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
-                        bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
-                        bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
-                ).toSqlQuery()
-        );
     }
 
     private MD_Product getMDProduct() {
@@ -128,14 +96,6 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         );
         //Salva dados alterados do S.O
         serialDao.addUpdateTmp(mdProductSerial);
-    }
-
-    private boolean isValidProduct(MD_Product md_product) {
-        //Erro, produto não encontrado
-        if (md_product != null && md_product.getProduct_code() > 0) {
-            return true;
-        }
-        return false;
     }
 
     @Override

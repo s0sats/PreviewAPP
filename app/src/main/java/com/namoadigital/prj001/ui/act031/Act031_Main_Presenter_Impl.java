@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -13,14 +15,14 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -39,22 +41,20 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     private Context context;
     private Act031_Main_View mView;
+    private long product_code;
     private HMAux hmAux_Trans;
     private MD_ProductDao mdProductDao;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
-    private long product_code;
-    private ArrayList<MD_Product_Serial_Tracking> tracking_list;
 
-    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, long product_code, ArrayList<MD_Product_Serial_Tracking> tracking_list) {
+    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, long product_code, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao) {
         this.context = context;
         this.mView = mView;
+        this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
         this.serialDao = serialDao;
         this.trackingDao = trackingDao;
-        this.product_code = product_code;
-        this.tracking_list = tracking_list;
     }
 
     /**
@@ -65,7 +65,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     @Override
     public void serialFlow(String serial) {
 
-        if (hasSerial(serial)) {
+        /*if (hasSerial(serial)) {
 
             if (ToolBox_Con.isOnline(context)) {
                 mView.showPD(
@@ -79,39 +79,14 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
             }
 
         } else {
-            mView.fieldFocus();
+            //mView.fieldFocus();
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_no_serial_typed_title"),
                     hmAux_Trans.get("alert_no_serial_typed_msg")
             );
-        }
+        }*/
     }
 
-    public boolean hasSerial(String serial) {
-        //Verifica se Serial foi preenchido
-        if (serial.trim().length() > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    public void executeSerialSearch(Long product_code, String serial_id) {
-        mView.setWs_process(Act031_Main.WS_SEARCH_SERIAL);
-
-        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
-        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, "");
-        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
-        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS, true);
-        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS, mView.isNew_serial());
-        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
 
     @Override
     public void getProductInfo() {
@@ -123,21 +98,80 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if (md_product.getCustomer_code() > 0) {
+        if (ToolBox_Inf.isValidProduct(md_product)) {
             mView.setProductValues(md_product);
         } else {
+            //
+            mView.setProductValues(null);
+            //
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
             );
         }
 
-
     }
 
     @Override
-    public void executeSaveSerial(Long product_code, String serial_id, boolean save_serial) {
-        mView.setWs_process(Act031_Main.WS_SAVE_SERIAL);
+    public void searchLocalSerial(long product_code, String serial_id) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //
+        MD_Product_Serial objSerial = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+        if (objSerial != null && objSerial.getSerial_code() > -1) {
+            mView.applyReceivedSerialToFrag(objSerial);
+        } else {
+            mView.reApplySerialIdToFrag();
+        }
+    }
+
+    @Override
+    public void updateSerialData(MD_Product_Serial productSerial) {
+        //Remove os tracking para reinserir os que ficaram
+        trackingDao.remove(new
+                        MD_Product_Serial_Tracking_Sql_002(
+                        productSerial.getCustomer_code(),
+                        productSerial.getProduct_code(),
+                        productSerial.getSerial_tmp()
+                ).toSqlQuery()
+        );
+        //Salva dados alterados do S.O
+        serialDao.addUpdateTmp(productSerial);
+    }
+
+
+    //region WS CALLS
+    public void executeSerialSearch(Long product_code, String product_id, String serial_id) {
+        mView.setWs_process(WS_Serial_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_serial_search_ttl"),
+                hmAux_Trans.get("dialog_serial_search_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSerialSave() {
+        mView.setWs_process(WS_Serial_Save.class.getName());
         //
         mView.showPD(
                 hmAux_Trans.get("progress_serial_save_ttl"),
@@ -146,10 +180,6 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_Serial_Save.class);
         Bundle bundle = new Bundle();
-//        bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,product_code);
-//        bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID,serial_id);
-//        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL,save_serial);
-//        bundle.putBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL,true);
         //
         mIntent.putExtras(bundle);
         //
@@ -159,7 +189,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
-        mView.setWs_process(Act031_Main.WS_SEARCH_TRACKING);
+        mView.setWs_process(WS_Serial_Tracking_Search.class.getName());
         //
         mView.showPD(
                 hmAux_Trans.get("progress_tracking_search_ttl"),
@@ -177,83 +207,9 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         //
         context.sendBroadcast(mIntent);
     }
+    //endregion
 
-    @Override
-    public void saveNewSerialInfo(MD_Product_Serial md_product_serial) {
-        serialDao.addUpdateTmp(md_product_serial);
-        //
-        getSerialInfo(product_code, md_product_serial.getSerial_id());
-    }
-
-    @Override
-    public void saveNewSerialInfo(Long product_code, String serial_id) {
-        MD_Product_Serial productSerial = new MD_Product_Serial();
-        productSerial.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-        productSerial.setProduct_code(product_code);
-        productSerial.setSerial_code(0);
-        productSerial.setSerial_id(serial_id);
-        //
-        serialDao.addUpdateTmp(productSerial);
-        //
-        getSerialInfo(product_code, serial_id);
-    }
-
-    @Override
-    public void getSerialInfo(Long product_code, String serial_id) {
-        HMAux serial_full_desc_info = serialDao.getByStringHM(
-                new MD_Product_Serial_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
-                        serial_id
-                ).toSqlQuery()
-        );
-        ///
-        MD_Product_Serial serialObjDb = serialDao.getByString(
-                new MD_Product_Serial_Sql_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
-                        serial_id
-                ).toSqlQuery()
-        );
-
-        //mView.setSerialValues(md_product_serial);
-        mView.setSerialValuesV2(serial_full_desc_info, serialObjDb);
-    }
-
-    @Override
-    public void updateTrackingReference(ArrayList<MD_Product_Serial_Tracking> tracking_list) {
-        this.tracking_list = tracking_list;
-    }
-
-    @Override
-    public void updateSerialInfo(MD_Product_Serial productSerial) {
-        //Remove os tracking para reinserir os que ficaram
-        trackingDao.remove(new
-                        MD_Product_Serial_Tracking_Sql_002(
-                        productSerial.getCustomer_code(),
-                        productSerial.getProduct_code(),
-                        productSerial.getSerial_tmp()
-                ).toSqlQuery()
-        );
-        //Salva dados alterados do S.O
-        serialDao.addUpdateTmp(productSerial);
-        //
-        refreshUI(productSerial.getProduct_code(), productSerial.getSerial_id());
-        //
-        //if (ToolBox_Con.isOnline(context)) {
-            //Chama consulta de S.O informando qe o serial precisa ser alterado.
-            executeSaveSerial(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
-        /*} else {
-            //Save Offiline
-            //ToolBox_Inf.showNoConnectionDialog(context);
-            mView.showSingleResultMsg(
-                    hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_save_serial_offline_msg")
-            );
-
-        }*/
-    }
-
+    //region WS CALLBACK TREATMENT
     @Override
     public void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
         if (hmSaveResult.size() > 0) {
@@ -295,7 +251,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            refreshUI(product_code, serial_id);
+            refreshMdProductSerialReference(product_code, serial_id);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
@@ -312,117 +268,70 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     }
 
     @Override
-    public void processTrackingResult(HMAux auxResult, MD_Product_Serial serialObj) {
-        if (auxResult.containsKey(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY)) {
-            if (auxResult.get(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY).equals(WS_Serial_Tracking_Search.NOT_EXISTS)) {
-                //
-                tracking_list.add(
-                        buildTrackingObj(serialObj, mView.getSearched_tracking())
-                );
-                //
-                mView.appendTracking(mView.getSearched_tracking());
-                //
-                mView.setTrackingListChanged(true);
-                //
-                mView.cleanSearched_tracking();
-                //
-                mView.scrollToTracking();
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        if (serial_list != null) {
+            if (serial_list.size() == 0) {
+                mView.reApplySerialIdToFrag();
+            } else if (serial_list.size() == 1) {
+                mView.applyReceivedSerialToFrag(serial_list.get(0));
             } else {
-                mView.showAlertDialog(
-                        hmAux_Trans.get("alert_tracking_unavailable_ttl"),
-                        hmAux_Trans.get("alert_tracking_unavailable_msg")
-                );
+                //FUDEU
             }
-        }
-    }
-
-    private MD_Product_Serial_Tracking buildTrackingObj(MD_Product_Serial serialObj, String searched_tracking) {
-        MD_Product_Serial_Tracking auxTracking = new MD_Product_Serial_Tracking();
-        //
-        auxTracking.setTracking(searched_tracking);
-        auxTracking.setPk(serialObj);
-        //
-        return auxTracking;
-    }
-
-    @Override
-    public boolean isTrackingListed(String tracking) {
-
-        for (int i = 0; i < tracking_list.size(); i++) {
-            if (tracking_list.get(i).getTracking().equals(tracking)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void refreshUI(long product_code, String serial_id) {
-
-        mView.setNew_serial(false);
-        //
-        mView.setTrackingListChanged(false);
-        //
-        getSerialInfo(product_code, serial_id);
-    }
-
-
-    @Override
-    public void onBackPressedClicked(boolean new_serial, final MD_Product_Serial serialObj) {
-        String ttl = "";
-        String msg = "";
-        DialogInterface.OnClickListener listener = null;
-
-        if (new_serial) {
-            ttl = hmAux_Trans.get("new_serial_data_lost_ttl");
-            msg = hmAux_Trans.get("new_serial_data_lost_msg");
-            listener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    removeNewSerialData(serialObj);
-                    //
-                    mView.callAct030(context);
-                }
-            };
-
         } else {
-            ttl = hmAux_Trans.get("serial_data_lost_ttl");
-            msg = hmAux_Trans.get("serial_data_lost_msg");
-            listener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mView.callAct030(context);
-                }
-            };
+            //FUDEU 2
         }
+        //
+    }
+    //ENDREGION
 
-        ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                listener,
-                1
+    private void refreshMdProductSerialReference(long product_code, String serial_id) {
+        mView.updateProductSerialValues(
+                getSerialInfo(
+                        product_code,
+                        serial_id
+                )
         );
-
+        //
+        mView.refreshUI();
     }
 
-    private void removeNewSerialData(MD_Product_Serial serialObj) {
-        //Remove Tracking OBS:Não deve existir tracking até aqui
-        //MAS por segurança
-        trackingDao.remove(new
-                        MD_Product_Serial_Tracking_Sql_002(
-                        serialObj.getCustomer_code(),
-                        serialObj.getProduct_code(),
-                        serialObj.getSerial_tmp()
+    //@Override
+    public MD_Product_Serial getSerialInfo(Long product_code, String serial_id) {
+        MD_Product_Serial serialObjDb = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
                 ).toSqlQuery()
         );
         //
-        serialDao.remove(new
-                        MD_Product_Serial_Sql_003(
-                        serialObj.getCustomer_code(),
-                        serialObj.getProduct_code(),
-                        serialObj.getSerial_tmp()
-                ).toSqlQuery()
-        );
+        return serialObjDb;
     }
 
+    @Override
+    public void onBackPressedClicked(boolean jump_ask) {
+        if(jump_ask) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("serial_data_lost_ttl"),
+                    hmAux_Trans.get("serial_data_lost_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callAct030(context);
+                        }
+                    },
+                    1
+            );
+        }else{
+            mView.callAct030(context);
+        }
+    }
 }

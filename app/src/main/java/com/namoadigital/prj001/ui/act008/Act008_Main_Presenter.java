@@ -27,8 +27,6 @@ public interface Act008_Main_Presenter {
 
     void onBackPressedClicked();
 
-    boolean checkFormXOperationExists();
-
     void defineFlow();
 
     void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);

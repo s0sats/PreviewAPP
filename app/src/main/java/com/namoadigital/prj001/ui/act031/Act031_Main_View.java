@@ -13,23 +13,14 @@ import java.util.ArrayList;
  */
 
 public interface Act031_Main_View {
-    void fieldFocus();
 
     void showPD(String title , String msg);
 
     void showAlertDialog(String title, String msg);
 
-    String getSearched_tracking();
-
-    void cleanSearched_tracking();
-
     void setWs_process(String ws_process);
 
     void setProductValues(MD_Product md_product);
-
-    void setSerialValues(HMAux md_product_serial);
-
-    void setSerialValuesV2(HMAux md_product_serial, MD_Product_Serial serialObjDb);
 
     void callAct030(Context context);
 
@@ -37,15 +28,13 @@ public interface Act031_Main_View {
 
     void showSerialResults(ArrayList<HMAux> returnList);
 
-    void appendTracking(String tracking);
+    void refreshUI();
 
-    void scrollToTracking();
+    void reApplySerialIdToFrag();
 
-    void setTrackingListChanged(boolean trackingListChanged);
+    void applyReceivedSerialToFrag(MD_Product_Serial serial_returned);
 
-    boolean isNew_serial();
-
-    void setNew_serial(boolean new_serial);
+    void updateProductSerialValues(MD_Product_Serial mdProductSerial);
 
 
 }

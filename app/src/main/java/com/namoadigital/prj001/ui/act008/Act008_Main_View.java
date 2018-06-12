@@ -16,8 +16,6 @@ public interface Act008_Main_View {
 
     void setProductValues(MD_Product md_product);
 
-//    void fieldFocus();
-
     void setWsProcess(String wsProcess);
 
     void showPD(String title, String msg);
@@ -45,5 +43,7 @@ public interface Act008_Main_View {
     void reApplySerialIdToFrag();
 
     void applyReceivedSerialToFrag(MD_Product_Serial serial_returned);
+
+    void updateProductSerialValues(MD_Product_Serial mdProductSerial);
 
 }
