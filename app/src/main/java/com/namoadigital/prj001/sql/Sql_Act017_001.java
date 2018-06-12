@@ -52,7 +52,9 @@ public class Sql_Act017_001 implements Specification {
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+                        "  l.require_serial,\n"+
+                        "  l.allow_new_serial_cl\n"+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -88,7 +90,8 @@ public class Sql_Act017_001 implements Specification {
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
-                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#schedule_date_start_format#schedule_date_end_format")
+                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
+                        "schedule_date_start_format#schedule_date_end_format#require_serial#allow_new_serial_cl")
                 .toString();
 
 

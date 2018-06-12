@@ -45,7 +45,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
-    public static final String KEY_NO_SERIAL = "NO_SERIAL";
 
     //public static final String PROGRESS_NFC = "progress_nfc";
 
@@ -313,7 +312,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 //
                 no_serial = true;
                 //
-                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(KEY_NO_SERIAL),no_serial);
+                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(Constant.KEY_NO_SERIAL),no_serial);
             }
         });
 

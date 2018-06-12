@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.util.Constant;
+
 import java.io.Serializable;
 
 /**
@@ -201,7 +203,7 @@ public class MD_Product implements Serializable {
             mdProductSerial.setProduct_desc(getProduct_desc());
             mdProductSerial.setSerial_code(0);
             mdProductSerial.setSerial_tmp(0);
-            mdProductSerial.setSerial_id(serial_id.toUpperCase());
+            mdProductSerial.setSerial_id(serial_id.equals(Constant.KEY_NO_SERIAL) ? "" : serial_id.toUpperCase());
             mdProductSerial.setProduct_io_control(getIo_control());
             mdProductSerial.setLocal_control(getLocal_control());
             mdProductSerial.setSite_restriction(getSite_restriction());

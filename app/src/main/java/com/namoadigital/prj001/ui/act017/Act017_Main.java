@@ -117,6 +117,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("filter_lbl");
         translateList.add("alert_filter_dialog_msg");
         translateList.add("msg_no_result");
+        translateList.add("alert_define_serial_ttl");
+        translateList.add("alert_define_serial_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

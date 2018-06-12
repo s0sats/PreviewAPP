@@ -160,6 +160,7 @@ public class Frg_Serial_Edit extends Fragment {
     private I_Frg_Serial_Edit delegate;
     private boolean useTracking;
     private String btn_action_translation = "";
+    private boolean forceCheckExistences = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -252,6 +253,10 @@ public class Frg_Serial_Edit extends Fragment {
 
     public void setShowCategorySegmentoInfo(boolean showCategorySegmentoInfo) {
         this.showCategorySegmentoInfo = showCategorySegmentoInfo;
+    }
+
+    public void setForceCheckExistences(boolean forceCheckExistences) {
+        this.forceCheckExistences = forceCheckExistences;
     }
 
     public void reApplySerialId() {
@@ -620,6 +625,42 @@ public class Frg_Serial_Edit extends Fragment {
             mket_serial_id.setmOCR(false);
             mket_serial_id.setmNFC(false);
             mket_serial_id.setEnabled(false);
+        }else{
+            /**
+             * 12/06/2018
+             * IMPLEMENTAR SE SOBRAR TEMPO
+             * Como houveram alteração no metodo de montagem dos ss, para que o metodo abaixo
+             * funcione , seria necessario buscar do banco TODOS DADOS de site e zona para
+             * inserir diretamente no obj ou SS.
+             */
+            //Se novo Serial e produto controla localização , então tenta setar site e zona atual como padrão
+            /*if (mdProduct.getLocal_control() == 1
+                    //&& mdProduct.getSite_restriction() == 0
+                 ) {
+                mdProductSerial.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
+                //Se Zona setada nas preferencias, adiciona.
+                if (ToolBox_Con.getPreference_Zone_Code(context) != -1) {
+                    mdProductSerial.setZone_code(ToolBox_Con.getPreference_Zone_Code(context));
+                    //
+                    //Verifica se Zona possui apenas um local, se tiver, seta ela no obj
+                    ArrayList<HMAux> auxLocalList = (ArrayList<HMAux>)
+                            new MD_Site_Zone_LocalDao(
+                                    context,
+                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    Constant.DB_VERSION_CUSTOM
+                            ).query_HM(
+                                    new MD_Site_Zone_Local_Sql_SS(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            String.valueOf(mdProductSerial.getSite_code()),
+                                            String.valueOf(mdProductSerial.getZone_code())
+                                    ).toSqlQuery()
+                            );
+                    //
+                    if(auxLocalList != null && auxLocalList.size() == 1){
+                        mdProductSerial.setLocal_code(Integer.parseInt(auxLocalList.get(0).get(SearchableSpinner.ID)));
+                    }
+                }
+            }*/
         }
         //Processa lista de trackings
         ll_tracking_content.removeAllViews();
@@ -786,6 +827,13 @@ public class Frg_Serial_Edit extends Fragment {
         //endregion
         //
         applyProfile();
+        //
+        if(forceCheckExistences){
+            forceCheckExistences = false;
+            blockAllProperties();
+            btn_action.setText(hmAux_Trans.get("btn_check_exists"));
+            btn_action.setOnClickListener(checkExistSerialListner);
+        }
     }
 
     private boolean checkDbValInOption(SearchableSpinner ssComponent, String value) {
