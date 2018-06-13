@@ -312,6 +312,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_list.add(tv_item_07_lbl);
         tv_list.add(tv_item_07_val);
         //
+        TextView tv_item_71_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_71_lbl);
+        TextView tv_item_71_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_71_val);
+
+        tv_list.add(tv_item_71_lbl);
+        tv_list.add(tv_item_71_val);
+        //
         TextView tv_item_08_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_lbl);
         TextView tv_item_08_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_val);
 
@@ -327,7 +333,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_lbl);
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_val);
         tv_status_lbl.setText(hmAux_Trans.get("lbl_status"));
-
         //
         // Aguardando definicao
         if (item.get("site_code") != null && !item.get("site_code").equalsIgnoreCase("null") && Long.parseLong(item.get("site_code")) == site_id_preference) {
@@ -367,6 +372,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0) {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+                    tv_item_71_lbl.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(GE_Custom_Form_LocalDao.SITE_ID) + " - " + item.get(GE_Custom_Form_LocalDao.SITE_DESC));
                     //
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
@@ -375,6 +381,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
                 } else {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
+                    tv_item_71_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                     tv_item_09_lbl.setVisibility(View.INVISIBLE);
                 }
@@ -457,6 +464,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("lbl_form");
         translateList.add("CHECKLIST");
         translateList.add("lbl_data_serv");
+        translateList.add("lbl_site_id");
         translateList.add("lbl_date_schedule_start");
         translateList.add("lbl_date_schedule_end");
         translateList.add("lbl_status");
