@@ -81,10 +81,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
             case Constant.MODULE_CHECKLIST:
                 if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
-                    if (item.get("site_code") != null &&
-                            !item.get("site_code").equalsIgnoreCase("null") &&
-                            !item.get("site_code").equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
-
+                    if (item.get(GE_Custom_Form_LocalDao.SITE_CODE) != null &&
+                            !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase("null") &&
+                            !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
 
                         ToolBox.alertMSG(
                                 context,
@@ -149,7 +148,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
-        bundle.putString(Constant.ACT017_SCHEDULED_SITE, "10");
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
 
 //        if(hasSerial){
 //            mView.callAct011(context,bundle);
