@@ -158,10 +158,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 //            mView.callAct008(context,bundle);
 //        }
 
-        if(hasSerial){
-            mView.callAct008(context,bundle);
-        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
+        if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
             mView.callAct011(context,bundle);
+        }else if(hasSerial){
+            mView.callAct008(context,bundle);
         }else{
             if( item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
                 && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
