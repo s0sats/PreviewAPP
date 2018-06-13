@@ -97,6 +97,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
+    public static final String ACT017_SCHEDULED_SITE = "scheduled_site";
+
     public static final String ACT020_BACK_FLOW = "back_flow";
     public static final String ACT020_PRODUCT_CODE = "product_code";
     public static final String ACT020_PRODUCT_DESC = "product_desc";
@@ -128,9 +130,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
     public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     public static final String MAIN_SERIAL_CREATION = "main_serial_creation";
+
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
     public static final String MAIN_CONCAT_STRING_2 = "##@n@m0@@##";
+    //
+    public static final String KEY_NO_SERIAL = MAIN_CONCAT_STRING + "_NO_SERIAL";
 
 
     /**

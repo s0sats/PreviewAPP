@@ -49,7 +49,6 @@ public class Sql_Act008_002 implements Specification {
                         "   l.custom_product_desc product_desc,\n" +
                         "   l.require_serial,\n" +
                         "   l.allow_new_serial_cl,\n" +
-                        //"   '0' flag_offline,\n" +
                         "   'TST' un,\n" +
                         "   0 sketch_code,\n" +
                         "   '' sketch_url,\n" +
@@ -62,7 +61,8 @@ public class Sql_Act008_002 implements Specification {
                         "   0 io_control,\n" +
                         "   null serial_rule,\n" +
                         "   null serial_min_length,\n" +
-                        "   null serial_max_length\n" +
+                        "   null serial_max_length,\n" +
+                        "   0 site_restriction\n" +
                         " FROM\n " +
                         GE_Custom_Form_LocalDao.TABLE + " l \n" +
                         " \n" +

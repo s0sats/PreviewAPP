@@ -221,6 +221,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.setForceCheckExistences(true);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -284,8 +285,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             if(bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
                 isSchedule = true;
             }//
-            bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
-            bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+            if(isSchedule) {
+                bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
+                bundle_serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            }else{
+                bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
+                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+            }
+
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
             requesting_process = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
             //
@@ -335,9 +342,17 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
+    public void setMdProductSerial(MD_Product_Serial mdProductSerial) {
+        this.mdProductSerial = mdProductSerial;
+    }
+
+    @Override
     public void updateProductSerialValues(MD_Product_Serial mdProductSerial) {
         this.mdProductSerial = mdProductSerial;
-        frgSerialEdit.setMdProductSerial(this.mdProductSerial);
+        //
+        if(frgSerialEdit != null) {
+            frgSerialEdit.setMdProductSerial(this.mdProductSerial);
+        }
     }
     //    @Override
 //    public void callAct007(Context context) {
@@ -565,7 +580,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct011(Context context) {
         Intent mIntent =  new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-       // bundle.putString(Constant.ACT008_SERIAL_ID,ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()));
+        bundle.putString(Constant.ACT008_SERIAL_ID,mdProductSerial.getSerial_id());
 
         mIntent.putExtras(bundle);
 

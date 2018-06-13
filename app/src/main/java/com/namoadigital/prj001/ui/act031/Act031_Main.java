@@ -46,10 +46,6 @@ import java.util.List;
 
 public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
-    public static final String WS_SEARCH_SERIAL = "WS_SEARCH_SERIAL";
-    public static final String WS_SAVE_SERIAL = "WS_SAVE_SERIAL";
-    public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
-
     private Act031_Main_Presenter mPresenter;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
@@ -347,36 +343,6 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 bundle_product_code = mdProductSerial.getProduct_code();
                 bundle_serial_id = mdProductSerial.getSerial_id();
                 bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
-                //Se novo Serial, seta site e zona atual como padrão
-                /**
-                 * MOVER ESSE IF ABAIXO PARA O FRAG DE EDIÇÃO DO SERIAL ?
-                 *
-                 */
-                /*if (bundle_new_serial) {
-                    mdProductSerial.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
-                    //Se Zona setada nas preferencias, adiciona.
-                    if (ToolBox_Con.getPreference_Zone_Code(context) != -1) {
-                        mdProductSerial.setZone_code(ToolBox_Con.getPreference_Zone_Code(context));
-                        //
-                        //Verifica se Zona possui apenas um local, se tiver, seta ela no obj
-                        ArrayList<HMAux> auxLocalList = (ArrayList<HMAux>)
-                                 new MD_Site_Zone_LocalDao(
-                                                    context,
-                                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                                                    Constant.DB_VERSION_CUSTOM
-                                            ).query_HM(
-                                                    new MD_Site_Zone_Local_Sql_SS(
-                                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                                            String.valueOf(mdProductSerial.getSite_code()),
-                                                            String.valueOf(mdProductSerial.getZone_code())
-                                                    ).toSqlQuery()
-                                            );
-                        //
-                        if(auxLocalList != null && auxLocalList.size() == 1){
-                            mdProductSerial.setLocal_code(Integer.parseInt(auxLocalList.get(0).get(SearchableSpinner.ID)));
-                        }
-                    }
-                }*/
             } else {
                 ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
             }

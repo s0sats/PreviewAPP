@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act017;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -137,28 +138,60 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         //com as bas e campos sendo validados.
         //updateFormStatus(item);
 
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         bundle.putString(Constant.ACT007_PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
         bundle.putString(Constant.ACT008_PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
         bundle.putString(Constant.ACT008_PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
         bundle.putString(Constant.ACT008_SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
         bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
-        bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
-        bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
+        bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+        bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, "10");
 
-        if (hasSerial) {
-            mView.callAct011(context, bundle);
-        } else if (!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
-            mView.callAct011(context, bundle);
-        } else {
-            mView.callAct008(context, bundle);
+//        if(hasSerial){
+//            mView.callAct011(context,bundle);
+//        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
+//            mView.callAct011(context,bundle);
+//        }else{
+//            mView.callAct008(context,bundle);
+//        }
+
+        if(hasSerial){
+            mView.callAct008(context,bundle);
+        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
+            mView.callAct011(context,bundle);
+        }else{
+            if( item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
+                && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
+            ) {
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_define_serial_ttl"),
+                        hmAux_Trans.get("alert_define_serial_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bundle.putBoolean(Constant.MAIN_SERIAL_CREATION,true);
+                                //
+                                mView.callAct008(context, bundle);
+                            }
+                        },
+                        2,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.callAct011(context, bundle);
+                            }
+                        }
+                );
+            }else{
+                mView.callAct011(context, bundle);
+            }
         }
-
-        //mView.callAct011(context,bundle);
-
     }
 
     private void updateFormStatus(HMAux item) {

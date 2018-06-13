@@ -417,7 +417,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
-            bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Act020_Main.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
+            bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
             bundle.putString(Constant.ACT008_SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
 

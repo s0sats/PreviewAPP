@@ -83,6 +83,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         //Se for um agendamento, busca dados da custom_form_local
         //se não do MD
         if (isSchedule) {
+            String serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
+            //se não veio serial, seta serial_id GAMBIS
+            serial_id = !serial_id.equals("") ? serial_id :Constant.KEY_NO_SERIAL;
+            //
             md_product =
                     mdProductDao.getByString(
                             new Sql_Act008_002(
@@ -93,6 +97,19 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                                     bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
                             ).toSqlQuery()
                     );
+            //
+            if(ToolBox_Inf.isValidProduct(md_product)){
+                MD_Product_Serial scheduledSerial = getSerialInfo(
+                                                        product_code,
+                                                        serial_id
+                                                    );
+                //
+                if(scheduledSerial != null){
+                    mView.setMdProductSerial(scheduledSerial);
+                }else{
+                    mView.setMdProductSerial(md_product.createNewSerialForThisProduct(serial_id));
+                }
+            }
 
         } else {
             md_product =
