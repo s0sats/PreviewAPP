@@ -308,6 +308,14 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             public void onProductOrSerialNull() {
                 mPresenter.onBackPressedClicked(true);
             }
+
+            @Override
+            public void onFragIsReady() {
+
+            }
+
+            @Override
+            public void abortFragLoad() { mPresenter.onBackPressedClicked(true); }
         });
 
     }

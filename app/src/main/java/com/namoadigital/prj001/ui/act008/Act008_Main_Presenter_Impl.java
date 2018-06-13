@@ -126,11 +126,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             mView.setProductValues(md_product);
         } else {
             mView.setProductValues(null);
-            //
-            mView.showAlertDialog(
-                    hmAux_Trans.get("alert_product_not_found_title"),
-                    hmAux_Trans.get("alert_product_not_found_msg")
-            );
+            // A MSG FOI MOVIDA PARA O FRAGMENTO.
+//            mView.showAlertDialog(
+//                    hmAux_Trans.get("alert_product_not_found_title"),
+//                    hmAux_Trans.get("alert_product_not_found_msg")
+//            );
         }
     }
 

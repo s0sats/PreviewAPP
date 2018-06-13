@@ -161,10 +161,19 @@ public class Frg_Serial_Edit extends Fragment {
     private boolean useTracking;
     private String btn_action_translation = "";
     private boolean forceCheckExistences = false;
+    private boolean abortReported = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
-
+        /**
+         * Interface disparada quando o btn de ação é acionado após
+         * o campo serial_id de um novo serial foi alterado.
+         *
+         * @param product_code
+         * @param product_id
+         * @param serial_id
+         * @param tracking
+         */
         void onCheckButtonClick(
                 long product_code,
                 String product_id,
@@ -172,22 +181,52 @@ public class Frg_Serial_Edit extends Fragment {
                 String tracking
         );
 
-        //
+        /**
+         * Interface disparada quando o save é acionado e NÃO HOUVE alteração
+         * nos dados do serial.
+         */
         void onSaveNoChangesClick(
                 MD_Product_Serial md_product_serial,
                 boolean serial_id_changes
         );
 
-        //
+        /**
+         * Interface disparada quando o save é acionado e HOUVE alteração
+         * nos dados do serial.
+         *
+         * @param md_product_serial
+         * @param serial_id_changes
+         */
         void onSaveWithChangesClick(
                 MD_Product_Serial md_product_serial,
                 boolean serial_id_changes
         );
 
-        //
+        /**
+         * Interface disparada quando o btn de verificar tracking é acionado
+         * @param product_code
+         * @param serial_code
+         * @param tracking
+         * @param site_code
+         */
         void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code);
-
+        /**
+         * Interface disparada quando o produto ou serial informado
+         * é null
+         */
         void onProductOrSerialNull();
+
+        /**
+         * Interface disparada após rodar TODOS OS METOOS
+         * da configuração do fragmento
+         */
+        void onFragIsReady();
+
+        /**
+         * Interface disparada caso algum problema seja encontrado
+         * no carregamento do fragmento.
+         */
+        void abortFragLoad();
     }
     //endregion
 
@@ -257,6 +296,10 @@ public class Frg_Serial_Edit extends Fragment {
 
     public void setForceCheckExistences(boolean forceCheckExistences) {
         this.forceCheckExistences = forceCheckExistences;
+    }
+
+    public ArrayList<HMAux> getSS_SiteOption(){
+        return ss_site.getmOption();
     }
 
     public void reApplySerialId() {
@@ -580,8 +623,6 @@ public class Frg_Serial_Edit extends Fragment {
                     spinnersInitializer();
                     //
                     applyViewMode();
-                    //
-                    btnActionFocus();
                 }else{
                     //
                     showAlertDialog(
@@ -599,6 +640,23 @@ public class Frg_Serial_Edit extends Fragment {
                         productOrSerialNullListner
                 );
             }
+        }
+    }
+
+    private void informFragIsReady() {
+        if(delegate != null && !abortReported) {
+            delegate.onFragIsReady();
+        }
+        //Se abortReported verdadeiro, não roda o frag isReady e reseta variavel
+        //abortReported
+        if(abortReported){
+            abortReported = false;
+        }
+    }
+
+    private void informFragAbort(){
+        if(delegate != null){
+            delegate.abortFragLoad();
         }
     }
 
@@ -834,6 +892,7 @@ public class Frg_Serial_Edit extends Fragment {
             btn_action.setText(hmAux_Trans.get("btn_check_exists"));
             btn_action.setOnClickListener(checkExistSerialListner);
         }
+
     }
 
     private boolean checkDbValInOption(SearchableSpinner ssComponent, String value) {
@@ -857,10 +916,6 @@ public class Frg_Serial_Edit extends Fragment {
             }
         }
         return false;
-    }
-
-    public void btnActionFocus() {
-        btn_action.findFocus();
     }
 
     public void refreshUi(){
@@ -2130,7 +2185,7 @@ public class Frg_Serial_Edit extends Fragment {
             //Seta a lista
             ss_site.setmOption(siteList);
         }
-        //
+        //Se o site que veio no serial não esta na lista de site dele, adicionado na lista.
         if (ss_site.getmValue() != null && ss_site.getmValue().size() > 0 && !checkDbValInOption(ss_site, String.valueOf(mdProductSerial.getSite_code()))) {
             ArrayList<HMAux> newOption = new ArrayList<>();
             newOption.add(ss_site.getmValue());
@@ -2139,7 +2194,25 @@ public class Frg_Serial_Edit extends Fragment {
             //
             ss_site.setmOption(siteList);
         }
-
+        //SE produto tem site restriction e mOption de site for vazio, aborta load do fragment.
+        if(mdProduct.getSite_restriction() == 1) {
+            if ( ss_site.getmOption() == null
+                 || ss_site.getmOption().size() == 0
+                ) {
+                abortReported = true;
+                //
+                showAlertDialog(
+                        hmAux_Trans.get("alert_no_site_option_ttl"),
+                        hmAux_Trans.get("alert_no_site_option_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                informFragAbort();
+                            }
+                        }
+                );
+            }
+        }
     }
 
     private void loadZoneSS(boolean reset_val) {
@@ -2175,16 +2248,16 @@ public class Frg_Serial_Edit extends Fragment {
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         //USA LISTA DE OPÇÕES DE SITE PARA EXIBIR SOMENTE OS LOCAIS DESSES SITES.
-        String site_restriction = "" ;
+        String site_option_list = "" ;
         if(ss_site.getmOption() != null) {
             for (HMAux aux : ss_site.getmOption()) {
-                site_restriction += aux.get(SearchableSpinner.ID) +",";
+                site_option_list += aux.get(SearchableSpinner.ID) +",";
             }
             //
-            if (site_restriction.length() > 0) {
-                site_restriction = site_restriction.substring(0, site_restriction.length() - 1);
+            if (site_option_list.length() > 0) {
+                site_option_list = site_option_list.substring(0, site_option_list.length() - 1);
             } else {
-                site_restriction = "";
+                site_option_list = "";
             }
         }
         //
@@ -2192,7 +2265,7 @@ public class Frg_Serial_Edit extends Fragment {
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                 ss_site.getmValue().get(SearchableSpinner.ID),
                 ss_site_zone.getmValue().get(SearchableSpinner.ID),
-                site_restriction
+                site_option_list
         ).toSqlQuery());
         //
         ss_site_zone_local.setmOption(localList);
@@ -2287,6 +2360,14 @@ public class Frg_Serial_Edit extends Fragment {
         //
         transListFrag.add("alert_serial_not_found_title");
         transListFrag.add("alert_serial_not_found_msg");
+        transListFrag.add("io_info_ttl");
+        transListFrag.add("inbound_lbl");
+        transListFrag.add("inbound_date_conf_lbl");
+        transListFrag.add("move_code_lbl");
+        transListFrag.add("move_group_lbl");
+        transListFrag.add("outbound_lbl");
+        transListFrag.add("alert_no_site_option_ttl");
+        transListFrag.add("alert_no_site_option_msg");
         //
         return transListFrag;
     }
@@ -2298,6 +2379,8 @@ public class Frg_Serial_Edit extends Fragment {
         super.onResume();
         if (!pausedByScan) {
             loadDataToScreen();
+            //
+            informFragIsReady();
         }
         pausedByScan = false;
     }

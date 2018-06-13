@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -69,11 +70,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private Frg_Serial_Edit frgSerialEdit;
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
-
-    private int serial_required;
-    private int serial_allow_new;
-    //agendamento
-    private boolean isSchedule;
+    private boolean isSchedule;////agendamento
+    private boolean forceCheckSerial = false;
+    private String scheduled_site;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,10 +149,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_no_form_for_product_msg");
         transList.add("alert_no_form_for_operation_msg");
         transList.add("alert_no_form_for_site_msg");
-        //Novas traduções
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
         transList.add("alert_site_restriction_violation_msg");
+        transList.add("alert_form_site_not_found_tll");
+        transList.add("alert_form_site_not_found_msg");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -180,14 +180,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         recoverIntentsInfo();
         //
-        mPresenter =  new Act008_Main_Presenter_Impl(
+        mPresenter = new Act008_Main_Presenter_Impl(
                 context,
                 this,
                 new Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                        ),
+                ),
                 new MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -202,7 +202,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 requesting_process,
                 new MD_Product_SerialDao(context),
                 new MD_Product_Serial_TrackingDao(context)
-                );
+        );
         //
         mPresenter.getProductInfo(bundle);
         //
@@ -221,20 +221,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
-        frgSerialEdit.setForceCheckExistences(true);
+        //frgSerialEdit.setForceCheckExistences(isSchedule);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
             @Override
             public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
-                if(ToolBox_Con.isOnline(context)) {
-                    mPresenter.executeSerialSearch(
-                            product_id,
-                            serial_id
-                    );
-                }else{
-                    mPresenter.searchLocalSerial(mdProduct.getProduct_code(),serial_id);
-                }
+                searchSerialFlow(product_code, product_id, serial_id, tracking);
             }
 
             @Override
@@ -253,9 +246,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 //
                 mdProductSerial = mdProductSerialFrag;
                 //
-                if(ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context)) {
                     mPresenter.executeSerialSave();
-                }else{
+                } else {
                     //ToolBox_Inf.showNoConnectionDialog(context);
                     /*mPresenter.validateSerial(
                             mdProductSerial.getSerial_id(),
@@ -268,33 +261,96 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
-                mPresenter.executeTrackingSearch(product_code,serial_code,tracking,site_code);
+                mPresenter.executeTrackingSearch(product_code, serial_code, tracking, site_code);
             }
 
             @Override
             public void onProductOrSerialNull() {
                 mPresenter.onBackPressedClicked();
             }
+
+            @Override
+            public void onFragIsReady() {
+                if (frgSerialEdit.getSS_SiteOption() != null) {
+                    //Busca se o site
+                    boolean isSiteScheduleInList = false;
+                    for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
+                        if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
+                            isSiteScheduleInList = true;
+                            break;
+                        }
+                    }
+                    //
+                    if(!isSiteScheduleInList){
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_form_site_not_found_tll"),
+                                hmAux_Trans.get("alert_form_site_not_found_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        onBackPressed();
+                                    }
+                                },
+                                0
+
+                        );
+
+                    }else {
+                        //Se é verificação força true, força verificação
+                        //dos dados dos serial.
+                        if (forceCheckSerial) {
+                            //reseta variavel para ser executada apenas uma vez.
+                            forceCheckSerial = false;
+                            searchSerialFlow(
+                                    mdProductSerial.getProduct_code(),
+                                    mdProductSerial.getProduct_id(),
+                                    mdProductSerial.getSerial_id(),
+                                    ""
+                            );
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void abortFragLoad() {
+                mPresenter.onBackPressedClicked();
+            }
         });
+    }
+
+    private void searchSerialFlow(long product_code, String product_id, String serial_id, String tracking) {
+        if (ToolBox_Con.isOnline(context)) {
+            mPresenter.executeSerialSearch(
+                    product_id,
+                    serial_id
+            );
+        } else {
+            mPresenter.searchLocalSerial(mdProduct.getProduct_code(), serial_id);
+        }
     }
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             //Chamada vinda da act017
-            if(bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
+            if (bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)) {
                 isSchedule = true;
             }//
-            if(isSchedule) {
+            if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
-            }else{
+                scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE,"");
+                //Se agendado e existe serial preenchido, seta variavel forceCheckSerial para true.
+                forceCheckSerial = !bundle_serial_id.equals("");
+            } else {
                 bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
             }
 
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
-            requesting_process = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
+            requesting_process = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
             //
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                 mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
@@ -350,7 +406,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void updateProductSerialValues(MD_Product_Serial mdProductSerial) {
         this.mdProductSerial = mdProductSerial;
         //
-        if(frgSerialEdit != null) {
+        if (frgSerialEdit != null) {
             frgSerialEdit.setMdProductSerial(this.mdProductSerial);
         }
     }
@@ -391,11 +447,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String msg = "";
         DialogInterface.OnClickListener listener = null;
 
-        if(serial_offline){
+        if (serial_offline) {
             mPresenter.defineFlow();
-        }else {
-            if (mdProduct.getAllow_new_serial_cl()  == 0
-                   // && ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()).length() > 0
+        } else {
+            if (mdProduct.getAllow_new_serial_cl() == 0
+                // && ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()).length() > 0
                     ) {
                 title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
                 msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis mdProduct requires connection to proceed.\nTry again later.";
@@ -432,12 +488,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void showPD(String title, String msg) {
-            enableProgressDialog(
-                    title,
-                    msg,
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
@@ -511,7 +567,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void refreshUI() {
-        if(frgSerialEdit != null){
+        if (frgSerialEdit != null) {
             frgSerialEdit.refreshUi();
         }
     }
@@ -528,39 +584,39 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct009(Context context) {
-        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),mdProduct.getProduct_code());
-        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), mdProduct.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), ToolBox_Con.getPreference_Operation_Code(context));
         boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
                 context,
                 ToolBox_Con.getPreference_Customer_Code(context),
-                mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context)
+                mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context)
         );
         boolean producSiteRestXSite = false;
-        if( mdProduct.getSite_restriction() == 1){
-            if(mdProductSerial.getSite_code() != null
-            && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
-            ){
+        if (mdProduct.getSite_restriction() == 1) {
+            if (mdProductSerial.getSite_code() != null
+                    && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
+                    ) {
                 producSiteRestXSite = true;
             }
-        }else{
+        } else {
             producSiteRestXSite = true;
         }
         //Se existir form para o produto,site e operação e a regra de restrição de site respeitada,
         //avança para o form
-        if(formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite){
-            Intent mIntent =  new Intent(context, Act009_Main.class);
+        if (formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite) {
+            Intent mIntent = new Intent(context, Act009_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             bundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
-            bundle.putString(Constant.ACT008_SERIAL_ID,ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
+            bundle.putString(Constant.ACT008_SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, mdProduct.getProduct_desc().trim());
             bundle.putString(Constant.ACT008_PRODUCT_ID, mdProduct.getProduct_id().trim());
-            bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //
             mIntent.putExtras(bundle);
             //
             startActivity(mIntent);
             finish();
-        }else{
+        } else {
             String msg = hmAux_Trans.get("alert_no_form_lbl");
             msg += "\n";
             msg = !formXProductExist ? msg + hmAux_Trans.get("alert_no_form_for_product_msg") + "\n" : msg;
@@ -578,9 +634,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct011(Context context) {
-        Intent mIntent =  new Intent(context, Act011_Main.class);
+        Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID,mdProductSerial.getSerial_id());
+        bundle.putString(Constant.ACT008_SERIAL_ID, mdProductSerial.getSerial_id());
 
         mIntent.putExtras(bundle);
 
@@ -590,7 +646,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct017(Context context) {
-        Intent mIntent =  new Intent(context, Act017_Main.class);
+        Intent mIntent = new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove dados não necessarios para act017
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
@@ -611,7 +667,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct006(Context context) {
-        Intent mIntent =  new Intent(context, Act006_Main.class);
+        Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -621,9 +677,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(ws_process.equals(WS_Serial_Search.class.getName())){
+        if (ws_process.equals(WS_Serial_Search.class.getName())) {
             disableProgressDialog();
-        }else if(ws_process.equals(WS_Serial_Save.class.getName())){
+        } else if (ws_process.equals(WS_Serial_Save.class.getName())) {
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
@@ -634,7 +690,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         hmAux_Trans.get("alert_no_serial_return_msg")
                 );
             }
-        } else if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+        } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frgSerialEdit.processTrackingResult(hmAux);
         }
         //
@@ -647,15 +703,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processCloseACT(result, mRequired);
         //
         disableProgressDialog();
-         if(ws_process.equalsIgnoreCase(WS_Serial_Search.class.getName())){
-             mPresenter.extractSearchResult(result);
+        if (ws_process.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
+            mPresenter.extractSearchResult(result);
             //
             disableProgressDialog();
-        }else {
-             //Atualiza data na tabela de produtos loca
-             mPresenter.updateSyncChecklist();
-             // mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
-         }
+        } else {
+            //Atualiza data na tabela de produtos loca
+            mPresenter.updateSyncChecklist();
+            // mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
+        }
 
     }
 
@@ -667,11 +723,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
-    public void reApplySerialIdToFrag(){
+    public void reApplySerialIdToFrag() {
         frgSerialEdit.reApplySerialId();
     }
+
     @Override
-    public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned){
+    public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned) {
         mdProductSerial = serial_returned;
         frgSerialEdit.applyReceivedSerial(serial_returned);
     }
@@ -687,6 +744,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         finish();
     }
+
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
@@ -694,6 +752,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
+
     //Metodo chamado ao finalizar o download da atualização.
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
