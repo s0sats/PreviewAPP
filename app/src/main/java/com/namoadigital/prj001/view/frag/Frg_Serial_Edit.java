@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.ctls.TextViewCT;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
@@ -58,7 +58,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Frg_Serial_Edit extends Fragment {
+public class Frg_Serial_Edit extends BaseFragment {
     //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
     //SE FOR ALTERAR AVISAR CESAR CALDI
     public static final String VIEW_FULL_EDIT = "VIEW_FULL_EDIT";
@@ -134,6 +134,7 @@ public class Frg_Serial_Edit extends Fragment {
     private ImageView iv_serial_dialog_info;
     private String brand_model_color_lbl;
     private boolean showCategorySegmentoInfo = true;
+    private boolean translationLoaded = false;
     //
 //    private String sql_ss_site;
 //    private String sql_ss_site_zone;
@@ -214,6 +215,8 @@ public class Frg_Serial_Edit extends Fragment {
          * Interface disparada quando o produto ou serial informado
          * é null
          */
+
+
         void onProductOrSerialNull();
 
         /**
@@ -238,7 +241,9 @@ public class Frg_Serial_Edit extends Fragment {
 
     public void setBtnActionLabel(String label) {
         btn_action_translation = label;
-        btn_action.setText(btn_action_translation);
+        if(bStatus) {
+            btn_action.setText(btn_action_translation);
+        }
     }
 
     public void setmModule_Code(String mModule_Code) {
@@ -251,7 +256,9 @@ public class Frg_Serial_Edit extends Fragment {
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
-        setTranslation();
+//        if (bStatus) {
+//            setTranslation();
+//        }
     }
 
     public MD_Product getMdProduct() {
@@ -419,6 +426,7 @@ public class Frg_Serial_Edit extends Fragment {
         ss_category_price.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         ss_class.setmLabel(hmAux_Trans.get("class_lbl"));
         ss_class.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
+        btn_action.setText(btn_action_translation);
         //
         for (View view : views) {
             if (view != null && hmAux_Trans.get((String) view.getTag()) != null) {
@@ -609,10 +617,15 @@ public class Frg_Serial_Edit extends Fragment {
         listnersInitializer();
     }
 
-    private void loadDataToScreen() {
+    public void loadDataToScreen() {
         //
         if (bStatus) {
             if(mdProduct != null) {
+                if(!translationLoaded) {
+                    setTranslation();
+                    translationLoaded = true;
+                }
+                //
                 setProductData();
                 //
                 if(mdProductSerial != null) {

@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -271,32 +270,32 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onFragIsReady() {
-                if (frgSerialEdit.getSS_SiteOption() != null) {
-                    //Busca se o site
-                    boolean isSiteScheduleInList = false;
-                    for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
-                        if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
-                            isSiteScheduleInList = true;
-                            break;
-                        }
-                    }
-                    //
-                    if(!isSiteScheduleInList){
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_form_site_not_found_tll"),
-                                hmAux_Trans.get("alert_form_site_not_found_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        onBackPressed();
-                                    }
-                                },
-                                0
-
-                        );
-
-                    }else {
+//                if (frgSerialEdit.getSS_SiteOption() != null) {
+//                    //Busca se o site
+//                    boolean isSiteScheduleInList = false;
+//                    for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
+//                        if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
+//                            isSiteScheduleInList = true;
+//                            break;
+//                        }
+//                    }
+//                    //
+//                    if(!isSiteScheduleInList){
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_form_site_not_found_tll"),
+//                                hmAux_Trans.get("alert_form_site_not_found_msg"),
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        onBackPressed();
+//                                    }
+//                                },
+//                                0
+//
+//                        );
+//
+//                    }else {
                         //Se é verificação força true, força verificação
                         //dos dados dos serial.
                         if (forceCheckSerial) {
@@ -309,8 +308,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                                     ""
                             );
                         }
-                    }
-                }
+                    //}
+                //}
             }
 
             @Override
