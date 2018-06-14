@@ -52,6 +52,7 @@ repositories {
         //url "file:///C:/AppsAndroid/NamoaLib"
         url "file:///C:/Android/LIB"
     }
+
 }
 
 dependencies {
