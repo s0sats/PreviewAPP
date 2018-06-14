@@ -227,6 +227,16 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             public void onProductOrSerialNull() {
                 mPresenter.onBackPressedClicked();
             }
+
+            @Override
+            public void onFragIsReady() {
+
+            }
+
+            @Override
+            public void abortFragLoad()  {
+                mPresenter.onBackPressedClicked();
+            }
         });
     }
 

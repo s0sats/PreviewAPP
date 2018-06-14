@@ -247,6 +247,16 @@ public class Teste2 extends Base_Activity {
             public void onProductOrSerialNull() {
                onBackPressed();
             }
+
+            @Override
+            public void onFragIsReady() {
+
+            }
+
+            @Override
+            public void abortFragLoad() {
+
+            }
         });
 
     }
