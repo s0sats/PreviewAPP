@@ -649,12 +649,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
         frgSerialEdit.setNew_serial(false);
-        //frgSerialEdit.setMdProduct(mdProduct);
-        //frgSerialEdit.setMdProductSerial(mdProductSerial);
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_serial_save"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         controls_frags.add(frgSerialEdit);
+        initializaFragInterfaces();
 
         // header
         act027_header_ = new Act027_Header();
@@ -708,15 +707,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     //region FRG_SERIAL_EDIT
-    private void loadProductSerialIntoFragment() {
-        frgSerialEdit.setMdProduct(getMDProduct(mSm_so.getProduct_code()));
-        frgSerialEdit.setMdProductSerial(
-                getMDProductSerial(
-                        mSm_so.getProduct_code(),
-                        mSm_so.getSerial_id()
-                )
-        );
-        //
+    private void initializaFragInterfaces(){
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
             @Override
             public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
@@ -775,6 +766,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
         });
     }
+
+    private void loadProductSerialIntoFragment() {
+        frgSerialEdit.setMdProduct(getMDProduct(mSm_so.getProduct_code()));
+        frgSerialEdit.setMdProductSerial(
+                getMDProductSerial(
+                        mSm_so.getProduct_code(),
+                        mSm_so.getSerial_id()
+                )
+        );
+    }
     private MD_Product getMDProduct(int product_code) {
         //
         return productDao.getByString(
@@ -827,10 +828,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void executeSerialSave() {
+        setWs_process(Act027_Main.WS_PROCESS_SERIAL);
         //
         showPD(
-                hmAux_Trans.get("progress_serial_search_ttl"),
-                hmAux_Trans.get("progress_serial_search_msg")
+                hmAux_Trans.get("progress_save_serial_ttl"),
+                hmAux_Trans.get("progress_save_serial_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_Serial_Save.class);
@@ -1140,6 +1142,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 recoverApprovalState();
             }
         }
+        //Verificar com Jhon
+//        if(ws_process.equals(WS_PROCESS_SERIAL)){
+//            setWs_process("");
+//            loadProductSerialIntoFragment();
+//            refreshFragUI();
+//        }
 
         progressDialog.dismiss();
     }
@@ -1152,6 +1160,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
             recoverApprovalState();
         }
+        //Verificar com Jhon
+//        if(ws_process.equals(WS_PROCESS_SERIAL)){
+//            setWs_process("");
+//            loadProductSerialIntoFragment();
+//            refreshFragUI();
+//        }
     }
 
     // TRATAVIA DE ENCERRAMENTO SEM PROBLEMAS DO SERVICO
@@ -1193,10 +1207,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             //act027_serial_.callProcessTrackingResult(hmAux);
             frgSerialEdit.processTrackingResult(hmAux);
-        } else {
+        } else if(ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL)){
             //WS_PROCESS_SERIAL
             //Esse else processa o retorno do WS Serial Save
             //act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_code(), hmAux);
+            setWs_process("");
             progressDialog.dismiss();
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
@@ -1208,6 +1223,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         hmAux_Trans.get("alert_no_serial_return_msg")
                 );
             }
+        }else{
+            setWs_process("");
+            progressDialog.dismiss();
         }
     }
 
@@ -1939,6 +1957,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 break;
             case Act027_Main.SELECTION_SERIAL:
                 //setFrag(act027_serial_, Act027_Main.SELECTION_SERIAL);
+                loadProductSerialIntoFragment();
                 setFrag(frgSerialEdit, Act027_Main.SELECTION_SERIAL);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;

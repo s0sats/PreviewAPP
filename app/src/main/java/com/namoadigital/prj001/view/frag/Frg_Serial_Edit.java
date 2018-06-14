@@ -327,8 +327,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setSerial_id(mket_serial_id.getText().toString());
         mdProductSerial.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>());
         //
-        serialIdChanged = false;
-        trackingListChanged = false;
+        resetSaveCtrlVar();
         //
         setUIDataToSerialObj();
         //
@@ -349,8 +348,8 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     public void applyReceivedSerial(MD_Product_Serial received_serial) {
         //
-        serialIdChanged = false;
-        trackingListChanged = false;
+        resetSaveCtrlVar();
+        //
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
@@ -454,7 +453,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         View view = inflater.inflate(R.layout.frg_serial_edit, container, false);
 
         iniVar(view);
-        iniAction();
 
         return view;
     }
@@ -632,10 +630,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         if (bStatus) {
             if(mdProduct != null) {
-                if(!translationLoaded) {
+                //if(!translationLoaded) {
                     setTranslation();
-                    translationLoaded = true;
-                }
+                  //  translationLoaded = true;
+                //}
                 //
                 setProductData();
                 //
@@ -643,6 +641,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     setSerialData();
                     //
                     //sqlInitializer();
+                    //
+                    iniAction();
                     //
                     spinnersInitializer();
                     //
@@ -744,7 +744,14 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             }*/
         }
+        //
         //Processa lista de trackings
+        //
+        //Se listner null, inicializa
+        if(tvCtListner == null){
+            initializeTrackingRemovelistner();
+        }
+        //Remove todas as views do layout antes de começar.
         ll_tracking_content.removeAllViews();
         //Insere lista de tracking vindo do banco.
         for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
@@ -1032,11 +1039,15 @@ public class Frg_Serial_Edit extends BaseFragment {
                                                 mdProductSerial,
                                                 !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
                                         );
+                                        //
+                                        resetSaveCtrlVar();
                                     } else {
                                         delegate.onSaveNoChangesClick(
                                                 mdProductSerial,
                                                 !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
                                         );
+                                        //
+                                        resetSaveCtrlVar();
                                     }
                                 }else{
                                     showAlertDialog(
@@ -1077,6 +1088,11 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             }
         };
+    }
+
+    private void resetSaveCtrlVar() {
+        serialIdChanged = false;
+        trackingListChanged = false;
     }
 
     /**
@@ -1281,19 +1297,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         });
         //
-        tvCtListner = new TextViewCT.ITextViewCT() {
-            @Override
-            public void removeViews(TextViewCT textViewCT) {
-                int idx = ll_tracking_content.indexOfChild(textViewCT);
-                //
-                mdProductSerial.getTracking_list().remove(idx);
-                //
-                ll_tracking_content.removeView(textViewCT);
-                //
-                setTrackingListChanged(true);
-            }
-        };
-        //
         //Listner que zera trackingList.
         //Usado no NÃO da troca de site e no SIM do "limpar" site
 
@@ -1321,6 +1324,22 @@ public class Frg_Serial_Edit extends BaseFragment {
                 showSerialInfoDialog();
             }
         });
+    }
+
+    private void initializeTrackingRemovelistner(){
+        //
+        tvCtListner = new TextViewCT.ITextViewCT() {
+            @Override
+            public void removeViews(TextViewCT textViewCT) {
+                int idx = ll_tracking_content.indexOfChild(textViewCT);
+                //
+                mdProductSerial.getTracking_list().remove(idx);
+                //
+                ll_tracking_content.removeView(textViewCT);
+                //
+                setTrackingListChanged(true);
+            }
+        };
     }
 
     private void showTrackingDialog() {
