@@ -69,7 +69,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private HMAux hmAux_Trans;
     private String mModule_Code;
     private String mResource_Code;
-    private ArrayList<MKEditTextNM> controls_sta;
+    //private ArrayList<MKEditTextNM> controls_sta;
     private String viewMode = "";
     private ScrollView sv_serial;
     private TextView tv_product_code_label;
@@ -104,6 +104,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private SearchableSpinner ss_class;
     private ImageView iv_class_icon;
     private FloatingActionButton fab_anchor;
+    private View view_footer;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
     private ArrayList<Object> serialProperties;
@@ -229,7 +230,15 @@ public class Frg_Serial_Edit extends BaseFragment {
          * Interface disparada caso algum problema seja encontrado
          * no carregamento do fragmento.
          */
-        void abortFragLoad();
+        void onAbortFragLoad();
+
+        /**
+         * Interface disparada quando um controle mket deve ser adicionado ou removido
+         * @param mket_control - Controle mket criado em tempo de execução
+         * @param add - True : Criação False: Remoção
+         */
+
+        void onAddOrRemoveControl(MKEditTextNM mket_control,boolean add);
     }
     //endregion
 
@@ -453,7 +462,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
         //
-        controls_sta = new ArrayList<>();
+        //controls_sta = new ArrayList<>();
         //
         mdProductSerial = mdProductSerial == null ? new MD_Product_Serial() : mdProductSerial;
         //
@@ -544,6 +553,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
         //
         fab_anchor = (FloatingActionButton) view.findViewById(R.id.frg_serial_edit_fab_anchor);
+        //
+        view_footer = view.findViewById(R.id.frg_serial_edit_view_footer);
         //
         btn_action = (Button) view.findViewById(R.id.frg_serial_edit_btn_action);
         //
@@ -669,7 +680,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     private void informFragAbort(){
         if(delegate != null){
-            delegate.abortFragLoad();
+            delegate.onAbortFragLoad();
         }
     }
 
@@ -1206,7 +1217,15 @@ public class Frg_Serial_Edit extends BaseFragment {
                     //o evento.
                     skip_validation = true;
                     //Seta valor do site
-                    ToolBox_Inf.setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
+                    //ToolBox_Inf.setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
+                    HMAux siteSelectedByLocal = new HMAux();
+                    for(HMAux auxSite: ss_site.getmOption()){
+                        if(auxSite.get(SearchableSpinner.ID).equals(hmAux.get(MD_Site_Zone_LocalDao.SITE_CODE))){
+                            siteSelectedByLocal = auxSite;
+                            break;
+                        }
+                    }
+                    ss_site.setmValue(siteSelectedByLocal);
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
                     ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
@@ -1312,20 +1331,33 @@ public class Frg_Serial_Edit extends BaseFragment {
 
         final MKEditTextNM mket_tracking = (MKEditTextNM) view.findViewById(R.id.namoa_dialog_add_tracking_mket_tracking);
         //mket_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
-        controls_sta.add(mket_tracking);
+        //controls_sta.add(mket_tracking);
+        if(delegate != null){
+            delegate.onAddOrRemoveControl(mket_tracking,true);
+        }
         //
         TextView tv_tracking_ttl = (TextView) view.findViewById(R.id.namoa_dialog_add_tracking_tv_lbl);
         ImageView iv_action = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_action);
         final ImageView iv_close = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
         //
         tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
+        //setDelegateTextBySpecialist
+        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                pausedByScan = true;
+            }
+        });
         builder.setView(view);
         builder.setCancelable(false);
         //
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                controls_sta.remove(mket_tracking);
+                //controls_sta.remove(mket_tracking);
+                if(delegate != null){
+                    delegate.onAddOrRemoveControl(mket_tracking,false);
+                }
             }
         });
         //
@@ -1774,6 +1806,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 setIoVisibility();
                 btn_action.setVisibility(View.VISIBLE);
                 fab_anchor.setVisibility(View.VISIBLE);
+                view_footer.setVisibility(fab_anchor.getVisibility());
                 break;
             case VIEW_SO_EDIT:
                 tv_brand_model_color.setVisibility(View.VISIBLE);
@@ -1785,6 +1818,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ll_io_info.setVisibility(View.GONE);
                 btn_action.setVisibility(View.VISIBLE);
                 fab_anchor.setVisibility(View.GONE);
+                view_footer.setVisibility(fab_anchor.getVisibility());
                 break;
             default:
                 tv_brand_model_color.setVisibility(View.GONE);
@@ -1796,6 +1830,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ll_io_info.setVisibility(View.GONE);
                 btn_action.setVisibility(View.GONE);
                 fab_anchor.setVisibility(View.GONE);
+                view_footer.setVisibility(fab_anchor.getVisibility());
         }
     }
 

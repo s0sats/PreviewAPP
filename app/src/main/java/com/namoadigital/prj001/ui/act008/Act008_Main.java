@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -51,9 +53,6 @@ import java.util.List;
  */
 
 public class Act008_Main extends Base_Activity implements Act008_Main_View {
-
-    public static final String WS_PROCESS_SYNC = "ws_process_sync";
-    public static final String WS_PROCESS_SERIAL = "ws_process_serial";
 
     private Act008_Main_Presenter mPresenter;
 
@@ -270,51 +269,67 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onFragIsReady() {
-//                if (frgSerialEdit.getSS_SiteOption() != null) {
-//                    //Busca se o site
-//                    boolean isSiteScheduleInList = false;
-//                    for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
-//                        if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
-//                            isSiteScheduleInList = true;
-//                            break;
-//                        }
-//                    }
-//                    //
-//                    if(!isSiteScheduleInList){
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("alert_form_site_not_found_tll"),
-//                                hmAux_Trans.get("alert_form_site_not_found_msg"),
-//                                new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        onBackPressed();
-//                                    }
-//                                },
-//                                0
-//
-//                        );
-//
-//                    }else {
-                        //Se é verificação força true, força verificação
-                        //dos dados dos serial.
-                        if (forceCheckSerial) {
-                            //reseta variavel para ser executada apenas uma vez.
-                            forceCheckSerial = false;
-                            searchSerialFlow(
-                                    mdProductSerial.getProduct_code(),
-                                    mdProductSerial.getProduct_id(),
-                                    mdProductSerial.getSerial_id(),
-                                    ""
-                            );
+                //Regras só se aplicam ao agendamento
+                if(isSchedule){
+                    if (mdProduct.getSite_restriction() == 1 && frgSerialEdit.getSS_SiteOption() != null) {
+                        //Busca se o site
+                        boolean isSiteScheduleInList = false;
+                        for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
+                            if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
+                                isSiteScheduleInList = true;
+                                break;
+                            }
                         }
-                    //}
-                //}
+                        //Se não existe o site agendado no spinner de Site
+                        //Seta forceCheckSerial para false e exibe alert com msg.
+                        //Clique no OK força processo de voltar.
+                        if (!isSiteScheduleInList) {
+                            //Seta var para falso para pular a busca por serial, uma vez que,
+                            //pelo fluxo, o backpressed será executado.
+                            forceCheckSerial = false;
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_form_site_not_found_tll"),
+                                    hmAux_Trans.get("alert_form_site_not_found_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            onBackPressed();
+                                        }
+                                    },
+                                    0
+
+                            );
+
+                        }
+                    }
+                    //Se é verificação força true, força verificação
+                    //dos dados dos serial.
+                    if (forceCheckSerial) {
+                        //reseta variavel para ser executada apenas uma vez.
+                        forceCheckSerial = false;
+                        searchSerialFlow(
+                                mdProductSerial.getProduct_code(),
+                                mdProductSerial.getProduct_id(),
+                                mdProductSerial.getSerial_id(),
+                                ""
+                        );
+                    }
+                }
             }
 
             @Override
-            public void abortFragLoad() {
+            public void onAbortFragLoad() {
                 mPresenter.onBackPressedClicked();
+            }
+
+            @Override
+            public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
+                if(add) {
+                    controls_sta.add(mket_control);
+                }else{
+                    controls_sta.remove(mket_control);
+                }
             }
         });
     }
@@ -717,6 +732,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
     }

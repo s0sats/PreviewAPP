@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -254,8 +255,17 @@ public class Teste2 extends Base_Activity {
             }
 
             @Override
-            public void abortFragLoad() {
+            public void onAbortFragLoad() {
 
+            }
+
+            @Override
+            public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
+                if(add) {
+                    controls_sta.add(mket_control);
+                }else{
+                    controls_sta.remove(mket_control);
+                }
             }
         });
 
@@ -421,6 +431,12 @@ public class Teste2 extends Base_Activity {
             //
             disableProgressDialog();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String teste = "teste";
     }
 
     @Override

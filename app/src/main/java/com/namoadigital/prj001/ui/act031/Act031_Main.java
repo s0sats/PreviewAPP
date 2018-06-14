@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -315,7 +316,16 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             }
 
             @Override
-            public void abortFragLoad() { mPresenter.onBackPressedClicked(true); }
+            public void onAbortFragLoad() { mPresenter.onBackPressedClicked(true); }
+
+            @Override
+            public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
+                if(add) {
+                    controls_sta.add(mket_control);
+                }else{
+                    controls_sta.remove(mket_control);
+                }
+            }
         });
 
     }

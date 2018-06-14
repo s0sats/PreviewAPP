@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -648,7 +649,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
         frgSerialEdit.setNew_serial(false);
-        //controls_sta.addAll(frgSerialEdit.getControlsSta());
         //frgSerialEdit.setMdProduct(mdProduct);
         //frgSerialEdit.setMdProductSerial(mdProductSerial);
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_serial_save"));
@@ -761,8 +761,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
 
             @Override
-            public void abortFragLoad() {
+            public void onAbortFragLoad() {
                 onBackPressed();
+            }
+
+            @Override
+            public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
+                if(add) {
+                    controls_sta.add(mket_control);
+                }else{
+                    controls_sta.remove(mket_control);
+                }
             }
         });
     }
