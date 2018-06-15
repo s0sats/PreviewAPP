@@ -41,6 +41,7 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
@@ -48,7 +49,8 @@ import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
-import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
@@ -2216,42 +2218,36 @@ public class Frg_Serial_Edit extends BaseFragment {
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> siteList = (ArrayList<HMAux>) siteDao.query_HM(
-                new MD_Site_Sql_SS_002(
+                new MD_Site_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
+        //Monta hm do site logado
+        MD_Site md_site = siteDao.getByString(
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
         //
-        if(mdProduct.getIo_control() == 1) {
-            //Se Site atual controla IO,exibe apenas ele mesmo como opção.
-            if (mdProductSerial.getSite_io_control() == null || mdProductSerial.getSite_io_control() == 0) {
-                //Se produto tem restrição de site, lita terá apenas o site atual e o site logado.
-                if (mdProductSerial.getSite_restriction() != null && mdProductSerial.getSite_restriction() == 1) {
-                    ArrayList<HMAux> siteListNew = new ArrayList<>();
-                    for (HMAux aux : siteList) {
-                        if (aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
-                            siteListNew.add(aux);
-                            break;
-                        }
-                    }
-                    //Ataualiza lista de opções de site.
-                    siteList = siteListNew;
-                    //
-                    if (new_serial) {
-                        ss_site.setmValue(siteListNew.get(0));
-                        ss_site.setmEnabled(false);
-                    }
-                }
-                //Seta a lista
-                ss_site.setmOption(siteList);
-            } else {
-                siteList.clear();
-                ss_site.setmOption(null);
-                //ss_site.setmEnabled(false);
-            }
+        HMAux loggedSite = new HMAux();
+        //
+        if(md_site != null){
+            loggedSite.put(SearchableSpinner.ID, md_site.getSite_code());
+            loggedSite.put(SearchableSpinner.DESCRIPTION, md_site.getSite_desc());
+            loggedSite.put(MD_SiteDao.SITE_ID, md_site.getSite_id());
+            loggedSite.put(MD_SiteDao.IO_CONTROL, String.valueOf(md_site.getIo_control()));
+            loggedSite.put(MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(md_site.getInbound_auto_create()));
         }else{
-            //Seta a lista
-            ss_site.setmOption(siteList);
+            loggedSite.put(SearchableSpinner.ID, "null");
+            loggedSite.put(SearchableSpinner.DESCRIPTION, "null");
+            loggedSite.put(MD_SiteDao.SITE_ID,"null");
+            loggedSite.put(MD_SiteDao.IO_CONTROL, "null");
+            loggedSite.put(MD_SiteDao.INBOUND_AUTO_CREATE, "null");
         }
+        //
+
+        ss_site.setmOption(siteList);
         //Se o site que veio no serial não esta na lista de site dele, adicionado na lista.
         if (ss_site.getmValue() != null && ss_site.getmValue().size() > 0 && !checkDbValInOption(ss_site, String.valueOf(mdProductSerial.getSite_code()))) {
             ArrayList<HMAux> newOption = new ArrayList<>();
@@ -2261,24 +2257,100 @@ public class Frg_Serial_Edit extends BaseFragment {
             //
             ss_site.setmOption(siteList);
         }
-        //SE produto tem site restriction e mOption de site for vazio, aborta load do fragment.
-        if(mdProduct.getSite_restriction() == 1) {
-            if ( ss_site.getmOption() == null
-                 || ss_site.getmOption().size() == 0
-                ) {
-                abortReported = true;
-                //
-                showAlertDialog(
-                        hmAux_Trans.get("alert_no_site_option_ttl"),
-                        hmAux_Trans.get("alert_no_site_option_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                informFragAbort();
-                            }
-                        }
-                );
+        //
+        if(mdProduct.getLocal_control() == 1){
+            ArrayList<HMAux> newSiteList = new ArrayList<>();
+            //
+            for (HMAux aux: siteList) {
+                boolean insert = true;
+                //SITE invalido, pula para aproximo
+                //nunca deve acontecer
+                if(!aux.containsKey(SearchableSpinner.ID)
+                   && aux.get(SearchableSpinner.ID) == null)
+                {
+                    continue;
+                }
+                //Validação 1: Se produto tem site restrição somente o site logado recebera
+                //insert = true;
+                if(mdProduct.getSite_restriction() == 1) {
+                    if (aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                        insert = true;
+                    }else{
+                        insert = false;
+                    }
+                }
+                //Validação 2: Se item = site que veio no serial
+                if(aux.get(SearchableSpinner.ID).equals(String.valueOf(mdProductSerial.getSite_code()))){
+                    insert = true;
+                }
+                //Validação 3: Se produto controla io e site do serial tb, então não permite outro site.
+                if (mdProduct.getIo_control() == 1 && mdProductSerial.getSite_io_control() != null && mdProductSerial.getSite_io_control() == 1) {
+                    if (aux.get(SearchableSpinner.ID).equals(String.valueOf(mdProductSerial.getSite_code()))) {
+                        insert = true;
+                    }else{
+                        insert = false;
+                    }
+                }
+                //Validação 4: Se produto e o item controlam io e item é inbound auto create
+                //              OU produto não controla io
+                //              OU item não controla io
+                if(insert) {
+                    if ( (mdProduct.getIo_control() == 1 && aux.get(MD_SiteDao.IO_CONTROL).equals("1") && aux.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1"))
+                         || mdProduct.getIo_control() == 0
+                         || aux.get(MD_SiteDao.IO_CONTROL).equals("0")
+                     ) {
+                        insert = true;
+                    } else {
+                        insert = false;
+                    }
+                    //
+                    if (insert) {
+                        newSiteList.add(aux);
+                    }
+                }
+
             }
+            //
+            siteList = newSiteList;
+        }
+        //Seta a lista
+        ss_site.setmOption(siteList);
+        //SE produto controla, analisa:
+        // Se site restriction, valida se existe algum opções de movimentação se não tiver ativa erro
+        // Se houver opções e for um novo serial, setá site logado como o selecionado e bloqueia edição
+        // Se não for site restrição e for um novo serial, seta o site logado como site escolhido mas permite edição
+        if(mdProduct.getLocal_control() == 1) {
+            if (mdProduct.getSite_restriction() == 1) {
+                if (ss_site.getmOption() == null
+                    || ss_site.getmOption().size() == 0
+                ) {
+                    abortReported = true;
+                    //
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_no_site_option_ttl"),
+                            hmAux_Trans.get("alert_no_site_option_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    informFragAbort();
+                                }
+                            }
+                    );
+                } else {
+                    if (new_serial) {
+                        ss_site.setmValue(loggedSite);
+                        ss_site.setmEnabled(false);
+                    }
+                }
+            }else{
+                if (new_serial) {
+                    ss_site.setmValue(loggedSite);
+                }
+            }
+        }
+        //Se o produto e o serial controlam io, bloqueia mudança de site.
+        if(mdProduct.getIo_control() == 1 && mdProductSerial.getSite_io_control() != null && mdProductSerial.getSite_io_control() == 1){
+
         }
     }
 

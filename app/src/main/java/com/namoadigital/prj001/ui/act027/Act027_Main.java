@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -50,6 +52,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -110,7 +113,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String SELECTION_PRODUCT_EDIT = "PRODUCT_EDIT";
     public static final String SELECTION_PRODUCT_SELECTION = "PRODUCT_SELECTION";
     public static final String SELECTION_SERVICE_EDITION = "SERVICE_EDITION";
-    public static final String SELECTION_SYNC_SERVICE= "SYNC_SERVICE";
+    public static final String SELECTION_SYNC_SERVICE = "SYNC_SERVICE";
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
@@ -179,6 +182,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private Frg_Serial_Edit frgSerialEdit;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
+    private boolean isSoSaveLinked = false;
 
     //
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
@@ -666,9 +670,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         controls_frags.add(act027_serial_);
         //
-        if(request_set_frag.trim().length() == 0) {
+        if (request_set_frag.trim().length() == 0) {
             setFrag(act027_services_, "SERVICES");
-        }else{
+        } else {
             act027_opc_.perfomClickInOption(request_set_frag);
         }
         //
@@ -707,7 +711,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     //region FRG_SERIAL_EDIT
-    private void initializaFragInterfaces(){
+    private void initializaFragInterfaces() {
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
             @Override
             public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
@@ -726,9 +730,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             public void onSaveWithChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
                 updateSerialData(md_product_serial);
                 //
-                if(ToolBox_Con.isOnline(context)) {
-                    executeSerialSave();
-                }else{
+                if (ToolBox_Con.isOnline(context)) {
+                    executeSerialSave(false);
+                } else {
                     showAlertDialog(
                             hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
                             hmAux_Trans.get("alert_offline_data_not_saved_msg")
@@ -738,7 +742,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
-                executeTrackingSearch(product_code,serial_code,tracking,site_code);
+                executeTrackingSearch(product_code, serial_code, tracking, site_code);
             }
 
             @Override
@@ -758,9 +762,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
             @Override
             public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                if(add) {
+                if (add) {
                     controls_sta.add(mket_control);
-                }else{
+                } else {
                     controls_sta.remove(mket_control);
                 }
             }
@@ -776,6 +780,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 )
         );
     }
+
     private MD_Product getMDProduct(int product_code) {
         //
         return productDao.getByString(
@@ -785,13 +790,33 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 ).toSqlQuery()
         );
     }
+
     private MD_Product_Serial getMDProductSerial(int product_code, String serial_id) {
-        return  serialDao.getByString(
+        return serialDao.getByString(
                 new MD_Product_Serial_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
+        );
+    }
+
+    private void showSingleResultMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(isSoSaveLinked){
+                            //
+                            isSoSaveLinked = false;
+                            executeSoSave();
+                        }
+                    }
+                },
+                0
         );
     }
 
@@ -817,7 +842,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private void updateSerialData(MD_Product_Serial mdProductSerial) {
         //Remove os tracking para reinserir os que ficaram
         trackingDao.remove(new
-                MD_Product_Serial_Tracking_Sql_002(
+                        MD_Product_Serial_Tracking_Sql_002(
                         mdProductSerial.getCustomer_code(),
                         mdProductSerial.getProduct_code(),
                         mdProductSerial.getSerial_tmp()
@@ -827,7 +852,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         serialDao.addUpdateTmp(mdProductSerial);
     }
 
-    private void executeSerialSave() {
+    private void executeSerialSave(boolean isSoSaveLinked) {
+        //Seta variavel que indica se o save da S.O Deve ser chamada após o se do Serial Rodar.
+        this.isSoSaveLinked = isSoSaveLinked;
+        //
         setWs_process(Act027_Main.WS_PROCESS_SERIAL);
         //
         showPD(
@@ -863,6 +891,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         context.sendBroadcast(mIntent);
 
     }
+
     //processa retorno do WS SErial Save
     private void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
         if (hmSaveResult.size() > 0) {
@@ -908,23 +937,25 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                showAlertDialog(ttl, msg);
+                showSingleResultMsg(ttl, msg);
             } else {
                 showSerialResults(returnList);
             }
         } else {
-            showAlertDialog(
+            showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
                     hmAux_Trans.get("alert_no_serial_return_msg")
             );
         }
     }
+
     //AtualizaUI do fragmento
     private void refreshFragUI() {
-        if(frgSerialEdit != null){
+        if (frgSerialEdit != null) {
             frgSerialEdit.refreshUi();
         }
     }
+
     //Exibe lista processada do retorno do WS de Serial Save
     private void showSerialResults(ArrayList<HMAux> returnList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -967,11 +998,54 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             @Override
             public void onClick(View v) {
                 show.dismiss();
+                //
+                if(isSoSaveLinked){
+                    isSoSaveLinked = false;
+                    //
+                    executeSoSave();
+                }
             }
         });
 
     }
 
+    //
+    public void checkSerialSaveNeeds(){
+        /*if(){
+
+        }*/
+    }
+
+    public boolean isSerialWithinTokenFile(long product_code, String serial_id) {
+        try {
+            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+            if (serialToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<MD_Product_Serial> token_serial_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(serialToken[0]),
+                                TSerial_Save_Env.class
+                        ).getSerial();
+                //
+                if (token_serial_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (MD_Product_Serial serial : token_serial_list) {
+                    if ( serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                        // && serial.getSo_prefix() == mSm_so.getSo_prefix()
+                        // && serial.getSo_code() == mSm_so.getSo_code()
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
+    }
 
     //endregion
 
@@ -994,7 +1068,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         }
     }
 
-    public void openDrawerInternally(){
+    public void openDrawerInternally() {
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
 
@@ -1075,7 +1149,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 startDownloadServices();
             }
             //Ajuste para clique no drawer da act043
-            request_set_frag = bundle.getString(REQUEST_SET_FRAG,"");
+            request_set_frag = bundle.getString(REQUEST_SET_FRAG, "");
         } else {
             mSm_so = null;
         }
@@ -1143,11 +1217,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
         }
         //Verificar com Jhon
-//        if(ws_process.equals(WS_PROCESS_SERIAL)){
-//            setWs_process("");
-//            loadProductSerialIntoFragment();
-//            refreshFragUI();
-//        }
+        if (ws_process.equals(WS_PROCESS_SERIAL)) {
+            setWs_process("");
+            loadProductSerialIntoFragment();
+            refreshFragUI();
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                executeSoSave();
+            }
+        }
 
         progressDialog.dismiss();
     }
@@ -1161,11 +1240,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             recoverApprovalState();
         }
         //Verificar com Jhon
-//        if(ws_process.equals(WS_PROCESS_SERIAL)){
-//            setWs_process("");
-//            loadProductSerialIntoFragment();
-//            refreshFragUI();
-//        }
+        if (ws_process.equals(WS_PROCESS_SERIAL)) {
+            setWs_process("");
+            loadProductSerialIntoFragment();
+            refreshFragUI();
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                executeSoSave();
+            }
+        }
     }
 
     // TRATAVIA DE ENCERRAMENTO SEM PROBLEMAS DO SERVICO
@@ -1207,7 +1291,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             //act027_serial_.callProcessTrackingResult(hmAux);
             frgSerialEdit.processTrackingResult(hmAux);
-        } else if(ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL)){
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL)) {
             //WS_PROCESS_SERIAL
             //Esse else processa o retorno do WS Serial Save
             //act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_code(), hmAux);
@@ -1223,7 +1307,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         hmAux_Trans.get("alert_no_serial_return_msg")
                 );
             }
-        }else{
+        } else {
             setWs_process("");
             progressDialog.dismiss();
         }
@@ -1997,7 +2081,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
                 break;
             case Act027_Main.SELECTION_SERVICE_EDITION:
-                if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+                if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
                     if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !act027_opc_.isSoWithinTokenFile()) {
                         callAct043(context);
                     } else {
@@ -2009,7 +2093,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                                 0
                         );
                     }
-                }else{
+                } else {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_so_edit_profile_ttl"),
@@ -2329,10 +2413,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public boolean onCreateOptionsMenu(Menu menu) {
 
         if (
-            ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
-            hasExecutionProfile() &&
-            !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-        ){
+                ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+                        hasExecutionProfile() &&
+                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                ) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -2371,9 +2455,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         );
 
                     } else {
-                        if(nFormProductList != null && nFormProductList.size() > 0){
+                        if (nFormProductList != null && nFormProductList.size() > 0) {
                             showNFormProductDialog();
-                        }else{
+                        } else {
                             callNFormMsg();
                         }
                     }
@@ -2435,7 +2519,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         final AlertDialog.Builder productDialog = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.namoa_dialog_ss_selection,null);
+        View view = inflater.inflate(R.layout.namoa_dialog_ss_selection, null);
         //IniVar
         TextView tv_main_ttl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_main_ttl);
         final SearchableSpinner ss_product = (SearchableSpinner) view.findViewById(R.id.namoa_dialog_ss_selection_ss_main);
@@ -2449,11 +2533,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         ss_product.setmOption(nFormProductList);
         //
         HMAux auxProd = new HMAux();
-        auxProd.put(SearchableSpinner.ID,String.valueOf(mSm_so.getProduct_code()));
-        auxProd.put(SearchableSpinner.DESCRIPTION,mSm_so.getProduct_desc());
-        auxProd.put(SM_SODao.PRODUCT_CODE,String.valueOf(mSm_so.getProduct_code()));
-        auxProd.put(SM_SODao.PRODUCT_ID,mSm_so.getProduct_id());
-        auxProd.put(SM_SODao.PRODUCT_DESC,mSm_so.getProduct_desc());
+        auxProd.put(SearchableSpinner.ID, String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SearchableSpinner.DESCRIPTION, mSm_so.getProduct_desc());
+        auxProd.put(SM_SODao.PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SM_SODao.PRODUCT_ID, mSm_so.getProduct_id());
+        auxProd.put(SM_SODao.PRODUCT_DESC, mSm_so.getProduct_desc());
         //
         ss_product.setmValue(auxProd);
         //
@@ -2476,11 +2560,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if(!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))){
+                if (!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))) {
                     tv_serial_lbl.setVisibility(View.GONE);
                     tv_serial_val.setVisibility(View.GONE);
                     tv_serial_val.setText("");
-                }else{
+                } else {
                     tv_serial_lbl.setVisibility(View.VISIBLE);
                     tv_serial_val.setVisibility(View.VISIBLE);
                     tv_serial_val.setText(mSm_so.getSerial_id());
@@ -2496,7 +2580,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                               // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.ID));
+                                // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.ID));
                                 //
                                 nFormProductSelected = ss_product.getmValue();
                                 //
@@ -2509,7 +2593,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                               // nFormProductSelected = -1;
+                                // nFormProductSelected = -1;
                                 resetHmAuxProdutcSelected();
                             }
                         }
@@ -2521,11 +2605,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void resetHmAuxProdutcSelected() {
-        nFormProductSelected.put(SearchableSpinner.ID,"-1");
-        nFormProductSelected.put(SearchableSpinner.DESCRIPTION,"");
-        nFormProductSelected.put(SM_SODao.PRODUCT_CODE,"-1");
-        nFormProductSelected.put(SM_SODao.PRODUCT_ID,"");
-        nFormProductSelected.put(SM_SODao.PRODUCT_DESC,"");
+        nFormProductSelected.put(SearchableSpinner.ID, "-1");
+        nFormProductSelected.put(SearchableSpinner.DESCRIPTION, "");
+        nFormProductSelected.put(SM_SODao.PRODUCT_CODE, "-1");
+        nFormProductSelected.put(SM_SODao.PRODUCT_ID, "");
+        nFormProductSelected.put(SM_SODao.PRODUCT_DESC, "");
     }
 
 
@@ -2657,7 +2741,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         bundle.putString(Constant.ACT008_PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSm_so.getProduct_id());
         bundle.putString(Constant.ACT008_PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) : mSm_so.getProduct_desc());
         //bundle.putString(Constant.ACT008_SERIAL_ID,nFormProductSelected ==  mSm_so.getProduct_code() || nFormProductSelected == -1 ? mSm_so.getSerial_id() : "" );
-        bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code())) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSm_so.getSerial_id() : "" );
+        bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code())) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSm_so.getSerial_id() : "");
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT027);
         //
         mIntent.putExtras(bundle);
