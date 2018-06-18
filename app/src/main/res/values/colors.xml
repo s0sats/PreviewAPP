@@ -61,6 +61,8 @@
     <color name="namoa_color_disabled_gray">#ADADAD</color>
     <color name="namoa_icon_color">#044C60</color>
     <color name="namoa_icon_pressed_color">#33000000</color>
+    <color name="namoa_fab_item_bg_color">#BB000000</color>
+    <color name="namoa_color_white_alpha">#DDFFFFFF</color>
     <!-- Novas S.O -->
     <!-- border-->
     <color name="namoa_color_pink_1">#FF1493</color>
@@ -93,6 +95,7 @@
     <color name="namoa_color_beige_chat">#F5F5DC</color>
     <color name="namoa_color_blue_balloon_chat">#C0DBE2</color>
     <color name="namoa_color_green_chat">#28A745</color>
+
 
     <!--&lt;!&ndash;REVISÃO CORES STATUS&ndash;&gt;-->
     <!--<color name="namoa_status_edit" >#FF1493</color>-->
