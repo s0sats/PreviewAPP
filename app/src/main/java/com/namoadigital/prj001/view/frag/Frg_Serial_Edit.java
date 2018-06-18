@@ -2350,7 +2350,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //Se o produto e o serial controlam io, bloqueia mudança de site.
         if(mdProduct.getIo_control() == 1 && mdProductSerial.getSite_io_control() != null && mdProductSerial.getSite_io_control() == 1){
-
+            ss_site.setmEnabled(false);
         }
     }
 
