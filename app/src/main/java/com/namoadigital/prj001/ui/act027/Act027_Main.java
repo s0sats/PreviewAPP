@@ -809,7 +809,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(isSoSaveLinked){
+                        if (isSoSaveLinked) {
                             //
                             isSoSaveLinked = false;
                             executeSoSave();
@@ -999,7 +999,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             public void onClick(View v) {
                 show.dismiss();
                 //
-                if(isSoSaveLinked){
+                if (isSoSaveLinked) {
                     isSoSaveLinked = false;
                     //
                     executeSoSave();
@@ -1010,7 +1010,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     //
-    public void checkSerialSaveNeeds(){
+    public void checkSerialSaveNeeds() {
         /*if(){
 
         }*/
@@ -1033,10 +1033,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 }
                 //
                 for (MD_Product_Serial serial : token_serial_list) {
-                    if ( serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                    if (serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
                         // && serial.getSo_prefix() == mSm_so.getSo_prefix()
                         // && serial.getSo_code() == mSm_so.getSo_code()
-                    ) {
+                            ) {
                         return true;
                     }
                 }
@@ -1239,14 +1239,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
             recoverApprovalState();
         }
+
         //Verificar com Jhon
         if (ws_process.equals(WS_PROCESS_SERIAL)) {
             setWs_process("");
             loadProductSerialIntoFragment();
             refreshFragUI();
+
             //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
             if (isSoSaveLinked) {
                 isSoSaveLinked = false;
+
                 executeSoSave();
             }
         }
@@ -1291,6 +1294,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             //act027_serial_.callProcessTrackingResult(hmAux);
             frgSerialEdit.processTrackingResult(hmAux);
+
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL)) {
             //WS_PROCESS_SERIAL
             //Esse else processa o retorno do WS Serial Save

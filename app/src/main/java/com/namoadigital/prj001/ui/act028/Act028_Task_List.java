@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -25,7 +24,6 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
@@ -459,7 +457,9 @@ public class Act028_Task_List extends BaseFragment {
         if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
             mMain_new.setMTASK_STATUS(Act028_Main.CREATE_TASK);
             //
-            callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+            mMain_new.setmTaskCall(false);
+            mMain_new.executeSerialSave();
+            //callSoSave();
         }
 
         if (delegate != null) {
@@ -473,28 +473,28 @@ public class Act028_Task_List extends BaseFragment {
 
     }
 
-    private void callSoSave(int prefix, int code) {
-
-        if (ToolBox_Con.isOnline(context)) {
-
-            baInfra.enableProgressDialog(
-                    hmAux_Trans.get("alert_task_title"),
-                    hmAux_Trans.get("alert_so_list_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            //
-            Intent mIntent = new Intent(context, WBR_SO_Save.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
-
-
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
-        } else {
-        }
-    }
+//    private void callSoSave() {
+//
+//        if (ToolBox_Con.isOnline(context)) {
+//
+//            baInfra.enableProgressDialog(
+//                    hmAux_Trans.get("alert_task_title"),
+//                    hmAux_Trans.get("alert_so_list_msg"),
+//                    hmAux_Trans.get("sys_alert_btn_cancel"),
+//                    hmAux_Trans.get("sys_alert_btn_ok")
+//            );
+//            //
+//            Intent mIntent = new Intent(context, WBR_SO_Save.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+//
+//
+//            mIntent.putExtras(bundle);
+//            //
+//            context.sendBroadcast(mIntent);
+//        } else {
+//        }
+//    }
 
     private HMAux last_task_seq_oper() {
         HMAux aux = null;
@@ -542,9 +542,9 @@ public class Act028_Task_List extends BaseFragment {
     }
 
     private void setExecStatusColor(TextView tv_status, String status) {
-                /*
-        * Tratativa de cor por Status
-        * */
+        /*
+         * Tratativa de cor por Status
+         * */
         switch (status) {
             case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));

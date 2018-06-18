@@ -29,7 +29,6 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_005;
@@ -805,8 +804,11 @@ public class Act028_Task extends BaseFragment {
 
                                 so.setUpdate_required(1);
                                 soDao.addUpdate(so);
-
-                                callSoSave(mTask.getSo_prefix(), mTask.getSo_code());
+                                //
+                                processStatusUpdateOffLine();
+                                mMain_new.setmTaskCall(true);
+                                mMain_new.executeSerialSave();
+                                //callSoSave();
                             }
                         },
                         1,
@@ -1011,35 +1013,36 @@ public class Act028_Task extends BaseFragment {
         //
         mMain_new.setMTASK_STATUS(Act028_Main.CREATE_SAVE);
         //
-        callSoSave(mTask.getSo_prefix(), mTask.getSo_code());
-    }
-
-    private void callSoSave(int prefix, int code) {
-
         processStatusUpdateOffLine();
-
-        if (ToolBox_Con.isOnline(context)) {
-
-            baInfra.enableProgressDialog(
-                    hmAux_Trans.get("alert_task_title"),
-                    hmAux_Trans.get("alert_task_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            //
-            Intent mIntent = new Intent(context, WBR_SO_Save.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
-
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
-            //
-            activateUpload(context);
-        } else {
-            mMain_new.offLineProcess();
-        }
+        mMain_new.setmTaskCall(true);
+        mMain_new.executeSerialSave();
+        //callSoSave();
     }
+
+//    private void callSoSave() {
+//
+//        // processStatusUpdateOffLine();
+//
+//        if (ToolBox_Con.isOnline(context)) {
+//
+//            baInfra.enableProgressDialog(
+//                    hmAux_Trans.get("alert_task_title"),
+//                    hmAux_Trans.get("alert_task_msg"),
+//                    hmAux_Trans.get("sys_alert_btn_cancel"),
+//                    hmAux_Trans.get("sys_alert_btn_ok")
+//            );
+//            //
+//            Intent mIntent = new Intent(context, WBR_SO_Save.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+//
+//            mIntent.putExtras(bundle);
+//            ////
+//            //context.sendBroadcast(mIntent);
+//        } else {
+//            mMain_new.offLineProcess();
+//        }
+//    }
 
     private void processStatusUpdateOffLine() {
 

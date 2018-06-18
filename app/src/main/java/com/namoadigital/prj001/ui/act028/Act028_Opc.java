@@ -303,18 +303,6 @@ public class Act028_Opc extends BaseFragment {
                         delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
                         loadDataToScreen();
                     }
-
-
-//                    if (delegate != null) {
-//                        if (type == 1) {
-//                            delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
-//                            loadDataToScreen();
-//                        } else {
-//                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-//                            // setHMAuxScreen(); loadDataToScreen()
-//                            loadDataToScreen();
-//                        }
-//                    }
                 }
             }
         });
@@ -361,20 +349,7 @@ public class Act028_Opc extends BaseFragment {
                         delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
                         loadDataToScreen();
                     }
-
-//                    if (delegate != null) {
-//                        if (type == 1) {
-//                            delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
-//                            loadDataToScreen();
-//                        } else {
-//                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-//                            // setHMAuxScreen(); loadDataToScreen()
-//                            loadDataToScreen();
-//                        }
-//                    }
                 }
-
-
             }
         });
     }
@@ -522,7 +497,7 @@ public class Act028_Opc extends BaseFragment {
                 } else {
                 }
 
-                if(!mMain.hasExecutionProfile()){
+                if (!mMain.hasExecutionProfile()) {
                     iv_new_exec.setVisibility(View.GONE);
                     iv_not_exec.setVisibility(View.GONE);
                 }
@@ -537,29 +512,6 @@ public class Act028_Opc extends BaseFragment {
     }
 
     private void setOffLineStatus(SM_SO_Service_Exec sm_so_service_execNew) {
-//        // Updata Status Service
-//        sm_so_service_execDao.addUpdate(new SM_SO_Service_Sql_Status_001(
-//                sm_so_service_execNew.getCustomer_code(),
-//                sm_so_service_execNew.getSo_prefix(),
-//                sm_so_service_execNew.getSo_code(),
-//                sm_so_service_execNew.getPrice_list_code(),
-//                sm_so_service_execNew.getPack_code(),
-//                sm_so_service_execNew.getPack_seq(),
-//                sm_so_service_execNew.getCategory_price_code(),
-//                sm_so_service_execNew.getService_code(),
-//                sm_so_service_execNew.getService_seq()
-//        ).toSqlQuery());
-//
-//        // Updata Status Pack
-//        sm_so_service_execDao.addUpdate(new SM_SO_Pack_Sql_Status_001(
-//                sm_so_service_execNew.getCustomer_code(),
-//                sm_so_service_execNew.getSo_prefix(),
-//                sm_so_service_execNew.getSo_code(),
-//                sm_so_service_execNew.getPrice_list_code(),
-//                sm_so_service_execNew.getPack_code(),
-//                sm_so_service_execNew.getPack_seq()
-//        ).toSqlQuery());
-
         // Updata Status SO
         sm_so_service_execDao.addUpdate(new SM_SO_Sql_Status_001(
                 sm_so_service_execNew.getCustomer_code(),
@@ -652,25 +604,6 @@ public class Act028_Opc extends BaseFragment {
                                 false
                         );
                     } else {
-
-//                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
-//                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
-//                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
-//                        //
-//                        sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
-//                        //
-//                        setOffLineStatus(sm_so_service_exec);
-//                        //
-//                        if (delegate != null) {
-//                            if (type == 1) {
-//                                delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
-//                                loadDataToScreen();
-//                            } else {
-//                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-//                                // setHMAuxScreen(); loadDataToScreen()
-//                                loadDataToScreen();
-//                            }
-//                        }
                     }
                 }
             });
@@ -726,20 +659,6 @@ public class Act028_Opc extends BaseFragment {
                                     break;
                             }
                         }
-
-
-//                        if (delegate != null) {
-//                            if (type == 1) {
-//                                delegate.notExec(mService, sm_so_service_exec, data.get("full_status"));
-//                                // setHMAuxScreen(); loadDataToScreen()
-//                                loadDataToScreen();
-//                            } else {
-//                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-//                                // setHMAuxScreen(); loadDataToScreen()
-//                                loadDataToScreen();
-//                            }
-//                        }
-
                     }
 
                     show.dismiss();
@@ -771,73 +690,12 @@ public class Act028_Opc extends BaseFragment {
                 ).toSqlQuery()
         );
 
-        if (resp != null && resp.get("full_status").equalsIgnoreCase("0")){
+        if (resp != null && resp.get("full_status").equalsIgnoreCase("0")) {
             return false;
         } else {
             return true;
         }
-
     }
-
-//    public boolean verificarStatus_SO(int so_prefix, int so_code, SM_SO_Service sm_so_service) {
-//
-//        SM_SODao sm_soDao = new SM_SODao(
-//                context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM
-//        );
-//
-//        SM_SO sm_so = sm_soDao.getByString(
-//
-//                new SM_SO_Sql_001(
-//                        ToolBox_Con.getPreference_Customer_Code(context),
-//                        so_prefix,
-//                        so_code
-//                ).toSqlQuery()
-//        );
-//
-//        if (
-//                !sm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
-//                        !sm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-//                ) {
-//
-//            return false;
-//
-//        } else {
-//
-//            for (SM_SO_Pack sm_so_pack : sm_so.getPack()) {
-//
-//                if ((sm_so_pack.getPrice_list_code() == sm_so_service.getPrice_list_code()) &&
-//                        (sm_so_pack.getPack_code() == sm_so_service.getPack_code()) &&
-//                        (sm_so_pack.getPack_seq() == sm_so_service.getPack_seq())
-//
-//                        ) {
-//
-//                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
-//                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-//                            ) {
-//                        return false;
-//                    } else {
-//
-//                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
-//                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-//                                ) {
-//
-//                            return false;
-//
-//                        } else {
-//
-//                            return true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//
-//
-//        return true;
-//    }
 
     private void changeTabColor() {
     }
