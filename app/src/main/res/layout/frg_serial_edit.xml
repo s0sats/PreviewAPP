@@ -661,7 +661,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/namoa_color_white_alpha"
-            android:visibility="visible"
+            android:visibility="gone"
             android:clickable="true"
             />
 

@@ -1401,6 +1401,16 @@ public class Frg_Serial_Edit extends BaseFragment {
         };
         //
         fabMenu_anchor.setOnFabClickListener(new FabMenu.IFabMenu() {
+
+            @Override
+            public void onFabStatusChanged(boolean menu_open) {
+                if(menu_open){
+                    view_background.setVisibility(View.VISIBLE);
+                }else{
+                    view_background.setVisibility(View.GONE);
+                }
+            }
+
             @Override
             public void onFabClick(View view) {
                 //A view retornada é o item fab selecionado.
@@ -1425,6 +1435,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     scrollToView(ll_io_info);
                 }
             }
+
         });
         //
         iv_serial_dialog_info.setOnClickListener(new View.OnClickListener() {
