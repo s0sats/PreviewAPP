@@ -572,6 +572,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
         //
         fabMenu_anchor = (FabMenu) view.findViewById(R.id.frg_serial_edit_fabMenu_anchor);
+        fabMenu_anchor.setmIcons_Enabled(true);
         //
         view_background = view.findViewById(R.id.frg_serial_edit_view_bg);
         //
@@ -1317,7 +1318,11 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
-                if (ss_site.getmValue().get(SearchableSpinner.ID) == null || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")) {
+                if (
+                    ss_site.getmValue().get(SearchableSpinner.ID) == null
+                            || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")
+                    )
+                {
                     //Seta var para impedir que a troca de valores nos spinners dispare
                     //o evento.
                     skip_validation = true;
@@ -1331,6 +1336,17 @@ public class Frg_Serial_Edit extends BaseFragment {
                         }
                     }
                     ss_site.setmValue(siteSelectedByLocal);
+                    //Seta valor da zone e refaz HmAux baseado no novo site.
+                    loadZoneSS(true);
+                    ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
+                    //
+                    loadLocalSS(false);
+                    //
+                    skip_validation = false;
+                }else if ( ss_site_zone.getmValue().get(SearchableSpinner.ID) == null
+                            || ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null")
+                ){
+                    //Se Zona estiver em branco, a seleção do local preenche os outros campos.
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
                     ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
