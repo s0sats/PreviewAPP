@@ -473,7 +473,8 @@ public class Act027_Services extends BaseFragment {
                 //Seta flag de somente save sem sincronismo.
                 mMain.setOnly_save(true);
                 //
-                mMain.executeSoSave();
+                mMain.executeSerialSave(true);
+                //mMain.executeSoSave();
             } else {
                 Act027_Main mMain = (Act027_Main) getActivity();
                 mMain.refreshUI();

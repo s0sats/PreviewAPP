@@ -792,13 +792,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         if (ToolBox_Con.isOnline(context) && !jumpOnlineExecution) {
 
-            enableProgressDialog(
-                    hmAux_Trans.get("alert_task_title"),
-                    hmAux_Trans.get("alert_so_list_msg"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-
             Intent mIntent = new Intent(context, WBR_SO_Save.class);
             Bundle bundle = new Bundle();
             bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);

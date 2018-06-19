@@ -184,6 +184,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private MD_Product_Serial_TrackingDao trackingDao;
     private boolean isSoSaveLinked = false;
 
+
     //
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
         this.eventEditOpenStatus = eventEditOpenStatus;
@@ -809,11 +810,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (isSoSaveLinked) {
-                            //
-                            isSoSaveLinked = false;
-                            executeSoSave();
-                        }
+
+//                        if (isSoSaveLinked) {
+//                            //
+//                            isSoSaveLinked = false;
+//                            executeSoSave();
+//                        }
                     }
                 },
                 0
@@ -852,7 +854,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         serialDao.addUpdateTmp(mdProductSerial);
     }
 
-    private void executeSerialSave(boolean isSoSaveLinked) {
+    public void executeSerialSave(boolean isSoSaveLinked) {
         //Seta variavel que indica se o save da S.O Deve ser chamada após o se do Serial Rodar.
         this.isSoSaveLinked = isSoSaveLinked;
         //
@@ -935,17 +937,41 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //Atualiza dados dos serial na tela e spinners
             refreshFragUI();
             //
-            //if(returnList.size() == 1){
-            if (returnList.size() == 1) {
-                showSingleResultMsg(ttl, msg);
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                //
+                // processa lista de serial
+                //
+                executeSoSave();
             } else {
-                showSerialResults(returnList);
+                //if(returnList.size() == 1){
+                if (returnList.size() == 1) {
+                    showSingleResultMsg(ttl, msg);
+                } else {
+                    showSerialResults(returnList);
+                }
             }
+//            //if(returnList.size() == 1){
+//            if (returnList.size() == 1) {
+//                showSingleResultMsg(ttl, msg);
+//            } else {
+//                showSerialResults(returnList);
+//            }
         } else {
-            showSingleResultMsg(
-                    hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_no_serial_return_msg")
-            );
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                //
+                executeSoSave();
+            } else {
+                showAlertDialog(
+                        hmAux_Trans.get("alert_save_serial_return_ttl"),
+                        hmAux_Trans.get("alert_no_serial_return_msg")
+                );
+            }
+//            showSingleResultMsg(
+//                    hmAux_Trans.get("alert_save_serial_return_ttl"),
+//                    hmAux_Trans.get("alert_no_serial_return_msg")
+//            );
         }
     }
 
@@ -999,17 +1025,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             public void onClick(View v) {
                 show.dismiss();
                 //
-                if (isSoSaveLinked) {
-                    isSoSaveLinked = false;
-                    //
-                    executeSoSave();
-                }
+//                if (isSoSaveLinked) {
+//                    isSoSaveLinked = false;
+//                    //
+//                    executeSoSave();
+//                }
             }
         });
 
     }
 
-    //
     public void checkSerialSaveNeeds() {
         /*if(){
 
@@ -1245,13 +1270,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             loadProductSerialIntoFragment();
             refreshFragUI();
-
-            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
-            if (isSoSaveLinked) {
-                isSoSaveLinked = false;
-
-                executeSoSave();
-            }
         }
     }
 
@@ -1306,10 +1324,20 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             if (hmAux.size() > 0) {
                 processSerialSaveResult(frgSerialEdit.getMdProductSerial().getProduct_code(), frgSerialEdit.getMdProductSerial().getSerial_id(), hmAux);
             } else {
-                showAlertDialog(
-                        hmAux_Trans.get("alert_save_serial_return_ttl"),
-                        hmAux_Trans.get("alert_no_serial_return_msg")
-                );
+                if (isSoSaveLinked) {
+                    isSoSaveLinked = false;
+                    //
+                    executeSoSave();
+                } else {
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_save_serial_return_ttl"),
+                            hmAux_Trans.get("alert_no_serial_return_msg")
+                    );
+                }
+//                showAlertDialog(
+//                        hmAux_Trans.get("alert_save_serial_return_ttl"),
+//                        hmAux_Trans.get("alert_no_serial_return_msg")
+//                );
             }
         } else {
             setWs_process("");
@@ -2136,7 +2164,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                             //
                             setWs_process(WS_PROCESS_SO_SAVE);
                             //
-                            executeSoSave();
+                            executeSerialSave(true);
+                            // Hugo
+                            //executeSoSave();
                         } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }
