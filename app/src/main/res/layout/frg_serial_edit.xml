@@ -656,16 +656,42 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
+        <View
+            android:id="@+id/frg_serial_edit_view_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/namoa_color_white_alpha"
+            android:visibility="gone"
+            android:clickable="true"
+            />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/frg_serial_edit_fab_anchor"
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/frg_serial_edit_fab_anchor"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|end"-->
+            <!--android:layout_margin="15dp"-->
+            <!--android:background="@color/namoa_dark_blue"-->
+            <!--android:backgroundTint="@color/namoa_dark_blue"-->
+            <!--android:src="@drawable/ic_swap_vert_black_25dp"-->
+            <!--android:tint="@color/padrao_WHITE"-->
+            <!--android:visibility="gone"-->
+            <!--/>-->
+
+        <com.namoa_digital.namoa_library.ctls.FabMenu
+            android:id="@+id/frg_serial_edit_fabMenu_anchor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="15dp"
-            android:background="@color/namoa_dark_blue"
-            android:backgroundTint="@color/namoa_dark_blue"
-            android:src="@drawable/ic_swap_vert_black_25dp"
-            android:tint="@color/padrao_WHITE" />
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="0dp"
+            app:mButton_Back_Color="@color/namoa_lime_green"
+            app:mButton_Resource="@drawable/ic_swap_vert_black_25dp"
+            app:mButton_Resource_Color="@color/padrao_WHITE"
+            >
+
+        </com.namoa_digital.namoa_library.ctls.FabMenu>
     </FrameLayout>
 </LinearLayout>

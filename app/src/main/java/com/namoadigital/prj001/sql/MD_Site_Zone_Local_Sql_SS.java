@@ -60,8 +60,9 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
                         "  and l.zone_code = z.zone_code" +
                         "  and l.customer_code = '"+ customer_code +"' \n" +
                         "  and ('" + site_code  + "' IS NULL \n"+
-                        "        or  (l.site_code = '"+ site_code +"' \n"+
-                        "        and l.zone_code= '"+ zone_code +"')\n" +
+                        "        or (l.site_code = '"+ site_code +"' \n"+
+                        "            and ( '"+ zone_code  + "' IS NULL OR l.zone_code= '"+ zone_code +"')" +
+                        "           )\n" +
                         "       ) \n" +
                         " and ( length('"+site_code_restriction+"') = 0 OR l.site_code in ("+site_code_restriction+")  ) \n"+
                         " ORDER BY\n" +

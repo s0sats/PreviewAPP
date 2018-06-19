@@ -68,7 +68,7 @@ dependencies {
 
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
 
-    implementation 'com.namoa_digital:library:0.0.344'
+    implementation 'com.namoa_digital:library:0.0.350'
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.firebase:firebase-messaging:10.0.1'

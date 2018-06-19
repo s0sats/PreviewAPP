@@ -7,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.FabMenu;
+import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.ctls.TextViewCT;
@@ -105,7 +105,14 @@ public class Frg_Serial_Edit extends BaseFragment {
     private LinearLayout ll_serial_class;
     private SearchableSpinner ss_class;
     private ImageView iv_class_icon;
-    private FloatingActionButton fab_anchor;
+    private FabMenu fabMenu_anchor;
+    private View view_background;
+    private FabMenuItem fabTop;
+    private FabMenuItem fabClass;
+    private FabMenuItem fabLocation;
+    private FabMenuItem fabProperties;
+    private FabMenuItem fabAddInfo;
+    private FabMenuItem fabIOInfo;
     private View view_footer;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
@@ -166,6 +173,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private String btn_action_translation = "";
     private boolean forceCheckExistences = false;
     private boolean abortReported = false;
+    ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -445,6 +453,17 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ((TextView) view).setText(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String) view.getTag()));
             }
         }
+        //
+        //Seta tradução e itens no FabMenu
+        for(FabMenuItem item: fabMenuItems){
+            if(item != null && hmAux_Trans.get((String) item.getTag()) != null){
+                item.setmLabel(hmAux_Trans.get((String) item.getTag()));
+            }else{
+                item.setmLabel(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String) item.getTag()));
+            }
+        }
+        //
+        fabMenu_anchor.setFabMenuItens(fabMenuItems);
     }
 
     @Nullable
@@ -552,7 +571,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
         //
-        fab_anchor = (FloatingActionButton) view.findViewById(R.id.frg_serial_edit_fab_anchor);
+        fabMenu_anchor = (FabMenu) view.findViewById(R.id.frg_serial_edit_fabMenu_anchor);
+        fabMenu_anchor.setmIcons_Enabled(true);
+        //
+        view_background = view.findViewById(R.id.frg_serial_edit_view_bg);
+        //
+        initFabMenuItens();
         //
         view_footer = view.findViewById(R.id.frg_serial_edit_view_footer);
         //
@@ -626,6 +650,70 @@ public class Frg_Serial_Edit extends BaseFragment {
         serialProperties.add(mket_info3);
         //
         listnersInitializer();
+    }
+
+    private void initFabMenuItens() {
+        int lblBgColor = getResources().getColor(R.color.namoa_fab_item_bg_color);
+        int lblColor = getResources().getColor(R.color.padrao_WHITE);
+        int btnBgColor = getResources().getColor(R.color.namoa_lime_green);
+        int iconColor = getResources().getColor(R.color.padrao_WHITE);
+        int icon = R.drawable.ic_arrow_left_thick;
+
+        fabTop = new FabMenuItem(context);
+        fabTop.setTag("to_top_ttl");
+        fabTop.setmLabel_Back_Color(lblBgColor);
+        fabTop.setmLabel_Text_Color(lblColor);
+        fabTop.setmButton_Back_Color(btnBgColor);
+        fabTop.setmButton_Resource_Color(iconColor);
+        fabTop.setmButton_Resource(icon);
+        fabMenuItems.add(fabTop);
+
+        fabClass = new FabMenuItem(context);
+        fabClass.setTag("class_ttl");
+        fabClass.setmLabel_Back_Color(lblBgColor);
+        fabClass.setmLabel_Text_Color(lblColor);
+        fabClass.setmButton_Back_Color(btnBgColor);
+        fabClass.setmButton_Resource_Color(iconColor);
+        fabClass.setmButton_Resource(icon);
+        fabMenuItems.add(fabClass);
+        //
+        fabLocation = new FabMenuItem(context);
+        fabLocation.setTag("serial_location_ttl");
+        fabLocation.setmLabel_Back_Color(lblBgColor);
+        fabLocation.setmLabel_Text_Color(lblColor);
+        fabLocation.setmButton_Back_Color(btnBgColor);
+        fabLocation.setmButton_Resource_Color(iconColor);
+        fabLocation.setmButton_Resource(icon);
+        fabMenuItems.add(fabLocation);
+        //
+        fabProperties = new FabMenuItem(context);
+        fabProperties.setTag("serial_properties_ttl");
+        fabProperties.setmLabel_Back_Color(lblBgColor);
+        fabProperties.setmLabel_Text_Color(lblColor);
+        fabProperties.setmButton_Back_Color(btnBgColor);
+        fabProperties.setmButton_Resource_Color(iconColor);
+        fabProperties.setmButton_Resource(icon);
+        fabMenuItems.add(fabProperties);
+        //
+        fabAddInfo = new FabMenuItem(context);
+        fabAddInfo.setTag("serial_add_info_ttl");
+        fabAddInfo.setmLabel_Back_Color(lblBgColor);
+        fabAddInfo.setmLabel_Text_Color(lblColor);
+        fabAddInfo.setmButton_Back_Color(btnBgColor);
+        fabAddInfo.setmButton_Resource_Color(iconColor);
+        fabAddInfo.setmButton_Resource(icon);
+        fabMenuItems.add(fabAddInfo);
+        //
+        fabIOInfo = new FabMenuItem(context);
+        fabIOInfo.setTag("io_info_ttl");
+        fabIOInfo.setmLabel_Back_Color(lblBgColor);
+        fabIOInfo.setmLabel_Text_Color(lblColor);
+        fabIOInfo.setmButton_Back_Color(btnBgColor);
+        fabIOInfo.setmButton_Resource_Color(iconColor);
+        fabIOInfo.setmButton_Resource(icon);
+        fabMenuItems.add(fabIOInfo);
+        //
+        //fabMenu_anchor.setFabMenuItens(fabMenuItems);
     }
 
     public void loadDataToScreen() {
@@ -913,7 +1001,9 @@ public class Frg_Serial_Edit extends BaseFragment {
             //
             setIoVisibility();
         } else {
-            ll_io_info.setVisibility(View.GONE);
+            //ll_io_info.setVisibility(View.GONE);
+            setIoVisibility();
+
         }
         //endregion
         //
@@ -1157,47 +1247,49 @@ public class Frg_Serial_Edit extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                //
-                if (!skip_validation) {
-                    loadZoneSS(true);
+                if (ss_site.hasChanged()) {
                     //
-                    loadLocalSS(true);
-                }
-                //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
-                //
-                if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_clear_tracking_list_ttl"),
-                            hmAux_Trans.get("alert_clear_tracking_list_msg"),
-                            dialogClearTrackingListner,
-                            2,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    siteChanged = false;
-                                    ss_site.setmValue(oldSite);
-                                    ss_site_zone.setmValue(oldZone);
-                                    ss_site_zone_local.setmValue(oldLocal);
-                                    //
-                                    loadZoneSS(false);
-                                    //
-                                    loadLocalSS(false);
-                                }
-                            }
-
-                    );
-                } else {
-                    if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
-                        //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                    if (!skip_validation) {
+                        loadZoneSS(true);
+                        //
+                        loadLocalSS(true);
+                    }
+                    //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
+                    //
+                    if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
                         ToolBox.alertMSG(
                                 context,
-                                hmAux_Trans.get("alert_keep_tracking_list_ttl"),
-                                hmAux_Trans.get("alert_keep_tracking_list_msg"),
-                                null,
+                                hmAux_Trans.get("alert_clear_tracking_list_ttl"),
+                                hmAux_Trans.get("alert_clear_tracking_list_msg"),
+                                dialogClearTrackingListner,
                                 2,
-                                dialogClearTrackingListner
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        siteChanged = false;
+                                        ss_site.setmValue(oldSite);
+                                        ss_site_zone.setmValue(oldZone);
+                                        ss_site_zone_local.setmValue(oldLocal);
+                                        //
+                                        loadZoneSS(false);
+                                        //
+                                        loadLocalSS(false);
+                                    }
+                                }
+
                         );
+                    } else {
+                        if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
+                            //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_keep_tracking_list_ttl"),
+                                    hmAux_Trans.get("alert_keep_tracking_list_msg"),
+                                    null,
+                                    2,
+                                    dialogClearTrackingListner
+                            );
+                        }
                     }
                 }
             }
@@ -1214,7 +1306,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (!skip_validation) {
                     loadLocalSS(true);
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
-                    if (ss_site_zone_local.getmOption().size() == 1) {
+                    if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
                     }
                 }
@@ -1230,7 +1322,11 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
-                if (ss_site.getmValue().get(SearchableSpinner.ID) == null || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")) {
+                if (
+                    ss_site.getmValue().get(SearchableSpinner.ID) == null
+                            || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")
+                    )
+                {
                     //Seta var para impedir que a troca de valores nos spinners dispare
                     //o evento.
                     skip_validation = true;
@@ -1244,6 +1340,17 @@ public class Frg_Serial_Edit extends BaseFragment {
                         }
                     }
                     ss_site.setmValue(siteSelectedByLocal);
+                    //Seta valor da zone e refaz HmAux baseado no novo site.
+                    loadZoneSS(true);
+                    ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
+                    //
+                    loadLocalSS(false);
+                    //
+                    skip_validation = false;
+                }else if ( ss_site_zone.getmValue().get(SearchableSpinner.ID) == null
+                            || ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null")
+                ){
+                    //Se Zona estiver em branco, a seleção do local preenche os outros campos.
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
                     ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
@@ -1313,11 +1420,42 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         };
         //
-        fab_anchor.setOnClickListener(new View.OnClickListener() {
+        fabMenu_anchor.setOnFabClickListener(new FabMenu.IFabMenu() {
+
             @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Anchora?", Toast.LENGTH_LONG).show();
+            public void onFabStatusChanged(boolean menu_open) {
+                if(menu_open){
+                    view_background.setVisibility(View.VISIBLE);
+                }else{
+                    view_background.setVisibility(View.GONE);
+                }
             }
+
+            @Override
+            public void onFabClick(View view) {
+                //A view retornada é o item fab selecionado.
+                int id = view.getId();
+                //
+                if(id == fabTop.getId()){
+                    scrollToTop();
+
+                }else if(id == fabClass.getId()){
+                    scrollToView(ll_serial_class);
+
+                }else if(id == fabLocation.getId()){
+                    scrollToView(ll_serial_location);
+
+                }else if(id == fabProperties.getId()){
+                    scrollToView(ll_serial_properties);
+
+                }else if(id == fabAddInfo.getId()){
+                    scrollToView(ll_serial_add_info);
+
+                }else if(id == fabIOInfo.getId()){
+                    scrollToView(ll_io_info);
+                }
+            }
+
         });
         //
         iv_serial_dialog_info.setOnClickListener(new View.OnClickListener() {
@@ -1617,7 +1755,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 //
                 cleanSearched_tracking();
                 //
-                scrollToTracking(ll_tracking_content);
+                scrollToView(ll_tracking_content);
             } else {
                 showAlertDialog(
                         hmAux_Trans.get("alert_tracking_unavailable_ttl"),
@@ -1627,7 +1765,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
     }
     //region Scrolls
-    private void scrollToTracking(View view) {
+    private void scrollToView(View view) {
         int x = (int) view.getX();
         int y = view.getTop() + ((View) view.getParent()).getTop();
 
@@ -1782,6 +1920,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         if (mdProduct.getLocal_control() == 0) {
             ll_serial_location.setVisibility(View.GONE);
+            fabMenu_anchor.removeFabMenuItens(fabLocation);
         }
         //Por fim aplica "profile do customer" se deve ou não exibir os dados de tracking
         if (!useTracking) {
@@ -1826,8 +1965,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ll_serial_add_info.setVisibility(View.VISIBLE);
                 setIoVisibility();
                 btn_action.setVisibility(View.VISIBLE);
-                fab_anchor.setVisibility(View.VISIBLE);
-                view_footer.setVisibility(fab_anchor.getVisibility());
+                fabMenu_anchor.setVisibility(View.VISIBLE);
+                view_footer.setVisibility(fabMenu_anchor.getVisibility());
                 break;
             case VIEW_SO_EDIT:
                 tv_brand_model_color.setVisibility(View.VISIBLE);
@@ -1838,8 +1977,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ll_serial_add_info.setVisibility(View.GONE);
                 ll_io_info.setVisibility(View.GONE);
                 btn_action.setVisibility(View.VISIBLE);
-                fab_anchor.setVisibility(View.GONE);
-                view_footer.setVisibility(fab_anchor.getVisibility());
+                fabMenu_anchor.setVisibility(View.GONE);
+                view_footer.setVisibility(fabMenu_anchor.getVisibility());
                 break;
             default:
                 tv_brand_model_color.setVisibility(View.GONE);
@@ -1850,8 +1989,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ll_serial_add_info.setVisibility(View.GONE);
                 ll_io_info.setVisibility(View.GONE);
                 btn_action.setVisibility(View.GONE);
-                fab_anchor.setVisibility(View.GONE);
-                view_footer.setVisibility(fab_anchor.getVisibility());
+                fabMenu_anchor.setVisibility(View.GONE);
+                view_footer.setVisibility(fabMenu_anchor.getVisibility());
         }
     }
 
@@ -1864,11 +2003,13 @@ public class Frg_Serial_Edit extends BaseFragment {
                     mket_outbound_id.getVisibility() == View.GONE
                     ) {
                 ll_io_info.setVisibility(View.GONE);
+                fabMenu_anchor.removeFabMenuItens(fabIOInfo);
             } else {
                 ll_io_info.setVisibility(View.VISIBLE);
             }
         } else {
             ll_io_info.setVisibility(View.GONE);
+            fabMenu_anchor.removeFabMenuItens(fabIOInfo);
         }
     }
     //endregion
@@ -2340,7 +2481,13 @@ public class Frg_Serial_Edit extends BaseFragment {
                     if (new_serial) {
                         ss_site.setmValue(loggedSite);
                         ss_site.setmEnabled(false);
+                    }else if( mdProduct.getSite_restriction() == 1
+                             && mdProductSerial.getSite_code() != null
+                             && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
+                            ){
+                        ss_site.setmEnabled(false);
                     }
+
                 }
             }else{
                 if (new_serial) {
@@ -2507,6 +2654,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("outbound_lbl");
         transListFrag.add("alert_no_site_option_ttl");
         transListFrag.add("alert_no_site_option_msg");
+        transListFrag.add("to_top_ttl");
+        transListFrag.add("class_ttl");
+
         //
         return transListFrag;
     }
