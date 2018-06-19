@@ -228,7 +228,7 @@
                             android:padding="5dp"
                             android:text="Class - Trad"
                             android:textSize="@dimen/font_size_item_md"
-                            android:visibility="gone" />
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -270,7 +270,9 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Location"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item_md"
+                            android:textStyle="bold"
+                            />
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_site"
@@ -347,7 +349,9 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Properties"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item_md"
+                            android:textStyle="bold"
+                            />
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_brand"
@@ -469,7 +473,8 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="Additional Info"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item_md"
+                            android:textStyle="bold"/>
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -531,7 +536,8 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:text="IO Info - Trad"
-                            android:textSize="@dimen/font_size_item_md" />
+                            android:textSize="@dimen/font_size_item_md"
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_inbound_lbl"

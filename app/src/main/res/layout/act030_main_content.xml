@@ -11,17 +11,19 @@
     tools:context=".ui.act030.Act030_Main"
     tools:showIn="@layout/act030_main">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/padrao_WHITE"
-        android:padding="10dp">
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="@color/padrao_WHITE"-->
+        <!--android:padding="10dp">-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@android:color/white"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <fragment
@@ -33,7 +35,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    <!--</ScrollView>-->
 
     <include layout="@layout/footer_base" />
 
