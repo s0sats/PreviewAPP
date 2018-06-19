@@ -1001,7 +1001,9 @@ public class Frg_Serial_Edit extends BaseFragment {
             //
             setIoVisibility();
         } else {
-            ll_io_info.setVisibility(View.GONE);
+            //ll_io_info.setVisibility(View.GONE);
+            setIoVisibility();
+
         }
         //endregion
         //
@@ -1245,47 +1247,49 @@ public class Frg_Serial_Edit extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                //
-                if (!skip_validation) {
-                    loadZoneSS(true);
+                if (ss_site.hasChanged()) {
                     //
-                    loadLocalSS(true);
-                }
-                //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
-                //
-                if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_clear_tracking_list_ttl"),
-                            hmAux_Trans.get("alert_clear_tracking_list_msg"),
-                            dialogClearTrackingListner,
-                            2,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    siteChanged = false;
-                                    ss_site.setmValue(oldSite);
-                                    ss_site_zone.setmValue(oldZone);
-                                    ss_site_zone_local.setmValue(oldLocal);
-                                    //
-                                    loadZoneSS(false);
-                                    //
-                                    loadLocalSS(false);
-                                }
-                            }
-
-                    );
-                } else {
-                    if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
-                        //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                    if (!skip_validation) {
+                        loadZoneSS(true);
+                        //
+                        loadLocalSS(true);
+                    }
+                    //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
+                    //
+                    if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
                         ToolBox.alertMSG(
                                 context,
-                                hmAux_Trans.get("alert_keep_tracking_list_ttl"),
-                                hmAux_Trans.get("alert_keep_tracking_list_msg"),
-                                null,
+                                hmAux_Trans.get("alert_clear_tracking_list_ttl"),
+                                hmAux_Trans.get("alert_clear_tracking_list_msg"),
+                                dialogClearTrackingListner,
                                 2,
-                                dialogClearTrackingListner
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        siteChanged = false;
+                                        ss_site.setmValue(oldSite);
+                                        ss_site_zone.setmValue(oldZone);
+                                        ss_site_zone_local.setmValue(oldLocal);
+                                        //
+                                        loadZoneSS(false);
+                                        //
+                                        loadLocalSS(false);
+                                    }
+                                }
+
                         );
+                    } else {
+                        if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
+                            //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_keep_tracking_list_ttl"),
+                                    hmAux_Trans.get("alert_keep_tracking_list_msg"),
+                                    null,
+                                    2,
+                                    dialogClearTrackingListner
+                            );
+                        }
                     }
                 }
             }
@@ -1302,7 +1306,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (!skip_validation) {
                     loadLocalSS(true);
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
-                    if (ss_site_zone_local.getmOption().size() == 1) {
+                    if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
                     }
                 }
@@ -1916,6 +1920,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         if (mdProduct.getLocal_control() == 0) {
             ll_serial_location.setVisibility(View.GONE);
+            fabMenu_anchor.removeFabMenuItens(fabLocation);
         }
         //Por fim aplica "profile do customer" se deve ou não exibir os dados de tracking
         if (!useTracking) {
@@ -1998,11 +2003,13 @@ public class Frg_Serial_Edit extends BaseFragment {
                     mket_outbound_id.getVisibility() == View.GONE
                     ) {
                 ll_io_info.setVisibility(View.GONE);
+                fabMenu_anchor.removeFabMenuItens(fabIOInfo);
             } else {
                 ll_io_info.setVisibility(View.VISIBLE);
             }
         } else {
             ll_io_info.setVisibility(View.GONE);
+            fabMenu_anchor.removeFabMenuItens(fabIOInfo);
         }
     }
     //endregion
@@ -2474,7 +2481,13 @@ public class Frg_Serial_Edit extends BaseFragment {
                     if (new_serial) {
                         ss_site.setmValue(loggedSite);
                         ss_site.setmEnabled(false);
+                    }else if( mdProduct.getSite_restriction() == 1
+                             && mdProductSerial.getSite_code() != null
+                             && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
+                            ){
+                        ss_site.setmEnabled(false);
                     }
+
                 }
             }else{
                 if (new_serial) {
