@@ -198,7 +198,9 @@
                             android:layout_weight="1"
                             android:background="@drawable/btn_namoa_main_states"
                             android:text="NEW"
-                            android:textColor="@color/padrao_WHITE" />
+                            android:textColor="@color/padrao_WHITE"
+                            android:focusable="true"
+                            />
 
                     </LinearLayout>
 

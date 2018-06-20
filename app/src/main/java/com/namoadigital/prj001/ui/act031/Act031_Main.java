@@ -119,78 +119,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //noava traduções abaixo
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
-        //Trauçoes comentadas são da form antiga da tela.
-        //Após implementar novo fragmento, podem ser apagadas.
-        /*transList.add("alert_no_connection_title");
-        transList.add("alert_no_connection_msg");
-        transList.add("alert_offine_mode_title");
-        transList.add("alert_offine_mode_msg");
-        transList.add("alert_start_sync_title");
-        transList.add("alert_start_sync_msg");
-        transList.add("alert_start_serial_title");
-        transList.add("alert_start_serial_msg");
-        transList.add("alert_product_not_found_title");
-        transList.add("alert_product_not_found_msg");
-        transList.add("alert_no_serial_typed_title");
-        transList.add("alert_no_serial_typed_msg");
-        transList.add("sys_alert_btn_cancel");
-        transList.add("sys_alert_btn_ok");
-        transList.add("product_ttl");
-        transList.add("mket_search_hint");
-        transList.add("product_label");
-        transList.add("product_id_label");
-        transList.add("alert_no_form_for_operation_ttl");
-        transList.add("alert_no_form_for_operation_msg");
-        //
-        transList.add("serial_ttl");
-        transList.add("serial_location_ttl");
-        transList.add("site_lbl");
-        transList.add("site_zone_lbl");
-        transList.add("site_zone_local_lbl");
-        transList.add("serial_add_info_ttl");
-        transList.add("add_info1_lbl");
-        transList.add("add_info2_lbl");
-        transList.add("add_info3_lbl");
-        transList.add("serial_properties_ttl");
-        transList.add("brand_lbl");
-        transList.add("brand_model_lbl");
-        transList.add("brand_color_lbl");
-        transList.add("segment_lbl");
-        transList.add("category_price_lbl");
-        transList.add("site_owner_lbl");
-        transList.add("btn_serial_search");
-        transList.add("btn_so_search");
-        transList.add("progress_so_search_ttl");
-        transList.add("progress_so_search_msg");
-        transList.add("progress_serial_search_ttl");
-        transList.add("progress_serial_search_msg");
-        transList.add("alert_no_so_found_ttl");
-        transList.add("alert_no_so_found_msg");
-
-        transList.add("alert_invalid_serial_local_ttl");
-        transList.add("alert_invalid_serial_local_msg");
-        transList.add("alert_no_data_changes_ttl");
-        transList.add("alert_no_data_changes_msg");
-
-        //
-        transList.add("tracking_ttl");
-        transList.add("dialog_tracking_ttl");
-        transList.add("alert_tracking_unavailable_ttl");
-        transList.add("alert_tracking_unavailable_msg");
-        transList.add("alert_tracking_already_listed_ttl");
-        transList.add("alert_tracking_already_listed_msg");
-        transList.add("alert_no_site_selected_ttl");
-        transList.add("alert_no_site_selected_msg");
-        transList.add("alert_keep_tracking_list_ttl");
-        transList.add("alert_keep_tracking_list_msg");
-        transList.add("alert_clear_tracking_list_ttl");
-        transList.add("alert_clear_tracking_list_msg");
-        transList.add("alert_save_serial_offline_msg");
-        transList.add("new_serial_data_lost_ttl");
-        transList.add("new_serial_data_lost_msg");
-        //
-        transList.add("alert_offline_data_not_saved_ttl");
-        transList.add("alert_offline_data_not_saved_msg");*/
+        transList.add("btn_action_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -249,7 +178,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
-        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
+        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_action_lbl"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         //
