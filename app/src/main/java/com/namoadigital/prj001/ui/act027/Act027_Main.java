@@ -867,6 +867,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         Intent mIntent = new Intent(context, WBR_Serial_Save.class);
         Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
         //
         mIntent.putExtras(bundle);
         //
