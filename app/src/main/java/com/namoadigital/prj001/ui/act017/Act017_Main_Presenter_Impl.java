@@ -159,7 +159,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
             ) {
 
-                ToolBox.alertMSG(
+                ToolBox.alertMSG_YES_NO(
                         context,
                         hmAux_Trans.get("alert_define_serial_ttl"),
                         hmAux_Trans.get("alert_define_serial_msg"),
