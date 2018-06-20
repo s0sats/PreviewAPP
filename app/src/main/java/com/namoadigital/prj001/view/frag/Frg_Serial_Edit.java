@@ -104,6 +104,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private SearchableSpinner ss_category_price;
     private LinearLayout ll_serial_class;
     private SearchableSpinner ss_class;
+    private TextView tv_class_ttl;
     private ImageView iv_class_icon;
     private FabMenu fabMenu_anchor;
     private View view_background;
@@ -173,7 +174,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private String btn_action_translation = "";
     private boolean forceCheckExistences = false;
     private boolean abortReported = false;
-    ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+    private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+    private boolean forceLoggedSiteRestriction = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -326,6 +328,10 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     public ArrayList<HMAux> getSS_SiteOption(){
         return ss_site.getmOption();
+    }
+    //Força validação de site restriction
+    public void setForceLoggedSiteRestriction(boolean forceLoggedSiteRestriction) {
+        this.forceLoggedSiteRestriction = forceLoggedSiteRestriction;
     }
 
     public void reApplySerialId() {
@@ -567,6 +573,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         ll_serial_class = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_class);
         //
+        tv_class_ttl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_class_ttl);
+        tv_class_ttl.setTag("class_ttl");
+        //
         ss_class = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_class);
         //
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
@@ -624,6 +633,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         views.add(tv_required_lbl);
         views.add(tv_allow_new_lbl);
         views.add(tv_serial_ttl);
+        views.add(tv_class_ttl);
         views.add(tv_serial_location_ttl);
         views.add(tv_serial_properties_ttl);
         views.add(tv_tracking);
@@ -2106,7 +2116,8 @@ public class Frg_Serial_Edit extends BaseFragment {
      * */
 
     private boolean validateSiteRestriction() {
-        if(mdProduct.getSite_restriction() == 0){
+        //if(mdProduct.getSite_restriction() == 0){
+        if(mdProduct.getSite_restriction() == 0 && !forceLoggedSiteRestriction){
             return true;
         }else{
             if( //mdProductSerial.getSite_code() != null
@@ -2413,7 +2424,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
                 //Validação 1: Se produto tem site restrição somente o site logado recebera
                 //insert = true;
-                if(mdProduct.getSite_restriction() == 1) {
+                //if(mdProduct.getSite_restriction() == 1) {
+                if(mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction) {
                     if (aux.get(SearchableSpinner.ID).equals(ToolBox_Con.getPreference_Site_Code(context))) {
                         insert = true;
                     }else{
@@ -2461,7 +2473,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         // Se houver opções e for um novo serial, setá site logado como o selecionado e bloqueia edição
         // Se não for site restrição e for um novo serial, seta o site logado como site escolhido mas permite edição
         if(mdProduct.getLocal_control() == 1) {
-            if (mdProduct.getSite_restriction() == 1) {
+            //if (mdProduct.getSite_restriction() == 1) {
+            if (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction) {
                 if (ss_site.getmOption() == null
                     || ss_site.getmOption().size() == 0
                 ) {
@@ -2481,7 +2494,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     if (new_serial) {
                         ss_site.setmValue(loggedSite);
                         ss_site.setmEnabled(false);
-                    }else if( mdProduct.getSite_restriction() == 1
+                    //}else if( mdProduct.getSite_restriction() == 1
+                    }else if( (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
                              && mdProductSerial.getSite_code() != null
                              && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
                             ){

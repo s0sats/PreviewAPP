@@ -220,6 +220,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         //frgSerialEdit.setForceCheckExistences(isSchedule);
+        //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
+        if(isSchedule && mdProduct.getLocal_control() == 1) {
+            frgSerialEdit.setForceLoggedSiteRestriction(true);
+        }
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
