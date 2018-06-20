@@ -154,6 +154,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private String ws_process = "";
     private String ws_process_approval_status = "";
 
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
+
     private boolean only_save = false;
     private boolean only_approval = false;
 
@@ -184,6 +186,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private MD_Product_Serial_TrackingDao trackingDao;
     private boolean isSoSaveLinked = false;
 
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
 
     //
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
@@ -860,6 +865,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         setWs_process(Act027_Main.WS_PROCESS_SERIAL);
         //
+        cleanUpResults();
+        //
         showPD(
                 hmAux_Trans.get("progress_save_serial_ttl"),
                 hmAux_Trans.get("progress_save_serial_msg")
@@ -904,6 +911,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             for (Map.Entry<String, String> item : hmSaveResult.entrySet()) {
                 HMAux aux = new HMAux();
+                HMAux auxRes = new HMAux();
+
                 String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
                 String status = item.getValue();
 
@@ -916,9 +925,19 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 //
                 if (mdProduct != null) {
                     aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+                    //
+                    auxRes.put("label", "" + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc() + " - " + pk[1]);
+                    auxRes.put("type", "SERIAL");
+                    auxRes.put("status", status);
+                    auxRes.put("final_status", mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc() + " - " + pk[1] + " / " + status);
+                    //
+                    if (!auxRes.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(auxRes);
+                    }
                 }
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+                //
                 returnList.add(aux);
                 //
                 if (product_code == Long.parseLong(pk[0])
@@ -1360,9 +1379,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         }
     }
 
-    public void setWs_process(String ws_process) {
-        this.ws_process = ws_process;
-    }
 //    public void addControlToList(MKEditTextNM mket_tracking){
 //        controls_sta.add(mket_tracking);
 //    }
@@ -1488,13 +1504,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
+            mHmAux.put("type", "S.O.");
             mHmAux.put("status", fields[1]);
             mHmAux.put("final_status", fields[0] + " / " + fields[1]);
             //
             sos.add(mHmAux);
+            //
+            wsResults.add(mHmAux);
         }
 
-        if (sos.size() == 1) {
+        //if (sos.size() == 1) {
+        if (wsResults.size() == 1) {
             //Verifica se S.O atualizada, foi esta S.O
             if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
                 if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
@@ -1535,7 +1555,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
 
         } else {
-            showNewOptDialog(sos);
+            showNewOptDialog(wsResults);
         }
     }
 
@@ -2783,6 +2803,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         startActivity(mIntent);
         finish();
+    }
+
+    public void cleanUpResults() {
+        if (wsResults != null) {
+            wsResults.clear();
+        } else {
+            wsResults = new ArrayList<>();
+        }
     }
 
     @Override

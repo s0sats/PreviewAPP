@@ -90,6 +90,9 @@ public class Act028_Results_Adapter extends BaseAdapter {
                 case "A.P.":
                     tv_ttl.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
                     break;
+                case "SERIAL":
+                    tv_ttl.setText(hmAux_Trans.get("adapter_serial_lbl"));
+                    break;
                 default:
                     break;
             }
@@ -116,6 +119,7 @@ public class Act028_Results_Adapter extends BaseAdapter {
 
         List<String> translateList = new ArrayList<>();
         translateList.add("adapter_so_lbl");
+        translateList.add("adapter_serial_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

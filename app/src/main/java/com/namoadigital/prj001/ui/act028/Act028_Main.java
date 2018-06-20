@@ -893,13 +893,17 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             //
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
+            mHmAux.put("type", "S.O.");
             mHmAux.put("status", fields[1]);
             mHmAux.put("final_status", fields[0] + " / " + fields[1]);
             //
             sos.add(mHmAux);
+            //
+            wsResults.add(mHmAux);
         }
 
-        if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+        //if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+        if (wsResults.size() == 1 && wsResults.get(0).get("status").equalsIgnoreCase("Ok")) {
 
             if (mShortCut) {
                 callAct027();
@@ -948,7 +952,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                 }
             }
         } else {
-            showNewOptDialog(sos, so_current_reload);
+            //showNewOptDialog(sos, so_current_reload);
+            showNewOptDialog(wsResults, so_current_reload);
         }
     }
 
