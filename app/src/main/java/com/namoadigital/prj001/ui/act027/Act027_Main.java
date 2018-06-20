@@ -362,6 +362,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("btn_serial_save");
         transList.add("alert_offline_data_not_saved_ttl");
         transList.add("alert_offline_data_not_saved_msg");
+        transList.add("alert_offline_data_saved_ttl");
+        transList.add("alert_offline_data_saved_msg");
         //
         transList.add("spinner_site_lbl");
         transList.add("spinner_zone_lbl");
@@ -645,14 +647,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //Se retorno da task, seta qual serviço deve ser mostrado
         act027_services_.setLastServiceUpdated(lastServiceReturned);
 
-        // Serial
-        act027_serial_ = new Act027_Serial();
-        // Dialog Acess
-        act027_serial_.setBaInfra(this);
-        // Translation Access
-        act027_serial_.setHmAux_Trans(hmAux_Trans);
-        // SO Acess
-        act027_serial_.setmSm_so(mSm_so);
+//        // Serial
+//        act027_serial_ = new Act027_Serial();
+//        // Dialog Acess
+//        act027_serial_.setBaInfra(this);
+//        // Translation Access
+//        act027_serial_.setHmAux_Trans(hmAux_Trans);
+//        // SO Acess
+//        act027_serial_.setmSm_so(mSm_so);
 
         frgSerialEdit = new Frg_Serial_Edit();
         frgSerialEdit.setmModule_Code(mModule_Code);
@@ -674,7 +676,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         // SO Acess
         act027_header_.setmSm_so(mSm_so);
         //
-        controls_frags.add(act027_serial_);
+        //controls_frags.add(act027_serial_);
         //
         if (request_set_frag.trim().length() == 0) {
             setFrag(act027_services_, "SERVICES");
@@ -740,8 +742,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     executeSerialSave(false);
                 } else {
                     showAlertDialog(
-                            hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
-                            hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                            hmAux_Trans.get("alert_offline_data_saved_ttl"),
+                            hmAux_Trans.get("alert_offline_data_saved_msg")
                     );
                 }
             }
@@ -1460,8 +1462,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_services_.setmSm_so(mSm_so);
         act027_services_.loadDataToScreen();
 
-        act027_serial_.setmSm_so(mSm_so);
-        act027_serial_.loadDataToScreen();
+//        act027_serial_.setmSm_so(mSm_so);
+//        act027_serial_.loadDataToScreen();
 
         act027_header_.setmSm_so(mSm_so);
         act027_header_.loadDataToScreen();
