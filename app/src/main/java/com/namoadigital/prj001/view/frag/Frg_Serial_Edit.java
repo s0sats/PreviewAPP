@@ -581,7 +581,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         iv_class_icon = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_class_icon);
         //
         fabMenu_anchor = (FabMenu) view.findViewById(R.id.frg_serial_edit_fabMenu_anchor);
-        fabMenu_anchor.setmIcons_Enabled(true);
+        fabMenu_anchor.setmIcons_Enabled(false);
         //
         view_background = view.findViewById(R.id.frg_serial_edit_view_bg);
         //
