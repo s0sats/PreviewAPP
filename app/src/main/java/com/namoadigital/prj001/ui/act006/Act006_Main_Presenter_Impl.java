@@ -189,8 +189,13 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
                 bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
             } else {
-                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+                if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
+                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+                } else {
+                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+                }
             }
 
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
