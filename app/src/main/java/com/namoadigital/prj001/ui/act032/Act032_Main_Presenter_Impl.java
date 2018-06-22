@@ -43,7 +43,7 @@ public class Act032_Main_Presenter_Impl  implements Act032_Main_Presenter {
                         serial_id
                 ).toSqlQuery()
         );
-        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null)) {
+        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
             List<HMAux> soExpressList = soDao.query_HM(
                     new SO_Pack_Express_Local_Sql_012(
                             ToolBox_Con.getPreference_Customer_Code(context)

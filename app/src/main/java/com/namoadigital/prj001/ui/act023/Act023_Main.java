@@ -114,6 +114,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transList.add("sys_alert_btn_cancel");
         transList.add("sys_alert_btn_ok");
         transList.add("btn_create");
+        transList.add("btn_so_search");
         transList.add("progress_so_search_ttl");
         transList.add("progress_so_search_msg");
         transList.add("progress_serial_search_ttl");
@@ -185,7 +186,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
-        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
+        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_so_search"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(true);
         //
