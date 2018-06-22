@@ -59,8 +59,4 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_LEAVE_ROOM = "https://nchatdev.namoadigital.com/leaveRoom";
     public static final String WS_CHAT_ROOM_AP = "https://nchatdev.namoadigital.com/joinFormAp";
 
-    public static final String FRAG_SEARCH_PRODUCT_ID_RECOVER = "frag_search_product_id_recover";
-    public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
-    public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
-
 }

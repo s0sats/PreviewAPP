@@ -72,6 +72,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
     public static final String FRG_SERIAL_EDIT = "frg_serial_edit";
 
+    public static final String FRAG_SEARCH_PRODUCT_ID_RECOVER = "frag_search_product_id_recover";
+    public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
+    public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
+
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
     public static final String WBR_BOOTCOMPLETED = "WBR_BootCompleted";
