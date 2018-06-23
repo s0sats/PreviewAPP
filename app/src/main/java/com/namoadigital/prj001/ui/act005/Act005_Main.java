@@ -1716,18 +1716,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
-        //Menu Teste
-        menu.add(0, TOOLBAR_SUPPORT + 1, Menu.FIRST + 3, "Teste");
-        menu.findItem(TOOLBAR_SUPPORT + 1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT + 1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT + 1).setTitle("Teste");
-
-        //Menu Teste
-        menu.add(0, TOOLBAR_SUPPORT + 2, Menu.FIRST + 3, "Teste 2");
-        menu.findItem(TOOLBAR_SUPPORT + 1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT + 1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT + 1).setTitle("Teste 2");
-
         return true;
     }
 
@@ -1772,17 +1760,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             case TOOLBAR_SUPPORT:
                 mPresenter.showSupportDialog();
-                break;
-
-            case TOOLBAR_SUPPORT + 1:
-                Intent mIntent = new Intent(context, Test.class);
-                startActivity(mIntent);
-                finish();
-                break;
-            case TOOLBAR_SUPPORT + 2:
-                Intent mIntent2 = new Intent(context, Teste2.class);
-                startActivity(mIntent2);
-                finish();
                 break;
             default:
                 return true;
