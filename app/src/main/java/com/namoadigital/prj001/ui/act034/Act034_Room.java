@@ -782,9 +782,9 @@ public class Act034_Room extends BaseFragment {
                     //
                     if (hmAux.get("room_code") == null) {
                         //DESCOMENTAR LINHA ABAIXO APÓS TESTE
-                        // alertForRoomPrivate(hmAux);
+                         alertForRoomPrivate(hmAux);
                         //
-                        alertForAddUsrRoomAP(hmAux);
+                       //alertForAddUsrRoomAP(hmAux);
 
                     } else {
                         HMAux ccRoom = roomDao.getByStringHM(
