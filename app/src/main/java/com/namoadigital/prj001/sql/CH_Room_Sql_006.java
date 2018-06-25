@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -12,7 +11,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class CH_Room_Sql_006 implements Specification {
 
     private String room_code;
-    private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_MessageDao.columns);
+    private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_RoomDao.columns);
 
     public CH_Room_Sql_006(String room_code) {
         this.room_code = room_code;

@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -29,7 +31,9 @@ import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
@@ -189,7 +193,7 @@ public class Act034_Room extends BaseFragment {
             @Override
             public void onClick(View v) {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()));
+                mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER);
             }
         });
     }
@@ -530,6 +534,7 @@ public class Act034_Room extends BaseFragment {
             ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            ImageView iv_add_user_room_ap = (ImageView) view.findViewById(R.id.act034_room_info_iv_add_user);
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
             //
             TextView tv_Room_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
@@ -537,6 +542,7 @@ public class Act034_Room extends BaseFragment {
             tv_Room_code.setText(mRoom_Code);
             //
             tv_room_desc.setText(info_room_desc);
+            //
             //
             if (info_room_image.equals("")) {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
@@ -597,6 +603,20 @@ public class Act034_Room extends BaseFragment {
                         dialog.dismiss();
 
                         alertForRoomRemove(ccRoom);
+                    }
+                });
+            }
+            //
+            iv_add_user_room_ap.setVisibility(View.GONE);
+            //Se room for Form AP, libera adição de user
+            if(mRoom_Type.equals(Constant.CHAT_ROOM_TYPE_AP) && ToolBox_Inf.profileExists(context,Constant.PROFILE_PRJ001_AP,Constant.PROFILE_MENU_AP_PARAM_EDIT)) {
+                iv_add_user_room_ap.setVisibility(View.VISIBLE);
+                //
+                iv_add_user_room_ap.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER);
                     }
                 });
             }
@@ -780,22 +800,60 @@ public class Act034_Room extends BaseFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
-                    if (hmAux.get("room_code") == null) {
-                        //DESCOMENTAR LINHA ABAIXO APÓS TESTE
-                         alertForRoomPrivate(hmAux);
+                    boolean gambis = true;
+                    if(gambis) {
                         //
-                       //alertForAddUsrRoomAP(hmAux);
-
-                    } else {
-                        HMAux ccRoom = roomDao.getByStringHM(
-                                new CH_Room_Sql_005(
-                                        hmAux.get(CH_RoomDao.USER_CODE)
+                        HMAux auxRoom = roomDao.getByStringHM(
+                                new CH_Room_Sql_006(
+                                        mRoom_Code
                                 ).toSqlQuery()
                         );
                         //
-                        mMain.callAct035(context, ccRoom, "0");
-                    }
+                        if(auxRoom != null && auxRoom.size() > 0 && auxRoom.containsKey(CH_RoomDao.ROOM_OBJ) && auxRoom.get(CH_RoomDao.ROOM_OBJ) != null) {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            Chat_Room_Obj_Form_AP roomFormAp =
+                                    gson.fromJson(
+                                            ToolBox_Inf.getRoomObjJsonParam(auxRoom.get(CH_RoomDao.ROOM_OBJ)),
+                                            Chat_Room_Obj_Form_AP.class
+                                    );
 
+                            if(roomFormAp.getPk() != null && roomFormAp.getPk().contains("|")) {
+                                String[] formApPk = roomFormAp.getPk()
+                                        .replace("|","@")
+                                        .split("@");
+                                if(formApPk != null) {
+                                    HMAux hmAuxParam = new HMAux();
+                                    //
+                                    hmAuxParam.put(CH_RoomDao.ROOM_CODE, mRoom_Code);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, formApPk[1]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, formApPk[2]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, formApPk[3]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, formApPk[4]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.AP_CODE, formApPk[5]);
+                                    hmAuxParam.put(CH_RoomDao.USER_CODE,hmAux.get(CH_RoomDao.USER_CODE));
+                                    //
+                                    alertForAddUsrRoomAP(hmAuxParam);
+
+                                }
+                            }
+                        }
+                    }else{
+                        if (hmAux.get("room_code") == null) {
+                            //DESCOMENTAR LINHA ABAIXO APÓS TESTE
+                            alertForRoomPrivate(hmAux);
+                            //
+                            //alertForAddUsrRoomAP(hmAux);
+
+                        } else {
+                            HMAux ccRoom = roomDao.getByStringHM(
+                                    new CH_Room_Sql_005(
+                                            hmAux.get(CH_RoomDao.USER_CODE)
+                                    ).toSqlQuery()
+                            );
+                            //
+                            mMain.callAct035(context, ccRoom, "0");
+                        }
+                    }
                     dialog.dismiss();
                 }
             });
@@ -881,12 +939,12 @@ public class Act034_Room extends BaseFragment {
 
                         mMain.startAddUserRoomAp(
                                 singletonWebSocket.mSocket.id(),
-                                "2018.XJ",
-                                "1",
-                                "40",
-                                "1",
-                                "7",
-                                "1",
+                                hmAux.get(CH_RoomDao.ROOM_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
+                                hmAux.get(GE_Custom_Form_ApDao.AP_CODE),
                                 hmAux.get(CH_RoomDao.USER_CODE)
                         );
                     }

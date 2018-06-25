@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Add_User_Into_Room_Env;
+import com.namoadigital.prj001.model.Chat_Add_User_Into_Room_Rec;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.util.Constant;
@@ -118,7 +120,13 @@ public class WS_Add_User_Room_AP extends IntentService {
             );
             return;
         }else{
-
+            String tst =  ToolBox_Inf.getWebSocketJsonParam(resultado);
+            ArrayList<Chat_Add_User_Into_Room_Rec> rec =
+                    gson.fromJson(
+                            ToolBox_Inf.getWebSocketJsonParam(resultado),
+                            new TypeToken<ArrayList<Chat_Add_User_Into_Room_Rec>>() {
+                            }.getType()
+                    );
         }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT","",new HMAux(), "" , "0");
