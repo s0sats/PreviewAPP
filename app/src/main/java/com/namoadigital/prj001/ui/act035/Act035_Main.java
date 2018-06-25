@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -61,6 +62,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
+import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
@@ -172,6 +174,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     //private DownloadMemberImgTask downloadMemberImgTask;
     private MessageInfoTask messageInfoTask;
     private RoomInfoTask roomInfoTask;
+    private UserListInfoTask userListInfoTask;
 
     private Chat_Member_Adapter mDialogAdapter;
 
@@ -280,6 +283,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("dialog_join_room_ap_ttl");
         transList.add("dialog_join_room_ap_msg");
         transList.add("alert_ap_info_ttl");
+        //
+        transList.add("progress_user_list_ttl");
+        transList.add("progress_user_list_msg");
+        //
+        transList.add("alert_no_item_tll");
+        transList.add("alert_no_item_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -732,17 +741,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     hmAux_Trans.get("alert_no_pdf_msg"),
                     true
             );
-
-//            ToolBox.alertMSG(
-//                    context,
-//                    hmAux_Trans.get("alert_no_pdf_tll"),
-//                    hmAux_Trans.get("alert_no_pdf_msg"),
-//                    null,
-//                    -1,
-//                    false
-//            );
         }
-
     }
 
     private void processingJoinAPDialog() {
@@ -1632,6 +1631,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         });
     }
 
+    public void showPDUser(String ttl, String msg, boolean cancelable) {
+        //
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_no"),
+                hmAux_Trans.get("sys_alert_btn_yes")
+        );
+        //
+        progressDialog.setCancelable(cancelable);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (userListInfoTask != null) {
+                    userListInfoTask.cancel(true);
+                }
+            }
+        });
+    }
+
     public void showPDPDF(String ttl, String msg, boolean cancelable) {
         //
         enableProgressDialog(
@@ -1826,11 +1845,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             final AlertDialog dialog = builder.create();
             dialog.show();
             //
-            iv_add_user.setVisibility(View.VISIBLE);
+            if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)){
+                iv_add_user.setVisibility(View.VISIBLE);
+            } else {
+                iv_add_user.setVisibility(View.GONE);
+            }
+
+            //
             iv_add_user.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // asynctask
+
+                    if (ToolBox_Con.isOnline(context)) {
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mCustomer_code));
+                    } else {
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
+
+                    dialog.dismiss();
                 }
             });
             //
@@ -2249,6 +2282,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void startRoomInfoTask(String socket_id, String room_code) {
         roomInfoTask = new RoomInfoTask();
         roomInfoTask.execute(socket_id, room_code);
+    }
+
+    public void startUserListInfoTask(String socket_id, String customer_code) {
+        userListInfoTask = new UserListInfoTask();
+        userListInfoTask.execute(socket_id, customer_code);
     }
 
     private void changeConectionMenu() {
@@ -2716,8 +2754,110 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     // Chat Multi Add
+
+    private class UserListInfoTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("ChatEvent", "UserListInfoTask PreExecute");
+            //
+            showPDUser(
+                    hmAux_Trans.get("progress_user_list_ttl"),
+                    hmAux_Trans.get("progress_user_list_msg"),
+
+                    true);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("ChatEvent", "UserListInfoTask DoInBackground");
+            String resultado = "";
+            try {
+                String socket_id = params[0];
+                String customer_code = params[1];
+                //
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                Chat_UserList_Info_Env env = new Chat_UserList_Info_Env();
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
+                env.setCustomer_code(customer_code);
+                //
+                resultado = ToolBox_Con.connWebService(
+                        Constant.WS_CHAT_ROOM_USER_LIST,
+                        gson.toJson(env)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                this.cancel(true);
+            }
+
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            Log.d("ChatEvent", "UserListInfoTask OnPost");
+            super.onPostExecute(resultado);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //Se não retornou nada, finaliza execução.
+            if (resultado.equals("")) {
+                this.cancel(true);
+                return;
+            }
+            try {
+                //
+                if (resultado.contains("error_msg")) {
+                    //
+                    Chat_C_Error cError =
+                            gson.fromJson(
+                                    ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                    Chat_C_Error.class
+                            );
+                    //
+                    ToolBox.sendBCStatus(
+                            context,
+                            "ERROR_1",
+                            cError != null ? cError.getError_msg() : "Error",
+                            "",
+                            "0"
+                    );
+
+                } else {
+                    //
+                    String tt = ToolBox_Inf.getWebSocketJsonParam(resultado);
+                    //
+                    disablePD();
+                    ArrayList<Chat_UserList_Info_Rec> userListInfoList = gson
+                            .fromJson(
+                                    ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                    new TypeToken<ArrayList<Chat_UserList_Info_Rec>>() {
+                                    }.getType()
+                            );
+
+                    showMultiUserListDialog(userListInfoList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                this.cancel(true);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.d("ChatEvent", "UserListInfoTask Cancelada");
+            disablePD();
+        }
+    }
+
+
     public void showMultiUserListDialog(ArrayList<Chat_UserList_Info_Rec> userListInfoList) {
-        ArrayList<HMAux> memberList = new ArrayList<>();
+        final ArrayList<HMAux> memberList = new ArrayList<>();
 
         try {
             //
@@ -2749,6 +2889,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ImageView iv_customer = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
+            Button btn_save = (Button) view.findViewById(R.id.chat_add_multi_user_info_btn_save);
+
             ImageView iv_trash = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_trash);
             final MKEditTextNM mket_filter_user = (MKEditTextNM) view.findViewById(R.id.chat_add_multi_user_info_mket_search_user);
             ImageView iv_filter_user = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_filter_user);
@@ -2815,21 +2957,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
-//                    //
-//                    if (hmAux.get("room_code") == null) {
-//                        alertForRoomPrivate(hmAux);
-//                    } else {
-//                        HMAux ccRoom = roomDao.getByStringHM(
-//                                new CH_Room_Sql_005(
-//                                        hmAux.get(CH_RoomDao.USER_CODE)
-//                                ).toSqlQuery()
-//                        );
-//                        //
-//                        mMain.callAct035(context, ccRoom, "0");
-//                    }
+                    //dialog.dismiss();
+                }
+            });
+            //
+            btn_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                    dialog.dismiss();
+                    String results = getSelectedUsers(memberList);
+
+                    if (!results.equalsIgnoreCase("")) {
+                        //
+                        // Call WS
+                        Toast.makeText(context, "Call WS: " + results, Toast.LENGTH_SHORT).show();
+                        //
+                        dialog.dismiss();
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_no_item_tll"),
+                                hmAux_Trans.get("alert_no_item_msg"),
+                                null,
+                                -1,
+                                false
+                        );
+                    }
                 }
             });
 
@@ -2838,6 +2991,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             disablePD();
         }
 
+    }
+
+    private String getSelectedUsers(ArrayList<HMAux> memberList) {
+        StringBuilder sb = new StringBuilder();
+        boolean bFirst = true;
+
+        for (HMAux item : memberList) {
+            if (item.get(Chat_UserList_Adapter.USER_SELECTED).equalsIgnoreCase("1")) {
+                if (bFirst) {
+                    bFirst = false;
+                    sb.append(item.get(Chat_UserList_Adapter.USER_CODE));
+                } else {
+                    sb.append("|");
+                    sb.append(item.get(Chat_UserList_Adapter.USER_CODE));
+                }
+            }
+        }
+
+        return sb.toString().trim();
     }
 
 

@@ -9,14 +9,19 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 
 import java.util.ArrayList;
+
+import static com.namoadigital.prj001.adapter.Chat_UserList_Adapter.SYS_USER_IMAGE;
+import static com.namoadigital.prj001.adapter.Chat_UserList_Adapter.USER_NAME;
+import static com.namoadigital.prj001.adapter.Chat_UserList_Adapter.USER_NICK;
+import static com.namoadigital.prj001.adapter.Chat_UserList_Adapter.USER_SELECTED;
 
 /**
  * Created by neomatrix on 28/11/17.
@@ -36,7 +41,7 @@ public class Chat_Add_Multi_User extends BaseAdapter implements Filterable {
     private HMAux hmAux_Trans;
     private String mResource_Code;
 
-    public Chat_Add_Multi_User(Context context, int resource_01, HMAux hmAux_Trans, ArrayList<HMAux> data) {
+    public Chat_Add_Multi_User(Context context, int resource, HMAux hmAux_Trans, ArrayList<HMAux> data) {
         this.context = context;
         this.resource = resource;
         this.hmAux_Trans = hmAux_Trans;
@@ -120,35 +125,37 @@ public class Chat_Add_Multi_User extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    private void processUser(HMAux hmAux, View convertView) {
-        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_ll_background);
-        TextView tv_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_desc);
-        ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_iv_type);
-        ProgressBar pb_rating = (ProgressBar) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_pb_rating);
-        TextView tv_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_pack_list_content_cell_tv_price);
+    private void processUser(final HMAux hmAux, View convertView) {
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.chat_add_multi_user_cell_ll_background);
+        ImageView iv_member_img = (ImageView) convertView.findViewById(R.id.chat_add_multi_user_cell_iv_member);
+        TextView tv_member = (TextView) convertView.findViewById(R.id.chat_add_multi_user_cell_tv_member);
+        TextView tv_member_name = (TextView) convertView.findViewById(R.id.chat_add_multi_user_cell_tv_member_name);
         //
-        try {
-            pb_rating.setProgress((int) Double.parseDouble(hmAux.get("rating_ref")));
-        } catch (Exception e) {
-            pb_rating.setProgress(0);
-        }
-
-        tv_price.setText(hmAux.get("price"));
-
-        try {
-            int qtd = Integer.parseInt(hmAux.get("qty"));
-            //
-            if (qtd > 0) {
-                ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
-            } else {
-                ll_background.setBackground(null);
-            }
-        } catch (Exception e) {
+        Glide.with(context)
+                .load(hmAux.get(SYS_USER_IMAGE))
+                .into(iv_member_img);
+        //
+        if (hmAux.get(USER_SELECTED).equalsIgnoreCase("1")){
+            ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+        } else {
             ll_background.setBackground(null);
         }
         //
-        tv_desc.setText(hmAux.get("pack_service_desc"));
-        iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+        ll_background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (hmAux.get(USER_SELECTED).equalsIgnoreCase("1")){
+                    hmAux.put(USER_SELECTED, "0");
+                } else {
+                    hmAux.put(USER_SELECTED, "1");
+                }
+
+                notifyDataSetChanged();
+            }
+        });
+        //
+        tv_member.setText(hmAux.get(USER_NICK));
+        tv_member_name.setText(hmAux.get(USER_NAME));
     }
 
     @Override
@@ -171,8 +178,8 @@ public class Chat_Add_Multi_User extends BaseAdapter implements Filterable {
                 constraint = ToolBox.AccentMapper(constraint.toString());
                 //
                 for (int i = 0; i < data.size(); i++) {
-                    String user_nick = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
-                    String user_name = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
+                    String user_nick = ToolBox.AccentMapper(data.get(i).get(USER_NICK).toLowerCase());
+                    String user_name = ToolBox.AccentMapper(data.get(i).get(USER_NAME).toLowerCase());
                     if (user_nick.contains(constraint.toString().toLowerCase()) ||
                             user_name.contains(constraint.toString().toLowerCase())
                             ) {
