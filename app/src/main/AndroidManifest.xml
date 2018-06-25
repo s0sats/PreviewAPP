@@ -537,6 +537,10 @@
 
         <service android:name=".service.WS_SO_Service_Search" />
 
+        <receiver android:name=".receiver_chat.WBR_Add_User_Room_AP" />
+
+        <service android:name=".service_chat.WS_Add_User_Room_AP" />
+
     </application>
 
 </manifest>

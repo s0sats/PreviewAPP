@@ -29,6 +29,8 @@ public interface Act034_Main_View {
 
     void startRoomPrivateWS(String user_code, String customer_code,Integer active,@Nullable String room_code);
 
+    void startAddUserRoomAp(String socket_id, String room_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code, String user_code_sql);
+
     void startLeaveRoomWS(String user_code, String room_code);
 
     void changeRoom_Private_Code(String room_private);

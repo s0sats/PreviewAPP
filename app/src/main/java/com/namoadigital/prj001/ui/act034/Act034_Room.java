@@ -781,7 +781,11 @@ public class Act034_Room extends BaseFragment {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
                     if (hmAux.get("room_code") == null) {
-                        alertForRoomPrivate(hmAux);
+                        //DESCOMENTAR LINHA ABAIXO APÓS TESTE
+                        // alertForRoomPrivate(hmAux);
+                        //
+                        alertForAddUsrRoomAP(hmAux);
+
                     } else {
                         HMAux ccRoom = roomDao.getByStringHM(
                                 new CH_Room_Sql_005(
@@ -863,6 +867,32 @@ public class Act034_Room extends BaseFragment {
         alertFRR.setNegativeButton(hmAux_Trans.get("sys_alert_btn_no"), null);
         //
         alertFRR.show();
+    }
+
+    private void alertForAddUsrRoomAP(final HMAux hmAux) {
+        ToolBox.alertMSG_YES_NO(
+                getActivity(),
+                hmAux_Trans.get("alert_create_room_ttl"),
+                hmAux_Trans.get("alert_create_room_confirm_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+                        mMain.startAddUserRoomAp(
+                                singletonWebSocket.mSocket.id(),
+                                "2018.XJ",
+                                "1",
+                                "40",
+                                "1",
+                                "7",
+                                "1",
+                                hmAux.get(CH_RoomDao.USER_CODE)
+                        );
+                    }
+                },
+                1
+        );
     }
 
     private void setFilterIconColor() {
