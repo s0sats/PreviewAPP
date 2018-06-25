@@ -39,6 +39,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
@@ -46,6 +47,7 @@ import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -702,6 +704,31 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         roomPrivateIntent.putExtras(roomPrivateBundle);
         //
         context.sendBroadcast(roomPrivateIntent);
+    }
+
+    @Override
+    public void startAddUserRoomAp(String socket_id, String room_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code, String user_code_sql) {
+        showPD(
+                hmAux_Trans.get("progress_create_room_ttl"),
+                hmAux_Trans.get("progress_create_room_msg"),
+                false);
+        //
+        //
+        Intent addUsrRoomAp = new Intent(context, WBR_Add_User_Room_AP.class);
+        Bundle addUserRoomApBundle = new Bundle();
+        //
+        addUserRoomApBundle.putString(Constant.CHAT_WS_SOCKET_ID_PARAM, socket_id);
+        addUserRoomApBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, custom_form_type);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, custom_form_code);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, custom_form_version);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, custom_form_data);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.AP_CODE, ap_code);
+        addUserRoomApBundle.putString(CH_RoomDao.USER_CODE, user_code_sql);
+        addUsrRoomAp.putExtras(addUserRoomApBundle);
+        //
+        context.sendBroadcast(addUsrRoomAp);
+
     }
 
     @Override

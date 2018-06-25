@@ -4,7 +4,7 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 13/12/2017.
  */
 
-public class Chat_Add_User_Env {
+public class Chat_Add_User_Into_Room_Env {
 
     private String socket_id;
     private String room_code;
