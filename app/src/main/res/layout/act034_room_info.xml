@@ -84,6 +84,17 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/act034_room_info_iv_add_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/namoa_icon_bg_states"
+            android:padding="10dp"
+            android:src="@drawable/ic_add_black_24px"
+            android:tint="@color/namoa_color_gray_4"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/act034_room_info_iv_trash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

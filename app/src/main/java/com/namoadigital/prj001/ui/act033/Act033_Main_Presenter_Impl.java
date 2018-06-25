@@ -66,7 +66,6 @@ public class Act033_Main_Presenter_Impl implements Act033_Main_Presenter {
                                     ToolBox_Con.getPreference_Customer_Code(context),
                                     Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))
                             ).toSqlQuery()
-
                     );
 
             if (zones == null || zones.size() == 0) {

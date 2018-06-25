@@ -30,6 +30,7 @@ public class Chat_UserList_Adapter extends BaseAdapter implements Filterable {
     public static final String ON_LINE = "on_line";
     public static final String SYS_USER_IMAGE = "sys_user_image";
     public static final String SYS_USER_IMAGE_NAME = "sys_user_image_name";
+    public static final String USER_SELECTED = "user_selected";
 
     private Context context;
     private ValueFilter valueFilter;
