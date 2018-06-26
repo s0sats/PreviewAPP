@@ -618,6 +618,8 @@ public class Act034_Room extends BaseFragment {
                 iv_add_user_room_ap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
+                        //
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                         mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_AP, mRoom_Code);
                     }
@@ -864,6 +866,7 @@ public class Act034_Room extends BaseFragment {
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
             Button btn_save = (Button) view.findViewById(R.id.chat_add_multi_user_info_btn_save);
+            btn_save.setText(hmAux_Trans.get("dialog_mult_usr_btn_add"));
 
             ImageView iv_trash = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_trash);
             final MKEditTextNM mket_filter_user = (MKEditTextNM) view.findViewById(R.id.chat_add_multi_user_info_mket_search_user);
@@ -938,7 +941,8 @@ public class Act034_Room extends BaseFragment {
             btn_save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    dialog.dismiss();
+                    //
                     String results = getSelectedUsers(memberList);
 
                     if (!results.equalsIgnoreCase("")) {
@@ -976,8 +980,6 @@ public class Act034_Room extends BaseFragment {
                                 }
                             }
                         }
-                        //
-                        dialog.dismiss();
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -1063,8 +1065,8 @@ public class Act034_Room extends BaseFragment {
     private void alertForAddUsrRoomAP(final HMAux hmAux) {
         ToolBox.alertMSG_YES_NO(
                 getActivity(),
-                hmAux_Trans.get("alert_create_room_ttl"),
-                hmAux_Trans.get("alert_create_room_confirm_msg"),
+                hmAux_Trans.get("alert_add_usr_in_ap_room_ttl"),
+                hmAux_Trans.get("alert_add_usr_in_ap_room_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
