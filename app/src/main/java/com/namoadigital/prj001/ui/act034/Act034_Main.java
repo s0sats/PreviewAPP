@@ -46,7 +46,6 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
@@ -676,9 +675,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void startUserListInfoTask(String socket_id, String customer_code) {
+    public void startUserListInfoTask(String socket_id, String customer_code, String room_type) {
         userListInfoTask = new UserListInfoTask();
-        userListInfoTask.execute(socket_id, customer_code);
+        userListInfoTask.execute(socket_id, customer_code,room_type);
     }
 
     @Override
@@ -918,6 +917,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 //    }
 
     private class UserListInfoTask extends AsyncTask<String, Integer, String> {
+        private String room_type = "";
 
         @Override
         protected void onPreExecute() {
@@ -938,6 +938,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             try {
                 String socket_id = params[0];
                 String customer_code = params[1];
+                room_type = params[2];
                 //
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
@@ -1001,7 +1002,15 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                             );
 
                     //act034_room.showRoomInfoDialog(roomInfoList);
-                    act034_room.showUserListInfoDialog(userListInfoList);
+                    switch (room_type) {
+                        case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
+                            act034_room.showUserListInfoDialog(userListInfoList);
+                            break;
+                        case Constant.CHAT_ROOM_TYPE_AP:
+                            act034_room.showUserListInfoDialog(userListInfoList);
+                            break;
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
