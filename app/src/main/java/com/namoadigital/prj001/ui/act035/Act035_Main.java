@@ -33,7 +33,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,6 +66,7 @@ import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
@@ -290,6 +290,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_no_item_tll");
         transList.add("alert_no_item_msg");
         //
+        transList.add("progress_add_user_in_room_ttl");
+        transList.add("progress_add_user_in_room_msg");
+        transList.add("dialog_mult_usr_btn_add");
+        transList.add("alert_add_usr_in_ap_room_ttl");
+        transList.add("alert_add_usr_in_ap_room_msg");
+        //
+        transList.add("alert_user_add_ok_ttl");
+        transList.add("alert_user_add_ok_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -2661,8 +2670,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
         hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
         //
-
-        //
         if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
             executeWsRoomAp(hmAuxAP);
         } else {
@@ -2677,38 +2684,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
+        if (ws_process.equalsIgnoreCase("multi_add_user")) {
+            setWSProcess("");
 
-        bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
-        bundle.putString(Constant.CHAT_RELOAD, "1");
-        //
-        callAct034(context);
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_user_add_ok_ttl"),
+                    hmAux_Trans.get("alert_user_add_ok_msg"),
+                    null,
+                    0
+            );
+        } else {
+            setWSProcess("");
+
+            bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
+            bundle.putString(Constant.CHAT_RELOAD, "1");
+            //
+            callAct034(context);
+        }
 
         progressDialog.dismiss();
-//
-//        //
-//        HMAux hmAuxAP = new HMAux();
-//        //
-//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
-//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
-//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
-//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
-//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
-//        hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
-//        //
-//        if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
-//            executeWsRoomAp(hmAuxAP);
-//        } else if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName())) {
-//            bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
-//            bundle.putString(Constant.CHAT_RELOAD, "1");
-//            //
-//            callAct034(context);
-//
-//            progressDialog.dismiss();
-//        } else {
-//            callAct038(context, hmAuxAP);
-//            //
-//            progressDialog.dismiss();
-//        }
     }
 
     @Override
@@ -2893,6 +2888,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
             Button btn_save = (Button) view.findViewById(R.id.chat_add_multi_user_info_btn_save);
+            btn_save.setText(hmAux_Trans.get("dialog_mult_usr_btn_add"));
 
             ImageView iv_trash = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_trash);
             final MKEditTextNM mket_filter_user = (MKEditTextNM) view.findViewById(R.id.chat_add_multi_user_info_mket_search_user);
@@ -2972,8 +2968,33 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     if (!results.equalsIgnoreCase("")) {
                         //
-                        // Call WS
-                        Toast.makeText(context, "Call WS: " + results, Toast.LENGTH_SHORT).show();
+                        if (mRoom != null && mRoom.getRoom_obj() != null && !mRoom.getRoom_obj().isEmpty()) {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            Chat_Room_Obj_Form_AP roomFormAp =
+                                    gson.fromJson(
+                                            ToolBox_Inf.getRoomObjJsonParam(mRoom.getRoom_obj()),
+                                            Chat_Room_Obj_Form_AP.class
+                                    );
+
+                            if (roomFormAp.getPk() != null && roomFormAp.getPk().contains("|")) {
+                                String[] formApPk = roomFormAp.getPk()
+                                        .replace("|", "@")
+                                        .split("@");
+                                if (formApPk != null) {
+                                    HMAux hmAuxParam = new HMAux();
+                                    //
+                                    hmAuxParam.put(CH_RoomDao.ROOM_CODE, String.valueOf(mRoom.getRoom_code()));
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, formApPk[1]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, formApPk[2]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, formApPk[3]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, formApPk[4]);
+                                    hmAuxParam.put(GE_Custom_Form_ApDao.AP_CODE, formApPk[5]);
+                                    hmAuxParam.put(CH_RoomDao.USER_CODE, results);
+                                    //
+                                    alertForAddUsrRoomAP(hmAuxParam);
+                                }
+                            }
+                        }
                         //
                         dialog.dismiss();
                     } else {
@@ -2993,6 +3014,57 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ToolBox_Inf.registerException(getClass().getName(), e);
             disablePD();
         }
+    }
+
+    private void alertForAddUsrRoomAP(final HMAux hmAux) {
+        ToolBox.alertMSG_YES_NO(
+                Act035_Main.this,
+                hmAux_Trans.get("alert_add_usr_in_ap_room_ttl"),
+                hmAux_Trans.get("alert_add_usr_in_ap_room_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+                        startAddUserRoomAp(
+                                singletonWebSocket.mSocket.id(),
+                                hmAux.get(CH_RoomDao.ROOM_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
+                                hmAux.get(GE_Custom_Form_ApDao.AP_CODE),
+                                hmAux.get(CH_RoomDao.USER_CODE)
+                        );
+                    }
+                },
+                1
+        );
+    }
+
+    public void startAddUserRoomAp(String socket_id, String room_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code, String user_code_sql) {
+
+        setWSProcess("multi_add_user");
+
+        showPD(
+                hmAux_Trans.get("progress_add_user_in_room_ttl"),
+                hmAux_Trans.get("progress_add_user_in_room_msg"),
+                false);
+
+        Intent addUsrRoomAp = new Intent(context, WBR_Add_User_Room_AP.class);
+        Bundle addUserRoomApBundle = new Bundle();
+        //
+        addUserRoomApBundle.putString(Constant.CHAT_WS_SOCKET_ID_PARAM, socket_id);
+        addUserRoomApBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, custom_form_type);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, custom_form_code);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, custom_form_version);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, custom_form_data);
+        addUserRoomApBundle.putString(GE_Custom_Form_ApDao.AP_CODE, ap_code);
+        addUserRoomApBundle.putString(CH_RoomDao.USER_CODE, user_code_sql);
+        addUsrRoomAp.putExtras(addUserRoomApBundle);
+        //
+        context.sendBroadcast(addUsrRoomAp);
 
     }
 
