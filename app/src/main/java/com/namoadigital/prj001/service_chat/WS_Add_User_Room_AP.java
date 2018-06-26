@@ -7,14 +7,12 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Add_User_Into_Room_Env;
-import com.namoadigital.prj001.model.Chat_Add_User_Into_Room_Rec;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.util.Constant;
@@ -88,18 +86,18 @@ public class WS_Add_User_Room_AP extends IntentService {
         env.setAp_code(ap_code);
         env.setUser_code_sql(user_code_sql);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_CHAT_ADD_USER_FORM_AP,
                 gson.toJson(env)
         );
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
         //
         //
         if (resultado.equals("")) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_info_return"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_info_return"), "", "0");
             return;
         }
         //
@@ -120,16 +118,22 @@ public class WS_Add_User_Room_AP extends IntentService {
             );
             return;
         }else{
-            String tst =  ToolBox_Inf.getWebSocketJsonParam(resultado);
+            /*String tst =  ToolBox_Inf.getWebSocketJsonParam(resultado);
             ArrayList<Chat_Add_User_Into_Room_Rec> rec =
                     gson.fromJson(
                             ToolBox_Inf.getWebSocketJsonParam(resultado),
                             new TypeToken<ArrayList<Chat_Add_User_Into_Room_Rec>>() {
                             }.getType()
-                    );
+                    );*/
+            /**
+             * POR HORA NÃO EXISTE TRATIVA NO RETORNO
+             *
+             * SE NÃO FOR VAZIO OU ERRO, ENTÃO CONSIDERA SUCESSO!!!
+             * SERÁ MODIFICADO EM BREVE QUANDO O MIOLO VOLTAR.
+             */
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT","",new HMAux(), "" , "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_ending_processing"),new HMAux(), "" , "0");
     }
 
     private void loadTranslation() {
@@ -137,8 +141,8 @@ public class WS_Add_User_Room_AP extends IntentService {
 
         translist.add("msg_no_info_return");
         translist.add("msg_receiving_data");
-        translist.add("msg_saving_new_room");
-        translist.add("msg_removing_room");
+        translist.add("msg_sending_data");
+        translist.add("msg_ending_processing");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

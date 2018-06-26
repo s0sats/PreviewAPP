@@ -49,6 +49,7 @@ import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.service_chat.WS_Add_User_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -95,6 +96,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private UserListInfoTask userListInfoTask;
     private long selected_customer;
     private HashMap<String,String> auxFilters;
+    private String wsProcess = "0";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,6 +156,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("progress_leave_room_msg");
         transList.add("progress_user_list_ttl");
         transList.add("progress_user_list_msg");
+        transList.add("progress_add_user_in_room_ttl");
+        transList.add("progress_add_user_in_room_msg");
+        transList.add("alert_user_add_ok_ttl");
+        transList.add("alert_user_add_ok_msg");
         //FragRoom
         transList.add("alert_room_info_members_ttl");
         transList.add("alert_room_info_no_members_ttl");
@@ -165,6 +171,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("alert_user_list_no_user_lbl");
         transList.add("alert_no_room_info_ttl");
         transList.add("alert_no_room_info_msg");
+        transList.add("alert_add_usr_in_ap_room_ttl");
+        transList.add("alert_add_usr_in_ap_room_msg");
+        transList.add("dialog_mult_usr_btn_add");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -174,6 +184,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 transList
         );
     }
+
 
     private void initVars() {
 
@@ -707,9 +718,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     @Override
     public void startAddUserRoomAp(String socket_id, String room_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code, String user_code_sql) {
+        wsProcess = WS_Add_User_Room_AP.class.getName();
+        //
         showPD(
-                hmAux_Trans.get("progress_create_room_ttl"),
-                hmAux_Trans.get("progress_create_room_msg"),
+                hmAux_Trans.get("progress_add_user_in_room_ttl"),
+                hmAux_Trans.get("progress_add_user_in_room_msg"),
                 false);
         //
         //
@@ -1110,5 +1123,26 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         super.processNotification_close(mValue, mActivity);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        disablePD();
+        //
+        if(wsProcess.equals(WS_Add_User_Room_AP.class.getName())){
+            //
+            wsProcess = "";
+            //
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_user_add_ok_ttl"),
+                    hmAux_Trans.get("alert_user_add_ok_msg"),
+                    null,
+                    0
+            );
+        }
+
     }
 }
