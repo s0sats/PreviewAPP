@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
+import com.namoadigital.prj001.adapter.Chat_Add_Multi_User;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -81,6 +83,7 @@ public class Act034_Room extends BaseFragment {
     private String info_room_image = "";
     private Chat_Member_Adapter mDialogAdapter;
     private Chat_UserList_Adapter mUserListAdapter;
+    private Chat_Add_Multi_User mMultiUserListAdapter;
 
     private String mRoom_Code = "";
     private String mRoom_Type = "";
@@ -193,7 +196,7 @@ public class Act034_Room extends BaseFragment {
             @Override
             public void onClick(View v) {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER);
+                mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER, null);
             }
         });
     }
@@ -616,7 +619,7 @@ public class Act034_Room extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                        mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER);
+                        mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mMain.getSelected_Customer()), Constant.CHAT_ROOM_TYPE_AP, mRoom_Code);
                     }
                 });
             }
@@ -800,8 +803,145 @@ public class Act034_Room extends BaseFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
-                    boolean gambis = true;
-                    if(gambis) {
+                    if (hmAux.get("room_code") == null) {
+                        //DESCOMENTAR LINHA ABAIXO APÓS TESTE
+                        alertForRoomPrivate(hmAux);
+                        //
+                        //alertForAddUsrRoomAP(hmAux);
+
+                    } else {
+                        HMAux ccRoom = roomDao.getByStringHM(
+                                new CH_Room_Sql_005(
+                                        hmAux.get(CH_RoomDao.USER_CODE)
+                                ).toSqlQuery()
+                        );
+                        //
+                        mMain.callAct035(context, ccRoom, "0");
+                    }
+
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            mMain.disablePD();
+        }
+
+    }
+
+    public void showMultiUserListDialog(ArrayList<Chat_UserList_Info_Rec> userListInfoList) {
+        final ArrayList<HMAux> memberList = new ArrayList<>();
+
+        try {
+            //
+            if (userListInfoList != null && userListInfoList.size() > 0) {
+                for (Chat_UserList_Info_Rec infoRec : userListInfoList) {
+                    if (infoRec.getUser_code() == Integer.parseInt(ToolBox_Con.getPreference_User_Code(context))) {
+                        continue;
+                    }
+                    //
+                    HMAux aux = new HMAux();
+                    aux.put(Chat_UserList_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
+                    aux.put(Chat_UserList_Adapter.USER_NICK, infoRec.getUser_nick());
+                    aux.put(Chat_UserList_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
+                    aux.put(Chat_UserList_Adapter.ROOM_CODE, infoRec.getRoom_code());
+                    aux.put(Chat_UserList_Adapter.USER_NAME, infoRec.getUser_name());
+                    aux.put(Chat_UserList_Adapter.USER_SELECTED, "0");
+                    //
+                    memberList.add(aux);
+                }
+            }
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.chat_add_multi_user_info, null);
+            //
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_dismiss);
+            TextView tv_customer_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_room_desc_lbl);
+            ImageView iv_customer = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_image);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
+            Button btn_save = (Button) view.findViewById(R.id.chat_add_multi_user_info_btn_save);
+
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_trash);
+            final MKEditTextNM mket_filter_user = (MKEditTextNM) view.findViewById(R.id.chat_add_multi_user_info_mket_search_user);
+            ImageView iv_filter_user = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_filter_user);
+            //
+            iv_trash.setVisibility(View.GONE);
+            //
+            tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+            iv_customer.setVisibility(View.GONE);
+            iv_customer.setImageBitmap(
+                    BitmapFactory.decodeFile(Constant.IMG_PATH + "/" + "logo_c_" + String.valueOf(String.valueOf(mMain.getSelected_Customer())) + ".png"));
+            //
+            tv_members_lbl.setText(hmAux_Trans.get("alert_user_list_user_lbl"));
+            //
+            if (memberList.size() > 0) {
+                mMultiUserListAdapter = new Chat_Add_Multi_User(
+                        context,
+                        R.layout.chat_add_multi_user_cell,
+                        hmAux_Trans,
+                        memberList
+                );
+                //
+                mket_filter_user.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                    @Override
+                    public void reportTextChange(String s) {
+                    }
+
+                    @Override
+                    public void reportTextChange(String s, boolean b) {
+                        mMultiUserListAdapter.getFilter().filter(mket_filter_user.getText().toString().trim());
+                    }
+                });
+                //
+                lv_members.setAdapter(
+                        mMultiUserListAdapter
+                );
+            } else {
+                lv_members.setVisibility(View.GONE);
+                //
+                tv_members_lbl.setText(hmAux_Trans.get("alert_user_list_no_user_lbl"));
+            }
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(true)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            //info_room_desc = info_room_image = "";
+                        }
+                    });
+            //
+            mMain.disablePD();
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_dismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            //
+            lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //dialog.dismiss();
+                }
+            });
+            //
+            btn_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String results = getSelectedUsers(memberList);
+
+                    if (!results.equalsIgnoreCase("")) {
                         //
                         HMAux auxRoom = roomDao.getByStringHM(
                                 new CH_Room_Sql_006(
@@ -830,31 +970,24 @@ public class Act034_Room extends BaseFragment {
                                     hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, formApPk[3]);
                                     hmAuxParam.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, formApPk[4]);
                                     hmAuxParam.put(GE_Custom_Form_ApDao.AP_CODE, formApPk[5]);
-                                    hmAuxParam.put(CH_RoomDao.USER_CODE,hmAux.get(CH_RoomDao.USER_CODE));
+                                    hmAuxParam.put(CH_RoomDao.USER_CODE,results);
                                     //
                                     alertForAddUsrRoomAP(hmAuxParam);
-
                                 }
                             }
                         }
-                    }else{
-                        if (hmAux.get("room_code") == null) {
-                            //DESCOMENTAR LINHA ABAIXO APÓS TESTE
-                            alertForRoomPrivate(hmAux);
-                            //
-                            //alertForAddUsrRoomAP(hmAux);
-
-                        } else {
-                            HMAux ccRoom = roomDao.getByStringHM(
-                                    new CH_Room_Sql_005(
-                                            hmAux.get(CH_RoomDao.USER_CODE)
-                                    ).toSqlQuery()
-                            );
-                            //
-                            mMain.callAct035(context, ccRoom, "0");
-                        }
+                        //
+                        dialog.dismiss();
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_no_item_tll"),
+                                hmAux_Trans.get("alert_no_item_msg"),
+                                null,
+                                -1,
+                                false
+                        );
                     }
-                    dialog.dismiss();
                 }
             });
 
@@ -951,6 +1084,25 @@ public class Act034_Room extends BaseFragment {
                 },
                 1
         );
+    }
+
+    private String getSelectedUsers(ArrayList<HMAux> memberList) {
+        StringBuilder sb = new StringBuilder();
+        boolean bFirst = true;
+
+        for (HMAux item : memberList) {
+            if (item.get(Chat_UserList_Adapter.USER_SELECTED).equalsIgnoreCase("1")) {
+                if (bFirst) {
+                    bFirst = false;
+                    sb.append(item.get(Chat_UserList_Adapter.USER_CODE));
+                } else {
+                    sb.append("|");
+                    sb.append(item.get(Chat_UserList_Adapter.USER_CODE));
+                }
+            }
+        }
+
+        return sb.toString().trim();
     }
 
     private void setFilterIconColor() {

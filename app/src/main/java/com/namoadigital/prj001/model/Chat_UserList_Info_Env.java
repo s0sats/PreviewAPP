@@ -8,6 +8,8 @@ public class Chat_UserList_Info_Env {
 
     private String session_app;
     private String customer_code;
+    private String profile;
+    private String room_code;
 
     public String getSession_app() {
         return session_app;
@@ -23,5 +25,21 @@ public class Chat_UserList_Info_Env {
 
     public void setCustomer_code(String customer_code) {
         this.customer_code = customer_code;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getRoom_code() {
+        return room_code;
+    }
+
+    public void setRoom_code(String room_code) {
+        this.room_code = room_code;
     }
 }

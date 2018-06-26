@@ -25,7 +25,7 @@ public interface Act034_Main_View {
 
     void startDownloadMemberImgTask(String[] imgUrlList);
 
-    void startUserListInfoTask(String socket_id, String customer_code, String room_type);
+    void startUserListInfoTask(String socket_id, String customer_code, String room_type, String room_code);
 
     void startRoomPrivateWS(String user_code, String customer_code,Integer active,@Nullable String room_code);
 

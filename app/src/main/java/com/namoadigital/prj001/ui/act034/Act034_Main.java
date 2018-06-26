@@ -675,9 +675,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void startUserListInfoTask(String socket_id, String customer_code, String room_type) {
+    public void startUserListInfoTask(String socket_id, String customer_code, String room_type, String room_code) {
         userListInfoTask = new UserListInfoTask();
-        userListInfoTask.execute(socket_id, customer_code,room_type);
+        userListInfoTask.execute(socket_id, customer_code,room_type,room_code);
     }
 
     @Override
@@ -939,6 +939,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 String socket_id = params[0];
                 String customer_code = params[1];
                 room_type = params[2];
+                String room_code = params[3];
                 //
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
@@ -946,6 +947,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 //
                 env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setCustomer_code(customer_code);
+                if(room_type.equals(Constant.CHAT_ROOM_TYPE_AP)){
+                    env.setProfile("AP");
+                    env.setRoom_code(room_code);
+                }
                 //
                 resultado = ToolBox_Con.connWebService(
                         Constant.WS_CHAT_ROOM_USER_LIST,
@@ -1001,13 +1006,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                                     }.getType()
                             );
 
-                    //act034_room.showRoomInfoDialog(roomInfoList);
                     switch (room_type) {
                         case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
                             act034_room.showUserListInfoDialog(userListInfoList);
                             break;
                         case Constant.CHAT_ROOM_TYPE_AP:
-                            act034_room.showUserListInfoDialog(userListInfoList);
+                            act034_room.showMultiUserListDialog(userListInfoList);
                             break;
                     }
 
