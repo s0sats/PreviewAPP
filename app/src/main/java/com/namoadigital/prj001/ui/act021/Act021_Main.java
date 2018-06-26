@@ -84,6 +84,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     }
 
     private String fragProduct_ID;
+    private String fragProduct_CODE;
     private String fragSerial_ID;
     private String fragTracking;
 
