@@ -118,8 +118,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+            //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);

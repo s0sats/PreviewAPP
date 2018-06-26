@@ -1845,12 +1845,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             final AlertDialog dialog = builder.create();
             dialog.show();
             //
-            if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)){
+            if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP) &&
+                    ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT)) {
+
                 iv_add_user.setVisibility(View.VISIBLE);
             } else {
                 iv_add_user.setVisibility(View.GONE);
             }
-
             //
             iv_add_user.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -2783,6 +2784,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 //
                 env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setCustomer_code(customer_code);
+                env.setProfile("AP");
+                env.setRoom_code(mRoom.getRoom_code());
                 //
                 resultado = ToolBox_Con.connWebService(
                         Constant.WS_CHAT_ROOM_USER_LIST,
