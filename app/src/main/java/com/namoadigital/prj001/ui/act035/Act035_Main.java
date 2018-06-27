@@ -284,9 +284,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("dialog_join_room_ap_msg");
         transList.add("alert_ap_info_ttl");
         //
-        transList.add("progress_user_list_ttl");
-        transList.add("progress_user_list_msg");
-        //
         transList.add("alert_no_item_tll");
         transList.add("alert_no_item_msg");
         //
@@ -2759,8 +2756,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             Log.d("ChatEvent", "UserListInfoTask PreExecute");
             //
             showPDUser(
-                    hmAux_Trans.get("progress_user_list_ttl"),
-                    hmAux_Trans.get("progress_user_list_msg"),
+                    hmAux_Trans.get("progress_add_user_in_room_ttl"),
+                    hmAux_Trans.get("progress_add_user_in_room_msg"),
 
                     true);
         }
