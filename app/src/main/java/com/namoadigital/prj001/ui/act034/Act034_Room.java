@@ -87,6 +87,7 @@ public class Act034_Room extends BaseFragment {
 
     private String mRoom_Code = "";
     private String mRoom_Type = "";
+    private String mRoom_Desc = "";
     private HashMap<String, String> filtersValues = new HashMap<>();
 
     @Override
@@ -279,6 +280,7 @@ public class Act034_Room extends BaseFragment {
                         if (ToolBox_Con.isOnline(context)) {
                             mRoom_Code = room_code;
                             mRoom_Type = room_type;
+                            mRoom_Desc = room_desc;
                             info_room_desc = room_desc;
                             info_room_image = image_path;
                             //
@@ -543,9 +545,6 @@ public class Act034_Room extends BaseFragment {
             TextView tv_Room_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
             //
             tv_Room_code.setText(mRoom_Code);
-            //
-            tv_room_desc.setText(info_room_desc);
-            //
             //
             if (info_room_image.equals("")) {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
@@ -861,7 +860,8 @@ public class Act034_Room extends BaseFragment {
             View view = inflater.inflate(R.layout.chat_add_multi_user_info, null);
             //
             ImageView iv_dismiss = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_dismiss);
-            TextView tv_customer_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_room_desc_lbl);
+            TextView tv_room_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_room_desc_lbl);
+            TextView tv_customer_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_customer_desc_lbl);
             ImageView iv_customer = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
@@ -873,6 +873,8 @@ public class Act034_Room extends BaseFragment {
             ImageView iv_filter_user = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_filter_user);
             //
             iv_trash.setVisibility(View.GONE);
+            //
+            tv_room_desc.setText(mRoom_Desc);
             //
             tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
             iv_customer.setVisibility(View.GONE);

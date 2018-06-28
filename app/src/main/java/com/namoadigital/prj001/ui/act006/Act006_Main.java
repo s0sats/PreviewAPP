@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -107,6 +108,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("alert_no_serial_found_msg");
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
+        //
+        transList.add("alert_local_product_not_found_ttl");
+        transList.add("alert_local_product_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -411,6 +415,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
 
+        Log.d("NFC", value[0]);
+
         if (!status) {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -425,7 +431,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             );
 
         } else {
-            mFrgSerialSearch.cleanFields();
+            //mFrgSerialSearch.cleanFields();
             String product_id = "";
             //
             switch (value[0]) {
@@ -434,6 +440,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     //
                     if (!product_id.equals("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
+                        mFrgSerialSearch.setSerialIdText("");
+                        mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialSearch(product_id, "", "");
                     } else {
                         ToolBox.alertMSG(
@@ -448,7 +456,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 case SERIAL:
                     product_id = mPresenter.searchProductInfo(value[2], "");
                     //
-                    if (!product_id.equals("")) {
+                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");

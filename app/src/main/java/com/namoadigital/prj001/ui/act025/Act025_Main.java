@@ -500,21 +500,21 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
                 case SERIAL:
                     product_id = mPresenter.searchProductInfo(value[2], "");
                     //
-                    if (!product_id.equals("")) {
+//                    if (!product_id.equals("")) {
 //                        fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
 //                        fragFilters.setProductCodeText(value[2]);
 //                        fragFilters.setProductIdText(product_id);
 //                        fragFilters.setSerialIdText(value[3]);
-                        mPresenter.executeSerialSearch(product_id, value[3], "");
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
-                                hmAux_Trans.get("alert_local_product_not_found_msg"),
-                                null,
-                                0
-                        );
-                    }
+//                        mPresenter.executeSerialSearch(product_id, value[3], "");
+//                    } else {
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+//                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+//                                null,
+//                                0
+//                        );
+//                    }
                     break;
 
                 default:

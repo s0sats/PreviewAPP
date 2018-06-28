@@ -101,7 +101,7 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
         Bundle bundle = new Bundle();
         //
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+        bundle.putString(Constant.MAIN_PRODUCT_CODE, productSerial != null ? String.valueOf(productSerial.getProduct_code()) : null);
         bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
         //

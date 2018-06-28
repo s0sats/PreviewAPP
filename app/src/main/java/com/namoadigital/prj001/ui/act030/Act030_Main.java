@@ -666,6 +666,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
                     if (!product_id.equals("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
+                        mFrgSerialSearch.setSerialIdText("");
+                        mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialSearch(product_id, "", "");
                     } else {
                         ToolBox.alertMSG(
@@ -678,19 +680,16 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                     }
 
 
-//                    fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
-//                    fragFilters.setProductCodeText(value[2]);
-//                    fragFilters.setProductIdText(product_id);
-
                     break;
                 case SERIAL:
                     product_id = mPresenter.searchProductInfo(value[2], "");
-                    //
-                    if (!product_id.equals("")) {
+
+                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialSearch(product_id, value[3], "");
+
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -700,25 +699,6 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                                 0
                         );
                     }
-
-//                    if (!product_id.equals("")) {
-//                        fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
-//                        fragFilters.setProductCodeText(value[2]);
-//                        fragFilters.setSerialIdText(value[3]);
-//                        if (fragFilters.getProductCodeText().length() > 0
-//                                && fragFilters.getSerialIdText().length() > 0
-//                                ) {
-//                            mPresenter.executeSerialSearch(value[2], "", value[3]);
-//                        }
-//                    } else {
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
-//                                hmAux_Trans.get("alert_local_product_not_found_msg"),
-//                                null,
-//                                0
-//                        );
-//                    }
 
                     break;
 

@@ -2880,7 +2880,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             View view = inflater.inflate(R.layout.chat_add_multi_user_info, null);
             //
             ImageView iv_dismiss = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_dismiss);
-            TextView tv_customer_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_room_desc_lbl);
+            TextView tv_room_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_room_desc_lbl);
+            TextView tv_customer_desc = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_customer_desc_lbl);
+
             ImageView iv_customer = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.chat_add_multi_user_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.chat_add_multi_user_info_lv_members);
@@ -2892,6 +2894,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ImageView iv_filter_user = (ImageView) view.findViewById(R.id.chat_add_multi_user_info_iv_filter_user);
             //
             iv_trash.setVisibility(View.GONE);
+            //
+            tv_room_desc.setText(mRoom.getRoom_desc());
             //
             tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
             iv_customer.setVisibility(View.GONE);

@@ -1106,12 +1106,14 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             );
 
         } else {
-            mFrgSerialSearch.cleanFields();
+            //mFrgSerialSearch.cleanFields();
             String product_id = "";
             //
             switch (value[0]) {
                 case PRODUCT:
                     product_id = mPresenter.searchProductInfo(value[2], "");
+                    mFrgSerialSearch.setSerialIdText("");
+                    mFrgSerialSearch.setTrackingText("");
                     //
                     if (!product_id.equals("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
@@ -1129,11 +1131,12 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 case SERIAL:
                     product_id = mPresenter.searchProductInfo(value[2], "");
                     //
-                    if (!product_id.equals("")) {
+                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialSearch(product_id, value[3], "");
+
                     } else {
                         ToolBox.alertMSG(
                                 context,
