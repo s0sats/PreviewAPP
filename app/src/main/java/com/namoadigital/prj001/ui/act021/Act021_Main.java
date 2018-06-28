@@ -157,6 +157,8 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         transList.add("progress_so_save_ttl");
         transList.add("progress_so_save_msg");
         transList.add("alert_results_ttl");
+        transList.add("alert_local_product_not_found_ttl");
+        transList.add("alert_local_product_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
