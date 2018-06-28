@@ -63,16 +63,19 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "                             and p.custom_form_type = f.custom_form_type\n" +
                         "                             and p.custom_form_code = f.custom_form_code\n" +
                         "                             and p.custom_form_version = f.custom_form_version\n" +
+                        "                             and p.product_code = '"+s_product_code+"'\n" +
                         " LEFT JOIN\n" +
                         "       "+ GE_Custom_Form_OperationDao.TABLE +" o on o.customer_code = f.customer_code\n" +
                         "                               and o.custom_form_type = f.custom_form_type\n" +
                         "                               and o.custom_form_code = f.custom_form_code\n" +
                         "                               and o.custom_form_version = f.custom_form_version \n "+
+                        "                               and o.operation_code = '"+s_operation_code+"' \n "+
                         " LEFT JOIN\n" +
                         "    "+ GE_Custom_Form_SiteDao.TABLE +" s on s.customer_code = f.customer_code\n" +
                         "                               and s.custom_form_type = f.custom_form_type\n" +
                         "                               and s.custom_form_code = f.custom_form_code\n" +
                         "                               and s.custom_form_version = f.custom_form_version \n"+
+                        "                               and s.site_code = '"+s_site_code+"' \n"+
                         " WHERE    \n" +
                         "   t.customer_code = f.customer_code \n" +
                         "   AND t.custom_form_type = f.custom_form_type\n"+

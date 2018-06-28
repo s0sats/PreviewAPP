@@ -207,7 +207,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            callAct008(context);
+                            //callAct008(context);
+                            mPresenter.onBackPressedClicked(actResqueting);
                         }
                     },
                     0
@@ -221,6 +222,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle.remove(Constant.ACT008_SERIAL_ID);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
         bundle.remove(Constant.BACK_ACTION);
+        //
+        bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(Constant.ACT007_PRODUCT_CODE));
+        bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(Constant.ACT008_SERIAL_ID));
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
