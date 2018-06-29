@@ -1627,13 +1627,22 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         ss_product.setmTitle(hmAux_Trans.get("dialog_form_prod_ss_product_search_ttl"));
         ss_product.setmOption(nFormProductList);
         //
-        ToolBox_Inf.setSSmValue(
+        HMAux auxProd = new HMAux();
+        auxProd.put(SearchableSpinner.ID, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        auxProd.put(SearchableSpinner.DESCRIPTION, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_DESC)));
+        auxProd.put(SM_SODao.PRODUCT_CODE, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        auxProd.put(SM_SODao.PRODUCT_ID,String.valueOf(mSoAux.get(SM_SODao.PRODUCT_ID)));
+        auxProd.put(SM_SODao.PRODUCT_DESC, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_DESC)));
+        //
+        ss_product.setmValue(auxProd);
+        //
+        /*ToolBox_Inf.setSSmValue(
                 ss_product,
                 mSoAux.get(SM_SODao.PRODUCT_CODE),
                 mSoAux.get(SM_SODao.PRODUCT_DESC),
                 true,
                 false
-        );
+        );*/
         //
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_form_prod_serial_lbl"));
         tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
