@@ -41,6 +41,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     private MD_ProductDao productDao;
 
     private MD_Product mdProduct;
+
+    private String mProduct_id;
     private String mSerial_id;
     private String mTracking;
 
@@ -106,6 +108,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     @Override
     public void executeSerialSearch(String product_id, String serial_id, String tracking) {
         mdProduct = searchProduct(product_id);
+        mProduct_id = product_id;
         mSerial_id = serial_id;
         mTracking = tracking;
 
@@ -202,7 +205,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
             //
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProduct != null ? mdProduct.getProduct_id() : "");
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mProduct_id); //mdProduct != null ? mdProduct.getProduct_id() : "");
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
 
@@ -296,22 +299,22 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 //        return tSerialList;
 //    }
 
-    @Override
-    public String searchProductInfo(String product_code, String product_id) {
-        MD_Product md_product = productDao.getByString(
-                new MD_Product_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
-                        product_id
-                ).toSqlQuery()
-        );
-        //
-        if (md_product != null) {
-            return md_product.getProduct_id();
-        }
-        //
-        return "";
-    }
+//    @Override
+//    public String searchProductInfo(String product_code, String product_id) {
+//        MD_Product md_product = productDao.getByString(
+//                new MD_Product_Sql_003(
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        product_code,
+//                        product_id
+//                ).toSqlQuery()
+//        );
+//        //
+//        if (md_product != null) {
+//            return md_product.getProduct_id();
+//        }
+//        //
+//        return "";
+//    }
 
     @Override
     public MD_Product searchProduct(String product_id) {

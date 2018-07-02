@@ -80,7 +80,8 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
                                     ToolBox_Con.getPreference_Customer_Code(context),
                                     Long.parseLong(data.get(0).get("code"))
                             ).toSqlQuery()
-                    ));
+                    )
+            );
         } else {
             mView.loadGroups_Products(data);
         }
