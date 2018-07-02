@@ -436,7 +436,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     }
                     break;
                 case SERIAL:
-                    //HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {

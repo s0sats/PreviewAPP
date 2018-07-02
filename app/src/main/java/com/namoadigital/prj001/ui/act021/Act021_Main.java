@@ -173,21 +173,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-//        List<String> transList = new ArrayList<String>();
-//        transList.add("btn_enable_nfc");
-//        transList.add("product_lbl");
-//        transList.add("serial_lbl");
-//        transList.add("tracking_lbl");
-//        transList.add("btn_option_01");
-//        transList.add("btn_option_02");
-//        transList.add("btn_option_03");
-//        transList.add("product_hint");
-//        transList.add("serial_hint");
-//        transList.add("tracking_hint");
-//        transList.add("product_all_lbl");
-//        transList.add("alert_no_product_ttl");
-//        transList.add("alert_no_product_msg");
-
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -257,68 +242,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 ),
                 hmAux_Trans
         );
-//        searchListner = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
-//                //
-//                if (mPresenter.checkForSoToSend()) {
-//                    ToolBox.alertMSG(
-//                            context,
-//                            hmAux_Trans.get("alert_so_to_send_ttl"),
-//                            hmAux_Trans.get("alert_so_to_send_msg"),
-//                            new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    callAct005(context);
-//                                }
-//                            },
-//                            0
-//                    );
-//                } else {
-//                    //
-//                    switch (v.getId()) {
-//                        case R.id.act021_iv_search_serial:
-//                            //
-//                            if (ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()).length() > 0) {
-//                                search_pressed = R.id.act021_iv_search_serial;
-//                                //Limpa campo tracking
-//                                mket_tracking.setText("");
-//                                //Chama Ws que consulta Seriais
-//                                mPresenter.executeSerialTracking(
-//                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
-//                                        mket_tracking.getText().toString().trim()
-//                                );
-//
-//                            } else {
-//                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-//                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-//                            }
-//                            //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
-//                            break;
-//                        case R.id.act021_iv_search_tracking:
-//
-//                            if (mket_tracking.getText().toString().trim().length() > 0) {
-//                                search_pressed = R.id.act021_iv_search_tracking;
-//                                //Limpa campo Serial
-//                                mket_serial.setText("");
-//                                //Chama Ws que consulta Seriais
-//                                mPresenter.executeSerialTracking(
-//                                        ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
-//                                        mket_tracking.getText().toString().trim()
-//                                );
-//                            } else {
-//                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-//                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-//                            }
-//                            //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                }
-//            }
-//        };
 
         hideSoftKeyboard();
 
@@ -420,120 +343,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     }
 
     private void initActions() {
-//        btn_load.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //showNewOptDialog();
-//                if (mPresenter.checkForSoToSend()) {
-//                    ToolBox.alertMSG(
-//                            context,
-//                            hmAux_Trans.get("alert_so_to_send_ttl"),
-//                            hmAux_Trans.get("alert_so_to_send_msg"),
-//                            new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    callAct005(context);
-//                                }
-//                            },
-//                            0
-//                    );
-//                } else {
-//                    showNewOptDialog();
-//                }
-//            }
-//        });
-//
-//        btn_pendencies.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if (pendencies_qty > 0) {
-//                    callAct026(context);
-//                } else {
-//                    showMsg();
-//                }
-//
-//
-//            }
-//        });
-//
-//        btn_so_express.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                callAct040(context);
-//
-//            }
-//        });
-//
-//        btn_sync.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if (ToolBox_Con.isOnline(context)) {
-//
-//                    executeSoSave();
-//
-//                } else {
-//                    ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
-//                }
-//
-//            }
-//        });
-//
-//        //Interface acionando quando o usuário digita na caixa.
-//        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-//            @Override
-//            public void reportTextChange(String s) {
-//
-//            }
-//
-//            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
-//            @Override
-//            public void reportTextChange(String text, boolean hasText) {
-//                if (hasText) {
-//                    iv_search_serial.setEnabled(hasText);
-//                } else {
-//                    iv_search_serial.setEnabled(hasText);
-//                }
-//            }
-//        });
-//        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
-//        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-//            @Override
-//            public void reportTextBySpecialist(String s) {
-//                iv_search_serial.performClick();
-//            }
-//        });
-//        //Interface acionando quando o usuário digita na caixa.
-//        mket_tracking.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-//            @Override
-//            public void reportTextChange(String s) {
-//
-//            }
-//
-//            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
-//            @Override
-//            public void reportTextChange(String text, boolean hasText) {
-//                if (hasText) {
-//                    iv_search_tracking.setEnabled(hasText);
-//                } else {
-//                    iv_search_tracking.setEnabled(hasText);
-//                }
-//            }
-//        });
-//        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
-//        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-//            @Override
-//            public void reportTextBySpecialist(String s) {
-//                iv_search_tracking.performClick();
-//            }
-//        });
-//        //
-//        iv_search_serial.setOnClickListener(searchListner);
-//        //
-//        iv_search_tracking.setOnClickListener(searchListner);
-
     }
 
     public void showMsg() {
@@ -743,14 +552,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         progressDialog.dismiss();
     }
 
-//    @Override
-//    protected void processCustom_error(String mLink, String mRequired) {
-//        super.processCustom_error(mLink, mRequired);
-//
-//        progressDialog.dismiss();
-//    }
-
-
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
@@ -943,59 +744,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
         mPresenter.getSync();
     }
-
-//    public void showResults(List<HMAux> res) {
-//
-//        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//
-//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-//
-//        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-//        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-//        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
-//
-//        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-//        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-//
-//        lv_results.setAdapter(
-//                new Act028_Results_Adapter(
-//                        context,
-//                        R.layout.act028_results_adapter_cell,
-//                        res
-//                )
-//        );
-//
-//        builder.setView(view);
-//        builder.setCancelable(false);
-//
-//        final AlertDialog show = builder.show();
-//
-//        /**
-//         * Ini Action
-//         */
-//        btn_ok.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                show.dismiss();
-//
-//                if (progressDialog != null && progressDialog.isShowing()) {
-//                    progressDialog.dismiss();
-//                }
-//            }
-//        });
-//    }
-//
-//    private void showSuccessDialog() {
-//        ToolBox.alertMSG(
-//                Act021_Main.this,
-//                hmAux_Trans.get("alert_sync_finish_ttl"),
-//                hmAux_Trans.get("alert_sync_finish_msg"),
-//                null,
-//                0
-//        );
-//    }
-
 
     @Override
     protected void processError_1(String mLink, String mRequired) {

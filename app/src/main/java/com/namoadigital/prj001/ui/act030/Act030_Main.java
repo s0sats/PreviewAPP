@@ -14,7 +14,6 @@ import android.view.WindowManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
-import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -60,19 +59,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
     private String fragSerial_ID;
     private String fragTracking;
     private boolean fragIsOnlyOne;
-
-    //    private String ws_process;
-    //    private Act020_Prod_Serial_Adapter mAdapter;
-    //    private TextView tv_no_result;
-    //    private ListView lv_prod_serial_list;
-    //    private TextView tv_records_count;
-    //    private TextView tv_records_limit;
-    //    private LinearLayout ll_records;
-    //    private TextView tv_records;
-    //    private ActionBarDrawerToggle mDrawerToggle;
-    //    private Act030_Frag_Filter fragFilters;
-    //    private FragmentManager fm;
-//    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,21 +153,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-//        List<String> transList = new ArrayList<String>();
-//        transList.add("btn_enable_nfc");
-//        transList.add("product_lbl");
-//        transList.add("serial_lbl");
-//        transList.add("tracking_lbl");
-//        transList.add("btn_option_01");
-//        transList.add("btn_option_02");
-//        transList.add("btn_option_03");
-//        transList.add("product_hint");
-//        transList.add("serial_hint");
-//        transList.add("tracking_hint");
-//        transList.add("product_all_lbl");
-//        transList.add("alert_no_product_ttl");
-//        transList.add("alert_no_product_msg");
-
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -193,7 +164,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     private void initVars() {
         recoverIntentsInfo();
-//        bundle = new Bundle();
 
         fm = getSupportFragmentManager();
 
@@ -234,103 +204,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
                         Constant.DB_VERSION_CUSTOM
                 )
         );
-//        //
-//        tv_records = (TextView) findViewById(R.id.act030_tv_record_info);
-//        //
-//        ll_records = (LinearLayout) findViewById(R.id.act030_ll_limit_exceeded);
-//        //
-//        tv_records_limit = (TextView) findViewById(R.id.act030_tv_record_limit);
-//        //
-//        tv_records_count = (TextView) findViewById(R.id.act030_tv_record_count);
-//        //
-//        lv_prod_serial_list = (ListView) findViewById(R.id.act030_lv_prod_serial);
-//        //
-//        tv_no_result = (TextView) findViewById(R.id.act030_tv_no_result);
-//        tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
-//        //
-//        /*
-//         * Drawer setup
-//         */
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.act030_drawer);
-//
-//        mDrawerToggle = new ActionBarDrawerToggle(
-//                Act030_Main.this,
-//                mDrawerLayout,
-//                R.string.act005_drawer_opened,
-//                R.string.act005_drawer_opened
-//        ) {
-//
-//            @Override
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-//                //
-//                invalidateOptionsMenu();
-//            }
-//
-//            @Override
-//            public void onDrawerClosed(View drawerView) {
-//                super.onDrawerClosed(drawerView);
-//                //
-//                invalidateOptionsMenu();
-//            }
-//
-//        };
-//        //
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
-//        //
-//        mDrawerLayout.addDrawerListener(mDrawerToggle);
-//        //
-//        mDrawerToggle.syncState();
-//        //
-//        fragFilters = (Act030_Frag_Filter) fm.findFragmentById(R.id.act030_frag_filter);
-//        //
-//        fragFilters.setHmAux_Trans(hmAux_Trans);
-//        //
-//        fragFilters.setSupportNFC(supportNFC);
-//        //
-//        controls_sta.addAll(fragFilters.getControlsSta());
-//        //
-//        fragFilters.setClickListener(actionBTN);
-//        //
-//        fragFilters.setOnDrawerClick(new Act030_Frag_Filter.IAct030_Filter() {
-//            @Override
-//            public void onIvSearchClick(String product_id, String serial, String tracking) {
-//                ToolBox_Inf.hideSoftKeyboard(Act030_Main.this);
-//                if ((product_id.trim().length() > 0 && serial.trim().length() > 0)
-//                        || tracking.trim().length() > 0
-//                        ) {
-//                    //Se somente tracking preenchido, chama Ws sem validar produto local
-//                    if (tracking.trim().length() > 0 && product_id.trim().length() == 0 && serial.trim().length() == 0) {
-//                        mPresenter.executeSerialSearch(product_id, serial, tracking);
-//                    } else {
-//                        //Se tudo preenchido, valida se produto existe
-//                        if (mPresenter.checkProductExists(
-//                                product_id.trim(),
-//                                serial.trim()
-//                        )
-//                                ) {
-//                            //
-//                            mPresenter.executeSerialSearch(product_id, serial, tracking);
-//                        }
-//                    }
-//                } else {
-//                    ToolBox.alertMSG(
-//                            context,
-//                            hmAux_Trans.get("alert_no_search_parameter_ttl"),
-//                            hmAux_Trans.get("alert_no_search_parameter_msg"),
-//                            null,
-//                            0
-//                    );
-//                }
-//            }
-//
-//        });
-//        //
-//        mPresenter.checkSingleProduct();
-//        /*
-//         * Drawer setup end
-//         */
 
         hideSoftKeyboard();
 
@@ -379,31 +252,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
                     optionsInfo.get(Frg_Serial_Search.TRACKING)
             );
-
-//            //Se somente tracking preenchido, chama Ws sem validar produto local
-//            if (optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0 &&
-//                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() == 0 &&
-//                    optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() == 0) {
-//                mPresenter.executeSerialSearch(
-//                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-//                        optionsInfo.get(Frg_Serial_Search.SERIAL),
-//                        optionsInfo.get(Frg_Serial_Search.TRACKING)
-//                );
-//            } else {
-//                //Se tudo preenchido, valida se produto existe
-//                if (mPresenter.checkProductExists(
-//                        optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim(),
-//                        optionsInfo.get(Frg_Serial_Search.SERIAL).trim()
-//                )
-//                        ) {
-//                    //
-//                    mPresenter.executeSerialSearch(
-//                            optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-//                            optionsInfo.get(Frg_Serial_Search.SERIAL),
-//                            optionsInfo.get(Frg_Serial_Search.TRACKING)
-//                    );
-//                }
-//            }
         } else {
             ToolBox.alertMSG(
                     context,
@@ -439,23 +287,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
     }
 
     private void initActions() {
-//        //Abre drawer ao carregar a tela
-//        mDrawerLayout.openDrawer(GravityCompat.START);
-//        //Sincroniza icone do hambuguer
-//        mDrawerToggle.syncState();
-//        //
-//        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                if (ToolBox_Con.isOnline(context)) {
-//                    MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-//                    //
-//                    mPresenter.defineFlow(productSerial, false);
-//                } else {
-//                    ToolBox_Inf.showNoConnectionDialog(context);
-//                }
-//            }
-//        });
     }
 
     @Override
@@ -477,8 +308,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     @Override
     public void setProductInfoToDrawer(MD_Product md_product) {
-//        fragFilters.setProductCodeText(String.valueOf(md_product.getProduct_code()));
-//        fragFilters.setProductIdText(md_product.getProduct_id());
     }
 
     @Override
@@ -538,83 +367,18 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     @Override
     public void setRecordInfo(long record_size, long record_page) {
-//        if (record_size > 0) {
-//            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
-//        } else {
-//            tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
-//
-//        }
     }
 
     @Override
     public void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list) {
-//        //Esconde tv com msg de nenhum busca feita
-//        //e ll com informações de limite de excedido.
-//        tv_no_result.setVisibility(View.GONE);
-//        ll_records.setVisibility(View.GONE);
-//        //
-//        mAdapter = new Act020_Prod_Serial_Adapter(
-//                context,
-//                R.layout.act020_cell,
-//                prod_serial_list
-//        );
-//        //
-//        lv_prod_serial_list.setAdapter(mAdapter);
     }
 
     @Override
     public void showQtyExceededMsg(long record_page, long record_count) {
-//        ll_records.setVisibility(View.VISIBLE);
-//
-//        tv_records_limit.setText(
-//                hmAux_Trans.get("records_display_limit_lbl") + " " + record_page
-//        );
-//
-//        tv_records_count.setText(
-//                hmAux_Trans.get("records_found_lbl") + " " + record_count
-//        );
-//
-//        ToolBox.alertMSG(
-//                context,
-//                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
-//                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
-//                null,
-//                0);
     }
 
     @Override
     public void showNewSerialMsg() {
-//        //Se nenhum serial encontrado e produto permite novo serial
-//        //exibe caixa perguntando se deseja criar novo serial.
-//        if (fragFilters.getTrackingText().length() > 0
-//                && fragFilters.getProductIdText().length() == 0
-//                && fragFilters.getSerialIdText().length() == 0
-//                ) {
-//            ToolBox.alertMSG(
-//                    context,
-//                    hmAux_Trans.get("alert_tracking_not_found_ttl"),
-//                    hmAux_Trans.get("alert_tracking_not_found_msg"),
-//                    null,
-//                    0
-//            );
-//        } else {
-//
-//            if (mPresenter.productAllowNewSerial(fragFilters.getProductCodeText(), fragFilters.getProductIdText())) {
-//                ToolBox.alertMSG(
-//                        context,
-//                        hmAux_Trans.get("alert_new_serial_ttl"),
-//                        hmAux_Trans.get("alert_new_serial_msg"),
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                mPresenter.defineFlow(serial, true);
-//                            }
-//                        },
-//                        1
-//                );
-//            }
-//        }
     }
 
     @Override
@@ -734,26 +498,10 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
     @Override
     protected void processCloseACT(String result, String mRequired) {
         super.processCloseACT(result, mRequired);
-
-//        mDrawerLayout.closeDrawer(GravityCompat.START);
-//        //
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mPresenter.getProductSerialList(ws_retorno);
-//                //
-//                progressDialog.dismiss();
-//            }
-//        }, 150);
-
+        //
         progressDialog.dismiss();
         //
         mPresenter.extractSearchResult(result);
-
-        //
-//        progressDialog.dismiss();
-//        mPresenter.extractSearchResult(result);
     }
 
     //Tratativa SESSION NOT FOUND
@@ -810,6 +558,5 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
-        //super.processNotification_close(mValue, mActivity);
     }
 }
