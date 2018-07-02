@@ -56,6 +56,7 @@ public class Sql_Act017_001 implements Specification {
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+                        "  strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
                         "  l.require_serial,\n"+
                         "  l.allow_new_serial_cl\n"+
                         " \n" +
@@ -71,7 +72,7 @@ public class Sql_Act017_001 implements Specification {
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                        // "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'" +
                         "      AND l.custom_form_data_serv is not null \n" +
-                        "      AND strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"' \n" +
+                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"') \n" +
                         "  ORDER BY\n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
                         "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
@@ -95,7 +96,8 @@ public class Sql_Act017_001 implements Specification {
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
                         "schedule_date_start_format#schedule_date_end_format#site_code#site_id#site_desc#require_serial#allow_new_serial_cl")
-                .toString();
+                .toString()
+                .replace("'null'","null");
 
 
     }

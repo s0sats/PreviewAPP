@@ -44,9 +44,11 @@ import java.util.List;
 public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     public static final String ACT017_MODULE_KEY = "module_key";
+    public static final String ACT017_ADAPTER_DATE_REF = "adapter_date_ref";
     //
     public static final String MODULE_CHECKLIST_FORM_IN_PROCESSING = "checklist_form_in_processing";
     public static final String MODULE_CHECKLIST_START_FORM = "checklist_start_form";
+    public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
 
     private TextView tv_title;
     private ListView lv_schedules;
@@ -98,7 +100,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
+            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE,null);
             filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, false);
         } else {
@@ -225,6 +227,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     }
 
+
+
     private void iniUIFooter() {
         iniFooter();
         //
@@ -267,6 +271,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     public void loadSchedules(List<HMAux> schedules) {
         //
+        if(scheduled_date == null || scheduled_date.trim().length() == 0){
+            addDateMsgs(schedules);
+        }
+        //
         mAdapter = new Module_Schedules_Adapter(
                 context,
                 R.layout.module_schedules_cell,
@@ -286,6 +294,20 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             lv_schedules.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void addDateMsgs(List<HMAux> schedules) {
+        String date_ref = "";
+        for (int i = 0; i < schedules.size();i++) {
+            if(!date_ref.equals(schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF))){
+                date_ref = schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF);
+                HMAux aux = new HMAux();
+                aux.put(Act017_Main.ACT017_MODULE_KEY,Act017_Main.MODULE_SCHEDULE_DATE_REF);
+                aux.put(Act017_Main.ACT017_ADAPTER_DATE_REF,getDateDesc(date_ref));
+                schedules.add(i,aux);
+            }
+
+        }
     }
 
     private void showFilterDialog() {
