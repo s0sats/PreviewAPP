@@ -140,15 +140,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         resetSearch();
 
         if (bundle != null) {
-
-
-            String tt = bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP);
-
             returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
             mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
         }
-
-        //callSetAdapterData(mket_product_search.getText().toString().trim());
     }
 
     private void callSetAdapterData(String search) {

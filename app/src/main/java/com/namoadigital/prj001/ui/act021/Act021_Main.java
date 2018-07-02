@@ -43,6 +43,8 @@ import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
+
 /**
  * Created by d.luche on 21/06/2017.
  */
@@ -87,6 +89,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     private String fragProduct_CODE;
     private String fragSerial_ID;
     private String fragTracking;
+    private boolean fragIsOnlyOne;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -324,7 +327,13 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
-            mFrgSerialSearch.setShowTree(true);
+
+            if (fragIsOnlyOne){
+                mFrgSerialSearch.setShowTree(false);
+                mFrgSerialSearch.setShowAll(false);
+            } else {
+                mFrgSerialSearch.setShowTree(true);
+            }
         }
 
         if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
@@ -603,10 +612,12 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
+            fragIsOnlyOne = false;
         } else if (list.size() == 1) {
             mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
+            fragIsOnlyOne = true;
         } else {
             mFrgSerialSearch.setProductIdText("");
         }
@@ -1129,14 +1140,36 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     }
                     break;
                 case SERIAL:
-                    product_id = mPresenter.searchProductInfo(value[2], "");
-                    //
+//                    product_id = mPresenter.searchProductInfo(value[2], "");
+//                    //
+//                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
+//                        mFrgSerialSearch.setProductIdText(product_id);
+//                        mFrgSerialSearch.setSerialIdText(value[3]);
+//                        mFrgSerialSearch.setTrackingText("");
+//                        mPresenter.executeSerialSearch(product_id, value[3], "");
+//
+//                    } else {
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+//                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+//                                null,
+//                                0
+//                        );
+//                    }
+//                    //
+                    HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
+
+                    product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
+
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+
+                        if (!product_id.equals("")) {
+                            mFrgSerialSearch.setProductIdText(product_id);
+                        }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, value[3], "");
-
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
                     } else {
                         ToolBox.alertMSG(
                                 context,

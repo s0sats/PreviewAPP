@@ -31,6 +31,8 @@ import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
@@ -53,6 +55,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String fragProduct_ID;
     private String fragSerial_ID;
     private String fragTracking;
+    private boolean fragIsOnlyOne;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,21 +125,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void loadTranslationFrg_Serial_Search() {
-//        List<String> transList = new ArrayList<String>();
-//        transList.add("btn_enable_nfc");
-//        transList.add("product_lbl");
-//        transList.add("serial_lbl");
-//        transList.add("tracking_lbl");
-//        transList.add("btn_option_01");
-//        transList.add("btn_option_02");
-//        transList.add("btn_option_03");
-//        transList.add("product_hint");
-//        transList.add("serial_hint");
-//        transList.add("tracking_hint");
-//        transList.add("product_all_lbl");
-//        transList.add("alert_no_product_ttl");
-//        transList.add("alert_no_product_msg");
-
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -162,21 +150,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
-//                        if (ToolBox_Con.isOnline(context)) {
-//                            if (ToolBox_Inf.checkSerialTokenURStatus(context)) {
-//                                ToolBox.alertMSG(
-//                                        context,
-//                                        "Seriais Pendentes - Trad",
-//                                        "Seriais Pendentes. Envie os seriais pendentes para poder realizar a pesquisa - Trad",
-//                                        null,
-//                                        0
-//                                );
-//                            } else {
-//                                processSerialSearch(optionsInfo);
-//                            }
-//                        } else {
-//                            processSerialSearch(optionsInfo);
-//                        }
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
@@ -189,7 +162,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 }
             }
         });
-
+        //
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
@@ -223,7 +196,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
-            mFrgSerialSearch.setShowTree(true);
+
+            if (fragIsOnlyOne){
+                mFrgSerialSearch.setShowTree(false);
+                mFrgSerialSearch.setShowAll(false);
+            } else {
+                mFrgSerialSearch.setShowTree(true);
+            }
         }
 
         if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
@@ -239,6 +218,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
             fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+
         } else {
             fragProduct_ID = "";
             fragSerial_ID = "";
@@ -247,13 +227,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void processSerialSearch(HMAux optionsInfo) {
-        if (optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() > 0
+        if (optionsInfo.get(PRODUCT_ID).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
                 ) {
             mPresenter.executeSerialSearch(
-                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
+                    optionsInfo.get(PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
                     optionsInfo.get(Frg_Serial_Search.TRACKING)
             );
@@ -322,10 +302,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
+            fragIsOnlyOne = false;
+
         } else if (list.size() == 1) {
             mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
+            fragIsOnlyOne = true;
         } else {
             mFrgSerialSearch.setProductIdText("");
         }
@@ -431,12 +414,11 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             );
 
         } else {
-            //mFrgSerialSearch.cleanFields();
             String product_id = "";
             //
             switch (value[0]) {
                 case PRODUCT:
-                    product_id = mPresenter.searchProductInfo(value[2], "");
+                    product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
                     //
                     if (!product_id.equals("")) {
                         mFrgSerialSearch.setProductIdText(product_id);
@@ -454,13 +436,18 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     }
                     break;
                 case SERIAL:
-                    product_id = mPresenter.searchProductInfo(value[2], "");
-                    //
+                    HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
+
+                    product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
+
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+
+                        if (!product_id.equals("")) {
+                            mFrgSerialSearch.setProductIdText(product_id);
+                        }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, value[3], "");
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
                     } else {
                         ToolBox.alertMSG(
                                 context,

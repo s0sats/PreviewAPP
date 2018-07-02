@@ -206,10 +206,11 @@ public class Frg_Serial_Search extends Fragment {
                     break;
             }
 
-            HMAux values = new HMAux();
-            values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
-            values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
-            values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
+            HMAux values = getHMAuxValues();
+
+//            values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+//            values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
+//            values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
             MD_Product mdProductAux = productValidCheck(values.get(PRODUCT_ID));
 
@@ -355,6 +356,15 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_05.setVisibility(status);
     }
 
+    public HMAux getHMAuxValues() {
+        HMAux values = new HMAux();
+        values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+        values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
+        values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
+
+        return values;
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans, boolean showHint) {
         this.hmAux_Trans = hmAux_Trans;
         this.showHint = showHint;
@@ -423,6 +433,13 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
+    private void statusOnlyOne() {
+        iv_product_change.setVisibility(View.GONE);
+        iv_product_id.setVisibility(View.GONE);
+        mket_product_id.setmBARCODE(false);
+        mket_product_id.setEnabled(false);
+    }
+
     public ArrayList<MKEditTextNM> getControlsSta() {
         return controls_sta;
     }
@@ -454,6 +471,7 @@ public class Frg_Serial_Search extends Fragment {
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
+
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
         } else {
         }
@@ -461,7 +479,6 @@ public class Frg_Serial_Search extends Fragment {
 
     public void callAct_Product_Selection(Context context) {
         Intent mIntent = new Intent(context, Act_Product_Selection.class);
-        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
         //
@@ -470,9 +487,9 @@ public class Frg_Serial_Search extends Fragment {
         startActivityForResult(mIntent, 20);
     }
 
-    public MD_Product productValidCheck() {
-        return productValidCheck(null);
-    }
+//    public MD_Product productValidCheck() {
+//        return productValidCheck(null);
+//    }
 
     public MD_Product productValidCheck(String product_id) {
         String mProductId = null;
@@ -496,6 +513,24 @@ public class Frg_Serial_Search extends Fragment {
         return md_product;
     }
 
+    public String searchProductInfo(String product_code, String product_id) {
+        MD_ProductDao productDao = new MD_ProductDao(getActivity());
+
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if (md_product != null) {
+            return md_product.getProduct_id();
+        }
+        //
+        return "";
+    }
+
     public static List<String> getFragTranslationsVars() {
         List<String> transListFrag = new ArrayList<String>();
         //
@@ -517,4 +552,5 @@ public class Frg_Serial_Search extends Fragment {
         //
         return transListFrag;
     }
+
 }

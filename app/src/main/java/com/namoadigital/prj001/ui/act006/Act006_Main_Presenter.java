@@ -25,7 +25,7 @@ public interface Act006_Main_Presenter {
 
     void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
 
-    String searchProductInfo(String product_code, String product_id);
+    //String searchProductInfo(String product_code, String product_id);
 
     MD_Product searchProduct(String product_id);
 }
