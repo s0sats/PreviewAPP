@@ -436,8 +436,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     }
                     break;
                 case SERIAL:
-                    HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-
+                    //HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
@@ -447,6 +446,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
+                        //
+                        HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                         mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
                     } else {
                         ToolBox.alertMSG(

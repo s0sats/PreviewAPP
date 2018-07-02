@@ -1119,7 +1119,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             );
 
         } else {
-            //mFrgSerialSearch.cleanFields();
             String product_id = "";
             //
             switch (value[0]) {
@@ -1142,26 +1141,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     }
                     break;
                 case SERIAL:
-//                    product_id = mPresenter.searchProductInfo(value[2], "");
-//                    //
-//                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
-//                        mFrgSerialSearch.setProductIdText(product_id);
-//                        mFrgSerialSearch.setSerialIdText(value[3]);
-//                        mFrgSerialSearch.setTrackingText("");
-//                        mPresenter.executeSerialSearch(product_id, value[3], "");
-//
-//                    } else {
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
-//                                hmAux_Trans.get("alert_local_product_not_found_msg"),
-//                                null,
-//                                0
-//                        );
-//                    }
-//                    //
-                    HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-
+                    //HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
@@ -1171,6 +1151,8 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
+                        //
+                        HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                         mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
                     } else {
                         ToolBox.alertMSG(

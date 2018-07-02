@@ -54,6 +54,13 @@ repositories {
     }
 
 }
+//Linux
+repositories {
+    maven {
+        url "file:////home/namoa/Documentos/LIB"
+    }
+
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

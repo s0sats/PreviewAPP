@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -35,7 +36,7 @@ import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_View {
+public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_Main_View {
 
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
@@ -667,7 +668,6 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
             );
 
         } else {
-            mFrgSerialSearch.cleanFields();
             ToolBox_Inf.hideSoftKeyboard(Act030_Main.this);
             String product_id = "";
             //
@@ -693,26 +693,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
                     break;
                 case SERIAL:
-//                    product_id = mPresenter.searchProductInfo(value[2], "");
-////
-////                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
-////                        mFrgSerialSearch.setProductIdText(product_id);
-////                        mFrgSerialSearch.setSerialIdText(value[3]);
-////                        mFrgSerialSearch.setTrackingText("");
-////                        mPresenter.executeSerialSearch(product_id, value[3], "");
-////
-////                    } else {
-////                        ToolBox.alertMSG(
-////                                context,
-////                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
-////                                hmAux_Trans.get("alert_local_product_not_found_msg"),
-////                                null,
-////                                0
-////                        );
-////                    }
-                    //
-                    HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-
+                    //HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
@@ -722,6 +703,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
+                        //
+                        HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
                         mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
                     } else {
                         ToolBox.alertMSG(
