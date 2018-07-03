@@ -18,12 +18,13 @@ public class Sql_Act017_001 implements Specification {
     private long s_customer_code;
     private String sqlite_date_format;
     private String selected_date;
+    private String serial_id;
 
-    public Sql_Act017_001(Context context, long s_customer_code ,String selected_date) {
+    public Sql_Act017_001(Context context, long s_customer_code ,String selected_date, String serial_id) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
         this.selected_date = selected_date;
-
+        this.serial_id = serial_id.trim().length() > 0 ?serial_id : null;
     }
 
     @Override
@@ -73,6 +74,7 @@ public class Sql_Act017_001 implements Specification {
                        // "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'" +
                         "      AND l.custom_form_data_serv is not null \n" +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"') \n" +
+                        "      AND ('"+serial_id+"' is null or l.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "  ORDER BY\n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
                         "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +

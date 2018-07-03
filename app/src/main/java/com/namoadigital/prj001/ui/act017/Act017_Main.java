@@ -24,6 +24,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -64,6 +65,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private ImageView iv_filter;
     private HMAux hmAux_Trans_Extra = new HMAux();
     private TextView tv_no_result;
+    //Implementação Agendamento 2.0 03/07/18
+    private String serial_id = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +106,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE,null);
             filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, false);
+            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
         } else {
             filter_form = false;
             filter_form_ap = false;
+            serial_id = "";
         }
     }
 
@@ -175,6 +180,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         iv_filter = (ImageView) findViewById(R.id.act017_iv_filter);
         //
         tv_title = (TextView) findViewById(R.id.act017_tv_title);
+        tv_title.setVisibility(View.GONE);
         //
         lv_schedules = (ListView) findViewById(R.id.act017_lv_schedules);
         //
@@ -271,9 +277,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     public void loadSchedules(List<HMAux> schedules) {
         //
-        if(scheduled_date == null || scheduled_date.trim().length() == 0){
+        //if(scheduled_date == null || scheduled_date.trim().length() == 0){
             schedules =  addDateMsgs(schedules);
-        }
+        //}
         //
         mAdapter = new Module_Schedules_Adapter(
                 context,
@@ -353,7 +359,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap);
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id );
         //
         if (filter_form || filter_form_ap) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));

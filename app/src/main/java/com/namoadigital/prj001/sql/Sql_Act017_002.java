@@ -21,11 +21,13 @@ public class Sql_Act017_002 implements Specification {
     private String sqlite_date_format;
     private String selected_date;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
+    private String serial_id;
 
-    public Sql_Act017_002(Context context, long s_customer_code , String selected_date) {
+    public Sql_Act017_002(Context context, long s_customer_code , String selected_date, String serial_id) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
         this.selected_date = selected_date;
+        this.serial_id = serial_id.trim().length() > 0 ?serial_id : null;
 
     }
 
@@ -43,6 +45,7 @@ public class Sql_Act017_002 implements Specification {
                         "      a."+GE_Custom_Form_ApDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
                         "      AND a.ap_when is not null \n" +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
+                        "      AND ('"+serial_id+"' is null or a.serial_id like '%"+serial_id+"%') \n" +
                         "  ORDER BY\n" +
                         "      CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
