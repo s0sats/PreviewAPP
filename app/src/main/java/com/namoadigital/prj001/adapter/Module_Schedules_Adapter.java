@@ -139,6 +139,24 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        //return super.isEnabled(position);
+        boolean isEnabled = false;
+        switch (getItemViewType(position)){
+            case 0:
+            case 1:
+                isEnabled = true;
+                break;
+            case 2:
+            default:
+                isEnabled =  false;
+                break;
+        }
+        //
+        return isEnabled;
+    }
+
     private void processDateItem(HMAux item, View convertView) {
         ImageView iv_icon = (ImageView) convertView.findViewById(R.id.module_schedules_date_cell_iv_calendar);
         TextView tv_date = (TextView) convertView.findViewById(R.id.module_schedules_date_cell_tv_date);

@@ -3,16 +3,22 @@
     android:id="@+id/module_schedules_cell_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/namoa_cell_8_states"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:padding="5dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:background="@drawable/module_schedules_date_cell_bg"
+            >
 
             <ImageView
                 android:id="@+id/module_schedules_date_cell_iv_calendar"
@@ -20,6 +26,9 @@
                 android:layout_height="40dp"
                 android:padding="2dp"
                 android:src="@drawable/ic_calendario" />
+            <View
+                android:layout_width="5dp"
+                android:layout_height="match_parent"/>
 
             <TextView
                 android:id="@+id/module_schedules_date_cell_tv_date"
@@ -29,7 +38,8 @@
                 android:gravity="center"
                 android:text="Date Here - Trad"
                 android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
 
         </LinearLayout>
 

@@ -27,7 +27,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -131,7 +133,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(ACT_SELECTED_DATE)) {
-            selected_date = ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE));
+            selected_date = bundle.getString(ACT_SELECTED_DATE) != null ? ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE)) : null;
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
         } else {
@@ -266,11 +268,27 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         events.addAll(scheduleData);
         //Se volta da Act017, lista de agendados, passa data clicada
         //para carregar calendario na data correta.
-        if (selected_date != null) {
-            cv_schedules.updateCalendar(selected_date, events);
-        } else {
-            cv_schedules.updateCalendar(events);
+        if(selected_date != null){
+            cv_schedules.updateCalendar(selected_date,events);
+        }else{
+            Date today = getTodayDate("yyyy-MM-dd");
+            //
+            cv_schedules.updateCalendar(today,events);
         }
+    }
+
+    private Date getTodayDate(String format) {
+        String sDate = "";
+        Calendar ca1 = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        //
+        try {
+            sDate = sdf.format(ca1.getTime());
+        } catch (Exception var5) {
+            sDate = "1900-01-01";
+        }
+        //
+        return ToolBox.generateDate(sDate);
     }
 
     @Override

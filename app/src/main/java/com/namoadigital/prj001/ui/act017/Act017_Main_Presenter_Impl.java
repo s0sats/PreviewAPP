@@ -41,7 +41,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     @Override
-    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, String serial_id) {
         ArrayList<HMAux> schedules = new ArrayList<>();
 
         if (filter_form || (!filter_form && !filter_form_ap)) {
@@ -50,7 +50,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                             new Sql_Act017_001(
                                     context,
                                     ToolBox_Con.getPreference_Customer_Code(context),
-                                    selected_date
+                                    selected_date,
+                                    serial_id
                             ).toSqlQuery()
                     );
             if (schedulesForm != null) {
@@ -64,7 +65,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                             new Sql_Act017_002(
                                     context,
                                     ToolBox_Con.getPreference_Customer_Code(context),
-                                    selected_date
+                                    selected_date,
+                                    serial_id
                             ).toSqlQuery()
                     );
             if (schedulesFormAP != null) {
