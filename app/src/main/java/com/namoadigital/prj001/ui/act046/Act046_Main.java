@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,6 +25,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,6 +33,11 @@ import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View {
 
@@ -99,6 +106,8 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         transList.add("search_date_hint");
         transList.add("cbk_n_form");
         transList.add("cbk_n_form_ap");
+        transList.add("alert_nfc_type_not_supported_ttl");
+        transList.add("alert_nfc_type_not_supported_msg");
 
 //        transList.add("search_prod_hint");
 //        transList.add("search_serial_hint");
@@ -295,15 +304,13 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         if (optionsInfo.get(Frg_Serial_Search.PRODUCT_ID).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
+                || !mket_date.getText().toString().equalsIgnoreCase("")
                 ) {
 
-//            mPresenter.executeSerialSearch(
-//                    optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
-//                    optionsInfo.get(Frg_Serial_Search.SERIAL),
-//                    optionsInfo.get(Frg_Serial_Search.TRACKING)
-//            );
+            callAct017(context, optionsInfo.get(Frg_Serial_Search.SERIAL).trim(), false);
 
         } else {
+
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_no_search_parameter_ttl"),
@@ -319,7 +326,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     }
 
     private void processLates(HMAux optionsInfo) {
-        Toast.makeText(context, "Atrasados", Toast.LENGTH_SHORT).show();
+        callAct017(context, "", true);
     }
 
     private void hideSoftKeyboard() {
@@ -349,21 +356,6 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     }
 
     @Override
-    public void callAct016(Context context) {
-        Intent mIntent = new Intent(context, Act016_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
-        Bundle bundle = new Bundle();
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, cbk_nform.isEnabled());
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, cbk_nform_ap.isEnabled());
-        //
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -372,7 +364,86 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     }
 
     @Override
+    public void callAct016(Context context) {
+        Intent mIntent = new Intent(context, Act016_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
+        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isEnabled());
+        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isEnabled());
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct017(Context context, String serial_id, boolean late) {
+        Intent mIntent = new Intent(context, Act017_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+        bundle.putBoolean(ACT_FILTER_LATE, late);
+        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isEnabled());
+        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isEnabled());
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
         callAct005(context);
+    }
+
+    // NFC Processing Data
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+
+        Log.d("NFC", value[0]);
+
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            ToolBox.alertMSG(
+                    context,
+                    "Erro:",
+                    value[0],
+                    null,
+                    0
+            );
+
+        } else {
+            switch (value[0]) {
+                case PRODUCT:
+
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_nfc_type_not_supported_ttl"),
+                            hmAux_Trans.get("alert_nfc_type_not_supported_msg"),
+                            null,
+                            0
+                    );
+
+                    break;
+                case SERIAL:
+
+                    mFrgSerialSearch.setSerialIdText(value[3]);
+
+                    processLoadForm(mFrgSerialSearch.getHMAuxValues());
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 }

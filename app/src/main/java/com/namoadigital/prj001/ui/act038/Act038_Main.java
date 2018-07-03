@@ -43,7 +43,6 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
-import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
@@ -57,6 +56,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoa_digital.namoa_library.util.ToolBox.SW_TYPE_BR_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -470,9 +472,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mAp_Code = bundle.getString(GE_Custom_Form_ApDao.AP_CODE);
             mRoom_code = bundle.getString(CH_RoomDao.ROOM_CODE);
             //Fluxo vindo do agendamento
-            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":", ""));
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, true);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, true);
+            scheduled_date = bundle.getString(ACT_SELECTED_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":", ""));
+            filter_form = bundle.getBoolean(ACT_FILTER_FORM, true);
+            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, true);
 
         } else {
         }
@@ -1169,9 +1171,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
+        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

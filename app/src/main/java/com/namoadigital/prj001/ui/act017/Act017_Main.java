@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
  */
@@ -100,9 +104,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE,null);
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, false);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, false);
+            scheduled_date = bundle.getString(ACT_SELECTED_DATE,null);
+            filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
+            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
         } else {
             filter_form = false;
             filter_form_ap = false;
@@ -484,21 +488,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     @Override
     public void callAct008(Context context, Bundle bundle) {
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
+        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void callAct016(Context context) {
-        Intent mIntent = new Intent(context, Act016_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -514,13 +506,25 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     @Override
+    public void callAct016(Context context) {
+        Intent mIntent = new Intent(context, Act016_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void callAct038(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act038_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Adicionan schedule_date no bundle
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
+        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

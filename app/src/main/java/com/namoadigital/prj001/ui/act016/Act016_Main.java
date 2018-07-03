@@ -32,16 +32,20 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+
 /**
  * Created by DANIEL.LUCHE on 10/04/2017.
  */
 
 public class Act016_Main extends Base_Activity implements Act016_Main_View {
 
-    public static final String ACT016_SELECTED_DATE = "selected_date";
-    public static final String ACT016_FILTER_FORM = "filter_form";
-    public static final String ACT016_FILTER_FORM_AP = "filter_form_ap";
-
+    //    public static final String ACT016_SELECTED_DATE = "selected_date";
+//    public static final String ACT016_FILTER_FORM = "filter_form";
+//    public static final String ACT016_FILTER_FORM_AP = "filter_form_ap";
+//
     private ListView lv_schedules;
     private CalendarView cv_schedules;
     private HashSet<HMAux> events;
@@ -103,10 +107,10 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 translateList
         );
         /*
-        * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
-        * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
-        * DO RECURSO DA ACT005
-        * */
+         * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+         * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+         * DO RECURSO DA ACT005
+         * */
         List<String> transList_Extra = new ArrayList<String>();
         transList_Extra.add("lbl_checklist");
         transList_Extra.add("lbl_form_ap");
@@ -125,12 +129,12 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     private void getBundleInfo() {
-        bundle =  getIntent().getExtras();
-        if(bundle != null && bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
-            selected_date = ToolBox.generateDate(bundle.getString(Act016_Main.ACT016_SELECTED_DATE));
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,false);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,false);
-        }else{
+        bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey(ACT_SELECTED_DATE)) {
+            selected_date = ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE));
+            filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
+            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
+        } else {
             filter_form = false;
             filter_form_ap = false;
         }
@@ -147,7 +151,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
-                                ),
+                        ),
                         hmAux_Trans
                 );
         //
@@ -191,10 +195,10 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder alert =  new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
         //
-        LayoutInflater inflater =  this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.module_filter_dialog,null);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.module_filter_dialog, null);
         //
         TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
@@ -228,9 +232,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void applyModuleFilter() {
         mPresenter.getSchedule(filter_form, filter_form_ap);
         //
-        if(filter_form||filter_form_ap){
+        if (filter_form || filter_form_ap) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        }else{
+        } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
@@ -262,9 +266,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         events.addAll(scheduleData);
         //Se volta da Act017, lista de agendados, passa data clicada
         //para carregar calendario na data correta.
-        if(selected_date != null){
-            cv_schedules.updateCalendar(selected_date,events);
-        }else{
+        if (selected_date != null) {
+            cv_schedules.updateCalendar(selected_date, events);
+        } else {
             cv_schedules.updateCalendar(events);
         }
     }
@@ -273,8 +277,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     public void callAct017(Bundle bundle) {
         Intent mIntent = new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

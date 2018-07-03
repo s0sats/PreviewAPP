@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
  */
@@ -69,7 +71,7 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
 
         Bundle bundle = new Bundle();
 
-        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, selected_date);
+        bundle.putString(ACT_SELECTED_DATE, selected_date);
 
         mView.callAct017(bundle);
     }

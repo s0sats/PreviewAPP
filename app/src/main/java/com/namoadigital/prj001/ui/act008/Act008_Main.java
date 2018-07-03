@@ -38,7 +38,6 @@ import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
-import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -47,6 +46,8 @@ import com.namoadigital.prj001.view.frag.Frg_Serial_Edit;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -353,7 +354,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             //Chamada vinda da act017
-            if (bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)) {
+            if (bundle.containsKey(ACT_SELECTED_DATE)) {
                 isSchedule = true;
             }//
             if (isSchedule) {
