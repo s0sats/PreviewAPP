@@ -41,13 +41,14 @@ public class Frg_Serial_Search extends Fragment {
     public static final String SERIAL = "serial";
     public static final String TRACKING = "tracking";
 
-    private ButtonNFC btn_nfc_reader;
+
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
     private ImageView iv_product_change;
     private ImageView iv_product_id;
     private LinearLayout ll_product_id;
     private TextView tv_serial;
+    private LinearLayout ll_serial;
     private MKEditTextNM mket_serial;
     private TextView tv_tracking;
     private LinearLayout ll_tracking;
@@ -63,6 +64,10 @@ public class Frg_Serial_Search extends Fragment {
     private Button btn_option_03;
     private Button btn_option_04;
     private Button btn_option_05;
+
+    private LinearLayout ll_options;
+
+    private ButtonNFC btn_nfc_reader;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -109,6 +114,8 @@ public class Frg_Serial_Search extends Fragment {
 
         controls_sta = new ArrayList<>();
         //
+        ll_options = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_options);
+        //
         btn_nfc_reader = (ButtonNFC) view.findViewById(R.id.frg_serial_search_btn_nfc_reader);
         btn_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(getContext())));
         btn_nfc_reader.setmProduct(true);
@@ -124,6 +131,7 @@ public class Frg_Serial_Search extends Fragment {
         controls_sta.add(mket_product_id);
         //
         tv_serial = (TextView) view.findViewById(R.id.frg_serial_search_tv_serial);
+        ll_serial = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_serial);
         mket_serial = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_serial);
         controls_sta.add(mket_serial);
         //
@@ -401,12 +409,26 @@ public class Frg_Serial_Search extends Fragment {
         customSettings();
     }
 
+    public void setShowHideProduct(boolean status) {
+        if (status) {
+            ll_product_id.setVisibility(View.VISIBLE);
+        } else {
+            ll_product_id.setVisibility(View.GONE);
+        }
+    }
+
+    public void setShowHideSerial(boolean status) {
+        if (status) {
+            ll_serial.setVisibility(View.VISIBLE);
+        } else {
+            ll_serial.setVisibility(View.GONE);
+        }
+    }
+
     public void setShowHideTracking(boolean status) {
         if (status) {
-            //tv_tracking.setVisibility(View.VISIBLE);
             ll_tracking.setVisibility(View.VISIBLE);
         } else {
-            //tv_tracking.setVisibility(View.GONE);
             ll_tracking.setVisibility(View.GONE);
         }
     }
@@ -433,11 +455,8 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
-    private void statusOnlyOne() {
-        iv_product_change.setVisibility(View.GONE);
-        iv_product_id.setVisibility(View.GONE);
-        mket_product_id.setmBARCODE(false);
-        mket_product_id.setEnabled(false);
+    public void setLl_options(View ll_options) {
+        this.ll_options.addView(ll_options);
     }
 
     public ArrayList<MKEditTextNM> getControlsSta() {

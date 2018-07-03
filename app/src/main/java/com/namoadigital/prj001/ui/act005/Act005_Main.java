@@ -73,11 +73,10 @@ import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
+import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.act.test.Test;
-import com.namoadigital.prj001.view.act.test2.Teste2;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -895,6 +894,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void callAct016(Context context) {
         Intent mIntent = new Intent(context, Act016_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct046(Context context) {
+        Intent mIntent = new Intent(context, Act046_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
