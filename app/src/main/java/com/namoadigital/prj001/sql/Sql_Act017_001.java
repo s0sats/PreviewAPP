@@ -95,7 +95,8 @@ public class Sql_Act017_001 implements Specification {
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
-                        "schedule_date_start_format#schedule_date_end_format#site_code#site_id#site_desc#require_serial#allow_new_serial_cl")
+                        "schedule_date_start_format#schedule_date_end_format#site_code#site_id#site_desc#require_serial#allow_new_serial_cl#" +
+                        Act017_Main.ACT017_ADAPTER_DATE_REF)
                 .toString()
                 .replace("'null'","null");
 

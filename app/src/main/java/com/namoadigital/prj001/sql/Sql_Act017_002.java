@@ -56,6 +56,7 @@ public class Sql_Act017_002 implements Specification {
                         "      a.ap_code \n" +
                         ";")
                 .append( Act017_Main.ACT017_MODULE_KEY+"#")
+                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
                 .append(HmAuxFields)
                 .toString()
                 .replace("'null'","null");

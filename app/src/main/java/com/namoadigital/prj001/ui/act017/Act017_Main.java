@@ -272,14 +272,15 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void loadSchedules(List<HMAux> schedules) {
         //
         if(scheduled_date == null || scheduled_date.trim().length() == 0){
-            addDateMsgs(schedules);
+            schedules =  addDateMsgs(schedules);
         }
         //
         mAdapter = new Module_Schedules_Adapter(
                 context,
+                schedules,
                 R.layout.module_schedules_cell,
                 R.layout.namoa_ap_cell,
-                schedules
+                R.layout.module_schedules_date_cell
         );
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
@@ -296,18 +297,24 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     }
 
-    private void addDateMsgs(List<HMAux> schedules) {
+    private List<HMAux> addDateMsgs(List<HMAux> schedules) {
+        List<HMAux> newSchedules = new ArrayList<>();
         String date_ref = "";
+        //
         for (int i = 0; i < schedules.size();i++) {
             if(!date_ref.equals(schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF))){
                 date_ref = schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF);
+                //
                 HMAux aux = new HMAux();
                 aux.put(Act017_Main.ACT017_MODULE_KEY,Act017_Main.MODULE_SCHEDULE_DATE_REF);
                 aux.put(Act017_Main.ACT017_ADAPTER_DATE_REF,getDateDesc(date_ref));
-                schedules.add(i,aux);
+                newSchedules.add(aux);
             }
-
+            //
+            newSchedules.add(schedules.get(i));
         }
+        //
+        return newSchedules;
     }
 
     private void showFilterDialog() {
