@@ -35,13 +35,14 @@ public class Sql_Act017_002 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "'"+Constant.MODULE_FORM_AP +"' "+ Act017_Main.ACT017_MODULE_KEY +" ,\n" +
-                        "  a.*\n" +
+                        "  a.*\n," +
+                        "  strftime('%Y-%m-%d',a.ap_when,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+"\n" +
                         "  FROM\n" +
                         GE_Custom_Form_ApDao.TABLE+ " a\n" +
                         "  WHERE\n" +
-                        "      a."+GE_Custom_Form_ApDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
+                        "      a."+GE_Custom_Form_ApDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
                         "      AND a.ap_when is not null \n" +
-                        "      AND strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"' \n" +
+                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
                         "  ORDER BY\n" +
                         "      CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
@@ -55,8 +56,10 @@ public class Sql_Act017_002 implements Specification {
                         "      a.ap_code \n" +
                         ";")
                 .append( Act017_Main.ACT017_MODULE_KEY+"#")
+                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
                 .append(HmAuxFields)
-                .toString();
+                .toString()
+                .replace("'null'","null");
 
 
     }

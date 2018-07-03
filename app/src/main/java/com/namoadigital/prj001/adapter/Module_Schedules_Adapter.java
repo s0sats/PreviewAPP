@@ -32,6 +32,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     private Context context;
     private int resource_01;
     private int resource_02;
+    private int resource_03;
     private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
@@ -52,10 +53,11 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public Module_Schedules_Adapter(Context context, int resource_01, int resource_02, List<HMAux> source) {
+    public Module_Schedules_Adapter(Context context,List<HMAux> source, int resource_01, int resource_02, int resource_03) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
+        this.resource_03 = resource_03;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -82,7 +84,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -94,6 +96,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 return 0;
             case Constant.MODULE_FORM_AP:
                 return 1;
+            case Act017_Main.MODULE_SCHEDULE_DATE_REF:
+                return 2;
             default:
                 return 0;
         }
@@ -110,11 +114,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             switch (getItemViewType(position)) {
                 case 0:
                     convertView = mInflater.inflate(resource_01, parent, false);
-                    //processFormItem(item, convertView);
                     break;
                 case 1:
                     convertView = mInflater.inflate(resource_02, parent, false);
-                    //processFormAPItem(item, convertView);
+                    break;
+                case 2:
+                    convertView = mInflater.inflate(resource_03, parent, false);
                     break;
             }
         }
@@ -126,9 +131,21 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case 1:
                 processFormAPItem(item, convertView);
                 break;
+            case 2:
+                processDateItem(item, convertView);
+                break;
         }
         //
         return convertView;
+    }
+
+    private void processDateItem(HMAux item, View convertView) {
+        ImageView iv_icon = (ImageView) convertView.findViewById(R.id.module_schedules_date_cell_iv_calendar);
+        TextView tv_date = (TextView) convertView.findViewById(R.id.module_schedules_date_cell_tv_date);
+        //
+        iv_icon.setImageDrawable(context.getDrawable(R.drawable.ic_calendario));
+        //
+        tv_date.setText(item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
     }
 
     private void processFormAPItem(HMAux item, View convertView) {
