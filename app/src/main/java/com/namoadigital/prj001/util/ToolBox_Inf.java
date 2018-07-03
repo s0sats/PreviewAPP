@@ -40,6 +40,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -4330,4 +4331,85 @@ public class ToolBox_Inf {
         }
         return false;
     }
+
+    public static  String getDayTranslate(Date date) {
+        String dayTrans = "";
+
+        switch (date.getDay()) {
+            case 0:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("daySunday");
+                break;
+            case 1:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayMonday");
+                break;
+            case 2:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayTuesday");
+                break;
+            case 3:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayWednesday");
+                break;
+            case 4:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayThursday");
+                break;
+            case 5:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayFriday");
+                break;
+            case 6:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("daySaturday");
+                break;
+            default:
+                break;
+        }
+
+        return dayTrans;
+    }
+
+    public static  String getMonthTranslate(Date date) {
+        String monthTrans = "";
+
+        switch (date.getMonth()) {
+            case 0:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJanuary");
+                break;
+            case 1:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monFebruary");
+                break;
+            case 2:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monMarch");
+                break;
+            case 3:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monApril");
+                break;
+            case 4:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monMay");
+                break;
+            case 5:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJune");
+                break;
+            case 6:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJuly");
+                break;
+            case 7:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monAugust");
+                break;
+            case 8:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monSeptember");
+                break;
+            case 9:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monOctober");
+                break;
+            case 10:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monNovember");
+                break;
+            case 11:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monDecember");
+                break;
+            default:
+                break;
+        }
+
+        return monthTrans;
+    }
+
+
 }
