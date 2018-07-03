@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/ll_options_chk_n_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:buttonTint="@color/namoa_dark_blue"
+        android:checked="true"
+        android:text="N-Form - trad" />
+
+    <CheckBox
+        android:id="@+id/ll_options_chk_n_form_ap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:buttonTint="@color/namoa_dark_blue"
+        android:checked="true"
+        android:text="N-Form AP - trad" />
+
+
+</LinearLayout>

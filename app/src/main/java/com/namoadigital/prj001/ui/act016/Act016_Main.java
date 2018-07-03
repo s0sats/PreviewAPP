@@ -21,8 +21,8 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
+import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -281,8 +281,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     @Override
-    public void callAct005() {
-        Intent mIntent = new Intent(context, Act005_Main.class);
+    public void callAct046() {
+        Intent mIntent = new Intent(context, Act046_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -309,4 +309,5 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
 }

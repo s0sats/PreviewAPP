@@ -32,7 +32,7 @@ import java.util.List;
 
 public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_Contract.I_View {
 
-    private Act045_Main_Presenter mPresenter;
+    private Act045_Main_Contract.I_Presenter mPresenter;
 
     private TextView tv_records;
     private LinearLayout ll_records;
