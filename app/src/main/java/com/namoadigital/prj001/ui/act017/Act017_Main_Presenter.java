@@ -14,7 +14,7 @@ public interface Act017_Main_Presenter {
 
     void prepareOpenForm(HMAux item,  boolean hasSerial);
 
-    void onBackPressedClicked(String requesting_act);
+    void onBackPressedClicked();
 
     String getDateDesc(String scheduled_date);
 }
