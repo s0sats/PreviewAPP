@@ -48,9 +48,13 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     @Override
-    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, String serial_id) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, String serial_id, boolean late, boolean filter_site_logged) {
         ArrayList<HMAux> schedules = new ArrayList<>();
-
+        //Se atrasado, ignora data
+        if(late){
+            selected_date = null;
+        }
+        //
         if (filter_form || (!filter_form && !filter_form_ap)) {
             ArrayList<HMAux> schedulesForm =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
@@ -58,7 +62,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                                     context,
                                     ToolBox_Con.getPreference_Customer_Code(context),
                                     selected_date,
-                                    serial_id
+                                    serial_id,
+                                    late,
+                                    filter_site_logged
                             ).toSqlQuery()
                     );
             if (schedulesForm != null) {
@@ -73,7 +79,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                                     context,
                                     ToolBox_Con.getPreference_Customer_Code(context),
                                     selected_date,
-                                    serial_id
+                                    serial_id,
+                                    late
                             ).toSqlQuery()
                     );
             if (schedulesFormAP != null) {
@@ -81,7 +88,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }
         }
         //Seta Qtd no tv
-        mView.setQty(schedules.size(), getTotalQty(selected_date,filter_form,filter_form_ap));
+        mView.setQty(schedules.size(), getTotalQty(selected_date,filter_form,filter_form_ap,late));
         //Ordena agendados por data
         sortSchedulesByDate(schedules);
         //Adiciona datas na lista de agendados e devole lista
@@ -89,13 +96,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     }
 
-    private int getTotalQty(String selected_date,boolean filter_form,boolean filter_form_ap) {
+    private int getTotalQty(String selected_date,boolean filter_form,boolean filter_form_ap,boolean late) {
         HMAux totQtyAux = formApDao.getByStringHM(
                 new Sql_Act017_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         selected_date,
                         filter_form,
-                        filter_form_ap
+                        filter_form_ap,
+                        late
                 ).toSqlQuery()
 
         );

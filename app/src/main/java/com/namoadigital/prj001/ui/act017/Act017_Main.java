@@ -77,6 +77,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private TextView tv_serial_lbl;
     private TextView tv_serial;
     private TextView tv_qty;
+    private boolean filter_site_logged;
+
 
 
     @Override
@@ -120,6 +122,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
             mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT046);
             late = bundle.getBoolean(ACT_FILTER_LATE,false);
+            filter_site_logged = bundle.getBoolean("Ronald",true);
         } else {
             scheduled_date = null;
             filter_form = false;
@@ -127,6 +130,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             serial_id = "";
             mRequesting_ACT = Constant.ACT046;
             late = false;
+            filter_site_logged = true;
         }
     }
 
@@ -326,7 +330,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id);
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site_logged );
         //
         if (filter_form || filter_form_ap) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));

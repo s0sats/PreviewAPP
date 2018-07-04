@@ -22,13 +22,14 @@ public class Sql_Act017_002 implements Specification {
     private String selected_date;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
     private String serial_id;
+    private String filter_only_delay;
 
-    public Sql_Act017_002(Context context, long s_customer_code , String selected_date, String serial_id) {
+    public Sql_Act017_002(Context context, long s_customer_code , String selected_date, String serial_id,boolean late) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
         this.selected_date = selected_date;
         this.serial_id = serial_id.trim().length() > 0 ?serial_id : null;
-
+        this.filter_only_delay = late ? "filter" : null;
     }
 
     @Override
@@ -47,13 +48,14 @@ public class Sql_Act017_002 implements Specification {
                         "      AND a.ap_when is not null \n" +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
                         "      AND ('"+serial_id+"' is null or a.serial_id like '%"+serial_id+"%') \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
                         "  ORDER BY\n" +
+                        "      strftime('%Y-%m-%d %H:%M',a.ap_when,'localtime'), \n" +
                         "      CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +
                         "           ELSE 3\n" +
-                        "      END ," +
-                        "      strftime('%Y-%m-%d %H:%M',a.ap_when,'localtime'), \n" +
+                        "      END \n," +
                         "      a.custom_form_type, \n" +
                         "      a.custom_form_code, \n" +
                         "      a.custom_form_version, \n" +
