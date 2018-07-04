@@ -38,7 +38,8 @@ public class Sql_Act017_002 implements Specification {
                 .append(" SELECT\n" +
                         "'"+Constant.MODULE_FORM_AP +"' "+ Act017_Main.ACT017_MODULE_KEY +" ,\n" +
                         "  a.*\n," +
-                        "  strftime('%Y-%m-%d',a.ap_when,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+"\n" +
+                        "  strftime('%Y-%m-%d',a.ap_when,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n" +
+                        "  (strftime('%s',a.ap_when,'localtime') * 1000) "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"\n" +
                         "  FROM\n" +
                         GE_Custom_Form_ApDao.TABLE+ " a\n" +
                         "  WHERE\n" +
@@ -52,6 +53,7 @@ public class Sql_Act017_002 implements Specification {
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +
                         "           ELSE 3\n" +
                         "      END ," +
+                        "      strftime('%Y-%m-%d %H:%M',a.ap_when,'localtime'), \n" +
                         "      a.custom_form_type, \n" +
                         "      a.custom_form_code, \n" +
                         "      a.custom_form_version, \n" +
@@ -60,6 +62,7 @@ public class Sql_Act017_002 implements Specification {
                         ";")
                 .append( Act017_Main.ACT017_MODULE_KEY+"#")
                 .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
+                .append( Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#")
                 .append(HmAuxFields)
                 .toString()
                 .replace("'null'","null");

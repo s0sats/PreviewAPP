@@ -58,6 +58,7 @@ public class Sql_Act017_001 implements Specification {
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
                         "  strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
+                        "  (strftime('%s',l.schedule_date_start_format,'localtime') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                         "  l.require_serial,\n"+
                         "  l.allow_new_serial_cl\n"+
                         " \n" +
@@ -87,6 +88,7 @@ public class Sql_Act017_001 implements Specification {
                         "      (CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN d.date_end\n" +
                         "            ELSE  '01/01/1900 00:00'\n" +
                         "       END) DESC , \n" +
+                        "      strftime('%Y-%m-%d %H:%M',l.schedule_date_start_format,'localtime'), \n" +
                         "      l.custom_form_type, \n" +
                         "      l.custom_product_code, \n" +
                         "      l.serial_id, \n" +
@@ -98,7 +100,7 @@ public class Sql_Act017_001 implements Specification {
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
                         "schedule_date_start_format#schedule_date_end_format#site_code#site_id#site_desc#require_serial#allow_new_serial_cl#" +
-                        Act017_Main.ACT017_ADAPTER_DATE_REF)
+                        Act017_Main.ACT017_ADAPTER_DATE_REF+"#"+Act017_Main.ACT017_ADAPTER_DATE_REF_MS)
                 .toString()
                 .replace("'null'","null");
 

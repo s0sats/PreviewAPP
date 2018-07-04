@@ -105,8 +105,8 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("search_date_hint");
-        transList.add("cbk_n_form");
-        transList.add("cbk_n_form_ap");
+        transList.add("chk_n_form");
+        transList.add("chk_n_form_ap");
         transList.add("alert_nfc_type_not_supported_ttl");
         transList.add("alert_nfc_type_not_supported_msg");
 
@@ -196,7 +196,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
 
         mOptions = ((LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.ll_options, null);
         cbk_nform = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form);
-        cbk_nform.setText(hmAux_Trans.get("cbk_n_form"));
+        cbk_nform.setText(hmAux_Trans.get("chk_n_form"));
         cbk_nform.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -204,7 +204,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
             }
         });
         cbk_nform_ap = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form_ap);
-        cbk_nform_ap.setText(hmAux_Trans.get("cbk_n_form_ap"));
+        cbk_nform_ap.setText(hmAux_Trans.get("chk_n_form_ap"));
         cbk_nform_ap.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

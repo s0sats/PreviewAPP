@@ -15,8 +15,14 @@ import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -73,8 +79,22 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 schedules.addAll(schedulesFormAP);
             }
         }
-        mView.loadSchedules(schedules);
+        //Ordena agendados por data
+        sortSchedulesByDate(schedules);
+        //Adiciona datas na lista de agendados e devole lista
+        mView.loadSchedules(addDateMsgs(schedules));
+
     }
+
+    private void sortSchedulesByDate(ArrayList<HMAux> schedules) {
+        Collections.sort(schedules, new Comparator<HMAux>() {
+            @Override
+            public int compare(HMAux hmAux, HMAux t1) {
+                return hmAux.get(Act017_Main.ACT017_ADAPTER_DATE_REF_MS).compareTo(t1.get(Act017_Main.ACT017_ADAPTER_DATE_REF_MS));
+            }
+        });
+    }
+
 
     @Override
     public void checkScheduleFlow(HMAux item) {
@@ -201,15 +221,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         );
     }
 
-    @Override
-    public void onBackPressedClicked() {
-
-        if (mView.getmRequesting_ACT().equalsIgnoreCase(Constant.ACT046)) {
-            mView.callAct046(context);
-        } else {
-            mView.callAct016(context);
-        }
-    }
 
     public boolean isAnyFormInProcessing(HMAux item) {
 
@@ -230,5 +241,70 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             return true;
         }
         return false;
+    }
+
+    private List<HMAux> addDateMsgs(List<HMAux> schedules) {
+        List<HMAux> newSchedules = new ArrayList<>();
+        String date_ref = "";
+        //
+        for (int i = 0; i < schedules.size();i++) {
+            if(!date_ref.equals(schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF))){
+                date_ref = schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF);
+                //
+                HMAux aux = new HMAux();
+                aux.put(Act017_Main.ACT017_MODULE_KEY,Act017_Main.MODULE_SCHEDULE_DATE_REF);
+                aux.put(Act017_Main.ACT017_ADAPTER_DATE_REF,getDateDesc(date_ref));
+                newSchedules.add(aux);
+            }
+            //
+            newSchedules.add(schedules.get(i));
+        }
+        //
+        return newSchedules;
+    }
+
+    @Override
+    public String getDateDesc(String scheduled_date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat showFormat = new SimpleDateFormat("EEEE, dd/MMM/yyyy");
+        Date date;
+        String final_date = "";
+        String day_desc = "";
+        String month_desc = "";
+
+        try {
+            //date = showFormat.format(format.parse(scheduled_date));
+            date = format.parse(scheduled_date);
+            //
+            day_desc = ToolBox_Inf.getDayTranslate(date);
+            month_desc = ToolBox_Inf.getMonthTranslate(date);
+            //formata data do oracle para format
+            //e troca MM por ** para substituir mes por extenso no final.
+            String customer_format =
+                    ToolBox_Con.getPreference_Customer_nls_date_format(context)
+                            .replace("DD", "dd")
+                            .replace("/", " ")
+                            .replace("MM", "**")
+                            .replace("RRRR", "yyyy");
+            //
+            showFormat = new SimpleDateFormat(customer_format);
+            final_date = day_desc + ", " + showFormat.format(date).replace("**", month_desc);
+
+        } catch (Exception e) {
+            date = format.getCalendar().getTime();
+            final_date = showFormat.format(date);
+        }
+
+        return final_date;
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+
+        if (mView.getmRequesting_ACT().equalsIgnoreCase(Constant.ACT046)) {
+            mView.callAct046(context);
+        } else {
+            mView.callAct016(context);
+        }
     }
 }
