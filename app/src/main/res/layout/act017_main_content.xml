@@ -18,6 +18,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="5dp">
+
         <LinearLayout
             android:id="@+id/act017_ll_filter"
             android:layout_width="match_parent"
@@ -36,7 +37,50 @@
                 android:gravity="center_vertical"
                 android:text="Filtros - trad"
                 android:layout_marginLeft="2dp"
+                android:visibility="gone"
                 />
+            <LinearLayout
+                android:id="@+id/act017_ll_serial"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act017_tv_serial_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:text="Serial:"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/font_size_font_12"
+                    android:layout_gravity="start"/>
+
+                <TextView
+                    android:id="@+id/act017_tv_serial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="10dp"
+                    android:text="Serial - trad "
+                    android:textStyle="bold"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:layout_gravity="start|center_vertical"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/act017_tv_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(10 / 15) -trad"
+                android:textSize="@dimen/font_size_font_12"
+                android:layout_gravity="end|center_vertical"
+                />
+
+            <View
+                android:layout_width="5dp"
+                android:layout_height="match_parent"/>
 
             <ImageView
                 android:id="@+id/act017_iv_filter"
@@ -49,30 +93,12 @@
                 android:tint="@color/namoa_color_gray_4" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act017_tv_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:paddingLeft="10dp"
-                android:text="Filtros"
-                android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold"
-                android:gravity="center"/>
-
-        </LinearLayout>
-
         <ListView
             android:id="@+id/act017_lv_schedules"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="4dp"

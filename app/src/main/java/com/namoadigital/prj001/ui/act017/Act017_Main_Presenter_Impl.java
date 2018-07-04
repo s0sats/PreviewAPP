@@ -13,6 +13,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
+import com.namoadigital.prj001.sql.Sql_Act017_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -79,11 +80,31 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 schedules.addAll(schedulesFormAP);
             }
         }
+        //Seta Qtd no tv
+        mView.setQty(schedules.size(), getTotalQty(selected_date,filter_form,filter_form_ap));
         //Ordena agendados por data
         sortSchedulesByDate(schedules);
         //Adiciona datas na lista de agendados e devole lista
         mView.loadSchedules(addDateMsgs(schedules));
 
+    }
+
+    private int getTotalQty(String selected_date,boolean filter_form,boolean filter_form_ap) {
+        HMAux totQtyAux = formApDao.getByStringHM(
+                new Sql_Act017_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        selected_date,
+                        filter_form,
+                        filter_form_ap
+                ).toSqlQuery()
+
+        );
+        //
+        if(totQtyAux != null && totQtyAux.containsKey(Sql_Act017_003.TOTAL_QTY)){
+            return Integer.parseInt(totQtyAux.get(Sql_Act017_003.TOTAL_QTY));
+        }
+        //
+        return -1;
     }
 
     private void sortSchedulesByDate(ArrayList<HMAux> schedules) {

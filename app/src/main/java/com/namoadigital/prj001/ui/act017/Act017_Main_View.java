@@ -28,4 +28,6 @@ public interface Act017_Main_View {
     void callAct046(Context context);
 
     String getmRequesting_ACT();
+
+    void setQty(int list_qty,int tot_qty);
 }

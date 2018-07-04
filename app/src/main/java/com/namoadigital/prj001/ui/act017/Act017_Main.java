@@ -56,7 +56,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_CHECKLIST_START_FORM = "checklist_start_form";
     public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
 
-    private TextView tv_title;
     private ListView lv_schedules;
     private Bundle bundle;
     private String scheduled_date;
@@ -74,6 +73,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private String serial_id = "";
     private boolean late = false;
     private String mRequesting_ACT;
+    private LinearLayout ll_serial;
+    private TextView tv_serial_lbl;
+    private TextView tv_serial;
+    private TextView tv_qty;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +117,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             scheduled_date = bundle.getString(ACT_SELECTED_DATE, null);
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
-            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
             mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT046);
             late = bundle.getBoolean(ACT_FILTER_LATE,false);
@@ -192,8 +195,13 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         iv_filter = (ImageView) findViewById(R.id.act017_iv_filter);
         //
-        tv_title = (TextView) findViewById(R.id.act017_tv_title);
-        tv_title.setVisibility(View.GONE);
+        ll_serial = (LinearLayout) findViewById(R.id.act017_ll_serial);
+        //
+        tv_serial_lbl = (TextView) findViewById(R.id.act017_tv_serial_lbl);
+        //
+        tv_serial = (TextView) findViewById(R.id.act017_tv_serial);
+        //
+        tv_qty = (TextView) findViewById(R.id.act017_tv_qty);
         //
         lv_schedules = (ListView) findViewById(R.id.act017_lv_schedules);
         //
@@ -201,14 +209,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         tv_no_result.setText(hmAux_Trans.get("msg_no_result"));
         tv_no_result.setVisibility(View.GONE);
         //
-        //mPresenter.getSchedules(scheduled_date,filter_form, filter_form_ap);
+        tv_serial.setText(serial_id);
+        ll_serial.setVisibility(!serial_id.equals("") ? View.VISIBLE  : View.INVISIBLE);
+        //
         applyModuleFilter();
-        //
-        /*String date_desc = getDateDesc(scheduled_date);
 
-        date_desc += "";
-        //
-        tv_title.setText(date_desc);*/
     }
 
     private void iniUIFooter() {
@@ -229,6 +234,16 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
+    }
+
+    @Override
+    public void setQty(int list_qty, int tot_qty) {
+        String sQty = "( list_qty / tot_qty )";
+        //
+        tv_qty.setText(
+                sQty.replace("list_qty",String.valueOf(list_qty))
+                    .replace("tot_qty",String.valueOf(tot_qty))
+        );
     }
 
     private void initActions() {
