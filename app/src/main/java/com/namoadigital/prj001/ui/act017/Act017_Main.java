@@ -29,6 +29,7 @@ import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
+import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -72,6 +73,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     //Implementação Agendamento 2.0 03/07/18
     private String serial_id = "";
 
+    private String mRequesting_ACT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,10 +110,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            scheduled_date = bundle.getString(ACT_SELECTED_DATE,null);
+            mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT, "");
+            scheduled_date = bundle.getString(ACT_SELECTED_DATE, null);
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
-            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
+            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
         } else {
             filter_form = false;
             filter_form_ap = false;
@@ -238,7 +242,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
 
-
     private void iniUIFooter() {
         iniFooter();
         //
@@ -282,7 +285,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void loadSchedules(List<HMAux> schedules) {
         //
         //if(scheduled_date == null || scheduled_date.trim().length() == 0){
-            schedules =  addDateMsgs(schedules);
+        schedules = addDateMsgs(schedules);
         //}
         //
         mAdapter = new Module_Schedules_Adapter(
@@ -311,13 +314,13 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         List<HMAux> newSchedules = new ArrayList<>();
         String date_ref = "";
         //
-        for (int i = 0; i < schedules.size();i++) {
-            if(!date_ref.equals(schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF))){
+        for (int i = 0; i < schedules.size(); i++) {
+            if (!date_ref.equals(schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF))) {
                 date_ref = schedules.get(i).get(Act017_Main.ACT017_ADAPTER_DATE_REF);
                 //
                 HMAux aux = new HMAux();
-                aux.put(Act017_Main.ACT017_MODULE_KEY,Act017_Main.MODULE_SCHEDULE_DATE_REF);
-                aux.put(Act017_Main.ACT017_ADAPTER_DATE_REF,getDateDesc(date_ref));
+                aux.put(Act017_Main.ACT017_MODULE_KEY, Act017_Main.MODULE_SCHEDULE_DATE_REF);
+                aux.put(Act017_Main.ACT017_ADAPTER_DATE_REF, getDateDesc(date_ref));
                 newSchedules.add(aux);
             }
             //
@@ -363,7 +366,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id );
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id);
         //
         if (filter_form || filter_form_ap) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
@@ -535,6 +538,20 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void callAct046(Context context) {
+        Intent mIntent = new Intent(context, Act046_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public String getmRequesting_ACT() {
+        return mRequesting_ACT;
     }
 
     @Override

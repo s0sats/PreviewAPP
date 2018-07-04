@@ -152,14 +152,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
         bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
 
-        if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
-            mView.callAct011(context,bundle);
-        }else if(hasSerial){
-            mView.callAct008(context,bundle);
-        }else{
-            if( item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
-                && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
-            ) {
+        if (!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
+            mView.callAct011(context, bundle);
+        } else if (hasSerial) {
+            mView.callAct008(context, bundle);
+        } else {
+            if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
+                    && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
+                    ) {
 
                 ToolBox.alertMSG_YES_NO(
                         context,
@@ -203,7 +203,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct016(context);
+
+        if (mView.getmRequesting_ACT().equalsIgnoreCase(Constant.ACT046)) {
+            mView.callAct046(context);
+        } else {
+            mView.callAct016(context);
+        }
     }
 
     public boolean isAnyFormInProcessing(HMAux item) {

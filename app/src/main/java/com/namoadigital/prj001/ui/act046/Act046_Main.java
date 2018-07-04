@@ -34,6 +34,7 @@ import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT046;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
@@ -384,6 +385,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, ACT046);
         bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putBoolean(ACT_FILTER_LATE, late);
