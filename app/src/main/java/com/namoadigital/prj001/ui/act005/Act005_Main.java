@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -700,7 +701,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             @Override
             public void logoutClicked() {
-                mPresenter.showLogoutDialog();
+                if (getSendBadgeQty() > 0) {
+                    //
+                    callSendAction("LOGOUT");
+                } else {
+                    mPresenter.showLogoutDialog();
+                }
             }
         });
 
@@ -818,6 +824,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void setSyncAfterSave(boolean syncAfterSave) {
         this.syncAfterSave = syncAfterSave;
+    }
+
+    @Override
+    public int getSendBadgeQty() {
+        return mAdapter.getBadgeQty(MENU_ID_SEND_DATA);
     }
 
     @Override
@@ -963,14 +974,65 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
 
-                        finish();
+                        if (getSendBadgeQty() > 0) {
+                            callSendAction("EXIT");
+                        } else {
+                            ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+                            //
+                            finish();
+                        }
                     }
                 },
                 1
         );
 
+    }
+
+    public void callSendAction(final String sAction) {
+        ToolBox.alertMSG(
+                Act005_Main.this,
+                "Pendencies TTl - Trad",
+                "Pendencies MSG - Trad",
+                //hmAux_Trans.get("alert_exit_confirm_ttl"),
+                //hmAux_Trans.get("alert_exit_confirm_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        switch (sAction.toUpperCase()) {
+                            case "EXIT":
+                                break;
+                            case "LOGOUT":
+                                mDrawerLayout.closeDrawer(GravityCompat.START);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                    }
+                },
+                2,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        switch (sAction.toUpperCase()) {
+                            case "EXIT":
+                                ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+                                //
+                                finish();
+                                break;
+                            case "LOGOUT":
+                                mPresenter.showLogoutDialog();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+        );
     }
 
     //TRATA UPDATE_REQUIRED - CANCEL

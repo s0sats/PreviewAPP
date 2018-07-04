@@ -8,12 +8,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -38,6 +38,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT046;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View {
@@ -64,6 +65,9 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     private View mOptions;
     private CheckBox cbk_nform;
     private CheckBox cbk_nform_ap;
+    private CheckBox cbk_site_logado;
+
+    private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,6 +158,8 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         transList.add("btn_check_exists");
         transList.add("btn_calendar");
         transList.add("btn_lates");
+        //
+        transList.add("lbl_site");
 //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -161,6 +167,27 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
+        );
+
+        /*
+         * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+         * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+         * DO RECURSO DA ACT005
+         * */
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_checklist");
+        transList_Extra.add("lbl_form_ap");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
         );
     }
 
@@ -196,21 +223,13 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
 
         mOptions = ((LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.ll_options, null);
         cbk_nform = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form);
-        cbk_nform.setText(hmAux_Trans.get("chk_n_form"));
-        cbk_nform.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Toast.makeText(context, "N-Form", Toast.LENGTH_SHORT).show();
-            }
-        });
+        cbk_nform.setText(hmAux_Trans_Extra.get("lbl_checklist"));
+        //
         cbk_nform_ap = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form_ap);
-        cbk_nform_ap.setText(hmAux_Trans.get("chk_n_form_ap"));
-        cbk_nform_ap.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Toast.makeText(context, "N-Form AP", Toast.LENGTH_SHORT).show();
-            }
-        });
+        cbk_nform_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
+        //
+        cbk_site_logado = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_sitee_logado);
+        cbk_site_logado.setText(hmAux_Trans.get("lbl_site"));
 
         mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act046_frg_serial_search);
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
@@ -267,7 +286,13 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
 
         hideSoftKeyboard();
 
-        //mPresenter.getMD_Products();
+        int mDelays = mPresenter.getTotalDelay(true, true);
+
+        if (mDelays > 0) {
+            mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_lates") + " (" + String.valueOf(mDelays) + ")");
+        } else {
+            mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        }
 
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
@@ -338,8 +363,8 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT030;
-        mAct_Title = Constant.ACT030 + "_" + "title";
+        mAct_Info = Constant.ACT046;
+        mAct_Title = Constant.ACT046 + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
@@ -371,8 +396,9 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         //
         Bundle bundle = new Bundle();
         bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
-        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isEnabled());
-        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isEnabled());
+        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isChecked());
+        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isChecked());
+        bundle.putBoolean(ACT_FILTER_SITE, cbk_site_logado.isChecked());
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -389,8 +415,9 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putBoolean(ACT_FILTER_LATE, late);
-        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isEnabled());
-        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isEnabled());
+        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isChecked());
+        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isChecked());
+        bundle.putBoolean(ACT_FILTER_SITE, cbk_site_logado.isChecked());
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -447,5 +474,15 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
                     break;
             }
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

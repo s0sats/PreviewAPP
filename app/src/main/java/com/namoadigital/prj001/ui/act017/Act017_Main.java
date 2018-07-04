@@ -39,6 +39,7 @@ import java.util.List;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 
@@ -65,6 +66,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     //Implementação AP
     private boolean filter_form;
     private boolean filter_form_ap;
+    private boolean filter_site;
+
     private LinearLayout ll_filter;
     private TextView tv_filter;
     private ImageView iv_filter;
@@ -113,9 +116,13 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             scheduled_date = bundle.getString(ACT_SELECTED_DATE, null);
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
+            filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
+            //
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
+            //
             mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT046);
+            //
             late = bundle.getBoolean(ACT_FILTER_LATE,false);
         } else {
             scheduled_date = null;
@@ -142,6 +149,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_form_site_restriction_ttl");
         translateList.add("alert_form_site_restriction_msg");
         //
+        translateList.add("lbl_site");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -158,6 +167,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         List<String> transList_Extra = new ArrayList<String>();
         transList_Extra.add("lbl_checklist");
         transList_Extra.add("lbl_form_ap");
+
 
         hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
                 context,
@@ -294,6 +304,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         chk_form_ap.setChecked(filter_form_ap);
         chk_form_ap.setTag(filter_form_ap);
         //
+        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_site_logado);
+        chk_site.setText(hmAux_Trans.get("lbl_site"));
+        chk_site.setChecked(filter_site);
+        chk_site.setTag(filter_site);
+        //
         alert
                 .setView(view)
                 .setCancelable(true)
@@ -302,6 +317,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                     public void onClick(DialogInterface dialog, int which) {
                         filter_form = chk_form.isChecked();
                         filter_form_ap = chk_form_ap.isChecked();
+                        filter_site = chk_site.isChecked();
                         //
                         applyModuleFilter();
                     }

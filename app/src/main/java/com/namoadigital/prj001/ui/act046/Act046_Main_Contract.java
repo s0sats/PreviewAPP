@@ -15,6 +15,8 @@ public interface Act046_Main_Contract {
 
     interface I_Presenter {
 
+        int getTotalDelay(boolean filter_form, boolean filter_form_ap);
+
     }
 
 }

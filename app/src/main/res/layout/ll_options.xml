@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:buttonTint="@color/namoa_dark_blue"
         android:checked="true"
         android:text="N-Form - trad" />
 
@@ -19,9 +18,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:buttonTint="@color/namoa_dark_blue"
         android:checked="true"
         android:text="N-Form AP - trad" />
 
+    <CheckBox
+        android:id="@+id/ll_options_chk_sitee_logado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:text="Apenas Site Logado - trad" />
 
 </LinearLayout>

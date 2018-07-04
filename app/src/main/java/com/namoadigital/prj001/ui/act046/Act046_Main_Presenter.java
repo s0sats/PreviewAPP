@@ -2,9 +2,14 @@ package com.namoadigital.prj001.ui.act046;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.sql.Sql_Act046_001;
+import com.namoadigital.prj001.util.ToolBox_Con;
+
+import java.util.ArrayList;
 
 public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
 
@@ -22,5 +27,25 @@ public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
         this.mdProductDao = mdProductDao;
     }
 
+    @Override
+    public int getTotalDelay(boolean filter_form, boolean filter_form_ap) {
 
+        ArrayList<HMAux> results = (ArrayList<HMAux>) mdProductDao.query_HM(
+                new Sql_Act046_001(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        filter_form,
+                        filter_form_ap
+                ).toSqlQuery()
+        );
+
+        if (results.size() == 1){
+            try{
+                return Integer.parseInt(results.get(0).get(CalendarView.DELAYED_COUNT));
+            } catch (Exception e){
+                return 0;
+            }
+        }
+
+        return 0;
+    }
 }

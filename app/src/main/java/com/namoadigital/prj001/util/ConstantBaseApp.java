@@ -81,6 +81,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT_SELECTED_DATE = "selected_date";
     public static final String ACT_FILTER_FORM = "filter_form";
     public static final String ACT_FILTER_FORM_AP = "filter_form_ap";
+    public static final String ACT_FILTER_SITE = "filter_site";
     public static final String ACT_FILTER_LATE = "filter_late";
 
     //Contantes classes relativas ao chat

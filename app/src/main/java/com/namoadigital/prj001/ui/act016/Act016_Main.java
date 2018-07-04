@@ -36,6 +36,7 @@ import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
@@ -60,6 +61,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private ImageView iv_filter;
     private boolean filter_form;
     private boolean filter_form_ap;
+    private boolean filter_site;
+
     private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
@@ -100,6 +103,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         translateList.add("alert_filter_dialog_msg");
         translateList.add("module_n_form");
         translateList.add("module_n_form_ap");
+        translateList.add("lbl_site");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -136,9 +140,11 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
             selected_date = bundle.getString(ACT_SELECTED_DATE) != null ? ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE)) : null;
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
+            filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
         } else {
             filter_form = false;
             filter_form_ap = false;
+            filter_site = false;
         }
 
     }
@@ -215,6 +221,11 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         chk_form_ap.setChecked(filter_form_ap);
         chk_form_ap.setTag(filter_form_ap);
         //
+        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_site_logado);
+        chk_site.setText(hmAux_Trans.get("lbl_site"));
+        chk_site.setChecked(filter_site);
+        chk_site.setTag(filter_site);
+
         alert
                 .setView(view)
                 .setCancelable(true)

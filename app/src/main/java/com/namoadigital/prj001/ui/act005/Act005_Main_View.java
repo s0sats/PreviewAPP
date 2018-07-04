@@ -55,4 +55,6 @@ public interface Act005_Main_View {
 
     void setSyncAfterSave(boolean syncAfterSave);
 
+    int getSendBadgeQty();
+
 }
