@@ -284,12 +284,11 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         events.addAll(scheduleData);
         //Se volta da Act017, lista de agendados, passa data clicada
         //para carregar calendario na data correta.
-        if(selected_date != null){
+        //if(selected_date != null){
+        if(!noDateSelected){
             cv_schedules.updateCalendar(selected_date,events);
         }else{
-            Date today = getTodayDate("yyyy-MM-dd");
-            //
-            cv_schedules.updateCalendar(today,events);
+            cv_schedules.updateCalendar(events);
         }
     }
 
@@ -313,6 +312,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT016);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

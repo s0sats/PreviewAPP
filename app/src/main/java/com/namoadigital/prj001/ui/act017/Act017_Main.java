@@ -40,6 +40,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_NO_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 
@@ -124,7 +125,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
             //
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID,"");
             //
             mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT046);
             //
@@ -420,6 +420,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(Constant.ACT_FILTER_SITE, filter_site);
+        bundle.remove(Constant.MAIN_REQUESTING_ACT);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -431,6 +434,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
+        bundle.putBoolean(ACT_FILTER_LATE, late);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+        bundle.putBoolean(ACT_NO_SELECTED_DATE,scheduled_date == null );
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
