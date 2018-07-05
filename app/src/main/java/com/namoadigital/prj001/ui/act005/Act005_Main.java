@@ -369,6 +369,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_forced_logout_ttl");
         transList.add("alert_forced_logout_msg");
         //
+        transList.add("alert_data_to_send_ttl");
+        transList.add("alert_data_to_send_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -992,10 +995,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public void callSendAction(final String sAction) {
         ToolBox.alertMSG(
                 Act005_Main.this,
-                "Pendencies TTl - Trad",
-                "Pendencies MSG - Trad",
-                //hmAux_Trans.get("alert_exit_confirm_ttl"),
-                //hmAux_Trans.get("alert_exit_confirm_msg"),
+                hmAux_Trans.get("alert_data_to_send_ttl"),
+                hmAux_Trans.get("alert_data_to_send_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
