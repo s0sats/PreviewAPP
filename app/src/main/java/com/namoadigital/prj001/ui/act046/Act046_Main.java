@@ -261,6 +261,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
 
         mFrgSerialSearch.setShowHideProduct(false);
         mFrgSerialSearch.setShowHideTracking(false);
+        mFrgSerialSearch.setbTokenPendenciesCheck(false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_calendar"));
@@ -395,7 +396,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
+        bundle.putString(ACT_SELECTED_DATE, null);
         bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isChecked());
         bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isChecked());
         bundle.putBoolean(ACT_FILTER_SITE, cbk_site_logado.isChecked());

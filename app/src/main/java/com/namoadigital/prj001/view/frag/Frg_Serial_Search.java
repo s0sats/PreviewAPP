@@ -41,7 +41,6 @@ public class Frg_Serial_Search extends Fragment {
     public static final String SERIAL = "serial";
     public static final String TRACKING = "tracking";
 
-
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
     private ImageView iv_product_change;
@@ -59,6 +58,8 @@ public class Frg_Serial_Search extends Fragment {
     private boolean showTree = false;
     private boolean showAll = false;
 
+    private boolean bTokenPendenciesCheck = true;
+
     private Button btn_option_01;
     private Button btn_option_02;
     private Button btn_option_03;
@@ -72,6 +73,14 @@ public class Frg_Serial_Search extends Fragment {
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
         btn_nfc_reader.setOnClickListener(clickListener);
+    }
+
+    public void setbTokenPendenciesCheck(boolean bTokenPendenciesCheck) {
+        this.bTokenPendenciesCheck = bTokenPendenciesCheck;
+    }
+
+    public boolean isbTokenPendenciesCheck() {
+        return bTokenPendenciesCheck;
     }
 
     public void setSupportNFC(boolean supportNFC) {
@@ -233,7 +242,8 @@ public class Frg_Serial_Search extends Fragment {
                             0
                     );
 
-                } else if (ToolBox_Con.isOnline(getActivity()) && ToolBox_Inf.checkSerialTokenURStatus(getActivity())) {
+                } else if (ToolBox_Con.isOnline(getActivity()) &&
+                        ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()) {
                     ToolBox.alertMSG(
                             getActivity(),
                             hmAux_Trans.get("alert_serial_pendencies_ttl"),
