@@ -1,13 +1,20 @@
 package com.namoadigital.prj001.sql;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on em 05/07/2018
+ * Adicionado filtro de site_logged na query de seleção dos form agendados.
+ *
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -17,9 +24,11 @@ public class Sql_Act016_001 implements Specification {
     private String sql_sub_query = "";
     private String sql_form = "";
     private String sql_form_ap = "";
+    private String site_logged;
 
-    public Sql_Act016_001(String customer_code, boolean filter_form,boolean filter_form_ap) {
+    public Sql_Act016_001(Context context, String customer_code, boolean filter_form, boolean filter_form_ap, boolean filter_site) {
         this.customer_code = customer_code;
+        this.site_logged = filter_site ? ToolBox_Con.getPreference_Site_Code(context) : null;
         //
         buildFinalSql(filter_form,filter_form_ap);
     }
@@ -38,7 +47,10 @@ public class Sql_Act016_001 implements Specification {
                     "  \n" +
                     "  WHERE \n" +
                     "        l.customer_code= '"+customer_code+"'     \n" +
-                    "        AND l.custom_form_data_serv is not null\n";
+                    "        AND l.custom_form_data_serv is not null\n"+
+                    "        AND ('"+site_logged+"' is null or l.site_code = '"+site_logged+"') ";
+        //Remove , caso exista, o text 'null'
+        sql_form = sql_form.replace("'null'","null");
         //
         sql_form_ap =
                     UNION_ALL +

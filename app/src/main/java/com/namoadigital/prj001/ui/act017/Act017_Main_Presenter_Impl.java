@@ -15,6 +15,7 @@ import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.sql.Sql_Act017_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -24,6 +25,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 
 /**
@@ -88,7 +91,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }
         }
         //Seta Qtd no tv
-        mView.setQty(schedules.size(), getTotalQty(selected_date,filter_form,filter_form_ap,late));
+        mView.setQty(schedules.size(), getTotalQty(selected_date,filter_form,filter_form_ap,late,filter_site_logged ));
         //Ordena agendados por data
         sortSchedulesByDate(schedules);
         //Adiciona datas na lista de agendados e devole lista
@@ -96,14 +99,16 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     }
 
-    private int getTotalQty(String selected_date,boolean filter_form,boolean filter_form_ap,boolean late) {
+    private int getTotalQty(String selected_date, boolean filter_form, boolean filter_form_ap, boolean late, boolean filter_site_logged) {
         HMAux totQtyAux = formApDao.getByStringHM(
                 new Sql_Act017_003(
+                        context,
                         ToolBox_Con.getPreference_Customer_Code(context),
                         selected_date,
                         filter_form,
                         filter_form_ap,
-                        late
+                        late,
+                        filter_site_logged
                 ).toSqlQuery()
 
         );
@@ -176,12 +181,13 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+        bundle.putString(Constant.ACT_SELECTED_DATE,hmAux.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
         //
         mView.callAct038(context, bundle);
     }
 
     @Override
-    public void prepareOpenForm(HMAux item, boolean hasSerial) {
+    public void prepareOpenForm(final HMAux item, boolean hasSerial) {
         //Atualiza status do form para in_processing
         //foi comentando pois a atualização do status já corre na act011
         //e pq se o form a ser aberto tem status inprocessing, fom ja abre
@@ -204,6 +210,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         if (!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
             mView.callAct011(context, bundle);
         } else if (hasSerial) {
+            bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
             mView.callAct008(context, bundle);
         } else {
             if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
@@ -218,6 +225,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+                                bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
                                 //
                                 mView.callAct008(context, bundle);
                             }

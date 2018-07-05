@@ -234,6 +234,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                     public void onClick(DialogInterface dialog, int which) {
                         filter_form = chk_form.isChecked();
                         filter_form_ap = chk_form_ap.isChecked();
+                        filter_site = chk_site.isChecked();
                         //
                         applyModuleFilter();
                     }
@@ -243,9 +244,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedule(filter_form, filter_form_ap);
+        mPresenter.getSchedule(filter_form, filter_form_ap, filter_site );
         //
-        if (filter_form || filter_form_ap) {
+        if (filter_form || filter_form_ap || filter_site) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
         } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -308,6 +309,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT016);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
