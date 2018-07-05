@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.sql;
 
+import android.content.Context;
+
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by DANIEL.LUCHE on 04/07/2018.
@@ -22,13 +25,21 @@ public class Sql_Act017_003 implements Specification {
     private int filter_form;
     private int filter_form_ap;
     private String filter_only_delay;
+    private String site_logged;
 
-    public Sql_Act017_003(long s_customer_code, String selected_date, boolean filter_form, boolean filter_form_ap, boolean late) {
+    public Sql_Act017_003(Context context, long s_customer_code, String selected_date, boolean filter_form, boolean filter_form_ap, boolean late, boolean site_logged) {
         this.s_customer_code = s_customer_code;
         this.selected_date = selected_date;
         this.filter_form = filter_form ? 1 : 0;
         this.filter_form_ap = filter_form_ap ? 1 : 0;
         this.filter_only_delay = late ? "filter" : null;
+        this.site_logged = site_logged ? ToolBox_Con.getPreference_Site_Code(context) : null;
+        //Se ambos os filtros form e form ap forem 0, seta ambos para true.
+        // REGRA TOP , SE NENHUM FILTRADO, FILTRA TODOS
+        if(!filter_form && !filter_form_ap ){
+            this.filter_form = 1;
+            this.filter_form_ap = 1;
+        }
     }
 
     @Override
@@ -54,6 +65,7 @@ public class Sql_Act017_003 implements Specification {
                         "       AND "+filter_form+" = 1\n" +
                         "       AND l.custom_form_data_serv is not null\n" +
                         "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"' )\n" +
+                        "       AND ( '"+site_logged+"' is null or l.site_code = '"+site_logged+"') \n" +
                         "       AND ( '"+filter_only_delay+"' is null or (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                         "       \n" +
                         "     UNION  ALL \n" +

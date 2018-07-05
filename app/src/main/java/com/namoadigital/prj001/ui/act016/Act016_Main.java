@@ -62,6 +62,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private boolean filter_form;
     private boolean filter_form_ap;
     private boolean filter_site;
+    private boolean noDateSelected;
 
     private HMAux hmAux_Trans_Extra = new HMAux();
 
@@ -137,11 +138,14 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(ACT_SELECTED_DATE)) {
-            selected_date = bundle.getString(ACT_SELECTED_DATE) != null ? ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE)) : null;
+            noDateSelected = bundle.getString(ACT_SELECTED_DATE) == null;
+            selected_date = ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE));
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
             filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
         } else {
+            noDateSelected = true;
+            selected_date = ToolBox.generateDate("");
             filter_form = false;
             filter_form_ap = false;
             filter_site = false;
@@ -234,6 +238,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                     public void onClick(DialogInterface dialog, int which) {
                         filter_form = chk_form.isChecked();
                         filter_form_ap = chk_form_ap.isChecked();
+                        filter_site = chk_site.isChecked();
                         //
                         applyModuleFilter();
                     }
@@ -243,9 +248,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedule(filter_form, filter_form_ap);
+        mPresenter.getSchedule(filter_form, filter_form_ap, filter_site );
         //
-        if (filter_form || filter_form_ap) {
+        if (filter_form || filter_form_ap || filter_site) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
         } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -308,6 +313,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT016);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

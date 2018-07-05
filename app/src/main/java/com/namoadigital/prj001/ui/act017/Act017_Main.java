@@ -347,7 +347,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private void applyModuleFilter() {
         mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site );
         //
-        if (filter_form || filter_form_ap) {
+        if (filter_form || filter_form_ap || filter_site) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
         } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -397,7 +397,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     @Override
     public void callAct008(Context context, Bundle bundle) {
-        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
@@ -430,8 +429,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void callAct038(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act038_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //Adicionan schedule_date no bundle
-        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
         //

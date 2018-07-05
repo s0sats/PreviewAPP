@@ -37,15 +37,17 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
     }
 
     @Override
-    public void getSchedule(boolean filter_form, boolean filter_form_ap) {
+    public void getSchedule(boolean filter_form, boolean filter_form_ap, boolean filter_site) {
         ArrayList<HMAux> schedules = new ArrayList<>();
         if (filter_form || filter_form_ap) {
             schedules =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act016_001(
+                                    context,
                                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                     filter_form,
-                                    filter_form_ap
+                                    filter_form_ap,
+                                    filter_site
                             ).toSqlQuery()
                     );
         }else{
@@ -53,9 +55,11 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
             schedules =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act016_001(
+                                    context,
                                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                     true,
-                                    true
+                                    true,
+                                    filter_site
                             ).toSqlQuery()
                     );
         }

@@ -11,6 +11,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 21/06/2017.
+ *
+ * Modificado by d.luche on 05/07/2018
+ * Comentado relacionamento com as tabelas marca, modelo e cor,
+ * pois como os campos BRAND_DESC , MODEL_DESC e COLOR_DESC
+ * agora existem no serial, estava gerando erro de ambigluidade ao rodar aquery
  */
 
 public class SM_SO_Sql_016 implements Specification {
@@ -48,17 +53,17 @@ public class SM_SO_Sql_016 implements Specification {
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
                         "                             and ps.product_code = s.product_code \n" +
                         "                             and ps.serial_code = s.serial_code\n" +
-                        " LEFT JOIN\n" +
-                        MD_BrandDao.TABLE +" b on ps.customer_code = b.customer_code\n" +
-                        "                    and ps.brand_code = b.brand_code\n" +
-                        " LEFT JOIN\n" +
-                        MD_Brand_ModelDao.TABLE +" m on ps.customer_code = m.customer_code\n" +
-                        "                       and ps.brand_code = m.brand_code\n" +
-                        "                       and ps.model_code = m.model_code\n" +
-                        " LEFT JOIN\n" +
-                        MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
-                        "                       and ps.brand_code = c.brand_code\n" +
-                        "                       and ps.color_code = c.color_code\n" +
+//                        " LEFT JOIN\n" +
+//                        MD_BrandDao.TABLE +" b on ps.customer_code = b.customer_code\n" +
+//                        "                    and ps.brand_code = b.brand_code\n" +
+//                        " LEFT JOIN\n" +
+//                        MD_Brand_ModelDao.TABLE +" m on ps.customer_code = m.customer_code\n" +
+//                        "                       and ps.brand_code = m.brand_code\n" +
+//                        "                       and ps.model_code = m.model_code\n" +
+//                        " LEFT JOIN\n" +
+//                        MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
+//                        "                       and ps.brand_code = c.brand_code\n" +
+//                        "                       and ps.color_code = c.color_code\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                             filter +
