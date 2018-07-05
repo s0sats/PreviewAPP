@@ -62,6 +62,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private boolean filter_form;
     private boolean filter_form_ap;
     private boolean filter_site;
+    private boolean noDateSelected;
 
     private HMAux hmAux_Trans_Extra = new HMAux();
 
@@ -137,11 +138,14 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void getBundleInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(ACT_SELECTED_DATE)) {
-            selected_date = bundle.getString(ACT_SELECTED_DATE) != null ? ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE)) : null;
+            noDateSelected = bundle.getString(ACT_SELECTED_DATE) == null;
+            selected_date = ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE));
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
             filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
         } else {
+            noDateSelected = true;
+            selected_date = ToolBox.generateDate("");
             filter_form = false;
             filter_form_ap = false;
             filter_site = false;
