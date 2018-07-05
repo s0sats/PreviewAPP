@@ -101,15 +101,20 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     private int getTotalQty(String selected_date, boolean filter_form, boolean filter_form_ap, boolean late, boolean filter_site_logged) {
         HMAux totQtyAux = formApDao.getByStringHM(
+//                new Sql_Act017_003(
+//                        context,
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        selected_date,
+//                        filter_form,
+//                        filter_form_ap,
+//                        late,
+//                        filter_site_logged
+//                ).toSqlQuery()
                 new Sql_Act017_003(
-                        context,
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        selected_date,
-                        filter_form,
-                        filter_form_ap,
-                        late,
-                        filter_site_logged
+                        selected_date
                 ).toSqlQuery()
+
 
         );
         //

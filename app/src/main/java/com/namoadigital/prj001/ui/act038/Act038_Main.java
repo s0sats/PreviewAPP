@@ -36,6 +36,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
@@ -58,6 +59,9 @@ import java.util.List;
 import static com.namoa_digital.namoa_library.util.ToolBox.SW_TYPE_BR_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_NO_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
@@ -148,6 +152,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private String scheduled_date;
     private boolean filter_form;
     private boolean filter_form_ap;
+    private boolean filter_site;
+    private boolean filter_late;
+    private boolean no_selected_date;
+    private String filter_serial_id;
 
     private PDFStatusReceiver mPdfStatusReceiver;
 
@@ -475,6 +483,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             scheduled_date = bundle.getString(ACT_SELECTED_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":", ""));
             filter_form = bundle.getBoolean(ACT_FILTER_FORM, true);
             filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, true);
+            filter_site = bundle.getBoolean(ACT_FILTER_SITE, true);
+            filter_late = bundle.getBoolean(ACT_FILTER_LATE, true);
+            filter_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+            no_selected_date = bundle.getBoolean(ACT_NO_SELECTED_DATE, false);
 
         } else {
         }
@@ -1171,9 +1183,17 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(ACT_SELECTED_DATE, scheduled_date);
+        //no_selected_date tratativa para caso o item selecionado
+        //tenha sido selecionado em uma listagem que não usava data
+        //como filtro.
+        //O scheduled_date sempre é enviado, pois a data recebida no bundle é
+        //a data do item selecionada na lista.
+        bundle.putString(ACT_SELECTED_DATE, no_selected_date ? null : scheduled_date);
         bundle.putBoolean(ACT_FILTER_FORM, filter_form);
         bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
+        bundle.putBoolean(ACT_FILTER_LATE, filter_late);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, filter_serial_id);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

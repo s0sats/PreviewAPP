@@ -83,6 +83,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT_FILTER_FORM_AP = "filter_form_ap";
     public static final String ACT_FILTER_SITE = "filter_site";
     public static final String ACT_FILTER_LATE = "filter_late";
+    public static final String ACT_NO_SELECTED_DATE = "no_selected_date";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
