@@ -13,6 +13,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  *
  * Query que seleciona todos os AP agendados na data selecionada
  *
+ * Modificado by DANIEL.LUCHE on 06/07/2018.
+ *
+ * NOVO CONCEITO de atrasados 06/07/2018
+ * Agora considera atrasado todos forms com data(dia, mes, ano) menor ou igual a de hoje.
+ *
  */
 
 public class Sql_Act017_002 implements Specification {
@@ -48,7 +53,7 @@ public class Sql_Act017_002 implements Specification {
                         "      AND a.ap_when is not null \n" +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
                         "      AND ('"+serial_id+"' is null or a.serial_id like '%"+serial_id+"%') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',a.ap_when ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime')) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
                         "  ORDER BY\n" +
                         "      strftime('%Y-%m-%d %H:%M',a.ap_when,'localtime'), \n" +
                         "      CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +

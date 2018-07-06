@@ -15,6 +15,13 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Modificado by DANIEL.LUCHE on em 05/07/2018
  * Adicionado filtro de site_logged na query de seleção dos form agendados.
  *
+ * Modificado by DANIEL.LUCHE on 06/07/2018.
+ *
+ * Em 06/07/2018 houve uma mudança no conceito de atrasadpo no badge e no contador da act046,
+ * onde o agendamento é considerado atrasado sua data dia/mes/ano for menor ou igual a de hoje.
+ *
+ * ESSA REGRA NÃO DEVE SER APLICADA AQUI, CONFORME ACORDADO COM J.YUDICE.
+ *
  */
 
 public class Sql_Act016_001 implements Specification {

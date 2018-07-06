@@ -5,6 +5,17 @@ import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 18/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on 06/07/2018.
+ *
+ * Modificado o conceito de atrasado.
+ * Antes, a data era comparada em milisegundos, assim, um form só era considerado atrasado
+ * caso da data hora minutos segundo fosse menor que a de agora + 12 hoas no futuro.
+ *
+ * NOVO CONCEITO 06/07/2018
+ * Agora considera atrasado todos forms com data(dia, mes, ano) menor ou igual a de hoje.
+ *
+ *
  */
 
 public class Sql_Act005_003 implements Specification {
@@ -30,9 +41,10 @@ public class Sql_Act005_003 implements Specification {
                         " WHERE\n" +
                         "   l.customer_code = '"+customer_code+"' \n" +
                         "   and l.custom_form_data_serv is not null\n " +
-                        "   and ( (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ))\n" +
+                        /*"   and ( (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ))\n" +
                         "          or(l.schedule_date_start_format_ms < (strftime('%s', 'now','+"+forward_hour+" hour')  * 1000 ))\n" +
-                        "          )\n" +
+                        "          )\n" +*/
+                        "   and (strftime('%Y-%m-%d',l.schedule_date_start_format ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime'))  \n"+
                         "   and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"'\n")
                 .append(";"+ BADGE_SCHEDULED_QTY)
                 .toString();

@@ -12,6 +12,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 11/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on 06/07/2018.
+ *
+ * NOVO CONCEITO de atrasados 06/07/2018
+ * Agora considera atrasado todos forms com data(dia, mes, ano) menor ou igual a de hoje.
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -83,7 +88,7 @@ public class Sql_Act017_001 implements Specification {
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or l.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or l.site_code = '"+site_logged+"') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',l.schedule_date_start_format ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime'))  and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                         "  ORDER BY\n" +
                         "      strftime('%Y-%m-%d %H:%M',l.schedule_date_start_format,'localtime'), \n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +

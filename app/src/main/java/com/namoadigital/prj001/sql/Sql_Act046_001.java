@@ -28,14 +28,8 @@ public class Sql_Act046_001 implements Specification {
         sql_form = UNION_ALL +
                 "   \nSELECT\n" +
                 "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
-                "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
-
-//                    "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
-//                    "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-//                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-//                    "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-//                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
-//                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
+                //"      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
+                "      ((strftime('%Y-%m-%d',l.schedule_date_start_format ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime')) and l.custom_form_status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
                 "     \n" +
                 "  FROM " + GE_Custom_Form_LocalDao.TABLE + " l\n" +
                 "  \n" +
@@ -47,14 +41,8 @@ public class Sql_Act046_001 implements Specification {
                 UNION_ALL +
                         "\nSELECT\n" +
                         "      strftime('%Y-%m-%d',a.ap_when,'localtime') schedule_date_start,\n" +
-                        "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "') ) delayed_count\n" +
-
-//                        "      strftime('%Y-%m-%d',a.ap_when,'localtime') schedule_date_start,\n" +
-//                        "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "') ) delayed_count,\n" +
-//                        "      0 inprocessing_count,\n" +
-//                        "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "')) scheduled_count,\n" +
-//                        "      (a.ap_status = '" + Constant.SYS_STATUS_DONE + "') finalized_count,\n" +
-//                        "      0 sent_count\n" +
+                        //"      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "') ) delayed_count\n" +
+                        "      ((strftime('%Y-%m-%d',a.ap_when ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime')) and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "') ) delayed_count\n" +
                         "  FROM " + GE_Custom_Form_ApDao.TABLE + " a  \n" +
                         "  WHERE \n" +
                         "        a.customer_code= '" + customer_code + "'     \n" +
@@ -70,30 +58,15 @@ public class Sql_Act046_001 implements Specification {
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
-
         return sb
                 .append(" SELECT\n" +
-//                                "  t.schedule_date_start " + CalendarView.DT + " ,\n" +
                                 "  sum(t.delayed_count) " + CalendarView.DELAYED_COUNT + "\n" +
-//                        "  sum(t.delayed_count) " + CalendarView.DELAYED_COUNT + ",\n" +
-//                        "  sum(t.inprocessing_count) " + CalendarView.INPROCESSING_COUNT + ",\n" +
-//                        "  sum(t.scheduled_count) " + CalendarView.SCHEDULED_COUNT + ",\n" +
-//                        "  sum(t.finalized_count) " + CalendarView.FINALIZED_COUNT + ",\n" +
-//                        "  sum(t.sent_count) " + CalendarView.SENT_COUNT + "\n " +
                                 " FROM(\n" +
                                 sql_sub_query +
                                 "   ) T\n" +
-//                                "      \n" +
-//                                " GROUP BY\n" +
-//                                "  schedule_date_start;" +
-//                                CalendarView.DT
+
                                 ";" + CalendarView.DELAYED_COUNT
-//                                + "#" + CalendarView.DELAYED_COUNT
-//                                + "#" + CalendarView.INPROCESSING_COUNT
-//                                + "#" + CalendarView.SCHEDULED_COUNT
-//                                + "#" + CalendarView.FINALIZED_COUNT
-//                                + "#" + CalendarView.SENT_COUNT
-//                                + "#cur_data#cur_mili"
+
                 )
                 .toString();
 
