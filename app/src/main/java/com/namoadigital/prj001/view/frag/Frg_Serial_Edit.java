@@ -2481,10 +2481,12 @@ public class Frg_Serial_Edit extends BaseFragment {
                 //Validação 4: Se produto e o item controlam io e item é inbound auto create
                 //              OU produto não controla io
                 //              OU item não controla io
+                //10/07/18      OU item é o mesmo site em que o serial esta alocado.
                 if (insert) {
                     if ((mdProduct.getIo_control() == 1 && aux.get(MD_SiteDao.IO_CONTROL).equals("1") && aux.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1"))
                             || mdProduct.getIo_control() == 0
                             || aux.get(MD_SiteDao.IO_CONTROL).equals("0")
+                            || (aux.get(SearchableSpinner.ID).equals(String.valueOf(mdProductSerial.getSite_code())))
                             ) {
                         insert = true;
                     } else {
