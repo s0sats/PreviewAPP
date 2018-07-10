@@ -361,7 +361,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex) + ":" + String.valueOf(currentIndex2));
         bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
         bundle.putString(Constant.ACT007_MSTACKVALUES, getStackValues());
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, product_code);
+        //bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
 
         mIntent.putExtras(bundle);
 

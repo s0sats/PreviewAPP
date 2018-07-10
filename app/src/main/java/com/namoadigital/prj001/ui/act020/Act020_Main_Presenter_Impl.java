@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -379,8 +380,10 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     @Override
     public void prepareAct008() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
-        bundle.putString(Constant.MAIN_SERIAL_ID,tProductSerial.getSerial_id());
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+        //bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,tProductSerial.getSerial_id());
+        //bundle.putString(Constant.MAIN_SERIAL_ID,tProductSerial.getSerial_id());
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, tProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
@@ -392,8 +395,10 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     public void createNewSerialFlow(MD_Product mdProduct, String serial_id) {
         MD_Product_Serial mdProductSerial = mdProduct.createNewSerialForThisProduct(serial_id);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
-        bundle.putString(Constant.MAIN_SERIAL_ID,serial_id);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+        //bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,serial_id);
+        //bundle.putString(Constant.MAIN_SERIAL_ID,serial_id);
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
@@ -414,12 +419,17 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         //
         if(formXProductExist && formXOperationExists && formXSiteExists){
             Bundle bundle = new Bundle();
-            bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
-            bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
-            bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
-            bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+            //bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, tProductSerial.getProduct_desc());
+            //bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
+            bundle.putString(MD_ProductDao.PRODUCT_ID, tProductSerial.getProduct_id());
+            //bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
+            //bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
-            bundle.putString(Constant.ACT008_SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(MD_SiteDao.SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+            //bundle.putString(Constant.ACT008_SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
 
             mView.callAct009(context, bundle);
         } else {

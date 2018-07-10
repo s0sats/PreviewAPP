@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -101,8 +102,8 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
         Bundle bundle = new Bundle();
         //
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, productSerial != null ? String.valueOf(productSerial.getProduct_code()) : null);
-        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, productSerial != null ? String.valueOf(productSerial.getProduct_code()) : null);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
         //
         mView.callAct023(context, bundle);

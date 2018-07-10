@@ -59,6 +59,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -730,16 +731,26 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
-            product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
-            product_id = bundle.getString(Constant.ACT008_PRODUCT_ID, "Sem Product ID");
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
-            type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
-            type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
-            form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
-            form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
+            product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
+            //product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
+            product_desc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
+            //product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
+            product_id = bundle.getString(MD_ProductDao.PRODUCT_ID, "Sem Product ID");
+            //product_id = bundle.getString(Constant.ACT008_PRODUCT_ID, "Sem Product ID");
+            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+            //serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            type = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
+            //type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
+            type_desc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
+            //type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
+            form = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
+            //form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
+            form_version = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
+            //form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
+            // VERIFICAR
             form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
-            form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
+            form_data = bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0");
+            //form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
             //
             mSo_Prefix = bundle.getString(SM_SODao.SO_PREFIX, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, null));
             mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));

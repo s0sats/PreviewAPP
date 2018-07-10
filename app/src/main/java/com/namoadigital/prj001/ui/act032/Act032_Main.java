@@ -13,6 +13,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
@@ -124,8 +126,8 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)) {
                 requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT014);
-                product_code = bundle.getString(Constant.MAIN_PRODUCT_CODE, null);
-                serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, null);
+                product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, null);
+                serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, null);
 
             } else {
                 //Tratar quando lista de s.o não for enviado.

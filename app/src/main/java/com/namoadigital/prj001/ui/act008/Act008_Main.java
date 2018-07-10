@@ -24,10 +24,14 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -358,14 +362,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 isSchedule = true;
             }//
             if (isSchedule) {
-                bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-                bundle_serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+                bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
+                //bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
+                bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                //bundle_serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+                //batatinha
                 scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE,"");
                 //Se agendado e existe serial preenchido, seta variavel forceCheckSerial para true.
                 forceCheckSerial = !bundle_serial_id.equals("");
             } else {
-                bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
-                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+                bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
+                //bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
+                bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                //bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
             }
 
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
@@ -625,11 +634,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite) {
             Intent mIntent = new Intent(context, Act009_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            bundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
-            bundle.putString(Constant.ACT008_SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
-            bundle.putString(Constant.ACT008_PRODUCT_DESC, mdProduct.getProduct_desc().trim());
-            bundle.putString(Constant.ACT008_PRODUCT_ID, mdProduct.getProduct_id().trim());
-            bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+            //bundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
+            //bundle.putString(Constant.ACT008_SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.getSerial_id()));
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProduct.getProduct_desc().trim());
+            //bundle.putString(Constant.ACT008_PRODUCT_DESC, mdProduct.getProduct_desc().trim());
+            bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct.getProduct_id().trim());
+            //bundle.putString(Constant.ACT008_PRODUCT_ID, mdProduct.getProduct_id().trim());
+            bundle.putString(MD_SiteDao.SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+            //bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //
             mIntent.putExtras(bundle);
             //
@@ -655,7 +669,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct011(Context context) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID, mdProductSerial.getSerial_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+        //bundle.putString(Constant.ACT008_SERIAL_ID, mdProductSerial.getSerial_id());
 
         mIntent.putExtras(bundle);
 
@@ -668,15 +683,24 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent = new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove dados não necessarios para act017
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-        bundle.remove(Constant.ACT008_PRODUCT_DESC);
-        bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
-        bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
-        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
-        bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
+        bundle.remove(MD_ProductDao.PRODUCT_CODE);
+        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(MD_ProductDao.PRODUCT_DESC);
+        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE);
+        //bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
+        bundle.remove(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC);
+        //bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+        bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_CODE);
+        //bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
+        bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION);
+        //bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
+        // DIFERENTE VERIFICAR
         bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
-        bundle.remove(Constant.ACT013_CUSTOM_FORM_DATA);
+        bundle.remove(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA);
+        //bundle.remove(Constant.ACT013_CUSTOM_FORM_DATA);
 
         mIntent.putExtras(bundle);
 
