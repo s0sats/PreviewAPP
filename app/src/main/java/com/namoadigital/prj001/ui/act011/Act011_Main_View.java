@@ -27,7 +27,4 @@ public interface Act011_Main_View {
 
     void showSignature();
 
-
-
-
 }

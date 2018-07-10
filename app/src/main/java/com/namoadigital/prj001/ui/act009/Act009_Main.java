@@ -19,6 +19,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
@@ -113,16 +116,17 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            product_code = Long.parseLong(bundle.getString(Constant.ACT020_PRODUCT_CODE));
-            serial_id = bundle.getString(Constant.ACT020_SERIAL_ID, "");
+            product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
+            //product_code = Long.parseLong(bundle.getString(Constant.ACT020_PRODUCT_CODE));
+            serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+            //serial_id = bundle.getString(Constant.ACT020_SERIAL_ID, "");
             //back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
             actResqueting = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
             back_action = bundle.getInt(Constant.BACK_ACTION, 0);
             //Novo fluxo N-Form 06/06/2018
-            site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            //
+            site_code_form_param = bundle.getString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+            //site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
         } else {
-
         }
     }
 
@@ -163,12 +167,14 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void addFormTypeInfoToBundle(HMAux item) {
         bundle.putString(
-                Constant.ACT009_CUSTOM_FORM_TYPE,
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                //Constant.ACT009_CUSTOM_FORM_TYPE,
                 item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
         );
         //
         bundle.putString(
-                Constant.ACT009_CUSTOM_FORM_TYPE_DESC,
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
+                //Constant.ACT009_CUSTOM_FORM_TYPE_DESC,
                 item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
         );
     }
@@ -219,12 +225,18 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct008(Context context) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(MD_ProductDao.PRODUCT_DESC);
+        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
         bundle.remove(Constant.BACK_ACTION);
         //
-        bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(Constant.ACT007_PRODUCT_CODE));
-        bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(Constant.ACT008_SERIAL_ID));
+        // VERIFICAR
+        bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(MD_ProductDao.PRODUCT_CODE));
+        //bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(Constant.ACT007_PRODUCT_CODE));
+        bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
+        //bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(Constant.ACT008_SERIAL_ID));
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -270,9 +282,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct027(Context context) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-        bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(MD_ProductDao.PRODUCT_CODE);
+        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(MD_ProductDao.PRODUCT_DESC);
+        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+
         bundle.remove(Constant.BACK_ACTION);
         bundle.remove(Constant.MAIN_REQUESTING_ACT);
         mIntent.putExtras(bundle);
@@ -284,9 +300,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct028(Context context) {
         Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-        bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(MD_ProductDao.PRODUCT_CODE);
+        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(MD_ProductDao.PRODUCT_DESC);
+        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+
         bundle.remove(Constant.BACK_ACTION);
         bundle.remove(Constant.MAIN_REQUESTING_ACT);
         mIntent.putExtras(bundle);
