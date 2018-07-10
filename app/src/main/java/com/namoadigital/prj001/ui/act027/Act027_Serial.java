@@ -381,8 +381,8 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)) {
                 requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS, "");
-                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
-                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+                product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE, "0"));
+                bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
             } else {
             }
 

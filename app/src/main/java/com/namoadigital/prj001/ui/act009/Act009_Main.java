@@ -23,7 +23,6 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
-import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
@@ -223,23 +222,23 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     }
 
     public void callAct008(Context context) {
-        Intent mIntent = new Intent(context, Act008_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-        //bundle.remove(Constant.ACT008_SERIAL_ID);
-        bundle.remove(MD_ProductDao.PRODUCT_DESC);
-        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
-        bundle.remove(Constant.BACK_ACTION);
-        //
-        // VERIFICAR
-        bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(MD_ProductDao.PRODUCT_CODE));
-        //bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(Constant.ACT007_PRODUCT_CODE));
-        bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
-        //bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(Constant.ACT008_SERIAL_ID));
-
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
+//        Intent mIntent = new Intent(context, Act008_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+//        //bundle.remove(Constant.ACT008_SERIAL_ID);
+//        bundle.remove(MD_ProductDao.PRODUCT_DESC);
+//        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+//        bundle.remove(Constant.BACK_ACTION);
+//        //
+//        // VERIFICAR
+//        bundle.putString(MD_ProductDao.PRODUCT_CODE,bundle.getString(MD_ProductDao.PRODUCT_CODE));
+//        //bundle.putString(Constant.MAIN_PRODUCT_CODE,bundle.getString(Constant.ACT007_PRODUCT_CODE));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_ID,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
+//        //bundle.putString(Constant.MAIN_SERIAL_ID,bundle.getString(Constant.ACT008_SERIAL_ID));
+//
+//        mIntent.putExtras(bundle);
+//        startActivity(mIntent);
+//        finish();
     }
 
     public void callAct010(Context context) {

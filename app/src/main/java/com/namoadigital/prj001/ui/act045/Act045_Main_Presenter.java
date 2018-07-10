@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.util.Constant;
 
@@ -50,8 +51,8 @@ public class Act045_Main_Presenter implements Act045_Main_Contract.I_Presenter {
     public void defineFlow(MD_Product_Serial productSerial, boolean new_serial) {
         Bundle bundle = new Bundle();
         //
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
-        bundle.putString(Constant.MAIN_SERIAL_ID, productSerial.getSerial_id());
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, productSerial.getSerial_id());
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT045);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, new_serial);

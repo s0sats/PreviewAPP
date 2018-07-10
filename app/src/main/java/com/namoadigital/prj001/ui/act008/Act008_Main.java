@@ -371,8 +371,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 //Se agendado e existe serial preenchido, seta variavel forceCheckSerial para true.
                 forceCheckSerial = !bundle_serial_id.equals("");
             } else {
-                bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
-                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+                bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
+                //bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
+                bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                //bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
             }
 
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);

@@ -371,7 +371,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         //
         bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
         bundle.putSerializable(Constant.MAIN_MSTACKVALUES, mStack);
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, product_code);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, product_code);
         //
         mIntent.putExtras(bundle);
 
