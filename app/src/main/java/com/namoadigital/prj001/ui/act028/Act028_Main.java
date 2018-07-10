@@ -32,6 +32,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
@@ -1839,10 +1840,14 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         bundle.putString(SM_SODao.SO_CODE, mSoAux.get(SM_SODao.SO_CODE));
         bundle.putString(SM_SODao.SITE_CODE, mSoAux.get(SM_SODao.SITE_CODE));
         bundle.putString(SM_SODao.OPERATION_CODE, mSoAux.get(SM_SODao.OPERATION_CODE));
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_CODE) : mSoAux.get(SM_SODao.PRODUCT_CODE)));
-        bundle.putString(Constant.ACT008_PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSoAux.get(SM_SODao.PRODUCT_ID));
-        bundle.putString(Constant.ACT008_PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) : mSoAux.get(SM_SODao.PRODUCT_DESC));
-        bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE)) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSoAux.get(SM_SODao.SERIAL_ID) : "");
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_CODE) : mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        //bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_CODE) : mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        bundle.putString(MD_ProductDao.PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSoAux.get(SM_SODao.PRODUCT_ID));
+        //bundle.putString(Constant.ACT008_PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSoAux.get(SM_SODao.PRODUCT_ID));
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) : mSoAux.get(SM_SODao.PRODUCT_DESC));
+        //bundle.putString(Constant.ACT008_PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) : mSoAux.get(SM_SODao.PRODUCT_DESC));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE)) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSoAux.get(SM_SODao.SERIAL_ID) : "");
+        //bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE)) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSoAux.get(SM_SODao.SERIAL_ID) : "");
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT028);
         //Dados do Serviço
         bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, String.valueOf(mService.getPrice_list_code()));
