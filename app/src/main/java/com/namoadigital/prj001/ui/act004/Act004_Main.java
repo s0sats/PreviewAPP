@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -49,6 +50,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     private TextView tv_site_lbl;
     private TextView tv_site_val;
     private TextView tv_zone_val;
+    private MKEditTextNM mk_search_operations;
     private ListView lv_operations;
     private Act004_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -104,6 +106,18 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         tv_site_lbl = (TextView) findViewById(R.id.act004_tv_site_lbl);
         tv_site_val = (TextView) findViewById(R.id.act004_tv_site_val);
         tv_zone_val = (TextView) findViewById(R.id.act004_tv_zone_val);
+        //
+        mk_search_operations = (MKEditTextNM) findViewById(R.id.act004_mket_search_operations);
+        mk_search_operations.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                mAdapter.getFilter().filter(mk_search_operations.getText().toString().trim());
+            }
+        });
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
@@ -168,7 +182,6 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
             }
             tv_zone_val.setVisibility(View.VISIBLE);
         }
-
         //
         lv_operations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

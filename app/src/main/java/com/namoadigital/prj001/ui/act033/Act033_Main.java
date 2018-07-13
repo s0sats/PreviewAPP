@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -40,6 +41,7 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
     private TextView tv_site_lbl;
     private TextView tv_site_val;
     private TextView tv_no_site;
+    private MKEditTextNM mk_search_zones;
     private ListView lv_zone;
     private Act033_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -114,6 +116,18 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         tv_site_lbl = (TextView) findViewById(R.id.act033_tv_site_lbl);
         tv_site_val = (TextView) findViewById(R.id.act033_tv_site_val);
         tv_no_site = (TextView) findViewById(R.id.act033_tv_no_zone);
+        //
+        mk_search_zones = (MKEditTextNM) findViewById(R.id.act033_mket_search_zones);
+        mk_search_zones.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                mAdapter.getFilter().filter(mk_search_zones.getText().toString().trim());
+            }
+        });
         //
         lv_zone = (ListView) findViewById(R.id.act033_lv_zone);
         //

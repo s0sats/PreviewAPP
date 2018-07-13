@@ -86,6 +86,17 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act033_mket_search_zones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+
+            android:inputType="text"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false" />
+
         <ListView
             android:id="@+id/act033_lv_zone"
             android:layout_width="match_parent"
