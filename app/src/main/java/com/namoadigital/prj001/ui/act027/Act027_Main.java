@@ -213,6 +213,32 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         initActions();
     }
 
+    private void iniDaos() {
+        sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        trackingDao = new MD_Product_Serial_TrackingDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+    }
+
     @Override
     protected void onDestroy() {
         ToolBox_Con.setApproval_Type(context, "");
@@ -237,7 +263,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 Constant.FRG_SERIAL_EDIT
         );
         //
-
+        iniDaos();
+        //
         loadTranslation();
     }
 
@@ -490,13 +517,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         transList.add("alert_sketch_not_ready_title");
         transList.add("alert_sketch_not_ready_msg");
-
-        sm_soDao = new SM_SODao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -559,7 +580,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 Constant.PROFILE_MENU_SO,
                 Constant.PROFILE_MENU_SO_PARAM_EXECUTION
         );
-
         // Drawer Opc
         act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
         // Dialog Acess
@@ -690,23 +710,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 Constant.DB_VERSION_CUSTOM
         );
         //
-        productDao = new MD_ProductDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-        //
-        serialDao = new MD_Product_SerialDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-        //
-        trackingDao = new MD_Product_Serial_TrackingDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
         loadNFormProductList();
         //
         resetHmAuxProdutcSelected();
