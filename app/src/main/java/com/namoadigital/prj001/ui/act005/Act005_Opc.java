@@ -177,7 +177,7 @@ public class Act005_Opc extends Fragment {
             //Verifica se customer tem acesso ao modulo serviço e , em caso negativo,
             //remove opção de trocar zona.
             //if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.parameterExists(getActivity(),new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})){
-            if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.profileExists(getActivity(),Constant.PARAM_SO, null)){
+            if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.profileExists(getActivity(),Constant.PROFILE_PRJ001_SO, null)){
                 continue;
             }
             HMAux hmAux = new HMAux();
