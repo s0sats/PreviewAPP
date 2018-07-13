@@ -548,8 +548,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             et_form_seq_ttl.setEnabled(false);
             et_form_seq_ttl.setText(String.valueOf(ap.getCustom_form_data()));
             //
-            //tv_creation_ttl.setText(hmAux_Trans.get("create_info_lbl"));
-            tv_creation_ttl.setText("Criação - Trad");
+            tv_creation_ttl.setText(hmAux_Trans.get("create_info_lbl"));
             et_create_date_ttl.setEnabled(false);
             et_create_date_ttl.setText(ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(ap.getCreate_date()),
