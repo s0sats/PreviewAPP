@@ -247,6 +247,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_discard_changes_msg");
         transList.add("product_lbl");
         transList.add("serial_lbl");
+        transList.add("create_info_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -312,10 +313,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_form_version_ttl = (TextView) findViewById(R.id.act038_header_tv_form_version_ttl);
         et_form_version_ttl = (EditText) findViewById(R.id.act038_header_et_form_version_ttl);
         //
-        tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_tv_form_seq_ttl);
+        tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_et_form_seq_ttl);
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
-        //tv_creation_ttl
+        tv_creation_ttl = (TextView) findViewById(R.id.act038_header_tv_form_creation_ttl);
+        et_create_date_ttl = (EditText) findViewById(R.id.act038_header_et_form_create_date_ttl);
+        et_create_user_ttl = (EditText) findViewById(R.id.act038_header_et_form_create_user_ttl);
         //
         tv_product_ttl = (TextView) findViewById(R.id.act038_header_tv_product_ttl);
         et_product_val = (EditText) findViewById(R.id.act038_header_et_product_val);
@@ -545,17 +548,29 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             et_form_seq_ttl.setEnabled(false);
             et_form_seq_ttl.setText(String.valueOf(ap.getCustom_form_data()));
             //
+            //tv_creation_ttl.setText(hmAux_Trans.get("create_info_lbl"));
+            tv_creation_ttl.setText("Criação - Trad");
+            et_create_date_ttl.setEnabled(false);
+            et_create_date_ttl.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(ap.getCreate_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+            //
+            et_create_user_ttl.setEnabled(false);
+            et_create_user_ttl.setText(ap.getCreate_user());
+            //
             tv_product_ttl.setText(hmAux_Trans.get("product_lbl"));
             et_product_val.setEnabled(false);
-            et_product_val.setText(ap.getProduct_id() +" - "+ap.getProduct_desc());
+            et_product_val.setText(ap.getProduct_id() + " - " + ap.getProduct_desc());
             //
             tv_serial_ttl.setText(hmAux_Trans.get("serial_lbl"));
             et_serial_val.setEnabled(false);
-            if(ap.getSerial_code() != null) {
+            if (ap.getSerial_code() != null) {
                 tv_serial_ttl.setVisibility(View.VISIBLE);
                 et_serial_val.setText(ap.getSerial_id());
                 et_serial_val.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 tv_serial_ttl.setVisibility(View.GONE);
                 et_serial_val.setVisibility(View.GONE);
             }
@@ -774,11 +789,11 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mGe_custom_form_ap == null){
+                if (mGe_custom_form_ap == null) {
                     requestingAct = Constant.ACT037;
                     //
                     actionBackPressed();
-                }else {
+                } else {
                     if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
                             mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
 
@@ -892,7 +907,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (aux.isEmpty()) {
             ss_status.setBackground(context.getDrawable(R.drawable.shape_error));
             return false;
-        }else{
+        } else {
             ss_status.setBackground(null);
         }
 
@@ -913,13 +928,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                             mUser.get(SearchableSpinner.ID) == "null" ||
                             mUser.get(SearchableSpinner.ID).isEmpty()) {
                         ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
-                    }else{
+                    } else {
                         ss_users.setBackground(null);
                     }
                     //
                     if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty()) {
                         et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
-                    }else{
+                    } else {
                         et_form_when_ttl.setBackground(null);
                     }
                     return false;
@@ -973,7 +988,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 }
             } else if (propertie instanceof MkDateTime) {
 
-                if (((MkDateTime) propertie).hasChanged()){
+                if (((MkDateTime) propertie).hasChanged()) {
                     mDataChanged = true;
 
                     return true;
@@ -1130,7 +1145,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //super.onBackPressed();
 
         //mPresenter.onBackPressedClicked();
-        if (    mGe_custom_form_ap == null ||
+        if (mGe_custom_form_ap == null ||
                 mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
                 mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
             actionBackPressed();
@@ -1329,7 +1344,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     mAp_Code
             );
             //
-            if(mGe_custom_form_ap != null) {
+            if (mGe_custom_form_ap != null) {
                 loadAP(mGe_custom_form_ap);
             }
         } else {
@@ -1410,7 +1425,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mGe_custom_form_ap != null) {
+                if (mGe_custom_form_ap != null) {
                     mPresenter.getloadAP(
                             mCustomer_Code,
                             mCustom_Form_Type,
@@ -1421,7 +1436,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     );
                     //
                     show.dismiss();
-                }else{
+                } else {
                     actionBackPressed();
                 }
             }
@@ -1761,7 +1776,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (hmAux.get("pk").equalsIgnoreCase(sKey)) {
             mGe_custom_form_ap.setCustom_form_url_local(hmAux.get("value"));
             //
-            if(progressDialog != null && progressDialog.isShowing()) {
+            if (progressDialog != null && progressDialog.isShowing()) {
                 disableProgressDialog();
             }
             //
