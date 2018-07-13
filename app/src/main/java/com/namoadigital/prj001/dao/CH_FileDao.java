@@ -127,7 +127,6 @@ public class CH_FileDao extends BaseDao implements Dao<CH_File> {
         }
 
         closeDB();
-
     }
 
     @Override

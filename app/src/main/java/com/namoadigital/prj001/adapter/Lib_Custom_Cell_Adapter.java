@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +28,7 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 26/01/2017.
  */
 
-public class Lib_Custom_Cell_Adapter extends BaseAdapter {
+public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
 
     //CONSTANTES
     public static final String CFG_ID_CODE_DESC = "ID_DESC";
@@ -34,36 +37,44 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
     public static final String CFG_DESC_QTY = "DESC_QTY";
 
     private Context context;
+    private ValueFilter valueFilter;
     private int resource;
-    private List<HMAux> source;
+    private List<HMAux> data;
+    private ArrayList<HMAux> data_filtered;
     private String config;
     private String key_code;
     private String key_id;
     private String key_desc;
-    private String trans_lbl_code ="";
-    private String trans_lbl_id ="";
-    private String trans_lbl_desc ="";
+    private String trans_lbl_code = "";
+    private String trans_lbl_id = "";
+    private String trans_lbl_desc = "";
     //
     private String mModule_Code = Constant.APP_MODULE;
-    private String mResource_Name = "lib_custom_cell_adapter" ;
+    private String mResource_Name = "lib_custom_cell_adapter";
     private HMAux hmAux_Trans;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_code, String key_id, String key_desc) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc) {
         this.context = context;
         this.resource = resource;
-        this.source = source;
+        //
+        this.data = data;
+        this.data_filtered = new ArrayList<>();
+        this.data_filtered.addAll(data);
+        //
         this.config = config;
         this.key_code = key_code;
         this.key_id = key_id;
         this.key_desc = key_desc;
 
         loadTranslation();
+
+        getFilter();
     }
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_code, String key_id, String key_desc, String trans_lbl_code, String trans_lbl_id, String trans_lbl_desc) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String trans_lbl_code, String trans_lbl_id, String trans_lbl_desc) {
         this.context = context;
         this.resource = resource;
-        this.source = source;
+        this.data = data;
         this.config = config;
         this.key_code = key_code;
         this.key_id = key_id;
@@ -73,16 +84,18 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         this.trans_lbl_desc = trans_lbl_desc;
 
         loadTranslation();
+
+        getFilter();
     }
 
     @Override
     public int getCount() {
-        return source.size();
+        return data_filtered.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return source.get(position);
+        return data_filtered.get(position);
     }
 
     @Override
@@ -93,13 +106,13 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            convertView = mInflater.inflate(resource, parent, false);
         }
         //Resgata HmAux com as informações
-        HMAux item = source.get(position);
+        HMAux item = data_filtered.get(position);
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
         //
@@ -117,7 +130,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         //
         iv_001.setVisibility(View.GONE);
         //
-        ColorStateList filterColor =  context.getResources().getColorStateList(R.color.lib_custom_cell_font_color);
+        ColorStateList filterColor = context.getResources().getColorStateList(R.color.lib_custom_cell_font_color);
         tv_code.setTextColor(filterColor);
         tv_id.setTextColor(filterColor);
         tv_desc.setTextColor(filterColor);
@@ -125,28 +138,28 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         tv_desc.setTypeface(tv_desc.getTypeface(), Typeface.BOLD);
 
         String codeText = (trans_lbl_code != "" ? trans_lbl_code : hmAux_Trans.get("lbl_code")) + " ";
-        String idText =  (trans_lbl_id != "" ? trans_lbl_id :hmAux_Trans.get("lbl_id") )+ " ";
-        String descText =  (trans_lbl_desc != "" ? trans_lbl_desc : ""/*hmAux_Trans.get("lbl_desc")*/) +"";
+        String idText = (trans_lbl_id != "" ? trans_lbl_id : hmAux_Trans.get("lbl_id")) + " ";
+        String descText = (trans_lbl_desc != "" ? trans_lbl_desc : ""/*hmAux_Trans.get("lbl_desc")*/) + "";
 
-        switch (config){
+        switch (config) {
             case CFG_ID_CODE_DESC:
-             //
+                //
                 try {
-                    if (item.get(key_code).trim().length() > 0){
+                    if (item.get(key_code).trim().length() > 0) {
                         codeText += item.get(key_code);
                     }
                 } catch (Exception e) {
                     codeText = "";
                 }
                 try {
-                    if (item.get(key_id).trim().length() > 0){
+                    if (item.get(key_id).trim().length() > 0) {
                         idText += item.get(key_id);
                     }
                 } catch (Exception e) {
-                    idText ="";
+                    idText = "";
                 }
                 try {
-                    if (item.get(key_desc).trim().length() > 0){
+                    if (item.get(key_desc).trim().length() > 0) {
                         descText = item.get(key_desc);
                     }
                 } catch (Exception e) {
@@ -164,7 +177,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 descText = item.get(key_desc);
                 //
                 try {
-                    if (item.get(key_id).trim().length() > 0){
+                    if (item.get(key_id).trim().length() > 0) {
                         descText += " (" + item.get(key_id) + ")";
                     }
                 } catch (Exception e) {
@@ -202,5 +215,51 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         );
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+
+            valueFilter = new ValueFilter();
+        }
+
+        return valueFilter;
+    }
+
+    private class ValueFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                constraint = ToolBox.AccentMapper(constraint.toString());
+                //
+                for (int i = 0; i < data.size(); i++) {
+                    String mKey_ID = ToolBox.AccentMapper(data.get(i).get(key_id).toLowerCase());
+                    String mKey_DESC = ToolBox.AccentMapper(data.get(i).get(key_desc).toLowerCase());
+                    if (mKey_ID.contains(constraint.toString().toLowerCase()) ||
+                            mKey_DESC.contains(constraint.toString().toLowerCase())
+                            ) {
+
+                        filterList.add(data.get(i));
+                    }
+                }
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = data.size();
+                results.values = data;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            data_filtered = (ArrayList<HMAux>) results.values;
+
+            notifyDataSetChanged();
+        }
     }
 }

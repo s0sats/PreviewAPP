@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -39,6 +40,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private Context context;
     private TextView tv_customer_val;
+    private MKEditTextNM mk_search_sites;
     private ListView lv_sites;
     private Act003_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -67,7 +69,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     public void callAct033(Context context) {
-        Intent mIntent =  new Intent(context, Act033_Main.class);
+        Intent mIntent = new Intent(context, Act033_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(mIntent);
@@ -75,7 +77,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     public void callAct004(Context context) {
-        Intent mIntent =  new Intent(context, Act004_Main.class);
+        Intent mIntent = new Intent(context, Act004_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -91,30 +93,43 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
+        mk_search_sites = (MKEditTextNM) findViewById(R.id.act003_mket_search_sites);
+        mk_search_sites.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                mAdapter.getFilter().filter(mk_search_sites.getText().toString().trim());
+            }
+        });
+        //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
-        if(mPresenter.checkPreferenceIsSet()){
-                //callAct004(context);
+        if (mPresenter.checkPreferenceIsSet()) {
+            //callAct004(context);
             callAct033(context);
-        }else{
+        } else {
             mPresenter.getSites(hmAux_Trans);
         }
     }
 
     private void startLogoDownload() {
-        Intent mIntent =  new Intent(getApplicationContext(),WBR_DownLoad_Customer_Logo.class);
+        Intent mIntent = new Intent(getApplicationContext(), WBR_DownLoad_Customer_Logo.class);
         getApplicationContext().sendBroadcast(mIntent);
     }
+
     @Override
     public void callAct002(Context context, boolean force_get_customer) {
-        ToolBox_Con.setPreference_Customer_Code(context,-1L);
+        ToolBox_Con.setPreference_Customer_Code(context, -1L);
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.BACK_ACTION, 1);
 
-        if(force_get_customer){
+        if (force_get_customer) {
             bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 1);
         }
         //
@@ -146,9 +161,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     @Override
     public void loadSites(List<HMAux> sites) {
-        if(sites.size() == 0) {
+        if (sites.size() == 0) {
             String title = !hmAux_Trans.containsKey("alert_no_site_title") || hmAux_Trans.get("alert_no_site_title").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_alert_no_site_ttl) : hmAux_Trans.get("alert_no_site_title");
-            String msg = !hmAux_Trans.containsKey("alert_no_site_msg") || hmAux_Trans.get("alert_no_site_msg").contains(Constant.APP_MODULE + "/") ?  getString(R.string.generic_alert_no_site_msg) : hmAux_Trans.get("alert_no_site_msg");
+            String msg = !hmAux_Trans.containsKey("alert_no_site_msg") || hmAux_Trans.get("alert_no_site_msg").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_alert_no_site_msg) : hmAux_Trans.get("alert_no_site_msg");
 
             ToolBox.alertMSG(
                     Act003_Main.this,
@@ -167,15 +182,15 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             // e no evento setOnDismissListener , rodar o metodo que chamada
             // callAct002
 
-        }else if(sites.size() == 1 ){
+        } else if (sites.size() == 1) {
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
-            if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
-                callAct002(context,false);
-            }else {
+            if (bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1) {
+                callAct002(context, false);
+            } else {
                 mPresenter.setSiteCode(sites.get(0));
             }
-        }else {
+        } else {
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
                     R.layout.lib_custom_cell,
@@ -190,7 +205,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         }
     }
 
-    private void loadTranslation(){
+    private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_customer");
         transList.add("alert_no_site_title");
@@ -208,12 +223,12 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     }
 
-    private void killCurSession(Context context){
+    private void killCurSession(Context context) {
 
-        String title = !hmAux_Trans.containsKey("alert_logout_ttl") || hmAux_Trans.get("alert_logout_ttl").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_dialog_logout_ttl) : hmAux_Trans.get("alert_logout_ttl") ;
+        String title = !hmAux_Trans.containsKey("alert_logout_ttl") || hmAux_Trans.get("alert_logout_ttl").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_dialog_logout_ttl) : hmAux_Trans.get("alert_logout_ttl");
         String msg = !hmAux_Trans.containsKey("alert_logout_msg") || hmAux_Trans.get("alert_logout_msg").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_dialog_logout_msg) : hmAux_Trans.get("alert_logout_msg");
 
-        if(title == null || msg == null){
+        if (title == null || msg == null) {
             title = getString(R.string.generic_dialog_logout_ttl);
             msg = getString(R.string.generic_dialog_logout_msg);
         }
@@ -238,7 +253,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-        callAct002(context,true);
+        callAct002(context, true);
     }
 
     @Override
