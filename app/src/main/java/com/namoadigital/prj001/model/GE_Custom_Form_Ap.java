@@ -56,6 +56,8 @@ public class GE_Custom_Form_Ap {
     private String serial_id;
     private int sync_required;
     private int upload_required;
+    private String create_date;
+    private String create_user;
 
     @Expose(serialize = false)
     private String custom_form_url;
@@ -337,5 +339,21 @@ public class GE_Custom_Form_Ap {
 
     public void setLast_update(String last_update) {
         this.last_update = last_update;
+    }
+
+    public String getCreate_date() {
+        return create_date;
+    }
+
+    public void setCreate_date(String create_date) {
+        this.create_date = create_date;
+    }
+
+    public String getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(String create_user) {
+        this.create_user = create_user;
     }
 }

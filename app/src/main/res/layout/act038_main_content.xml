@@ -195,6 +195,57 @@
                         app:mOCR="false" />
 
                     <TextView
+                        android:id="@+id/act038_header_tv_form_creation_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Criacao - Trad"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                            android:id="@+id/act038_header_et_form_create_date_ttl"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:hint=""
+                            android:inputType="text"
+                            android:minHeight="30dp"
+                            android:padding="10dp"
+                            android:textSize="15sp"
+                            app:mBARCODE="false"
+                            app:mNFC="false"
+                            app:mOCR="false" />
+
+                        <View
+                            android:layout_width="5dp"
+                            android:layout_height="match_parent"/>
+
+                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                            android:id="@+id/act038_header_et_form_create_user_ttl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint=""
+                            android:inputType="text"
+                            android:minHeight="30dp"
+                            android:padding="10dp"
+                            android:textSize="15sp"
+                            app:mBARCODE="false"
+                            app:mNFC="false"
+                            app:mOCR="false" />
+
+
+                    </LinearLayout>
+
+
+                    <TextView
                         android:id="@+id/act038_header_tv_product_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

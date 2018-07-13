@@ -109,6 +109,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private EditText et_form_version_ttl;
     private TextView tv_form_seq_ttl;
     private EditText et_form_seq_ttl;
+    private TextView tv_creation_ttl;
+    private EditText et_create_date_ttl;
+    private EditText et_create_user_ttl;
+
     private TextView tv_product_ttl;
     private EditText et_product_val;
     private TextView tv_serial_ttl;
@@ -310,6 +314,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_tv_form_seq_ttl);
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
+        //
+        //tv_creation_ttl
         //
         tv_product_ttl = (TextView) findViewById(R.id.act038_header_tv_product_ttl);
         et_product_val = (EditText) findViewById(R.id.act038_header_et_product_val);
