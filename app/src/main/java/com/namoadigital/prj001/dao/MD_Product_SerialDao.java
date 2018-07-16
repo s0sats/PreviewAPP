@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -166,7 +168,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             Constant.DB_VERSION_CUSTOM
                     );
 
-            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
+            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -476,6 +478,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      */
     public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials){
         boolean processReturn = false;
+
+        Log.d("SerialTransaction","processSerialSync - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         openDB();
 
         try {
@@ -509,20 +513,21 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             processReturn = true;
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            Log.d("SerialTransaction","processSerialSync - Erro:  "+ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n"+e.toString());
             processReturn = false;
         } finally {
             db.endTransaction();
         }
 
         closeDB();
-
+        Log.d("SerialTransaction","processSerialSync - Fim:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         return processReturn ;
     }
 
     public boolean processSerialConsiliation(){
         boolean processReturn = false;
         openDB();
-
+        Log.d("SerialTransaction","processSerialConsiliation - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         try {
 
             db.beginTransaction();
@@ -572,13 +577,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             processReturn = true;
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            Log.d("SerialTransaction","processSerialConsiliation - Erro:  "+ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n"+e.toString());
             processReturn = false;
         } finally {
             db.endTransaction();
         }
 
         closeDB();
-
+        Log.d("SerialTransaction","processSerialConsiliation - Fim: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         return processReturn ;
     }
 
