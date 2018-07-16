@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
@@ -84,11 +85,27 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
 
     @Override
     public void addUpdate(Iterable<MD_Product_Serial_Tracking> md_product_serial_trackings, boolean status) {
-        openDB();
+        addUpdate(md_product_serial_trackings,status,null);
+    }
+
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public void addUpdate(Iterable<MD_Product_Serial_Tracking> md_product_serial_trackings, boolean status,SQLiteDatabase dbInstance) {
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
-
-            db.beginTransaction();
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
 
             if (status) {
                 db.delete(TABLE, null, null);
@@ -108,15 +125,21 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
                     db.update(TABLE, toContentValuesMapper.map(md_product_serial_tracking), sbWhere.toString(), null);
                 }
             }
-
-            db.setTransactionSuccessful();
+            //Se db não foi passado, finaliza transaction com sucesso
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
-            db.endTransaction();
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
         }
-
-        closeDB();
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
     }
 
     @Override
@@ -135,7 +158,21 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
 
     @Override
     public void remove(String sQuery) {
-        openDB();
+        remove(sQuery,null);
+    }
+
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public void remove(String sQuery, SQLiteDatabase dbInstance) {
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
             db.execSQL(sQuery);
@@ -143,8 +180,10 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
         } catch (Exception e) {
         } finally {
         }
-
-        closeDB();
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
     }
 
     @Override
@@ -202,9 +241,22 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
 
     @Override
     public List<MD_Product_Serial_Tracking> query(String sQuery) {
-        List<MD_Product_Serial_Tracking> md_product_serial_trackings = new ArrayList<>();
+        return query(sQuery,null);
+    }
 
-        openDB();
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public List<MD_Product_Serial_Tracking> query(String sQuery, SQLiteDatabase dbInstance ) {
+        List<MD_Product_Serial_Tracking> md_product_serial_trackings = new ArrayList<>();
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
@@ -220,7 +272,9 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
         } finally {
         }
 
-        closeDB();
+        if(dbInstance == null){
+            closeDB();
+        }
 
         return md_product_serial_trackings;
     }

@@ -3,17 +3,23 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_007;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -124,8 +130,22 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void addUpdate(MD_Product_Serial md_product_serial) {
-        openDB();
+        addUpdate(md_product_serial,null);
+    }
 
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public void addUpdate(MD_Product_Serial md_product_serial,SQLiteDatabase dbInstance) {
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        //
         try {
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_serial)) == -1) {
@@ -152,8 +172,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             e.printStackTrace();
         } finally {
         }
-
-        closeDB();
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
     }
 
     @Override
@@ -193,8 +215,22 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void addUpdateTmp(MD_Product_Serial md_product_serial) {
-        openDB();
+        addUpdateTmp(md_product_serial,null);
+    }
 
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public void addUpdateTmp(MD_Product_Serial md_product_serial, SQLiteDatabase dbInstance) {
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        //
         int serial_tmp = 0;
         Cursor cursor = null;
 
@@ -266,18 +302,21 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             md_product_serial.getCustomer_code(),
                             md_product_serial.getProduct_code(),
                             md_product_serial.getSerial_tmp()
-                    ).toSqlQuery()
+                    ).toSqlQuery(),
+                    db
+
             );
             //
-            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
+            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         }
-
-        closeDB();
-
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
     }
 
     @Override
@@ -400,7 +439,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void remove(String sQuery) {
-        openDB();
+        remove(sQuery,null);
+    }
+
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public void remove(String sQuery, SQLiteDatabase dbInstance) {
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
             db.execSQL(sQuery);
@@ -409,14 +461,148 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
+        if(dbInstance == null) {
+            closeDB();
+        }
+
+    }
+
+    //region Metodo para processamento via transaction
+    /**
+     * Metodo especifico para sincronizar os dados do serial
+     *
+     * @param md_product_serials
+     * @return
+     */
+    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials){
+        boolean processReturn = false;
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            boolean forceRollback = false;
+            for (MD_Product_Serial md_product_serial : md_product_serials) {
+
+                MD_Product_Serial dbSerial = this.getByString(
+                        new MD_Product_Serial_Sql_002(
+                                md_product_serial.getCustomer_code(),
+                                md_product_serial.getProduct_code(),
+                                md_product_serial.getSerial_id()
+                        ).toSqlQuery(),db);
+                //
+                if(dbSerial != null && dbSerial.getSerial_code() > 0){
+                    md_product_serial.setSerial_tmp(dbSerial.getSerial_tmp());
+                    md_product_serial.setSync_process(1);
+                    //
+                    this.addUpdate(md_product_serial,db);
+                }else{
+                    md_product_serial.setSync_process(1);
+                    //
+                    this.addUpdateTmp(md_product_serial,db);
+                }
+
+            }
+            //
+            db.setTransactionSuccessful();
+            processReturn = true;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            processReturn = false;
+        } finally {
+            db.endTransaction();
+        }
+
         closeDB();
+
+        return processReturn ;
+    }
+
+    public boolean processSerialConsiliation(){
+        boolean processReturn = false;
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+            //Seleciona todos os seriais que estão no banco e não foram atualizados
+            //via sincronismo(metodo processSerialSync), ou seja não foi enviado pelo server e deve ser deletado.
+            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
+                    this.query(
+                            new MD_Product_Serial_Sql_011(
+                                    ToolBox_Con.getPreference_Customer_Code(context)
+                            ).toSqlQuery(),
+                            db
+                    );
+            //Faz loop no seriais que não vieram via sincronismo
+            //Avaliando se esse serial tem vinculo com algum S.O
+            for (MD_Product_Serial productSerial : serialDelCheck) {
+                HMAux auxExists = this.getByStringHM(
+                        new MD_Product_Serial_Sql_012(
+                                productSerial.getCustomer_code(),
+                                productSerial.getProduct_code(),
+                                productSerial.getSerial_code()
+                        ).toSqlQuery(),
+                        db
+                );
+                //Se não existir vinculo, apaga o serial e seus trackings
+                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
+                    this.remove(
+                            new MD_Product_Serial_Sql_013(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery(),
+                            db
+                    );
+                    //
+                    this.remove(
+                            new MD_Product_Serial_Tracking_Sql_004(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery(),
+                            db
+                    );
+                }
+            }
+            //
+            db.setTransactionSuccessful();
+            processReturn = true;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            processReturn = false;
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
+
+        return processReturn ;
     }
 
     @Override
     public MD_Product_Serial getByString(String sQuery) {
-        MD_Product_Serial md_product_serial = null;
+        return getByString(sQuery,null);
+    }
 
-        openDB();
+    /**
+     * Metodo modificado para trabahar com a instancia de banco passada por parametro
+     * @param sQuery
+     * @param dbInstance
+     * @return
+     */
+    public MD_Product_Serial getByString(String sQuery, SQLiteDatabase dbInstance) {
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        //
+        MD_Product_Serial md_product_serial = null;
+        //
         try {
 
             Cursor cursor = db.rawQuery(sQuery, null);
@@ -439,7 +625,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                                 md_product_serial.getCustomer_code(),
                                                 md_product_serial.getProduct_code(),
                                                 md_product_serial.getSerial_tmp()
-                                        ).toSqlQuery()
+                                        ).toSqlQuery(),
+                                        db
                                 )
                 );
             }
@@ -450,16 +637,31 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        closeDB();
-
+        if (dbInstance == null) {
+            closeDB();
+        }
         return md_product_serial;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        HMAux hmAux = null;
-        openDB();
+        return getByStringHM(sQuery,null);
+    }
 
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance ) {
+
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        HMAux hmAux = null;
         String s_query_div[] = sQuery.split(";");
 
         Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
@@ -478,18 +680,33 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        closeDB();
-
+        if(dbInstance == null){
+            closeDB();
+        }
+        //
         return hmAux;
     }
 
     @Override
     public List<MD_Product_Serial> query(String sQuery) {
+        return query(sQuery,null);
+    }
 
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     * @param dbInstance
+     */
+    public List<MD_Product_Serial> query(String sQuery,SQLiteDatabase dbInstance) {
+
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        //
         List<MD_Product_Serial> md_product_serials = new ArrayList<>();
-
-        openDB();
-
+        //
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
 
@@ -510,7 +727,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                                     uAux.getCustomer_code(),
                                                     uAux.getProduct_code(),
                                                     uAux.getSerial_tmp()
-                                            ).toSqlQuery()
+                                            ).toSqlQuery(),
+                                            db
                                     )
                     );
                 }
@@ -524,7 +742,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        closeDB();
+        if(dbInstance == null){
+            closeDB();
+        }
         return md_product_serials;
     }
 

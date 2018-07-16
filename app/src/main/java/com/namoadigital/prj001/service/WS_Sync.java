@@ -130,12 +130,7 @@ import com.namoadigital.prj001.sql.MD_Product_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
@@ -728,7 +723,88 @@ public class WS_Sync extends IntentService {
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                     ).toSqlQuery()
             );
-            //
+            //region OLD SERIAL PROCESS - SEM TRANSACTION COMPARTILHANDO DB INSTANCE
+//            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
+//
+//            for (File _file : files_serial) {
+//
+//                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
+//                        ToolBox.jsonFromOracle(
+//                                ToolBox_Inf.getContents(_file)
+//                        ),
+//                        new TypeToken<ArrayList<MD_Product_Serial>>() {
+//                        }.getType()
+//                );
+//                //Analisa lista enviada pra atualizar ou inserir registros
+//                for (MD_Product_Serial serverSerial : serialList) {
+//                    MD_Product_Serial dbSerial = serialDao.getByString(
+//                            new MD_Product_Serial_Sql_009(
+//                                    serverSerial.getCustomer_code(),
+//                                    serverSerial.getProduct_code(),
+//                                    (int) serverSerial.getSerial_code()
+//                            ).toSqlQuery()
+//                    );
+//                    //Se encontrou no banco, seta o serial_tmp do banco no obj to server
+//                    //e o salva no banco.
+//                    //Se não existe, chama metodo que insere registro ja criando um tmp
+//                    //Em ambos os casos seta sync_process para 1
+//                    if (dbSerial != null && dbSerial.getSerial_code() > 0) {
+//                        serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
+//                        serverSerial.setSync_process(1);
+//                        //
+//                        serialDao.addUpdate(serverSerial);
+//                    } else {
+//                        serverSerial.setSync_process(1);
+//                        //
+//                        serialDao.addUpdateTmp(serverSerial);
+//                    }
+//                }
+//
+//            }
+//
+//            //Se não vier arquivo de serial, limpa todos que não tiverem vinculo com S.O
+//            //Seleciona todos os seriais que estão no banco e não foram atualizados
+//            //no loop de cima, ou seja não foi enviado pelo server
+//            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
+//                    serialDao.query(
+//                            new MD_Product_Serial_Sql_011(
+//                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+//                            ).toSqlQuery()
+//                    );
+//            //Faz loop no seriais que não vieram via sincronismo
+//            //Avaliando se esse serial tem vinculo com algum S.O
+//            for (MD_Product_Serial productSerial : serialDelCheck) {
+//                HMAux auxExists = serialDao.getByStringHM(
+//                        new MD_Product_Serial_Sql_012(
+//                                productSerial.getCustomer_code(),
+//                                productSerial.getProduct_code(),
+//                                productSerial.getSerial_code()
+//                        ).toSqlQuery()
+//                );
+//                //Se não existir vinculo, apaga o serial e seus trackings
+//                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
+//                    serialDao.remove(
+//                            new MD_Product_Serial_Sql_013(
+//                                    productSerial.getCustomer_code(),
+//                                    productSerial.getProduct_code(),
+//                                    productSerial.getSerial_code()
+//                            ).toSqlQuery()
+//                    );
+//                    //
+//                    trackingDao.remove(
+//                            new MD_Product_Serial_Tracking_Sql_004(
+//                                    productSerial.getCustomer_code(),
+//                                    productSerial.getProduct_code(),
+//                                    productSerial.getSerial_code()
+//                            ).toSqlQuery()
+//                    );
+//                }
+//            }
+            //endregion
+            /**
+             * Novo processo de sincronisa de serial usando transaction + dbInstance compartilhada
+             *
+             */
             File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
 
             for (File _file : files_serial) {
@@ -740,70 +816,27 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<MD_Product_Serial>>() {
                         }.getType()
                 );
-                //Analisa lista enviada pra atualizar ou inserir registros
-                for (MD_Product_Serial serverSerial : serialList) {
-                    MD_Product_Serial dbSerial = serialDao.getByString(
-                            new MD_Product_Serial_Sql_009(
-                                    serverSerial.getCustomer_code(),
-                                    serverSerial.getProduct_code(),
-                                    (int) serverSerial.getSerial_code()
-                            ).toSqlQuery()
-                    );
-                    //Se encontrou no banco, seta o serial_tmp do banco no obj to server
-                    //e o salva no banco.
-                    //Se não existe, chama metodo que insere registro ja criando um tmp
-                    //Em ambos os casos seta sync_process para 1
-                    if (dbSerial != null && dbSerial.getSerial_code() > 0) {
-                        serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
-                        serverSerial.setSync_process(1);
-                        //
-                        serialDao.addUpdate(serverSerial);
-                    } else {
-                        serverSerial.setSync_process(1);
-                        //
-                        serialDao.addUpdateTmp(serverSerial);
-                    }
-                }
+                /**
+                 * Chama novo metodo do DAO que processa o sincronismo dos seriais.
+                 * Vericar se o serial ja existe no banco local e :
+                 * SE EXISTIR:
+                 *      Atribui o tmp que ja existia no objeto, seta sync_process para 1
+                 *      e atualiza no banco.
+                 * SE NÃO EXISTIR:
+                 *     Seta sync_process para 1 e chama metodo de insert criando TMP
+                 */
+                serialDao.processSerialSync(serialList);
+
             }
-            //Se não vier arquivo de serial, limpa todos que não tiverem vinculo com S.O
-            //Seleciona todos os seriais que estão no banco e não foram atualizados
-            //no loop de cima, ou seja não foi enviado pelo server
-            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
-                    serialDao.query(
-                            new MD_Product_Serial_Sql_011(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                            ).toSqlQuery()
-                    );
-            //Faz loop no seriais que não vieram via sincronismo
-            //Avaliando se esse serial tem vinculo com algum S.O
-            for (MD_Product_Serial productSerial : serialDelCheck) {
-                HMAux auxExists = serialDao.getByStringHM(
-                        new MD_Product_Serial_Sql_012(
-                                productSerial.getCustomer_code(),
-                                productSerial.getProduct_code(),
-                                productSerial.getSerial_code()
-                        ).toSqlQuery()
-                );
-                //Se não existir vinculo, apaga o serial e seus trackings
-                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
-                    serialDao.remove(
-                            new MD_Product_Serial_Sql_013(
-                                    productSerial.getCustomer_code(),
-                                    productSerial.getProduct_code(),
-                                    productSerial.getSerial_code()
-                            ).toSqlQuery()
-                    );
-                    //
-                    trackingDao.remove(
-                            new MD_Product_Serial_Tracking_Sql_004(
-                                    productSerial.getCustomer_code(),
-                                    productSerial.getProduct_code(),
-                                    productSerial.getSerial_code()
-                            ).toSqlQuery()
-                    );
-                }
-            }
+            /**
+             * Após inserir todos os seriais de todos os arquivos,
+             * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,
+             * e analisa se eles possuem vinculo com a S.O.
+             * Se não possuir, apaga serial e tracking
+             */
+            serialDao.processSerialConsiliation();
             //FIM DO PROCESSAMENTO DO SERIAL
+
             //region Tracking
             //
             // Processamento Tracking do serial
