@@ -75,6 +75,10 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         this.context = context;
         this.resource = resource;
         this.data = data;
+        //
+        this.data_filtered = new ArrayList<>();
+        this.data_filtered.addAll(data);
+        //
         this.config = config;
         this.key_code = key_code;
         this.key_id = key_id;

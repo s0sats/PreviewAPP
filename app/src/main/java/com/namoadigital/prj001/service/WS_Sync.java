@@ -149,6 +149,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by neomatrix on 16/01/17.
  */
@@ -176,6 +178,11 @@ public class WS_Sync extends IntentService {
 
         try {
 
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", "Erro: Sem acesso ao Servidor!!!", "", "0");
+                //
+                return;
+            }
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
@@ -542,11 +549,11 @@ public class WS_Sync extends IntentService {
                 );
 
                 /*
-                * Verifica se operação das preferencias ainda
-                * esta na lista de operações enviadas.
-                * Se não tiver, ao final do processo envia para change customer.
-                *
-                */
+                 * Verifica se operação das preferencias ainda
+                 * esta na lista de operações enviadas.
+                 * Se não tiver, ao final do processo envia para change customer.
+                 *
+                 */
                 if (!operationExist) {
                     for (MD_Operation operation : operations) {
                         if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
@@ -580,10 +587,10 @@ public class WS_Sync extends IntentService {
                 );
 
                 /*
-                * Verifica se site das preferencias
-                * esta na lista de site enviadas.
-                * Se não tiver, ao final do processo desloga usr.
-                */
+                 * Verifica se site das preferencias
+                 * esta na lista de site enviadas.
+                 * Se não tiver, ao final do processo desloga usr.
+                 */
                 if (!siteExist) {
                     for (MD_Site site : sites) {
                         if (ToolBox_Con
@@ -637,8 +644,8 @@ public class WS_Sync extends IntentService {
                     for (MD_Product product : products) {
                         if (product.getFlag_offline() == 1) {
                             boolean isProductInList = false;
-                            for(Sync_Checklist sync_prod : newSyncList){
-                                if(
+                            for (Sync_Checklist sync_prod : newSyncList) {
+                                if (
                                         sync_prod.getCustomer_code() == product.getCustomer_code()
                                                 && sync_prod.getProduct_code() == product.getProduct_code()
                                         ) {
@@ -647,10 +654,10 @@ public class WS_Sync extends IntentService {
                                 }
                             }
                             //
-                            if(!isProductInList){
+                            if (!isProductInList) {
                                 //
-                                Calendar cDate =  Calendar.getInstance();
-                                SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+                                Calendar cDate = Calendar.getInstance();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                                 String last_update = dateFormat.format(cDate.getTime());
                                 //
                                 Sync_Checklist objSyncChkl = new Sync_Checklist();
@@ -1434,17 +1441,17 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
             /*
-            *
-            * Selecionar somente registros com data_serv  da local
-            *
-            * Fazer loop na lista retornada e verificar se existe aquele registro
-            * na tab local e com status <> de schedule.
-            * Se status <> de Schedule, ignorar registro enviado pelo server.
-            * Add itens enviados a tab local.
-            *
-            * Fields
-            * Fazer loop nos fields e se não existir cabeçalalho nos itens, ignorar.
-            */
+             *
+             * Selecionar somente registros com data_serv  da local
+             *
+             * Fazer loop na lista retornada e verificar se existe aquele registro
+             * na tab local e com status <> de schedule.
+             * Se status <> de Schedule, ignorar registro enviado pelo server.
+             * Add itens enviados a tab local.
+             *
+             * Fields
+             * Fazer loop nos fields e se não existir cabeçalalho nos itens, ignorar.
+             */
 
             //
             // Processamento Custom Form Local
@@ -1503,11 +1510,11 @@ public class WS_Sync extends IntentService {
                             new TypeToken<ArrayList<GE_Custom_Form_Local>>() {
                             }.getType()
                     );
-                /*
-                * Valida se cada forms recebido  deve ser ignorado ou não.
-                * Form só é ignorado caso o form recebido já exista na base local
-                * com um STATUS diferente de SCHEDULE
-                */
+                    /*
+                     * Valida se cada forms recebido  deve ser ignorado ou não.
+                     * Form só é ignorado caso o form recebido já exista na base local
+                     * com um STATUS diferente de SCHEDULE
+                     */
                     for (GE_Custom_Form_Local schedules : scheduleForms) {
                         boolean add = true;
                         for (GE_Custom_Form_Local local : formLocals) {
