@@ -57,4 +57,6 @@ public interface Act005_Main_View {
 
     int getSendBadgeQty();
 
+    int getImagesToUpload();
+
 }

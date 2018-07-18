@@ -35,6 +35,12 @@ public class WS_Upload_Img extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
 
+            if (ToolBox_Con.getPreference_Customer_Code(getApplicationContext()) == -1L) {
+                //programAlarm(getApplicationContext());
+                //
+                return;
+            }
+
             Gson gson = new Gson();
             TUploadImg_Env env = new TUploadImg_Env();
             env.setApp_code(Constant.PRJ001_CODE);
@@ -55,7 +61,7 @@ public class WS_Upload_Img extends IntentService {
                     new GE_File_Sql_001().toSqlQuery()
             );
             //SE NENHUM ITEM A ENVIAR, SAI DO SERVIÇO SEM CHAMAR NOTIFICAÇÃO
-            if(geFiles.size() == 0){
+            if (geFiles.size() == 0) {
                 return;
             }
             //Verifica necessida de notificação de upload
@@ -94,13 +100,13 @@ public class WS_Upload_Img extends IntentService {
 
         } catch (Exception e) {
             programAlarm(getApplicationContext());
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             WBR_Upload_Img.IS_RUNNING = false;
             WBR_Upload_Img.completeWakefulIntent(intent);
             //
-            if(!ToolBox_Inf.isUploadRunning()){
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
+            if (!ToolBox_Inf.isUploadRunning()) {
+                ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
             }
         }
     }

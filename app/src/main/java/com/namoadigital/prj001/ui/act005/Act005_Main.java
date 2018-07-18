@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -37,6 +36,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -45,11 +45,13 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
@@ -57,6 +59,7 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
+import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
@@ -493,21 +496,34 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
                         //
-                        alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
-                        alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
-                        //
-                        listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //if(ToolBox_Con.isOnline(context)) {
-                                //Reseta preferencias do Customer e volta para
-                                //Act002 - lista de customer
-                                changeCustomer();
+                        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
+
+                            ToolBox.alertMSG(
+                                    context,
+                                    "Dados ou Imagens Pendentes",
+                                    "Mudanca de Customer so podem ocorrer sem dados pendentes para transmissao",
+                                    null,
+                                    -1,
+                                    null
+                            );
+
+                        } else {
+                            alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
+                            //
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //if(ToolBox_Con.isOnline(context)) {
+                                    //Reseta preferencias do Customer e volta para
+                                    //Act002 - lista de customer
+                                    changeCustomer();
 //                                }else{
 //                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
 //                                }
-                            }
-                        };
+                                }
+                            };
+                        }
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
@@ -704,7 +720,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             @Override
             public void logoutClicked() {
-                if (getSendBadgeQty() > 0) {
+                if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
                     //
                     callSendAction("LOGOUT");
                 } else {
@@ -832,6 +848,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public int getSendBadgeQty() {
         return mAdapter.getBadgeQty(MENU_ID_SEND_DATA);
+    }
+
+    @Override
+    public int getImagesToUpload() {
+        GE_FileDao geFileDao = new GE_FileDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles;
+
+        geFiles = (ArrayList<GE_File>) geFileDao.query(
+                new GE_File_Sql_001().toSqlQuery()
+        );
+
+        return geFiles.size();
     }
 
     @Override
@@ -993,6 +1026,70 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     public void callSendAction(final String sAction) {
+        switch (sAction.toUpperCase()) {
+            case "EXIT":
+                callExitAction();
+                break;
+            case "LOGOUT":
+                callLogOutAction();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            default:
+                break;
+        }
+    }
+
+//
+//
+//
+//
+//
+//
+//        ToolBox.alertMSG_YES_NO(
+//                Act005_Main.this,
+//                hmAux_Trans.get("alert_data_to_send_ttl"),
+//                hmAux_Trans.get("alert_data_to_send_msg"),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                        switch (sAction.toUpperCase()) {
+//                            case "EXIT":
+//                                break;
+//                            case "LOGOUT":
+//                                mDrawerLayout.closeDrawer(GravityCompat.START);
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//
+//                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+//                    }
+//                },
+//                2,
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        switch (sAction.toUpperCase()) {
+//                            case "EXIT":
+//                                ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+//                                //
+//                                finish();
+//                                break;
+//                            case "LOGOUT":
+//                                mPresenter.showLogoutDialog();
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                    }
+//                }
+//        );
+
+    private void callExitAction() {
+
+
         ToolBox.alertMSG_YES_NO(
                 Act005_Main.this,
                 hmAux_Trans.get("alert_data_to_send_ttl"),
@@ -1000,18 +1097,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-                        switch (sAction.toUpperCase()) {
-                            case "EXIT":
-                                break;
-                            case "LOGOUT":
-                                mDrawerLayout.closeDrawer(GravityCompat.START);
-                                break;
-                            default:
-                                break;
-                        }
-
                         mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                        //
+                        activateUpload(context);
                     }
                 },
                 2,
@@ -1019,21 +1107,42 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        switch (sAction.toUpperCase()) {
-                            case "EXIT":
-                                ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
-                                //
-                                finish();
-                                break;
-                            case "LOGOUT":
-                                mPresenter.showLogoutDialog();
-                                break;
-                            default:
-                                break;
-                        }
+                        ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+                        //
+                        finish();
                     }
                 }
         );
+
+
+    }
+
+    private void callLogOutAction() {
+        ToolBox.alertMSG(
+                Act005_Main.this,
+                hmAux_Trans.get("alert_data_to_send_ttl"),
+                "Dados ou Imagens Pendentes de Envio!!! O LogOut nao poderá ser executado se todos os dados e imagens forem enviados para o servidor.",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                        activateUpload(context);
+                    }
+                },
+                -1,
+                null
+        );
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     //TRATA UPDATE_REQUIRED - CANCEL
