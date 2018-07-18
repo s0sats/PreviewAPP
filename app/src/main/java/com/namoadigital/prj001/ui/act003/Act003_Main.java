@@ -94,6 +94,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
         mk_search_sites = (MKEditTextNM) findViewById(R.id.act003_mket_search_sites);
+        mk_search_sites.setHint(hmAux_Trans.get("lbl_search_sites_hint"));
         mk_search_sites.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -212,6 +213,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         transList.add("alert_no_site_msg");
         transList.add("alert_logout_ttl");
         transList.add("alert_logout_msg");
+        transList.add("lbl_search_sites_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

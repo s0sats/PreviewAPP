@@ -86,6 +86,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         transList.add("alert_no_operation_msg");
         transList.add("lbl_customer");
         transList.add("lbl_site");
+        transList.add("lbl_search_operations_hint");
         //transList.add("lbl_external_site");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -108,6 +109,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         tv_zone_val = (TextView) findViewById(R.id.act004_tv_zone_val);
         //
         mk_search_operations = (MKEditTextNM) findViewById(R.id.act004_mket_search_operations);
+        mk_search_operations.setHint(hmAux_Trans.get("lbl_search_operations_hint"));
         mk_search_operations.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
