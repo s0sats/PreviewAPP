@@ -91,8 +91,8 @@ public class Sql_Act020_002 implements Specification {
                                 "     " + MD_Product_SerialDao.TABLE + " s on p.customer_code = s.customer_code\n" +
                                 "                             and p.product_code = s.product_code\n" +
                                 "                             and ( p.site_restriction = '0' \n" +
-                                "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '1')" +
-                                "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '0' AND s.site_code = '" + site_code + "')" +
+                                "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '1')\n" +
+                                "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '0' AND s.site_code = '" + site_code + "')\n" +
                                 "                                 )\n" +
                                 " LEFT JOIN\n" +
                                 "     " + MD_Product_Serial_TrackingDao.TABLE + " t on t.customer_code = s.customer_code\n" +
