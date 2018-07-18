@@ -92,6 +92,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:inputType="text"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             app:mBARCODE="false"
             app:mNFC="false"
             app:mOCR="false" />
