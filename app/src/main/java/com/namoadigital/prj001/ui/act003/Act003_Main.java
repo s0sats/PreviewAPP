@@ -65,7 +65,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(context, mModule_Code, Constant.ACT003);
         //
         loadTranslation();
-        //
     }
 
     public void callAct033(Context context) {
@@ -148,6 +147,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 mPresenter.setSiteCode(item);
+                //
+                ToolBox_Inf.hideSoftKeyboard(Act003_Main.this);
             }
         });
     }

@@ -218,8 +218,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private void forceLogoutBySessionNotFound() {
         ToolBox.alertMSG(
                 context,
-                hmAux_Trans.get("alert_forced_logout_ttl"),
-                hmAux_Trans.get("alert_forced_logout_msg"),
+                hmAux_Trans.get("alert_logout_data_to_send_ttl"),
+                hmAux_Trans.get("alert_logout_data_to_send_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -369,11 +369,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_ws_general_error_msg");
         transList.add("alert_results_ttl");
         transList.add("alert_ws_serial_error_msg");
+        //
         transList.add("alert_forced_logout_ttl");
         transList.add("alert_forced_logout_msg");
         //
         transList.add("alert_data_to_send_ttl");
         transList.add("alert_data_to_send_msg");
+        //
+        transList.add("alert_changecustomer_data_to_send_ttl");
+        transList.add("alert_changecustomer_data_to_send_msg");
+        //
+        transList.add("alert_logout_data_to_send_ttl");
+        transList.add("alert_logout_data_to_send_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -500,8 +507,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                             ToolBox.alertMSG(
                                     context,
-                                    "Dados ou Imagens Pendentes",
-                                    "Mudanca de Customer so podem ocorrer sem dados pendentes para transmissao",
+                                    hmAux_Trans.get("alert_changecustomer_data_to_send_ttl"),
+                                    hmAux_Trans.get("alert_changecustomer_data_to_send_msg"),
                                     null,
                                     -1,
                                     null
@@ -1011,7 +1018,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        if (getSendBadgeQty() > 0) {
+                        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
                             callSendAction("EXIT");
                         } else {
                             ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
@@ -1039,57 +1046,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
-//
-//
-//
-//
-//
-//
-//        ToolBox.alertMSG_YES_NO(
-//                Act005_Main.this,
-//                hmAux_Trans.get("alert_data_to_send_ttl"),
-//                hmAux_Trans.get("alert_data_to_send_msg"),
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                        switch (sAction.toUpperCase()) {
-//                            case "EXIT":
-//                                break;
-//                            case "LOGOUT":
-//                                mDrawerLayout.closeDrawer(GravityCompat.START);
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//
-//                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-//                    }
-//                },
-//                2,
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                        switch (sAction.toUpperCase()) {
-//                            case "EXIT":
-//                                ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
-//                                //
-//                                finish();
-//                                break;
-//                            case "LOGOUT":
-//                                mPresenter.showLogoutDialog();
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                }
-//        );
-
     private void callExitAction() {
-
-
         ToolBox.alertMSG_YES_NO(
                 Act005_Main.this,
                 hmAux_Trans.get("alert_data_to_send_ttl"),
@@ -1098,7 +1055,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                        //
                         activateUpload(context);
                     }
                 },
@@ -1106,29 +1062,30 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        activateUpload(context);
+                        //
                         ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
                         //
                         finish();
                     }
                 }
         );
-
-
     }
 
     private void callLogOutAction() {
         ToolBox.alertMSG(
                 Act005_Main.this,
-                hmAux_Trans.get("alert_data_to_send_ttl"),
-                "Dados ou Imagens Pendentes de Envio!!! O LogOut nao poderá ser executado se todos os dados e imagens forem enviados para o servidor.",
+                hmAux_Trans.get("alert_logout_data_to_send_ttl"),
+                hmAux_Trans.get("alert_logout_data_to_send_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                        activateUpload(context);
+                        if (ToolBox_Con.isOnline(context)) {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                            mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                            activateUpload(context);
+                        }
                     }
                 },
                 -1,

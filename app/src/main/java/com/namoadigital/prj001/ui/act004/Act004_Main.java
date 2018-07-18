@@ -76,7 +76,6 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(context, mModule_Code, Constant.ACT004);
         //
         loadTranslation();
-        //
     }
 
     private void loadTranslation() {
