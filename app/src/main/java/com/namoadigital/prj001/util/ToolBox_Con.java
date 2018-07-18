@@ -17,6 +17,9 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -452,7 +455,7 @@ public class ToolBox_Con {
 
 
     //region Chat_Msg_Prefix
-    public static void setPreference_Chat_Msg_Prefix(Context context, String chat_msg_prefix ) {
+    public static void setPreference_Chat_Msg_Prefix(Context context, String chat_msg_prefix) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -1040,6 +1043,27 @@ public class ToolBox_Con {
         }
         //
         return "NO_SERVICE";
+    }
+
+    public static boolean isHostAvailable() {
+        return isHostAvailable(
+                Constant.WS_HOST,
+                Constant.WS_PORT,
+                Constant.WS_TIMEOUT
+        );
+    }
+
+    public static boolean isHostAvailable(final String host, final int port, final int timeout) {
+        try (final Socket socket = new Socket()) {
+            final InetAddress inetAddress = InetAddress.getByName(host);
+            final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
+
+            socket.connect(inetSocketAddress, timeout);
+            return true;
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
