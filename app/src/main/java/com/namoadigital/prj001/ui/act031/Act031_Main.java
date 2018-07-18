@@ -221,6 +221,9 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 if(ToolBox_Con.isOnline(context)) {
                     mPresenter.executeSerialSave();
                 }else{
+                    frgSerialEdit.setNew_serial(false);
+                    refreshUI();
+                    //
                     showAlertDialog(
                             //hmAux_Trans.get("alert_no_connection_title"),
                             hmAux_Trans.get("serial_ttl"),

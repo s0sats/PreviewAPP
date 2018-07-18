@@ -85,6 +85,7 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         transList.add("lbl_customer");
         transList.add("lbl_site");
         transList.add("alert_no_zone_found");
+        transList.add("lbl_search_zones_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -118,6 +119,7 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         tv_no_site = (TextView) findViewById(R.id.act033_tv_no_zone);
         //
         mk_search_zones = (MKEditTextNM) findViewById(R.id.act033_mket_search_zones);
+        mk_search_zones.setHint(hmAux_Trans.get("lbl_search_zones_hint"));
         mk_search_zones.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -231,6 +233,7 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         tv_no_site.setVisibility(View.VISIBLE);
         //
         lv_zone.setVisibility(View.GONE);
+        mk_search_zones.setVisibility(View.GONE);
     }
 
     @Override

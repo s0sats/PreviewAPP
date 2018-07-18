@@ -2087,6 +2087,12 @@ public class ToolBox_Inf {
                             .setTicker("");
 
             mBuilder.setAutoCancel(true);
+            //18/07/2018
+            //A notificação de upload agoranão é mais cancelavel
+            if(notification_id == Constant.NOTIFICATION_UPLOAD){
+                mBuilder.setAutoCancel(false);
+                mBuilder.setOngoing(true);
+            }
 
             NotificationManager mNotifyManager =
                     (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
