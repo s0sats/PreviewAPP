@@ -167,8 +167,25 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
+            //Apaga Trackings antesde chamar addUpdate
+            md_product_serial_trackingDao.remove(
+                    new MD_Product_Serial_Tracking_Sql_002(
+                            md_product_serial.getCustomer_code(),
+                            md_product_serial.getProduct_code(),
+                            md_product_serial.getSerial_tmp()
+                    ).toSqlQuery(),
+                    db
 
-            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
+            );
+
+            //Seta a pk nos tracking
+            for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
+                md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+            }
+            //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
+            if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false, db);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -309,8 +326,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
             );
             //
-            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
-
+            //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
+            if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -405,9 +424,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                 md_product_serial.getSerial_tmp()
                         ).toSqlQuery()
                 );
-                //
-                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
 
+                //Seta a pk nos tracking
+                for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
+                    md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+                }
+                //
+                //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
+                if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                    md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
+                }
             }
 
             //db.setTransactionSuccessful();
