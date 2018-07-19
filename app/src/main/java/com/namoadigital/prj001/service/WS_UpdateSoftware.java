@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -31,6 +34,12 @@ public class WS_UpdateSoftware extends IntentService {
         StringBuilder sb = new StringBuilder();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.ws_exception_server_not_found), "", "0");
+                //
+                return;
+            }
 
             if(!ToolBox_Inf.isDownloadRunning()){
                 //Log.v("WS_Customer_Logo","true");

@@ -25,6 +25,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
@@ -49,6 +51,13 @@ public class WS_AP_Search extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             int sync_required = bundle.getInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 0);
             long customer_code = bundle.getLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, -1L);
             int custom_form_type = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, -1);
@@ -282,6 +291,5 @@ public class WS_AP_Search extends IntentService {
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
                 translist);
     }
-
 
 }

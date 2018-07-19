@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
@@ -27,6 +28,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by DANIEL.LUCHE on 10/02/2017.
@@ -59,6 +62,13 @@ public class WS_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             formDataDao = new GE_Custom_Form_DataDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -174,6 +184,7 @@ public class WS_Save extends IntentService {
         translist.add("msg_forms_sent");
         translist.add("msg_error_token_excep");
         translist.add("msg_error_save");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

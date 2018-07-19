@@ -179,10 +179,11 @@ public class WS_Sync extends IntentService {
         try {
 
             if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", "Erro: Sem acesso ao Servidor!!!", "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
                 //
                 return;
             }
+
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
@@ -1739,6 +1740,7 @@ public class WS_Sync extends IntentService {
         translist.add("msg_no_forms_found");
         translist.add("msg_lost_access_to_site_or_operation");
         translist.add("msg_lost_access_to_zone");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

@@ -28,6 +28,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
@@ -52,6 +54,11 @@ public class WS_AP_Save extends IntentService {
         boolean menu_send_process = bundle.getBoolean(Constant.PROCESS_MENU_SEND, false);
 
         try {
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
             //
             processApSave(menu_send_process);
 
@@ -283,6 +290,7 @@ public class WS_AP_Save extends IntentService {
         translist.add("msg_processing_data_returned");
         translist.add("msg_end_ap_save");
         translist.add("msg_ap_removed");
+
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

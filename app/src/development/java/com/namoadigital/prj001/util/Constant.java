@@ -60,7 +60,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_ROOM_AP = "https://nchatdev.namoadigital.com/joinFormAp";
     public static final String WS_CHAT_ADD_USER_FORM_AP = "https://nchatdev.namoadigital.com/addUserFormAp";
 
-
     // Connection Test
     public static final String WS_HOST = "dev.namoadigital.com";
     public static final int WS_PORT = 443;

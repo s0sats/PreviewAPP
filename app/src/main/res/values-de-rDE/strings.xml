@@ -73,6 +73,10 @@
     <string name="ws_exception_contact_admin_json_syntax">The received data is unreadable!\nContact support team.</string>
     <string name="ws_exception_contact_admin_oracle">A database error has occurred!\nContact support team!</string>
     <string name="ws_exception_contact_admin_timeout">Time limit for server response has exceeded!\nCheck your  connections and try again!</string>
+    //
+    <string name="ws_exception_connection_error">A connection error has occurred!\nCheck your network connections and try again.\nIf the error persists, send a support file through the main menu.</string>
+    <string name="ws_exception_unexpected_error">An unexpected error has occurred!\nIf the error persists, please send a support file through the main menu.</string>
+    //
     <string name="generic_error_lbl">ERROR:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Sync Required</string>
@@ -92,5 +96,6 @@
     <string name="generic_alert_no_site_ttl">Standortliste ist leer</string>
     <string name="generic_alert_no_site_msg">Standort wurde nicht gefunden. Prüfen Sie Ihre Zugriffsberechtigung oder versuchen Sie es noch einmal über die Option zurück.</string>
     <string name="act002_offline_logout_msg">Connection not found!\nServer app sessions will not logged off!</string>
+    <string name="ws_exception_server_not_found">Could not connect to the server!\nIf the error persists, send a support file through the main menu.</string>
 
 </resources>

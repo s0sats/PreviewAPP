@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.TEnableNFC_Env;
@@ -20,6 +21,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by d.luche on 08/05/2017.
@@ -45,6 +48,13 @@ public class WS_Enable_NFC extends IntentService {
         loadTranslation();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             processEnableNFC();
 
         } catch (Exception e) {
@@ -117,6 +127,7 @@ public class WS_Enable_NFC extends IntentService {
 
         translist.add("msg_enabling_nfc");
         translist.add("msg_nfc_enabled");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

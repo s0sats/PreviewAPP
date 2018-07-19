@@ -19,6 +19,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by neomatrix on 16/01/17.
  */
@@ -41,6 +43,13 @@ public class WS_UserAuthor extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             long so_customer = bundle.getLong(Constant.SO_PARAM_CUSTOMER_CODE, -1);
             long so_prefix = bundle.getLong(Constant.SO_PARAM_SO_PREFIX, 1900);
             long so_code = bundle.getLong(Constant.SO_PARAM_SO_CODE, 0);
@@ -153,6 +162,7 @@ public class WS_UserAuthor extends IntentService {
         translist.add("msg_no_so_found");
         translist.add("msg_save_ok");
         translist.add("msg_no_so_full_returned");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

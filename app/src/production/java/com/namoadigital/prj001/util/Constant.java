@@ -51,4 +51,9 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_LEAVE_ROOM = "https://nchat.namoadigital.com/leaveRoom";
     public static final String WS_CHAT_ROOM_AP = "https://nchat.namoadigital.com/joinFormAp";
 
+    // Connection Test
+    public static final String WS_HOST = "portal.namoadigital.com";
+    public static final int WS_PORT = 443;
+    public static final int WS_TIMEOUT = 500;
+
 }

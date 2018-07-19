@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.TLogout_Env;
 import com.namoadigital.prj001.model.TLogout_Rec;
@@ -15,6 +17,8 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by DANIEL.LUCHE on 24/03/2017.
@@ -35,6 +39,12 @@ public class WS_Logout extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.ws_exception_server_not_found), "", "0");
+                //
+                return;
+            }
 
             String customer_list = bundle.getString(Constant.WS_LOGOUT_CUSTOMER_LIST);
             String user_code =  ToolBox_Con.getPreference_User_Code(getApplicationContext());

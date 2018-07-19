@@ -28,6 +28,7 @@ import java.util.List;
 
 import static com.namoadigital.prj001.service.WS_SO_Save.SO_NO_EMPTY_LIST;
 import static com.namoadigital.prj001.service.WS_SO_Save.SO_RETURN_LIST;
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 
 /**
@@ -52,6 +53,13 @@ public class WS_SO_Approval extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             soDao = new SM_SODao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -230,6 +238,7 @@ public class WS_SO_Approval extends IntentService {
         translist.add("msg_no_so_found");
         translist.add("msg_save_ok");
         translist.add("msg_no_so_full_returned");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

@@ -21,6 +21,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 public class WS_SO_Service_Search extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
@@ -38,6 +40,13 @@ public class WS_SO_Service_Search extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             int contract_code = bundle.getInt(SM_SODao.CONTRACT_CODE,0);
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
@@ -140,6 +149,7 @@ public class WS_SO_Service_Search extends IntentService {
         translist.add("msg_searching_services");
         translist.add("msg_receiving_services");
         translist.add("msg_end_proccess");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

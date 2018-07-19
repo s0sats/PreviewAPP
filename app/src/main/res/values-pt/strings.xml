@@ -70,6 +70,10 @@
     <string name="ws_exception_contact_admin_json_syntax">Os dados recebidos não podem ser lidos!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_oracle">Ocorreu um erro de banco de dados!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_timeout">Tempo de resposta excedido!\nVerifique suas conexões e tente novamente!</string>
+    //
+    <string name="ws_exception_connection_error">Ocorreu um erro de conexão!\nVerifique suas conexões de rede e tente novamente.\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
+    <string name="ws_exception_unexpected_error">Ocorreu um erro não identificado!\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
+    //
     <string name="generic_error_lbl">ERRO:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Sincronismo Necessário</string>
@@ -89,6 +93,7 @@
     <string name="generic_alert_no_site_ttl">Lista de Site vazia</string>
     <string name="generic_alert_no_site_msg">Nenhum Site encontrado.\nVerifique se você possui acesso a algum Site ou clique em voltar e tente novamente</string>
     <string name="act002_offline_logout_msg">Conexão não encontrada!\n Não foi possível finalizar as sessões no servidor!</string>
+    <string name="ws_exception_server_not_found">Não foi possível se conectar ao servidor!\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
 
 
 </resources>

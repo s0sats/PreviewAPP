@@ -20,6 +20,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by d.luche on 06/09/2017.
  */
@@ -44,6 +46,12 @@ public class WS_Serial_Tracking_Search extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
 
             String product_code = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE);
             String serial_code = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE);
@@ -133,6 +141,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
         translist.add("msg_save_ok");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

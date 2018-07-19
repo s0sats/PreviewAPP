@@ -24,6 +24,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
@@ -49,6 +51,13 @@ public class WS_SO_Search extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
+
+            if (!isHostAvailable()) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
+                //
+                return;
+            }
+
             gson = new GsonBuilder().serializeNulls().create();
             Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
@@ -74,8 +83,6 @@ public class WS_SO_Search extends IntentService {
     private void processSO_Search(Long product_code, String serial_id, String so_mult) throws Exception {
         //Seleciona traduções
         loadTranslation();
-        //
-
         //
         TSO_Search_Env env = new TSO_Search_Env();
         //
@@ -170,6 +177,7 @@ public class WS_SO_Search extends IntentService {
         translist.add("msg_send_serial_data");
         translist.add("msg_end_serial_save");
         translist.add("msg_end_so_download");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

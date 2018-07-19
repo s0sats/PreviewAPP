@@ -2089,7 +2089,7 @@ public class ToolBox_Inf {
             mBuilder.setAutoCancel(true);
             //18/07/2018
             //A notificação de upload agoranão é mais cancelavel
-            if(notification_id == Constant.NOTIFICATION_UPLOAD){
+            if (notification_id == Constant.NOTIFICATION_UPLOAD) {
                 mBuilder.setAutoCancel(false);
                 mBuilder.setOngoing(true);
             }
@@ -2135,8 +2135,16 @@ public class ToolBox_Inf {
         }
 
         hmAux_Trans.put("ws_exception_contact_admin_json_syntax",
-                (!hmAux_Trans.containsKey("ws_exception_contact_admin_json_syntax") || hmAux_Trans.get("ws_exception_contact_admin_json_syntax").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_json_syntax) : hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+                (!hmAux_Trans.containsKey("ws_exception_connection_error") || hmAux_Trans.get("ws_exception_connection_error").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_connection_error) : hmAux_Trans.get("ws_exception_connection_error"))
         );
+
+        hmAux_Trans.put("ws_exception_unexpected_error",
+                (!hmAux_Trans.containsKey("ws_exception_unexpected_error") || hmAux_Trans.get("ws_exception_unexpected_error").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_unexpected_error) : hmAux_Trans.get("ws_exception_unexpected_error"))
+        );
+
+//        hmAux_Trans.put("ws_exception_contact_admin_json_syntax",
+//                (!hmAux_Trans.containsKey("ws_exception_contact_admin_json_syntax") || hmAux_Trans.get("ws_exception_contact_admin_json_syntax").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_json_syntax) : hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+//        );
 
         hmAux_Trans.put("ws_exception_contact_admin_oracle",
                 (!hmAux_Trans.containsKey("ws_exception_contact_admin_oracle") || hmAux_Trans.get("ws_exception_contact_admin_oracle").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_oracle) : hmAux_Trans.get("ws_exception_contact_admin_oracle"))
@@ -2152,46 +2160,50 @@ public class ToolBox_Inf {
 
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
 
+//        if (e.toString().contains("JsonSyntaxException")) {
+//            sb.append(results).append(" \n")
+//                    .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+//                    .append("\n")
+//                    .append("\n")
+//                    .append("JsonParse!\n")
+//                    .append(e.toString()
+//                    );
+//
         if (e.toString().contains("JsonSyntaxException")) {
             sb.append(results).append(" \n")
-                    .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+                    .append(hmAux_Trans.get("ws_exception_connection_error"))
                     .append("\n")
-                    .append("\n")
-                    .append("JsonParse!\n")
-                    .append(e.toString()
-                    );
-
+                    .append("\n");
+                    //.append("JsonParse!\n")
+                    //.append(e.toString()
         } else if (e.toString().contains("ORA-")) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))
                     .append("\n")
                     .append("\n")
-                    .append("ORACLE!\n")
-                    .append(e.toString()
-                    );
+                    .append("ORACLE!\n");
+                    //.append(e.toString()
 
         } else if (e.toString().toLowerCase().contains("timeout")) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_timeout"))
                     .append("\n")
                     .append("\n")
-                    .append("Timeout!\n ")
-                    .append(e.toString()
-                    );
+                    .append("Timeout!\n ");
+                    //.append(e.toString()
         } else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
                     .append("\n")
                     .append("\n")
-                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR + "!\n ")
-            //.append(e.toString())//Como exception na mão, não tem toString
-            ;
-
+                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR + "!\n ");
+            //.append(e.toString());//Como exception na mão, não tem toString
         } else {
             sb.append(results)
                     .append("\n")
                     .append("\n")
-                    .append(e.toString());
+                    .append(hmAux_Trans.get("ws_exception_server_connection_failed"));
+                    //.append(e.toString());
         }
         return sb;
     }
@@ -4343,7 +4355,7 @@ public class ToolBox_Inf {
         return false;
     }
 
-    public static  String getDayTranslate(Date date) {
+    public static String getDayTranslate(Date date) {
         String dayTrans = "";
 
         switch (date.getDay()) {
@@ -4375,7 +4387,7 @@ public class ToolBox_Inf {
         return dayTrans;
     }
 
-    public static  String getMonthTranslate(Date date) {
+    public static String getMonthTranslate(Date date) {
         String monthTrans = "";
 
         switch (date.getMonth()) {

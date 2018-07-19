@@ -21,6 +21,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 /**
  * Created by neomatrix on 20/01/17.
  */
@@ -34,6 +36,12 @@ public class WS_Upload_Img extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+
+            if (!isHostAvailable()) {
+                //ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.msg_no_server_found), "", "0");
+                //
+                return;
+            }
 
             if (ToolBox_Con.getPreference_Customer_Code(getApplicationContext()) == -1L) {
                 //programAlarm(getApplicationContext());
