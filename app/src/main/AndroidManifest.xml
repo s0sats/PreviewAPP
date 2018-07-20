@@ -549,6 +549,10 @@
 
         <service android:name=".service_chat.WS_Add_User_Room_AP" />
 
+        <receiver android:name=".receiver.WBR_Process_Form_Ap" />
+
+        <service android:name=".service.WS_Process_Form_AP" />
+
     </application>
 
 </manifest>

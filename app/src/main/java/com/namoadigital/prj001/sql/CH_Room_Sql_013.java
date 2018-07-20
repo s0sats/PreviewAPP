@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -25,7 +26,9 @@ public class CH_Room_Sql_013 implements Specification {
         return sb
                 .append(" SELECT room_code" +
                         " FROM " + CH_RoomDao.TABLE +
-                        " WHERE room_type = 'FORM_AP' and room_obj like '%\"pk\":\"" + pk_ap + "\"%'  \n")
+                //       " WHERE room_type = 'FORM_AP' and room_obj like '%\"pk\":\"" + pk_ap + "\"%'  \n"
+                        " WHERE room_type = '"+ Constant.CHAT_MESSAGE_TYPE_FORM_AP+"' and room_obj like '%\"pk\":\"" + pk_ap + "\"%'  \n"
+                )
                 .append(";")
                 .append("room_code")
                 .toString();
