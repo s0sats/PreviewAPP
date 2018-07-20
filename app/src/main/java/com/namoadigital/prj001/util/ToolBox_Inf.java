@@ -4185,9 +4185,12 @@ public class ToolBox_Inf {
         return getFullNick(nick, String.valueOf(id));
     }
 
-
     public static String getFullNick(String nick, String id) {
-        return nick + " (" + id + ")";
+        if (nick.contains(" (" + id + ")")) {
+            return nick;
+        } else {
+            return nick + " (" + id + ")";
+        }
     }
 
     public static long pkCustomerCode(String pk) {
