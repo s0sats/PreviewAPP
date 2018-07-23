@@ -308,8 +308,11 @@ public class WS_C_Message extends IntentService {
                     ch_message.setStatus_update(1);
                     ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                 }
-                //Se msg for do tipo form Ap, verifica se deve ser criado texto para insert posterior
-                if (ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP)) {
+                //Se msg for do tipo form Ap, e for uma nova msg
+                //verifica se deve ser criado texto para insert posterior
+                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP)
+                     && hasNewMsg ) {
+
                     try {
                         JSONObject jsonObject = new JSONObject(ch_message.getMsg_obj());
                         JSONObject msg = jsonObject.getJSONObject("message");

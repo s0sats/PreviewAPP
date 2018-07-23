@@ -107,6 +107,7 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_008;
 import com.namoadigital.prj001.sql.CH_Room_Sql_010;
 import com.namoadigital.prj001.sql.CH_Room_Sql_011;
 import com.namoadigital.prj001.sql.CH_Room_Sql_012;
+import com.namoadigital.prj001.sql.CH_Room_Sql_014;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
@@ -4088,10 +4089,28 @@ public class ToolBox_Inf {
                 //
                 //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
                 CH_RoomDao roomDao = new CH_RoomDao(context);
+                //Seleção antiga:
+                // Selecionava somente via room_code
+//                CH_Room chRoom = roomDao.getByString(
+//                        new CH_Room_Sql_001(
+//                                formAp.getRoom_code()
+//                        ).toSqlQuery()
+//                );
+                //Seleção Nova(23/07/18):
+                //Seleciona via room_code e pk concatenada no room_obj
+                String pkConcat =
+                        formAp.getCustomer_code() + "|" +
+                        formAp.getCustom_form_type() + "|" +
+                        formAp.getCustom_form_code() + "|" +
+                        formAp.getCustom_form_version() + "|" +
+                        formAp.getCustom_form_data() + "|" +
+                        formAp.getAp_code()
+                        ;
                 //
                 CH_Room chRoom = roomDao.getByString(
-                        new CH_Room_Sql_001(
-                                formAp.getRoom_code()
+                        new CH_Room_Sql_014(
+                                formAp.getRoom_code(),
+                                pkConcat
                         ).toSqlQuery()
                 );
                 //
