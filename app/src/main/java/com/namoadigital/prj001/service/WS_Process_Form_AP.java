@@ -30,10 +30,12 @@ public class WS_Process_Form_AP extends IntentService {
     public WS_Process_Form_AP() {
         super("WS_Process_Form_AP");
     }
+    private int safeCounter = 0;
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            //
             processFormAp();
 
         } catch (Exception e) {
@@ -46,9 +48,10 @@ public class WS_Process_Form_AP extends IntentService {
 
     private void processFormAp() throws Exception {
         File[] formApFiles = ToolBox_Inf.getListOfFiles_v5(Constant.CHAT_PATH,Constant.CHAT_PREFIX + Constant.CHAT_MESSAGE_TYPE_FORM_AP);
-        ArrayList<GE_Custom_Form_Ap> formApList = new ArrayList<>();
+        //ArrayList<GE_Custom_Form_Ap> formApList = new ArrayList<>();
         ArrayList<File> fileToDelete = new ArrayList<>();
         Gson gson = new GsonBuilder().serializeNulls().create();
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         //
         if(formApFiles.length > 0) {
 
@@ -62,7 +65,7 @@ public class WS_Process_Form_AP extends IntentService {
                 );
                 //
                 auxAp = msgObjFormAp.toGeCustomFormAp();
-                //Verifica
+                //Verifica se foi gerar um form_ap baseado no arquivo texto
                 if (auxAp != null) {
                     //Seta necessidade de sncronismos para 1
                     auxAp.setSync_required(1);
@@ -72,29 +75,21 @@ public class WS_Process_Form_AP extends IntentService {
                     //
                     auxAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     //Adiciona na lista de inserção
-                    formApList.add(auxAp);
-                    fileToDelete.add(file);
+                    //formApList.add(auxAp);
+                    //Insere formAp
+                    formApDao.addUpdate(auxAp);
+                    //
                     Log.d("FormAP", msgObjFormAp.getPk());
                 }
-                /**
-                 * Falta rodar exclusão dos arquvios após sucesso
-                 * (TALVEZ TENHA QUE MUDAR PARA ADICIONAR FORM AP UM A UM POIS, SE DER ERRO EM UM FORM AP
-                 * SO POSSO EXCLUIR ARQUIVOS QUE FORAM PROCESSADOS COM SUCESSO, OU NÃO, SÓ APAGAR SE TUDO DEU
-                 * SUCESSO ?!)
-                 *
-                 * Adicionar chamada recursiva após o loop, pois novos arquivos podem ter sidos criados
-                 *
-                 */
-
-
+                //SEMPRE ADICIONA O ARQUIVO NA LISTA DE DELETE
+                //INDEPENDENTE DELE TER APRESENTADO ERRO OU NÃO
+                fileToDelete.add(file);
             }
             //
-            if (formApList != null && formApList.size() > 0) {
-                //
-                GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
-                //
-                formApDao.addUpdate(formApList, false);
-            }
+//            if (formApList != null && formApList.size() > 0) {
+//                //
+//                formApDao.addUpdate(formApList, false);
+//            }
             //
             if (fileToDelete != null && fileToDelete.size() > 0) {
                 ToolBox_Inf.deleteFileListExceptionSafe(fileToDelete);
@@ -102,7 +97,11 @@ public class WS_Process_Form_AP extends IntentService {
             //Recursão!!!
             //Se processou algum arquivo, após finalizar o processamento,
             //Chama esse mesmo metodo novamente.
-            processFormAp();
+            //Adicionado variavel safeCounter para impedir loop infinito
+            if(safeCounter <= 100) {
+                safeCounter++;
+                processFormAp();
+            }
         }
 
     }
