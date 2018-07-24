@@ -13,12 +13,14 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_Message_Obj_Form_Ap;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
@@ -28,6 +30,7 @@ import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.CH_Room_Sql_013;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -39,7 +42,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -86,7 +88,7 @@ public class WS_C_Message extends IntentService {
 
     }
 
-    private void processC_Message(String json_param, String ws_event, String messageTmpFile, String historicalAction, long messageIncrement) {
+    private void processC_Message(String json_param, String ws_event, String messageTmpFile, String historicalAction, long messageIncrement) throws Exception {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<Chat_C_Message> messages = new ArrayList<>();
         File msgListFile = null;
@@ -310,57 +312,10 @@ public class WS_C_Message extends IntentService {
                 }
                 //Se msg for do tipo form Ap, e for uma nova msg
                 //verifica se deve ser criado texto para insert posterior
-                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP)
-                     && hasNewMsg ) {
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(ch_message.getMsg_obj());
-                        JSONObject msg = jsonObject.getJSONObject("message");
-                        JSONObject data = msg.getJSONObject("data");
-                        //
-                        Chat_Message_Obj_Form_Ap objFormAp = gson.fromJson(
-                                ToolBox_Inf.getRoomObjJsonParam(
-                                        //  form_ap.toString()
-                                        data.toString()
-                                ),
-                                Chat_Message_Obj_Form_Ap.class
-                        );
-                        //Se o form ap possui data, verifica se deve ser inserido
-                        if (objFormAp != null && objFormAp.getAp_when() != null) {
-                            //Se o usr for o "Quem" do form ap, cria arquivo para inserção.
-                            if (ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase(String.valueOf(objFormAp.getAp_who()))) {
-                                //cria arquivo com o form ap
-                                createMsgsFile(data.toString(),Constant.CHAT_MESSAGE_TYPE_FORM_AP);
-                                //Se false, seta variavel de inicio do serviço de form ap para true.
-                                if(!startFormApService){
-                                    startFormApService = true;
-                                }
-                            } else {
-                                CH_RoomDao chRoomDao = new CH_RoomDao(getApplicationContext());
-                                //
-                                HMAux auxRoom = chRoomDao.getByStringHM(
-                                        new CH_Room_Sql_013(
-                                                objFormAp.getPk()
-                                        ).toSqlQuery()
-                                );
-                                //
-                                //Se o usr tem join com a sala do form ap, cria arquivo para inserção.
-                                if(auxRoom != null && auxRoom.containsKey(CH_RoomDao.ROOM_CODE) && auxRoom.get(CH_RoomDao.ROOM_CODE) != null ){
-                                    //cria arquivo com o form ap
-                                    createMsgsFile(data.toString(),Constant.CHAT_MESSAGE_TYPE_FORM_AP);
-                                    //Se false, seta variavel de inicio do serviço de form ap para true.
-                                    if(!startFormApService){
-                                        startFormApService = true;
-                                    }
-                                }
-
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && hasNewMsg) {
+                    startFormApService = checkForFormApInsert(gson, ch_message.getMsg_obj(),startFormApService);
                 }
-
+                //
                 //Salva lista no banco de dados.
                 messageDao.addUpdate(ch_message);
             }
@@ -443,6 +398,77 @@ public class WS_C_Message extends IntentService {
         }
     }
 
+    private boolean checkForFormApInsert(Gson gson, String msg_obj, boolean startFormApService) throws Exception {
+        //
+        try {
+            JSONObject jsonObject = new JSONObject(msg_obj);
+            JSONObject msg = jsonObject.getJSONObject("message");
+            JSONObject data = msg.getJSONObject("data");
+            //
+            Chat_Message_Obj_Form_Ap objFormAp = gson.fromJson(
+                    ToolBox_Inf.getRoomObjJsonParam(
+                            //  form_ap.toString()
+                            data.toString()
+                    ),
+                    Chat_Message_Obj_Form_Ap.class
+            );
+            //Se o form ap possui data, verifica se deve ser inserido
+            if (objFormAp != null && objFormAp.getAp_when() != null) {
+                //Verifica se o FormAP ja existe. Somente se ele NÃO EXISTIR
+                //ele será inserido.
+                GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+                //
+                GE_Custom_Form_Ap formAp = formApDao.getByString(
+                        new GE_Custom_Form_Ap_Sql_005(
+                                String.valueOf(objFormAp.getCustomer_code()),
+                                String.valueOf(objFormAp.getCustom_form_type()),
+                                String.valueOf(objFormAp.getCustom_form_code()),
+                                String.valueOf(objFormAp.getCustom_form_version()),
+                                String.valueOf(objFormAp.getCustom_form_data()),
+                                String.valueOf(objFormAp.getAp_code()),
+                                GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+
+                        ).toSqlQuery()
+                );
+                //
+                if(formAp == null && !fileAlreadyExists(objFormAp.getPk().replace("|","_"))) {
+                    //Se o usr for o "Quem" do form ap, cria arquivo para inserção.
+                    if (ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase(String.valueOf(objFormAp.getAp_who()))) {
+                        //cria arquivo com o form ap
+                        createMsgsFile(data.toString(), Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ objFormAp.getPk().replace("|","_"));
+                        //Se false, seta variavel de inicio do serviço de form ap para true.
+                        if (!startFormApService) {
+                            startFormApService = true;
+                        }
+                    } else {
+                        CH_RoomDao chRoomDao = new CH_RoomDao(getApplicationContext());
+                        //
+                        HMAux auxRoom = chRoomDao.getByStringHM(
+                                new CH_Room_Sql_013(
+                                        objFormAp.getPk()
+                                ).toSqlQuery()
+                        );
+                        //
+                        //Se o usr tem join com a sala do form ap, cria arquivo para inserção.
+                        if (auxRoom != null && auxRoom.containsKey(CH_RoomDao.ROOM_CODE) && auxRoom.get(CH_RoomDao.ROOM_CODE) != null) {
+                            //cria arquivo com o form ap
+                            createMsgsFile(data.toString(), Constant.CHAT_MESSAGE_TYPE_FORM_AP+"_"+ objFormAp.getPk().replace("|","_"));
+                            //Se false, seta variavel de inicio do serviço de form ap para true.
+                            if (!startFormApService) {
+                                startFormApService = true;
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //
+        return startFormApService;
+    }
+
 
     private boolean msgRoomExists(String room_code) {
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
@@ -486,7 +512,7 @@ public class WS_C_Message extends IntentService {
         String fileName = Constant.CHAT_PREFIX +
                 (type != null ? type : "") +
                 ToolBox_Inf.getToken(getApplicationContext()) +
-                "_" + UUID.randomUUID().toString() +
+                //"_" + UUID.randomUUID().toString() +
                 ".txt";
         //
         File msgListFile = new File(Constant.CHAT_PATH, fileName);
@@ -499,6 +525,11 @@ public class WS_C_Message extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(), e);
             return null;
         }
+    }
+
+    private boolean fileAlreadyExists(String formPk){
+        File[] files = ToolBox_Inf.getListOfFiles_v5( Constant.CHAT_PATH, Constant.CHAT_PREFIX + Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ formPk);
+        return files != null && files.length != 0;
     }
 
 }
