@@ -248,6 +248,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("product_lbl");
         transList.add("serial_lbl");
         transList.add("create_info_lbl");
+        transList.add("alert_partial_ap_detected_tll");
+        transList.add("alert_partial_ap_detected_msg");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -461,7 +464,23 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 if (ToolBox_Con.isOnline(context)) {
                     mPresenter.executeApSyncWs();
                 } else {
-                    ToolBox_Inf.showNoConnectionDialog(context);
+                    if(mGe_custom_form_ap.getCreate_date() == null && mGe_custom_form_ap.getCreate_user() == null){
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_partial_ap_detected_tll"),
+                                hmAux_Trans.get("alert_partial_ap_detected_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        onBackPressed();
+                                    }
+                                },
+                                0
+                        );
+                    }else{
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
+                    //ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
             //
@@ -550,14 +569,26 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             tv_creation_ttl.setText(hmAux_Trans.get("create_info_lbl"));
             et_create_date_ttl.setEnabled(false);
-            et_create_date_ttl.setText(ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(ap.getCreate_date()),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
-            );
-            //
             et_create_user_ttl.setEnabled(false);
-            et_create_user_ttl.setText(ap.getCreate_user());
+            //A situação de um dos itens abaixo serem nulos, só deve acontecer quando
+            //o form ap for inserido via MSG do chat.
+            if(ap.getCreate_date() != null && ap.getCreate_user() != null ) {
+                tv_creation_ttl.setVisibility(View.VISIBLE);
+                et_create_date_ttl.setVisibility(View.VISIBLE);
+                et_create_user_ttl.setVisibility(View.VISIBLE);
+                //
+                et_create_date_ttl.setText(ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(ap.getCreate_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                );
+                //
+                et_create_user_ttl.setText(ap.getCreate_user());
+            }else{
+                tv_creation_ttl.setVisibility(View.GONE);
+                et_create_date_ttl.setVisibility(View.GONE);
+                et_create_user_ttl.setVisibility(View.GONE);
+            }
             //
             tv_product_ttl.setText(hmAux_Trans.get("product_lbl"));
             et_product_val.setEnabled(false);
@@ -1022,6 +1053,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                                 mPresenter.executeApSyncWs();
                             } else {
                                 ToolBox_Inf.showNoConnectionDialog(context);
+
                             }
                         }
                     },

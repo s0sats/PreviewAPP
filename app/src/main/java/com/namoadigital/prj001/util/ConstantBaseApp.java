@@ -366,6 +366,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_DOWNLOAD = 667;
     public static final int NOTIFICATION_CHAT_MSG = 668;
     public static final int NOTIFICATION_CHAT_ROOM = 669;
+    //Alarms
+    public static final int ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP = 670;
+
 
     //Helper
     public static final String BACK_ACTION = "back_action";
@@ -539,6 +542,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_WS_MSG_COUNTER_PARAM = "WS_MSG_COUNTER_PARAM";
     public static final String CHAT_MESSAGE_TYPE_IMAGE = "IMAGE";
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
+    public static final String CHAT_MESSAGE_TYPE_FORM_AP = "FORM_AP";
     public static final String CHAT_MESSAGE_TYPE_TRANSLATE = "TRANSLATE";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
     public static final String CHAT_ROOM_TYPE_SO = "SO";

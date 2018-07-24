@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
@@ -27,7 +28,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by d.luche on 30/11/2017.
@@ -39,10 +42,13 @@ public class WS_C_Add_Room extends IntentService {
         super("WS_C_Add_Room");
     }
 
+    private boolean startFormApService = false;
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+
 
         try {
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
@@ -124,7 +130,7 @@ public class WS_C_Add_Room extends IntentService {
                     if(objFormAp != null){
                         chRoom.setRoom_status(objFormAp.getAp_status());
                         //Processa dados do Ap.
-                        processFormAP(objFormAp,chRoom.getRoom_code());
+                        processFormAP(objFormAp,chRoom.getRoom_code(),chRoom.getRoom_obj());
                     }
                     break;
                 default:
@@ -134,6 +140,10 @@ public class WS_C_Add_Room extends IntentService {
         roomDao.addUpdate(chRooms, false);
         //
         startDownloadService();
+        //
+        if(startFormApService){
+            startFormApService();
+        }
         //
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
         //
@@ -169,7 +179,7 @@ public class WS_C_Add_Room extends IntentService {
     * apenas seta sync_required para 1, indicando que o ap precisa
     * ser atualizado.
     */
-    private void processFormAP(Chat_Room_Obj_Form_AP objFormAp, String room_code) {
+    private void processFormAP(Chat_Room_Obj_Form_AP objFormAp, String room_code, String room_obj) {
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(objFormAp.getCustomer_code()),
@@ -199,8 +209,42 @@ public class WS_C_Add_Room extends IntentService {
             }else{
                 formApDao.addUpdate(dbFormAp);
             }
+        }else{
+            if(objFormAp.getAp_when() != null && ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase(String.valueOf(objFormAp.getAp_who()))){
+                //cria arquivo com o form ap
+                createMsgsFile(room_obj, Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ objFormAp.getPk().replace("|","_"));
+                //Se false, seta variavel de inicio do serviço de form ap para true.
+                if (!startFormApService) {
+                    startFormApService = true;
+                }
+            }
         }
 
+    }
+
+    private void startFormApService() {
+        Intent mIntentFormAp = new Intent(getApplicationContext(), WBR_Process_Form_Ap.class);
+        //
+        getApplicationContext().sendBroadcast(mIntentFormAp);
+    }
+
+    private String createMsgsFile(String param, String type) {
+        String fileName = Constant.CHAT_PREFIX +
+                (type != null ? type : "") +
+                ToolBox_Inf.getToken(getApplicationContext()) +
+                "_" + UUID.randomUUID().toString() +
+                ".txt";
+        //
+        File msgListFile = new File(Constant.CHAT_PATH, fileName);
+        try {
+            ToolBox_Inf.writeIn(param, msgListFile);
+            return msgListFile.getAbsolutePath();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            return null;
+        }
     }
 
     private void startDownloadService() {

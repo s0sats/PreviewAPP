@@ -9,28 +9,40 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Message;
+import com.namoadigital.prj001.model.Chat_Message_Obj_Form_Ap;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.CH_Room_Sql_013;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -60,7 +72,7 @@ public class WS_C_Message extends IntentService {
             String messageTmpFile = bundle.getString(Constant.CHAT_WS_MSG_TMP_PARAM, null);
             String historicalAction = bundle.getString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, null);
             long messageIncrement = bundle.getLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, 0);
-            processC_Message(json_param, ws_event, messageTmpFile,historicalAction, messageIncrement);
+            processC_Message(json_param, ws_event, messageTmpFile, historicalAction, messageIncrement);
 
         } catch (Exception e) {
 
@@ -77,7 +89,7 @@ public class WS_C_Message extends IntentService {
 
     }
 
-    private void processC_Message(String json_param, String ws_event, String messageTmpFile, String historicalAction, long messageIncrement) {
+    private void processC_Message(String json_param, String ws_event, String messageTmpFile, String historicalAction, long messageIncrement) throws Exception {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<Chat_C_Message> messages = new ArrayList<>();
         File msgListFile = null;
@@ -103,8 +115,9 @@ public class WS_C_Message extends IntentService {
                 .equalsIgnoreCase(String.valueOf(messages.get(0).getUser_code()))
                 ) {
             JsonArray sDeliveredList = new JsonArray();
-            Chat_C_Message chatMessage  = messages.get(0);
+            Chat_C_Message chatMessage = messages.get(0);
             boolean startDownloadService = false;
+            boolean startFormApService = false;
 
             CH_Message chMessage = messageDao.getByString(
                     new CH_Message_Sql_005(
@@ -114,9 +127,9 @@ public class WS_C_Message extends IntentService {
             );
             //
             if (chMessage != null) {
-                if(chMessage.getMsg_prefix() > -1){
+                if (chMessage.getMsg_prefix() > -1) {
                     chMessage.setMsg_date(chatMessage.getMsg_date());
-                }else{
+                } else {
                     chMessage = chatMessage.toCH_MessageObj();
                     chMessage.setTmp(0);
                     //Verifica se precisa iniciar serviço de download
@@ -130,9 +143,9 @@ public class WS_C_Message extends IntentService {
                     chMessage.setDelivered(1);
                     chMessage.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     //Se msg é minha, mas é msg "sistemica", não seta como lido
-                    if(chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
-                       chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
-                    ) {
+                    if (chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
+                            chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
+                            ) {
                         chMessage.setRead(1);
                         chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     }
@@ -146,12 +159,17 @@ public class WS_C_Message extends IntentService {
                     sDelivered.setRead(1);
                     //
                     sDeliveredList.add(gson.toJsonTree(sDelivered));
+                    //24/07/18
+                    //Se msg for tipo Form Ap, valida se deve ser inserida.
+                    if ( chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && chMessage.getTmp() == 0) {
+                        startFormApService = checkForFormApInsert(gson, chMessage.getMsg_obj(),startFormApService);
+                    }
                 }
                 /*
-                *
-                * TRATAR SE VEI READ 0 E JA ESTA READ 1 NO BANCO ?!
-                *
-                * */
+                 *
+                 * TRATAR SE VEI READ 0 E JA ESTA READ 1 NO BANCO ?!
+                 *
+                 * */
                 //
                 messageDao.addUpdate(chMessage);
                 //
@@ -165,10 +183,10 @@ public class WS_C_Message extends IntentService {
                 //
                 messageObj.dataConverter();*/
                 //
-                if(!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) &&
-                   !chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
-                ){
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
+                if (!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) &&
+                        !chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
+                        ) {
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, false);
                 }
                 //
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
@@ -183,6 +201,10 @@ public class WS_C_Message extends IntentService {
                 if (startDownloadService) {
                     startDownloadService();
                 }
+                //
+                if(startFormApService){
+                    startFormApService();
+                }
             }
 
         } else {
@@ -193,17 +215,18 @@ public class WS_C_Message extends IntentService {
             boolean startDownloadService = false;
             boolean hasNewMsg = false;
             boolean showNotification = true;
+            boolean startFormApService = false;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message : chMessages) {
                 //Verifica se existe a room da msg, se não houver, ignora
-                if(!msgRoomExists(ch_message.getRoom_code())){
+                if (!msgRoomExists(ch_message.getRoom_code())) {
                     continue;
                 }
                 //
-                if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                if (ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
                     ch_message.setMsg_pk(String.valueOf(ch_message.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, ch_message.getMsg_code())));
                     ch_message.setDelivered(0);
                     //ch_message.setDelivered_date("");
@@ -213,15 +236,15 @@ public class WS_C_Message extends IntentService {
                     ch_message.setAll_read(0);
                     ch_message.setStatus_update(1);
                     ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
-                }else{
-                    if(singletonWebSocket == null) {
+                } else {
+                    if (singletonWebSocket == null) {
                         singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                     }
                     ///
-                    if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE)
-                       && ch_message.getRoom_code().equals(Act035_Main.mRoom_code)
-                    ){
-                      showNotification = false;
+                    if (ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE)
+                            && ch_message.getRoom_code().equals(Act035_Main.mRoom_code)
+                            ) {
+                        showNotification = false;
                     }
                 }
                 //
@@ -233,7 +256,7 @@ public class WS_C_Message extends IntentService {
                                 ).toSqlQuery()
                         );
                 //Verifica se a necessidade de notificação
-                if(singletonWebSocket != null &&!singletonWebSocket.isShow_notification() && dbMessage.getTmp() < 0){
+                if (singletonWebSocket != null && !singletonWebSocket.isShow_notification() && dbMessage.getTmp() < 0) {
                     singletonWebSocket.setShow_notification(true);
                 }
                 //Verifica se precisa iniciar serviço de download
@@ -242,18 +265,18 @@ public class WS_C_Message extends IntentService {
                 }
                 //CORREÇÃO DA ATUALIZAÇÃO DE TMP PARA MSG JA EXISTENTE
                 //Se msg existe no banco, atualiza valor com o tmp do banco
-                if(dbMessage.getTmp() > 0){
+                if (dbMessage.getTmp() > 0) {
                     ch_message.setTmp(dbMessage.getTmp());
-                }else{
+                } else {
                     ch_message.setTmp(0);
                     hasNewMsg = true;
                     //Correção paleativa até o server começar a enviar FCM
                     //pra mesagens minhas quando eu estou ativo na web e o app não.
-                    if(
-                        ws_event.equals(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)
-                        && ToolBox_Con.getPreference_User_Code(getApplicationContext()).equals(String.valueOf(ch_message.getUser_code()))
-                        && ch_message.getDelivered() == 1
-                    ){
+                    if (
+                            ws_event.equals(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)
+                                    && ToolBox_Con.getPreference_User_Code(getApplicationContext()).equals(String.valueOf(ch_message.getUser_code()))
+                                    && ch_message.getDelivered() == 1
+                            ) {
                         ch_message.setStatus_update(1);
                         ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                     }
@@ -291,19 +314,24 @@ public class WS_C_Message extends IntentService {
                 }
                 //Correção de Delivery_all e Read_all não atualizarem tela quando
                 //essas flags são alterada via cHistoricalMessage
-                if(
-                    (dbMessage.getAll_delivered() == 0 && ch_message.getAll_delivered() == 1)
-                    || (dbMessage.getAll_read() == 0 && ch_message.getAll_read() == 1)
-                ){
+                if (
+                        (dbMessage.getAll_delivered() == 0 && ch_message.getAll_delivered() == 1)
+                                || (dbMessage.getAll_read() == 0 && ch_message.getAll_read() == 1)
+                        ) {
                     ch_message.setStatus_update(1);
                     ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                 }
-
+                //Se msg for do tipo form Ap, e for uma nova msg
+                //verifica se deve ser criado texto para insert posterior
+                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && hasNewMsg) {
+                    startFormApService = checkForFormApInsert(gson, ch_message.getMsg_obj(),startFormApService);
+                }
+                //
                 //Salva lista no banco de dados.
                 messageDao.addUpdate(ch_message);
             }
             //
-            if (msgListFile != null){
+            if (msgListFile != null) {
                 msgListFile.delete();
             }
             //
@@ -311,9 +339,13 @@ public class WS_C_Message extends IntentService {
                 startDownloadService();
             }
             //
-            if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
-                if(hasNewMsg){
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, true);
+            if(startFormApService){
+                startFormApService();
+            }
+            //
+            if (ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
+                if (hasNewMsg) {
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, true);
                 }
                 //
                 Intent postDeliveredIntent = new Intent(getApplicationContext(), WBR_Delivered.class);
@@ -326,7 +358,7 @@ public class WS_C_Message extends IntentService {
                 return;
             }
             //
-            if (sDeliveredList.size() > 0 && ! ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
+            if (sDeliveredList.size() > 0 && !ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
                 singletonWebSocket.attemptToDeliveryMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                 );
@@ -339,19 +371,19 @@ public class WS_C_Message extends IntentService {
             }
             //
             //Se diferente de null, o serviço foi chamado do cHistoricalMessage Action Login
-            if(messageTmpFile != null){
+            if (messageTmpFile != null) {
                 //Se maior que 0, existe arquivo para ser processado.
                 //Se não houver arquivo, tenta enviar msg offline
-                if(messageTmpFile.length() > 0) {
+                if (messageTmpFile.length() > 0) {
                     startCMessageTmpService(messageTmpFile, messageIncrement);
-                }else{
+                } else {
                     //Incrementa contador
                     singletonWebSocket.updateCounterMsg(messageIncrement);
                     //Verifica se todas as msg foram processadas
                     //Se foram, reseta contador, dispara broadcast e envia offlines
-                    if(singletonWebSocket.areAllMsgProcessed()){
-                        if(singletonWebSocket.isShow_notification()){
-                            ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
+                    if (singletonWebSocket.areAllMsgProcessed()) {
+                        if (singletonWebSocket.isShow_notification()) {
+                            ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, false);
                         }
                         singletonWebSocket.resetProcessMsgCounter();
                         //
@@ -361,12 +393,12 @@ public class WS_C_Message extends IntentService {
                         singletonWebSocket.attempSendOfflineMessagesV2();
                     }
                 }
-            }else{
-                if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
+            } else {
+                if (ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
-                }else{
-                    if(singletonWebSocket.isShow_notification() && showNotification){
-                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
+                } else {
+                    if (singletonWebSocket.isShow_notification() && showNotification) {
+                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, false);
                         //
                         singletonWebSocket.setShow_notification(false);
                     }
@@ -377,6 +409,79 @@ public class WS_C_Message extends IntentService {
         }
     }
 
+    private boolean checkForFormApInsert(Gson gson, String msg_obj, boolean startFormApService) throws Exception {
+        //
+        try {
+            JSONObject jsonObject = new JSONObject(msg_obj);
+            JSONObject msg = jsonObject.getJSONObject("message");
+            JSONObject data = msg.getJSONObject("data");
+            //
+            Chat_Message_Obj_Form_Ap objFormAp = gson.fromJson(
+                    ToolBox_Inf.getRoomObjJsonParam(
+                            //  form_ap.toString()
+                            data.toString()
+                    ),
+                    Chat_Message_Obj_Form_Ap.class
+            );
+            //Se o form ap possui data, verifica se deve ser inserido
+            if (objFormAp != null && objFormAp.getAp_when() != null) {
+                //Verifica se o FormAP ja existe. Somente se ele NÃO EXISTIR
+                //ele será inserido.
+                GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+                //
+                GE_Custom_Form_Ap formAp = formApDao.getByString(
+                        new GE_Custom_Form_Ap_Sql_005(
+                                String.valueOf(objFormAp.getCustomer_code()),
+                                String.valueOf(objFormAp.getCustom_form_type()),
+                                String.valueOf(objFormAp.getCustom_form_code()),
+                                String.valueOf(objFormAp.getCustom_form_version()),
+                                String.valueOf(objFormAp.getCustom_form_data()),
+                                String.valueOf(objFormAp.getAp_code()),
+                                GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+
+                        ).toSqlQuery()
+                );
+                //Se form não existir, verifica necessidade de inserir.
+                //if(formAp == null && !fileAlreadyExists(objFormAp.getPk().replace("|","_"))) {
+                if(formAp == null) {
+                    //Se o usr for o "Quem" do form ap, cria arquivo para inserção.
+                    if (ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase(String.valueOf(objFormAp.getAp_who()))) {
+                        //cria arquivo com o form ap
+                        createMsgsFile(data.toString(), Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ objFormAp.getPk().replace("|","_"));
+                        //Se false, seta variavel de inicio do serviço de form ap para true.
+                        if (!startFormApService) {
+                            startFormApService = true;
+                        }
+                    } else {
+                        CH_RoomDao chRoomDao = new CH_RoomDao(getApplicationContext());
+                        //
+                        HMAux auxRoom = chRoomDao.getByStringHM(
+                                new CH_Room_Sql_013(
+                                        objFormAp.getPk()
+                                ).toSqlQuery()
+                        );
+                        //
+                        //Se o usr tem join com a sala do form ap, cria arquivo para inserção.
+                        if (auxRoom != null && auxRoom.containsKey(CH_RoomDao.ROOM_CODE) && auxRoom.get(CH_RoomDao.ROOM_CODE) != null) {
+                            //cria arquivo com o form ap
+                            createMsgsFile(data.toString(), Constant.CHAT_MESSAGE_TYPE_FORM_AP+"_"+ objFormAp.getPk().replace("|","_"));
+                            //Se false, seta variavel de inicio do serviço de form ap para true.
+                            if (!startFormApService) {
+                                startFormApService = true;
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //
+        return startFormApService;
+    }
+
+
     private boolean msgRoomExists(String room_code) {
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         CH_Room ch_room = roomDao.getByString(
@@ -385,7 +490,7 @@ public class WS_C_Message extends IntentService {
                 ).toSqlQuery()
         );
         //
-        if(ch_room != null && ch_room.getRoom_code() != null){
+        if (ch_room != null && ch_room.getRoom_code() != null) {
             return true;
         }
         return false;
@@ -407,6 +512,36 @@ public class WS_C_Message extends IntentService {
         //
         getApplicationContext().sendBroadcast(mIntentPIC);
 
+    }
+
+    private void startFormApService() {
+        Intent mIntentFormAp = new Intent(getApplicationContext(), WBR_Process_Form_Ap.class);
+        //
+        getApplicationContext().sendBroadcast(mIntentFormAp);
+    }
+
+    private String createMsgsFile(String param, String type) {
+        String fileName = Constant.CHAT_PREFIX +
+                (type != null ? type : "") +
+                ToolBox_Inf.getToken(getApplicationContext()) +
+                "_" + UUID.randomUUID().toString() +
+                ".txt";
+        //
+        File msgListFile = new File(Constant.CHAT_PATH, fileName);
+        try {
+            ToolBox_Inf.writeIn(param, msgListFile);
+            return msgListFile.getAbsolutePath();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            return null;
+        }
+    }
+    //
+    private boolean fileAlreadyExists(String formPk){
+        File[] files = ToolBox_Inf.getListOfFiles_v5( Constant.CHAT_PATH, Constant.CHAT_PREFIX + Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ formPk);
+        return files != null && files.length != 0;
     }
 
 }
