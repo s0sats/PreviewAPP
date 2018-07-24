@@ -366,6 +366,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_DOWNLOAD = 667;
     public static final int NOTIFICATION_CHAT_MSG = 668;
     public static final int NOTIFICATION_CHAT_ROOM = 669;
+    //Alarms
+    public static final int ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP = 670;
+
 
     //Helper
     public static final String BACK_ACTION = "back_action";

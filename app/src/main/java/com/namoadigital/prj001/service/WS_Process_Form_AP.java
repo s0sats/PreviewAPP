@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Message_Obj_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -64,9 +65,24 @@ public class WS_Process_Form_AP extends IntentService {
                         Chat_Message_Obj_Form_Ap.class
                 );
                 //
+                //Verifica mais uma vez se o form existe localmente.
+                GE_Custom_Form_Ap dbFormAp = formApDao.getByString(
+                        new GE_Custom_Form_Ap_Sql_005(
+                                String.valueOf(msgObjFormAp.getCustomer_code()),
+                                String.valueOf(msgObjFormAp.getCustom_form_type()),
+                                String.valueOf(msgObjFormAp.getCustom_form_code()),
+                                String.valueOf(msgObjFormAp.getCustom_form_version()),
+                                String.valueOf(msgObjFormAp.getCustom_form_data()),
+                                String.valueOf(msgObjFormAp.getAp_code()),
+                                GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+
+                        ).toSqlQuery()
+                );
+                //Tenta gerar obj FormAp a partir do conteudo do arquvio texto.
                 auxAp = msgObjFormAp.toGeCustomFormAp();
-                //Verifica se foi gerar um form_ap baseado no arquivo texto
-                if (auxAp != null) {
+                //Se não existir no banco local e gerou um form_ap baseado no arquivo texto
+                //Inserir Form ap.
+                if (dbFormAp == null && auxAp != null) {
                     //Seta necessidade de sncronismos para 1
                     auxAp.setSync_required(1);
                     //Força SCN para 0 para que ao sincronizar os dados,
@@ -110,8 +126,8 @@ public class WS_Process_Form_AP extends IntentService {
         Calendar calendarAux = Calendar.getInstance();
         //
         calendarAux.set(
-                Calendar.MINUTE,
-                calendarAux.get(Calendar.MINUTE) + 5
+                Calendar.SECOND,
+                calendarAux.get(Calendar.SECOND) + 30
         );
         //
         Intent mIntent = new Intent(
@@ -121,7 +137,7 @@ public class WS_Process_Form_AP extends IntentService {
         //
         PendingIntent pi = PendingIntent.getBroadcast(
                 context,
-                10,
+                Constant.ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP,
                 mIntent,
                 0
         );

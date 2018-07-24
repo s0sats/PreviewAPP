@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -116,6 +117,7 @@ public class WS_C_Message extends IntentService {
             JsonArray sDeliveredList = new JsonArray();
             Chat_C_Message chatMessage = messages.get(0);
             boolean startDownloadService = false;
+            boolean startFormApService = false;
 
             CH_Message chMessage = messageDao.getByString(
                     new CH_Message_Sql_005(
@@ -157,6 +159,11 @@ public class WS_C_Message extends IntentService {
                     sDelivered.setRead(1);
                     //
                     sDeliveredList.add(gson.toJsonTree(sDelivered));
+                    //24/07/18
+                    //Se msg for tipo Form Ap, valida se deve ser inserida.
+                    if ( chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && chMessage.getTmp() == 0) {
+                        startFormApService = checkForFormApInsert(gson, chMessage.getMsg_obj(),startFormApService);
+                    }
                 }
                 /*
                  *
@@ -193,6 +200,10 @@ public class WS_C_Message extends IntentService {
                 //
                 if (startDownloadService) {
                     startDownloadService();
+                }
+                //
+                if(startFormApService){
+                    startFormApService();
                 }
             }
 
@@ -430,8 +441,9 @@ public class WS_C_Message extends IntentService {
 
                         ).toSqlQuery()
                 );
-                //
-                if(formAp == null && !fileAlreadyExists(objFormAp.getPk().replace("|","_"))) {
+                //Se form não existir, verifica necessidade de inserir.
+                //if(formAp == null && !fileAlreadyExists(objFormAp.getPk().replace("|","_"))) {
+                if(formAp == null) {
                     //Se o usr for o "Quem" do form ap, cria arquivo para inserção.
                     if (ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase(String.valueOf(objFormAp.getAp_who()))) {
                         //cria arquivo com o form ap
@@ -512,7 +524,7 @@ public class WS_C_Message extends IntentService {
         String fileName = Constant.CHAT_PREFIX +
                 (type != null ? type : "") +
                 ToolBox_Inf.getToken(getApplicationContext()) +
-                //"_" + UUID.randomUUID().toString() +
+                "_" + UUID.randomUUID().toString() +
                 ".txt";
         //
         File msgListFile = new File(Constant.CHAT_PATH, fileName);
@@ -526,7 +538,7 @@ public class WS_C_Message extends IntentService {
             return null;
         }
     }
-
+    //
     private boolean fileAlreadyExists(String formPk){
         File[] files = ToolBox_Inf.getListOfFiles_v5( Constant.CHAT_PATH, Constant.CHAT_PREFIX + Constant.CHAT_MESSAGE_TYPE_FORM_AP +"_"+ formPk);
         return files != null && files.length != 0;
