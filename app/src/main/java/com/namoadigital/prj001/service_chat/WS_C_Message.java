@@ -223,6 +223,11 @@ public class WS_C_Message extends IntentService {
             for (CH_Message ch_message : chMessages) {
                 //Verifica se existe a room da msg, se não houver, ignora
                 if (!msgRoomExists(ch_message.getRoom_code())) {
+                    //Se não existe a room e existe somente uma msg no loop,
+                    //Seta flag para não enviar notificação.
+                    if(chMessages.size() == 1){
+                        showNotification = false;
+                    }
                     continue;
                 }
                 //
@@ -397,7 +402,7 @@ public class WS_C_Message extends IntentService {
                 if (ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 } else {
-                    if (singletonWebSocket.isShow_notification() && showNotification) {
+                    if (showNotification && singletonWebSocket.isShow_notification()) {
                         ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, false);
                         //
                         singletonWebSocket.setShow_notification(false);
