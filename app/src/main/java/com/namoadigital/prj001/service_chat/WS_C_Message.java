@@ -287,6 +287,12 @@ public class WS_C_Message extends IntentService {
                     }
                 }
                 //
+                //Se msg for do tipo form Ap,for uma nova msg e não foi entregue ainda.
+                //verifica se deve ser criado texto para insert posterior
+                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && hasNewMsg && ch_message.getDelivered() == 0) {
+                    startFormApService = checkForFormApInsert(gson, ch_message.getMsg_obj(),startFormApService);
+                }
+                //
                 if (ch_message.getDelivered() == 0 && !ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
                     //Atualiza valor de dado entregue
                     ch_message.setDelivered(1);
@@ -325,11 +331,6 @@ public class WS_C_Message extends IntentService {
                         ) {
                     ch_message.setStatus_update(1);
                     ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
-                }
-                //Se msg for do tipo form Ap, e for uma nova msg
-                //verifica se deve ser criado texto para insert posterior
-                if ( ch_message.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_FORM_AP) && hasNewMsg) {
-                    startFormApService = checkForFormApInsert(gson, ch_message.getMsg_obj(),startFormApService);
                 }
                 //
                 //Salva lista no banco de dados.
