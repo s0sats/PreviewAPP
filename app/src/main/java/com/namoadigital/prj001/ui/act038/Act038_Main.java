@@ -1882,7 +1882,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             showPDPDF(
                     hmAux_Trans.get("alert_no_pdf_tll"),
                     hmAux_Trans.get("alert_no_pdf_msg"),
-                    true
+                    false
             );
 
 //            ToolBox.alertMSG(
