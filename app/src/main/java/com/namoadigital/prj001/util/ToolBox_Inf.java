@@ -2122,6 +2122,7 @@ public class ToolBox_Inf {
             transList.add("ws_exception_contact_admin_timeout");
             transList.add("ws_exception_server_connection_failed");
             transList.add("generic_error_lbl");
+            transList.add("ws_exception_connection_error");
 
             hmAux_Trans = setLanguage(
                     context,
@@ -2135,7 +2136,7 @@ public class ToolBox_Inf {
                     transList);
         }
 
-        hmAux_Trans.put("ws_exception_contact_admin_json_syntax",
+        hmAux_Trans.put("ws_exception_connection_error",
                 (!hmAux_Trans.containsKey("ws_exception_connection_error") || hmAux_Trans.get("ws_exception_connection_error").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_connection_error) : hmAux_Trans.get("ws_exception_connection_error"))
         );
 
