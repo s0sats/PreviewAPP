@@ -546,6 +546,8 @@ public class Act034_Room extends BaseFragment {
             //
             tv_Room_code.setText(mRoom_Code);
             //
+            tv_room_desc.setText(mRoom_Desc);
+            //
             if (info_room_image.equals("")) {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
             } else {

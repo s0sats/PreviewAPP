@@ -745,7 +745,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             showPDPDF(
                     hmAux_Trans.get("alert_no_pdf_tll"),
                     hmAux_Trans.get("alert_no_pdf_msg"),
-                    true
+                    false
             );
         }
     }
