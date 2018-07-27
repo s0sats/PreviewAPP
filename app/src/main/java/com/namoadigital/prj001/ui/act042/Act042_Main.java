@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -23,6 +24,7 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
     private Act042_Main_Presenter_Impl mPresenter;
     private ListView lv_sos;
     private SO_Header_Adapter mAdapter;
+    private MKEditTextNM mket_filter;
 
 
     @Override
@@ -56,6 +58,7 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act042_title");
+        transList.add("filter_hint");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -77,6 +80,9 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
         );
         //
         lv_sos = (ListView) findViewById(R.id.act042_lv_sos);
+        //
+        mket_filter = (MKEditTextNM) findViewById(R.id.act042_mket_filter_desc);
+        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         //
         mPresenter.getSoExpressList();
     }
@@ -112,7 +118,24 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
 
 
     private void initActions() {
+        //
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
 
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                applySearchFilter();
+            }
+        });
+    }
+
+    private void applySearchFilter() {
+        if (mAdapter != null) {
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
     }
 
     @Override

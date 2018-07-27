@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act042_mket_filter_desc"
@@ -45,7 +45,9 @@
                 android:background="@drawable/namoa_icon_bg_states"
                 android:padding="10dp"
                 android:src="@drawable/ic_filter_black_24px"
-                android:tint="@color/namoa_color_gray_4" />
+                android:tint="@color/namoa_color_gray_4"
+                android:visibility="gone"
+                />
         </LinearLayout>
 
         <ListView
