@@ -23,6 +23,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="2dp">
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act026_mket_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:mOCR="false"
+                app:mBARCODE="false"
+                app:mNFC="false"
+                />
+
             <TextView
                 android:id="@+id/act026_tv_filter_lbl"
                 android:layout_width="wrap_content"
@@ -31,6 +41,7 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/font_size_title_md"
                 android:text="Filtrar "
+                android:visibility="gone"
                 />
 
             <Switch

@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
@@ -29,7 +30,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.R.layout.act026_main;
+
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -46,11 +47,12 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     //
     private TextView tv_filter_lbl;
     private Switch sw_filter;
+    private MKEditTextNM mket_filter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(act026_main);
+        setContentView(R.layout.act026_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,6 +91,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("alert_no_so_founded_ttl");
         transList.add("alert_no_so_founded_msg");
         transList.add("only_avaliable_filter_lbl");
+        transList.add("filter_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -123,6 +126,9 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
         tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
         //views.add(tv_filter_lbl);
+        //
+        mket_filter = (MKEditTextNM) findViewById(R.id.act026_mket_filter);
+        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         //
         sw_filter = (Switch) findViewById(R.id.act026_sw_filter);
         //
@@ -192,12 +198,31 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             }
         });
         //
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                applySearchFilter();
+            }
+        });
+
+        //
         sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mPresenter.getSOList(product_code, serial_id, isChecked);
             }
         });
+    }
+
+    private void applySearchFilter() {
+        if (mAdapter != null) {
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
     }
 
     @Override

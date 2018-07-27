@@ -65,7 +65,7 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         );
         //
         pendencies.addAll(NFormAPPendencies);
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        if (ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)) {
             //Seleciona "pendencias do usr"
             HMAux soMyPendencies = soDao.getByStringHM(
                     new Sql_Act005_004(
@@ -92,7 +92,7 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             //
             pendencies.addAll(SOPendencies);
             //Se possui acesso ao profile so_express, exibe item so_express
-            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null)) {
+            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
                 //So Express "Pendentes"
                 List<HMAux> soExpressPendencies =
                         expressLocalDao.query_HM(
