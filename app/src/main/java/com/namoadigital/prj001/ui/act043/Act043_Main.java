@@ -490,6 +490,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         mAct_Info = Constant.ACT043;
         mAct_Title = Constant.ACT043 + "_" + "title";
         //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

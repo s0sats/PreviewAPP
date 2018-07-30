@@ -45,10 +45,6 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 public class Act016_Main extends Base_Activity implements Act016_Main_View {
 
-    //    public static final String ACT016_SELECTED_DATE = "selected_date";
-//    public static final String ACT016_FILTER_FORM = "filter_form";
-//    public static final String ACT016_FILTER_FORM_AP = "filter_form_ap";
-//
     private ListView lv_schedules;
     private CalendarView cv_schedules;
     private HashSet<HMAux> events;
@@ -263,6 +259,10 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT016;
         mAct_Title = Constant.ACT016 + "_" + "title";
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);

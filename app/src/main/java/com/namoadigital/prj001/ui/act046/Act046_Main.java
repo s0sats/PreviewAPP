@@ -367,6 +367,10 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         mAct_Info = Constant.ACT046;
         mAct_Title = Constant.ACT046 + "_" + "title";
         //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

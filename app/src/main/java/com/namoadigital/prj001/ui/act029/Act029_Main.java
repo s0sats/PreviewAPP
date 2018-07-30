@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
@@ -76,6 +77,10 @@ public class Act029_Main extends Base_Activity implements Act029_Main_View {
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT029;
         mAct_Title = Constant.ACT029 + "_" + "title";
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);

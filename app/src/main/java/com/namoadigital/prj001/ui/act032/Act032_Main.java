@@ -148,6 +148,10 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         mAct_Info = Constant.ACT032;
         mAct_Title = Constant.ACT032 + "_" + "title";
         //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
