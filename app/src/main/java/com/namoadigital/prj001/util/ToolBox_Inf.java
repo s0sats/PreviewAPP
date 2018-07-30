@@ -1659,10 +1659,10 @@ public class ToolBox_Inf {
         siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
 
         //operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-        //operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+        operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
 
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
-        //hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
+        hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
 
         if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO})) {
             MD_Site_Zone zone =
