@@ -145,6 +145,10 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         mAct_Info = Constant.ACT014;
         mAct_Title = Constant.ACT014 + "_" + "title";
         //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

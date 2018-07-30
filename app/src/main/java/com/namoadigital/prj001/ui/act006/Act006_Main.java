@@ -197,7 +197,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
 
-            if (fragIsOnlyOne){
+            if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
                 mFrgSerialSearch.setShowAll(false);
             } else {
@@ -258,6 +258,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT006;
         mAct_Title = Constant.ACT006 + "_" + "title";
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);

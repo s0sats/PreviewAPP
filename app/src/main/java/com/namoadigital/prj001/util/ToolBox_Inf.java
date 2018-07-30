@@ -1625,6 +1625,71 @@ public class ToolBox_Inf {
 
     }
 
+    public static HMAux loadFooterSiteOperationInfo(Context context) {
+        HMAux hmAux = new HMAux();
+        String siteDesc;
+        String zoneDesc;
+        String operationDesc;
+
+        MD_Site site =
+                new MD_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).getByString(
+                        new MD_Site_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context)
+                        ).toSqlQuery()
+                );
+
+        MD_Operation operation =
+                new MD_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).getByString(
+                        new MD_Operation_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Operation_Code(context)
+                        ).toSqlQuery()
+                );
+
+        //siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+        siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+
+        //operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
+        //operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+
+        hmAux.put(Constant.FOOTER_SITE, siteDesc);
+        //hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
+
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO})) {
+            MD_Site_Zone zone =
+                    new MD_Site_ZoneDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ).getByString(
+                            new MD_Site_Zone_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
+                                    ToolBox_Con.getPreference_Zone_Code(context)
+
+                            ).toSqlQuery()
+                    );
+            zoneDesc = "";
+            if (zone != null) {
+                //zoneDesc = zone.getZone_code() + " - " + zone.getZone_desc();
+                zoneDesc = zone.getZone_desc();
+            }
+            //
+            hmAux.put(Constant.FOOTER_ZONE, zoneDesc);
+
+        }
+        return hmAux;
+    }
+
     public static String getCustomerLogoPath(Context context) {
 
         return Constant.IMG_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) + ".png";

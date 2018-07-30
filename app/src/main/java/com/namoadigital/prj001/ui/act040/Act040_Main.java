@@ -272,6 +272,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 mket_serial.setmRequired(true);
                 mket_serial.setmMinSize(md_product.getSerial_min_length());
                 mket_serial.setmMaxSize(md_product.getSerial_max_length());
+                //
                 mket_serial.setmIgnoreMaxMinSize(true);
             }
             //
@@ -313,6 +314,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT040;
         mAct_Title = Constant.ACT040 + "_" + "title";
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
