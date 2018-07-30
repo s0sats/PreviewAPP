@@ -150,10 +150,6 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
     }
 
     private void iniUIFooter() {
-        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
-        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
-        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
-        //
         mAct_Title = Constant.ACT033 + "_" + "title";
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
