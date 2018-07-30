@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
@@ -29,7 +32,7 @@ import java.util.List;
  * Created by d.luche on 28/06/2017.
  */
 
-public class SO_Header_Adapter extends BaseAdapter {
+public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     public static final String CONFIG_TYPE_DOWNLOAD = "download";
     public static final String CONFIG_TYPE_EXIBITION_FULL = "CONFIG_TYPE_EXIBITION_FULL";
     public static final String CONFIG_TYPE_EXIBITION_SO = "CONFIG_TYPE_EXIBITION_SO";
@@ -44,6 +47,9 @@ public class SO_Header_Adapter extends BaseAdapter {
     private String config_type;
     private boolean[] checkedStatus;
     private ISO_Header_Adapter delegate;
+    //Implementação de filter no adapter - 27/07/2018
+    private ValueFilter valueFilter;
+    private ArrayList<HMAux> source_filtered;
 
 //    public SO_Header_Adapter(Context context, int resource_01, List<HMAux> source, String config_type) {
 //        this.context = context;
@@ -78,6 +84,10 @@ public class SO_Header_Adapter extends BaseAdapter {
             checkedStatus[i] = false;
         }
         loadTranslation();
+        //
+        this.source_filtered = (ArrayList<HMAux>) source;
+
+        getFilter();
     }
 
     public interface ISO_Header_Adapter {
@@ -614,6 +624,57 @@ public class SO_Header_Adapter extends BaseAdapter {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         );
+    }
+
+
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new ValueFilter();
+        }
+        return valueFilter;
+    }
+
+
+    private class ValueFilter extends Filter{
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            constraint = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                for (HMAux hmAux : source_filtered) {
+                    String so_prefix_code = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_PREFIX).toLowerCase() + "." +hmAux.get(SM_SODao.SO_CODE).toLowerCase());
+                    String so_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_ID).toLowerCase());
+                    String so_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_DESC).toLowerCase());
+                    String serial_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SERIAL_ID).toLowerCase());
+                    //
+                    if ( so_prefix_code.contains(constraint.toString().toLowerCase()) ||
+                         so_id.contains(constraint.toString().toLowerCase()) ||
+                         so_desc.contains(constraint.toString().toLowerCase()) ||
+                         serial_id.contains(constraint.toString().toLowerCase())
+                     ) {
+                        filterList.add(hmAux);
+                    }
+                }
+                //
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = source_filtered.size();
+                results.values = source_filtered;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            source = (ArrayList<HMAux>) results.values;
+            //
+            notifyDataSetChanged();
+        }
     }
 
 

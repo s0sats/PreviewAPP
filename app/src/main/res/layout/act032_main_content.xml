@@ -19,6 +19,16 @@
         android:gravity="center_horizontal"
         android:padding="5dp">
 
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act032_mket_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:mOCR="false"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            android:paddingLeft="10dp"
+            />
+
         <ListView
             android:id="@+id/act032_lv_so"
             android:layout_width="match_parent"

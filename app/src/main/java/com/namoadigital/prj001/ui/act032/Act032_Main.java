@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
@@ -44,6 +45,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
     private String requesting_act;
     private String product_code;
     private String serial_id;
+    private MKEditTextNM mket_filter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +88,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         transList.add("progress_downloading_so_msg");
         transList.add("alert_no_so_founded_ttl");
         transList.add("alert_no_so_founded_msg");
+        transList.add("filter_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -116,6 +119,9 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
                 );
         //
         lv_so = (ListView) findViewById(R.id.act032_lv_so);
+        //
+        mket_filter = (MKEditTextNM) findViewById(R.id.act032_mket_filter);
+        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         //
         mPresenter.getSOList(product_code, serial_id);
     }
@@ -178,8 +184,25 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
 
             }
         });
+        //
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
 
+            }
 
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                applySearchFilter();
+            }
+        });
+
+    }
+
+    private void applySearchFilter() {
+        if (mAdapter != null) {
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
     }
 
     @Override
