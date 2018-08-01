@@ -16,8 +16,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
-
 /**
  * Created by DANIEL.LUCHE on 07/03/2017.
  */
@@ -32,13 +30,6 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         try {
-
-            if (!isHostAvailable()) {
-                //ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.msg_no_server_found), "", "0");
-                //
-                return;
-            }
-
             Bundle bundle = intent.getExtras();
 
             EV_User_CustomerDao userCustomerDao =

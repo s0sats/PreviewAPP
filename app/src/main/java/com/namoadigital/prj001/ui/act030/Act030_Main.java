@@ -517,6 +517,13 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     }
 
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        progressDialog.dismiss();
+    }
+
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {

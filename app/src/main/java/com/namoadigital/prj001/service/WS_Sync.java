@@ -149,8 +149,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
-
 /**
  * Created by neomatrix on 16/01/17.
  */
@@ -178,11 +176,7 @@ public class WS_Sync extends IntentService {
 
         try {
 
-            if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
-                //
-                return;
-            }
+
 
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);

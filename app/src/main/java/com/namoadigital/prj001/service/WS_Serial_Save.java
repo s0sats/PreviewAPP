@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
-
 /**
  * Created by d.luche on 07/08/2017.
  */
@@ -53,11 +51,7 @@ public class WS_Serial_Save extends IntentService {
         Bundle bundle = intent.getExtras();
         try {
 
-            if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
-                //
-                return;
-            }
+
 
             gson = new GsonBuilder().serializeNulls().create();
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
