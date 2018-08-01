@@ -70,7 +70,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateDownLoadPicture(Context context) {
         Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

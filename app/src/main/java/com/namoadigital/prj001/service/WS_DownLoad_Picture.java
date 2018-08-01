@@ -113,7 +113,11 @@ public class WS_DownLoad_Picture extends IntentService {
                     ).toSqlQuery()
             );
             //CROQUIS MD ALL Products
-            allProductDao = new MD_All_ProductDao(getApplicationContext());
+            allProductDao = new MD_All_ProductDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+                    );
             //
             all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
                     new MD_All_Product_Sql_004(

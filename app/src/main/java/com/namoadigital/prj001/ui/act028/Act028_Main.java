@@ -1825,6 +1825,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
         mIntentLogo.putExtras(bundle);

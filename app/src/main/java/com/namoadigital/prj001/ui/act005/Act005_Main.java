@@ -189,6 +189,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPIC.putExtras(bundle);
         context.sendBroadcast(mIntentPIC);
         //
@@ -1933,6 +1936,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
         mIntentLogo.putExtras(bundle);

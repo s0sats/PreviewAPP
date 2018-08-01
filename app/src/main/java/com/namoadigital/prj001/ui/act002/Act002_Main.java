@@ -358,6 +358,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
         //

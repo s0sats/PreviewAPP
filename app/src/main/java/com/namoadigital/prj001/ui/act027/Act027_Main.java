@@ -2781,6 +2781,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
         mIntentLogo.putExtras(bundle);
