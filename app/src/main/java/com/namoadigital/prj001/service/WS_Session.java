@@ -20,8 +20,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
-
 /**
  * Created by neomatrix on 16/01/17.
  */
@@ -42,12 +40,6 @@ public class WS_Session extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
-            if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.ws_exception_server_not_found), "", "0");
-                //
-                return;
-            }
 
             String user = bundle.getString(Constant.GC_USER_CODE);
             String password = bundle.getString(Constant.GC_PWD);

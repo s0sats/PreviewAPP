@@ -1059,6 +1059,7 @@ public class ToolBox_Con {
             final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
 
             socket.connect(inetSocketAddress, timeout);
+
             return true;
         } catch (java.io.IOException e) {
             e.printStackTrace();

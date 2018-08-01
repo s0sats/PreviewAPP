@@ -55,6 +55,6 @@ public class Constant extends ConstantBaseApp {
     // Connection Test
     public static final String WS_HOST = "portal.namoadigital.com";
     public static final int WS_PORT = 443;
-    public static final int WS_TIMEOUT = 500;
+    public static final int WS_TIMEOUT = 3000;
 
 }

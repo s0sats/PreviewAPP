@@ -182,6 +182,7 @@ import java.util.zip.ZipOutputStream;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -2237,12 +2238,19 @@ public class ToolBox_Inf {
 //                    );
 //
         if (e.toString().contains("JsonSyntaxException")) {
-            sb.append(results).append(" \n")
-                    .append(hmAux_Trans.get("ws_exception_connection_error"))
-                    .append("\n")
-                    .append("\n");
-                    //.append("JsonParse!\n")
-                    //.append(e.toString()
+            if (!isHostAvailable()) {
+                sb.append(results)
+                        .append("\n")
+                        .append("\n")
+                        .append(hmAux_Trans.get("ws_exception_server_not_found"));
+            } else {
+                sb.append(results).append(" \n")
+                        .append(hmAux_Trans.get("ws_exception_connection_error"))
+                        .append("\n")
+                        .append("\n");
+                //.append("JsonParse!\n")
+                //.append(e.toString()
+            }
         } else if (e.toString().contains("ORA-")) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSerial_Env;
 import com.namoadigital.prj001.model.TSerial_Rec;
@@ -18,8 +17,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by DANIEL.LUCHE on 03/02/2017.
@@ -44,11 +41,7 @@ public class WS_Serial extends IntentService {
 
         try {
 
-            if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
-                //
-                return;
-            }
+
 
             Long product_code = bundle.getLong(Constant.GS_SERIAL_PRODUCT_CODE);
             String serial_id = bundle.getString(Constant.GS_SERIAL_ID);

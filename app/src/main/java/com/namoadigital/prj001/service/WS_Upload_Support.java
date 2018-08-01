@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.TUpload_Support_Env;
 import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by d.luche on 09/05/2017.
@@ -52,11 +49,7 @@ public class WS_Upload_Support extends IntentService {
 
         try{
 
-            if (!isHostAvailable()) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("ws_exception_server_not_found"), "", "0");
-                //
-                return;
-            }
+
 
             String support_msg =  bundle.getString(Constant.WS_SUPPORT_MSG,"");
             processUploadSupport(support_msg);

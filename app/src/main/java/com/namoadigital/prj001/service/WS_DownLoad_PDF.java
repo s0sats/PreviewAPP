@@ -25,8 +25,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
-
 /**
  * Created by neomatrix on 28/10/16.
  */
@@ -43,12 +41,6 @@ public class WS_DownLoad_PDF extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-
-            if (!isHostAvailable()) {
-                //ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.msg_no_server_found), "", "0");
-                //
-                return;
-            }
 
             mAp = false;
 
