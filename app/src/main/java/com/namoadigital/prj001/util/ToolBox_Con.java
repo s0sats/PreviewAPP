@@ -1067,4 +1067,17 @@ public class ToolBox_Con {
         }
     }
 
+    public static String getDBHelperName(String mDBName, int mDBVersion) {
+        try {
+            if (mDBName == null || mDBName.isEmpty()) {
+                return "";
+            }
+
+            return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 }

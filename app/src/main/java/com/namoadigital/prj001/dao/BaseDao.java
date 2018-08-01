@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import com.namoadigital.prj001.database.DatabaseHelperChat;
 import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
+import com.namoadigital.prj001.database.DatabaseManager;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -31,7 +33,7 @@ public class BaseDao {
     }
 
     public void openDB() {
-        //DatabaseManager.getInstance();
+        DatabaseManager.getInstance();
 
         try {
             switch (mMode) {
@@ -41,10 +43,14 @@ public class BaseDao {
                     );
 
                     this.db = DatabaseManager.getInstance().openDatabaseMulti();*/
-                    DatabaseHelperMulti SQLHelper_var_multi = new DatabaseHelperMulti(context, mDB_NAME,
+                    /*DatabaseHelperMulti SQLHelper_var_multi = new DatabaseHelperMulti(context, mDB_NAME,
                             mDB_VERSION);
 
-                    this.db = SQLHelper_var_multi.getWritableDatabase();
+                    this.db = SQLHelper_var_multi.getWritableDatabase();*/
+
+                    DatabaseManager.addDatabaseHelper(new DatabaseHelperMulti(context, mDB_NAME, mDB_VERSION));
+
+                    this.db = DatabaseManager.getInstance().openDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
 
                     break;
 
@@ -54,10 +60,15 @@ public class BaseDao {
                     );
 
                     this.db = DatabaseManager.getInstance().openDatabaseChat();*/
-                    DatabaseHelperChat SQLHelper_var_chat = new DatabaseHelperChat(context, mDB_NAME,
+                    /*DatabaseHelperChat SQLHelper_var_chat = new DatabaseHelperChat(context, mDB_NAME,
                             mDB_VERSION);
 
-                    this.db = SQLHelper_var_chat.getWritableDatabase();
+                    this.db = SQLHelper_var_chat.getWritableDatabase();*/
+
+                    DatabaseManager.addDatabaseHelper(new DatabaseHelperChat(context, mDB_NAME, mDB_VERSION));
+
+                    this.db = DatabaseManager.getInstance().openDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
+
 
                     break;
 
@@ -67,10 +78,15 @@ public class BaseDao {
                     );
 
                     this.db = DatabaseManager.getInstance().openDatabaseSingle();*/
-                    DatabaseHelperSingle SQLHelper_var_single = new DatabaseHelperSingle(context, mDB_NAME,
+                    /*DatabaseHelperSingle SQLHelper_var_single = new DatabaseHelperSingle(context, mDB_NAME,
                             mDB_VERSION);
 
-                    this.db = SQLHelper_var_single.getWritableDatabase();
+                    this.db = SQLHelper_var_single.getWritableDatabase();*/
+
+                    DatabaseManager.addDatabaseHelper(new DatabaseHelperSingle(context, mDB_NAME, mDB_VERSION));
+
+                    this.db = DatabaseManager.getInstance().openDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
+
 
                     break;
             }
@@ -81,20 +97,18 @@ public class BaseDao {
     }
 
     public void closeDB() {
-        /*switch (mMode) {
+        switch (mMode) {
             case "MULTI":
-                DatabaseManager.getInstance().closeDatabaseMulti();
+                DatabaseManager.getInstance().closeDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
                 break;
             case Constant.DB_MODE_CHAT:
-                DatabaseManager.getInstance().closeDatabaseChat();
+                DatabaseManager.getInstance().closeDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
                 break;
             default:
-                DatabaseManager.getInstance().closeDatabaseSingle();
+                DatabaseManager.getInstance().closeDatabase(ToolBox_Con.getDBHelperName(mDB_NAME, mDB_VERSION));
                 break;
-        }*/
-        if (this.db != null) {
-            this.db.close();
         }
+
     }
 
 }
