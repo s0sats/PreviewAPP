@@ -117,6 +117,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private void startLogoDownload() {
         Intent mIntent = new Intent(getApplicationContext(), WBR_DownLoad_Customer_Logo.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        mIntent.putExtras(bundle);
+        //
         getApplicationContext().sendBroadcast(mIntent);
     }
 

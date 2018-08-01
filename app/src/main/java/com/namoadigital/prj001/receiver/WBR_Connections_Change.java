@@ -97,7 +97,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateLogo(Context context){
         Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentLogo);
