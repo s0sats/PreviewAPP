@@ -224,6 +224,9 @@ public class WS_C_Add_Room extends IntentService {
 
     private void startFormApService() {
         Intent mIntentFormAp = new Intent(getApplicationContext(), WBR_Process_Form_Ap.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentFormAp.putExtras(bundle);
         //
         getApplicationContext().sendBroadcast(mIntentFormAp);
     }
