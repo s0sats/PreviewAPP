@@ -50,6 +50,9 @@ import java.util.ArrayList;
 
 public class WS_DownLoad_Picture extends IntentService {
 
+    private long customer_code;
+
+
     public WS_DownLoad_Picture() {
         super("WS_DownLoad_Picture");
     }
@@ -59,7 +62,12 @@ public class WS_DownLoad_Picture extends IntentService {
         try {
 
             Bundle bundle = intent.getExtras();
-
+            //
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
+            //Se parametro de customer não foi enviado, aborta chamada
+            if (customer_code == -1L) {
+                return;
+            }
             /*
             * Download images do N-Form
             * */
@@ -73,13 +81,13 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
             );
             //
             GE_Custom_Form_Field_LocalDao form_fieldLocalDao = new GE_Custom_Form_Field_LocalDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
             );
             //
@@ -95,13 +103,13 @@ public class WS_DownLoad_Picture extends IntentService {
             //CROQUIS MD Products
             productDao = new MD_ProductDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
             );
             //
             product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
                     new MD_Product_Sql_004(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            customer_code
                     ).toSqlQuery()
             );
             //CROQUIS MD ALL Products
@@ -109,7 +117,7 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
                     new MD_All_Product_Sql_004(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            customer_code
                     ).toSqlQuery()
             );
             /**
@@ -129,27 +137,27 @@ public class WS_DownLoad_Picture extends IntentService {
                 taskFileDao =
                         new SM_SO_Service_Exec_Task_FileDao(
                                 getApplicationContext(),
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                ToolBox_Con.customDBPath(customer_code),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                 //Adiciona lista de task files para download
                 so_file_list.addAll(taskFileDao.query_HM(
                         new SM_SO_Service_Exec_Task_File_Sql_003(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                customer_code
                         ).toSqlQuery()
                         )
                 );
                 //CROQUIS PRODUTO EVENTO
                 eventDao = new SM_SO_Product_EventDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
                 //
                 event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
                         new SM_SO_Product_Event_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                customer_code
                         ).toSqlQuery()
                 );
                 /*
@@ -157,13 +165,13 @@ public class WS_DownLoad_Picture extends IntentService {
                  */
                 eventFileDao = new SM_SO_Product_Event_FileDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
                 //
                 event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
                         new SM_SO_Product_Event_File_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                customer_code
                         ).toSqlQuery()
                 );
                 //
@@ -306,7 +314,7 @@ public class WS_DownLoad_Picture extends IntentService {
                 //Atualiza campo com url local
                 productDao.addUpdate(
                         new MD_Product_Sql_005(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                customer_code,
                                 hmAux.get(MD_ProductDao.PRODUCT_CODE),
                                 hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
                         ).toSqlQuery()
@@ -328,7 +336,7 @@ public class WS_DownLoad_Picture extends IntentService {
                 //Atualiza campo com url local
                 allProductDao.addUpdate(
                         new MD_All_Product_Sql_005(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                customer_code,
                                 hmAux.get(MD_All_ProductDao.PRODUCT_CODE),
                                 hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
                         ).toSqlQuery()
@@ -395,7 +403,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     //Atualiza campo com url local
                     eventDao.addUpdate(
                             new SM_SO_Product_Event_Sql_005(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    customer_code,
                                     hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
                                     hmAux.get(SM_SO_Product_EventDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_EventDao.SEQ),
@@ -423,7 +431,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     //Atualiza campo com url local
                     productDao.addUpdate(
                             new SM_SO_Product_Event_File_Sql_005(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    customer_code,
                                     hmAux.get(SM_SO_Product_Event_FileDao.SO_PREFIX),
                                     hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
