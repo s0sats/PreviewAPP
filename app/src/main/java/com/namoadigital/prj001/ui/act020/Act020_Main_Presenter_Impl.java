@@ -464,6 +464,8 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             //
             mIntentPDF.putExtras(bundle);
             mIntentPIC.putExtras(bundle);
+            //
+            bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
             mIntentLogo.putExtras(bundle);
             //
             context.sendBroadcast(mIntentPDF);

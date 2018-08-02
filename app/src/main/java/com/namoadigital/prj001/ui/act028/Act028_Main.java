@@ -1830,6 +1830,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
+        //
+        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);

@@ -2786,6 +2786,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
+        //
+        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);

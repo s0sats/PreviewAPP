@@ -130,8 +130,11 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
         Bundle bundle = new Bundle();
         //
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
+        //
+        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);
