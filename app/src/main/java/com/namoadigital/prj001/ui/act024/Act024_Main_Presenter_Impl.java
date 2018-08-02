@@ -13,6 +13,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -127,8 +128,13 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
 
         Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+        //
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
+        //
+        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);

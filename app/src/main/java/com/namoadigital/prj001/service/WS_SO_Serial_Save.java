@@ -307,6 +307,9 @@ public class WS_SO_Serial_Save extends IntentService {
 
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentPIC.putExtras(bundle);
         getApplicationContext().sendBroadcast(mIntentPIC);
 
     }

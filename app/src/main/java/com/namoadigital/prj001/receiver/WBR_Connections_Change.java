@@ -61,7 +61,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateDownLoadPDF(Context context) {
         Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -70,7 +70,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateDownLoadPicture(Context context) {
         Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -79,7 +79,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateUpload(Context context) {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -97,7 +97,8 @@ public class WBR_Connections_Change extends BroadcastReceiver {
     private void activateLogo(Context context){
         Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentLogo);
