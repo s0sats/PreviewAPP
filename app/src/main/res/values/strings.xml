@@ -96,5 +96,12 @@
     <string name="act002_offline_logout_msg">Connection not found!\nServer app sessions will not logged off!</string>
     <string name="title_activity_act042__main">Act042_Main</string>
     <string name="ws_exception_server_not_found">Could not connect to the server!\nIf the error persists, send a support file through the main menu.</string>
+    <string name="notification_ttl_upload">Loading</string>
+    <string name="notification_msg_upload">Sending files to server</string>
+    <string name="notification_user_says_lbl">says</string>
+    <string name="notification_rooms_lbl">Rooms</string>
+    <string name="notification_messages_lbl">Messages</string>
+    <string name="chat_fcm_offline_ttl">Offline messages</string>
+    <string name="chat_fcm_offline_msg">There are new messages on the server.\nOpen the Namoa application to receive them.</string>
 
 </resources>
