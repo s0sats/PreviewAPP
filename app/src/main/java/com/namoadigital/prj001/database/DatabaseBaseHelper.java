@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
 
     protected String mDBName;
@@ -73,6 +76,16 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
         //
         mDBName = name;
         mDBVersion = version;
+        //Tratativa para identificar banco -1
+        try {
+            if (name.contains("-1")) {
+                throw new Exception(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE);
+            }
+        }catch (Exception e){
+            if(e.toString().contains(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE)){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+        }
     }
 }
 
