@@ -49,6 +49,8 @@ public class WS_Cleanning extends IntentService {
     private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
     private int qtyDaysToSub = 10;
 
+    private long customer_code = -1L;
+
     public WS_Cleanning() {
         super("WS_Cleanning");
     }
@@ -56,6 +58,13 @@ public class WS_Cleanning extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+
+            customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
+
+            //Se parametro de customer na preferencias estiver igual a -1 não realizar a limpeza.
+            if (customer_code == -1L) {
+                return;
+            }
 
             deleteFormLocal();
             deleteSO();
@@ -77,8 +86,8 @@ public class WS_Cleanning extends IntentService {
         ArrayList<GE_Custom_Form_Ap> formApList = (ArrayList<GE_Custom_Form_Ap>)
                 formApDao.query(
                         new WS_Cleaning_Sql_006(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                                customer_code,
+                                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                         ).toSqlQuery()
                 );
         //
@@ -99,7 +108,7 @@ public class WS_Cleanning extends IntentService {
                 //Verifica se existe PDF do AP esta sendo usado por outro registro
                 HMAux formUsingPdf = formApDao.getByStringHM(
                         new WS_Cleaning_Sql_007(
-                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                customer_code,
                                 apPDF
                         ).toSqlQuery()
                 );
@@ -125,14 +134,14 @@ public class WS_Cleanning extends IntentService {
         SM_SODao sm_soDao =
                 new SM_SODao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
         // Remove TODOS OS ARQUIVOS vinculados a S.O
         ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
                 new WS_Cleaning_Sql_003(
-                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                 ).toSqlQuery()
         );
 
@@ -163,14 +172,14 @@ public class WS_Cleanning extends IntentService {
         SO_Pack_Express_LocalDao soPackExpressLocalDao =
                 new SO_Pack_Express_LocalDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
         // Remove TODAS AS S.O. Express
         soPackExpressLocalDao.remove(
                 new WS_Cleaning_Sql_008(
-                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                 ).toSqlQuery()
         );
     }
@@ -180,48 +189,48 @@ public class WS_Cleanning extends IntentService {
         GE_Custom_Form_LocalDao formLocalDao =
                 new GE_Custom_Form_LocalDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
         GE_Custom_Form_Field_LocalDao formFieldLocalDao =
                 new GE_Custom_Form_Field_LocalDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
         GE_Custom_Form_DataDao formDataDao =
                 new GE_Custom_Form_DataDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
         //
         GE_Custom_Form_Data_FieldDao formDataFieldDao =
                 new GE_Custom_Form_Data_FieldDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
                 new WS_Cleaning_Sql_001(
-                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                 ).toSqlQuery()
         );
 
         GE_FileDao ge_fileDao =
                 new GE_FileDao(
                         getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
                 );
 
         ArrayList<HMAux> hmAuxFiles = (ArrayList<HMAux>) ge_fileDao.query_HM(
                 new WS_Cleaning_Sql_002(
-                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                 ).toSqlQuery()
         );
 
@@ -302,15 +311,15 @@ public class WS_Cleanning extends IntentService {
 
         fcmMessageDao.remove(
                 new FCMMessage_Sql_006(
-                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
                 ).toSqlQuery()
         );
     }
 
-    public String sDTFormat_Sub_Days(String sDTFormatS,int days_to_sub) {
+    public String sDTFormat_Sub_Days(String sDTFormatS, int days_to_sub) {
         String sResults = "";
         Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - (days_to_sub + 1) );
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - (days_to_sub + 1));
         //
         SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
             public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {

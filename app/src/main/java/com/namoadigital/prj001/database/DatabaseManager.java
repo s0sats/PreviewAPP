@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.database;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -42,7 +41,7 @@ public class DatabaseManager {
             mDBHelpers.add(mDatabaseBaseHelper);
         }
 
-        Log.d("BANCO", "HELPER " + String.valueOf(mDBHelpers.size()));
+        //Log.d("BANCO", "HELPER " + String.valueOf(mDBHelpers.size()));
     }
 
     public synchronized SQLiteDatabase openDatabase(String fullName) {
