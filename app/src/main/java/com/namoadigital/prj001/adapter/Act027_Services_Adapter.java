@@ -163,9 +163,24 @@ public class Act027_Services_Adapter extends BaseAdapter {
         tv_pack_val.setText(item.get(SM_SO_PackDao.PACK_ID) +" - "+ item.get(SM_SO_PackDao.PACK_DESC));
 
         tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
-        if(item.get(SM_SO_ServiceDao.ZONE_CODE) != null && item.get(SM_SO_ServiceDao.ZONE_CODE).length() > 0) {
+        //06/08/18 - Se site do serviço diferente do site do logado, muda cor de fundo.
+        if(item.get(SM_SO_ServiceDao.SITE_CODE) != null &&  !item.get(SM_SO_ServiceDao.SITE_CODE).isEmpty() && !item.get(SM_SO_ServiceDao.SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+            ll_bg.setBackground(context.getDrawable(R.drawable.namoa_orange_bg_bordered));
+        }else{
+            //
+            ll_bg.setBackground(context.getDrawable(R.drawable.namoa_cell_8));
+        }
+        //
+        if( (item.get(SM_SO_ServiceDao.SITE_CODE) != null && item.get(SM_SO_ServiceDao.SITE_CODE).length() > 0)) {
             ll_zone.setVisibility(View.VISIBLE);
-            tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) + " - " + item.get(SM_SO_ServiceDao.ZONE_DESC));
+            //Linha abaixo, so com info de zone, é o esquema ate 06/08/18
+            //tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) + " - " + item.get(SM_SO_ServiceDao.ZONE_DESC));
+            //06/08/18 , agora será exibido a informação de site_desc + zone_desc
+            String site_zone_desc = "";
+            site_zone_desc += item.get(SM_SO_ServiceDao.SITE_CODE) != null ? item.get(SM_SO_ServiceDao.SITE_DESC): site_zone_desc ;
+            site_zone_desc += item.get(SM_SO_ServiceDao.SITE_CODE) != null && item.get(SM_SO_ServiceDao.ZONE_CODE) != null ? " / ": "";
+            site_zone_desc += item.get(SM_SO_ServiceDao.ZONE_CODE) != null ? item.get(SM_SO_ServiceDao.ZONE_DESC): site_zone_desc ;
+            tv_zone_val.setText(site_zone_desc);
             //Monta variaveis de comparação
             String site_zone_row = item.get(SM_SO_ServiceDao.SITE_CODE) +"|"+item.get(SM_SO_ServiceDao.ZONE_CODE);
             String site_zone_pref = ToolBox_Con.getPreference_Site_Code(context) +"|"+ToolBox_Con.getPreference_Zone_Code(context);
@@ -325,7 +340,15 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     HMAux item = (HMAux) v.getTag();
                     //
                     if (delegate != null) {
-                        delegate.serviceSelected(item, Act027_Main.SELECTION_EXPRESS);
+                        //06/08/18 - Aplicado a restrição de execução de site do serviço diferente do site logado
+                        //Caso o status do serviço seja diferente de pendente ou
+                        // seja pendente, mas não tenha restrição de execução, chama metodo express.
+                        //Caso haja restrição, emite dialog informando restrição
+                        if( !item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
+                            || !ToolBox_Inf.hasServiceSiteRestriction(context,item.get(SM_SO_ServiceDao.SITE_CODE),hmAux_Trans)
+                        ) {
+                            delegate.serviceSelected(item, Act027_Main.SELECTION_EXPRESS);
+                        }
                     }
                 }
             });

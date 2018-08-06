@@ -1438,6 +1438,40 @@ public class ToolBox_Inf {
         );
     }
 
+    /**
+     * Metodo retorna o site do serviço tem restrição de execução.
+     * A restrição de execução se dá caso o serviço possua um site e esse site seja diferente do
+     * site logado.
+     *
+     * @param context
+     * @param site_code - Site do Serviço
+     * @param hmAux_Trans - HmAux com as traduções
+     * @return - Caso falso, exibe dialog informando que não é possivel executar a ação.
+     */
+    public static boolean hasServiceSiteRestriction(Context context, String site_code, HMAux hmAux_Trans) {
+        boolean results = false;
+
+        if (site_code == null ||site_code.equalsIgnoreCase("null") || site_code.isEmpty() ) {
+            results = false;
+        } else if (site_code.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
+            results = false;
+        } else {
+            results = true;
+        }
+        //
+        if (results) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("so_service_site_restriction_ttl"),
+                    hmAux_Trans.get("so_service_site_restriction_msg"),
+                    null,
+                    0
+            );
+        }
+
+        return results;
+    }
+
     public static void buildFooterDialog(Context context) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
