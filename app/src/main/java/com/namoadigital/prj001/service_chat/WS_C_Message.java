@@ -433,7 +433,11 @@ public class WS_C_Message extends IntentService {
             if (objFormAp != null && objFormAp.getAp_when() != null) {
                 //Verifica se o FormAP ja existe. Somente se ele NÃO EXISTIR
                 //ele será inserido.
-                GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+                GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(objFormAp.getCustomer_code()),
+                        Constant.DB_VERSION_CUSTOM
+                );
                 //
                 GE_Custom_Form_Ap formAp = formApDao.getByString(
                         new GE_Custom_Form_Ap_Sql_005(

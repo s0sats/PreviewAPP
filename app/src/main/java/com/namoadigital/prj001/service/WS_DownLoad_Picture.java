@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -207,6 +208,7 @@ public class WS_DownLoad_Picture extends IntentService {
             //}
             //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
             //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
+            Log.d("DownPic","\nCustomer: "+String.valueOf(customer_code)+"\nRoomImg: " +String.valueOf(roomImgList.size()) + "\nMsgImg: "+String.valueOf(messageImgList.size()));
             if(  dados_geral.size() == 0
                  && so_file_list.size() == 0
                  && product_sketch_list.size() == 0

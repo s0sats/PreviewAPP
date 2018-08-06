@@ -78,7 +78,11 @@ public class WS_DownLoad_PDF extends IntentService {
                             new GE_Custom_Form_Blob_Local_Sql_002().toSqlQuery().toLowerCase()
                     )
             );//fim N FORM
-            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
             //
             ArrayList<HMAux> formAplist = new ArrayList<>();
             //

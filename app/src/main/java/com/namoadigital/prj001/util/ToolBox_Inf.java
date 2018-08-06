@@ -1227,19 +1227,23 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String getResourceCode(Context context, String module_code, String resource_name) {
+       return getResourceCode(context, module_code, resource_name, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
-     *
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
      * @param context
      * @param module_code
      * @param resource_name
      * @return
      */
-    public static String getResourceCode(Context context, String module_code, String resource_name) {
+    public static String getResourceCode(Context context, String module_code, String resource_name, long customer_code) {
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1263,6 +1267,7 @@ public class ToolBox_Inf {
      * Quando houver tempo, fazer taskforce para substituir esse
      * metodo nas acts que usam o antigo.
      *
+     *
      * @param context
      * @param module_code
      * @param resource_code
@@ -1271,10 +1276,26 @@ public class ToolBox_Inf {
      * @return
      */
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list) {
+        return setLanguage(context,module_code,resource_code,translate_code,translation_list,ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Segunda assinatura com parametro de customer para evitar customer -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param module_code
+     * @param resource_code
+     * @param translate_code
+     * @param translation_list
+     * @param customer_code
+     * @return
+     */
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list,long customer_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -2107,29 +2128,55 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Assinatura orignal
      * @param context
-     * @param notification_id Constant com o id da notificação;
+     * @param notification_id
      */
-    public static void showNotification(Context context, int notification_id) {
+    public static void showNotification(Context context, int notification_id){
+        showNotification(context, notification_id, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Assinatura com parametro de customer para evitar banco -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     * @param context
+     * @param notification_id
+     * @param customer_code
+     */
+    public static void showNotification(Context context, int notification_id, long customer_code) {
         List<String> translist = new ArrayList<>();
         int animation = -1;
         String title = "";
         String msg = "";
+        HMAux hmAux_Trans = new HMAux();
+        //
+        Log.d("ShowNotif","Customer: " + String.valueOf(customer_code));
 
-        HMAux hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                "",
-                "0",
-                ToolBox_Con.getPreference_Translate_Code(context),
-                translist
-        );
+        //
+        if(customer_code != -1){
+            //
+            hmAux_Trans = ToolBox_Inf.setLanguage(
+                    context,
+                    "",
+                    "0",
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translist,
+                    customer_code
+            );
+        }
 
         switch (notification_id) {
 
             case Constant.NOTIFICATION_UPLOAD:
                 animation = R.drawable.upload_animation;
-                title = hmAux_Trans.get("notification_ttl_upload");
-                msg = hmAux_Trans.get("notification_msg_upload");
+                title = context.getString(R.string.notification_ttl_upload);
+                if (hmAux_Trans.containsKey("notification_ttl_upload")) {
+                    title = hmAux_Trans.get("notification_ttl_upload");
+                }
+                msg = context.getString(R.string.notification_msg_upload);
+                if (hmAux_Trans.containsKey("notification_msg_upload")) {
+                    msg = hmAux_Trans.get("notification_msg_upload");
+                }
                 break;
 
             case Constant.NOTIFICATION_DOWNLOAD:
@@ -2257,7 +2304,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append("ORACLE!\n");
-                    //.append(e.toString()
+            //.append(e.toString()
 
         } else if (e.toString().toLowerCase().contains("timeout")) {
             sb.append(results).append(" \n")
@@ -2265,7 +2312,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append("Timeout!\n ");
-                    //.append(e.toString()
+            //.append(e.toString()
         } else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
@@ -2278,7 +2325,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"));
-                    //.append(e.toString());
+            //.append(e.toString());
         }
         return sb;
     }
@@ -3534,6 +3581,11 @@ public class ToolBox_Inf {
         //
         if (hmAux_trans == null || hmAux_trans.size() == 0) {
             //Necessidade de incluir arquivo de String ?!
+            hmAux_trans.put("notification_user_says_lbl",context.getString(R.string.notification_user_says_lbl));
+            hmAux_trans.put("notification_rooms_lbl", context.getString(R.string.notification_rooms_lbl));
+            hmAux_trans.put("notification_messages_lbl",context.getString(R.string.notification_messages_lbl));
+            hmAux_trans.put("chat_fcm_offline_ttl",context.getString(R.string.chat_fcm_offline_ttl));
+            hmAux_trans.put("chat_fcm_offline_msg",context.getString(R.string.chat_fcm_offline_msg));
         }
         //
         NotificationManager nm = (NotificationManager)
@@ -4174,12 +4226,11 @@ public class ToolBox_Inf {
                 //Seleciona via room_code e pk concatenada no room_obj
                 String pkConcat =
                         formAp.getCustomer_code() + "|" +
-                        formAp.getCustom_form_type() + "|" +
-                        formAp.getCustom_form_code() + "|" +
-                        formAp.getCustom_form_version() + "|" +
-                        formAp.getCustom_form_data() + "|" +
-                        formAp.getAp_code()
-                        ;
+                                formAp.getCustom_form_type() + "|" +
+                                formAp.getCustom_form_code() + "|" +
+                                formAp.getCustom_form_version() + "|" +
+                                formAp.getCustom_form_data() + "|" +
+                                formAp.getAp_code();
                 //
                 CH_Room chRoom = roomDao.getByString(
                         new CH_Room_Sql_014(
