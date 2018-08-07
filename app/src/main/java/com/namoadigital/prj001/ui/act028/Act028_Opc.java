@@ -407,10 +407,10 @@ public class Act028_Opc extends BaseFragment {
 
                     String results;
                     //
-                    if (mService.getService_desc().isEmpty()) {
+                    if (mService.getSite_desc().isEmpty()) {
                         results = mService.getZone_desc();
                     } else {
-                        results = mService.getService_desc() + " / " + mService.getZone_desc();
+                        results = mService.getSite_desc() + " / " + mService.getZone_desc();
                     }
                     //
                     tv_zone_val.setText(results);
