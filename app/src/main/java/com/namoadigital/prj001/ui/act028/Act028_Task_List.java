@@ -362,6 +362,14 @@ public class Act028_Task_List extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(sm_so_service.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
+
                 mMain_new.notExec(
                         sm_so_service,
                         sm_so_service_exec,
@@ -381,6 +389,14 @@ public class Act028_Task_List extends BaseFragment {
         iv_new_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(sm_so_service.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
 
                 createNewTask();
             }

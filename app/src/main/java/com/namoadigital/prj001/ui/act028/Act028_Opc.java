@@ -264,6 +264,14 @@ public class Act028_Opc extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
+
                 SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
 
                 sm_so_service_execNew.setExec_code(0);
@@ -310,6 +318,15 @@ public class Act028_Opc extends BaseFragment {
         iv_not_exec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
+
                 SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
 
                 sm_so_service_execNew.setExec_code(0);
@@ -387,7 +404,17 @@ public class Act028_Opc extends BaseFragment {
 
                 if (mService.getZone_id() != null) {
                     tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
-                    tv_zone_val.setText(mService.getZone_id() + " - " + mService.getZone_desc());
+
+                    String results;
+                    //
+                    if (mService.getService_desc().isEmpty()) {
+                        results = mService.getZone_desc();
+                    } else {
+                        results = mService.getService_desc() + " / " + mService.getZone_desc();
+                    }
+                    //
+                    tv_zone_val.setText(results);
+
                 } else {
                     tv_zone_lbl.setVisibility(View.GONE);
                     tv_zone_val.setVisibility(View.GONE);

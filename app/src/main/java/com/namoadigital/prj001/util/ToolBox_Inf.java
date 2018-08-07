@@ -1227,19 +1227,24 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String getResourceCode(Context context, String module_code, String resource_name) {
+        return getResourceCode(context, module_code, resource_name, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
      *
      * @param context
      * @param module_code
      * @param resource_name
      * @return
      */
-    public static String getResourceCode(Context context, String module_code, String resource_name) {
+    public static String getResourceCode(Context context, String module_code, String resource_name, long customer_code) {
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1271,10 +1276,26 @@ public class ToolBox_Inf {
      * @return
      */
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list) {
+        return setLanguage(context, module_code, resource_code, translate_code, translation_list, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Segunda assinatura com parametro de customer para evitar customer -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param module_code
+     * @param resource_code
+     * @param translate_code
+     * @param translation_list
+     * @param customer_code
+     * @return
+     */
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list, long customer_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1323,6 +1344,7 @@ public class ToolBox_Inf {
         //
         return item;
     }
+
 
     public static String sVersionDesc(String Build_RELEASE, String Build_SDK_INT) {
         return Build_RELEASE + " (" + Build_SDK_INT + ")";
@@ -1450,7 +1472,6 @@ public class ToolBox_Inf {
      */
     public static boolean hasServiceSiteRestriction(Context context, String site_code, HMAux hmAux_Trans) {
         boolean results = false;
-
         if (site_code == null ||site_code.equalsIgnoreCase("null") || site_code.isEmpty() ) {
             results = false;
         } else if (site_code.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
@@ -1468,7 +1489,6 @@ public class ToolBox_Inf {
                     0
             );
         }
-
         return results;
     }
 

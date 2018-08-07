@@ -750,6 +750,14 @@ public class Act028_Task extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
+
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_cancel_task_ttl"),
@@ -1150,6 +1158,8 @@ public class Act028_Task extends BaseFragment {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
 
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -1435,6 +1445,15 @@ public class Act028_Task extends BaseFragment {
     private View.OnClickListener play_stop_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            /**
+             *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+             *  o site do cabecalho da S.O.
+             */
+            if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                return;
+            }
+
             showTechDialog();
         }
     };
@@ -1442,6 +1461,14 @@ public class Act028_Task extends BaseFragment {
     private View.OnClickListener save_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            /**
+             *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+             *  o site do cabecalho da S.O.
+             */
+            if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                return;
+            }
 
             if (isValid()) {
                 informTaskActiveClosed();
