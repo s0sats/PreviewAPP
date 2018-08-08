@@ -216,6 +216,9 @@ public class WS_C_Message extends IntentService {
             boolean hasNewMsg = false;
             boolean showNotification = true;
             boolean startFormApService = false;
+            //08/08/2018
+            //Criado var para identificar se o FCM recebido é uma msg de outro usr.
+            boolean isFcmNotMineMsg = false;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
@@ -241,6 +244,8 @@ public class WS_C_Message extends IntentService {
                     ch_message.setAll_read(0);
                     ch_message.setStatus_update(1);
                     ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
+                    //Se ta se fcm recebido é de outro user.
+                    isFcmNotMineMsg = !ToolBox_Con.getPreference_User_Code(getApplicationContext()).equals(String.valueOf(ch_message.getUser_code()));
                 } else {
                     if (singletonWebSocket == null) {
                         singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
@@ -350,7 +355,10 @@ public class WS_C_Message extends IntentService {
             }
             //
             if (ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
-                if (hasNewMsg) {
+                //08/08/2018
+                //Modidicado validação para alem de validar se o fcm é nova msg, validar se essa msg
+                //NÃO É DO MEU PROPRIO USUARIo pois nesse caso, não deve ser emitido notificação.
+                if ( hasNewMsg && isFcmNotMineMsg){
                     ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE, null, true);
                 }
                 //
