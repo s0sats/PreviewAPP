@@ -720,6 +720,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         finish();
     }
 
+    /**
+     * Nota: 08/08/2018
+     * No retorno do WS_Serial_Save, INDEPENDENTEMENTE de haver ou não
+     * erro no save do serial e qual o tipo, O USUARIO NÃO DEVE SER IMPEDIDO
+     * de avançar para o N-Form, pois ao finalizar o N-Form, antes do envio do N-Form
+     * o Serial será novamente enviado para server e, dependendo do tipo de erro ocorrido anteriormente,
+     * o processo seguirá sem problemas.
+     */
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);

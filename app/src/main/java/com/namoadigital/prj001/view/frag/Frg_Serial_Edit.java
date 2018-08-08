@@ -340,31 +340,51 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     public void reApplySerialId() {
-        mket_serial_id.setTag(mket_serial_id.getText().toString());
-        btn_action.setText(btn_action_translation);
-        //
-        mdProductSerial.setSerial_code(0);
-        mdProductSerial.setSerial_tmp(0);
-        mdProductSerial.setSerial_id(mket_serial_id.getText().toString());
-        mdProductSerial.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>());
-        //
-        resetSaveCtrlVar();
-        //
-        setUIDataToSerialObj();
-        //
-        showAlertDialog(
-                hmAux_Trans.get("alert_serial_not_exists_ttl"),
-                hmAux_Trans.get("alert_serial_not_exists_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        btn_action.setOnClickListener(saveSerialListner);
-                        //applyProfile();
-                        loadDataToScreen();
-                        cleanDbReference();
+        if(
+            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS) ||
+            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION) ||
+            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+        ) {
+            mket_serial_id.setTag(mket_serial_id.getText().toString());
+            btn_action.setText(btn_action_translation);
+            //
+            mdProductSerial.setSerial_code(0);
+            mdProductSerial.setSerial_tmp(0);
+            mdProductSerial.setSerial_id(mket_serial_id.getText().toString());
+            mdProductSerial.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>());
+            //
+            resetSaveCtrlVar();
+            //
+            setUIDataToSerialObj();
+            //
+            showAlertDialog(
+                    hmAux_Trans.get("alert_serial_not_exists_ttl"),
+                    hmAux_Trans.get("alert_serial_not_exists_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            btn_action.setOnClickListener(saveSerialListner);
+                            //applyProfile();
+                            loadDataToScreen();
+                            cleanDbReference();
+                        }
                     }
-                }
-        );
+            );
+        }else{
+            mket_serial_id.setEnabled(false);
+            btn_action.setEnabled(false);
+            //
+            showAlertDialog(
+                    hmAux_Trans.get("alert_serial_edition_not_allowed_ttl"),
+                    hmAux_Trans.get("alert_serial_edition_not_allowed_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            informFragAbort();
+                        }
+                    }
+            );
+        }
     }
 
     public void applyReceivedSerial(MD_Product_Serial received_serial) {
@@ -2706,6 +2726,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("alert_no_site_option_msg");
         transListFrag.add("to_top_ttl");
         transListFrag.add("class_ttl");
+        //
+        transListFrag.add("alert_serial_edition_not_allowed_ttl");
+        transListFrag.add("alert_serial_edition_not_allowed_msg");
+
 
         //
         return transListFrag;
