@@ -916,19 +916,18 @@ public class Act028_Task extends BaseFragment {
                 cfgStatus(false);
             }
 
-            //tv_exec_tmp_label.setTextColor(0xFF000000);
+            //Se a task for minha, porem há restrição de execução por causa do site,
+            //bloqueia campos .
+            if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                iv_cancel_task.setEnabled(false);
+                //
+                cfgStatus(false);
+            }
 
         } else {
 
             iv_cancel_task.setVisibility(View.GONE);
 
-            cfgStatus(false);
-        }
-        //Se a task for minha, porem há restrição de execução por causa do site,
-        //bloqueia campos .
-        if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
-            iv_cancel_task.setEnabled(false);
-            //
             cfgStatus(false);
         }
     }

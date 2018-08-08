@@ -492,7 +492,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     dados.add(i, mAux);
                 } else {
-                    if (dados.get(i).get("read") != null && !dados.get(i).get("read").isEmpty() && dados.get(i).get("read").equalsIgnoreCase("0")) {
+                    if (dados.get(i).get("read") != null &&
+                            !dados.get(i).get("read").isEmpty() &&
+                            dados.get(i).get("read").equalsIgnoreCase("0") &&
+                            (!dados.get(i).get("user_code").equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context)) ||
+                                    dados.get(i).get("msg_type").equalsIgnoreCase("TRANSLATE"))
+                            ) {
 
                         no_read_count++;
 
