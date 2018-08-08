@@ -924,6 +924,13 @@ public class Act028_Task extends BaseFragment {
 
             cfgStatus(false);
         }
+        //Se a task for minha, porem há restrição de execução por causa do site,
+        //bloqueia campos .
+        if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+            iv_cancel_task.setEnabled(false);
+            //
+            cfgStatus(false);
+        }
     }
 
     private void uploadFiles(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
