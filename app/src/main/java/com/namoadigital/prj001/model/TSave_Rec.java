@@ -1,14 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by DANIEL.LUCHE on 10/02/2017.
  */
 
 public class TSave_Rec {
+    @Expose
     private String app;
+    @Expose
     private String validation;
+    @Expose
     private String link_url;
+    @Expose
     private String error_msg;
+    @Expose
     private String save;
 
     public String getApp() {
