@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.List;
 
 /**
@@ -7,13 +9,21 @@ import java.util.List;
  */
 
 public class TSave_Env {
+    @Expose
     private String app_code;
+    @Expose
     private String app_version;
+    @Expose
     private String session_app;
+    @Expose
     private String site_code;
+    @Expose
     private long operation_code;
+    @Expose
     private String token;
+    @Expose
     private List<GE_Custom_Form_Data> form_datas;
+    @Expose
     private List<GE_Custom_Form_Data_Field> form_data_fields;
 
     public String getApp_code() {

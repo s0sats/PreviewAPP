@@ -618,7 +618,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         for (int i = 0; i < customFFs.size(); i++) {
             String sFile_v = customFFs.get(i).getmValue();
-            String sFile_e = customFFs.get(i).getmDots_photo();
+            String sFile_e_1 = customFFs.get(i).getmDots_photo1();
+            String sFile_e_2 = customFFs.get(i).getmDots_photo2();
+            String sFile_e_3 = customFFs.get(i).getmDots_photo3();
+            String sFile_e_4 = customFFs.get(i).getmDots_photo4();
 
             if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
@@ -633,12 +636,51 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 }
             }
             //
-            if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
-                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
+            if (sFile_e_1.endsWith(".png") || sFile_e_1.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_1);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
-                    geFile.setFile_path(sFile_e);
+                    geFile.setFile_code(sFile_e_1.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_e_1);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(sDate);
+
+                    geFiles.add(geFile);
+                }
+            }
+            //
+            if (sFile_e_2.endsWith(".png") || sFile_e_2.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_2);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_e_2.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_e_2);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(sDate);
+
+                    geFiles.add(geFile);
+                }
+            }
+            //
+            if (sFile_e_3.endsWith(".png") || sFile_e_3.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_3);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_e_3.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_e_3);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(sDate);
+
+                    geFiles.add(geFile);
+                }
+            }
+            //
+            if (sFile_e_4.endsWith(".png") || sFile_e_4.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_4);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_e_4.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_e_4);
                     geFile.setFile_status("OPENED");
                     geFile.setFile_date(sDate);
 

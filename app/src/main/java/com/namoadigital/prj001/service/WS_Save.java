@@ -105,9 +105,9 @@ public class WS_Save extends IntentService {
         loadTranslation();
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_getting_finalized_forms"), "", "0");
-        //Antigo não usarGson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-       // Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
-        Gson gson = new GsonBuilder().serializeNulls().create();
+        //Antigo não usar <- Até 09/08/18  esse comentario era valido.
+        //Voltamos o esquema para excludeFieldsWithoutExposeAnnotation , para evitar campo duplicado no json.
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
 
         if(processPendingToken(1) == 0){
             processNewToken(0);

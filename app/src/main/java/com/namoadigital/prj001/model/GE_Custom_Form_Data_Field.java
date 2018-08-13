@@ -158,7 +158,7 @@ public class GE_Custom_Form_Data_Field {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }
     }
@@ -179,30 +179,72 @@ public class GE_Custom_Form_Data_Field {
 
                 String sComment = ja.getJSONObject(0).getString("COMMENT");
                 String sAP = ja.getJSONObject(0).getString("AP");
-                String sPhoto = ja.getJSONObject(0).getString("PHOTO");
-
-                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto);
-                if (sFile.exists()) {
-                    this.value_extra_json = this.value_extra;
+                String sPhoto1 = ja.getJSONObject(0).getString("PHOTO1");
+                String sPhoto2 = ja.getJSONObject(0).getString("PHOTO2");
+                String sPhoto3 = ja.getJSONObject(0).getString("PHOTO3");
+                String sPhoto4 = ja.getJSONObject(0).getString("PHOTO4");
+                //
+                JSONObject jsonObject = new JSONObject();
+                JSONObject jsonObjectAux = new JSONObject();
+                //
+                jsonObjectAux.put("COMMENT", sComment);
+                jsonObjectAux.put("AP", sAP);
+                //
+                File sFile1 = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto1);
+                if (sFile1.exists()) {
+                    jsonObjectAux.put("PHOTO1", sPhoto1);
                 } else {
-
-                    JSONObject jsonObject = new JSONObject();
-                    JSONObject jsonObjectAux = new JSONObject();
-
-                    jsonObjectAux.put("COMMENT", sComment);
-                    jsonObjectAux.put("AP", sAP);
-                    jsonObjectAux.put("PHOTO", "");
-
-                    JSONArray jar = new JSONArray();
-                    jar.put(jsonObjectAux);
-                    //
-                    jsonObject.put("CONTENT", jar);
-
-                    this.value_extra_json = jsonObject.toString();
+                    jsonObjectAux.put("PHOTO1", "");
                 }
+                File sFile2 = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto2);
+                if (sFile2.exists()) {
+                    jsonObjectAux.put("PHOTO2", sPhoto2);
+                } else {
+                    jsonObjectAux.put("PHOTO2", "");
+                }
+                File sFile3 = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto3);
+                if (sFile3.exists()) {
+                    jsonObjectAux.put("PHOTO3", sPhoto3);
+                } else {
+                    jsonObjectAux.put("PHOTO3", "");
+                }
+                File sFile4 = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto4);
+                if (sFile4.exists()) {
+                    jsonObjectAux.put("PHOTO4", sPhoto4);
+                } else {
+                    jsonObjectAux.put("PHOTO4", "");
+                }
+                //
+                JSONArray jar = new JSONArray();
+                jar.put(jsonObjectAux);
+                //
+                jsonObject.put("CONTENT", jar);
+
+                this.value_extra_json = jsonObject.toString();
+
+
+//                File sFile1 = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto1);
+//                if (sFile1.exists()) {
+//                    this.value_extra_json = this.value_extra;
+//                } else {
+
+//                    JSONObject jsonObject = new JSONObject();
+//                    JSONObject jsonObjectAux = new JSONObject();
+
+//                    jsonObjectAux.put("COMMENT", sComment);
+//                    jsonObjectAux.put("AP", sAP);
+//                    jsonObjectAux.put("PHOTO", "");
+
+//                    JSONArray jar = new JSONArray();
+//                    jar.put(jsonObjectAux);
+//                    //
+//                    jsonObject.put("CONTENT", jar);
+//
+//                    this.value_extra_json = jsonObject.toString();
+//                }
 
             } catch (JSONException e) {
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
 
             //this.value_extra_json = this.value_extra;
@@ -229,7 +271,7 @@ public class GE_Custom_Form_Data_Field {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }
     }
