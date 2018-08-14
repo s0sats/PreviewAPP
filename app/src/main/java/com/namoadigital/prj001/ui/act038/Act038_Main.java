@@ -316,7 +316,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_form_version_ttl = (TextView) findViewById(R.id.act038_header_tv_form_version_ttl);
         et_form_version_ttl = (EditText) findViewById(R.id.act038_header_et_form_version_ttl);
         //
-        tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_et_form_seq_ttl);
+        tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_tv_form_seq_ttl);
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
         tv_creation_ttl = (TextView) findViewById(R.id.act038_header_tv_form_creation_ttl);

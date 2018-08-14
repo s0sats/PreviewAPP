@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,6 +82,7 @@ import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.act.test2.Teste2;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -1855,6 +1857,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
+        /**
+         *
+         * APAGAR APÓS TESTES
+         *
+         */
+        menu.add(0, TOOLBAR_SUPPORT + 1, Menu.FIRST + 4, "Log Serial");
+        menu.findItem(TOOLBAR_SUPPORT).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(TOOLBAR_SUPPORT).setTitle("Log Serial");
 
         return true;
     }
@@ -1900,6 +1911,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             case TOOLBAR_SUPPORT:
                 mPresenter.showSupportDialog();
+                break;
+            case TOOLBAR_SUPPORT +1:
+                Intent intent = new Intent(context, Teste2.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
                 break;
             default:
                 return true;

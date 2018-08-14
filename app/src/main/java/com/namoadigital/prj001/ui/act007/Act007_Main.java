@@ -5,31 +5,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_GroupDao;
-import com.namoadigital.prj001.ui.act006.Act006_Main;
-import com.namoadigital.prj001.ui.act008.Act008_Main;
+import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.Serial_Log_Obj;
+import com.namoadigital.prj001.service.WS_Serial_Log;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -38,22 +33,15 @@ import java.util.Stack;
 public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private Act007_Main_Presenter mPresenter;
-
-    private MKEditTextNM mket_product_search;
-
-    private ListView lv_groups_products;
-
-    private Button btn_back;
-    private Button btn_home;
-
-    private Stack<Long> mStack = new Stack<Long>();
-
-    private long currentIndex = 0L;
-    private Long currentIndex2 = 0L;
-
-    private int stopPropagation = 0;
-
-    private boolean mkUpdate = true;
+    private TextView tv_product_lbl;
+    private TextView tv_product_val;
+    private TextView tv_serial_lbl;
+    private TextView tv_serial_val;
+    private ListView lv_logs;
+    private Serial_Log_Adapter mAdapter;
+    private Bundle bundle;
+    private MD_Product_Serial mdProductSerial;
+    private String file_name;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,10 +66,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 mModule_Code,
                 Constant.ACT007
         );
-
+        //
         loadTranslation();
-
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void loadTranslation() {
@@ -101,115 +87,68 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     }
 
     private void initVars() {
+        recoverIntentsInfo();
+        //
         mPresenter = new Act007_Main_Presenter_Impl(
                 context,
                 this,
-                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                file_name,
+                new MD_Product_SerialDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                hmAux_Trans
+
         );
-
-        mket_product_search = (MKEditTextNM) findViewById(R.id.act007_mket_product_search);
-        mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
-
-        lv_groups_products = (ListView) findViewById(R.id.act007_lv_groups_products);
-
-        btn_back = (Button) findViewById(R.id.act007_btn_back);
-        btn_back.setTag("btn_back");
-        btn_back.setVisibility(View.INVISIBLE);
-
-        btn_home = (Button) findViewById(R.id.act007_btn_home);
-        btn_home.setTag("btn_home");
         //
-        views.add(btn_back);
-        views.add(btn_home);
+        //tv_product_lbl = (TextView) findViewById(R.id.act007_tv_product_lbl);
+        //tv_product_lbl.setTag("product_lbl");
         //
-        controls_sta.add(mket_product_search);
-
-        recuperaGetIntents();
-
-        if (stopPropagation == 0) {
-            mPresenter.setAdapterData(currentIndex, currentIndex2, mket_product_search.getText().toString().trim());
-        }
+        tv_product_val = (TextView) findViewById(R.id.act007_tv_product_val);
+        //
+        tv_serial_lbl = (TextView) findViewById(R.id.act007_tv_serial_lbl);
+        tv_serial_lbl.setTag("serial_lbl");
+        //
+        tv_serial_val = (TextView) findViewById(R.id.act007_tv_serial_val);
+        //
+        lv_logs = (ListView) findViewById(R.id.act007_lv_log);
+        //
+        //views.add(tv_product_lbl);
+        views.add(tv_serial_lbl);
+        //Chama carregamento dos dados do produto.
+        setProductInfo();
     }
 
-    private void recuperaGetIntents() {
+    private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            //Se tem bundle e só 1 produto,
-            //significa que o usr clicou em voltar na act008
-            if (mPresenter.getProductList().size() == 1) {
-                stopPropagation = 1;
-                callAct006(context);
-            } else {
-                //19-06-17
-                //Add tratativa na reconstrução da pilha.
-                //Caso de exception,"reseta" pilha e exibe o home.
-                try {
-                    String[] parts = bundle.getString(Constant.ACT007_CURRENTINDEX).split(":");
-
-                    currentIndex = Long.parseLong(parts[0]);
-                    currentIndex2 = Long.parseLong(parts[1]);
-
-                    mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
-                    //
-                    reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
-                }catch (Exception e){
-                    currentIndex = 0;
-                    mket_product_search.setText("");
-                    //
-                    mStack.clear();
-                    btn_back.setVisibility(View.INVISIBLE);
-                }
-            }
-
+            mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+            file_name = bundle.getString(WS_Serial_Log.SERIAL_LOG_FILE, "");
         } else {
-            currentIndex = 0;
-            mket_product_search.setText("");
-            //
-            mStack.clear();
-            btn_back.setVisibility(View.INVISIBLE);
+            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
     }
 
-    private void reloadStack(String pilha_values) {
-        String[] p_values = pilha_values.split("#");
+
+    public void setProductInfo() {
+        tv_product_val.setText(mdProductSerial.getProduct_id() + " - " + mdProductSerial.getProduct_desc());
+        //Chama metodo que carrega lista de log do arquivo json
+        tv_serial_val.setText(mdProductSerial.getSerial_id());
         //
-        //Modifica visibilidade do botão
-        if(p_values.length >= 2){
-            btn_back.setVisibility(View.VISIBLE);
-        }else{
-            btn_back.setVisibility(View.INVISIBLE);
-        }
-        try {
-            for (int i = 0; i < p_values.length; i++) {
-                mStack.push(Long.parseLong(p_values[i]));
-            }
-        } catch (Exception e) {
-           // ToolBox_Inf.registerException(getClass().getName(),e);
-        }
+        mPresenter.getLog();
+
     }
 
-    private String getStackValues() {
-        List<Long> mStackValues = new ArrayList<>();
+    @Override
+    public void loadLogList(ArrayList<Serial_Log_Obj> logList) {
+        mAdapter = new Serial_Log_Adapter(
+                context,
+                logList,
+                R.layout.serial_log_cell
+        );
         //
-        int mStackSize = mStack.size();
-        //
-        for (int i = 0; i < mStackSize; i++) {
-            mStackValues.add(mStack.pop());
-        }
-        //
-        StringBuilder sbResults = new StringBuilder();
-        //
-        for (int i = mStackValues.size() - 1; i >= 0; i--) {
-            sbResults.append(mStackValues.get(i));
-            //
-            if (i != 0) {
-                sbResults.append("#");
-            }
-
-        }
-        //
-        return sbResults.toString();
+        lv_logs.setAdapter(mAdapter);
     }
 
     private void iniUIFooter() {
@@ -235,145 +174,17 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
     }
+
     private void initActions() {
 
-        mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-
-                if (mkUpdate) {
-                    mPresenter.setAdapterData(
-                            currentIndex,
-                            currentIndex2,
-                            s
-                    );
-                }
-            }
-
-            @Override
-            public void reportTextChange(String s, boolean b) {
-
-            }
-
-        });
-
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    // Ordem inversao para recuperar os dados
-                    currentIndex2 = mStack.pop();
-                    currentIndex = mStack.pop();
-                    //
-                    mkUpdate = false;
-                    mket_product_search.setText("");
-                    mkUpdate = true;
-                    //
-                    if(currentIndex == 0){
-                        btn_back.setVisibility(View.INVISIBLE);
-
-                    }
-                    //
-                    mPresenter.setAdapterData(
-                            currentIndex,
-                            currentIndex2,
-                            mket_product_search.getText().toString()
-                    );
-                } catch (Exception e) {
-                    mPresenter.onBackPressedClicked();
-                }
-            }
-        });
-
-        btn_home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentIndex = 0;
-                currentIndex2 = 0L;
-
-                mStack.clear();
-                //
-                mkUpdate = false;
-                mket_product_search.setText("");
-                mkUpdate = true;
-                //
-                btn_back.setVisibility(View.INVISIBLE);
-                //
-                mPresenter.onBtnHomeClicked();
-            }
-        });
-
-        lv_groups_products.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                if (item.get("type").equalsIgnoreCase("group")) {
-                    mStack.push(currentIndex);
-                    mStack.push(currentIndex2);
-                    //
-                    currentIndex = Long.parseLong(item.get("code"));
-                    currentIndex2 = Long.parseLong(item.get("recursive"));
-                    //
-                    mkUpdate = false;
-                    mket_product_search.setText("");
-                    mkUpdate = true;
-                    //
-                    btn_back.setVisibility(View.VISIBLE);
-                    //
-                    mPresenter.setAdapterData(
-                            currentIndex,
-                            currentIndex2,
-                            mket_product_search.getText().toString()
-                    );
-                } else {
-                    mPresenter.onCategoryProductClicked(item.get("code"));
-                }
-            }
-        });
     }
 
-    @Override
-    public void loadGroups_Products(List<HMAux> groups_products) {
-
-        lv_groups_products.setAdapter(
-                new Act007_Adapter_Groups_Products(
-                        context,
-                        R.layout.act007_main_content_cell_01,
-                        groups_products,
-                        hmAux_Trans
-                )
-        );
-
-    }
-
-    @Override
-    public void callAct006(Context context) {
-        Intent mIntent = new Intent(context, Act006_Main.class);
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
-
-    @Override
-    public void callAct008(Context context, String product_code) {
-        Intent mIntent = new Intent(context, Act008_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex) + ":" + String.valueOf(currentIndex2));
-        bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
-        bundle.putString(Constant.ACT007_MSTACKVALUES, getStackValues());
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, product_code);
-        //bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
-
-        mIntent.putExtras(bundle);
-
-        startActivity(mIntent);
-        finish();
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -393,14 +204,6 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     @Override
     protected void onDestroy() {
-
-        Log.d("VIDAS", "ACT007 ON DESTROY");
-
         super.onDestroy();
-    }
-
-    @Override
-    protected void processNotification_close(String mValue, String mActivity) {
-        //super.processNotification_close(mValue, mActivity);
     }
 }

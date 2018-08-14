@@ -555,6 +555,10 @@
 
         <service android:name=".service.WS_Process_Form_AP" />
 
+        <receiver android:name=".receiver.WBR_Serial_Log" />
+
+        <service android:name=".service.WS_Serial_Log" />
+
     </application>
 
 </manifest>

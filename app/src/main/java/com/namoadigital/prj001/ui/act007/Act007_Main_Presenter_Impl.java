@@ -2,17 +2,18 @@ package com.namoadigital.prj001.ui.act007;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_GroupDao;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.sql.MD_Product_Sql_002;
-import com.namoadigital.prj001.sql.Sql_Act007_001;
-import com.namoadigital.prj001.sql.Sql_Act007_002;
-import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.Serial_Log_Obj;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -22,98 +23,50 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
 
     private Context context;
     private Act007_Main_View mView;
+    private String file_name;
+    private MD_Product_SerialDao productSerialDao;
+    private HMAux hmAux_trans;
 
-    private MD_ProductDao productDao;
-    private MD_Product_GroupDao product_groupDao;
-
-    public Act007_Main_Presenter_Impl(Context context, Act007_Main_View mView, MD_ProductDao productDao, MD_Product_GroupDao product_groupDao) {
+    public Act007_Main_Presenter_Impl(Context context, Act007_Main_View mView, String file_name, MD_Product_SerialDao productSerialDao, HMAux hmAux_trans) {
         this.context = context;
         this.mView = mView;
-
-        this.productDao = productDao;
-        this.product_groupDao = product_groupDao;
+        this.file_name = file_name;
+        this.productSerialDao = productSerialDao;
+        this.hmAux_trans = hmAux_trans;
     }
 
     @Override
-    public void setAdapterData(long group_code, Long recursive_code, String filter) {
-        List<MD_Product> listProducts = getProductList();
-
-        if (listProducts.size() == 1) {
-            mView.callAct008(context, String.valueOf(listProducts.get(0).getProduct_code()));
-        } else {
-
-            ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
-                    new Sql_Act007_001(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(recursive_code),
-                            (filter.trim().equals("") ? "null" : filter)
-                    ).toSqlQuery()
-            );
-
-            ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
-                    new Sql_Act007_002(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(group_code),
-                            (filter.trim().equals("") ? "null" : filter),
-                            (int) group_code
-                    ).toSqlQuery()
-            );
-
-            ArrayList<HMAux> data = new ArrayList<>();
-
-            for (HMAux aux : groups) {
-                HMAux item = new HMAux();
-                item.put("code", aux.get("group_code"));
-                item.put("desc", aux.get("group_desc"));
-                item.put("id", aux.get("group_id"));
-                item.put("full_desc", aux.get("full_group_desc"));
-                item.put("type", aux.get("type"));
-                // Hugo
-                item.put("recursive", aux.get("recursive_code"));
-                //
-                data.add(item);
-            }
-
-            for (HMAux aux : products) {
-                HMAux item = new HMAux();
-                item.put("code", aux.get("product_code"));
-                item.put("desc", aux.get("product_desc"));
-                item.put("id", aux.get("product_id"));
-                item.put("full_desc", aux.get("full_product_desc"));
-                item.put("type", aux.get("type"));
-                item.put("recursive", aux.get(""));
-                //
-                data.add(item);
-            }
-
-            mView.loadGroups_Products(data);
-        }
-    }
-
-    @Override
-    public List<MD_Product> getProductList() {
-
-        List<MD_Product> listProducts =
-                productDao.query(new MD_Product_Sql_002(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ).toSqlQuery()
+    public void getLog() {
+        File file = new File(Constant.TOKEN_PATH,file_name);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        if(file.exists()){
+            try {
+                ArrayList<Serial_Log_Obj> logList = gson.fromJson(
+                        ToolBox_Inf.getContents(file),
+                        new TypeToken<ArrayList<Serial_Log_Obj>>() {
+                        }.getType()
                 );
+                //
+                if(logList != null && logList.size() > 0){
+                    mView.loadLogList(logList);
+                }
+            }catch (JsonSyntaxException e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                //ALERT????
+            }
+            //
 
-        return listProducts;
-    }
+        }else{
+            //CASO ARQUIVO NÃO EXISTA
+        }
 
-    @Override
-    public void onCategoryProductClicked(String product_code) {
-        mView.callAct008(context, product_code);
-    }
-
-    @Override
-    public void onBtnHomeClicked() {
-        setAdapterData(0, 0L, "");
     }
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct006(context);
+        ToolBox_Inf.deleteFileListExceptionSafe(Constant.TOKEN_PATH,Constant.PREFIX_LOG_FILE_SERIAL);
+        //
+        mView.callAct005(context);
     }
 }
