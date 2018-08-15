@@ -287,6 +287,10 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setProductIdText(String text) {
+        if (text.length() != 0){
+            iv_product_change.performClick();
+        }
+        //
         mket_product_id.setText(text.toString());
     }
 
