@@ -86,6 +86,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 this
         );
         //
+        controls_sta.add(mk_login);
+        //
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.checkLogin();
