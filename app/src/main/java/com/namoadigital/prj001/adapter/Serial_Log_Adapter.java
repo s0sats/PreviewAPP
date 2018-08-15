@@ -68,27 +68,19 @@ public class Serial_Log_Adapter extends BaseAdapter {
         //
         TextView tv_process = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_process);
         TextView tv_status = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_status);
+        TextView tv_desc_lbl = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_desc_lbl);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_desc);
+        TextView tv_location_lbl = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_location_lbl);
         TextView tv_location = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_location);
         TextView tv_datetime = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_datetime);
         TextView tv_user_action = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_user_action);
         //
-//        tv_process.setText(item.get(Serial_Log_Obj.PROCESS));
-//        tv_status.setText(item.get(Serial_Log_Obj.STATUS));
-//        tv_desc.setText(item.get(Serial_Log_Obj.DESCRIPTION));
-//        tv_location.setText(item.get(Serial_Log_Obj.LOCATION));
-//        tv_user_action.setText(item.get(Serial_Log_Obj.USER_ACTION));
-//        tv_datetime.setText(
-//                ToolBox_Inf.millisecondsToString(
-//                        ToolBox_Inf.dateToMilliseconds(item.get(Serial_Log_Obj.DATETIME)),
-//                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-//                )
-//        );
-        //
         tv_process.setText(logObj.getProcess());
         tv_status.setText((hmAux_Trans.get(logObj.getSys_status())));
         tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(logObj.getSys_status())));
+        tv_desc_lbl.setText(hmAux_Trans.get("description_lbl"));
         tv_desc.setText(logObj.getDescription());
+        tv_location_lbl.setText(hmAux_Trans.get("location_lbl"));
         tv_location.setText(logObj.getLocation());
         tv_user_action.setText(logObj.getUser_action());
         tv_datetime.setText(
@@ -103,8 +95,9 @@ public class Serial_Log_Adapter extends BaseAdapter {
 
     private void loadTransation() {
         List<String> translateList = new ArrayList<>();
-        translateList.add("so_main_title");
-
+        translateList.add("description_lbl");
+        translateList.add("location_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 Constant.APP_MODULE,
@@ -113,6 +106,4 @@ public class Serial_Log_Adapter extends BaseAdapter {
                 translateList
         );
     }
-
-
 }

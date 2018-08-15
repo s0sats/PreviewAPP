@@ -108,14 +108,14 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         tv_product_val = (TextView) findViewById(R.id.act007_tv_product_val);
         //
         tv_serial_lbl = (TextView) findViewById(R.id.act007_tv_serial_lbl);
-        tv_serial_lbl.setTag("serial_lbl");
+        //tv_serial_lbl.setTag("serial_lbl");
         //
         tv_serial_val = (TextView) findViewById(R.id.act007_tv_serial_val);
         //
         lv_logs = (ListView) findViewById(R.id.act007_lv_log);
         //
         //views.add(tv_product_lbl);
-        views.add(tv_serial_lbl);
+        //views.add(tv_serial_lbl);
         //Chama carregamento dos dados do produto.
         setProductInfo();
     }
