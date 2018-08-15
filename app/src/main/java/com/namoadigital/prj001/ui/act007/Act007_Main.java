@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act007;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,14 +11,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Serial_Log_Obj;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Log;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,6 +43,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     private Bundle bundle;
     private MD_Product_Serial mdProductSerial;
     private String file_name;
+    private String wsProcess ="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,11 +74,13 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("lbl_code");
-        transList.add("lbl_id");
-        transList.add("lbl_desc");
-        transList.add("mket_hint_msg");
-
+        transList.add("alert_log_file_not_found_ttl");
+        transList.add("alert_log_file_not_found_msg");
+        transList.add("dialog_serial_log_ttl");
+        transList.add("dialog_serial_log_start");
+        transList.add("alert_empty_log_ttl");
+        transList.add("alert_empty_log_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -92,7 +96,6 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         mPresenter = new Act007_Main_Presenter_Impl(
                 context,
                 this,
-                file_name,
                 new MD_Product_SerialDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -124,20 +127,33 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
-            file_name = bundle.getString(WS_Serial_Log.SERIAL_LOG_FILE, "");
+            //file_name = bundle.getString(WS_Serial_Log.SERIAL_LOG_FILE, "");
         } else {
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
     }
 
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
 
     public void setProductInfo() {
         tv_product_val.setText(mdProductSerial.getProduct_id() + " - " + mdProductSerial.getProduct_desc());
         //Chama metodo que carrega lista de log do arquivo json
         tv_serial_val.setText(mdProductSerial.getSerial_id());
         //
-        mPresenter.getLog();
+        mPresenter.executeSerialLog(mdProductSerial);
+    }
 
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
@@ -150,6 +166,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //
         lv_logs.setAdapter(mAdapter);
     }
+
 
     private void iniUIFooter() {
         iniFooter();
@@ -179,16 +196,125 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     }
 
-    public void callAct005(Context context) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
+    @Override
+    public void showNoConnecionMsg() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_no_conection_ttl"),
+                hmAux_Trans.get("alert_no_conection_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
+    }
+
+    @Override
+    public void showNoFileMsg() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_log_file_not_found_ttl"),
+                hmAux_Trans.get("alert_log_file_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
+    }
+
+    @Override
+    public void showEmptyLogMsg() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_empty_log_ttl"),
+                hmAux_Trans.get("alert_empty_log_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if (wsProcess.equals(WS_Serial_Log.class.getName())) {
+            mPresenter.setFile_name(hmAux.get(WS_Serial_Log.SERIAL_LOG_FILE));
+            //
+            mPresenter.getLog();
+            disableProgressDialog();
+        }
+
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+        mPresenter.deleteLogFile();
+        //
+        finish();
     }
 
     @Override
@@ -202,8 +328,4 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         return true;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

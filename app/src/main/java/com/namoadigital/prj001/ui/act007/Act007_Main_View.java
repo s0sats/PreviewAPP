@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.ui.act007;
 
-import android.content.Context;
-
 import com.namoadigital.prj001.model.Serial_Log_Obj;
 
 import java.util.ArrayList;
@@ -12,7 +10,15 @@ import java.util.ArrayList;
 
 public interface Act007_Main_View {
 
-    void callAct005(Context context);
+    void showPD(String title, String msg);
+
+    void setWsProcess(String wsProcess);
+
+    void showNoConnecionMsg();
+
+    void showNoFileMsg();
+
+    void showEmptyLogMsg();
 
     void loadLogList(ArrayList<Serial_Log_Obj> logList);
 

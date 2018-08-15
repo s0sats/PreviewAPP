@@ -68,6 +68,8 @@ public class WS_Serial_Log extends IntentService {
         //Seleciona traduções
         loadTranslation();
         //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
+        //
         TSerial_Log_Env env = new TSerial_Log_Env();
         //
         env.setApp_code(Constant.PRJ001_CODE);
@@ -83,12 +85,12 @@ public class WS_Serial_Log extends IntentService {
                 Constant.WS_SERIAL_LOG,
                 gson.toJson(env)
         );
-
+        //
         TSerial_Log_Rec rec = gson.fromJson(
                 resultado,
                 TSerial_Log_Rec.class
         );
-
+        //
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 rec.getValidation(),
@@ -105,6 +107,8 @@ public class WS_Serial_Log extends IntentService {
                 ) {
             return;
         }
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_log"), "", "0");
         //Gera nome do arquivo json
         String file_name = Constant.PREFIX_LOG_FILE_SERIAL+String.valueOf(customer_code+"_"+product_code+"_"+serial_code) + ".json";
         //Chama metodo para criar arquivo
@@ -116,7 +120,7 @@ public class WS_Serial_Log extends IntentService {
         ToolBox.sendBCStatus(
                 getApplicationContext(),
                 "CLOSE_ACT",
-                hmAux_Trans.get("msg_processing_list"),
+                hmAux_Trans.get("msg_process_finalized"),
                 auxName,
                 rec.getLink_url(),
                 "0"
@@ -137,9 +141,10 @@ public class WS_Serial_Log extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
-        translist.add("msg_processing_list");
+        translist.add("msg_sending_data");
         translist.add("msg_receving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_processing_log");
+        translist.add("msg_process_finalized");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
