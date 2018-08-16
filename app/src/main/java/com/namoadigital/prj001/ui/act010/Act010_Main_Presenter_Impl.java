@@ -55,7 +55,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 ToolBox_Con.getPreference_Translate_Code(context),
                                 String.valueOf(this.product_code),
                                 ToolBox_Con.getPreference_Operation_Code(context),
-                                site_code_form_param
+                                site_code_form_param,
+                                serial_id
                         ).toSqlQuery()
                 );
         //

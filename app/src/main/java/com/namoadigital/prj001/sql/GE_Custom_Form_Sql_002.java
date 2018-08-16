@@ -11,6 +11,11 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by DANIEL.LUCHE on 08/02/2017.
+ *
+ * Modified by DANIEL.LUCHE on 16/08/2018
+ *  Adicionado Serial Id como parametro no construtor.
+ *  Adicionado filtro na query para que, caso o serial_id seja null
+ *  sejam filtrados apenas os form que NÃO REQUEREM SERIAL para finalização
  */
 
 public class GE_Custom_Form_Sql_002 implements Specification {
@@ -21,14 +26,16 @@ public class GE_Custom_Form_Sql_002 implements Specification {
     private String s_product_code;
     private long s_operation_code;
     private String s_site_code;
+    private String s_serial_id;
 
-    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code) {
+    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code, String s_serial_id) {
         this.s_customer_code = s_customer_code;
         this.s_form_type_code = s_form_type_code;
         this.s_translate_code = s_translate_code;
         this.s_product_code = s_product_code;
         this.s_operation_code = s_operation_code;
         this.s_site_code = s_site_code;
+        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
     }
 
     @Override
@@ -83,13 +90,14 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "      AND (cf.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
                 "      AND (cf.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
                 "      AND (cf.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
-
+                "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
                 "    \n" +
                 "    ORDER BY\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";" +
                 GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
-                .toString();
+                .toString()
+                .replace("'null'","null");
 
         /*return  sb.append(
                 " SELECT\n" +
