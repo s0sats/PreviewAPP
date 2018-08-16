@@ -1,10 +1,8 @@
 package com.namoadigital.prj001.ui.act007;
 
-import android.content.Context;
+import com.namoadigital.prj001.model.Serial_Log_Obj;
 
-import com.namoa_digital.namoa_library.util.HMAux;
-
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -12,10 +10,16 @@ import java.util.List;
 
 public interface Act007_Main_View {
 
-    void loadGroups_Products(List<HMAux> groups_products);
+    void showPD(String title, String msg);
 
-    void callAct006(Context context);
+    void setWsProcess(String wsProcess);
 
-    void callAct008(Context context, String product_code);
+    void showNoConnecionMsg();
+
+    void showNoFileMsg();
+
+    void showEmptyLogMsg();
+
+    void loadLogList(ArrayList<Serial_Log_Obj> logList);
 
 }

@@ -15,8 +15,6 @@ public interface Act006_Main_View {
 
     void callAct005(Context context);
 
-    void callAct007(Context context);
-
     void callAct013(Context context);
 
     void callAct020(Context context, Bundle bundle);

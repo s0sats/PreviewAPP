@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,6 +82,7 @@ import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.act.test2.Teste2;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;

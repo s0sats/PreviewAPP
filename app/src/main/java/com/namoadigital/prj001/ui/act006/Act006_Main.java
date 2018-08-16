@@ -20,7 +20,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -326,14 +325,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
-    }
-
-    @Override
-    public void callAct007(Context context) {
-        Intent mIntent = new Intent(context, Act007_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
     }
 
     @Override

@@ -24,6 +24,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
     public static final String WS_SERIAL_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_product_serial.ws";
     public static final String WS_SERIAL_TRACKING_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_serial_tracking.ws";
+    public static final String WS_SERIAL_LOG = "https://dev.namoadigital.com/ws/prj001/server_serial_log.ws";
 
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
 
