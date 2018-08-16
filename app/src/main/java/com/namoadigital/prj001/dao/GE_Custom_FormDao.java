@@ -29,6 +29,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String REQUIRE_SIGNATURE = "require_signature";
     public static final String REQUIRE_LOCATION = "require_location";
+    public static final String REQUIRE_SERIAL_DONE = "require_serial_done";
     public static final String AUTOMATIC_FILL = "automatic_fill";
     public static final String ALL_SITE = "all_site";
     public static final String ALL_OPERATION = "all_operation";
@@ -254,6 +255,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
             custom_form.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
+            custom_form.setRequire_serial_done(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL_DONE)));
             custom_form.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
             custom_form.setAll_product(cursor.getInt(cursor.getColumnIndex(ALL_PRODUCT)));
             custom_form.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
@@ -285,6 +287,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             }
             if (custom_form.getRequire_location() > -1) {
                 contentValues.put(REQUIRE_LOCATION, custom_form.getRequire_location());
+            }
+            if (custom_form.getRequire_serial_done() > -1) {
+                contentValues.put(REQUIRE_SERIAL_DONE, custom_form.getRequire_serial_done());
             }
             if (custom_form.getAutomatic_fill() != null) {
                 contentValues.put(AUTOMATIC_FILL, custom_form.getAutomatic_fill());

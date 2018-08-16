@@ -12,6 +12,7 @@ public class GE_Custom_Form {
     private int custom_form_version;
     private int require_signature;
     private int require_location;
+    private int require_serial_done;
     private String automatic_fill;
     private int all_site;
     private int all_operation;
@@ -65,6 +66,14 @@ public class GE_Custom_Form {
         this.require_location = require_location;
     }
 
+    public int getRequire_serial_done() {
+        return require_serial_done;
+    }
+
+    public void setRequire_serial_done(int require_serial_done) {
+        this.require_serial_done = require_serial_done;
+    }
+
     public String getAutomatic_fill() {
         return automatic_fill;
     }
@@ -96,4 +105,6 @@ public class GE_Custom_Form {
     public void setAll_product(int all_product) {
         this.all_product = all_product;
     }
+
+
 }
