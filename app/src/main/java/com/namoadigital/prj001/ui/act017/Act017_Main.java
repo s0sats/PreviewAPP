@@ -124,8 +124,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(ACT_SELECTED_DATE, null);
-            filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
-            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
+            filter_form = bundle.getBoolean(ACT_FILTER_FORM, true);
+            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, true);
             filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
             //
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
@@ -422,6 +422,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //16/08/2018 - Add filtros no bundle para act008
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
