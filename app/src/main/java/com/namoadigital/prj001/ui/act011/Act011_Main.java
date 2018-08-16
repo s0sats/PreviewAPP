@@ -928,6 +928,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
+                //
+                if (i==1){
+                    custom_form_ff.setComments("Ai vai um texto longo para testes da Inclusao do campo de Informacoes Gerais");
+                } else {
+                    custom_form_ff.setComments("");
+                }
+                //
                 custom_form_ff.setCustomFFs(customFFs, i);
                 custom_form_ff.setHmAux_Trans(hmAux_Trans);
                 custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
