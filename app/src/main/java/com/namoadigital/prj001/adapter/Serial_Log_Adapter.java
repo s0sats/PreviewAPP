@@ -83,12 +83,17 @@ public class Serial_Log_Adapter extends BaseAdapter {
         tv_location_lbl.setText(hmAux_Trans.get("location_lbl"));
         tv_location.setText(logObj.getLocation());
         tv_user_action.setText(logObj.getUser_action());
-        tv_datetime.setText(
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(logObj.getDatetime()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                )
-        );
+        if(logObj.getDatetime() == null){
+            tv_datetime.setVisibility(View.GONE);
+        }else {
+            tv_datetime.setVisibility(View.VISIBLE);
+            tv_datetime.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(logObj.getDatetime()),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+        }
         //
         return convertView;
     }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -74,34 +73,35 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         File file = new File(Constant.TOKEN_PATH, file_name);
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
-        if(file.exists()){
-            try {
+        try {
+            if (file.exists()) {
+
                 ArrayList<Serial_Log_Obj> logList = gson.fromJson(
                         ToolBox_Inf.getContents(file),
                         new TypeToken<ArrayList<Serial_Log_Obj>>() {
                         }.getType()
                 );
                 //
-                if(logList != null && logList.size() > 0){
+                if (logList != null && logList.size() > 0) {
                     mView.loadLogList(logList);
-                }else{
+                } else {
                     mView.showEmptyLogMsg();
                 }
-            }catch (JsonSyntaxException e){
-                ToolBox_Inf.registerException(getClass().getName(),e);
-                //ALERT????
+                //
+            } else {
+                mView.showNoFileMsg();
             }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             //
-
-        }else{
-            mView.showNoFileMsg();
+            mView.showEmptyLogMsg();
         }
 
     }
 
     @Override
     public void deleteLogFile() {
-        ToolBox_Inf.deleteFileListExceptionSafe(Constant.TOKEN_PATH,Constant.PREFIX_LOG_FILE_SERIAL);
+        ToolBox_Inf.deleteFileListExceptionSafe(Constant.TOKEN_PATH, Constant.PREFIX_LOG_FILE_SERIAL);
     }
 
 }
