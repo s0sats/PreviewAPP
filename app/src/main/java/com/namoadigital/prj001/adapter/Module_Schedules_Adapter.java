@@ -25,6 +25,11 @@ import java.util.List;
 
 /**
  * Created by DANIEL.LUCHE on 11/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on 16/08/2018.
+ *
+ * Adicionado variavel do comentario do agendamento e interface para o clique.
+ *
  */
 
 public class Module_Schedules_Adapter extends BaseAdapter {
@@ -36,6 +41,15 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private OnIvCommentClickListner onIvCommentClickListner;
+
+    public interface OnIvCommentClickListner{
+        void OnIvCommentClick(String comment);
+    }
+
+    public void setOnIvCommentClickListner(OnIvCommentClickListner onIvCommentClickListner) {
+        this.onIvCommentClickListner = onIvCommentClickListner;
+    }
 
     private long site_id_preference = -1L;
 
@@ -274,7 +288,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
     }
 
-    private void processFormItem(HMAux item, View convertView) {
+    private void processFormItem(final HMAux item, View convertView) {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.module_schedules_cell_ll_bg);
         //
@@ -284,10 +298,10 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //
         TextView tv_main_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_lbl);
         TextView tv_main_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_val);
-
         tv_list.add(tv_main_lbl);
         tv_list.add(tv_main_val);
-
+        //
+        ImageView iv_comments = (ImageView) convertView.findViewById(R.id.module_schedules_cell_iv_comment);
         //
         TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_label);
         TextView tv_date_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_val);
@@ -296,8 +310,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_list.add(tv_date_val);
         //
         TextView tv_ttl_001 = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_ttl_001);
-
-
         tv_list.add(tv_ttl_001);
         //
         TextView tv_item_01_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_01_lbl);
@@ -385,6 +397,22 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
                 //APÓS IMPLANTAÇÃO DO FORM_AP, ICONE FOI ESCONDIDO
                 iv_main.setVisibility(View.GONE);
+                //16/08/2018 - Add icone de comentario quando houver
+                if(!item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS).isEmpty()){
+                    iv_comments.setVisibility(View.VISIBLE);
+                }else{
+                    iv_comments.setVisibility(View.GONE);
+                }
+                //
+                iv_comments.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onIvCommentClickListner != null){
+                            onIvCommentClickListner.OnIvCommentClick(item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS));
+                        }
+                    }
+                });
+                //
                 //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
                 tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
 

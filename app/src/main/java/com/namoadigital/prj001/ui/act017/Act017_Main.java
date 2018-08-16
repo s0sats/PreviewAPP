@@ -46,6 +46,10 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on 16/08/2018.
+ * Implementado interface do clique no icone de comentario do agendamento
+ *
  */
 
 public class Act017_Main extends Base_Activity implements Act017_Main_View {
@@ -156,6 +160,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_form_site_restriction_msg");
         //
         translateList.add("lbl_site");
+        translateList.add("alert_schedule_comment_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -292,6 +297,20 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 R.layout.namoa_ap_cell,
                 R.layout.module_schedules_date_cell
         );
+        //16/08/18
+        mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
+            @Override
+            public void OnIvCommentClick(String comment) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_schedule_comment_ttl"),
+                        comment,
+                        null,
+                        0
+                );
+            }
+        });
+
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
         //
