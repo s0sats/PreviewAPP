@@ -38,7 +38,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void setAdapterData(long product_code, String filter) {
+    public void setAdapterData(long product_code, String filter, String serial_id) {
         List<HMAux> data =
         custom_form_typeDao.query_HM(
                 new GE_Custom_Form_Type_Sql_001(
@@ -46,7 +46,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                         product_code,
                         ToolBox_Con.getPreference_Translate_Code(context),
                         ToolBox_Con.getPreference_Operation_Code(context),
-                        site_code_form_param
+                        site_code_form_param,
+                        serial_id
                 ).toSqlQuery()
         );
         //Se apenas um tipo, auto seleciona
