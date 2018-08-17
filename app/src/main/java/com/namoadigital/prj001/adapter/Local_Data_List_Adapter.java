@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
     private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private OnIvCommentClickListner onIvCommentClickListner;
 
     public Local_Data_List_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
@@ -42,6 +44,14 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                 "local_data_list_adapter"
         );
         loadTranslation();
+    }
+
+    public interface OnIvCommentClickListner{
+        void OnIvCommentClick(String comment);
+    }
+
+    public void setOnIvCommentClickListner(OnIvCommentClickListner onIvCommentClickListner) {
+        this.onIvCommentClickListner = onIvCommentClickListner;
     }
 
     @Override
@@ -70,7 +80,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         }
 
         //Resgata HmAux com as informações
-        HMAux item = source.get(position);
+        final HMAux item = source.get(position);
 
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.local_data_list_cell_01_ll_bg);
@@ -95,6 +105,27 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 
         tv_list.add(tv_hour_lbl);
         tv_list.add(tv_hour_val);
+        //
+        ImageView iv_schedule_comment = (ImageView) convertView.findViewById(R.id.local_data_list_cell_iv_schedule_comment);
+        //
+        if( item.containsKey(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS)
+            && !item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS).isEmpty()
+        ){
+            iv_schedule_comment.setVisibility(View.VISIBLE);
+            //
+            //
+            iv_schedule_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(onIvCommentClickListner != null){
+                        onIvCommentClickListner.OnIvCommentClick(item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS));
+                    }
+                }
+            });
+        }else{
+            iv_schedule_comment.setVisibility(View.GONE);
+            iv_schedule_comment.setOnClickListener(null);
+        }
         //
         TextView tv_product_ttl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_ttl);
 

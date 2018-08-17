@@ -333,7 +333,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.ACT006, 1);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT006);
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);

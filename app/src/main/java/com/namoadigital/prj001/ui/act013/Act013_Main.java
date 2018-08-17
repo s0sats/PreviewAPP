@@ -25,6 +25,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -53,7 +54,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private CheckBox chk_finalized;
     private ImageView iv_help;
     private List<CheckBox> checkBoxList;
-    private Bundle recBundle;
+    private String requesting_act = "";
 
     private boolean accessToSchedule;
 
@@ -98,6 +99,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_msg_exists_in_processing");
         translateList.add("alert_ttl_start_new_processing");
         translateList.add("alert_msg_start_new_processing");
+        //
+        translateList.add("alert_schedule_comment_ttl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -110,7 +113,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     private void initVars() {
 
-        recBundle = getIntent().getExtras();
+        recoverIntentsInfo();
 
         mPresenter =
                 new Act013_Main_Presenter_Impl(
@@ -120,7 +123,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
-                        )
+                        ),
+                        hmAux_Trans
                 );
         //Verifica se usr tem acesso aos agendados
         accessToSchedule = ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST);
@@ -152,6 +156,17 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         //mPresenter.getPendencies(true,false);
         filterApply();
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT012);
+        } else {
+            requesting_act = Constant.ACT012;
+        }
+
     }
 
     private void iniUIFooter() {
@@ -300,6 +315,20 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                         R.layout.local_data_list_cell,
                         pendencies
                 );
+        //
+        mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
+            @Override
+            public void OnIvCommentClick(String comment) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_schedule_comment_ttl"),
+                        comment,
+                        null,
+                        0
+                );
+            }
+        });
+        //
         lv_pendencies.setAdapter(mAdapter);
 
     }
@@ -368,6 +397,17 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         startActivity(mIntent);
         finish();
     }
+    //17/08/2018
+    @Override
+    public void callAct008(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act008_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Add flag inficando qual actChamou
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT013);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 
     @Override
     public void alertFormNotReady() {
@@ -384,7 +424,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked(recBundle);
+        mPresenter.onBackPressedClicked(requesting_act);
     }
 
     @Override

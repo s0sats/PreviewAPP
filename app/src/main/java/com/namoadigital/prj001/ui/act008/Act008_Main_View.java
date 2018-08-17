@@ -47,5 +47,7 @@ public interface Act008_Main_View {
     void updateProductSerialValues(MD_Product_Serial mdProductSerial);
 
     void setMdProductSerial(MD_Product_Serial mdProductSerial);
+    //17/08/18
+    void callAct013(Context context);
 
 }
