@@ -930,7 +930,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 Act011_FF custom_form_ff = new Act011_FF();
                 //
                 if (i==1){
-                    custom_form_ff.setComments("Ai vai um texto longo para testes da Inclusao do campo de Informacoes Gerais");
+                    custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                 } else {
                     custom_form_ff.setComments("");
                 }
