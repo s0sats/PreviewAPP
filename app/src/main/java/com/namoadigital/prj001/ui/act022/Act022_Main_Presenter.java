@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 
 /**
@@ -24,7 +26,14 @@ public class Act022_Main_Presenter implements Act022_Main_Contract.I_Presenter {
 
     @Override
     public MD_Product getMD_Produt(String product_code) {
-        return null;
+        MD_Product mdProduct = mdProductDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        Long.parseLong(product_code)
+                ).toSqlQuery()
+        );
+
+        return mdProduct;
     }
 
     @Override
@@ -47,6 +56,6 @@ public class Act022_Main_Presenter implements Act022_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.sendReturn("");
+        //mView.sendReturn("");
     }
 }

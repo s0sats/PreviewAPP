@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act022;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -44,6 +46,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     private TextView tv_product_desc;
     private MKEditTextNM mk_serial_id;
+    private ImageView iv_nfc;
     private Button btn_cancel;
     private Button btn_ok;
 
@@ -85,6 +88,9 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         transList.add("mket_hint_msg");
         transList.add("btn_back");
         transList.add("btn_home");
+        transList.add("alert_nfc_auth_cancel_ttl");
+        transList.add("alert_nfc_auth_cancel_msg");
+        transList.add("serial_hint_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -103,10 +109,19 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
         tv_product_desc = (TextView) findViewById(R.id.act022_tv_product_desc_value);
         mk_serial_id = (MKEditTextNM) findViewById(R.id.act022_mket_serial_id);
+        iv_nfc = (ImageView) findViewById(R.id.act022_iv_nfc);
         btn_cancel = (Button) findViewById(R.id.act022_btn_cancel);
         btn_cancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         btn_ok = (Button) findViewById(R.id.act022_btn_ok);
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        mk_serial_id.setHint(hmAux_Trans.get("serial_hint_lbl"));
+
+        if (supportNFC){
+            iv_nfc.setVisibility(View.VISIBLE);
+        } else {
+            iv_nfc.setVisibility(View.GONE);
+        }
 
         mPresenter = new Act022_Main_Presenter(
                 context,
@@ -122,6 +137,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         controls_sta.add(mk_serial_id);
 
         mdProduct = mPresenter.getMD_Produt(product_code);
+
+        tv_product_desc.setText(mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
     }
 
     private void recoverIntentsInfo() {
@@ -163,7 +180,19 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_nfc_auth_cancel_ttl"),
+                        hmAux_Trans.get("alert_nfc_auth_cancel_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendReturn("");
+                            }
+                        },
+                        2,
+                        false
+                );
             }
         });
 
