@@ -130,7 +130,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
+            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
             ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //

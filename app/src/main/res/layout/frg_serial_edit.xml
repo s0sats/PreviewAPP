@@ -155,14 +155,14 @@
 
                     <ImageView
                         android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
-                        android:layout_width="29dp"
-                        android:layout_height="29dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="end|center_vertical"
-                        android:layout_marginEnd="11dp"
+                        android:layout_marginEnd="13dp"
                         android:layout_marginStart="2dp"
                         android:src="@drawable/ic_clock_chat"
                         android:tint="@color/light_to_dark_blue_color"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
                 </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -193,7 +193,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginStart="2dp"
                             android:src="@drawable/icon_info_states"
-                            android:visibility="gone" />
+                            android:visibility="visible" />
 
                     </LinearLayout>
 
