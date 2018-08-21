@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act005;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -73,6 +72,7 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
@@ -82,7 +82,6 @@ import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.act.test2.Teste2;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -1903,6 +1902,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             case TOOLBAR_SUPPORT:
                 mPresenter.showSupportDialog();
                 break;
+
             default:
                 return true;
         }

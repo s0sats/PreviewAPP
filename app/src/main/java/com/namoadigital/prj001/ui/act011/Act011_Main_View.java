@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface Act011_Main_View {
 
-    void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature);
+    void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int Require_serial_done);
 
     void showMsg(String title, String msg, int type);
 
@@ -24,6 +24,8 @@ public interface Act011_Main_View {
     void callAct027(Context context, Bundle bundle);
 
     void callSignature();
+
+    void callNFCResults();
 
     void showSignature();
 

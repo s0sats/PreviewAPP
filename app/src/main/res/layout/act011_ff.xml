@@ -18,6 +18,17 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/act011_ff_tv_comments_ttl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Titulo do Comentário"
+                    android:textColor="@color/namoa_color_blue_dark_chat"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold"/>
+
                 <TextView
                     android:id="@+id/act011_ff_tv_comments"
                     android:layout_width="match_parent"

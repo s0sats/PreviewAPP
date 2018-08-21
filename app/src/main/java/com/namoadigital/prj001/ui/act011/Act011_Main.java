@@ -84,6 +84,7 @@ import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -150,6 +151,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String form_data;
     private String mSignature;
     private int signature;
+    private int require_serial_done;
+    private String require_serial_done_ok;
 
     private String so_prefix;
     private String so_code;
@@ -263,6 +266,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_location_gps_info");
         transList.add("alert_location_info_aquired_succesfully");
         transList.add("alert_location_info_aquired_unsuccesfully");
+        transList.add("alert_schedule_comment_ttl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -691,7 +695,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         formData.setSignature(mSignature);
 
-        mPresenter.checkSignature(formData, signature, 0, geFiles);
+        mPresenter.checkSignature(formData, signature, 0, geFiles, require_serial_done, require_serial_done_ok);
     }
 
     private void deleteFormLocal() {
@@ -836,7 +840,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done) {
 
         this.prefix = prefix;
         this.bNew = bNew;
@@ -850,6 +854,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.form_data = String.valueOf(formLocal.getCustom_form_data());
         this.mSo_Prefix = formData.getSo_prefix();
         this.mSo_Code = formData.getSo_code();
+        this.require_serial_done = require_serial_done;
+        this.require_serial_done_ok = "";
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id) && !serial_id.isEmpty()) {
             formData.setSerial_id(serial_id);
@@ -929,7 +935,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
                 //
-                if (i==1){
+                if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                 } else {
                     custom_form_ff.setComments("");
@@ -1721,7 +1727,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 formData.setSignature("");
                                 formData.setSignature_name("");
 
-                                mPresenter.checkData(formData, geFiles);
+                                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
                                 bNew = false;
                             }
                         }
@@ -1851,7 +1857,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData, geFiles);
+
+                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -1875,6 +1882,52 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             Intent mIntent = new Intent(context, SignaTure_Activity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mIntent.putExtras(bundleN);
+
+            context.startActivity(mIntent);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
+
+    @Override
+    protected void getNFCResults(String mValue) {
+        String sResults = mValue;
+
+        if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
+            require_serial_done_ok = "OK";
+            formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+            //
+            bNew = false;
+        } else {
+            File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
+            if (sFile.exists()) {
+                sFile.delete();
+            }
+            //
+            formData.setSignature("");
+            formData.setSignature_name("");
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
+            formData.setLocation_type("");
+            formData.setDate_end("1900-01-01 00:00:00 +00:00");
+        }
+    }
+
+    @Override
+    public void callNFCResults() {
+        require_serial_done_ok = "";
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putInt(ConstantBase.PID, -1);
+            bundle.putInt(ConstantBase.PTYPE, 2);
+
+            bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, product_code);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+
+            Intent mIntent = new Intent(context, Act022_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundle);
 
             context.startActivity(mIntent);
         } catch (Exception e) {
