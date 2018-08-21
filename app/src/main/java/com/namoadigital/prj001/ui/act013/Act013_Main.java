@@ -101,7 +101,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_msg_start_new_processing");
         //
         translateList.add("alert_schedule_comment_ttl");
-
+        translateList.add("alert_define_serial_ttl");
+        translateList.add("alert_define_serial_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
