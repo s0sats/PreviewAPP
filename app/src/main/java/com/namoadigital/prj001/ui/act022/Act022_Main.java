@@ -50,6 +50,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     private Button btn_cancel;
     private Button btn_ok;
 
+    private boolean isShowingAlert = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +119,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
         mk_serial_id.setHint(hmAux_Trans.get("serial_hint_lbl"));
 
-        if (supportNFC){
+        if (supportNFC) {
             iv_nfc.setVisibility(View.VISIBLE);
         } else {
             iv_nfc.setVisibility(View.GONE);
@@ -177,6 +179,14 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     }
 
     private void initActions() {
+
+        mk_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                mPresenter.processValidation(product_code, serial_id, "", s);
+            }
+        });
+
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,13 +216,22 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     @Override
     public void showMSG() {
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_invalid_serial_ttl"),
-                hmAux_Trans.get("alert_invalid_serial_msg"),
-                null,
-                -1
-        );
+        if (!isShowingAlert) {
+            isShowingAlert = true;
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_invalid_serial_ttl"),
+                    hmAux_Trans.get("alert_invalid_serial_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            isShowingAlert = false;
+                        }
+                    },
+                    -1
+            );
+        }
     }
 
     @Override
@@ -244,29 +263,38 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
                     500
             );
         } else {
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_serial_validation_ttl"),
-                    value[0],
-                    null,
-                    -1
+            if (!isShowingAlert) {
+                isShowingAlert = true;
 
-            );
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_serial_validation_ttl"),
+                        value[0],
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                isShowingAlert = false;
+                            }
+                        },
+                        -1
+
+                );
+            }
         }
     }
 
-    @Override
-    protected void nfcDataError(boolean status, int id, String... value) {
-        super.nfcDataError(status, id, value);
-        //
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_serial_validation_ttl"),
-                value[0],
-                null,
-                -1
-        );
-    }
+//    @Override
+//    protected void nfcDataError(boolean status, int id, String... value) {
+//        super.nfcDataError(status, id, value);
+//        //
+//        ToolBox.alertMSG(
+//                context,
+//                hmAux_Trans.get("alert_serial_validation_ttl"),
+//                value[0],
+//                null,
+//                -1
+//        );
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
