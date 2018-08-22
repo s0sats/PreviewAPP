@@ -180,10 +180,25 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     private void initActions() {
 
+//        mk_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+//            @Override
+//            public void reportTextBySpecialist(String s) {
+//                mPresenter.processValidation(product_code, serial_id, "", s);
+//            }
+//        });
         mk_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
-            public void reportTextBySpecialist(String s) {
-                mPresenter.processValidation(product_code, serial_id, "", s);
+            public void reportTextBySpecialist(final String s) {
+
+                new Handler().postDelayed(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                mPresenter.processValidation(product_code, serial_id, "", s);
+                            }
+                        },
+                        500
+                );
             }
         });
 
