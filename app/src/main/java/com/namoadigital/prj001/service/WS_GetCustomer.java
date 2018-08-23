@@ -153,14 +153,30 @@ public class WS_GetCustomer extends IntentService {
                 File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
                 File[] files_support = ToolBox_Inf.getListOfFiles_v5(Constant.SUPPORT_PATH,"");
                 //
+                File[] files_cc_cache = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH,"");
+                File[] files_cc_cache_photo = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH_PHOTO,"");
+                File[] files_cc_cache_chat = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_CHAT_PATH,"");
+                File[] files_cc_cache_pdf = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PDF,"");
+
+                File[] files_img = ToolBox_Inf.getListOfFiles_v5(Constant.IMG_PATH,"");
+                File[] files_thu = ToolBox_Inf.getListOfFiles_v5(Constant.THU_PATH,"");
+                File[] files_chat = ToolBox_Inf.getListOfFiles_v5(Constant.CHAT_PATH,"");
+                //
                 Collections.addAll(listToDelete,files_db);
                 Collections.addAll(listToDelete,files_db_mult);
                 Collections.addAll(listToDelete,files_db_chat);
                 Collections.addAll(listToDelete,files_token);
                 Collections.addAll(listToDelete,files_support);
                 //
-                ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
+                Collections.addAll(listToDelete,files_cc_cache);
+                Collections.addAll(listToDelete,files_cc_cache_photo);
+                Collections.addAll(listToDelete,files_cc_cache_chat);
+                Collections.addAll(listToDelete,files_cc_cache_pdf);
+                Collections.addAll(listToDelete,files_img);
+                Collections.addAll(listToDelete,files_thu);
+                Collections.addAll(listToDelete,files_chat);
                 //
+                ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
             }
             //
             ev_userDao.addUpdate(users, true);

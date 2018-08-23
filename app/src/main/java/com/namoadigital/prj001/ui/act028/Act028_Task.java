@@ -1206,6 +1206,8 @@ public class Act028_Task extends BaseFragment {
         mIntent.putExtra(ConstantBase.PTYPE, 10);
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "p");
+        mIntent.putExtra(ConstantBase.MPREMODE, true);
+
 
         if (mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
             mIntent.putExtra(ConstantBase.PENABLED, true);

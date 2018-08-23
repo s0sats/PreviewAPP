@@ -38,7 +38,7 @@ public class WS_Upload_Img extends IntentService {
         try {
             Bundle bundle = intent.getExtras();
 
-            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1L);
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE, -1L);
             //
             if (customer_code == -1L) {
                 //programAlarm(getApplicationContext());
@@ -81,21 +81,28 @@ public class WS_Upload_Img extends IntentService {
             //
             for (GE_File geFile : geFiles) {
 
-                env.setFile_path(geFile.getFile_path());
-                //
-                String sResults = ToolBox_Inf.uploadFile(
-                        gson.toJson(env),
-                        geFile.getFile_path(),
-                        geFile.getFile_path_new()
-                );
+                String sRealFileName = geFile.getFile_path_new() != null ? geFile.getFile_path_new() : geFile.getFile_path();
 
-                TUploadImg_Rec rec = gson.fromJson(
-                        sResults,
-                        TUploadImg_Rec.class
-                );
+                if (ToolBox_Inf.verifyFileExists(sRealFileName)) {
+                    env.setFile_path(geFile.getFile_path());
+                    //
+                    String sResults = ToolBox_Inf.uploadFile(
+                            gson.toJson(env),
+                            geFile.getFile_path(),
+                            geFile.getFile_path_new()
+                    );
 
-                if (rec.getSave().equalsIgnoreCase("OK")) {
-                    geFile.setFile_status("SENT");
+                    TUploadImg_Rec rec = gson.fromJson(
+                            sResults,
+                            TUploadImg_Rec.class
+                    );
+
+                    if (rec.getSave().equalsIgnoreCase("OK")) {
+                        geFile.setFile_status("SENT");
+                        geFileDao.addUpdate(geFile);
+                    }
+                } else {
+                    geFile.setFile_status("FILE_NOT_FOUND");
                     geFileDao.addUpdate(geFile);
                 }
             }
