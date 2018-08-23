@@ -42,6 +42,7 @@ import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -360,7 +361,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             //Chamada vinda da act017
             if (bundle.containsKey(ACT_SELECTED_DATE)) {
                 isSchedule = true;
-            }//
+            }
+            //Chamada vinda Act013 quando agendamento
+            if ( bundle.containsKey(Constant.MAIN_REQUESTING_ACT)
+                 && bundle.getString(Constant.MAIN_REQUESTING_ACT).equals(Constant.ACT013)
+            ) {
+                isSchedule = true;
+            }
+            //
             if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 //bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
@@ -715,6 +723,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    /**
+     * 17/08/18
+     * Correção do fluxo de agendamento quando vindo pela act013
+     * @param context
+     */
+    @Override
+    public void callAct013(Context context) {
+        Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

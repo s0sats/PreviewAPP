@@ -17,6 +17,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  *
  * NOVO CONCEITO de atrasados 06/07/2018
  * Agora considera atrasado todos forms com data(dia, mes, ano) menor ou igual a de hoje.
+ *
+ * Modificado by DANIEL.LUCHE on 16/08/2018.
+ * Adicionado campos schedule_comments e require_serial_done no retorno da query.
+ *
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -71,7 +75,9 @@ public class Sql_Act017_001 implements Specification {
                         "  strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
                         "  (strftime('%s',l.schedule_date_start_format,'localtime') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                         "  l.require_serial,\n"+
-                        "  l.allow_new_serial_cl\n"+
+                        "  l.allow_new_serial_cl,\n"+
+                        "  l.schedule_comments,\n"+
+                        "  l.require_serial_done\n"+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -113,7 +119,10 @@ public class Sql_Act017_001 implements Specification {
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
                         "schedule_date_start_format#schedule_date_end_format#site_code#site_id#site_desc#require_serial#allow_new_serial_cl#" +
-                        Act017_Main.ACT017_ADAPTER_DATE_REF+"#"+Act017_Main.ACT017_ADAPTER_DATE_REF_MS)
+                        Act017_Main.ACT017_ADAPTER_DATE_REF+"#"+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#"+
+                        GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS +"#"+
+                        GE_Custom_Form_LocalDao.REQUIRE_SERIAL_DONE
+                )
                 .toString()
                 .replace("'null'","null");
 

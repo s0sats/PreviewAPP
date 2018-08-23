@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
@@ -63,6 +64,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     private void loadTranslation() {
         //
         List<String> translateList = new ArrayList<>();
+        translateList.add("alert_schedule_comment_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -133,7 +135,20 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                 R.layout.local_data_list_cell,
                 sentData
         );
-
+        //
+        mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
+            @Override
+            public void OnIvCommentClick(String comment) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_schedule_comment_ttl"),
+                        comment,
+                        null,
+                        0
+                );
+            }
+        });
+        //
         lv_sent.setAdapter(mAdapter);
 
     }

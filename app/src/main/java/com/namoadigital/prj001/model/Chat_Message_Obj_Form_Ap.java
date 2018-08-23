@@ -211,6 +211,7 @@ public class Chat_Message_Obj_Form_Ap {
             formAp.setAp_who(this.ap_who);
             formAp.setAp_who_nick(this.ap_who_name);
             formAp.setAp_when(this.ap_when);
+            formAp.setSerial_id(this.ap_serial_id);
         }catch (Exception e){
             formAp = null;
             ToolBox_Inf.registerException(getClass().getName(),e);

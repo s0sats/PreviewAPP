@@ -4,6 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <ImageView
+        android:id="@+id/act_test2_iv_tst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clock_chat"
+        android:padding="15dp"
+        android:background="@color/namoa_color_blue_chat"
+        android:tint="@color/padrao_WHITE"
+        android:layout_gravity="center"
+        />
 
     <fragment
         android:id="@+id/act023_frg_serial_edit"

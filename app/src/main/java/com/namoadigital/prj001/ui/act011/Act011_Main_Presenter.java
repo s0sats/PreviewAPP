@@ -16,9 +16,9 @@ public interface Act011_Main_Presenter {
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
 
-    void checkData(GE_Custom_Form_Data formData , ArrayList<GE_File> geFiles );
+    void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok);
 
-    void checkSignature(GE_Custom_Form_Data formData, int signature, int opc , ArrayList<GE_File> geFiles);
+    void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok);
 
     void onBackPressedClicked();
 

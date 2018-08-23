@@ -108,7 +108,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
         //
-        mPresenter.setAdapterData(product_code, "");
+        mPresenter.setAdapterData(product_code, "", serial_id );
 
     }
 

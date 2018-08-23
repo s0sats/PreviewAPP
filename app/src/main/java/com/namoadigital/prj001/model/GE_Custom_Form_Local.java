@@ -16,6 +16,7 @@ public class GE_Custom_Form_Local {
     private Long custom_form_data_serv;
     private int require_signature;
     private int require_location;
+    private int require_serial_done;
     private String automatic_fill;
     private int custom_product_code;
     private String custom_product_desc;
@@ -47,6 +48,7 @@ public class GE_Custom_Form_Local {
     private String serial_rule;
     private Integer serial_min_length;
     private Integer serial_max_length;
+    private String schedule_comments;
 
     public long getCustomer_code() {
         return customer_code;
@@ -126,6 +128,14 @@ public class GE_Custom_Form_Local {
 
     public void setRequire_location(int require_location) {
         this.require_location = require_location;
+    }
+
+    public int getRequire_serial_done() {
+        return require_serial_done;
+    }
+
+    public void setRequire_serial_done(int require_serial_done) {
+        this.require_serial_done = require_serial_done;
     }
 
     public String getAutomatic_fill() {
@@ -366,5 +376,13 @@ public class GE_Custom_Form_Local {
 
     public void setSerial_max_length(Integer serial_max_length) {
         this.serial_max_length = serial_max_length;
+    }
+
+    public String getSchedule_comments() {
+        return schedule_comments;
+    }
+
+    public void setSchedule_comments(String schedule_comments) {
+        this.schedule_comments = schedule_comments;
     }
 }

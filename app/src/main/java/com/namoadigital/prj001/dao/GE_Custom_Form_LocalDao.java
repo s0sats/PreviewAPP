@@ -46,6 +46,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String REQUIRE_SERIAL = "require_serial";
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
     public static final String REQUIRE_LOCATION = "require_location";
+    public static final String REQUIRE_SERIAL_DONE = "require_serial_done";
     public static final String ALL_SITE = "all_site";
     public static final String ALL_OPERATION = "all_operation";
     public static final String ALL_PRODUCT = "all_product";
@@ -69,6 +70,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String SERIAL_RULE = "serial_rule";
     public static final String SERIAL_MIN_LENGTH = "serial_min_length";
     public static final String SERIAL_MAX_LENGTH = "serial_max_length";
+    public static final String SCHEDULE_COMMENTS = "schedule_comments";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -385,6 +387,14 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
                 custom_form_local.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
             }
             //
+            custom_form_local.setRequire_serial_done(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL_DONE)));
+            //
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_COMMENTS))){
+                custom_form_local.setSchedule_comments(null);
+            }else{
+                custom_form_local.setSchedule_comments(cursor.getString(cursor.getColumnIndex(SCHEDULE_COMMENTS)));
+            }
+            //
             return custom_form_local;
         }
     }
@@ -513,10 +523,16 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             if (custom_form_local.getSerial_rule() != null) {
                 contentValues.put(SERIAL_RULE, custom_form_local.getSerial_rule());
             }
-
+            //
             contentValues.put(SERIAL_MIN_LENGTH, custom_form_local.getSerial_min_length());
             contentValues.put(SERIAL_MAX_LENGTH, custom_form_local.getSerial_max_length());
-
+            //
+            if (custom_form_local.getRequire_serial_done() > -1) {
+                contentValues.put(REQUIRE_SERIAL_DONE, custom_form_local.getRequire_serial_done());
+            }
+            //
+            contentValues.put(SCHEDULE_COMMENTS, custom_form_local.getSchedule_comments());
+            //
             return contentValues;
         }
     }

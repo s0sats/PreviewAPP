@@ -24,6 +24,8 @@ public interface Act013_Main_View {
     void showMsg(String type, final HMAux item);
 
     void alertFormNotReady();
+    //17/08/2018
+    void callAct008(Context context, Bundle bundle);
 
 
 }

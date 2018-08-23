@@ -189,6 +189,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setSchedule_date_start_format_ms(0);
             customFormLocal.setSchedule_date_end_format_ms(0);
             customFormLocal.setRequire_location(customForm.getRequire_location());
+            customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
+            customFormLocal.setSchedule_comments("");
 
             custom_form_LocalDao.addUpdate(customFormLocal);
 
@@ -286,7 +288,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
+        mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {
@@ -383,7 +385,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles) {
+    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok) {
+        if (require_serial_done == 1 && !require_serial_done_ok.equalsIgnoreCase("OK")){
+            mView.callNFCResults();
+            //
+            return;
+        }
+
         custom_form_LocalDao.addUpdate(
                 new GE_Custom_Form_Local_Sql_004(
                         String.valueOf(formData.getCustomer_code()),
@@ -426,12 +434,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
-                    checkData(formData, geFiles);
+                    checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
                 } else {
 //                    mView.showMsg(
 //                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -445,7 +453,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.setSignature("");
                 formData.setSignature_name("");
                 //
-                checkData(formData, geFiles);
+                checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
 
 //                if (opc == 1) {
 //                    checkData(formData, geFiles);

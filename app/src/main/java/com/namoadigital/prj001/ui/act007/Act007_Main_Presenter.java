@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.ui.act007;
 
-import com.namoadigital.prj001.model.MD_Product;
-
-import java.util.List;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -10,14 +8,11 @@ import java.util.List;
 
 public interface Act007_Main_Presenter {
 
-    void setAdapterData(long group_code, Long recursive_code, String filter);
+    void setFile_name(String file_name);
 
-    void onCategoryProductClicked(String product_code);
+    void executeSerialLog(MD_Product_Serial mdProductSerial);
 
-    List<MD_Product> getProductList();
+    void getLog();
 
-    void onBtnHomeClicked();
-
-    void onBackPressedClicked();
-
+    void deleteLogFile();
 }

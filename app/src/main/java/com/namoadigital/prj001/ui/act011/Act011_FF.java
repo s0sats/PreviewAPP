@@ -25,6 +25,9 @@ public class Act011_FF extends Fragment {
 
     private transient Context context;
 
+    private transient TextView tv_comments_ttl;
+    private transient TextView tv_comments;
+
     private transient LinearLayout ll_controls;
 
     private transient List<CustomFF> customFFs;
@@ -45,6 +48,8 @@ public class Act011_FF extends Fragment {
 
     private int tabIndex = 0;
 
+    private String comments;
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
     }
@@ -52,6 +57,10 @@ public class Act011_FF extends Fragment {
     public void setCustomFFs(List<CustomFF> customFFs, int indice) {
         this.customFFs = customFFs;
         this.tabIndex = indice;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public interface ICustom_Form_FF_ll {
@@ -88,6 +97,9 @@ public class Act011_FF extends Fragment {
 
     private void iniVars(View view) {
         context = getActivity();
+        //
+        tv_comments_ttl = (TextView) view.findViewById(R.id.act011_ff_tv_comments_ttl);
+        tv_comments = (TextView) view.findViewById(R.id.act011_ff_tv_comments);
         //
         ll_controls = (LinearLayout) view.findViewById(R.id.act011_ff_ll_controls);
         //
@@ -198,6 +210,22 @@ public class Act011_FF extends Fragment {
             } else {
                 ll_check.setVisibility(View.VISIBLE);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        tv_comments_ttl.setText(hmAux_Trans.get("alert_schedule_comment_ttl"));
+        tv_comments.setText(comments);
+        //
+        if (comments.length() > 0){
+            tv_comments_ttl.setVisibility(View.VISIBLE);
+            tv_comments.setVisibility(View.VISIBLE);
+        } else {
+            tv_comments_ttl.setVisibility(View.GONE);
+            tv_comments.setVisibility(View.GONE);
         }
     }
 }

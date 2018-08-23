@@ -624,7 +624,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         if (isSchedule) {
-            mView.callAct017(context);
+            if(requesting_process.equals(Constant.ACT013)){
+                mView.callAct013(context);
+            }else {
+                mView.callAct017(context);
+            }
         } else {
             //mView.callAct007(context);
             mView.callAct006(context);

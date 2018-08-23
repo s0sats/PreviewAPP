@@ -46,6 +46,10 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
+ *
+ * Modificado by DANIEL.LUCHE on 16/08/2018.
+ * Implementado interface do clique no icone de comentario do agendamento
+ *
  */
 
 public class Act017_Main extends Base_Activity implements Act017_Main_View {
@@ -120,8 +124,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(ACT_SELECTED_DATE, null);
-            filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
-            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
+            filter_form = bundle.getBoolean(ACT_FILTER_FORM, true);
+            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, true);
             filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
             //
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
@@ -156,6 +160,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_form_site_restriction_msg");
         //
         translateList.add("lbl_site");
+        translateList.add("alert_schedule_comment_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -292,6 +297,20 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 R.layout.namoa_ap_cell,
                 R.layout.module_schedules_date_cell
         );
+        //16/08/18
+        mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
+            @Override
+            public void OnIvCommentClick(String comment) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_schedule_comment_ttl"),
+                        comment,
+                        null,
+                        0
+                );
+            }
+        });
+
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
         //
@@ -403,6 +422,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //16/08/2018 - Add filtros no bundle para act008
+        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
+        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
+        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

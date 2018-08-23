@@ -45,6 +45,17 @@
                 android:textSize="@dimen/font_size_title_md"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/module_schedules_cell_iv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:src="@drawable/ic_user_msg_on"
+                android:tint="@color/light_to_dark_blue_color"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                />
         </LinearLayout>
 
     </LinearLayout>

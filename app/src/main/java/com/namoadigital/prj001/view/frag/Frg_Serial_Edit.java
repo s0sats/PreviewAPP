@@ -2,6 +2,7 @@ package com.namoadigital.prj001.view.frag;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -53,6 +54,7 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -78,6 +80,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_product_id_label;
     private TextView tv_product_desc_value;
     private MKEditTextNM mket_serial_id;
+    private ImageView iv_serial_log;
     private TextView tv_required_lbl;
     private TextView tv_required_val;
     private TextView tv_allow_new_lbl;
@@ -255,6 +258,7 @@ public class Frg_Serial_Edit extends BaseFragment {
          */
 
         void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add);
+
     }
     //endregion
 
@@ -525,6 +529,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_serial);
         mket_serial_id.setmBARCODE(true);
         controls_sta.add(mket_serial_id);
+        //
+        iv_serial_log = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_serial_dialog_log);
         //
         tv_product_code_label = (TextView) view.findViewById(R.id.frg_serial_edit_tv_product_code_lbl);
         tv_product_code_label.setTag("product_label");
@@ -826,12 +832,14 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setmIgnoreMaxMinSize(true);
         mket_serial_id.setmBARCODE(true);
         mket_serial_id.setmRequired(true);
+        iv_serial_log.setVisibility(View.GONE);
         //
         if (!new_serial) {
             mket_serial_id.setmBARCODE(false);
             mket_serial_id.setmOCR(false);
             mket_serial_id.setmNFC(false);
             mket_serial_id.setEnabled(false);
+            iv_serial_log.setVisibility(View.VISIBLE);
         } else {
             /**
              * 12/06/2018
@@ -1266,6 +1274,17 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void reportTextBySpecialist(String s) {
                 pausedByScan = true;
+            }
+        });
+        //Clique para abertura do dialog com informações de log.
+        iv_serial_log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ToolBox_Con.isOnline(context)){
+                    callLogAct();
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
             }
         });
         //
@@ -2637,6 +2656,20 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         }
 
+    }
+
+    /**
+     * Chama Act007, especializada em exibir o log do serial.
+     * Não mata
+     */
+    private void callLogAct(){
+        Intent logIntent = new Intent(context, Act007_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
+        logIntent.putExtras(bundle);
+        //
+        startActivity(logIntent);
     }
 
     //region Variaveis de tradução.

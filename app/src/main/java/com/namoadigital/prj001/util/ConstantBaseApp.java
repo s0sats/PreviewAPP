@@ -201,6 +201,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String THUMB_SUFFIX = "_thumb";
 
+    public static final String PREFIX_LOG_FILE_SERIAL = "log_serial_";
+
     /**
      * SM_SO_Service Login Parameter
      */

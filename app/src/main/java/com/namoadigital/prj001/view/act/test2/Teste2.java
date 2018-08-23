@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,9 +21,11 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Serial_Log;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Log;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
@@ -28,6 +33,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -40,9 +46,10 @@ public class Teste2 extends Base_Activity {
 
     private FragmentManager fm;
     private Frg_Serial_Edit frgSerialEdit;
-
     private HMAux hmAux_Trans_frg_serial_edit;
     private String wsProcess = "";
+    private ImageView iv_serial_log;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,14 +181,14 @@ public class Teste2 extends Base_Activity {
         );
 
         long product_code = 53;
-        String serial_di = "s3";
+        String serial_di = "s1";
         MD_ProductDao productDao = new MD_ProductDao(context);
 
         MD_Product mdProduct = productDao.getByString(
-                    new MD_Product_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            product_code
-                    ) .toSqlQuery()
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code
+                ).toSqlQuery()
         );
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
 
@@ -190,7 +197,7 @@ public class Teste2 extends Base_Activity {
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_di
-                ) .toSqlQuery()
+                ).toSqlQuery()
         );
         //
         frgSerialEdit = (Frg_Serial_Edit) fm.findFragmentById(R.id.act023_frg_serial_edit);
@@ -231,22 +238,22 @@ public class Teste2 extends Base_Activity {
             public void onSaveWithChangesClick(MD_Product_Serial mdProductSerial, boolean serial_id_changes) {
                 saveSerialInDb(mdProductSerial);
                 //
-                if(ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context)) {
                     executeSerialSave();
-                }else{
+                } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
-                executeTrackingSearch(product_code,serial_code,tracking,site_code);
+                executeTrackingSearch(product_code, serial_code, tracking, site_code);
             }
 
 
             @Override
             public void onProductOrSerialNull() {
-               onBackPressed();
+                onBackPressed();
             }
 
             @Override
@@ -261,21 +268,24 @@ public class Teste2 extends Base_Activity {
 
             @Override
             public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                if(add) {
+                if (add) {
                     controls_sta.add(mket_control);
-                }else{
+                } else {
                     controls_sta.remove(mket_control);
                 }
             }
         });
+        //
+        iv_serial_log = (ImageView) findViewById(R.id.act_test2_iv_tst);
+        //
 
     }
 
-    private void saveSerialInDb(MD_Product_Serial mdProductSerial ) {
+    private void saveSerialInDb(MD_Product_Serial mdProductSerial) {
         MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(context);
         //Remove os tracking para reinserir os que ficaram
         trackingDao.remove(new
-                MD_Product_Serial_Tracking_Sql_002(
+                        MD_Product_Serial_Tracking_Sql_002(
                         mdProductSerial.getCustomer_code(),
                         mdProductSerial.getProduct_code(),
                         mdProductSerial.getSerial_tmp()
@@ -309,8 +319,41 @@ public class Teste2 extends Base_Activity {
     }
 
     private void initActions() {
+        iv_serial_log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeSerialLog(frgSerialEdit.getMdProductSerial());
+            }
+        });
 
     }
+
+    private void executeSerialLog(MD_Product_Serial mdProductSerial) {
+        if (ToolBox_Con.isOnline(context)) {
+            wsProcess = WS_Serial_Log.class.getName();
+            //
+            showPD(
+                    "Search Log - Trad",// hmAux_Trans.get("dialog_serial_search_ttl"),
+                    "Searching Log... - Trad"//hmAux_Trans.get("dialog_serial_search_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Log.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, mdProductSerial.getCustomer_code());
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, mdProductSerial.getProduct_code());
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            Toast.makeText(context, "Sem conexão", Toast.LENGTH_LONG).show();
+        }
+
+
+    }
+
     private void showPD(String title, String msg) {
         enableProgressDialog(
                 title,
@@ -320,11 +363,11 @@ public class Teste2 extends Base_Activity {
         );
     }
 
-    private void executeSerialSearch( String product_id,String serial_id, String tracking){
+    private void executeSerialSearch(String product_id, String serial_id, String tracking) {
         if (ToolBox_Con.isOnline(context)) {
             wsProcess = WS_Serial_Search.class.getName();
             showPD(
-                   "Search - Trad",// hmAux_Trans.get("dialog_serial_search_ttl"),
+                    "Search - Trad",// hmAux_Trans.get("dialog_serial_search_ttl"),
                     "Search ms - Trad"//hmAux_Trans.get("dialog_serial_search_start")
             );
             //
@@ -387,15 +430,15 @@ public class Teste2 extends Base_Activity {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        if(serial_list != null){
-            if(serial_list.size() == 0){
+        if (serial_list != null) {
+            if (serial_list.size() == 0) {
                 frgSerialEdit.reApplySerialId();
-            }else if(serial_list.size() == 1){
+            } else if (serial_list.size() == 1) {
                 frgSerialEdit.applyReceivedSerial(serial_list.get(0));
-            }else{
+            } else {
                 //FUDEU
             }
-        }else{
+        } else {
             //FUDEU 2
         }
         //
@@ -406,27 +449,59 @@ public class Teste2 extends Base_Activity {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
+        if (wsProcess.equals(WS_Serial_Tracking_Search.class.getName())) {
             frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
-        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
             //frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
-        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())) {
             frgSerialEdit.setNew_serial(false);
             frgSerialEdit.refreshUi();
             disableProgressDialog();
+        } else if (wsProcess.equals(WS_Serial_Log.class.getName())) {
+            processSerialLog(hmAux.get(WS_Serial_Log.SERIAL_LOG_FILE));
+            disableProgressDialog();
         }
+    }
+
+    private void processSerialLog(String log_file_name) {
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+//        File file = new File(Constant.TOKEN_PATH,log_file_name);
+//        if (file.exists()) {
+//            if (file.isFile()) {
+//                ArrayList<Serial_Log_Obj> logObjs = gson.fromJson(
+//                        ToolBox_Inf.getContents(file),
+//                        new TypeToken<ArrayList<Serial_Log_Obj>>() {
+//                        }.getType()
+//                );
+//                //
+//                int size = logObjs.size();
+//
+//            }
+//
+//        }
+        MD_Product_Serial mdProductSerial = frgSerialEdit.getMdProductSerial();
+        Intent intent = new Intent(context, Act007_Main.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,frgSerialEdit.getMdProductSerial());
+        bundle.putString(WS_Serial_Log.SERIAL_LOG_FILE,log_file_name);
+        //
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+
     }
 
     @Override
     protected void processCloseACT(String result, String mRequired) {
         super.processCloseACT(result, mRequired);
         //
-        if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
-           // frgSerialEdit.processTrackingResult(hmAux);
+        if (wsProcess.equals(WS_Serial_Tracking_Search.class.getName())) {
+            // frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
-        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
             extractSearchResult(result);
             //
             disableProgressDialog();
@@ -442,7 +517,7 @@ public class Teste2 extends Base_Activity {
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
-        if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+        if (wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
             //frgSerialEdit.processTrackingResult(hmAux);
             disableProgressDialog();
         }
@@ -454,6 +529,7 @@ public class Teste2 extends Base_Activity {
         //
         progressDialog.dismiss();
     }
+
     //Tratativa SESSION NOT FOUND
     @Override
     protected void processLogin() {
