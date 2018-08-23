@@ -90,7 +90,9 @@ public class WS_UpdateSoftware extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_starting_download_msg), "", "0");
 
-        String local_link = "/sdcard/download" + "/" + "namoa.apk";
+        //String local_link = "/sdcard/download" + "/" + "namoa.apk";
+        //23/08/2018 - Modificado local de download da apk. Teste para resolver problema Zenfone3
+        String local_link = Constant.APK_PATH+"/"+Constant.APK_FILE_NAME;
 
         ToolBox_Inf.deleteDownloadFile(local_link);
 

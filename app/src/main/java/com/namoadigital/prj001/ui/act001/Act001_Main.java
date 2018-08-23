@@ -23,6 +23,8 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
@@ -65,6 +67,25 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         initVars();
         initActions();
+        //23/08/2018
+        deleteApkFile();
+
+    }
+
+    /**
+     * 23/08/2018
+     * Verifica se existe apk na pasta de download e deleta arquivo
+     */
+    private void deleteApkFile() {
+        try {
+            File file = new File(Constant.APK_PATH, Constant.APK_FILE_NAME);
+            //
+            if (file.exists()) {
+                file.delete();
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 
     @Override
