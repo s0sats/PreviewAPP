@@ -1660,7 +1660,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE))) {
+                if (!hmAux.containsKey(SearchableSpinner.ID) ||!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE))) {
                     tv_serial_lbl.setVisibility(View.GONE);
                     tv_serial_val.setVisibility(View.GONE);
                     tv_serial_val.setText("");
@@ -1680,9 +1680,13 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                nFormProductSelected = ss_product.getmValue();
-                                //
-                                processNFormFlow();
+                                if(ss_product.getmValue().size() == 0) {
+                                    resetHmAuxProdutcSelected();
+                                }else {
+                                    nFormProductSelected = ss_product.getmValue();
+                                    //
+                                    processNFormFlow();
+                                }
                             }
                         }
                 )
