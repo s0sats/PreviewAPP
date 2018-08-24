@@ -160,6 +160,9 @@ public class Act034_Room extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Atualiza valor da primeira posição visivel
                 mMain.setLastFirstAdapterPosition(String.valueOf(lv_msg.getFirstVisiblePosition()));
+                //24/08/2018 - Acrecentado offset Top para realinhar item da lista.
+                View topFistItem = lv_msg.getChildAt(0);
+                mMain.setOffsetPositionTop(topFistItem == null ? 0 : topFistItem.getTop());
                 //
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 //room.put(Constant.CHAT_ROOM_POSITION, String.valueOf(lv_msg.getFirstVisiblePosition()));
@@ -342,9 +345,11 @@ public class Act034_Room extends BaseFragment {
         }*/
         //VOLTA DO PRIMEIRO PADRÃO, AO VOLTAR, SETA ADAPTER NA POSIÇÃO QUE ESTAVA
         try {
+            //Resgata valores salvos para realinhar lista.
             int positionToSet = ToolBox_Inf.convertStringToInt(mMain.getLastFirstAdapterPosition());
-            //
-            lv_msg.setSelection(positionToSet <= mAdapter.getCount() - 1 ? positionToSet : mAdapter.getCount() - 1);
+            int offsetTop = mMain.getOffsetPositionTop();
+            //Seta lista usando os parametros
+            lv_msg.setSelectionFromTop(positionToSet,offsetTop);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
