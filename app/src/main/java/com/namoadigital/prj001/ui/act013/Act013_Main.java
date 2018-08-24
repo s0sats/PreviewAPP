@@ -129,7 +129,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                         hmAux_Trans
                 );
         //Verifica se usr tem acesso aos agendados
-        accessToSchedule = ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST);
+        //accessToSchedule = ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST);
+        accessToSchedule = ToolBox_Inf.profileExists(context,Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST,null);
         //
         lv_pendencies = (ListView) findViewById(R.id.act013_lv_pendencies);
         //

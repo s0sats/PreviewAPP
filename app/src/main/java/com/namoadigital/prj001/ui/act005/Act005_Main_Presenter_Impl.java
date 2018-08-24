@@ -503,12 +503,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST,null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
         //Não é necessario verificar se tem PARAM_SO_MOV,pois esse parametro sempre
         //vem acompanhado do PARAM_SO.
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
+        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
         data_package.add(DataPackage.DATA_PACKAGE_AP);

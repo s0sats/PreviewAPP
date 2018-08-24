@@ -118,7 +118,8 @@ public class Act020_Frag_Filter extends Fragment {
             tv_nfc_reader.setVisibility(View.GONE);
         }
         //Se customer sem acesso ao N-Service, não exibe tracking
-        if (ToolBox_Inf.parameterExists(getActivity(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        //if (ToolBox_Inf.parameterExists(getActivity(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        if (ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_PRJ001_SO,null)) {
             ll_tracking.setVisibility(View.VISIBLE);
         }else{
             ll_tracking.setVisibility(View.GONE);
