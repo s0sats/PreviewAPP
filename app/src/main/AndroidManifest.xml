@@ -324,6 +324,12 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act047.Act047_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -556,8 +562,10 @@
         <service android:name=".service.WS_Process_Form_AP" />
 
         <receiver android:name=".receiver.WBR_Serial_Log" />
+        <receiver android:name=".receiver.WBR_SO_Next_Orders" />
 
         <service android:name=".service.WS_Serial_Log" />
+        <service android:name=".service.WS_SO_Next_Orders" />
 
     </application>
 
