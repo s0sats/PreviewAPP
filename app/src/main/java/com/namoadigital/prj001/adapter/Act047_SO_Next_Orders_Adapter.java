@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,53 +149,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
             tv_brand_model_color.setText(item.getBrand_model_color());
         }
         //
-        iv_so_details.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDetailsDialog(item);
-            }
-        });
-        //
         return convertView;
-    }
-
-    private void showDetailsDialog(SO_Next_Orders_Obj item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
-        //
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.act047_so_next_orders_dialog,null);
-        //IniVars
-        LinearLayout ll_title = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
-        TextView tv_title = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
-        LinearLayout ll_so_desc = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
-        TextView tv_so_desc_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
-        TextView tv_so_desc_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
-        LinearLayout ll_services = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_services);
-        TextView tv_services_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_lbl);
-        TextView tv_services_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_val);
-        LinearLayout ll_so_comments = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
-        TextView tv_so_comment_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
-        TextView tv_so_comment_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
-        //Seta data
-        //ll_title.setVisibility(View.GONE);
-        tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
-        tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
-        tv_so_desc_val.setText(item.getSo_desc());
-        tv_services_lbl.setText(hmAux_Trans.get("dialog_services_lbl"));
-        tv_services_val.setText(item.getService());
-        tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
-        tv_so_comment_val.setText(item.getComments());
-        //
-        builder
-                //.setTitle(hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code())
-                .setView(view)
-                .setPositiveButton(
-                        hmAux_Trans.get("sys_alert_btn_ok"),
-                        null
-                );
-        //
-        AlertDialog dialog =  builder.create();
-        dialog.show();
     }
 
     private void loadTranslation() {

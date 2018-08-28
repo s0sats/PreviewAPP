@@ -1,14 +1,18 @@
 package com.namoadigital.prj001.ui.act047;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -78,6 +82,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("dialog_next_orders_search_msg");
         transList.add("qty_lbl");
         //
+        transList.add("dialog_so_desc_lbl");
+        transList.add("dialog_services_lbl");
+        transList.add("dialog_so_comment_lbl");
+        transList.add("dialog_so_details_ttl");
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -198,6 +206,45 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
     }
 
+    private void showDetailsDialog(SO_Next_Orders_Obj item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
+        //
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.act047_so_next_orders_dialog,null);
+        //IniVars
+        LinearLayout ll_title = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
+        TextView tv_title = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
+        LinearLayout ll_so_desc = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
+        TextView tv_so_desc_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
+        TextView tv_so_desc_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
+        LinearLayout ll_services = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_services);
+        TextView tv_services_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_lbl);
+        TextView tv_services_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_val);
+        LinearLayout ll_so_comments = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
+        TextView tv_so_comment_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
+        TextView tv_so_comment_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
+        //Seta data
+        //ll_title.setVisibility(View.GONE);
+        tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
+        tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
+        tv_so_desc_val.setText(item.getSo_desc());
+        tv_services_lbl.setText(hmAux_Trans.get("dialog_services_lbl"));
+        tv_services_val.setText(item.getService());
+        tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
+        tv_so_comment_val.setText(item.getComments());
+        //
+        builder
+                //.setTitle(hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code())
+                .setView(view)
+                .setPositiveButton(
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        null
+                );
+        //
+        AlertDialog dialog =  builder.create();
+        dialog.show();
+    }
+
     private void iniUIFooter() {
         iniFooter();
         //
@@ -222,7 +269,14 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private void initActions() {
-
+        lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) parent.getItemAtPosition(position);
+                //
+                showDetailsDialog(item);
+            }
+        });
     }
 
     @Override

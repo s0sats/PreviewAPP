@@ -261,6 +261,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         super.processError_1(mLink, mRequired);
         //
         disableProgressDialog();
+        //
+        onBackPressed();
     }
 
     @Override
@@ -268,6 +270,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
+        //
+        onBackPressed();
     }
 
 
