@@ -205,7 +205,6 @@
                 android:id="@+id/act047_cell_tv_serial_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Serial"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -214,7 +213,7 @@
                 android:layout_height="0dp" />
             <TextView
                 android:id="@+id/act047_cell_tv_serial_id"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
@@ -278,8 +277,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="left"
-                android:text="44 - TST"
+                android:gravity="end"
+                android:text="trk001"
                 />
 
         </LinearLayout>

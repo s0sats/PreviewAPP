@@ -32,6 +32,7 @@ import java.util.List;
 public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I_View {
 
     private TextView tv_site;
+    private TextView tv_qty;
     private TextView tv_zone;
     private ListView lv_services;
     private Act047_SO_Next_Orders_Adapter mAdapter;
@@ -75,6 +76,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("alert_no_orders_found_msg");
         transList.add("dialog_next_orders_search_ttl");
         transList.add("dialog_next_orders_search_msg");
+        transList.add("qty_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -90,6 +92,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         recoverIntentsInfo();
         //
         tv_site = (TextView) findViewById(R.id.act047_tv_site_val);
+        //
+        tv_qty = (TextView) findViewById(R.id.act047_tv_qty_orders);
         //
         tv_zone = (TextView) findViewById(R.id.act047_tv_zone_val);
         //
@@ -134,10 +138,15 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             tv_zone.setVisibility(View.VISIBLE);
             tv_zone.setText(mFooter.get(Constant.FOOTER_ZONE));
         }
+        //
+        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " 0");
     }
 
     @Override
     public void loadNextOrders(ArrayList<SO_Next_Orders_Obj> nextOrdersObjs) {
+        //
+        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " "+ (nextOrdersObjs == null ? "0": nextOrdersObjs.size()));
+        //
         mAdapter = new Act047_SO_Next_Orders_Adapter(
                 context,
                 nextOrdersObjs,
@@ -248,6 +257,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         super.processError_1(mLink, mRequired);
         //
         disableProgressDialog();
+        //
+        onBackPressed();
     }
 
     @Override
@@ -255,6 +266,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
+        //
+        onBackPressed();
     }
 
 

@@ -65,6 +65,7 @@ public class Frg_Serial_Search extends Fragment {
     private Button btn_option_03;
     private Button btn_option_04;
     private Button btn_option_05;
+    private LinearLayout ll_btn_option_04;
 
     private LinearLayout ll_options;
 
@@ -154,6 +155,8 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_03 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_03);
         btn_option_04 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_04);
         btn_option_05 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_05);
+        //
+        ll_btn_option_04 = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_btn_option_04);
 
         if (supportNFC) {
             btn_nfc_reader.setVisibility(View.VISIBLE);
@@ -363,7 +366,8 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_04_Visibility(int status) {
-        btn_option_04.setVisibility(status);
+        ll_btn_option_04.setVisibility(status);
+        //btn_option_04.setVisibility(status);
     }
 
     public void setBtn_Option_05_Label(String label) {

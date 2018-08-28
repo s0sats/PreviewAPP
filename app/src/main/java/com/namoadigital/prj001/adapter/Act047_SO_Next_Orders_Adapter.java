@@ -161,11 +161,13 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
     }
 
     private void showDetailsDialog(SO_Next_Orders_Obj item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
         //
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.act047_so_next_orders_dialog,null);
         //IniVars
+        LinearLayout ll_title = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
+        TextView tv_title = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
         LinearLayout ll_so_desc = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
         TextView tv_so_desc_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
         TextView tv_so_desc_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
@@ -176,6 +178,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
         TextView tv_so_comment_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
         TextView tv_so_comment_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
         //Seta data
+        //ll_title.setVisibility(View.GONE);
+        tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
         tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
         tv_so_desc_val.setText(item.getSo_desc());
         tv_services_lbl.setText(hmAux_Trans.get("dialog_services_lbl"));
@@ -184,14 +188,15 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
         tv_so_comment_val.setText(item.getComments());
         //
         builder
-                .setTitle(hmAux_Trans.get("dialog_so_details_ttl"))
+                //.setTitle(hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code())
                 .setView(view)
                 .setPositiveButton(
                         hmAux_Trans.get("sys_alert_btn_ok"),
                         null
                 );
         //
-        builder.create().show();
+        AlertDialog dialog =  builder.create();
+        dialog.show();
     }
 
     private void loadTranslation() {

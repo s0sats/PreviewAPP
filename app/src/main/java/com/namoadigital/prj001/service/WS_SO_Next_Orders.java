@@ -85,8 +85,6 @@ public class WS_SO_Next_Orders extends IntentService {
                 gson.toJson(env)
         );
         //
-        //String resultado = "{\"app\": \"|response|\",\"validation\": \"OK\",\"obj\": [{\"so_prefix\": \"2017\",\"so_code\": \"66966\",\"so_id\": \"Test Ronaldo\",\"so_desc\": \"Teste do Ronaldo\",\"product_code\": \"53\",\"product_id\": \"Btt3\",\"product_desc\": \"Btt Teste\",\"serial_code\": \"5\",\"serial_id\": \"S9\",\"status\": \"PENDING\",\"deadline\": \"2018-08-21 20:06:00 +00:00\",\"tracking\": \"TRK001\\nTRK002\",\"brand_model_color\": \"CHERY | CARROÇA | MERDA\",\"comments\": \"Essa S.O foi criada na mão para testes\",\"services\": \"21 - Lavagem Inicial \\n21 - Lavagem Inicial - vai\\n15 - Martelinho\"}, {\"so_prefix\": \"2018\",\"so_code\": \"6669\",\"so_id\": \"2018.66669\",\"so_desc\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\\n Phasellus at volutpat sem.\\n Nullam sed facilisis leo.\\n Integer dui sapien, finibus non est eget, facilisis congue massa. Phasellus dictum non lacus nec cursus. Donec a enim pretium, sagittis tortor nec, molestie massa. Vivamus vestibulum tempor finibus. Phasellus mollis pharetra quam, eu bibendum lacus finibus eget. Maecenas nec tellus sit amet dui vulputate consectetur. Pellentesque at libero nec tellus consectetur vestibulum. Cras non ultricies libero, ut ultricies tellus. Nulla cursus lorem eu rutrum tincidunt. Aliquam consequat nulla eget dolor tincidunt feugiat.\",\"product_code\": \"23\",\"product_id\": \"Btt\",\"product_desc\": \"Produto do Batata\",\"serial_code\": \"5\",\"serial_id\": \"Qwert\",\"status\": \"PROCESS\",\"deadline\": \"2018-08-29 15:00:00 +00:00\",\"tracking\": \"TRK001\",\"brand_model_color\": \"BMW | X5 | AZUL DA PRUSSIA\",\"comments\": \"Essa teste DE S.O foi criada na mão\",\"services\": \"16 - Lavagem Cerebral\"}]}";
-        //
         TSO_Next_Orders_Rec rec = gson.fromJson(
                 resultado,
                 TSO_Next_Orders_Rec.class
@@ -109,7 +107,7 @@ public class WS_SO_Next_Orders extends IntentService {
             return;
         }
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_log"), "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_orders"), "", "0");
         //
         HMAux auxName = new HMAux();
         auxName.put(SO_NEXT_SERVICES,gson.toJson(rec.getObj()));
@@ -131,7 +129,7 @@ public class WS_SO_Next_Orders extends IntentService {
         //
         translist.add("msg_sending_data");
         translist.add("msg_receving_data");
-        translist.add("msg_processing_log");
+        translist.add("msg_processing_orders");
         translist.add("msg_process_finalized");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(

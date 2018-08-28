@@ -163,6 +163,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         transList.add("alert_results_ttl");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        transList.add("btn_so_next_orders");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -234,7 +235,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));
         mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_sync_so"));
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
-        mFrgSerialSearch.setBtn_Option_05_Label("Services Here - Trad");
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_so_next_orders"));
 
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,

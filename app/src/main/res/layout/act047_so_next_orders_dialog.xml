@@ -5,88 +5,114 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-    <LinearLayout
-        android:id="@+id/act047_so_next_orders_dialog_ll_so_desc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="5dp"
-        >
-        <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_so_desc_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_title"
-            android:textStyle="bold"
-            android:gravity="start|center_vertical"
-            android:text="O.S Desc - Trad"
-            />
-        <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_so_desc_val"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:text="O.S Desc - Trad"
-            android:layout_marginStart="5dp"
-            />
-
-    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/act047_so_next_orders_dialog_ll_services"
+        android:id="@+id/act047_so_next_orders_dialog_ll_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="5dp"
-        >
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
         <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_services_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_title"
-            android:textStyle="bold"
-            android:gravity="start|center_vertical"
-            android:text="Service List - Trad"
-            />
-        <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_services_val"
+            android:id="@+id/act047_so_next_orders_dialog_tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:text="Service 666 - Trad"
-            android:layout_marginStart="5dp"
-            />
-
+            android:gravity="center"
+            android:text="O.S - Trad"
+            android:textSize="@dimen/font_size_title_dialog"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/act047_so_next_orders_dialog_ll_so_comment"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="5dp"
-        >
-        <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_so_comment_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_title"
-            android:textStyle="bold"
-            android:gravity="start|center_vertical"
-            android:text="SO Comments - Trad"
-            />
-        <TextView
-            android:id="@+id/act047_so_next_orders_dialog_tv_so_comment_val"
+        android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:text="Comment here - Trad"
-            android:layout_marginStart="5dp"
-            />
-
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
 
+            <LinearLayout
+                android:id="@+id/act047_so_next_orders_dialog_ll_so_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_so_desc_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:text="O.S Desc - Trad"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_so_desc_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="start|center_vertical"
+                    android:text="O.S Desc - Trad" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act047_so_next_orders_dialog_ll_services"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_services_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:text="Service List - Trad"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_services_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="start|center_vertical"
+                    android:text="Service 666 - Trad" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act047_so_next_orders_dialog_ll_so_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_so_comment_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:text="SO Comments - Trad"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act047_so_next_orders_dialog_tv_so_comment_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="start|center_vertical"
+                    android:text="Comment here - Trad" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 
 
 </LinearLayout>
