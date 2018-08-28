@@ -40,6 +40,9 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_AP_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_ap.ws";
     public static final String WS_SO_PACK_EXPRESSION = "https://portal.namoadigital.com/ws/prj001/server_save_so_pack_express.ws";
 
+    public static final String WS_SERIAL_LOG = "https://portal.namoadigital.com/ws/prj001/server_serial_log.ws";
+    public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
+
     public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
     public static final String WS_UPLOAD_NODE_CHAT = "https://nchat.namoadigital.com/messageFile";
     public static final String WS_CHAT_ROOM_INFO = "https://nchat.namoadigital.com/roomMemberList";
