@@ -24,7 +24,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
     public static final String WS_SERIAL_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_product_serial.ws";
     public static final String WS_SERIAL_TRACKING_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_serial_tracking.ws";
-    public static final String WS_SERIAL_LOG = "https://dev.namoadigital.com/ws/prj001/server_serial_log.ws";
 
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
 
@@ -60,6 +59,9 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_LEAVE_ROOM = "https://nchatdev.namoadigital.com/leaveRoom";
     public static final String WS_CHAT_ROOM_AP = "https://nchatdev.namoadigital.com/joinFormAp";
     public static final String WS_CHAT_ADD_USER_FORM_AP = "https://nchatdev.namoadigital.com/addUserFormAp";
+    //
+    public static final String WS_SERIAL_LOG = "https://dev.namoadigital.com/ws/prj001/server_serial_log.ws";
+    public static final String WS_SO_NEXT_ORDERS = "https://dev.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
 
     // Connection Test
     public static final String WS_HOST = "dev.namoadigital.com";

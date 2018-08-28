@@ -35,6 +35,7 @@ import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
+import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -162,6 +163,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         transList.add("alert_results_ttl");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        transList.add("btn_so_next_orders");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -216,6 +218,9 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     case Frg_Serial_Search.BTN_OPTION_04:
                         processSyncro(optionsInfo);
                         break;
+                    case Frg_Serial_Search.BTN_OPTION_05:
+                        processServiceList(optionsInfo);
+                        break;
                     default:
                         break;
                 }
@@ -229,7 +234,8 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies_so"));
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));
         mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_sync_so"));
-        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_so_next_orders"));
 
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,
@@ -337,6 +343,14 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     private void processSyncro(HMAux optionsInfo) {
         if (ToolBox_Con.isOnline(context)) {
             executeSoSave();
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
+        }
+    }
+
+    private void processServiceList(HMAux optionsInfo) {
+        if (ToolBox_Con.isOnline(context)) {
+            callAct047(context);
         } else {
             ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
         }
@@ -611,6 +625,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
     @Override
     public void callAct040(Context context) {
         Intent mIntent = new Intent(context, Act040_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void callAct047(Context context) {
+        Intent mIntent = new Intent(context, Act047_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);

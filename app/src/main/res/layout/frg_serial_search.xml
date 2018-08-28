@@ -202,30 +202,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <Button
-                android:id="@+id/frg_serial_search_btn_option_04"
+            <LinearLayout
+                android:id="@+id/frg_serial_search_ll_btn_option_04"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Option 04"
-                android:textColor="@color/padrao_WHITE" />
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
+                <Button
+                    android:id="@+id/frg_serial_search_btn_option_04"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/namoa_cell_2_states"
+                    android:gravity="left"
+                    android:padding="20dp"
+                    android:text="Option 04"
+                    android:textColor="@color/padrao_WHITE" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/frg_serial_search_ll_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
+                android:orientation="vertical" />
 
             <Button
                 android:id="@+id/frg_serial_search_btn_option_05"
@@ -237,6 +241,10 @@
                 android:padding="20dp"
                 android:text="Option 05"
                 android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
 
             <com.namoa_digital.namoa_library.ctls.ButtonNFC
                 android:id="@+id/frg_serial_search_btn_nfc_reader"
