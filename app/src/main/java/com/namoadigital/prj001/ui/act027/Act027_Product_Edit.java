@@ -847,6 +847,7 @@ public class Act027_Product_Edit extends BaseFragment {
         mMain.setEventEditOpenStatus(false);
 
         if (ToolBox_Con.isOnline(context)) {
+            mMain.cleanUpResults();
             mMain.executeSoSave();
         } else {
             //ToolBox_Inf.showNoConnectionDialog(context);
