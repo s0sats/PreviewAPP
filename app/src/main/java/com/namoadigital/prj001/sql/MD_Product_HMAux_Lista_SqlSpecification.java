@@ -27,7 +27,7 @@ public class MD_Product_HMAux_Lista_SqlSpecification implements Specification {
                 .append(" order by ")
                 .append(" customer_code, product_code ")
                 .append(";")
-                .append("customer_code#product_code#product_id#product_desc")
+                //.append("customer_code#product_code#product_id#product_desc")
                 .toString();
     }
 }

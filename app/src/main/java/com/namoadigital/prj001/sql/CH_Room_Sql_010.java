@@ -29,7 +29,7 @@ public class CH_Room_Sql_010 implements Specification {
                         "   WHERE status_update = '1' and room_image_local != '' and room_image_local notnull\n" +
                         "  )")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

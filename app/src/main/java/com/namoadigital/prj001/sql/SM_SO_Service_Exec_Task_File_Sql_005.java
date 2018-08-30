@@ -61,7 +61,8 @@ public class SM_SO_Service_Exec_Task_File_Sql_005 implements Specification {
                         "  AND exec_tmp = '" + exec_tmp + "' \n" +
                         "  AND task_tmp ='" + task_tmp + "' \n"
                         )
-                .append(";"+NEXT_TMP)
+                .append(";")
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

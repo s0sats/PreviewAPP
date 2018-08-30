@@ -67,7 +67,7 @@ public class Sql_Act027_006 implements Specification {
                         "          AND e.SERVICE_CODE = '"+service_code+"'\n" +
                         "          AND e.SERVICE_SEQ = '"+service_seq+"' \n")
                 .append(";")
-                .append(NEXT_TASK_SEQ_OPER)
+                //.append(NEXT_TASK_SEQ_OPER)
                 .toString();
     }
 }

@@ -31,8 +31,8 @@ public class EV_User_Customer_Sql_004 implements Specification {
                         EV_User_CustomerDao.TABLE +" e\n" +
                         " WHERE\n" +
                         "   e.user_code = '"+s_user+"' " +
-                        "   AND e.session_app <> '';" +
-                        "customer_code#customer_name#"+KEY_LOGOUT)
+                        "   AND e.session_app <> '';")
+                        //"customer_code#customer_name#"+KEY_LOGOUT)
                 .toString();
     }
 }

@@ -79,7 +79,7 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         "   s.create_date desc\n," +
                         "   s.seq desc")
                 .append(";")
-                .append(HmAuxFields+"#"+SKETCH_SELECTED+"#"+FILE_QTY)
+                //.append(HmAuxFields+"#"+SKETCH_SELECTED+"#"+FILE_QTY)
                 .toString()
                 .replace("'%null%'","null").replace("'null'","null");
     }

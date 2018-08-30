@@ -30,7 +30,7 @@ public class CH_Room_Sql_011 implements Specification {
                         "  SELECT distinct room_image_local  FROM ch_rooms WHERE room_code != '" + room_code + "' and room_image_local != '' and room_image_local notnull\n" +
                         " )")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

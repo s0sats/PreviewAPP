@@ -38,7 +38,7 @@ public class SM_SO_Product_Event_Sql_002 implements Specification {
                         "    and e.so_prefix = '"+so_prefix+"'\n" +
                         "    and e.so_code = '"+so_code+"'\n")
                 .append(";")
-                .append(NEXT_TMP)
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

@@ -33,7 +33,8 @@ public class MD_Product_Serial_Tracking_Sql_003 implements Specification {
                         "  t.customer_code = '"+customer_code+"'\n" +
                         "  and t.product_code = '"+product_code+"'\n" +
                         "  and t.serial_code = '"+serial_code+"'")
-                .append(";"+HmAuxFields)
+                .append(";")
+                //.append(HmAuxFields)
                 .toString() ;
     }
 }

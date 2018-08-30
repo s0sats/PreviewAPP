@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
-import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 
@@ -127,7 +126,7 @@ public class Sql_Act027_004 implements Specification {
                         "          AND e.SERVICE_SEQ = '"+service_seq+"' \n" +
                         "          AND e.status = '"+ Constant.SYS_STATUS_PROCESS+"'")*/
                 .append(";")
-                .append(SM_SO_Service_Exec_TaskDao.EXEC_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_PERC)
+                //.append(SM_SO_Service_Exec_TaskDao.EXEC_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_PERC)
                 .toString();
     }
 }

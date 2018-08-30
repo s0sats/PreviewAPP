@@ -43,7 +43,8 @@ public class Sql_Act021_002 implements Specification {
                         "   s.customer_code = '" + customer_code + "' \n" +
                         "   and s.status != '" + Constant.SYS_STATUS_DONE + "'\n" +
                         "   and s.status != '" + Constant.SYS_STATUS_CANCELLED + "'\n")
-                .append(";" + PENDING_PROCESS_QTY)
+                .append(";")
+                //.append(PENDING_PROCESS_QTY)
                 .toString();
 
     }

@@ -27,7 +27,7 @@ public class CH_Room_Sql_008 implements Specification {
                         " WHERE" +
                         "   status_update = '0'\n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

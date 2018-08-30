@@ -52,7 +52,8 @@ public class Sql_Act005_006 implements Specification {
                         "       )\n" +*/
                         "        and (strftime('%Y-%m-%d',a.ap_when ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime')) \n"+
                         "   and a.ap_status not in('"+ Constant.SYS_STATUS_DONE+"','"+ Constant.SYS_STATUS_CANCELLED+"') \n")
-                .append(";"+ BADGE_SCHEDULED_QTY)
+                .append(";")
+                //.append(BADGE_SCHEDULED_QTY)
                 .toString();
     }
 }

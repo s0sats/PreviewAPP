@@ -36,7 +36,7 @@ public class Sql_Act014_001 implements Specification {
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
                         "    = '"+ Constant.SYS_STATUS_SENT +"' ;")
-                .append(SENT_QTY+"#"+TYPE)
+                //.append(SENT_QTY+"#"+TYPE)
                 .toString();
     }
 

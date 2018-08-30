@@ -34,7 +34,7 @@ public class SM_SO_Product_Event_Sql_004 implements Specification {
                         "    and e.sketch_url is not null\n" +
                         "    and e.sketch_url_local is null\n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

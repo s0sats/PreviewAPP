@@ -55,7 +55,7 @@ public class GE_Custom_Form_Ap_Sql_007 implements Specification {
                         "       a.custom_form_version,\n" +
                         "       a.custom_form_data\n")
                 .append(";")
-                .append(HmAuxFields+"#"+FILE_LOCAL_NAME)
+                //.append(HmAuxFields+"#"+FILE_LOCAL_NAME)
                 .toString();
     }
 }

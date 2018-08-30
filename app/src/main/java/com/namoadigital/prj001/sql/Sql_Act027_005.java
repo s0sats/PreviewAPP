@@ -105,7 +105,7 @@ public class Sql_Act027_005 implements Specification {
                         "       AND e.exec_tmp = t.exec_tmp \n" +
                         "       AND e.task_seq_oper = t.task_seq_oper")
                 .append(";")
-                .append(SM_SO_Service_Exec_TaskDao.EXEC_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_PERC)
+                //.append(SM_SO_Service_Exec_TaskDao.EXEC_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_PERC)
                 .toString();
     }
 }

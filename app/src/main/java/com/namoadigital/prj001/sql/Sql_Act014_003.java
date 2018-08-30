@@ -39,7 +39,7 @@ public class Sql_Act014_003 implements Specification {
                         "   AND a."+GE_Custom_Form_ApDao.AP_STATUS+"" +
                         "    in ('"+ Constant.SYS_STATUS_DONE +"','"+ Constant.SYS_STATUS_CANCELLED +"')\n" +
                         ";")
-                .append(SENT_QTY+"#"+TYPE)
+                //.append(SENT_QTY+"#"+TYPE)
                 .toString();
     }
 

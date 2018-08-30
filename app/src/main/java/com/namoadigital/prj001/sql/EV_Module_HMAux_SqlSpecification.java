@@ -32,7 +32,7 @@ public class EV_Module_HMAux_SqlSpecification implements Specification {
                 .append(" )")
                 .append(" )")
                 .append(";")
-                .append("module_code#module_name")
+                //.append("module_code#module_name")
                 .toString();
     }
 }

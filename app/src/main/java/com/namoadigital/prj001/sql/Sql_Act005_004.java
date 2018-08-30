@@ -219,7 +219,7 @@ public class Sql_Act005_004 implements Specification {
                         " ) F \n")
 
                 .append(";")
-                .append(QTD_MY_PENDING_SO)
+                //.append(QTD_MY_PENDING_SO)
                 .toString();
     }
 }

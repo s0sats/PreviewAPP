@@ -116,14 +116,14 @@ public class Sql_Act013_001 implements Specification {
                         "      l.serial_id, \n" +
                         "      l.custom_form_data" +
                         ";")
-                .append("customer_code#custom_form_type#custom_form_type_desc#" +
-                        "custom_form_code#custom_form_version#custom_form_desc#" +
-                        "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
-                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
-                        "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
-                        "schedule_comments#require_serial_done#require_serial#allow_new_serial_cl#" +
-                        "site_code"
-                )
+//                .append("customer_code#custom_form_type#custom_form_type_desc#" +
+//                        "custom_form_code#custom_form_version#custom_form_desc#" +
+//                        "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
+//                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
+//                        "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
+//                        "schedule_comments#require_serial_done#require_serial#allow_new_serial_cl#" +
+//                        "site_code"
+//                )
                 .toString();
     }
 

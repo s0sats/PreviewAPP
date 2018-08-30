@@ -40,9 +40,9 @@ public class Sql_Act043_002 implements Specification {
                         "      and s.so_code = '"+so_code+"'\n" +
                         "      and s.status <> '"+ Constant.SYS_STATUS_CANCELLED+"' ")
                 .append(";")
-                .append(
-                        TOTAL_PRICE
-                )
+//                .append(
+//                        TOTAL_PRICE
+//                )
                 .toString();
     }
 }

@@ -46,7 +46,8 @@ public class Sql_Act005_003 implements Specification {
                         "          )\n" +*/
                         "   and (strftime('%Y-%m-%d',l.schedule_date_start_format ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime'))  \n"+
                         "   and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"'\n")
-                .append(";"+ BADGE_SCHEDULED_QTY)
+                .append(";")
+                //.append(BADGE_SCHEDULED_QTY)
                 .toString();
     }
 }

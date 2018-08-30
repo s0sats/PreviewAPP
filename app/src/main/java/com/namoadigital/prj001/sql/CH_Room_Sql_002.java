@@ -31,7 +31,7 @@ public class CH_Room_Sql_002 implements Specification {
                         "  r.room_code\n")
 
                 .append(";")
-                .append(HmAuxFields+"#"+FILE_LOCAL_NAME)
+                //.append(HmAuxFields+"#"+FILE_LOCAL_NAME)
                 .toString();
     }
 }

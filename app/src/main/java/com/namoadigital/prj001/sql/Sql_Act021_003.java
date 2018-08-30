@@ -31,7 +31,7 @@ public class Sql_Act021_003 implements Specification {
                         "  s.customer_code = '"+customer_code+"'\n" +
                         "  and (s.update_required = 1\n" +
                         "  or s.approval_required = 1);")
-                .append(UPDATE_APPROVAL_REQUIRED_QTY)
+                //.append(UPDATE_APPROVAL_REQUIRED_QTY)
                 .toString();
     }
 }

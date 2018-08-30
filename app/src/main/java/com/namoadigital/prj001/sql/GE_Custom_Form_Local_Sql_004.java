@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -38,6 +37,7 @@ public class GE_Custom_Form_Local_Sql_004 implements Specification {
                                 "  AND custom_form_code = '" + s_form_code + "' " +
                                 "  AND custom_form_version = '" + s_formversion_code + "' " +
                                 "  AND custom_form_data = '" + s_form_data + "'")
+                .append(";")
                 .toString();
     }
 }

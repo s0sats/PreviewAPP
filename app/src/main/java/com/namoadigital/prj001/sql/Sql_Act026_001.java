@@ -259,13 +259,13 @@ public class Sql_Act026_001 implements Specification {
                 .append(serialFilter)
                 .append(only_avaliable_where)
                 .append(";")
-                .append(HmAuxFields+"#" +
-                                QTD_SERVICES+"#"+
-                                Constant.PARAM_KEY_TYPE+"#"+
-                                MD_BrandDao.BRAND_DESC+"#"+
-                                MD_Brand_ModelDao.MODEL_DESC+"#"+
-                                MD_Brand_ColorDao.COLOR_DESC
-                )
+//                .append(HmAuxFields+"#" +
+//                                QTD_SERVICES+"#"+
+//                                Constant.PARAM_KEY_TYPE+"#"+
+//                                MD_BrandDao.BRAND_DESC+"#"+
+//                                MD_Brand_ModelDao.MODEL_DESC+"#"+
+//                                MD_Brand_ColorDao.COLOR_DESC
+//                )
                 .toString();
     }
 }

@@ -42,7 +42,7 @@ public class SO_Pack_Express_Local_Sql_011 implements Specification {
                         "   AND l." + SO_Pack_Express_LocalDao.STATUS + "" +
                         "    = '" + Constant.SYS_STATUS_SENT + "' ")
                 .append(";")
-                .append(SENT_QTY + "#" + TYPE)
+                //.append(SENT_QTY + "#" + TYPE)
                 .toString();
 
         /*

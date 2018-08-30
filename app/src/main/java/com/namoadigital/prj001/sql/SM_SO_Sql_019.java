@@ -31,7 +31,7 @@ public class SM_SO_Sql_019 implements Specification {
                         "    S.customer_code =  '" + customer_code + "'\n" +
                         "    AND (S.sync_required = 1)")
                 .append(";")
-                .append("so")
+                //.append("so")
                 .toString();
     }
 }

@@ -29,7 +29,7 @@ public class CH_Message_Sql_002 implements Specification {
                         " WHERE\n" +
                         "   m.msg_prefix = '"+msg_prefix+"' \n")
                 .append(";")
-                .append(NEXT_TMP)
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

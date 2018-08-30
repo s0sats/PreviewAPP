@@ -75,7 +75,7 @@ public class GE_Custom_Form_Local_Sql_003 implements Specification {
                         "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE + " = '" + s_form_code + "' " +
                         "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' ")
                 .append(s_filter)
-
+                .append(";")
                 .toString();
     }
 }

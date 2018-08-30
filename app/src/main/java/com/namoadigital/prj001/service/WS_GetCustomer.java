@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
@@ -44,6 +45,8 @@ public class WS_GetCustomer extends IntentService {
     private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
     private GE_Custom_Form_LocalDao customFormLocalDao;
 
+    private ErrorCfg mErrorCfg;
+
     public WS_GetCustomer() {
         super("WS_GetCustomer");
     }
@@ -53,6 +56,7 @@ public class WS_GetCustomer extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+        mErrorCfg = new ErrorCfg();
 
         try {
 
@@ -126,7 +130,7 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user), "", "0");
 
         //Apaga dados da tabela
-        ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery() );
+        ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery(), mErrorCfg);
 
         File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
 
@@ -179,7 +183,7 @@ public class WS_GetCustomer extends IntentService {
                 ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
             }
             //
-            ev_userDao.addUpdate(users, true);
+            ev_userDao.addUpdate(users, true, mErrorCfg);
             //Atualiza contador
             forIdx++;
         }
@@ -203,6 +207,8 @@ public class WS_GetCustomer extends IntentService {
 //            }
 //
 //        }
+
+        // Hugo Comeca aqui a analise
 
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
@@ -265,6 +271,8 @@ public class WS_GetCustomer extends IntentService {
 
             ev_user_customerParamDao.addUpdate(customer_params,true);
         }
+
+        // Hugo Termina aqui a analise
 
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
         ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));

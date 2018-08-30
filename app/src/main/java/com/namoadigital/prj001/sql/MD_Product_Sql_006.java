@@ -26,7 +26,7 @@ public class MD_Product_Sql_006 implements Specification {
                         " WHERE\n" +
                         "   p." + MD_ProductDao.CUSTOMER_CODE + " = '" + customer_code + "'")
                 .append(";")
-                .append("count")
+                //.append("count")
                 .toString();
     }
 }

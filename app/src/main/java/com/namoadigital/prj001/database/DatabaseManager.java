@@ -40,25 +40,24 @@ public class DatabaseManager {
         if (!mHelperExists) {
             mDBHelpers.add(mDatabaseBaseHelper);
         }
-
-        //Log.d("BANCO", "HELPER " + String.valueOf(mDBHelpers.size()));
     }
 
-    public synchronized SQLiteDatabase openDatabase(String fullName) {
+    public synchronized SQLiteDatabase openDatabase(String fullName, boolean mIgnoreCounter) {
         for (int i = 0; i < mDBHelpers.size(); i++) {
             if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
-                mDBHelpers.get(i).openDatabase();
-                //
-                return mDBHelpers.get(i).db;
+                mDBHelpers.get(i).setmIgnoreCounter(mIgnoreCounter);
+
+                return mDBHelpers.get(i).openDatabase();
             }
         }
 
         return null;
     }
 
-    public synchronized void closeDatabase(String fullName) {
+    public synchronized void closeDatabase(String fullName, boolean mIgnoreCounter) {
         for (int i = 0; i < mDBHelpers.size(); i++) {
             if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
+                mDBHelpers.get(i).setmIgnoreCounter(mIgnoreCounter);
                 mDBHelpers.get(i).closeDatabase();
             }
         }

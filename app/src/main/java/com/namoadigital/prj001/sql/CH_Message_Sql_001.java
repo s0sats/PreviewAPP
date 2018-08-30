@@ -33,7 +33,7 @@ public class CH_Message_Sql_001 implements Specification {
                         " ORDER BY\n" +
                         "   m.msg_pk asc\n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

@@ -43,7 +43,7 @@ public class Sql_Act012_001 implements Specification {
                         "    in('"+ Constant.SYS_STATUS_IN_PROCESSING+"'" +
                         //" ,'"+Constant.SYS_STATUS_FINALIZED+"' " +
                         ");")
-                .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
+                //.append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
     }
 }

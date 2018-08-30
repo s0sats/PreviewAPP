@@ -33,12 +33,12 @@ public class MD_Site_Sql_SS implements Specification {
                         MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
                         " ORDER BY \n" +
                         "      site_id,site_desc;")
-                .append(SearchableSpinner.ID + "#" +
-                        MD_SiteDao.SITE_ID + "#" +
-                        SearchableSpinner.DESCRIPTION + "#" +
-                        MD_SiteDao.IO_CONTROL + "#" +
-                        MD_SiteDao.INBOUND_AUTO_CREATE
-                )
+//                .append(SearchableSpinner.ID + "#" +
+//                        MD_SiteDao.SITE_ID + "#" +
+//                        SearchableSpinner.DESCRIPTION + "#" +
+//                        MD_SiteDao.IO_CONTROL + "#" +
+//                        MD_SiteDao.INBOUND_AUTO_CREATE
+//                )
                 .toString();
     }
 }

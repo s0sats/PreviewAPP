@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.FCMMessageDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -27,7 +26,7 @@ public class FCMMessage_Sql_001 implements Specification {
                         FCMMessageDao.TABLE + " inner join ev_user_customers on fcmmessages.customer = ev_user_customers.customer_code\n" +
                         " ORDER BY date_create_ms desc")
                 .append(";")
-                .append("fcmmessage_code#customer#type#title#msg_short#module#sender#status#date_create_ms#customer_name")
+                //.append("fcmmessage_code#customer#type#title#msg_short#module#sender#status#date_create_ms#customer_name")
                 .toString();
     }
 }

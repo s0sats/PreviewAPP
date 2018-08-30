@@ -31,7 +31,7 @@ public class Sql_Act005_008 implements Specification {
                                 "  ps.customer_code = '" + customer_code + "'\n" +
                                 "  and (ps.update_required = 1\n" +
                                 "  );")
-                        .append(BADGE_TO_SEND_QTY)
+                        //.append(BADGE_TO_SEND_QTY)
                         .toString();
     }
 }

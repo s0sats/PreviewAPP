@@ -28,8 +28,8 @@ public class Sync_Checklist_Sql_002 implements Specification {
                         Sync_ChecklistDao.CUSTOMER_CODE + " = '"+customer_code+"' " +
                         "     and "+ Sync_ChecklistDao.PRODUCT_CODE  +" = '"+product_code+"' " +
                         " ORDER BY " +
-                        "   product_code;" +
-                        "customer_code#product_code#last_update");
+                        "   product_code;");
+                        //"customer_code#product_code#last_update");
 
         return sb.toString();
     }

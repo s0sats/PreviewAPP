@@ -36,7 +36,7 @@ public class SM_SO_Product_Event_File_Sql_004 implements Specification {
                         " ORDER BY\n" +
                         "   f.file_code \n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

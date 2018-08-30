@@ -18,8 +18,8 @@ public class GE_File_Sql_003 implements Specification {
 
         return sb
                 .append("select ifnull(max(file_code),0) + 1 next_code from ge_files")
-                .append(";next_code")
-
+                .append(";")
+                //.append("next_code")
                 .toString();
     }
 }

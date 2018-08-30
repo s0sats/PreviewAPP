@@ -37,7 +37,7 @@ public class MD_All_Product_Sql_004 implements Specification {
                         "   and p."+MD_All_ProductDao.SKETCH_URL+" is not null\n" +
                         "   and p."+MD_All_ProductDao.SKETCH_URL_LOCAL+" = ''")
                 .append(";")
-                .append(HmAuxFields+"#"+PROD_FILE_LOCAL_NAME)
+                //.append(HmAuxFields+"#"+PROD_FILE_LOCAL_NAME)
                 .toString();
 
     }

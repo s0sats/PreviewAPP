@@ -32,7 +32,8 @@ public class WS_Cleaning_Sql_007 implements Specification {
                         "WHERE\n" +
                         "  a.customer_code = '"+customer_code+"'\n" +
                         "  and a.custom_form_url_local = '"+ap_pdf_name+"'")
-                .append(";"+USING_PDF_QTY)
+                .append(";")
+                //.append(USING_PDF_QTY)
                 .toString();
     }
 }

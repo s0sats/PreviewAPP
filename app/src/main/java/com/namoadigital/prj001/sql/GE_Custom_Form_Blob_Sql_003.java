@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_FormDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -47,7 +45,6 @@ public class GE_Custom_Form_Blob_Sql_003 implements Specification {
                 .append("custom_form_version = '").append(s_formversion_code).append("' and \n")
                 .append("blob_code = '").append(s_blob_code).append("' ")
                 .append(";")
-
                 .toString();
     }
 }

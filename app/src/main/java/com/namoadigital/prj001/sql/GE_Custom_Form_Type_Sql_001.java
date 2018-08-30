@@ -96,7 +96,7 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "   t.custom_form_type\n"
                 )
                 .append(";")
-                .append(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
+                //.append(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
                 .toString()
                 .replace("'null'","null");
 

@@ -53,7 +53,8 @@ public class SM_SO_Service_Exec_Sql_003 implements Specification {
                         "    AND S.category_price_code =    '" + category_price_code + "'\n" +
                         "    AND S.service_code =           '" + service_code + "'\n" +
                         "    AND S.service_seq =            '" + service_seq + "' ")
-                .append(";"+NEXT_TMP)
+                .append(";")
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

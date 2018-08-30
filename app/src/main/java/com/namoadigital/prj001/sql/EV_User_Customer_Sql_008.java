@@ -35,7 +35,7 @@ public class EV_User_Customer_Sql_008 implements Specification {
                         "   e.user_code = '"+user_code+"'\n" +
                         "   and e.customer_code = '"+customer_code+"' \n")
                 .append(";")
-                .append(EV_User_CustomerDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.SESSION_APP)
+                //.append(EV_User_CustomerDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.SESSION_APP)
                 .toString();
     }
 }

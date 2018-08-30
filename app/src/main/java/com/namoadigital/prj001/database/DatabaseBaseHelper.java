@@ -15,6 +15,16 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
     protected int mOpenCounter;
     protected SQLiteDatabase db;
 
+    private boolean mIgnoreCounter = false;
+
+    public boolean ismIgnoreCounter() {
+        return mIgnoreCounter;
+    }
+
+    public void setmIgnoreCounter(boolean mIgnoreCounter) {
+        this.mIgnoreCounter = mIgnoreCounter;
+    }
+
     public String getDBHelperName() {
         try {
             if (mDBName == null || mDBName.isEmpty()) {
@@ -51,40 +61,42 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
     }
 
     public synchronized SQLiteDatabase openDatabase() {
-        mOpenCounter++;
-        if (mOpenCounter == 1) {
-            db = getWritableDatabase();
+        if (!mIgnoreCounter) {
+            mOpenCounter++;
+            if (mOpenCounter == 1) {
+                db = getWritableDatabase();
+            }
         }
-
-        //Log.d("BANCO", String.valueOf(mOpenCounter));
 
         return db;
     }
 
     public synchronized void closeDatabase() {
-        mOpenCounter--;
-        if (mOpenCounter == 0) {
-            db.close();
+        if (!mIgnoreCounter) {
+            mOpenCounter--;
+            if (mOpenCounter == 0) {
+                db.close();
+                db = null;
+            }
         }
-
-        //Log.d("BANCO", String.valueOf(mOpenCounter));
     }
 
     public DatabaseBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
-        //
+
         mDBName = name;
         mDBVersion = version;
-        //Tratativa para identificar banco -1
+
         try {
             if (name.contains("-1")) {
                 throw new Exception(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE);
             }
-        }catch (Exception e){
-            if(e.toString().contains(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE)){
-                ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            if (e.toString().contains(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE)) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }
     }
 }
+
 

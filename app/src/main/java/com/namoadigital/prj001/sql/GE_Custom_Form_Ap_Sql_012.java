@@ -42,7 +42,7 @@ public class GE_Custom_Form_Ap_Sql_012 implements Specification {
                         "   END\n"
                 )
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

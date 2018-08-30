@@ -33,7 +33,7 @@ public class GE_Custom_Form_Local_Sql_014 implements Specification {
                         "'\n" +
                         " ")
                 .append(";")
-                .append("type#total")
+                //.append("type#total")
                 .toString();
     }
 

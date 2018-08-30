@@ -32,7 +32,8 @@ public class EV_User_Customer_Sql_010 implements Specification {
                         " WHERE\n" +
                         "   e.user_code = '"+user_code+"'\n" +
                         "   and e.session_app <> ''\n")
-                .append(";" + HmAuxFields)
+                .append(";")
+                //.append(HmAuxFields)
                 .toString();
     }
 }

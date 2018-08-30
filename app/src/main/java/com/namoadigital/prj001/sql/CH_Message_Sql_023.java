@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -27,9 +26,9 @@ public class CH_Message_Sql_023 implements Specification {
                         "\n" +
                         ")")
                 .append(";")
-                .append(CH_MessageDao.ROOM_CODE)
-                .append("#")
-                .append(CH_MessageDao.MESSAGE_IMAGE_LOCAL)
+                //.append(CH_MessageDao.ROOM_CODE)
+                //.append("#")
+                //.append(CH_MessageDao.MESSAGE_IMAGE_LOCAL)
                 .toString();
     }
 }

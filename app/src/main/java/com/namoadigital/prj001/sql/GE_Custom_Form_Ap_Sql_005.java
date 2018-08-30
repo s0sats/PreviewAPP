@@ -53,7 +53,7 @@ public class GE_Custom_Form_Ap_Sql_005 implements Specification {
                         "    and a.custom_form_data = '"+custom_form_data+"'\n" +
                         "    and a.ap_code = '"+ap_code+"'\n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

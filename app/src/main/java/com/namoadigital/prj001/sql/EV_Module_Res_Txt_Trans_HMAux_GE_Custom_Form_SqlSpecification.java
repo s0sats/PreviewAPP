@@ -47,7 +47,7 @@ public class EV_Module_Res_Txt_Trans_HMAux_GE_Custom_Form_SqlSpecification imple
                 .append(s_translate_code)
                 .append("' ")
                 .append(";")
-                .append("module_code#resource_code#resource_name#txt_code#txt_value#translate_code")
+                //.append("module_code#resource_code#resource_name#txt_code#txt_value#translate_code")
                 .toString();
     }
 }
