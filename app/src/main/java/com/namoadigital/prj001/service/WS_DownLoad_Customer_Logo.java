@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -34,8 +35,8 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
         try {
             Bundle bundle = intent.getExtras();
             //
-            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
-            user_code = bundle.getString(Constant.LOGIN_USER_CODE,"-1");
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
+            user_code = bundle.getString(Constant.LOGIN_USER_CODE, "-1");
             //Se parametro de customer não foi enviado, aborta chamada
             if (customer_code == -1L) {
                 return;
@@ -53,11 +54,12 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
                             new EV_User_Customer_Sql_002(
                                     user_code,
                                     String.valueOf(customer_code)
-                            ).toSqlQuery()
+                            ).toSqlQuery(),
+                            new ErrorCfg()
                     );
             String logo_prefix = "logo_c_" + userCustomer.getCustomer_code();
             //Se imagem existir, sai do serviço sem acionar necessidade de notificação
-            if(ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png",Constant.IMG_PATH)){
+            if (ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png", Constant.IMG_PATH)) {
                 return;
             }
             //Se não saiu, verifica necessidade de notificação.

@@ -53,14 +53,12 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     @Override
     public void addUpdate(EV_User user, ErrorCfg mError) {
         openDB();
-        //
-        long rows = 0;
 
         try {
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
 
-            rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
+            long rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
 
             if (rows == 0) {
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user));
@@ -80,13 +78,16 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     @Override
     public void addUpdate(List<EV_User> users, boolean status, ErrorCfg mError) {
         openDB();
-        //
-        long rows = 0;
-        //
+
         try {
             if (!ismIgnoreCounter()) {
                 db.beginTransaction();
             }
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
 
             StringBuilder sbWhere;
 
@@ -95,7 +96,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
                 sbWhere = new StringBuilder();
                 sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
 
-                rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
+                long rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
 
                 if (rows == 0) {
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user));
@@ -116,7 +117,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
                 db.endTransaction();
             }
         }
-        //
+
         closeDB();
     }
 
@@ -131,8 +132,6 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
             // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
             // long rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
-
-
 
         } catch (SQLiteException e) {
             mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
@@ -182,7 +181,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
             mError.clearError();
             cursor.close();
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
             mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -209,7 +208,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
             mError.clearError();
             cursor.close();
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
             mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -223,13 +222,13 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
 
     @Override
-    public List<EV_User> query(String s_query, ErrorCfg mError) {
+    public List<EV_User> query(String sQuery, ErrorCfg mError) {
         List<EV_User> users = new ArrayList<>();
         openDB();
 
         try {
 
-            Cursor cursor = db.rawQuery(s_query, null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 EV_User uAux = toUserMapper.map(cursor);
@@ -238,7 +237,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
             mError.clearError();
             cursor.close();
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
             mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -265,7 +264,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
             mError.clearError();
             cursor.close();
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
             mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -282,12 +281,24 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
         public ContentValues map(EV_User user) {
             ContentValues contentValues = new ContentValues();
 
-                contentValues.put(USER_CODE, user.getUser_code());
+
+            contentValues.put(USER_CODE, user.getUser_code());
+
+            if (user.getUser_nick() != null) {
                 contentValues.put(USER_NICK, user.getUser_nick());
+            }
+            if (user.getEmail_p() != null) {
                 contentValues.put(EMAIL_P, user.getEmail_p());
+            }
+            if (user.getAdmin() > -1) {
                 contentValues.put(ADMIN, user.getAdmin());
+            }
+            if (user.getExist_nfc() > -1) {
                 contentValues.put(EXIST_NFC, user.getExist_nfc());
+            }
+            if (user.getNfc_blocked() > -1) {
                 contentValues.put(NFC_BLOCKED, user.getNfc_blocked());
+            }
 
             return contentValues;
         }

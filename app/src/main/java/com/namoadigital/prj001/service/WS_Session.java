@@ -12,6 +12,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.TSession_Env;
 import com.namoadigital.prj001.model.TSession_Rec;
 import com.namoadigital.prj001.receiver.WBR_Session;
@@ -123,7 +124,8 @@ public class WS_Session extends IntentService {
                     new EV_User_Customer_Sql_002(
                             ToolBox_Con.getPreference_User_Code(getApplicationContext()),
                             customer_code
-                            ).toSqlQuery()
+                            ).toSqlQuery(),
+                new ErrorCfg()
                     );
 
         //Seta propriedade do customer que serão atualizadas
@@ -131,7 +133,7 @@ public class WS_Session extends IntentService {
         userCustomer.setSession_app(rec.getSession_app());
 
         //Chama metodo para atualizar dados
-        ev_user_customerDao.addUpdate(userCustomer);
+        ev_user_customerDao.addUpdate(userCustomer, new ErrorCfg());
 
         //Seta preferecia de customer
         ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());

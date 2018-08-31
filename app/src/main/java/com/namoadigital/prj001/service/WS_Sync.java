@@ -62,6 +62,7 @@ import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
@@ -376,7 +377,7 @@ public class WS_Sync extends IntentService {
                     }.getType()
             );
 
-            userDao.addUpdate(users, false);
+            userDao.addUpdate(users, false, new ErrorCfg());
         }
 
         //Processa traduções

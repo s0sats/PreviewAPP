@@ -1085,18 +1085,14 @@ public class ToolBox_Con {
     public static ErrorCfg getSQLiteErrorCodeDescription(String errorMessage) {
         ErrorCfg mErrorDao = new ErrorCfg();
 
-        if (!errorMessage.toLowerCase().contains("android.database.sqlite.SQLiteConstraintException".toLowerCase())) {
-            return null;
-        }
-
         String[] rows = errorMessage.toString().trim().split("\n");
 
         if (rows.length > 0) {
             String[] parts = rows[0].split(":");
 
-            if (parts.length > 2) {
+            if (parts.length > 1) {
 
-                String[] components = parts[2].trim()
+                String[] components = parts[1].trim()
                         .replace("(code ", "")
                         .replace(")", "").split(" ");
 
