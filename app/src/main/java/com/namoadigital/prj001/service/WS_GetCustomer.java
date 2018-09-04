@@ -10,9 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SyncDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.ErrorCfg;
@@ -37,9 +34,9 @@ import java.util.Collections;
 public class WS_GetCustomer extends IntentService {
 
     private EV_UserDao ev_userDao;
-    private EV_User_CustomerDao ev_user_customerDao;
-    private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
-    private GE_Custom_Form_LocalDao customFormLocalDao;
+//    private EV_User_CustomerDao ev_user_customerDao;
+//    private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
+//    private GE_Custom_Form_LocalDao customFormLocalDao;
 
     private SyncDao syncDao;
 
@@ -84,8 +81,8 @@ public class WS_GetCustomer extends IntentService {
     private void processWS_GC(String user, String password, String nfc, int statusjump) throws Exception {
 
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        ev_user_customerParamDao = new Ev_User_Customer_ParameterDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+//        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+//        ev_user_customerParamDao = new Ev_User_Customer_ParameterDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         syncDao = new SyncDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_customer), "", "0");

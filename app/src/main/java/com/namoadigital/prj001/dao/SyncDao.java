@@ -26,11 +26,6 @@ public class SyncDao extends BaseDao {
     private String mDB_NAME;
     private int mDB_VERSION;
 
-    private EV_UserDao ev_userDao;
-    private EV_User_CustomerDao ev_user_customerDao;
-    private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
-    private GE_Custom_Form_LocalDao customFormLocalDao;
-
     private ErrorCfg mErrorCfg;
 
     public SyncDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -48,12 +43,15 @@ public class SyncDao extends BaseDao {
         db.beginTransaction();
 
         try {
-            ev_userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+            EV_UserDao ev_userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
             ev_userDao.setmIgnoreCounter(true);
-            ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+            EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
             ev_user_customerDao.setmIgnoreCounter(true);
-            ev_user_customerParamDao = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+            Ev_User_Customer_ParameterDao ev_user_customerParamDao = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
             ev_user_customerParamDao.setmIgnoreCounter(true);
+
+            GE_Custom_Form_LocalDao customFormLocalDao = null;
+
             mErrorCfg = new ErrorCfg();
 
             Gson gson = new GsonBuilder().serializeNulls().create();
