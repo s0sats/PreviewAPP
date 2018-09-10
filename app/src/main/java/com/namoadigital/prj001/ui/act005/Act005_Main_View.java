@@ -59,4 +59,8 @@ public interface Act005_Main_View {
 
     int getImagesToUpload();
 
+    int getOpenForms(HMAux customers);
+
+    boolean getPendingForms();
+
 }

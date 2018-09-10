@@ -27,6 +27,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -46,10 +47,9 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
- *
+ * <p>
  * Modificado by DANIEL.LUCHE on 16/08/2018.
  * Implementado interface do clique no icone de comentario do agendamento
- *
  */
 
 public class Act017_Main extends Base_Activity implements Act017_Main_View {
@@ -86,7 +86,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private TextView tv_serial;
     private TextView tv_qty;
 
-
+    private static final int PROCESSO_SELECAO_ZONA = 10;
+    private String site_code_back;
+    private int zone_code_back;
+    private HMAux item_selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +120,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         getBundleInfo();
         //
         loadTranslation();
-
     }
 
     private void getBundleInfo() {
@@ -130,9 +132,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             //
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
             //
-            mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT046);
+            mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT046);
             //
-            late = bundle.getBoolean(ACT_FILTER_LATE,false);
+            late = bundle.getBoolean(ACT_FILTER_LATE, false);
         } else {
             scheduled_date = null;
             filter_form = false;
@@ -142,6 +144,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             late = false;
             filter_site = true;
         }
+        // Cópia do Site_Code e do Zone_Code para o mudanca no Agendamento
+        site_code_back = ToolBox_Con.getPreference_Site_Code(context);
+        zone_code_back = ToolBox_Con.getPreference_Zone_Code(context);
+        item_selected = new HMAux();
     }
 
     private void loadTranslation() {
@@ -228,7 +234,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         tv_no_result.setVisibility(View.GONE);
         //
         tv_serial.setText(serial_id);
-        ll_serial.setVisibility(!serial_id.equals("") ? View.VISIBLE  : View.INVISIBLE);
+        ll_serial.setVisibility(!serial_id.equals("") ? View.VISIBLE : View.INVISIBLE);
         //
         applyModuleFilter();
 
@@ -263,8 +269,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         String sQty = "( list_qty / tot_qty )";
         //
         tv_qty.setText(
-                sQty.replace("list_qty",String.valueOf(list_qty))
-                    .replace("tot_qty",String.valueOf(tot_qty))
+                sQty.replace("list_qty", String.valueOf(list_qty))
+                        .replace("tot_qty", String.valueOf(tot_qty))
         );
     }
 
@@ -281,6 +287,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
+
+                item_selected.putAll(item);
+
                 mPresenter.checkScheduleFlow(item);
             }
         });
@@ -368,7 +377,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site );
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
         //
         if (filter_form || filter_form_ap || filter_site) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
@@ -457,6 +466,35 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     @Override
+    public void callAct033(Context context) {
+        Intent mIntent = new Intent(context, Act033_Main.class);
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
+        //
+        mIntent.putExtras(bundle);
+        startActivityForResult(mIntent, PROCESSO_SELECAO_ZONA);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PROCESSO_SELECAO_ZONA:
+                if (resultCode == RESULT_OK){
+                    mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
+                    iniUIFooter();
+                    //
+                    mPresenter.checkScheduleFlow(item_selected);
+                } else {
+                    ToolBox_Con.setPreference_Site_Code(context, site_code_back);
+                    ToolBox_Con.setPreference_Zone_Code(context, zone_code_back);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void callAct038(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act038_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -465,7 +503,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle.putBoolean(ACT_FILTER_SITE, filter_site);
         bundle.putBoolean(ACT_FILTER_LATE, late);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
-        bundle.putBoolean(ACT_NO_SELECTED_DATE,scheduled_date == null );
+        bundle.putBoolean(ACT_NO_SELECTED_DATE, scheduled_date == null);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

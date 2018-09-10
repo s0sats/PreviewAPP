@@ -31,6 +31,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
@@ -59,6 +60,7 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -72,7 +74,6 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
-import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
@@ -383,6 +384,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_logout_data_to_send_ttl");
         transList.add("alert_logout_data_to_send_msg");
         //
+        transList.add("lbl_unfinished_data");
+        transList.add("alert_pending_data_ttl");
+        transList.add("alert_pending_data_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -443,7 +448,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                new CH_MessageDao(context)
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
@@ -495,6 +501,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         fragOpc = (Act005_Opc) fm.findFragmentById(R.id.act005_frag_opc);
         fragOpc.setHmAux_Trans(hmAux_Trans, mModule_Code, mResource_Code);
+        fragOpc.setPendingForms(getPendingForms());
         fragOpc.setOnOpcItemClicked(new Act005_Opc.IAct005_Opc() {
             @Override
             public void itemClicked(String index) {
@@ -731,6 +738,26 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
                     //
                     callSendAction("LOGOUT");
+                } else if (getPendingForms()) {
+                    ToolBox.alertMSG_YES_NO(
+                            Act005_Main.this,
+                            hmAux_Trans.get("alert_pending_data_ttl"),
+                            hmAux_Trans.get("alert_pending_data_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    mPresenter.showLogoutDialog();
+                                }
+                            },
+                            2,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                                }
+                            }
+                    );
+
                 } else {
                     mPresenter.showLogoutDialog();
                 }
@@ -738,6 +765,34 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         });
 
 
+    }
+
+    @Override
+    public boolean getPendingForms() {
+
+        GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<HMAux> openedSessions = ToolBox_Inf.getActiveCustomerSession(context);
+        ArrayList<HMAux> pendingTotals = (ArrayList<HMAux>) geCustomFormLocalDao.query_HM(
+                new GE_Custom_Form_Local_Sql_015().toSqlQuery()
+        );
+
+        boolean pendingExists = false;
+
+        for (int i = 0; i < openedSessions.size(); i++) {
+            for (int j = 0; j < pendingTotals.size(); j++) {
+                if (openedSessions.get(i).get("customer_code").equalsIgnoreCase(pendingTotals.get(j).get("customer_code"))) {
+                    pendingExists = true;
+                    break;
+                }
+            }
+        }
+
+        return pendingExists;
     }
 
     private void changeCustomer() {
@@ -877,6 +932,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
 
         return geFiles.size();
+    }
+
+    @Override
+    public int getOpenForms(HMAux customers) {
+        return 0;
     }
 
     @Override

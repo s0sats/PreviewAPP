@@ -139,7 +139,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
 
     @Override
-    public void checkScheduleFlow(HMAux item) {
+    public void checkScheduleFlow(final HMAux item) {
 
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
 
@@ -149,12 +149,33 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                             !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase("null") &&
                             !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
 
-                        ToolBox.alertMSG(
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_form_site_restriction_ttl"),
+//                                hmAux_Trans.get("alert_form_site_restriction_msg"),
+//                                null,
+//                                0
+//                        );
+                        ToolBox.alertMSG_YES_NO(
                                 context,
                                 hmAux_Trans.get("alert_form_site_restriction_ttl"),
                                 hmAux_Trans.get("alert_form_site_restriction_msg"),
-                                null,
-                                0
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+                                            ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
+                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                                            //
+                                            checkScheduleFlow(item);
+                                        } else {
+                                            ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
+                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                                            mView.callAct033(context);
+                                        }
+                                    }
+                                },
+                                1
                         );
 
                     } else if (isAnyFormInProcessing(item)) {
@@ -234,7 +255,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         } else {
             if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
                     && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
-                ) {
+                    ) {
                 //16/08/18
                 //Se o form agendado requer aprovação via serial, joga user para act008
                 //

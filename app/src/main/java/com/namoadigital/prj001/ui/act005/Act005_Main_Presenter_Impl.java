@@ -22,6 +22,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -53,6 +54,7 @@ import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.sql.CH_Message_Sql_025;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
@@ -97,6 +99,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private SM_SODao soDao;
     private GE_Custom_Form_ApDao customFormApDao;
     private MD_ProductDao mdProductDao;
+    private CH_MessageDao chMessageDao;
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
@@ -108,7 +111,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     //
     private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao, CH_MessageDao chMessageDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -119,6 +122,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.customFormApDao = customFormApDao;
         this.soPackExpressLocalDao = soPackExpressLocalDao;
         this.mdProductDao = mdProductDao;
+        this.chMessageDao = chMessageDao;
         buildMenuList();
     }
 
@@ -456,8 +460,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_CHAT:
-                        qty = "1";
+                        //qty = "1";
+                        //menu.addInBadge1(qty);
+
+                        try {
+                            qty = chMessageDao.getByStringHM(
+                                    new CH_Message_Sql_025().toSqlQuery()
+                            ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
                         menu.addInBadge1(qty);
+
                         break;
                     case Act005_Main.MENU_ID_FORM_AP:
                         try {

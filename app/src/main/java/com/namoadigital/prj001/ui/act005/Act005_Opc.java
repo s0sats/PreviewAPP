@@ -40,8 +40,11 @@ public class Act005_Opc extends Fragment {
     //
     private ImageView iv_logo;
     private ListView lv_opc;
+    private LinearLayout ll_unfinished_forms;
     private LinearLayout ll_sync;
     private LinearLayout ll_logout;
+
+    private TextView tv_unfinished_forms_label;
     private TextView tv_sync_label;
     private TextView tv_logout_label;
     private IAct005_Opc delegate;
@@ -67,6 +70,7 @@ public class Act005_Opc extends Fragment {
         translateItens(mModule_Code, mResource_Code);
         sAdapter.notifyDataSetChanged();
         //
+        tv_unfinished_forms_label.setText(hmAux_Trans.get("lbl_unfinished_data"));
         tv_sync_label.setText(hmAux_Trans.get("lbl_sync_data"));
         tv_logout_label.setText(hmAux_Trans.get("lbl_logout"));
     }
@@ -97,9 +101,11 @@ public class Act005_Opc extends Fragment {
     private void iniVar(View view) {
         iv_logo = (ImageView) view.findViewById(R.id.act005_opc_iv_logo);
         //
+        ll_unfinished_forms = (LinearLayout) view.findViewById(R.id.act005_opc_ll_unfinished_forms);
         ll_sync = (LinearLayout) view.findViewById(R.id.act005_opc_ll_sync);
         ll_logout = (LinearLayout) view.findViewById(R.id.act005_opc_ll_logout);
         //
+        tv_unfinished_forms_label = (TextView) view.findViewById(R.id.act005_opc_tv_unfinished_forms);
         tv_sync_label = (TextView) view.findViewById(R.id.act005_opc_tv_sync);
         tv_logout_label = (TextView) view.findViewById(R.id.act005_opc_tv_logout);
         //
@@ -155,14 +161,14 @@ public class Act005_Opc extends Fragment {
                 DRAWER_OPC_SITE,
                 DRAWER_OPC_ZONE,
                 DRAWER_OPC_OPERATION,
-             //   DRAWER_OPC_LOGOUT
+                //   DRAWER_OPC_LOGOUT
         };
         String[] icon = {
                 "",
                 "",
                 "",
                 "",
-               // String.valueOf(R.drawable.ic_settings_power_red_24dp)
+                // String.valueOf(R.drawable.ic_settings_power_red_24dp)
         };
 
         String[] desc = {
@@ -170,14 +176,14 @@ public class Act005_Opc extends Fragment {
                 "lbl_change_site",
                 "lbl_change_zone",
                 "lbl_change_operation",
-              //  "lbl_logout",
+                //  "lbl_logout",
         };
         drawerItemList = new ArrayList<>();
         for (int i = 0; i < id.length; i++) {
             //Verifica se customer tem acesso ao modulo serviço e , em caso negativo,
             //remove opção de trocar zona.
             //if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.parameterExists(getActivity(),new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})){
-            if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.profileExists(getActivity(),Constant.PROFILE_PRJ001_SO, null)){
+            if (id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_PRJ001_SO, null)) {
                 continue;
             }
             HMAux hmAux = new HMAux();
@@ -189,5 +195,13 @@ public class Act005_Opc extends Fragment {
         }
 
         return drawerItemList;
+    }
+
+    public void setPendingForms(boolean status) {
+        if (status) {
+            ll_unfinished_forms.setVisibility(View.VISIBLE);
+        } else {
+            ll_unfinished_forms.setVisibility(View.GONE);
+        }
     }
 }

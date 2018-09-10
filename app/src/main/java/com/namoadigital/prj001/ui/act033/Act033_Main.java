@@ -267,9 +267,20 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
     }
 
     @Override
+    public void callAct017(Context context) {
+        setResult(RESULT_OK);
+        //
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        if (requestingAct.equals(Constant.ACT017)) {
+            finish();
+        } else {
+            mPresenter.onBackPressedClicked();
+        }
     }
 
     @Override

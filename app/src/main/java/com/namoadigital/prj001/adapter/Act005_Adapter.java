@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 
 import java.util.ArrayList;
 
@@ -94,17 +93,17 @@ public class Act005_Adapter extends BaseAdapter {
             tvBadge.setText(" ");
         }
 
-        if(item.getMenu_id().equals(Act005_Main.MENU_ID_CHAT)){
-            tvBadge.setVisibility(View.GONE);
-            //
-            if(item.getBadge1() == 1) {
-                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
-                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
-            }else{
-                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
-                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
-            }
-        }
+//        if(item.getMenu_id().equals(Act005_Main.MENU_ID_CHAT)){
+//            tvBadge.setVisibility(View.GONE);
+//            //
+//            if(item.getBadge1() == 1) {
+//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
+//            }else{
+//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
+//            }
+//        }
 
         //Se chave Badge2 tiver preenchida exibe no menu
         if (item.getBadge2() > 0) {
