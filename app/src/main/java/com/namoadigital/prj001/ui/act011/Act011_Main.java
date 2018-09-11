@@ -311,6 +311,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     // Hugo
                     Set keys = resTabs.keySet();
 
+                    hmPages.clear();
+
                     for (Iterator i = keys.iterator(); i.hasNext(); ) {
                         String key = (String) i.next();
                         String value = (String) resTabs.get(key);
