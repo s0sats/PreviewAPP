@@ -7,14 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -84,6 +76,13 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
+
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +90,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.view.menu.MenuBuilder;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -205,10 +207,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
         //
-       /* chatReceiver = new BR_Chat();
+        // Hugo Reativou
+        chatReceiver = new BR_Chat();
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);*/
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
         /*
          * Desloga user se preferencia login_status != OK
          */
@@ -242,7 +245,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
+        //
+        // Hugo Reativou
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
         super.onDestroy();
     }
 
@@ -2042,8 +2047,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 case Constant.CHAT_BR_TYPE_ROOM:
                     break;
                 default:
+                    mPresenter.getMenuItensV2(hmAux_Trans);
+                    break;
             }
-
         }
     }
 

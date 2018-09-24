@@ -1335,7 +1335,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     } else {
                         if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
                             //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
-                            ToolBox.alertMSG(
+                            ToolBox.alertMSG_YES_NO(
                                     context,
                                     hmAux_Trans.get("alert_keep_tracking_list_ttl"),
                                     hmAux_Trans.get("alert_keep_tracking_list_msg"),

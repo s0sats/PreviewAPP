@@ -374,6 +374,19 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         progressDialog.dismiss();
     }
 
+    // Hugo
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked();
