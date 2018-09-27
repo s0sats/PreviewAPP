@@ -16,7 +16,10 @@ public class GE_Custom_Form_Local_Sql_015 implements Specification {
 
     public static final String PENDING_QTY = "pending_qty";
 
-    public GE_Custom_Form_Local_Sql_015() {
+    private String customer_code;
+
+    public GE_Custom_Form_Local_Sql_015(String customer_code) {
+        this.customer_code = customer_code;
     }
 
     @Override
@@ -25,13 +28,15 @@ public class GE_Custom_Form_Local_Sql_015 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        " customer_code," +
-                        "     count(1) " + PENDING_QTY +
+                        "   customer_code,\n" +
+                        "   count(1) " + PENDING_QTY + "\n" +
                         " FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE + " l\n " +
                         " WHERE\n" +
-                        "   l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + "" +
-                        "    in('" + Constant.SYS_STATUS_IN_PROCESSING + "');")
+                        "   l.customer_code = '"+customer_code+"' \n" +
+                        "   and l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + "" +
+                        "    in('" + Constant.SYS_STATUS_IN_PROCESSING + "')\n" +
+                        ";")
                 .append(GE_Custom_Form_LocalDao.CUSTOMER_CODE + "#" + PENDING_QTY)
                 .toString();
     }

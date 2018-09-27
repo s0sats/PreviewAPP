@@ -390,6 +390,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("lbl_unfinished_data");
         transList.add("alert_pending_data_ttl");
         transList.add("alert_pending_data_msg");
+        transList.add("alert_pending_form_logout_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -485,6 +486,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 super.onDrawerOpened(drawerView);
                 //
                 invalidateOptionsMenu();
+                //
+                if(fragOpc != null){
+                    fragOpc.setPendingForms(getPendingForms());
+                }
             }
 
             @Override
@@ -745,7 +750,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     ToolBox.alertMSG_YES_NO(
                             Act005_Main.this,
                             hmAux_Trans.get("alert_pending_data_ttl"),
-                            hmAux_Trans.get("alert_pending_data_msg"),
+                            hmAux_Trans.get("alert_pending_form_logout_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -773,29 +778,57 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public boolean getPendingForms() {
 
-        GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        ArrayList<HMAux> openedSessions = ToolBox_Inf.getActiveCustomerSession(context);
-        ArrayList<HMAux> pendingTotals = (ArrayList<HMAux>) geCustomFormLocalDao.query_HM(
-                new GE_Custom_Form_Local_Sql_015().toSqlQuery()
-        );
+//        GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        ArrayList<HMAux> openedSessions = ToolBox_Inf.getActiveCustomerSession(context);
+//        ArrayList<HMAux> pendingTotals = (ArrayList<HMAux>) geCustomFormLocalDao.query_HM(
+//                new GE_Custom_Form_Local_Sql_015().toSqlQuery()
+//        );
+//
+//        boolean pendingExists = false;
+//
+//        for (int i = 0; i < openedSessions.size(); i++) {
+//            for (int j = 0; j < pendingTotals.size(); j++) {
+//                if (openedSessions.get(i).get("customer_code").equalsIgnoreCase(pendingTotals.get(j).get("customer_code"))) {
+//                    pendingExists = true;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return pendingExists;
 
         boolean pendingExists = false;
-
+        ArrayList<HMAux> openedSessions = ToolBox_Inf.getActiveCustomerSession(context);
+        //
         for (int i = 0; i < openedSessions.size(); i++) {
-            for (int j = 0; j < pendingTotals.size(); j++) {
-                if (openedSessions.get(i).get("customer_code").equalsIgnoreCase(pendingTotals.get(j).get("customer_code"))) {
-                    pendingExists = true;
-                    break;
-                }
+            GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
+                    context,
+                    ToolBox_Con.customDBPath(
+                            Long.parseLong(openedSessions.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE))
+                    ),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            HMAux pendingTotals = geCustomFormLocalDao.getByStringHM(
+                    new GE_Custom_Form_Local_Sql_015(
+                            openedSessions.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE)
+                    ).toSqlQuery()
+            );
+            int qtyPendings = pendingTotals == null ? 0 : ToolBox_Inf.convertStringToInt(pendingTotals.get(GE_Custom_Form_Local_Sql_015.PENDING_QTY));
+            //
+            if(qtyPendings > 0){
+                pendingExists = true;
+                break;
             }
         }
-
+        //
         return pendingExists;
+
     }
 
     private void changeCustomer() {
@@ -1202,6 +1235,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (!wsProcess.equals("")) {
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
                 progressDialog.dismiss();
+                //Atualiza lbl de form pendentes
+                if(fragOpc != null){
+                    fragOpc.setPendingForms(getPendingForms());
+                }
+                //
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     mPresenter.stopChatServices();
                     //
