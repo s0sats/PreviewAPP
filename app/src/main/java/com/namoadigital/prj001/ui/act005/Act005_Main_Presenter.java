@@ -45,4 +45,6 @@ public interface Act005_Main_Presenter {
     boolean existOthersSession();
 
     void clearLocalSession();
+
+    int getChatBadgeQty();
 }

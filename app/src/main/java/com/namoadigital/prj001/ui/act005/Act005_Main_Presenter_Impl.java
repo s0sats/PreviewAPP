@@ -465,7 +465,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                         try {
                             qty = chMessageDao.getByStringHM(
-                                    new CH_Message_Sql_025().toSqlQuery()
+                                    new CH_Message_Sql_025(
+                                            ToolBox_Con.getPreference_User_Code(context)
+                                    ).toSqlQuery()
                             ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
                         } catch (Exception e) {
                             qty = "0";
@@ -509,6 +511,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus);
+    }
+
+    @Override
+    public int getChatBadgeQty() {
+        String qty = "0";
+        //
+        try {
+            qty = chMessageDao.getByStringHM(
+                    new CH_Message_Sql_025(
+                            ToolBox_Con.getPreference_User_Code(context)
+                    ).toSqlQuery()
+            ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
+        } catch (Exception e) {
+            qty = "0";
+        }
+        //
+        return ToolBox_Inf.convertStringToInt(qty);
     }
 
     @Override

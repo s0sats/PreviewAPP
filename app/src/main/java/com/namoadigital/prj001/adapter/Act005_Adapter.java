@@ -53,6 +53,25 @@ public class Act005_Adapter extends BaseAdapter {
         return 0;
     }
 
+    public void updateMenuItemBadge(String menu_id, int badge_idx, int badge_val){
+
+        for (MenuMainNamoa menu:source) {
+            if(menu.getMenu_id().equalsIgnoreCase(menu_id)){
+                if(badge_idx == 1){
+                    menu.setBadge1(badge_val);
+                }
+                //
+                if(badge_idx == 2){
+                    menu.setBadge2(badge_val);
+                }
+                //
+                notifyDataSetChanged();
+                //
+                break;
+            }
+        }
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

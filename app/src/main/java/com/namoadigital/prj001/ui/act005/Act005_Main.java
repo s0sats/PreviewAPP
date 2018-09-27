@@ -7,6 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,13 +84,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
-
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,9 +91,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.view.menu.MenuBuilder;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -2039,17 +2037,34 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
 
+//            switch (type) {
+//                case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
+//                    break;
+//                case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
+//                    break;
+//                case Constant.CHAT_BR_TYPE_ROOM:
+//                    break;
+//                default:
+//                    mPresenter.getMenuItensV2(hmAux_Trans);
+//                    break;
+//            }
+            //
             switch (type) {
-                case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
+                case Constant.CHAT_BR_TYPE_MSG:
+                case Constant.CHAT_EVENT_C_MESSAGE_FCM:
+
+                    if(mAdapter != null){
+                        mAdapter.updateMenuItemBadge(
+                                MENU_ID_CHAT,
+                                1,
+                                mPresenter.getChatBadgeQty()
+                        );
+                    }
+                    //
                     break;
-                case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
-                    break;
-                case Constant.CHAT_BR_TYPE_ROOM:
-                    break;
-                default:
-                    mPresenter.getMenuItensV2(hmAux_Trans);
-                    break;
+
             }
+
         }
     }
 
