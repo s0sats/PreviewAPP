@@ -164,6 +164,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_define_serial_msg");
         translateList.add("alert_form_site_restriction_ttl");
         translateList.add("alert_form_site_restriction_msg");
+        translateList.add("alert_form_site_restriction_no_access_msg");
+        translateList.add("alert_form_site_restriction_confirm");
         //
         translateList.add("lbl_site");
         translateList.add("alert_schedule_comment_ttl");

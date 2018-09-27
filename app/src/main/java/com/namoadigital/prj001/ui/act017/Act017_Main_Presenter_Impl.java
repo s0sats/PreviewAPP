@@ -12,9 +12,12 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.sql.Sql_Act017_003;
@@ -42,6 +45,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private Act017_Main_View mView;
     private GE_Custom_Form_LocalDao formLocalDao;
     private GE_Custom_Form_ApDao formApDao;
+    private MD_SiteDao siteDao;
     private HMAux hmAux_Trans;
 
 
@@ -50,6 +54,11 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         this.mView = mView;
         this.formLocalDao = formLocalDao;
         this.formApDao = new GE_Custom_Form_ApDao(context);
+        this.siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -147,36 +156,42 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
                     if (item.get(GE_Custom_Form_LocalDao.SITE_CODE) != null &&
                             !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase("null") &&
-                            !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
-
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("alert_form_site_restriction_ttl"),
-//                                hmAux_Trans.get("alert_form_site_restriction_msg"),
-//                                null,
-//                                0
-//                        );
-                        ToolBox.alertMSG_YES_NO(
-                                context,
-                                hmAux_Trans.get("alert_form_site_restriction_ttl"),
-                                hmAux_Trans.get("alert_form_site_restriction_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-                                            ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
-                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                            //
-                                            checkScheduleFlow(item);
-                                        } else {
-                                            ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
-                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                            mView.callAct033(context);
-                                        }
-                                    }
-                                },
-                                1
-                        );
+                            !item.get(GE_Custom_Form_LocalDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))
+                        ) {
+                        //Verifica se o usuario possui acesso ao site do form com restrição
+                        //Se possuir, da opção do usr alterar para o site se não, apenas informa
+                        //sobre a restrição.
+                        if(formSiteAccess(item.get(GE_Custom_Form_LocalDao.SITE_CODE))) {
+                            ToolBox.alertMSG_YES_NO(
+                                  context,
+                                  hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                                  hmAux_Trans.get("alert_form_site_restriction_confirm"),
+                                  new DialogInterface.OnClickListener() {
+                                      @Override
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+                                              ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
+                                              ToolBox_Con.setPreference_Zone_Code(context, -1);
+                                              //
+                                              checkScheduleFlow(item);
+                                          } else {
+                                              ToolBox_Con.setPreference_Site_Code(context, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
+                                              ToolBox_Con.setPreference_Zone_Code(context, -1);
+                                              mView.callAct033(context);
+                                          }
+                                      }
+                                  },
+                                  1
+                            );
+                        }else{
+                          ToolBox.alertMSG(
+                                  context,
+                                  hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                                  hmAux_Trans.get("alert_form_site_restriction_no_access_msg"),
+                                  null,
+                                  0
+                          );
+                        }
 
                     } else if (isAnyFormInProcessing(item)) {
                         mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
@@ -199,6 +214,23 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         }
 
+    }
+
+    private boolean formSiteAccess(String site_code) {
+        boolean access = false;
+        //
+        MD_Site formSite = siteDao.getByString(
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        site_code
+                ).toSqlQuery()
+        );
+        //
+        if(formSite != null && formSite.getSite_code().equalsIgnoreCase(site_code)){
+            access = true;
+        }
+        //
+        return access;
     }
 
     private void prepareOpenFormAP(HMAux hmAux) {
