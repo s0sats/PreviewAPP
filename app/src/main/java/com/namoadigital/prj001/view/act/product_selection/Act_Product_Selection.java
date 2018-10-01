@@ -178,6 +178,10 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         mAct_Info = Constant.ACT_PRODUCT_SELECTION;
         mAct_Title = Constant.ACT_PRODUCT_SELECTION + "_" + "title";
         //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
