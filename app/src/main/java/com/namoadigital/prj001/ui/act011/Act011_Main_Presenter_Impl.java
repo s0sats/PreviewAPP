@@ -419,7 +419,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

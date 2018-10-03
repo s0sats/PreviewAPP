@@ -5,6 +5,7 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -28,19 +30,28 @@ import java.util.Calendar;
 
 public class WS_Process_Form_AP extends IntentService {
 
+    private long customer_code = -1L;
+    private int safeCounter = 0;
+
     public WS_Process_Form_AP() {
         super("WS_Process_Form_AP");
     }
-    private int safeCounter = 0;
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            Bundle bundle = intent.getExtras();
+            //
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1L);
+            //Se parametro de customer não foi enviado, aborta chamada
+            if (customer_code == -1L) {
+                return;
+            }
             //
             processFormAp();
 
         } catch (Exception e) {
-            programAlarm(getApplicationContext());
+            programAlarm(getApplicationContext(),customer_code);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             WBR_Process_Form_Ap.completeWakefulIntent(intent);
@@ -52,7 +63,11 @@ public class WS_Process_Form_AP extends IntentService {
         //ArrayList<GE_Custom_Form_Ap> formApList = new ArrayList<>();
         ArrayList<File> fileToDelete = new ArrayList<>();
         Gson gson = new GsonBuilder().serializeNulls().create();
-        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+        );
         //
         if(formApFiles.length > 0) {
 
@@ -122,7 +137,7 @@ public class WS_Process_Form_AP extends IntentService {
 
     }
 
-    private void programAlarm(Context context) {
+    private void programAlarm(Context context, long customer_code) {
         Calendar calendarAux = Calendar.getInstance();
         //
         calendarAux.set(
@@ -134,6 +149,9 @@ public class WS_Process_Form_AP extends IntentService {
                 context,
                 WBR_Process_Form_Ap.class
         );
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,customer_code);
+        mIntent.putExtras(bundle);
         //
         PendingIntent pi = PendingIntent.getBroadcast(
                 context,

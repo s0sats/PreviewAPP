@@ -1839,7 +1839,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private void activateDownLoadPDF(Context context) {
         Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
         Bundle bundle = new Bundle();
-
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

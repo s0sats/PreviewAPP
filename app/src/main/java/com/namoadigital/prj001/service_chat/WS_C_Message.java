@@ -523,6 +523,9 @@ public class WS_C_Message extends IntentService {
 
     private void startDownloadService() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentPIC.putExtras(bundle);
         //
         getApplicationContext().sendBroadcast(mIntentPIC);
 
@@ -530,6 +533,9 @@ public class WS_C_Message extends IntentService {
 
     private void startFormApService() {
         Intent mIntentFormAp = new Intent(getApplicationContext(), WBR_Process_Form_Ap.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentFormAp.putExtras(bundle);
         //
         getApplicationContext().sendBroadcast(mIntentFormAp);
     }

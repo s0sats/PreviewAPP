@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class WS_DownLoad_PDF extends IntentService {
 
-
+    private long customer_code;
     private boolean mAp;
 
     public WS_DownLoad_PDF() {
@@ -45,20 +45,29 @@ public class WS_DownLoad_PDF extends IntentService {
             mAp = false;
 
             Bundle bundle = intent.getExtras();
+            //
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
+            //
+            //Se parametro de customer não foi enviado, aborta chamada
+            if (customer_code == -1L) {
+                return;
+            }
+
             //region GERAÇÃO DE LISTAS
             ArrayList<HMAux> dados = new ArrayList<>();
             ArrayList<HMAux> dados_geral = new ArrayList<>();
             //
             GE_Custom_Form_BlobDao form_blobDao = new GE_Custom_Form_BlobDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
             );
             //
             GE_Custom_Form_Blob_LocalDao form_blob_localDao = new GE_Custom_Form_Blob_LocalDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
+
             );
             //
             dados_geral = (ArrayList<HMAux>) form_blobDao.query_HM(
@@ -77,7 +86,7 @@ public class WS_DownLoad_PDF extends IntentService {
             formAplist.addAll(
                     formApDao.query_HM(
                             new GE_Custom_Form_Ap_Sql_007(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                    customer_code
                             ).toSqlQuery()
 
                     )
@@ -92,14 +101,14 @@ public class WS_DownLoad_PDF extends IntentService {
                 soFileDao =
                         new SM_SO_FileDao(
                                 getApplicationContext(),
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                ToolBox_Con.customDBPath(customer_code),
                                 Constant.DB_VERSION_CUSTOM
                         );
                 //
                 so_file_list.addAll(
                         soFileDao.query_HM(
                                 new SM_SO_File_Sql_003(
-                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                        customer_code
                                 ).toSqlQuery()
                         )
                 );

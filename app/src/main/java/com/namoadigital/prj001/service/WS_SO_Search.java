@@ -155,6 +155,10 @@ public class WS_SO_Search extends IntentService {
     private void startDownloadServices() {
         Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentPIC.putExtras(bundle);
+        mIntentPDF.putExtras(bundle);
         //
         getApplicationContext().sendBroadcast(mIntentPDF);
         getApplicationContext().sendBroadcast(mIntentPIC);

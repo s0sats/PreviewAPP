@@ -27,6 +27,8 @@ import java.util.Calendar;
 
 public class WS_Upload_Img extends IntentService {
 
+    private long customer_code = -1L;
+
     public WS_Upload_Img() {
         super("WS_Upload_Img");
     }
@@ -34,8 +36,11 @@ public class WS_Upload_Img extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            Bundle bundle = intent.getExtras();
 
-            if (ToolBox_Con.getPreference_Customer_Code(getApplicationContext()) == -1L) {
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1L);
+            //
+            if (customer_code == -1L) {
                 //programAlarm(getApplicationContext());
                 //
                 return;
@@ -46,14 +51,12 @@ public class WS_Upload_Img extends IntentService {
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
-
-            Bundle bundle = intent.getExtras();
             //
             ArrayList<GE_File> geFiles;
             //
             GE_FileDao geFileDao = new GE_FileDao(
                     getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    ToolBox_Con.customDBPath(customer_code),
                     Constant.DB_VERSION_CUSTOM
             );
             //
@@ -99,7 +102,7 @@ public class WS_Upload_Img extends IntentService {
 
 
         } catch (Exception e) {
-            programAlarm(getApplicationContext());
+            programAlarm(getApplicationContext(),customer_code);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             WBR_Upload_Img.IS_RUNNING = false;
@@ -111,7 +114,7 @@ public class WS_Upload_Img extends IntentService {
         }
     }
 
-    private void programAlarm(Context context) {
+    private void programAlarm(Context context, long customer_code) {
         Calendar calendarAux = Calendar.getInstance();
         //
         calendarAux.set(
@@ -123,6 +126,9 @@ public class WS_Upload_Img extends IntentService {
                 context,
                 WBR_Upload_Img.class
         );
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,customer_code);
+        mIntent.putExtras(bundle);
         //
         PendingIntent pi = PendingIntent.getBroadcast(
                 context,
