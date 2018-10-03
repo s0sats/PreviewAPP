@@ -85,6 +85,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private Bundle bundle;
     private String returnedRoomCode = null;
     private String lastFirstAdapterPosition = "0";
+    private int offsetPositionTop = 0;
     //
     private LinearLayout ll_info;
     private ImageView iv_info_icon;
@@ -267,6 +268,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
             selected_customer = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             lastFirstAdapterPosition = bundle.getString(Constant.CHAT_ROOM_POSITION, "0");
+            offsetPositionTop = bundle.getInt(Constant.CHAT_ROOM_POSITION_TOP, 0);
             if(bundle.containsKey(CH_RoomDao.ROOM_TYPE)){
                 auxFilters = (HashMap<String, String>) bundle.getSerializable(CH_RoomDao.ROOM_TYPE);
             }
@@ -293,6 +295,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     public void setLastFirstAdapterPosition(String lastFirstAdapterPosition) {
         this.lastFirstAdapterPosition = lastFirstAdapterPosition;
+    }
+
+    public int getOffsetPositionTop() {
+        return offsetPositionTop;
+    }
+    public void setOffsetPositionTop(int offsetPositionTop) {
+        this.offsetPositionTop = offsetPositionTop;
     }
 
     public ArrayList<HMAux> getCustomer_list() {
@@ -488,6 +497,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer);
         bundle.putString(Constant.CHAT_ROOM_POSITION, lastFirstAdapterPosition);
+        bundle.putInt(Constant.CHAT_ROOM_POSITION_TOP, offsetPositionTop);
         //
         bundle.putSerializable(CH_RoomDao.ROOM_TYPE, mReload.equalsIgnoreCase("0") ?  act034_room.getFilterArrayValues() : auxFilters);
         //
