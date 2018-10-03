@@ -75,6 +75,16 @@ public class WS_C_Remove_Room extends IntentService {
                         room.getRoom_code()
                 ).toSqlQuery()
         );
+        //23/08/2018
+        //Verifica se obj room é null.
+        //Se for, aborta processamento, pois significa que a room não existe mais
+        //no banco local.
+        //OBS: Não deveria acontecer,pois o bug do server que gerar msg de remove room com atraso
+        //já foi corrigido...
+        //
+        if(ccRoom == null){
+            return;
+        }
         //
         ToolBox_Inf.cleanRoom_RoomMessages(
                 getApplicationContext(),

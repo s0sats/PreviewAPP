@@ -292,6 +292,11 @@ public class ToolBox_Inf {
         if (!dirCamTest.exists()) {
             dirCamTest.mkdir();
         }
+        //23/08/2018 - Diretorio da apk baixada.
+        File dirApk = new File(Constant.APK_PATH);
+        if (!dirApk.exists()) {
+            dirApk.mkdir();
+        }
     }
 
     public static String md5(String s) {
