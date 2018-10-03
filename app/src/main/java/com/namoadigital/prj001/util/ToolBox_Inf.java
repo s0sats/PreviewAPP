@@ -1638,7 +1638,8 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_ZONE_LBL, "");
         hmAux.put(Constant.FOOTER_ZONE, "");
 
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
                             context,
@@ -1704,7 +1705,8 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
 
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO})) {
+        //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO})) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
                             context,

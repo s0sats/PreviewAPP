@@ -1569,7 +1569,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
         //
         if (
-                ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+                //ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+                ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) &&
                         hasExecutionProfile() &&
                         !so_status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                 ) {

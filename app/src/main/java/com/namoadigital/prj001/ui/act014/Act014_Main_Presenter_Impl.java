@@ -65,7 +65,8 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
         //
         senList.addAll(NFormAPHistoric);
         //
-        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             ArrayList<HMAux> senListSO =
                     (ArrayList<HMAux>) sm_soDao.query_HM(
                             new SM_SO_Sql_015(

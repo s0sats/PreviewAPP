@@ -302,13 +302,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qty = "0";
                         }
-                        try {
-                            qtySO = soDao.getByStringHM(
-                                    new Sql_Act021_002(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                    ).toSqlQuery()
-                            ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
-                        } catch (Exception e) {
+                        //24/08/2018 - Add validação se usr tem acesso a S.O
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+                            try {
+                                qtySO = soDao.getByStringHM(
+                                        new Sql_Act021_002(
+                                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                        ).toSqlQuery()
+                                ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                            } catch (Exception e) {
+                                qtySO = "0";
+                            }
+                        }else{
                             qtySO = "0";
                         }
                         //
@@ -321,14 +326,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtyAP = "0";
                         }
-
-                        try {
-                            qtySO_Express = soPackExpressLocalDao.getByStringHM(
-                                    new SO_Pack_Express_Local_Sql_010(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
-                                    ).toSqlQuery()
-                            ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
-                        } catch (Exception e) {
+                        //24/08/2018 - Add validação se usr tem acesso a S.O Express
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
+                            try {
+                                qtySO_Express = soPackExpressLocalDao.getByStringHM(
+                                        new SO_Pack_Express_Local_Sql_010(
+                                                ToolBox_Con.getPreference_Customer_Code(context)
+                                        ).toSqlQuery()
+                                ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
+                            } catch (Exception e) {
+                                qtySO_Express = "0";
+                            }
+                        }else{
                             qtySO_Express = "0";
                         }
                         //Soma Qtd de n-form ,n_service, n_form_ap e so_express
@@ -343,16 +352,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 //                                        + Integer.parseInt(qtySO_Express)
 //                        );
                         //
-                        //
-                        try {
-                            qtyBadge2 = soDao.getByStringHM(
-                                    new Sql_Act005_004(
-                                            ToolBox_Con.getPreference_Customer_Code(context),
-                                            ToolBox_Con.getPreference_Site_Code(context),
-                                            ToolBox_Con.getPreference_Zone_Code(context)
-                                    ).toSqlQuery()
-                            ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
-                        } catch (Exception e) {
+                        //24/08/2018 - Add valudação se usr tem acesso a S.O
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+                            try {
+                                qtyBadge2 = soDao.getByStringHM(
+                                        new Sql_Act005_004(
+                                                ToolBox_Con.getPreference_Customer_Code(context),
+                                                ToolBox_Con.getPreference_Site_Code(context),
+                                                ToolBox_Con.getPreference_Zone_Code(context)
+                                        ).toSqlQuery()
+                                ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
+                            } catch (Exception e) {
+                                qtyBadge2 = "0";
+                            }
+                        }else{
                             qtyBadge2 = "0";
                         }
                         menu.addInBadge2(qtyBadge2);
@@ -536,12 +549,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST,null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
         //Não é necessario verificar se tem PARAM_SO_MOV,pois esse parametro sempre
         //vem acompanhado do PARAM_SO.
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
+        //
+        // if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
         data_package.add(DataPackage.DATA_PACKAGE_AP);

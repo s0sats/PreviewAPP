@@ -2477,7 +2477,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public boolean onCreateOptionsMenu(Menu menu) {
 
         if (
-                ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+               // ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+                ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) &&
                         hasExecutionProfile() &&
                         !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                 ) {
@@ -2492,7 +2493,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
+        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) && hasExecutionProfile()) {
             //
             int id = item.getItemId();
             //

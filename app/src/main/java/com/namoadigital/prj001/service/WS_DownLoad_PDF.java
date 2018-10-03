@@ -96,7 +96,8 @@ public class WS_DownLoad_PDF extends IntentService {
              */
             SM_SO_FileDao soFileDao = null;
             ArrayList<HMAux> so_file_list = new ArrayList<>();
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
 
                 soFileDao =
                         new SM_SO_FileDao(
@@ -235,7 +236,8 @@ public class WS_DownLoad_PDF extends IntentService {
              *
              */
             //region S.O
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
                 //
                 String splitKey = "@#My#@Key#@";
                 for (HMAux hmAux : so_file_list) {

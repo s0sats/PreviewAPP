@@ -137,7 +137,8 @@ public class WS_DownLoad_Picture extends IntentService {
             SM_SO_Product_Event_FileDao eventFileDao = null;
             ArrayList<HMAux> event_file_list = new ArrayList<>();
 
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+           // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
                 //
                 taskFileDao =
                         new SM_SO_Service_Exec_Task_FileDao(
@@ -354,7 +355,8 @@ public class WS_DownLoad_Picture extends IntentService {
              */
             //region S.O
             //Download de files do S.O
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
                 //
                 for (HMAux hmAux : so_file_list) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
