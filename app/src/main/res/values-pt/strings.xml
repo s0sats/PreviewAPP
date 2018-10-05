@@ -94,6 +94,11 @@
     <string name="generic_alert_no_site_msg">Nenhum Site encontrado.\nVerifique se você possui acesso a algum Site ou clique em voltar e tente novamente</string>
     <string name="act002_offline_logout_msg">Conexão não encontrada!\n Não foi possível finalizar as sessões no servidor!</string>
     <string name="ws_exception_server_not_found">Não foi possível se conectar ao servidor!\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
+    <string name="notification_user_says_lbl"> disse </string>
+    <string name="notification_rooms_lbl">Salas </string>
+    <string name="notification_messages_lbl">Mensagens</string>
+    <string name="chat_fcm_offline_ttl">Mensagens Offline</string>
+    <string name="chat_fcm_offline_msg">Existem novas mensagens no servidor.\nAbra o app Namoa para recebe-las.</string>
 
 
 </resources>

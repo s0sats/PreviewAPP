@@ -3573,7 +3573,15 @@ public class ToolBox_Inf {
         );
         //
         if (hmAux_trans == null || hmAux_trans.size() == 0) {
-            //Necessidade de incluir arquivo de String ?!
+            if(hmAux_trans == null){
+                hmAux_trans = new HMAux();
+            }
+            //
+            hmAux_trans.put("notification_user_says_lbl",context.getString(R.string.notification_user_says_lbl));
+            hmAux_trans.put("notification_rooms_lbl", context.getString(R.string.notification_rooms_lbl));
+            hmAux_trans.put("notification_messages_lbl",context.getString(R.string.notification_messages_lbl));
+            hmAux_trans.put("chat_fcm_offline_ttl",context.getString(R.string.chat_fcm_offline_ttl));
+            hmAux_trans.put("chat_fcm_offline_msg",context.getString(R.string.chat_fcm_offline_msg));
         }
         //
         NotificationManager nm = (NotificationManager)
