@@ -31,14 +31,9 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
-import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.SO_Pack_Express;
-import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -60,9 +55,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private SO_Pack_Express mSo_pack_express;
     private MD_Partner md_partner;
     private MD_Product md_product;
-    private MD_Site md_site;
-    private MD_Operation md_operation;
-
     //private MKEditTextNM mket_produto;
     //private ImageView iv_search_produto;
 
@@ -137,6 +129,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("express_send_error_ttl");
         transList.add("express_send_error_msg");
         //
+        transList.add("alert_so_pack_error_tll");
+        transList.add("alert_site_or_operation_not_found_ttl");
+        transList.add("alert_site_or_operation_not_found_msg");
+        transList.add("alert_pending_so_express_exists_ttl");
+        transList.add("alert_pending_so_express_exists_msg");
+
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -172,33 +171,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                ), new MD_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ), new MD_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
-        );
-        //
-        MD_SiteDao mdSiteDao = new MD_SiteDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        MD_OperationDao mdOperationDao = new MD_OperationDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        md_site = mdSiteDao.getByString(
-                new MD_Site_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context)
-                ).toSqlQuery()
-        );
-
-        md_operation = mdOperationDao.getByString(
-                new MD_Operation_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Operation_Code(context)
-                ).toSqlQuery()
         );
         //
         mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
@@ -225,8 +206,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         controls_sta.add(mket_serial);
         controls_sta.add(mket_barcode);
         //
-        mPresenter.checkJump(ToolBox_Con.getPreference_Customer_Code(context));
-        mPresenter.setPartners();
+        //mPresenter.checkJump(ToolBox_Con.getPreference_Customer_Code(context));
+        mPresenter.loadPartners();
         //
         connectionStatusAlter = false;
     }
@@ -246,18 +227,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if (mSo_pack_express != null) {
             tv_status.setText(mSo_pack_express.getPack_desc());
             //
-            MD_ProductDao mdProductDao = new MD_ProductDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-            );
-
-            md_product = mdProductDao.getByString(
-                    new MD_Product_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            mSo_pack_express.getProduct_code()
-                    ).toSqlQuery()
-            );
+            md_product = mPresenter.getProdutctInfo(so_pack_express.getProduct_code());
             //
             if (md_product == null) {
                 tv_prod_desc.setText("");
@@ -291,16 +261,33 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
 
     @Override
-    public void loadMD_Partner(MD_Partner md_partner) {
-        this.md_partner = md_partner;
+    public void setPartner(HMAux partner) {
+        this.md_partner = getMdPartnerFromHMAux(partner);
         //
-        HMAux md_partner_hm = new HMAux();
-        md_partner_hm.put("description", md_partner.getPartner_desc());
-        md_partner_hm.put("partner_id", md_partner.getPartner_id());
-        md_partner_hm.put("id", String.valueOf(md_partner.getPartner_code()));
-        md_partner_hm.put("customer_code", String.valueOf(md_partner.getCustomer_code()));
+//        HMAux md_partner_hm = new HMAux();
+//        md_partner_hm.put("description", md_partner.getPartner_desc());
+//        md_partner_hm.put("partner_id", md_partner.getPartner_id());
+//        md_partner_hm.put("id", String.valueOf(md_partner.getPartner_code()));
+//        md_partner_hm.put("customer_code", String.valueOf(md_partner.getCustomer_code()));
         //
-        this.ss_partner.setmValue(md_partner_hm);
+        this.ss_partner.setmValue(partner);
+    }
+
+    private MD_Partner getMdPartnerFromHMAux(HMAux partner) {
+        MD_Partner mdPartner = new MD_Partner();
+        //
+        try {
+            mdPartner.setCustomer_code(Long.parseLong(partner.get(MD_PartnerDao.CUSTOMER_CODE)));
+            mdPartner.setPartner_code(Integer.parseInt(partner.get(SearchableSpinner.ID)));
+            mdPartner.setPartner_id(partner.get(MD_PartnerDao.PARTNER_ID));
+            mdPartner.setPartner_desc(partner.get(SearchableSpinner.DESCRIPTION));
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            //
+            //showMsg();
+        }
+        //
+        return mdPartner;
     }
 
     @Override
@@ -339,7 +326,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void reportTextChange(String s, boolean b) {
                 if (b) {
-                    mPresenter.setSO_Pack_Express(
+                    mPresenter.searchSO_Pack_Express(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             s
                     );
@@ -358,10 +345,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.size() > 0) {
-                    mPresenter.setMD_Partner(
+                    /*mPresenter.setMD_Partner(
                             Long.parseLong(hmAux.get("customer_code")),
                             Long.parseLong(hmAux.get(SearchableSpinner.ID))
-                    );
+                    );*/
+                    md_partner = getMdPartnerFromHMAux(hmAux);
+                }else{
+                    md_partner = null;
                 }
             }
         });
@@ -371,23 +361,50 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             public void onClick(View v) {
 
                 if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()))) {
-
-                    ToolBox.alertMSG(
+                    ToolBox.alertMSG_YES_NO(
                             context,
                             hmAux_Trans.get("alert_create_so_express_ttl"),
                             hmAux_Trans.get("alert_create_so_express_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    mPresenter.onCreateSo_Pack_Express(
-                                            mSo_pack_express,
-                                            md_partner,
-                                            md_product,
-                                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
-                                            md_site,
-                                            md_operation,
-                                            connectionStatusAlter
-                                    );
+                                    if(mPresenter.checkOrderAlreadyExists(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            ToolBox_Con.getPreference_Operation_Code(context),
+                                            md_product.getProduct_code(),
+                                            mSo_pack_express.getExpress_code(),
+                                            ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString())
+                                        )
+                                    ){
+                                        ToolBox.alertMSG_YES_NO(
+                                                context,
+                                                hmAux_Trans.get("alert_pending_so_express_exists_ttl"),
+                                                hmAux_Trans.get("alert_pending_so_express_exists_msg"),
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        mPresenter.onCreateSo_Pack_Express(
+                                                                mSo_pack_express,
+                                                                md_partner,
+                                                                md_product,
+                                                                ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
+                                                                connectionStatusAlter
+                                                        );
+                                                    }
+                                                },
+                                                1,
+                                                false
+                                        );
+                                    }else{
+                                        mPresenter.onCreateSo_Pack_Express(
+                                                mSo_pack_express,
+                                                md_partner,
+                                                md_product,
+                                                ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim()),
+                                                connectionStatusAlter
+                                        );
+                                    }
                                 }
                             },
                             1,
@@ -427,6 +444,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     @Override
+    public void disablePartnerSelector() {
+        ss_partner.setmEnabled(false);
+    }
+
+    @Override
     public void callAct021(Context context) {
         Intent mIntent = new Intent(context, Act021_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -439,6 +461,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_barcode.setText("");
         mket_serial.setText("");
         mket_serial.setmInputTypeValidator("");
+        tv_status.setText("");
+        tv_prod_desc.setText("");
         //
         mSo_pack_express = null;
         md_product = null;

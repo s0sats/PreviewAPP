@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.WindowManager;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -71,6 +72,8 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
     }
 
     private void initVars() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //
         recoverIntentsInfo();
         //
         mPresenter = new Act042_Main_Presenter_Impl(

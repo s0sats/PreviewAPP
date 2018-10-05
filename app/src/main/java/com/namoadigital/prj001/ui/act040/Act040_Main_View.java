@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act040;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 
 import java.util.ArrayList;
@@ -16,7 +15,9 @@ public interface Act040_Main_View {
 
     void loadSO_Pack_Express(SO_Pack_Express so_pack_express, String express_code);
 
-    void loadMD_Partner(MD_Partner md_partner);
+    void setPartner(HMAux partner);
+
+    void disablePartnerSelector();
 
     //void loadMD_Product(MD_Product md_product);
 
