@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act048.Act048_Main"
+    tools:showIn="@layout/act048_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/act048_tv_record_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:textSize="@dimen/font_size_title" />
+
+        <LinearLayout
+            android:id="@+id/act048_ll_limit_exceeded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/act048_tv_record_limit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Limite de exibição: 10000"
+                android:textSize="@dimen/font_size_item" />
+
+            <TextView
+                android:id="@+id/act048_tv_record_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Registros retornados: 1000"
+                android:textSize="@dimen/font_size_item" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/act048_btn_no_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/namoa_cell_2_states"
+            android:gravity="left"
+            android:padding="20dp"
+            android:text="No Serial"
+            android:textColor="@color/padrao_WHITE" />
+
+        <Button
+            android:id="@+id/act048_btn_create_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/namoa_cell_2_states"
+            android:gravity="left"
+            android:padding="20dp"
+            android:text="Create Serial"
+            android:textColor="@color/padrao_WHITE" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/act048_lv_prod_serial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/padrao_TRANSPARENT"
+                android:dividerHeight="0dp" />
+
+            <TextView
+                android:id="@+id/act048_tv_no_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_title_md" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <include layout="@layout/footer_base" />
+
+</LinearLayout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act049.Act049_Main"
+    tools:showIn="@layout/act049_main">
+
+
+    <fragment
+        android:id="@+id/act049_frg_serial_edit"
+        android:name="com.namoadigital.prj001.view.frag.Frg_Serial_Edit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/frg_serial_edit"
+        />
+
+    <include layout="@layout/footer_base" />
+
+</LinearLayout>
