@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act040;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SO_Pack_Express;
@@ -38,4 +39,8 @@ public interface Act040_Main_View {
     void showMsgToast(String msg);
 
     void setConnectionStatusAlter(boolean connectionStatusAlter);
+    //08/10/2018
+    void setWsProcess(String wsProcess);
+    //
+    void callAct048(Context context, Bundle bundle);
 }

@@ -27,5 +27,9 @@ public interface Act040_Main_Presenter {
     void executeSO_Pack_Express_Local(boolean connectionStatusAlter);
 
     boolean checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id);
+    //08/10/2018
+    void executeSerialSearch(MD_Product mdProduct, String serial_id);
+    //
+    void extractSearchResult(MD_Product mdProduct, String serial_id, String result);
 
 }
