@@ -141,8 +141,6 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
         btn_no_serial.setText(hmAux_Trans.get("btn_no_serial"));
         //
         configButtons();
-        //
-        mPresenter.checkSerialListJump(serial_list);
     }
 
     private void configButtons() {
@@ -154,7 +152,7 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
             } else {
                 btn_no_serial.setVisibility(View.VISIBLE);
             }*/
-            //Se produto permite novo serial e usuario tem permissão de edição e existe serial digita
+            //Se produto permite novo serial e usuario tem permissão de edição e existe serial digitado
             //exibe btn de criação de serial e , nesse caso, tb desabilita tb de sem serial.
             if ( md_product.getAllow_new_serial_cl() == 1
                  && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
@@ -225,6 +223,30 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
         ToolBox_Inf.buildFooterDialog(context);
     }
 
+    private void initActions() {
+        btn_create_serial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.prepareEditionParams(
+                        md_product.createNewSerialForThisProduct(serial_id),
+                        true
+                );
+            }
+        });
+        //
+        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
+
+                mPresenter.prepareEditionParams(productSerial, false);
+            }
+        });
+        //Preenchimento da lista vem aqui, para q o perfom clique da lista ja esteja configurado.
+        mPresenter.checkSerialListJump(serial_list);
+
+    }
+
     @Override
     public void loadSerialList(ArrayList<MD_Product_Serial> serialList) {
         //Esconde tv com msg de nenhum busca feita
@@ -287,32 +309,13 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
                 0);
     }
 
-    private void initActions() {
-        btn_create_serial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.prepareEditionParams(
-                        md_product.createNewSerialForThisProduct(serial_id),
-                        true
-                );
-            }
-        });
-        //
-        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-
-                mPresenter.prepareEditionParams(productSerial, false);
-            }
-        });
-
-    }
-
     @Override
     public void callAct040(Context context) {
         Intent mIntent = new Intent(context, Act040_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT048);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -369,6 +372,12 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
         ToolBox_Con.cleanPreferences(context);
 
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

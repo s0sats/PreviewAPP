@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -332,7 +333,11 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
 
     @Override
     public void callAct040(Context context) {
-
+        Intent mIntent = new Intent(context, Act040_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -465,6 +470,14 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
 
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));

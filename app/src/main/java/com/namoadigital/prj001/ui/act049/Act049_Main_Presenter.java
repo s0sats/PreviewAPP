@@ -76,7 +76,7 @@ public class Act049_Main_Presenter implements Act049_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-
+        mView.callAct040(context);
     }
 
     @Override

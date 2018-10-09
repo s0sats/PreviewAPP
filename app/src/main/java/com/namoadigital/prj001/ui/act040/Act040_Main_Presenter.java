@@ -18,7 +18,7 @@ public interface Act040_Main_Presenter {
 
     MD_Product getProdutctInfo(long product_code);
 
-    void loadPartners();
+    void loadPartners(String partner_code);
 
     void onBackPressedClicked();
 

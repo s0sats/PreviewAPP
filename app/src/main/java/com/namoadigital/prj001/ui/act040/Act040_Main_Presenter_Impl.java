@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_OperationDao;
@@ -121,7 +122,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 //    }
 
     @Override
-    public void loadPartners() {
+    public void loadPartners(String partner_code) {
         ArrayList<HMAux> partnerList = (ArrayList<HMAux>) md_partnerDao.query_HM(
                 new MD_Partner_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context)
@@ -138,6 +139,19 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             mView.setPartner(partnerList.get(0));
             //
             mView.disablePartnerSelector();
+        }else if(!partner_code.equalsIgnoreCase("-1")){
+            boolean partnerFound = false;
+            for(HMAux aux : partnerList){
+                if(aux.get(SearchableSpinner.ID).equalsIgnoreCase(partner_code)){
+                    partnerFound = true;
+                    mView.setPartner(aux);
+                    break;
+                }
+            }
+            //Vale a pena tratar
+            if(!partnerFound){
+                //Mensagem de erro ?!
+            }
         }
     }
 
@@ -324,7 +338,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     //
                     mView.showMsg(
                             hmAux_Trans.get("alert_offline_serial_not_found_ttl"),
-                            hmAux_Trans.get("alert_offline_serial_not_found_msg")
+                            hmAux_Trans.get("alert_product_not_allow_new_serial_msg")
                     );
                 } else {
                     defineSearchResultFlow(mdProduct, serial_id,"" , localSerialList, (long) localSerialList.size(), (long) localSerialList.size());
@@ -335,12 +349,13 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     public void defineSearchResultFlow(MD_Product mdProduct, String serial_id, String tracking, ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
-        if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
-            mView.showMsg(
-                    hmAux_Trans.get("alert_no_serial_found_ttl"),
-                    hmAux_Trans.get("alert_no_serial_found_msg")
-            );
-        } else {
+           //A condição do if nunca DEVERIA acontecer, pois a consulta só existe se produto != null
+//        if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
+//            mView.showMsg(
+//                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+//                    hmAux_Trans.get("alert_no_serial_found_msg")
+//            );
+//        } else {
 
             ArrayList<MD_Product_Serial> results = processEqualCheck(mdProduct, serial_id, tracking, serial_list);
 
@@ -366,7 +381,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
             //
             mView.callAct048(context, bundle);
-        }
+        //}
     }
 
     private ArrayList<MD_Product_Serial> processEqualCheck(MD_Product mdProduct, String serial_id, String tracking, ArrayList<MD_Product_Serial> serial_list) {
@@ -394,23 +409,24 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                         res += "0";
                     }
                 }
-                //
-                if (tracking.isEmpty()) {
-                    res += "1";
-                } else {
-                    int mSize = psAux.getTracking_list().size();
-                    //
-                    if (mSize == 0) {
-                        res += "0";
-                    } else {
-                        for (int i = 0; i < mSize; i++) {
-                            if (tracking.equalsIgnoreCase(psAux.getTracking_list().get(i).getTracking())) {
-                                res += "1";
-                                break;
-                            }
-                        }
-                    }
-                }
+                //Validação de tracking não é necessaria aqui
+                res += "1";
+//                if (tracking.isEmpty()) {
+//                    res += "1";
+//                } else {
+//                    int mSize = psAux.getTracking_list().size();
+//                    //
+//                    if (mSize == 0) {
+//                        res += "0";
+//                    } else {
+//                        for (int i = 0; i < mSize; i++) {
+//                            if (tracking.equalsIgnoreCase(psAux.getTracking_list().get(i).getTracking())) {
+//                                res += "1";
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
                 //
                 if (res.equalsIgnoreCase("111")) {
                     results.add(psAux);

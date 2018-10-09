@@ -55,8 +55,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private static final int PROCESSO_PRODUCT_CODE = 100;
     public static final String EXPRESS_PACK_CODE = "express_pack_code";
 
-
-
     private Bundle bundle;
     private Act040_Main_Presenter_Impl mPresenter;
     private SO_Pack_Express mSo_pack_express;
@@ -78,7 +76,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private SearchableSpinner ss_partner;
     private Button btn_create_so;
     private String wsProcess = "";
-
+    private String requestingAct = "";
+    private String bundle_express_pack_code = "";
+    private String bundle_partner_code = "-1";
+    private String bundle_serial_id = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,9 +143,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_pending_so_express_exists_ttl");
         transList.add("alert_pending_so_express_exists_msg");
         transList.add("alert_offline_serial_not_found_ttl");
-        transList.add("alert_offline_serial_not_found_msg");
+        transList.add("alert_product_not_allow_new_serial_msg");
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
+        transList.add("alert_product_not_found_ttl");
+        transList.add("alert_product_not_found_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -222,7 +225,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         controls_sta.add(mket_barcode);
         //
         //mPresenter.checkJump(ToolBox_Con.getPreference_Customer_Code(context));
-        mPresenter.loadPartners();
+        mPresenter.loadPartners(bundle_partner_code);
         //
         connectionStatusAlter = false;
     }
@@ -231,7 +234,24 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
+            requestingAct = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
+            /*
+            * Com excessão do codigo do parceiro, os dados recuperados via bundle
+            * são aplicados ao final do metodo initAction, pois nesse momento, os "eventos"
+            * ja estão instanciados e apenas o fato de setar o valor no campo ja garante
+            * o preenhcimento das variaiveis necessarios para criação da O.S
+            */
+
+            if(requestingAct.equals(Constant.ACT048) /*|| requestingAct.equals(Constant.ACT049)*/ ){
+                bundle_express_pack_code = bundle.getString(EXPRESS_PACK_CODE,"");
+                bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
+                bundle_serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,"");
+            }
+
         } else {
+            bundle_express_pack_code = "";
+            bundle_partner_code = "-1";
+            bundle_serial_id = "";
         }
     }
 
@@ -469,9 +489,22 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         iv_search_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.executeSerialSearch(md_product, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()));
+                if(md_product != null) {
+                    mPresenter.executeSerialSearch(md_product, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()));
+                }else{
+                    showMsg(
+                            hmAux_Trans.get("alert_product_not_found_ttl"),
+                            hmAux_Trans.get("alert_product_not_found_msg")
+                    );
+                }
             }
         });
+        //
+        //Se pacote expresso enviado pelo bundle, seta valores.
+        if(!bundle_express_pack_code.equalsIgnoreCase("")){
+            mket_barcode.setText(bundle_express_pack_code);
+            mket_serial.setText(bundle_serial_id);
+        }
     }
 
     @Override
@@ -495,10 +528,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(bundle == null){
             bundle = new Bundle();
         }
-//        String serial_id = ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString());
-//        bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, serial_id != null ? serial_id : "");
         //
         bundle.putString(EXPRESS_PACK_CODE, mSo_pack_express.getExpress_code()); //mdProduct != null ? mdProduct.getProduct_id() : "");
+        if(md_partner != null ) {
+            bundle.putString(MD_PartnerDao.PARTNER_CODE, String.valueOf(md_partner.getPartner_code()));
+        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -513,6 +547,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_serial.setmInputTypeValidator("");
         tv_status.setText("");
         tv_prod_desc.setText("");
+        iv_search_serial.setVisibility(View.GONE);
+        iv_search_serial.setEnabled(true);
         //
         mSo_pack_express = null;
         md_product = null;
