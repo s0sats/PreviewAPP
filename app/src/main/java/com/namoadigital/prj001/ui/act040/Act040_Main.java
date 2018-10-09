@@ -242,7 +242,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             * o preenhcimento das variaiveis necessarios para criação da O.S
             */
 
-            if(requestingAct.equals(Constant.ACT048) /*|| requestingAct.equals(Constant.ACT049)*/ ){
+            if(requestingAct.equals(Constant.ACT048) || requestingAct.equals(Constant.ACT049)){
                 bundle_express_pack_code = bundle.getString(EXPRESS_PACK_CODE,"");
                 bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
                 bundle_serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,"");

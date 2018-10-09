@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -322,10 +323,13 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
     }
 
     @Override
-    public void callAct049(Context context, Bundle bundle) {
+    public void callAct049(Context context, Bundle mBundle) {
         Intent mIntent = new Intent(context, Act049_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
+        mBundle.putString(Act040_Main.EXPRESS_PACK_CODE, bundle.getString(Act040_Main.EXPRESS_PACK_CODE));
+        mBundle.putString(MD_PartnerDao.PARTNER_CODE, bundle.getString(MD_PartnerDao.PARTNER_CODE));
+
+        mIntent.putExtras(mBundle);
         //
         startActivity(mIntent);
         finish();

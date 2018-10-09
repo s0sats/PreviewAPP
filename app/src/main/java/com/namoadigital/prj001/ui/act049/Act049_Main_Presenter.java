@@ -176,8 +176,12 @@ public class Act049_Main_Presenter implements Act049_Main_Contract.I_Presenter {
                 if (mdProduct != null) {
                     aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
                 }
+                //Chave adiciona para validação posterior
+                aux.put(MD_ProductDao.PRODUCT_CODE, pk[0]);
+                //
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+
                 returnList.add(aux);
                 //
                 if (product_code == Long.parseLong(pk[0])

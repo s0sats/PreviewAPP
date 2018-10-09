@@ -22,6 +22,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
@@ -52,8 +53,10 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private long bundle_product_code;
-    private String bundle_serial_id;
     private boolean bundle_new_serial;
+    private String bundle_express_pack_code = "";
+    private String bundle_partner_code = "-1";
+    private String bundle_serial_id = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +267,9 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                 bundle_product_code = mdProductSerial.getProduct_code();
                 bundle_serial_id = mdProductSerial.getSerial_id();
                 bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
+                bundle_express_pack_code = bundle.getString(Act040_Main.EXPRESS_PACK_CODE,"");
+                bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
+                bundle_serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,"");
             } else {
                 ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
             }
@@ -335,7 +341,14 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     public void callAct040(Context context) {
         Intent mIntent = new Intent(context, Act040_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
+        //
+        Bundle mBundle = new Bundle();
+        mBundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT049);
+        mBundle.putString(Act040_Main.EXPRESS_PACK_CODE, bundle_express_pack_code);
+        mBundle.putString(MD_PartnerDao.PARTNER_CODE, bundle_partner_code);
+        mBundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,mdProductSerial.getSerial_id());
+        //
+        mIntent.putExtras(mBundle);
         startActivity(mIntent);
         finish();
     }
@@ -361,7 +374,7 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     }
 
     @Override
-    public void showSerialResults(ArrayList<HMAux> returnList) {
+    public void showSerialResults(final ArrayList<HMAux> returnList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -394,22 +407,31 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         builder.setView(view);
         //builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
         builder.setCancelable(false);
-        /*
-        *
-        *
-        *
-        *  Valida ser o item salvo esta com STATUS OK, se tiver, além do dismiss
-        *  no clique abaixo, chamar o metodo callAct040 passando os dados da tela de
-        *  Express Os como param
-        *
-        */
+        //
         //
         final AlertDialog show = builder.show();
         //
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean goToExpressSO = false;
+                //Valida se o serial enviao possui retorno OK e, caso tenha, o modifica açao de clique
+                //para voltar a act040
+                for(HMAux aux : returnList){
+                    if( aux.get(MD_ProductDao.PRODUCT_CODE).equals(String.valueOf(mdProductSerial.getProduct_code()))
+                            && aux.get(Generic_Results_Adapter.VALUE_ITEM_2).equals(mdProductSerial.getSerial_id())
+                            && aux.get(Generic_Results_Adapter.VALUE_ITEM_3).equalsIgnoreCase("OK")
+                            ){
+                        goToExpressSO = true;
+                        break;
+                    }
+                }
+                //
                 show.dismiss();
+                //
+                if(goToExpressSO){
+                    callAct040(context);
+                }
             }
         });
 
