@@ -28,6 +28,9 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -92,26 +95,22 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("act049_title");
-        transList.add("btn_create");
-        transList.add("serial_data_lost_ttl");
-        transList.add("serial_data_lost_msg");
         transList.add("progress_serial_save_ttl");
         transList.add("progress_serial_save_msg");
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
         transList.add("alert_save_serial_return_ttl");
         transList.add("alert_save_serial_ok_msg");
-        transList.add("alert_save_serial_error_ttl");
+        //transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
         transList.add("alert_no_serial_return_msg");
         transList.add("dialog_results_ttl");
         transList.add("dialog_result_product_lbl");
         transList.add("dialog_result_serial_lbl");
         transList.add("dialog_result_msg_lbl");
-        //noava traduções abaixo
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
-        transList.add("btn_action_lbl");
+        transList.add("btn_action");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -170,7 +169,7 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
-        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
+        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_action"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         //
@@ -197,10 +196,11 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                     //no form, mas aqui, como master será?!
                     mPresenter.updateSerialData(mdProductSerial);
                     //
-                    showAlertDialog(
+                    /*showAlertDialog(
                             hmAux_Trans.get("alert_no_data_changes_ttl"),
                             hmAux_Trans.get("alert_no_data_changes_msg")
-                    );
+                    );*/
+
                 }
 
                 @Override
@@ -341,7 +341,7 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     }
 
     @Override
-    public void showSingleResultMsg(String ttl, String msg) {
+    public void showSingleResultMsg(String ttl, String msg, final boolean backToExpressOS) {
         ToolBox.alertMSG(
                 context,
                 ttl,
@@ -350,6 +350,10 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         frgSerialEdit.scrollToTop();
+                        //
+                        if(backToExpressOS){
+                            callAct040(context);
+                        }
                     }
                 },
                 0
@@ -366,7 +370,6 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         /**
          * Ini Vars
          */
-
         TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
@@ -377,7 +380,6 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_1, hmAux_Trans.get("dialog_result_product_lbl"));
         hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_2, hmAux_Trans.get("dialog_result_serial_lbl"));
         hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("dialog_result_msg_lbl"));
-
         //
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
@@ -387,11 +389,20 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                         hmAux_Trans
                 )
         );
-
+        //
         builder.setTitle(hmAux_Trans.get("dialog_results_ttl"));
         builder.setView(view);
         //builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
         builder.setCancelable(false);
+        /*
+        *
+        *
+        *
+        *  Valida ser o item salvo esta com STATUS OK, se tiver, além do dismiss
+        *  no clique abaixo, chamar o metodo callAct040 passando os dados da tela de
+        *  Express Os como param
+        *
+        */
         //
         final AlertDialog show = builder.show();
         //
@@ -428,6 +439,39 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         frgSerialEdit.setMdProductSerial(this.mdProductSerial);
     }
 
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        progressDialog.dismiss();
+        //
+        if(ws_process.equals(WS_Serial_Search.class.getName())){
+            String result = mLink;
+            mPresenter.extractSearchResult(result);
+            //
+            disableProgressDialog();
+        }else if(ws_process.equals(WS_Serial_Save.class.getName())){
+            frgSerialEdit.setNew_serial(false);
+            //frgSerialEdit.refreshUi();
+            if (hmAux.size() > 0) {
+                mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
+            } else {
+                showSingleResultMsg(
+                        hmAux_Trans.get("alert_save_serial_return_ttl"),
+                        hmAux_Trans.get("alert_no_serial_return_msg"),
+                        false
+                );
+            }
+        } else if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+            frgSerialEdit.processTrackingResult(hmAux);
+        }
+    }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {

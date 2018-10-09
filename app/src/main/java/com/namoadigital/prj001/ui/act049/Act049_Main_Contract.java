@@ -22,7 +22,7 @@ public interface Act049_Main_Contract {
 
         void callAct040(Context context);
 
-        void showSingleResultMsg(String ttl, String msg);
+        void showSingleResultMsg(String ttl, String msg, boolean backToExpressOS);
 
         void showSerialResults(ArrayList<HMAux> returnList);
 

@@ -199,14 +199,15 @@ public class Act049_Main_Presenter implements Act049_Main_Contract.I_Presenter {
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                mView.showSingleResultMsg(ttl, msg);
+                mView.showSingleResultMsg(ttl, msg,true);
             } else {
                 mView.showSerialResults(returnList);
             }
         } else {
             mView.showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_no_serial_return_msg")
+                    hmAux_Trans.get("alert_no_serial_return_msg"),
+                    false
             );
         }
     }
@@ -268,9 +269,11 @@ public class Act049_Main_Presenter implements Act049_Main_Contract.I_Presenter {
                 mView.applyReceivedSerialToFrag(serial_list.get(0));
             } else {
                 //FUDEU
+                ToolBox_Inf.registerException(getClass().getName(),new Exception("extractSearchResult more than 1 serial returned"));
             }
         } else {
             //FUDEU 2
+            ToolBox_Inf.registerException(getClass().getName(),new Exception("extractSearchResult no serial returned"));
         }
     }
 }
