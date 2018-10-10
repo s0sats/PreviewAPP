@@ -66,11 +66,6 @@ public class Act049_Main_Presenter implements Act049_Main_Contract.I_Presenter {
         } else {
             //
             mView.setProductValues(null);
-            //
-            mView.showAlertDialog(
-                    hmAux_Trans.get("alert_product_not_found_title"),
-                    hmAux_Trans.get("alert_product_not_found_msg")
-            );
         }
     }
 

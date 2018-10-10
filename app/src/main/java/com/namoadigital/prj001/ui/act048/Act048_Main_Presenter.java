@@ -59,6 +59,9 @@ public class Act048_Main_Presenter implements Act048_Main_Contract.I_Presenter {
     @Override
     public void prepareEditionParams(MD_Product_Serial productSerial, boolean new_serial) {
         Bundle bundle = new Bundle();
+        if(productSerial == null){
+            productSerial = new MD_Product_Serial();
+        }
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, productSerial.getSerial_id());

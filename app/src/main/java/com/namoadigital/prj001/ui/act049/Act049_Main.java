@@ -114,6 +114,8 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
         transList.add("btn_action");
+        transList.add("serial_ttl");
+        transList.add("alert_save_serial_offline_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -203,6 +205,8 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                             hmAux_Trans.get("alert_no_data_changes_ttl"),
                             hmAux_Trans.get("alert_no_data_changes_msg")
                     );*/
+                    //Nessa tela, o save sem mudanças é um confirm de serial certo e o usr deve voltar act040
+                    callAct040(context);
 
                 }
 
@@ -218,10 +222,10 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                         frgSerialEdit.setNew_serial(false);
                         refreshUI();
                         //
-                        showAlertDialog(
-                                //hmAux_Trans.get("alert_no_connection_title"),
+                        showSingleResultMsg(
                                 hmAux_Trans.get("serial_ttl"),
-                                hmAux_Trans.get("alert_save_serial_offline_msg")
+                                hmAux_Trans.get("alert_save_serial_offline_msg"),
+                                true
                         );
                     }
                 }
