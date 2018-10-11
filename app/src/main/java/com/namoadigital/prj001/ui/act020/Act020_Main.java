@@ -210,7 +210,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         lv_prod_serial_list = (ListView) findViewById(R.id.act020_lv_prod_serial);
         //
         tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
-        tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
+        tv_no_result.setText(hmAux_Trans.get("no_record_found_lbl"));
         //
         if (md_product != null) {
             if (md_product.getRequire_serial() == 1) {
@@ -359,7 +359,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         } else {
         }
         //
-        setRecordInfo(record_count, record_page);
+
     }
 
     @Override
@@ -391,7 +391,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if (record_size > 0) {
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         } else {
-            tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
+            tv_records.setVisibility(View.GONE);
+            tv_no_result.setVisibility(View.VISIBLE);
+            ll_records.setVisibility(View.VISIBLE);
         }
 
         if (record_count > record_page) {
@@ -405,6 +407,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //e ll com informações de limite de excedido.
         tv_no_result.setVisibility(View.GONE);
         ll_records.setVisibility(View.GONE);
+        //
+        setRecordInfo(record_count, record_page);
         //
         mAdapter = new Act020_Prod_Serial_Adapter(
                 context,

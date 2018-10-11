@@ -16,8 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/act045_tv_record_info"
@@ -26,28 +26,6 @@
             android:gravity="center_horizontal"
             android:padding="10dp"
             android:textSize="@dimen/font_size_title" />
-
-        <Button
-            android:id="@+id/act045_btn_no_serial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/namoa_cell_2_states"
-            android:gravity="left"
-            android:padding="20dp"
-            android:text="No Serial"
-            android:textColor="@color/padrao_WHITE" />
-
-        <Button
-            android:id="@+id/act045_btn_create_serial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/namoa_cell_2_states"
-            android:gravity="left"
-            android:padding="20dp"
-            android:text="Create Serial"
-            android:textColor="@color/padrao_WHITE" />
 
         <LinearLayout
             android:id="@+id/act045_ll_limit_exceeded"
@@ -77,6 +55,28 @@
                 android:textSize="@dimen/font_size_item" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/act045_btn_no_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/namoa_cell_2_states"
+            android:gravity="left"
+            android:padding="20dp"
+            android:text="No Serial"
+            android:textColor="@color/padrao_WHITE" />
+
+        <Button
+            android:id="@+id/act045_btn_create_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/namoa_cell_2_states"
+            android:gravity="left"
+            android:padding="20dp"
+            android:text="Create Serial"
+            android:textColor="@color/padrao_WHITE" />
 
         <FrameLayout
             android:layout_width="match_parent"

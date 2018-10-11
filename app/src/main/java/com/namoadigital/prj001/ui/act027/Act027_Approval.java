@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -338,7 +339,7 @@ public class Act027_Approval extends BaseFragment {
         final TextView tv_password_lbl = (TextView) view.findViewById(R.id.act027_dialog_user_password_tv_password_lbl);
         tv_password_lbl.setText(hmAux_Trans.get("dialog_user_author_pwd_lbl"));
 
-        final MKEditTextNM mk_password_value = (MKEditTextNM) view.findViewById(R.id.act027_dialog_user_password_mk_password);
+        final EditText mk_password_value = (EditText) view.findViewById(R.id.act027_dialog_user_password_mk_password);
 
         final Button btn_validate = (Button) view.findViewById(R.id.act027_dialog_user_password_btn_validate);
         btn_validate.setText(hmAux_Trans.get("dialog_user_author_btn"));

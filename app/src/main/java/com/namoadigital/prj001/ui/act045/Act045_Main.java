@@ -97,7 +97,6 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         transList.add("showing_lbl");
         transList.add("records_lbl");
         transList.add("btn_create_serial");
-        transList.add("no_search_realized");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -230,8 +229,6 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         } else {
         }
 
-        //
-        setRecordInfo(record_count, record_page);
     }
 
     private void recoverIntentsInfo() {
@@ -272,6 +269,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         tv_no_result.setVisibility(View.GONE);
         ll_records.setVisibility(View.GONE);
         //
+        setRecordInfo(record_count, record_page);
+        //
         mAdapter = new Act020_Prod_Serial_Adapter(
                 context,
                 R.layout.act020_cell,
@@ -288,7 +287,9 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         if (record_size > 0) {
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         } else {
-            tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
+            tv_records.setVisibility(View.GONE);
+            tv_no_result.setVisibility(View.VISIBLE);
+            ll_records.setVisibility(View.VISIBLE);
         }
 
         if (record_count > record_page) {
