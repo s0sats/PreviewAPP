@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act040;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
@@ -31,5 +32,9 @@ public interface Act040_Main_Presenter {
     void executeSerialSearch(MD_Product mdProduct, String serial_id);
     //
     void extractSearchResult(MD_Product mdProduct, String serial_id, String result);
+
+    void executeSerialSave(boolean connectionStatusAlter);
+
+    void processSerialSaveResult(HMAux hmSaveResult);
 
 }

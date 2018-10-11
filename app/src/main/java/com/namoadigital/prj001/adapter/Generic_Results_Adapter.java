@@ -102,8 +102,12 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 tv_item3_value.setVisibility(View.GONE);
                 break;
             case CONFIG_3_ITENS_NEW:
+                /*
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
                 tv_ttl.setVisibility(View.GONE);
+                iv_flag.setVisibility(View.GONE);
+                */
+                tv_ttl.setText(item.get(LABEL_TTL));
                 iv_flag.setVisibility(View.GONE);
                 //
                 tv_item1_ttl.setText(item.get(LABEL_ITEM_1));

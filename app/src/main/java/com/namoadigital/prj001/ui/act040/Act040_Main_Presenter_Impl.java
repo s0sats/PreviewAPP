@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -25,8 +26,10 @@ import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
@@ -42,6 +45,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -217,7 +221,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
-        executeSO_Pack_Express_Local(connectionStatusAlter);
+        //executeSO_Pack_Express_Local(connectionStatusAlter);
+        executeSerialSave(connectionStatusAlter);
     }
 
     private MD_Site getSiteInfo() {
@@ -268,6 +273,44 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         }
         //
         return false;
+    }
+
+    @Override
+    public void executeSerialSave(boolean connectionStatusAlter) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_save_ttl"),
+                    hmAux_Trans.get("progress_serial_save_msg")
+            );
+
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            //Como ha chama de WS encadeada, esse param é setado para true
+            //assim se não houver seriala ser enviado, o processo retorna sem erro.
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND,true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            if (!connectionStatusAlter) {
+                connectionStatusAlter = true;
+                mView.setConnectionStatusAlter(connectionStatusAlter);
+                //
+                //ToolBox_Inf.showNoConnectionDialog(context);
+                mView.showMsg(
+                        hmAux_Trans.get("express_send_error_ttl"),
+                        hmAux_Trans.get("express_send_error_msg")
+                );
+            } else {
+            }
+
+            mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
+
+            mView.automationCleanForm();
+        }
     }
 
     @Override
@@ -346,6 +389,41 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             }
         }
 
+    }
+
+    @Override
+    public void processSerialSaveResult(HMAux hmSaveResult) {
+        if (hmSaveResult.size() > 0) {
+            //
+            for (Map.Entry<String, String> item : hmSaveResult.entrySet()) {
+                HMAux aux = new HMAux();
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+                //NESSA TELA, SÓ EXIBE RESULTAOD DO SERIAL SE ERRO.
+                if (status.equals("OK")) {
+                    continue;
+                }else{
+                    MD_Product mdProduct = md_productDao.getByString(
+                            new MD_Product_Sql_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Long.parseLong(pk[0])
+                            ).toSqlQuery()
+                    );
+                    //
+                    aux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("serial_result_ttl"));
+                    if (mdProduct != null) {
+                        aux.put(Generic_Results_Adapter.LABEL_ITEM_1, hmAux_Trans.get("product_result_lbl"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+                    }
+                    aux.put(Generic_Results_Adapter.LABEL_ITEM_2, hmAux_Trans.get("serial_result_lbl"));
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
+                    aux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("express_status"));
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+                    //
+                    mView.addWsAuxResult(aux);
+                }
+            }
+         }
     }
 
     public void defineSearchResultFlow(MD_Product mdProduct, String serial_id, String tracking, ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {

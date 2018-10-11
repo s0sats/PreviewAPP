@@ -43,4 +43,6 @@ public interface Act040_Main_View {
     void setWsProcess(String wsProcess);
     //
     void callAct048(Context context, Bundle bundle);
+
+    void addWsAuxResult(HMAux auxResult);
 }

@@ -36,6 +36,7 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
@@ -80,6 +81,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_express_pack_code = "";
     private String bundle_partner_code = "-1";
     private String bundle_serial_id = "";
+    private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,7 +150,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("dialog_serial_search_start");
         transList.add("alert_product_not_found_ttl");
         transList.add("alert_product_not_found_msg");
-
+        transList.add("serial_result_ttl");
+        transList.add("product_result_lbl");
+        transList.add("serial_result_lbl");
+        transList.add("express_order_result_ttl");
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
+        transList.add("express_order_ttl");
+        transList.add("alert_serial_save_error_ttl");
+        transList.add("alert_serial_save_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -376,6 +386,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     );
                 } else {
                     tv_status.setText("");
+                    iv_search_serial.setEnabled(false);
+                    iv_search_serial.setVisibility(View.GONE);
                 }
             }
         });
@@ -508,6 +520,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     @Override
+    public void addWsAuxResult(HMAux auxResult) {
+        wsAuxResult.add(auxResult);
+    }
+
+    @Override
     public void disablePartnerSelector() {
         ss_partner.setmEnabled(false);
     }
@@ -554,6 +571,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         md_product = null;
         //
         mket_barcode.requestFocus();
+        wsAuxResult.clear();
     }
 
     @Override
@@ -593,9 +611,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired);
         //
-        progressDialog.dismiss();
-        //
         if(wsProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getName())) {
+            progressDialog.dismiss();
             //
             if (hmAux.keySet().size() == 0) {
                 automationCleanForm();
@@ -608,10 +625,17 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 showResults(hmAux);
             }
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
+            progressDialog.dismiss();
             mPresenter.extractSearchResult(md_product, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()), mLink);
+        }else if(wsProcess.equals(WS_Serial_Save.class.getName())){
+            mPresenter.processSerialSaveResult(hmAux);
+            mPresenter.executeSO_Pack_Express_Local(connectionStatusAlter);
         }
+    }
 
-
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
     }
 
     @Override
@@ -619,12 +643,27 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
         //
-        automationCleanForm();
-        //
-        showMsg(
-                hmAux_Trans.get("alert_express_general_error_ttl"),
-                hmAux_Trans.get("alert_express_general_error_msg")
-        );
+//        automationCleanForm();
+//        //
+//        showMsg(
+//                hmAux_Trans.get("alert_express_general_error_ttl"),
+//                hmAux_Trans.get("alert_express_general_error_msg")
+//        );
+
+        if(wsProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getName())) {
+            //
+            automationCleanForm();
+            //
+            showMsg(
+                    hmAux_Trans.get("alert_express_general_error_ttl"),
+                    hmAux_Trans.get("alert_express_general_error_msg")
+            );
+        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
+            showMsg(
+                    hmAux_Trans.get("alert_serial_save_error_ttl"),
+                    hmAux_Trans.get("alert_serial_save_error_msg")
+            );
+        }
     }
 
 
@@ -652,12 +691,18 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void showPD(String ttl, String msg) {
-        enableProgressDialog(
-                ttl,
-                msg,
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
-        );
+        if(progressDialog == null || !progressDialog.isShowing()) {
+            enableProgressDialog(
+                    ttl,
+                    msg,
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+        }else{
+            progressDialog.setTitle(ttl);
+            progressDialog.setMessage(msg);
+        }
+
     }
 
     private void showResults(HMAux so_express) {
@@ -673,6 +718,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             //hmAux.put("so_express_code", sFinal);
             //hmAux.put("so_express_result", so_express.get(sKey));
 
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("express_order_ttl"));
+
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, hmAux_Trans.get("express_label"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sParts[0] + "   -   " + sParts[2]);
 
@@ -682,13 +729,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("express_status"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, so_express.get(sKey));
 
-            mSO_Express.add(hmAux);
+            //mSO_Express.add(hmAux);
+            addWsAuxResult(hmAux);
         }
 
-        showResultsDialog(mSO_Express);
+        showResultsDialog();
     }
 
-    public void showResultsDialog(List<HMAux> so_express) {
+    public void showResultsDialog() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -706,25 +754,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
-        String[] from = {"so_express_code", "so_express_result"};
-        int[] to = {R.id.act038_results_adapter_cell_tv_ttl, R.id.act038_results_adapter_cell_tv_msg_value};
-
-
-//        lv_results.setAdapter(
-//                new SimpleAdapter(
-//                        context,
-//                        so_express,
-//                        R.layout.act038_results_adapter_cell,
-//                        from,
-//                        to
-//                )
-//        );
-
-
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
                         context,
-                        so_express,
+                        wsAuxResult,
                         Generic_Results_Adapter.CONFIG_3_ITENS_NEW,
                         hmAux_Trans
                 )
