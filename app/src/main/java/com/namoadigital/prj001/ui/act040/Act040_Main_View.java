@@ -45,4 +45,10 @@ public interface Act040_Main_View {
     void callAct048(Context context, Bundle bundle);
 
     void addWsAuxResult(HMAux auxResult);
+
+    boolean isExitProcess();
+
+    void setExitProcess(boolean exitProcess);
+
+    boolean isConnectionStatusAlter();
 }

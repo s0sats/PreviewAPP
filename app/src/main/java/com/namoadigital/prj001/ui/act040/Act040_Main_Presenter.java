@@ -37,4 +37,6 @@ public interface Act040_Main_Presenter {
 
     void processSerialSaveResult(HMAux hmSaveResult);
 
+    void checkSerialUpdateRequired(long product_code, String serial_id);
+
 }

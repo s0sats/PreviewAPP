@@ -82,6 +82,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_partner_code = "-1";
     private String bundle_serial_id = "";
     private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
+    private boolean exitProcess = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,6 +160,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("express_order_ttl");
         transList.add("alert_serial_save_error_ttl");
         transList.add("alert_serial_save_error_msg");
+        transList.add("alert_data_success_sent_ttl");
+        transList.add("alert_data_success_sent_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -268,6 +271,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    public void setExitProcess(boolean exitProcess) {
+        this.exitProcess = exitProcess;
+    }
+
+    @Override
+    public boolean isExitProcess() {
+        return exitProcess;
     }
 
     @Override
@@ -415,7 +427,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         btn_create_so.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //Seta variavel de controle.
+                exitProcess = false;
+                //
                 if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()))) {
                     ToolBox.alertMSG_YES_NO(
                             context,
@@ -576,7 +590,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+
+        if(md_product != null && ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()).length() > 0) {
+            mPresenter.checkSerialUpdateRequired(
+                    md_product.getProduct_code(),
+                    ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString())
+            );
+        }else {
+            mPresenter.onBackPressedClicked();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -615,12 +637,16 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             progressDialog.dismiss();
             //
             if (hmAux.keySet().size() == 0) {
-                automationCleanForm();
-                //
-                showMsg(
-                        hmAux_Trans.get("alert_express_no_tll"),
-                        hmAux_Trans.get("alert_express_no_msg")
-                );
+                if(!exitProcess) {
+                    automationCleanForm();
+                    //
+                    showMsg(
+                            hmAux_Trans.get("alert_express_no_tll"),
+                            hmAux_Trans.get("alert_express_no_msg")
+                    );
+                }else{
+                    exitProcessMsg();
+                }
             } else {
                 showResults(hmAux);
             }
@@ -631,6 +657,21 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             mPresenter.processSerialSaveResult(hmAux);
             mPresenter.executeSO_Pack_Express_Local(connectionStatusAlter);
         }
+    }
+
+    private void exitProcessMsg() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_data_success_sent_ttl"),
+                hmAux_Trans.get("alert_data_success_sent_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callAct021(context);
+                    }
+                },
+                0
+        );
     }
 
     @Override
@@ -802,5 +843,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void setConnectionStatusAlter(boolean connectionStatusAlter) {
         this.connectionStatusAlter = connectionStatusAlter;
+    }
+    @Override
+    public boolean isConnectionStatusAlter() {
+        return connectionStatusAlter;
     }
 }
