@@ -586,19 +586,16 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         mket_barcode.requestFocus();
         wsAuxResult.clear();
+        exitProcess = false;
     }
 
     @Override
     public void onBackPressed() {
 
-        if(md_product != null && ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()).length() > 0) {
-            mPresenter.checkSerialUpdateRequired(
-                    md_product.getProduct_code(),
-                    ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString())
-            );
-        }else {
-            mPresenter.onBackPressedClicked();
-        }
+        mPresenter.onBackPressedClicked(
+                md_product == null ? null : md_product.getProduct_code(),
+                ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString())
+        );
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -817,9 +814,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                automationCleanForm();
-                //
                 show.dismiss();
+                //
+                if(exitProcess){
+                    automationCleanForm();
+                    onBackPressed();
+                }else{
+                    automationCleanForm();
+                }
             }
         });
     }

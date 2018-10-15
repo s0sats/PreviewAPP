@@ -313,7 +313,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
                 mView.automationCleanForm();
             }else{
-                onBackPressedClicked();
+                onBackPressedClicked(null, null);
             }
         }
     }
@@ -335,21 +335,25 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
         } else {
-            if (!connectionStatusAlter) {
-                connectionStatusAlter = true;
-                mView.setConnectionStatusAlter(connectionStatusAlter);
-                //
-                //ToolBox_Inf.showNoConnectionDialog(context);
-                mView.showMsg(
-                        hmAux_Trans.get("express_send_error_ttl"),
-                        hmAux_Trans.get("express_send_error_msg")
-                );
-            } else {
+            if(!mView.isExitProcess()) {
+                if (!connectionStatusAlter) {
+                    connectionStatusAlter = true;
+                    mView.setConnectionStatusAlter(connectionStatusAlter);
+                    //
+                    //ToolBox_Inf.showNoConnectionDialog(context);
+                    mView.showMsg(
+                            hmAux_Trans.get("express_send_error_ttl"),
+                            hmAux_Trans.get("express_send_error_msg")
+                    );
+                } else {
+                }
+
+                mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
+
+                mView.automationCleanForm();
+            }else{
+                onBackPressedClicked(null, null);
             }
-
-            mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
-
-            mView.automationCleanForm();
         }
     }
 
@@ -547,36 +551,39 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         defineSearchResultFlow(mdProduct, serial_id, "", serial_list, rec.getRecord_count(), rec.getRecord_page());
     }
 
-    @Override
     public void checkSerialUpdateRequired(long product_code, String serial_id) {
-        if (serial_id == null || serial_id.trim().length() == 0) {
-            onBackPressedClicked();
-        } else {
-            MD_Product_Serial productSerial =
-                    productSerialDao.getByString(
-                            new MD_Product_Serial_Sql_002(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    product_code,
-                                    serial_id
-                            ).toSqlQuery()
-                    );
-            //
-            if(productSerial == null || productSerial.getUpdate_required() == 0){
-                onBackPressedClicked();
+        MD_Product_Serial productSerial =
+                productSerialDao.getByString(
+                        new MD_Product_Serial_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code,
+                                serial_id
+                        ).toSqlQuery()
+                );
+        //
+        if(productSerial == null || productSerial.getUpdate_required() == 0){
+            onBackPressedClicked(null, null);
+        }else{
+            if(ToolBox_Con.isOnline(context)) {
+                mView.setExitProcess(true);
+                //
+                executeSerialSave(mView.isConnectionStatusAlter());
             }else{
-                if(ToolBox_Con.isOnline(context)) {
-                    mView.setExitProcess(true);
-                    //
-                    executeSerialSave(mView.isConnectionStatusAlter());
-                }else{
-                    onBackPressedClicked();
-                }
+                onBackPressedClicked(null, null);
             }
         }
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct021(context);
+    public void onBackPressedClicked(Long product_code, String serial_id) {
+        if(product_code != null && serial_id != null && serial_id.length() > 0) {
+            checkSerialUpdateRequired(
+                    product_code,
+                    serial_id
+            );
+        }else {
+            mView.callAct021(context);
+        }
+
     }
 }

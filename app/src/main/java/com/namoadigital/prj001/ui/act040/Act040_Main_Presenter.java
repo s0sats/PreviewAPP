@@ -21,7 +21,7 @@ public interface Act040_Main_Presenter {
 
     void loadPartners(String partner_code);
 
-    void onBackPressedClicked();
+    void onBackPressedClicked(Long product_code, String serial_id);
 
     void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, boolean connectionStatusAlter);
 
@@ -37,6 +37,6 @@ public interface Act040_Main_Presenter {
 
     void processSerialSaveResult(HMAux hmSaveResult);
 
-    void checkSerialUpdateRequired(long product_code, String serial_id);
+    //void checkSerialUpdateRequired(long product_code, String serial_id);
 
 }
