@@ -51,4 +51,6 @@ public interface Act040_Main_View {
     void setExitProcess(boolean exitProcess);
 
     boolean isConnectionStatusAlter();
+
+    void exitProcessMsg(boolean successMsg);
 }

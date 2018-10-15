@@ -313,7 +313,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
                 mView.automationCleanForm();
             }else{
-                onBackPressedClicked(null, null);
+                onBackPressedClicked(null,null);
             }
         }
     }
@@ -352,7 +352,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
                 mView.automationCleanForm();
             }else{
-                onBackPressedClicked(null, null);
+                mView.exitProcessMsg(false);
             }
         }
     }

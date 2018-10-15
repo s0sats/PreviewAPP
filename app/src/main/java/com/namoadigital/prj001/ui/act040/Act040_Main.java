@@ -162,6 +162,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_serial_save_error_msg");
         transList.add("alert_data_success_sent_ttl");
         transList.add("alert_data_success_sent_msg");
+        transList.add("alert_data_not_sent_ttl");
+        transList.add("alert_data_not_sent_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -642,7 +644,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             hmAux_Trans.get("alert_express_no_msg")
                     );
                 }else{
-                    exitProcessMsg();
+                    exitProcessMsg(true);
                 }
             } else {
                 showResults(hmAux);
@@ -656,11 +658,19 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }
     }
 
-    private void exitProcessMsg() {
+    @Override
+    public void exitProcessMsg(boolean successMsg) {
+        String ttl = successMsg ? hmAux_Trans.get("alert_data_success_sent_ttl") : hmAux_Trans.get("alert_data_not_sent_ttl");
+        String msg = successMsg ? hmAux_Trans.get("alert_data_success_sent_msg") : hmAux_Trans.get("alert_data_not_sent_msg");
+        //Se progress sendo exibido na msg negativa, o desabilita antes de exibir a caixa.
+        if(!successMsg && progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+        //
         ToolBox.alertMSG(
                 context,
-                hmAux_Trans.get("alert_data_success_sent_ttl"),
-                hmAux_Trans.get("alert_data_success_sent_msg"),
+                ttl,
+                msg,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
