@@ -165,6 +165,7 @@ import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -4578,5 +4579,41 @@ public class ToolBox_Inf {
         return monthTrans;
     }
 
+    public static String convertBytesToFormattedString(long size, boolean accurate_conversion) {
+        long Kb = 1 * 1024;
+        long Mb = Kb * 1024;
+        long Gb = Mb * 1024;
+        long Tb = Gb * 1024;
+        long Pb = Tb * 1024;
+        long Eb = Pb * 1024;
+        //
+        if (!accurate_conversion) {
+            Kb = 1 * 1000;
+            Mb = Kb * 1000;
+            Gb = Mb * 1000;
+            Tb = Gb * 1000;
+            Pb = Tb * 1000;
+            Eb = Pb * 1000;
+        }
+
+        if (size < Kb) return floatForm(size) + " byte";
+        if (size >= Kb && size < Mb) return floatForm((double) size / Kb) + " KB";
+        if (size >= Mb && size < Gb) return floatForm((double) size / Mb) + " MB";
+        if (size >= Gb && size < Tb) return floatForm((double) size / Gb) + " GB";
+        if (size >= Tb && size < Pb) return floatForm((double) size / Tb) + " TB";
+        if (size >= Pb && size < Eb) return floatForm((double) size / Pb) + " PB";
+        if (size >= Eb) return floatForm((double) size / Eb) + " EB";
+
+        return "Erro...";
+    }
+
+    public static String floatForm(double d) {
+        try {
+            return new DecimalFormat("#.##").format(d);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0.00";
+        }
+    }
 
 }

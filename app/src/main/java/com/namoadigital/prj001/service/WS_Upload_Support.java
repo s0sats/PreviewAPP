@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.NamoaDeviceInfo;
 import com.namoadigital.prj001.model.TUpload_Support_Env;
 import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
@@ -208,7 +209,6 @@ public class WS_Upload_Support extends IntentService {
             ToolBox_Inf.copyFile(preference_path, dest);
 
         }else{
-
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -238,6 +238,15 @@ public class WS_Upload_Support extends IntentService {
             //
             ToolBox_Inf.writeIn(chatStatusParam, chat_status);
         //}
+        //Gera arquivo com dados do device
+        File deviceInfoFile = new File(Constant.SUPPORT_PATH, "device_info.txt");
+        NamoaDeviceInfo namoaDeviceInfo = new NamoaDeviceInfo(getApplicationContext());
+        namoaDeviceInfo.getInfo();
+        String device_data = "";
+        device_data = namoaDeviceInfo.getFormattedInfo();
+        //
+        ToolBox_Inf.writeIn(device_data,deviceInfoFile);
+        //
         //Envia broadcast e monta zip
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_data"), "", "0");
 
