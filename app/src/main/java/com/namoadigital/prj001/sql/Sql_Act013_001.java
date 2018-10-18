@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -86,18 +87,33 @@ public class Sql_Act013_001 implements Specification {
                         "  l.require_serial_done,\n" +
                         "  l.require_serial,\n" +
                         "  l.allow_new_serial_cl,\n" +
-                        "  l.site_code" +
+                        //"  l.site_code" +
+                        "  CASE WHEN LENGTH(l.site_code) <> 0\n" +
+                        "       THEN l.site_code\n" +
+                        "       ELSE d.site_code\n" +
+                        "  END "+MD_SiteDao.SITE_CODE +",\n" +
+                        "  CASE WHEN LENGTH(l.site_id) <> 0\n" +
+                        "       THEN l.site_id\n" +
+                        "       ELSE s.site_id\n" +
+                        "  END "+MD_SiteDao.SITE_ID +",\n" +
+                        "  CASE WHEN LENGTH(l.site_desc) <> 0\n" +
+                        "       THEN l.site_desc\n" +
+                        "       ELSE s.site_desc\n" +
+                        "  END "+MD_SiteDao.SITE_DESC +"\n"+
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
-                        "LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON " +
-                        "      l.customer_code = d.customer_code  " +
+                        "LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +
+                        "      l.customer_code = d.customer_code  \n" +
                         "      AND l.custom_form_type = d.custom_form_type\n" +
                         "      AND l.custom_form_code = d.custom_form_code\n" +
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
+                        "LEFT JOIN "+MD_SiteDao.TABLE+" s ON \n" +
+                        "      d.customer_code = s.customer_code\n" +
+                        "      AND d.site_code = s.site_code\n " +
                         "  WHERE\n" +
-                        "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'" +
+                        "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
+                        "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'\n" +
                         s_filter +
                         "  ORDER BY\n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
@@ -115,14 +131,17 @@ public class Sql_Act013_001 implements Specification {
                         "      l.custom_product_code, \n" +
                         "      l.serial_id, \n" +
                         "      l.custom_form_data" +
-                        ";")
+                        "\n;")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
                         "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
                         "schedule_comments#require_serial_done#require_serial#allow_new_serial_cl#" +
-                        "site_code"
+                        "site_code#"+
+                        MD_SiteDao.SITE_CODE+"#"+
+                        MD_SiteDao.SITE_ID+"#"+
+                        MD_SiteDao.SITE_DESC
                 )
                 .toString();
     }

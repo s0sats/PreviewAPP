@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -198,13 +199,21 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 
         tv_list.add(tv_data_serv_lbl);
         tv_list.add(tv_data_serv_val);
+        //
+        LinearLayout ll_site = (LinearLayout) convertView.findViewById(R.id.local_data_list_cell_01_ll_site);
+        TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_lbl);
+        TextView tv_site_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_val);
+        //
+        tv_site_lbl.setText(hmAux_Trans.get("lbl_site") + " " + item.get(MD_SiteDao.SITE_ID)+ " - " + item.get(MD_SiteDao.SITE_DESC));
 
+        tv_list.add(tv_site_lbl);
+        tv_list.add(tv_site_val);
+        //
         TextView tv_date_schedule_start_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_lbl);
         TextView tv_date_schedule_start_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_val);
 
         TextView tv_date_schedule_end_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_end_lbl);
         TextView tv_date_schedule_end_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_end_val);
-
 
         tv_list.add(tv_date_schedule_start_lbl);
         tv_list.add(tv_date_schedule_start_val);
@@ -332,6 +341,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("lbl_type");
         translateList.add("lbl_form");
         translateList.add("lbl_data_serv");
+        translateList.add("lbl_site");
         translateList.add("lbl_date_schedule_start");
         translateList.add("lbl_date_schedule_end");
         translateList.add("lbl_so_code");
