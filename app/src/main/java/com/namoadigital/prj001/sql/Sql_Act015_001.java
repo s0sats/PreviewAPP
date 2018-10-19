@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -37,10 +38,9 @@ public class Sql_Act015_001 implements Specification {
                         "  l.custom_product_desc,\n" +
                         "  l.custom_product_id,\n" +
                         "  l.custom_form_data,\n" +
-                        "  l.custom_form_status," +
+                        "  l.custom_form_status,\n" +
                         "  d.so_prefix,\n" +
                         "  d.so_code,\n" +
-
                         "    CASE WHEN LENGTH(l.serial_id) <> 0 \n" +
                         "       THEN L.serial_id\n" +
                         "       ELSE d.serial_id\n" +
@@ -50,11 +50,17 @@ public class Sql_Act015_001 implements Specification {
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n "+
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
                         "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
-                        "  l.schedule_comments\n" +
-                        " \n" +
+                        "  l.schedule_comments,\n" +
+                        "  d.site_code,\n" +
+                        "  s.site_id,\n" +
+                        "  s.site_desc\n" +
                         "  FROM\n" +
-                        GE_Custom_Form_LocalDao.TABLE+ " l\n," +
+                        GE_Custom_Form_LocalDao.TABLE+ " l,\n" +
                         GE_Custom_Form_DataDao.TABLE+ " d\n " +
+                        "  LEFT JOIN\n" +
+                        MD_SiteDao.TABLE +" s ON\n" +
+                        "               d.customer_code = s.customer_code\n" +
+                        "               AND d.site_code = s.site_code\n    " +
                         "  WHERE\n" +
                         "      l.customer_code = d.customer_code\n" +
                         "      AND l.custom_form_type = d.custom_form_type\n" +
@@ -64,9 +70,9 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"'\n " +
                         "      AND l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"'\n" +
                         "  ORDER BY" +
-                        "    d.date_end desc," +
-                        "    l.custom_form_type, " +
-                        "    l.custom_product_code, " +
+                        "    d.date_end desc,\n" +
+                        "    l.custom_form_type,\n " +
+                        "    l.custom_product_code,\n " +
                         "    l.serial_id, \n" +
                         "    l.custom_form_data \n" +
                         ";")
@@ -75,7 +81,12 @@ public class Sql_Act015_001 implements Specification {
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
                         "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
-                        "schedule_comments")
+                        "schedule_comments#"+
+                        MD_SiteDao.SITE_CODE +"#"+
+                        MD_SiteDao.SITE_ID +"#"+
+                        MD_SiteDao.SITE_DESC
+
+                )
                 .toString();
     }
 }

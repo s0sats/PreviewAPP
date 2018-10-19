@@ -203,8 +203,16 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         LinearLayout ll_site = (LinearLayout) convertView.findViewById(R.id.local_data_list_cell_01_ll_site);
         TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_lbl);
         TextView tv_site_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_val);
-        //
-        tv_site_lbl.setText(hmAux_Trans.get("lbl_site") + " " + item.get(MD_SiteDao.SITE_ID)+ " - " + item.get(MD_SiteDao.SITE_DESC));
+        //Tratativa para caso o de não encontrar o site no left join
+        if(
+            item.get(MD_SiteDao.SITE_ID) != null &&
+            !item.get(MD_SiteDao.SITE_ID).equals("null") &&
+            item.get(MD_SiteDao.SITE_ID).trim().length() > 0
+        ) {
+            tv_site_lbl.setText(hmAux_Trans.get("lbl_site") + " " + item.get(MD_SiteDao.SITE_ID) + " - " + item.get(MD_SiteDao.SITE_DESC));
+        }else{
+            tv_site_lbl.setText(hmAux_Trans.get("lbl_site") + " " + item.get(MD_SiteDao.SITE_CODE));
+        }
 
         tv_list.add(tv_site_lbl);
         tv_list.add(tv_site_val);
