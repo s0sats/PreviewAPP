@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Serial_Log_Adapter extends BaseAdapter {
+    public static final String SYS_PROCESS_SO = "PRC_SERVICE_ORDER";
 
     private Context context;
     //private ArrayList<HMAux> source;
@@ -26,6 +28,7 @@ public class Serial_Log_Adapter extends BaseAdapter {
     private HMAux hmAux_Trans;
     private String mResource_Code;
     private String mResource_Name = "serial_log_adapter" ;
+    private ivDownloadClick ivDownloadClickListner;
 
     public Serial_Log_Adapter(Context context, ArrayList<Serial_Log_Obj> source, int resource) {
         this.context = context;
@@ -39,6 +42,14 @@ public class Serial_Log_Adapter extends BaseAdapter {
         );
         //
         loadTransation();
+    }
+
+    public void setIvDownloadClickListner(ivDownloadClick ivDownloadClickListner) {
+        this.ivDownloadClickListner = ivDownloadClickListner;
+    }
+
+    public interface ivDownloadClick{
+        void onIvDowloadClick(String process, String[] pk);
     }
 
     @Override
@@ -64,10 +75,11 @@ public class Serial_Log_Adapter extends BaseAdapter {
             convertView = inflater.inflate(resource,parent,false);
         }
         //
-        Serial_Log_Obj logObj = source.get(position);
+        final Serial_Log_Obj logObj = source.get(position);
         //
         TextView tv_process = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_process);
         TextView tv_status = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_status);
+        ImageView iv_download = (ImageView) convertView.findViewById(R.id.serial_log_cell_iv_download);
         TextView tv_desc_lbl = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_desc_lbl);
         TextView tv_desc = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_desc);
         TextView tv_location_lbl = (TextView) convertView.findViewById(R.id.serial_log_cell_tv_location_lbl);
@@ -93,6 +105,26 @@ public class Serial_Log_Adapter extends BaseAdapter {
                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     )
             );
+        }
+        //Se for SO e status DONE e usr possui acesso ao menu so, exibe btn de download.
+        if( logObj.getSys_process().equals(SYS_PROCESS_SO)
+            && logObj.getSys_status().equals(Constant.SYS_STATUS_DONE)
+            && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)
+            && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC)
+        ){
+            iv_download.setVisibility(View.VISIBLE);
+            //
+            iv_download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ivDownloadClickListner != null){
+                        ivDownloadClickListner.onIvDowloadClick(SYS_PROCESS_SO,logObj.getSplitedPk());
+                    }
+                }
+            });
+        }else{
+            iv_download.setVisibility(View.GONE);
+            iv_download.setOnClickListener(null);
         }
         //
         return convertView;

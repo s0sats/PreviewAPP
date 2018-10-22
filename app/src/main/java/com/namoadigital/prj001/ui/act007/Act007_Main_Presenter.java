@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act007;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
 /**
@@ -15,4 +16,8 @@ public interface Act007_Main_Presenter {
     void getLog();
 
     void deleteLogFile();
+
+    void processDownloadClick(String process, String[] pk);
+
+    void processSoDownloadResult(HMAux so_download_result);
 }

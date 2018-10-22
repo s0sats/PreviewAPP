@@ -54,8 +54,9 @@ public class WS_SO_Search extends IntentService {
             Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
             String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");//Lista de SO a Serem Baixados. Act024
+            int profile_check = bundle.getInt(Constant.WS_SO_SEARCH_PROFILE_CHECK, 1);//Lista de SO a Serem Baixados. Act024
             //
-            processSO_Search(product_code, serial_id, so_mult);
+            processSO_Search(product_code, serial_id, so_mult, profile_check);
 
         } catch (Exception e) {
 
@@ -72,7 +73,7 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(Long product_code, String serial_id, String so_mult) throws Exception {
+    private void processSO_Search(Long product_code, String serial_id, String so_mult, int profile_check) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -84,6 +85,7 @@ public class WS_SO_Search extends IntentService {
         env.setProduct_code(product_code);
         env.setSerial_id(serial_id);
         env.setSo_mult(so_mult);
+        env.setProfile_check(profile_check);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
         //

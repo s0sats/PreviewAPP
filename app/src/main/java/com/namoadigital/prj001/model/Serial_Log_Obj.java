@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 /**
  * Created by d.luche on 22/05/2017.
  */
@@ -12,6 +15,8 @@ public class Serial_Log_Obj {
     private String description;
     private String sys_status;
     private String location;
+    private String sys_process;
+    private String sys_pk;
 
     public String getProcess() {
         return process;
@@ -59,5 +64,33 @@ public class Serial_Log_Obj {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getSys_process() {
+        return sys_process;
+    }
+
+    public void setSys_process(String sys_process) {
+        this.sys_process = sys_process;
+    }
+
+    public String getSys_pk() {
+        return sys_pk;
+    }
+
+    public void setSys_pk(String sys_pk) {
+        this.sys_pk = sys_pk;
+    }
+
+    public String[] getSplitedPk(){
+        try {
+            String[] pk = sys_pk.replace("|", Constant.MAIN_CONCAT_STRING).split(Constant.MAIN_CONCAT_STRING);
+            return  pk;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            e.printStackTrace();
+            return new String[]{};
+        }
+
     }
 }

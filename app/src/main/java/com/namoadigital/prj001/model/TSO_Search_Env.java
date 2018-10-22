@@ -12,6 +12,7 @@ public class TSO_Search_Env {
     private Long product_code;
     private String serial_id;
     private String so_mult;
+    private int profile_check;
 
     public String getApp_code() {
         return app_code;
@@ -61,4 +62,7 @@ public class TSO_Search_Env {
         this.so_mult = so_mult;
     }
 
+    public void setProfile_check(int profile_check) {
+        this.profile_check = profile_check;
+    }
 }

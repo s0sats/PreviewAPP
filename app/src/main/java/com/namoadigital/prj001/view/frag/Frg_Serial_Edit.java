@@ -39,6 +39,7 @@ import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -55,12 +56,16 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 public class Frg_Serial_Edit extends BaseFragment {
     //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
@@ -2669,7 +2674,47 @@ public class Frg_Serial_Edit extends BaseFragment {
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
         logIntent.putExtras(bundle);
         //
-        startActivity(logIntent);
+        startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constant.REQUEST_CODE_SERIAL_LOG){
+            if(resultCode == RESULT_OK){
+                if(data != null){
+                    Bundle resultBundle = data.getExtras();
+                    if( resultBundle != null
+                        && resultBundle.containsKey(SM_SODao.SO_PREFIX)
+                        && resultBundle.containsKey(SM_SODao.SO_CODE)
+                    ){
+                        callAct027(resultBundle);
+                    }else{
+                        callAct026();
+                    }
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void callAct027(Bundle bundle) {
+        if(getActivity() instanceof Act027_Main){
+            return ;
+        }else {
+            Intent mIntent = new Intent(context, Act027_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundle);
+            startActivity(mIntent);
+            getActivity().finish();
+        }
+    }
+
+    private void callAct026() {
+        Intent mIntent = new Intent(context, Act026_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        getActivity().finish();
     }
 
     //region Variaveis de tradução.

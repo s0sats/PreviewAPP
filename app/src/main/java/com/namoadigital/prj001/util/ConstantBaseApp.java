@@ -267,6 +267,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SO_SEARCH_SO_MULT = "sosearchmult";
     public static final String WS_SO_SEARCH_SAVE_SERIAL = "so_search_save_serial";
     public static final String WS_SO_SEARCH_CREATE_SERIAL = "so_search_create_serial";
+    public static final String WS_SO_SEARCH_PROFILE_CHECK = "so_search_profile_check";
 
     /**
      * SO Serial Save
@@ -377,7 +378,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_CHAT_ROOM = 669;
     //Alarms
     public static final int ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP = 670;
-
+    //Request codes
+    public static final int REQUEST_CODE_SERIAL_LOG = 666;
 
     //Helper
     public static final String BACK_ACTION = "back_action";
@@ -414,6 +416,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String PROFILE_MENU_SO_PARAM_EDIT = "EDIT";
+    public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";

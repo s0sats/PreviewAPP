@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act007;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +17,14 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Serial_Log_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Log;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -81,6 +86,13 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         transList.add("alert_empty_log_ttl");
         transList.add("alert_empty_log_msg");
         //
+        transList.add("alert_no_so_found_ttl");
+        transList.add("alert_no_so_found_msg");
+        transList.add("alert_download_ttl");
+        transList.add("alert_download_confirm_msg");
+        transList.add("dialog_so_download_ttl");
+        transList.add("dialog_so_download_start");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -101,8 +113,13 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                hmAux_Trans
-
+                hmAux_Trans,
+                mdProductSerial,
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
         );
         //
         //tv_product_lbl = (TextView) findViewById(R.id.act007_tv_product_lbl);
@@ -164,7 +181,40 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 R.layout.serial_log_cell
         );
         //
+        mAdapter.setIvDownloadClickListner(new Serial_Log_Adapter.ivDownloadClick() {
+            @Override
+            public void onIvDowloadClick(String process, String[] pk) {
+                showDownloadMsg(process,pk);
+            }
+        });
+        //
         lv_logs.setAdapter(mAdapter);
+    }
+
+    private void showDownloadMsg(final String process, final String[] pk) {
+        String ttl = hmAux_Trans.get("alert_download_ttl");
+        String msg = "";
+        //
+        switch (process){
+            case Serial_Log_Adapter.SYS_PROCESS_SO:
+                msg = hmAux_Trans.get("alert_download_confirm_msg");
+                break;
+            default:
+                break;
+        }
+        //
+        ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.processDownloadClick(process,pk);
+                    }
+                },
+                1
+        );
     }
 
 
@@ -244,6 +294,40 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         );
     }
 
+    public void sendResult(Intent data){
+        if(data != null){
+            setResult(RESULT_OK,data);
+        }else{
+            setResult(RESULT_OK);
+        }
+        finish();
+    }
+
+    @Override
+    public void callAct026(Context context) {
+        finish();
+        //
+        Intent mIntent = new Intent(context, Act026_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        //Como fluxo de voltar, envia act021
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+
+    }
+
+    @Override
+    public void callAct027(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -252,6 +336,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             //
             mPresenter.getLog();
             disableProgressDialog();
+        }else if(wsProcess.equals(WS_SO_Search.class.getName())){
+            disableProgressDialog();
+            //
+            mPresenter.processSoDownloadResult(hmAux);
         }
 
     }
