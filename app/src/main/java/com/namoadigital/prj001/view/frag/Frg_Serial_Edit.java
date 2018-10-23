@@ -56,8 +56,8 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
-import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -2689,7 +2689,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     ){
                         callAct027(resultBundle);
                     }else{
-                        callAct026();
+                        callAct032();
                     }
                 }
             }
@@ -2699,20 +2699,29 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private void callAct027(Bundle bundle) {
-        if(getActivity() instanceof Act027_Main){
-            return ;
-        }else {
+        //if(getActivity() instanceof Act027_Main){
+            //return ;
+            getActivity().finish();
+            Intent mIntent = new Intent(context, Act027_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundle);
+            startActivity(mIntent);
+
+        /*}else {
             Intent mIntent = new Intent(context, Act027_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mIntent.putExtras(bundle);
             startActivity(mIntent);
             getActivity().finish();
-        }
+        }*/
     }
 
-    private void callAct026() {
-        Intent mIntent = new Intent(context, Act026_Main.class);
+    private void callAct032() {
+        Intent mIntent = new Intent(context, Act032_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         getActivity().finish();
     }

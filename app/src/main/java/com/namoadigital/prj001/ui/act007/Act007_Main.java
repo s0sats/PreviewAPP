@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act007;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,8 +22,6 @@ import com.namoadigital.prj001.model.Serial_Log_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Log;
-import com.namoadigital.prj001.ui.act026.Act026_Main;
-import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -301,31 +298,6 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             setResult(RESULT_OK);
         }
         finish();
-    }
-
-    @Override
-    public void callAct026(Context context) {
-        finish();
-        //
-        Intent mIntent = new Intent(context, Act026_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Bundle bundle = new Bundle();
-        //Como fluxo de voltar, envia act021
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);
-        //
-        mIntent.putExtras(bundle);
-        //
-        startActivity(mIntent);
-
-    }
-
-    @Override
-    public void callAct027(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act027_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
     }
 
     @Override
