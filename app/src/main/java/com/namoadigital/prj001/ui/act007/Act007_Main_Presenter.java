@@ -17,7 +17,7 @@ public interface Act007_Main_Presenter {
 
     void deleteLogFile();
 
-    void processDownloadClick(String process, String[] pk);
-
     void processSoDownloadResult(HMAux so_download_result);
+
+    void processDownloadClick(String process, String[] pk, boolean alreadyDownloaded);
 }

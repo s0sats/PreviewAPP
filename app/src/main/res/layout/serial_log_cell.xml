@@ -15,7 +15,7 @@
             android:id="@+id/serial_log_cell_tv_process"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center"
             android:padding="2dp"
             android:text="N - Form"
@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
+            android:gravity="center"
             android:padding="2dp"
             android:text="Em Processo"
             android:textStyle="bold" />
@@ -38,8 +38,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:src="@drawable/ic_file_download_black_24dp"
-            android:tint="@color/namoa_dark_blue"
-            android:background="@drawable/namoa_icon_bg"
+            android:background="@drawable/namoa_icon_bg_states"
             android:visibility="gone"
             />
 

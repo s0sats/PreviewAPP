@@ -89,6 +89,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         transList.add("alert_download_confirm_msg");
         transList.add("dialog_so_download_ttl");
         transList.add("dialog_so_download_start");
+        transList.add("alert_go_to_so_confirm_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -180,21 +181,25 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //
         mAdapter.setIvDownloadClickListner(new Serial_Log_Adapter.ivDownloadClick() {
             @Override
-            public void onIvDowloadClick(String process, String[] pk) {
-                showDownloadMsg(process,pk);
+            public void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded) {
+                showDownloadMsg(process,pk,alreadyDownloaded);
             }
         });
         //
         lv_logs.setAdapter(mAdapter);
     }
 
-    private void showDownloadMsg(final String process, final String[] pk) {
+    private void showDownloadMsg(final String process, final String[] pk, final boolean alreadyDownloaded) {
         String ttl = hmAux_Trans.get("alert_download_ttl");
         String msg = "";
         //
         switch (process){
             case Serial_Log_Adapter.SYS_PROCESS_SO:
-                msg = hmAux_Trans.get("alert_download_confirm_msg");
+                if(alreadyDownloaded) {
+                    msg = hmAux_Trans.get("alert_go_to_so_confirm_msg");
+                }else{
+                    msg = hmAux_Trans.get("alert_download_confirm_msg");
+                }
                 break;
             default:
                 break;
@@ -207,7 +212,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.processDownloadClick(process,pk);
+                        mPresenter.processDownloadClick(process,pk,alreadyDownloaded);
                     }
                 },
                 1

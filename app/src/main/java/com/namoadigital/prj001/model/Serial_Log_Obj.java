@@ -17,6 +17,7 @@ public class Serial_Log_Obj {
     private String location;
     private String sys_process;
     private String sys_pk;
+    private boolean log_downloaded;
 
     public String getProcess() {
         return process;
@@ -80,6 +81,14 @@ public class Serial_Log_Obj {
 
     public void setSys_pk(String sys_pk) {
         this.sys_pk = sys_pk;
+    }
+
+    public boolean isLog_downloaded() {
+        return log_downloaded;
+    }
+
+    public void setLog_downloaded(boolean log_downloaded) {
+        this.log_downloaded = log_downloaded;
     }
 
     public String[] getSplitedPk(){

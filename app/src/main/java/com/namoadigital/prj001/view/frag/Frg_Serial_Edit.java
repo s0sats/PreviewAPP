@@ -2699,21 +2699,14 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private void callAct027(Bundle bundle) {
-        //if(getActivity() instanceof Act027_Main){
-            //return ;
-            getActivity().finish();
             Intent mIntent = new Intent(context, Act027_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mIntent.putExtras(bundle);
-            startActivity(mIntent);
-
-        /*}else {
-            Intent mIntent = new Intent(context, Act027_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //Sem essa flag abaixo, não reabre act027 caso o fluxo de "download de S.O"
+            //seja iniciado do fragmento serial dentro da propria act027
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mIntent.putExtras(bundle);
             startActivity(mIntent);
             getActivity().finish();
-        }*/
     }
 
     private void callAct032() {

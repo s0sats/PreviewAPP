@@ -97,6 +97,12 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 );
                 //
                 if (logList != null && logList.size() > 0) {
+                    for (Serial_Log_Obj aux:logList){
+                        if(aux.getSys_process().equals(Serial_Log_Adapter.SYS_PROCESS_SO)){
+                            boolean tst = checkSoExists(aux.getSplitedPk());
+                            aux.setLog_downloaded(tst);
+                        }
+                    }
                     mView.loadLogList(logList);
                 } else {
                     mView.showEmptyLogMsg();
@@ -114,11 +120,12 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
     }
 
     @Override
-    public void processDownloadClick(String process, String[] pk) {
+    public void processDownloadClick(String process, String[] pk, boolean alreadyDownloaded) {
         switch (process){
             case Serial_Log_Adapter.SYS_PROCESS_SO:
                 checkSaveSerial();
-                if(!checkSoExists(pk)) {
+                //if(!checkSoExists(pk)) {
+                if(!alreadyDownloaded) {
                     executeSoDownloadProcess(pk);
                 }else{
                     Intent data = new Intent();

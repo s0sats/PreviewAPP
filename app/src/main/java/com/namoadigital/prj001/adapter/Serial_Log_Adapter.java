@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class Serial_Log_Adapter extends BaseAdapter {
     }
 
     public interface ivDownloadClick{
-        void onIvDowloadClick(String process, String[] pk);
+        void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded);
     }
 
     @Override
@@ -112,13 +113,26 @@ public class Serial_Log_Adapter extends BaseAdapter {
             && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)
             && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC)
         ){
+            Drawable drawable = null;
+            if(logObj.isLog_downloaded()){
+                //iv_download.setImageDrawable(context.getDrawable(R.drawable.ic_n_service2_24x24));
+                drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+                drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
+                drawable.mutate();
+                iv_download.setImageDrawable(drawable);
+            }else{
+                drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+                drawable.setTint(context.getResources().getColor(R.color.namoa_dark_blue));
+                drawable.mutate();
+                iv_download.setImageDrawable(drawable);
+            }
             iv_download.setVisibility(View.VISIBLE);
             //
             iv_download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(ivDownloadClickListner != null){
-                        ivDownloadClickListner.onIvDowloadClick(SYS_PROCESS_SO,logObj.getSplitedPk());
+                        ivDownloadClickListner.onIvDowloadClick(SYS_PROCESS_SO,logObj.getSplitedPk(),logObj.isLog_downloaded());
                     }
                 }
             });
