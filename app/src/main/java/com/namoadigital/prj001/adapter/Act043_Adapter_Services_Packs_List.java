@@ -175,7 +175,8 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
             ll_background.setBackground(null);
         }
         //
-        tv_desc.setText(hmAux.get("pack_service_desc"));
+        //tv_desc.setText(hmAux.get("pack_service_desc"));
+        tv_desc.setText(hmAux.get("pack_service_desc_full"));
         iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
     }
 
@@ -206,7 +207,8 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
             ll_background.setBackground(null);
         }
         //
-        tv_desc.setText(hmAux.get("pack_service_desc"));
+        tv_desc.setText(hmAux.get("pack_service_desc_full"));
+        //tv_desc.setText(hmAux.get("pack_service_desc"));
         iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
     }
 
@@ -230,10 +232,10 @@ public class Act043_Adapter_Services_Packs_List extends BaseAdapter implements F
                 constraint = ToolBox.AccentMapper(constraint.toString());
                 //
                 for (int i = 0; i < data.size(); i++) {
-                    String user_nick = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
-                    String user_name = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
-                    if (user_nick.contains(constraint.toString().toLowerCase()) ||
-                            user_name.contains(constraint.toString().toLowerCase())
+                    String service_desc = ToolBox.AccentMapper(data.get(i).get("pack_service_desc").toLowerCase());
+                    String service_desc_full = ToolBox.AccentMapper(data.get(i).get("pack_service_desc_full").toLowerCase());
+                    if (service_desc.contains(constraint.toString().toLowerCase()) ||
+                            service_desc_full.contains(constraint.toString().toLowerCase())
                             ) {
 
                         //HMAux hmAux = new HMAux();
