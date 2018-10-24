@@ -615,7 +615,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         super.processCustom_error(mLink, mRequired);
         disableProgressDialog();
         //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
-        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+        //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     @Override
@@ -623,7 +623,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         super.processError_1(mLink, mRequired);
         disableProgressDialog();
         //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
-        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+        //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     //Metodo chamado ao finalizar o download da atualização.
