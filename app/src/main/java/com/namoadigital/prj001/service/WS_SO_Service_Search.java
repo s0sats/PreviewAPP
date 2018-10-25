@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -130,6 +131,11 @@ public class WS_SO_Service_Search extends IntentService {
     //
     private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) {
         HMAux auxReturn = new HMAux();
+        //25/10/18 - Caso o data seja null, o que NUNCA deveria ter acontecido, mas aconteceu,
+        //seta array vazio que será tratado pela tela que recebe o CLOSE_ACT.
+        if(rec.getData() == null ){
+            rec.setData(new JsonArray());
+        }
         //
         auxReturn.put(Constant.PARAM_KEY_WS_RETURN,rec.getData().toString());
         //

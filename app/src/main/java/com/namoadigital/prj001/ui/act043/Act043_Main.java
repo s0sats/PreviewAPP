@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
@@ -115,6 +116,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
         transList.add("alert_so_status");
+        transList.add("alert_no_service_found_ttl");
+        transList.add("alert_no_service_found_msg");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -549,11 +552,21 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         if (ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())) {
             //
             if (hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
-                act043_frag_service_list.setmService(mSm_so);
-                act043_frag_service_list.setDataReturn(
-                        mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN))
-                );
-                setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                //25/10/18
+                ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
+                if(servicesList != null && servicesList.size() > 0) {
+                    act043_frag_service_list.setmService(mSm_so);
+                    act043_frag_service_list.setDataReturn(servicesList);
+                    setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_service_found_ttl"),
+                            hmAux_Trans.get("alert_no_service_found_msg"),
+                            null,
+                            0
+                    );
+                }
             } else {
                 //DEFINIR MSG DE ERRO
             }
