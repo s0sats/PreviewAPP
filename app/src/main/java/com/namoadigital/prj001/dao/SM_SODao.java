@@ -59,6 +59,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String CONTRACT_PO_ERP = "contract_po_erp";
     public static final String CONTRACT_PO_CLIENT1 = "contract_po_client1";
     public static final String CONTRACT_PO_CLIENT2 = "contract_po_client2";
+    public static final String CONTRACT_PO_CLIENT3 = "contract_po_client3";
     public static final String PRIORITY_CODE = "priority_code";
     public static final String PRIORITY_DESC = "priority_desc";
     public static final String STATUS = "status";
@@ -80,10 +81,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String CLIENT_APPROVAL_IMAGE = "client_approval_image";
     public static final String CLIENT_APPROVAL_IMAGE_NAME = "client_approval_image_name";
     public static final String CLIENT_APPROVAL_IMAGE_URL = "client_approval_image_url";
+    public static final String CLIENT_APPROVAL_IMAGE_URL_LOCAL = "client_approval_image_url_local";
     public static final String CLIENT_APPROVAL_DATE = "client_approval_date";
     public static final String CLIENT_APPROVAL_USER = "client_approval_user";
     public static final String CLIENT_APPROVAL_USER_NICK = "client_approval_user_nick";
     public static final String CLIENT_APPROVAL_TYPE_SIG = "client_approval_type_sig";
+    public static final String CLIENT_SO_ID = "client_so_id";
     public static final String ORIGIN_CHANGE = "origin_change";
     public static final String STARTED_FLAG = "started_flag";
     public static final String EDIT_ORIGIN = "edit_origin";
@@ -543,6 +546,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setContract_po_client2(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_CLIENT2)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_CLIENT3))) {
+                so.setContract_po_client3(null);
+            } else {
+                so.setContract_po_client3(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_CLIENT3)));
+            }
+
             so.setPriority_code(cursor.getInt(cursor.getColumnIndex(PRIORITY_CODE)));
             so.setPriority_desc(cursor.getString(cursor.getColumnIndex(PRIORITY_DESC)));
             so.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
@@ -646,6 +655,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setClient_approval_image_url(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_URL)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_URL_LOCAL))) {
+                so.setClient_approval_image_url_local(null);
+            } else {
+                so.setClient_approval_image_url_local(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_URL_LOCAL)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_DATE))) {
                 so.setClient_approval_date(null);
             } else {
@@ -669,6 +684,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             } else {
                 so.setClient_approval_type_sig(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_TYPE_SIG)));
             }
+
+            so.setClient_so_id(cursor.getString(cursor.getColumnIndex(CLIENT_SO_ID)));
 
             so.setOrigin_change(cursor.getString(cursor.getColumnIndex(ORIGIN_CHANGE)));
             so.setStarted_flag(cursor.getInt(cursor.getColumnIndex(STARTED_FLAG)));
@@ -863,6 +880,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(CONTRACT_PO_CLIENT2, sm_so.getContract_po_client2());
             }
 
+            if (sm_so.getContract_po_client3() != null) {
+                contentValues.put(CONTRACT_PO_CLIENT3, sm_so.getContract_po_client3());
+            }
+
             if (sm_so.getPriority_code() > -1) {
                 contentValues.put(PRIORITY_CODE, sm_so.getPriority_code());
             }
@@ -949,6 +970,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             if (sm_so.getClient_approval_image_url() != null) {
                 contentValues.put(CLIENT_APPROVAL_IMAGE_URL, sm_so.getClient_approval_image_url());
             }
+            contentValues.put(CLIENT_APPROVAL_IMAGE_URL_LOCAL, sm_so.getClient_approval_image_url_local());
 
             if (sm_so.getClient_approval_date() != null) {
                 contentValues.put(CLIENT_APPROVAL_DATE, sm_so.getClient_approval_date());
@@ -964,6 +986,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             if (sm_so.getClient_approval_type_sig() != null) {
                 contentValues.put(CLIENT_APPROVAL_TYPE_SIG, sm_so.getClient_approval_type_sig());
+            }
+
+            if (sm_so.getClient_so_id() != null) {
+                contentValues.put(CLIENT_SO_ID, sm_so.getClient_so_id());
             }
 
             if (sm_so.getOrigin_change() != null) {

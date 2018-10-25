@@ -52,6 +52,7 @@ public class SM_SO {
     private String contract_po_erp;
     private String contract_po_client1;
     private String contract_po_client2;
+    private String contract_po_client3;
     @Expose
     private int priority_code;
     private String priority_desc;
@@ -86,10 +87,12 @@ public class SM_SO {
     private Integer client_approval_image;
     private String client_approval_image_name;
     private String client_approval_image_url;
+    private String client_approval_image_url_local;
     private String client_approval_date;
     private String client_approval_user_nick;
     private Integer client_approval_user;
     private String client_approval_type_sig;
+    private String client_so_id;
     @Expose
     private String origin_change;
     private int started_flag;
@@ -359,6 +362,14 @@ public class SM_SO {
 
     public void setContract_po_client2(String contract_po_client2) {
         this.contract_po_client2 = contract_po_client2;
+    }
+
+    public String getContract_po_client3() {
+        return contract_po_client3;
+    }
+
+    public void setContract_po_client3(String contract_po_client3) {
+        this.contract_po_client3 = contract_po_client3;
     }
 
     public int getPriority_code() {
@@ -727,5 +738,21 @@ public class SM_SO {
 
     public void setProduct_event(ArrayList<SM_SO_Product_Event> product_event) {
         this.product_event = product_event;
+    }
+
+    public String getClient_approval_image_url_local() {
+        return client_approval_image_url_local;
+    }
+
+    public void setClient_approval_image_url_local(String client_approval_image_url_local) {
+        this.client_approval_image_url_local = client_approval_image_url_local;
+    }
+
+    public String getClient_so_id() {
+        return client_so_id;
+    }
+
+    public void setClient_so_id(String client_so_id) {
+        this.client_so_id = client_so_id;
     }
 }

@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
@@ -34,6 +35,8 @@ import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Sql_021;
+import com.namoadigital.prj001.sql.SM_SO_Sql_022;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -136,9 +139,23 @@ public class WS_DownLoad_Picture extends IntentService {
             ArrayList<HMAux> event_sketch_list = new ArrayList<>();
             SM_SO_Product_Event_FileDao eventFileDao = null;
             ArrayList<HMAux> event_file_list = new ArrayList<>();
+            SM_SODao smSoDao = null;
+            ArrayList<HMAux> so_client_approval_image = new ArrayList<>();
 
            // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+                //
+                smSoDao = new SM_SODao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //Adiciona lista de assinaturas da s.o
+                so_client_approval_image.addAll(
+                    smSoDao.query_HM(
+                            new SM_SO_Sql_021(customer_code).toSqlQuery()
+                    )
+                );
                 //
                 taskFileDao =
                         new SM_SO_Service_Exec_Task_FileDao(
@@ -211,6 +228,7 @@ public class WS_DownLoad_Picture extends IntentService {
             //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
             if(  dados_geral.size() == 0
                  && so_file_list.size() == 0
+                 && so_client_approval_image.size() == 0
                  && product_sketch_list.size() == 0
                  && all_product_sketch_list.size() == 0
                  && event_sketch_list.size() == 0
@@ -357,6 +375,29 @@ public class WS_DownLoad_Picture extends IntentService {
             //Download de files do S.O
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
             if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+                //
+                for (HMAux hmAux : so_client_approval_image) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".png")) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_URL),
+                                Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase(), ".png");
+                    }
+                    //Atualiza campo com url local
+                    smSoDao.addUpdate(
+                            new SM_SO_Sql_022(
+                                    hmAux.get(SM_SODao.CUSTOMER_CODE),
+                                    hmAux.get(SM_SODao.SO_PREFIX),
+                                    hmAux.get(SM_SODao.SO_CODE),
+                                    hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME)
+                            ).toSqlQuery().toLowerCase()
+                    );
+                }
                 //
                 for (HMAux hmAux : so_file_list) {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
