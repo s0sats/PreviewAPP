@@ -67,6 +67,9 @@ public class Act027_Header extends BaseFragment {
     private TextView tv_prefix_code_title;
     private TextView tv_prefix_code;
 
+    private TextView tv_client_so_id_ttl;
+    private TextView tv_client_so_id;
+
     private TextView tv_serial_title;
     private TextView tv_serial;
 
@@ -114,6 +117,9 @@ public class Act027_Header extends BaseFragment {
 
     private TextView tv_contract_po_client2_title;
     private TextView tv_contract_po_client2;
+
+    private TextView tv_contract_po_client3_title;
+    private TextView tv_contract_po_client3;
 
     private TextView tv_quality_approval_user_title;
     private TextView tv_quality_approval_user;
@@ -243,6 +249,9 @@ public class Act027_Header extends BaseFragment {
         tv_prefix_code_title = (TextView) view.findViewById(R.id.act027_header_content_tv_prefix_code_title);
         tv_prefix_code = (TextView) view.findViewById(R.id.act027_header_content_tv_prefix_code);
 
+        tv_client_so_id_ttl = (TextView) view.findViewById(R.id.act027_header_content_tv_client_so_id_ttl);
+        tv_client_so_id = (TextView) view.findViewById(R.id.act027_header_content_tv_client_so_id);
+
         tv_serial_title = (TextView) view.findViewById(R.id.act027_header_content_tv_serial_title);
         tv_serial = (TextView) view.findViewById(R.id.act027_header_content_tv_serial);
 
@@ -290,6 +299,9 @@ public class Act027_Header extends BaseFragment {
 
         tv_contract_po_client2_title = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_client2_title);
         tv_contract_po_client2 = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_client2);
+
+        tv_contract_po_client3_title = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_client3_title);
+        tv_contract_po_client3 = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_client3);
 
         tv_quality_approval_user_title = (TextView) view.findViewById(R.id.act027_header_content_tv_quality_approval_user_title);
         tv_quality_approval_user = (TextView) view.findViewById(R.id.act027_header_content_tv_quality_approval_user);
@@ -407,6 +419,9 @@ public class Act027_Header extends BaseFragment {
                 tv_prefix_code_title.setText(hmAux_Trans.get("so_code_lbl"));
                 tv_prefix_code.setText(valueOf(mSm_so.getSo_prefix()) + "." + valueOf(mSm_so.getSo_code()));
 
+                tv_client_so_id_ttl.setText(hmAux_Trans.get("client_so_id_lbl"));
+                tv_client_so_id.setText(mSm_so.getClient_so_id());
+
                 tv_serial_title.setText(hmAux_Trans.get("serial"));
                 tv_serial.setText(mSm_so.getSerial_id());
 
@@ -459,6 +474,9 @@ public class Act027_Header extends BaseFragment {
 
                 tv_contract_po_client2_title.setText(hmAux_Trans.get("contract_po_client2"));
                 tv_contract_po_client2.setText(mSm_so.getContract_po_client2());
+
+                tv_contract_po_client3_title.setText(hmAux_Trans.get("contract_po_client3_lbl"));
+                tv_contract_po_client3.setText(mSm_so.getContract_po_client3());
 
                 tv_quality_approval_user_title.setText(hmAux_Trans.get("quality_approval_user"));
                 tv_quality_approval_user.setText(mSm_so.getQuality_approval_user() != null ? valueOf(mSm_so.getQuality_approval_user()) : "");

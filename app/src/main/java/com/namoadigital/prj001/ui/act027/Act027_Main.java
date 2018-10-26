@@ -426,6 +426,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("so_id");
         transList.add("so_desc");
         transList.add("prefix_code");
+        transList.add("client_so_id_lbl");
         transList.add("serial");
         transList.add("category_price_id");
         transList.add("category_price_desc");
@@ -442,6 +443,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("contract_po_erp");
         transList.add("contract_po_client1");
         transList.add("contract_po_client2");
+        transList.add("contract_po_client3_lbl");
         transList.add("quality_approval_user");
         transList.add("quality_approval_user_nick");
         transList.add("quality_approval_date");

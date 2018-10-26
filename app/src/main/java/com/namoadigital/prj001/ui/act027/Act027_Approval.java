@@ -93,6 +93,8 @@ public class Act027_Approval extends BaseFragment {
 
     private ImageView iv_signature;
 
+    private boolean mNFCSupport = false;
+
     private View.OnClickListener listener;
 
     public void setListener(View.OnClickListener listener) {
@@ -219,7 +221,9 @@ public class Act027_Approval extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
-
+        //
+        mNFCSupport = ToolBox_Inf.hasNFC(context);
+        //
         tv_so_id_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_lbl);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_value);
 
@@ -560,7 +564,7 @@ public class Act027_Approval extends BaseFragment {
                                 case R.id.act027_approval_content_rb_other:
 
                                     approvalApprovalUser.setVisibility(View.GONE);
-                                    approvalNFC.setVisibility(View.VISIBLE);
+                                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                                     approvalUser_Password.setVisibility(View.VISIBLE);
 
                                     break;
@@ -580,7 +584,7 @@ public class Act027_Approval extends BaseFragment {
                             case R.id.act027_approval_content_rb_other:
 
                                 approvalApprovalUser.setVisibility(View.GONE);
-                                approvalNFC.setVisibility(View.VISIBLE);
+                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                                 approvalUser_Password.setVisibility(View.VISIBLE);
 
                                 break;
@@ -618,7 +622,7 @@ public class Act027_Approval extends BaseFragment {
                                 case R.id.act027_approval_content_rb_other:
 
                                     approvalApprovalUser.setVisibility(View.GONE);
-                                    approvalNFC.setVisibility(View.VISIBLE);
+                                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                                     approvalUser_Password.setVisibility(View.VISIBLE);
 
                                     break;
@@ -638,7 +642,7 @@ public class Act027_Approval extends BaseFragment {
                             case R.id.act027_approval_content_rb_other:
 
                                 approvalApprovalUser.setVisibility(View.GONE);
-                                approvalNFC.setVisibility(View.VISIBLE);
+                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                                 approvalUser_Password.setVisibility(View.VISIBLE);
 
                                 break;
@@ -651,7 +655,7 @@ public class Act027_Approval extends BaseFragment {
 
                 } else {
                     approvalApprovalUser.setVisibility(View.GONE);
-                    approvalNFC.setVisibility(View.VISIBLE);
+                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                     approvalUser_Password.setVisibility(View.VISIBLE);
                 }
 
@@ -749,7 +753,7 @@ public class Act027_Approval extends BaseFragment {
 //                                case R.id.act027_approval_content_rb_other:
 //
 //                                    approvalApprovalUser.setVisibility(View.GONE);
-//                                    approvalNFC.setVisibility(View.VISIBLE);
+//                                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
 //                                    approvalUser_Password.setVisibility(View.VISIBLE);
 //
 //                                    break;
@@ -769,7 +773,7 @@ public class Act027_Approval extends BaseFragment {
 //                            case R.id.act027_approval_content_rb_other:
 //
 //                                approvalApprovalUser.setVisibility(View.GONE);
-//                                approvalNFC.setVisibility(View.VISIBLE);
+//                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
 //                                approvalUser_Password.setVisibility(View.VISIBLE);
 //
 //                                break;
@@ -782,7 +786,7 @@ public class Act027_Approval extends BaseFragment {
 //
 //                } else {
 //                    approvalApprovalUser.setVisibility(View.GONE);
-//                    approvalNFC.setVisibility(View.VISIBLE);
+//                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
 //                    approvalUser_Password.setVisibility(View.VISIBLE);
 //                }
 //

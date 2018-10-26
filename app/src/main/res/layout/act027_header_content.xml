@@ -189,6 +189,22 @@
                     android:padding="10dp"
                     android:text="2017 / 30"
                     android:textSize="@dimen/font_size_title_md" />
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_so_id_ttl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="Client So ID - Trad"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_so_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="ClientSOID - trad"
+                    android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_so_desc_title"
@@ -502,6 +518,24 @@
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
                     android:text="CLI2"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client3_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Contract PO Client3 -Trad"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="CLI3-Trad"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
