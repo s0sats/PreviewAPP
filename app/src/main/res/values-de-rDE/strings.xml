@@ -102,5 +102,7 @@
     <string name="notification_messages_lbl">Messages</string>
     <string name="chat_fcm_offline_ttl">Offline messages</string>
     <string name="chat_fcm_offline_msg">There are new messages on the server.\nOpen the Namoa application to receive them.</string>
+    <string name="notification_ttl_upload">Loading</string>
+    <string name="notification_msg_upload">Sending files to server</string>
 
 </resources>
