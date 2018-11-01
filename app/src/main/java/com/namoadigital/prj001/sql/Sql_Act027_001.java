@@ -88,7 +88,7 @@ public class Sql_Act027_001 implements Specification {
                         "   \n" +
                         "   ORDER BY \n" +
                         "    exec_seq_oper;")
-                .append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+ HmAuxFields+"#"+SET_FLAG+"#"+QTY_DONE)
+                //.append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+ HmAuxFields+"#"+SET_FLAG+"#"+QTY_DONE)
                 .toString();
     }
 }

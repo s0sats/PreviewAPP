@@ -40,7 +40,7 @@ public class MD_Segment_Sql_SS implements Specification {
 
                                 " ORDER BY " +
                                 "     s.segment_id,s.segment_desc;")
-                .append(SearchableSpinner.ID + "#segment_id#"+SearchableSpinner.DESCRIPTION )
+                //.append(SearchableSpinner.ID + "#segment_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }
 }

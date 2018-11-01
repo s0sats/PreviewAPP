@@ -46,6 +46,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
@@ -74,6 +75,7 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
@@ -1925,7 +1927,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         EV_User user = userDao.getByString(
                 new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                ).toSqlQuery()
+                ).toSqlQuery(),
+                new ErrorCfg()
         );
 
         //

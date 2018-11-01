@@ -97,14 +97,14 @@ public class Sql_Act016_001 implements Specification {
                         "   ) T\n" +
                         "      \n" +
                         " GROUP BY\n" +
-                        "  schedule_date_start;" +
-                        CalendarView.DT
-                        +"#"+ CalendarView.DELAYED_COUNT
-                        +"#"+ CalendarView.INPROCESSING_COUNT
-                        +"#"+ CalendarView.SCHEDULED_COUNT
-                        +"#"+ CalendarView.FINALIZED_COUNT
-                        +"#"+ CalendarView.SENT_COUNT
-                        +"#cur_data#cur_mili"
+                        "  schedule_date_start;"
+//                        CalendarView.DT
+//                        +"#"+ CalendarView.DELAYED_COUNT
+//                        +"#"+ CalendarView.INPROCESSING_COUNT
+//                        +"#"+ CalendarView.SCHEDULED_COUNT
+//                        +"#"+ CalendarView.FINALIZED_COUNT
+//                        +"#"+ CalendarView.SENT_COUNT
+//                        +"#cur_data#cur_mili"
                 )
                 .toString();
 

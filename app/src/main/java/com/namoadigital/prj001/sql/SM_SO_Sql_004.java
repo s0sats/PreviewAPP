@@ -35,7 +35,7 @@ public class SM_SO_Sql_004 implements Specification {
                         "    S.customer_code =  '" + customer_code + "'\n" +
                         "    AND s.status not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"')" +
                         ";")
-                .append(PENDING_QTY)
+                //.append(PENDING_QTY)
                 .toString();
     }
 }

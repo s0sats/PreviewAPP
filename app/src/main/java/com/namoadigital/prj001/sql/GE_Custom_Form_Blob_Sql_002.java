@@ -24,7 +24,8 @@ public class GE_Custom_Form_Blob_Sql_002 implements Specification {
                         GE_Custom_Form_BlobDao.TABLE +
                         " WHERE " +
                         GE_Custom_Form_BlobDao.BLOB_URL_LOCAL + "= '' ")
-                .append(";customer_code#custom_form_type#custom_form_code#custom_form_version#blob_code#blob_url#custom_name")
+                .append(";")
+                //.append("customer_code#custom_form_type#custom_form_code#custom_form_version#blob_code#blob_url#custom_name")
                 .toString();
     }
 }

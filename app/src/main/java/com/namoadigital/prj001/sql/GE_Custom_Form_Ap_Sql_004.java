@@ -48,25 +48,25 @@ public class GE_Custom_Form_Ap_Sql_004 implements Specification {
                         "   a.customer_code = '"+customer_code+"'\n" +
                         "   and a.ap_status not in('"+ Constant.SYS_STATUS_DONE+"','"+ Constant.SYS_STATUS_CANCELLED+"') \n")
                 .append(";")
-                .append(GE_Custom_Form_ApDao.CUSTOMER_CODE+"#"+
-                        GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE+"#"+
-                        GE_Custom_Form_ApDao.CUSTOM_FORM_CODE+"#"+
-                        GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION+"#"+
-                        GE_Custom_Form_ApDao.CUSTOM_FORM_DATA+"#"+
-                        GE_Custom_Form_ApDao.AP_CODE+"#"+
-                        GE_Custom_Form_ApDao.AP_DESCRIPTION+"#"+
-                        GE_Custom_Form_ApDao.AP_STATUS+"#"+
-                        GE_Custom_Form_ApDao.AP_COMMENTS+"#"+
-                        GE_Custom_Form_ApDao.AP_WHAT+"#"+
-                        GE_Custom_Form_ApDao.AP_WHEN+"#"+
-                        GE_Custom_Form_ApDao.AP_WHERE+"#"+
-                        GE_Custom_Form_ApDao.AP_WHY+"#"+
-                        GE_Custom_Form_ApDao.AP_WHO+"#"+
-                        GE_Custom_Form_ApDao.AP_HOW+"#"+
-                        GE_Custom_Form_ApDao.AP_HOW_MUCH+"#"+
-                        GE_Custom_Form_ApDao.DEPARTMENT_CODE+"#"+
-                        GE_Custom_Form_ApDao.AP_SCN
-                )
+//                .append(GE_Custom_Form_ApDao.CUSTOMER_CODE+"#"+
+//                        GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE+"#"+
+//                        GE_Custom_Form_ApDao.CUSTOM_FORM_CODE+"#"+
+//                        GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION+"#"+
+//                        GE_Custom_Form_ApDao.CUSTOM_FORM_DATA+"#"+
+//                        GE_Custom_Form_ApDao.AP_CODE+"#"+
+//                        GE_Custom_Form_ApDao.AP_DESCRIPTION+"#"+
+//                        GE_Custom_Form_ApDao.AP_STATUS+"#"+
+//                        GE_Custom_Form_ApDao.AP_COMMENTS+"#"+
+//                        GE_Custom_Form_ApDao.AP_WHAT+"#"+
+//                        GE_Custom_Form_ApDao.AP_WHEN+"#"+
+//                        GE_Custom_Form_ApDao.AP_WHERE+"#"+
+//                        GE_Custom_Form_ApDao.AP_WHY+"#"+
+//                        GE_Custom_Form_ApDao.AP_WHO+"#"+
+//                        GE_Custom_Form_ApDao.AP_HOW+"#"+
+//                        GE_Custom_Form_ApDao.AP_HOW_MUCH+"#"+
+//                        GE_Custom_Form_ApDao.DEPARTMENT_CODE+"#"+
+//                        GE_Custom_Form_ApDao.AP_SCN
+//                )
                 .toString();
     }
 }

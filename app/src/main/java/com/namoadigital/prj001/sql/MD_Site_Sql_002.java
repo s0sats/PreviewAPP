@@ -30,7 +30,7 @@ public class MD_Site_Sql_002 implements Specification {
                         MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
                        " ORDER BY " +
                         "      site_id,site_desc;")
-                .append("site_code#site_id#site_desc")
+                //.append("site_code#site_id#site_desc")
                 .toString();
     }
 }

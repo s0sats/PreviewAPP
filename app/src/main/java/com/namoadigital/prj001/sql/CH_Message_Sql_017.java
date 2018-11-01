@@ -30,7 +30,7 @@ public class CH_Message_Sql_017 implements Specification {
                         "   room_code =  '" + room_code + "' \n" +
                         "   and read = '0'")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

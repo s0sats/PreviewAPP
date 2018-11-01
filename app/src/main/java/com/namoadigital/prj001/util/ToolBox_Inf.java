@@ -75,6 +75,7 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
@@ -1233,19 +1234,24 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String getResourceCode(Context context, String module_code, String resource_name) {
+        return getResourceCode(context, module_code, resource_name, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
      *
      * @param context
      * @param module_code
      * @param resource_name
      * @return
      */
-    public static String getResourceCode(Context context, String module_code, String resource_name) {
+    public static String getResourceCode(Context context, String module_code, String resource_name, long customer_code) {
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1277,10 +1283,26 @@ public class ToolBox_Inf {
      * @return
      */
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list) {
+        return setLanguage(context, module_code, resource_code, translate_code, translation_list, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Segunda assinatura com parametro de customer para evitar customer -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param module_code
+     * @param resource_code
+     * @param translate_code
+     * @param translation_list
+     * @param customer_code
+     * @return
+     */
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list, long customer_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1451,13 +1473,13 @@ public class ToolBox_Inf {
      * site logado.
      *
      * @param context
-     * @param site_code - Site do Serviço
+     * @param site_code   - Site do Serviço
      * @param hmAux_Trans - HmAux com as traduções
      * @return - Caso falso, exibe dialog informando que não é possivel executar a ação.
      */
     public static boolean hasServiceSiteRestriction(Context context, String site_code, HMAux hmAux_Trans) {
         boolean results = false;
-        if (site_code == null ||site_code.equalsIgnoreCase("null") || site_code.isEmpty() ) {
+        if (site_code == null || site_code.equalsIgnoreCase("null") || site_code.isEmpty()) {
             results = false;
         } else if (site_code.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
             results = false;
@@ -1903,7 +1925,8 @@ public class ToolBox_Inf {
 
         ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(
                 new EV_User_Customer_Sql_006()
-                        .toSqlQuery()
+                        .toSqlQuery(),
+                new ErrorCfg()
         );
 
         for (HMAux hmAux : customers) {
@@ -2148,29 +2171,57 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Assinatura orignal
+     *
      * @param context
-     * @param notification_id Constant com o id da notificação;
+     * @param notification_id
      */
     public static void showNotification(Context context, int notification_id) {
+        showNotification(context, notification_id, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Assinatura com parametro de customer para evitar banco -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param notification_id
+     * @param customer_code
+     */
+    public static void showNotification(Context context, int notification_id, long customer_code) {
         List<String> translist = new ArrayList<>();
         int animation = -1;
         String title = "";
         String msg = "";
+        HMAux hmAux_Trans = new HMAux();
+        //
+        Log.d("ShowNotif", "Customer: " + String.valueOf(customer_code));
 
-        HMAux hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                "",
-                "0",
-                ToolBox_Con.getPreference_Translate_Code(context),
-                translist
-        );
+        //
+        if (customer_code != -1) {
+            //
+            hmAux_Trans = ToolBox_Inf.setLanguage(
+                    context,
+                    "",
+                    "0",
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translist,
+                    customer_code
+            );
+        }
 
         switch (notification_id) {
 
             case Constant.NOTIFICATION_UPLOAD:
                 animation = R.drawable.upload_animation;
-                title = hmAux_Trans.get("notification_ttl_upload");
-                msg = hmAux_Trans.get("notification_msg_upload");
+                title = context.getString(R.string.notification_ttl_upload);
+                if (hmAux_Trans.containsKey("notification_ttl_upload")) {
+                    title = hmAux_Trans.get("notification_ttl_upload");
+                }
+                msg = context.getString(R.string.notification_msg_upload);
+                if (hmAux_Trans.containsKey("notification_msg_upload")) {
+                    msg = hmAux_Trans.get("notification_msg_upload");
+                }
                 break;
 
             case Constant.NOTIFICATION_DOWNLOAD:
@@ -2341,7 +2392,8 @@ public class ToolBox_Inf {
                     new Ev_User_Customer_Parameter_Sql_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                             param
-                    ).toSqlQuery()
+                    ).toSqlQuery(),
+                    new ErrorCfg()
             );
 
             if (parameter != null) {
@@ -2372,7 +2424,8 @@ public class ToolBox_Inf {
                         new Ev_User_Customer_Parameter_Sql_002(
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                 param[i]
-                        ).toSqlQuery()
+                        ).toSqlQuery(),
+                        new ErrorCfg()
                 );
 
                 if (parameter != null) {
@@ -3966,7 +4019,8 @@ public class ToolBox_Inf {
         EV_User ev_user = userDao.getByString(
                 new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(context)
-                ).toSqlQuery()
+                ).toSqlQuery(),
+                new ErrorCfg()
         );
         //
         return ev_user != null && ev_user.getAdmin() == 1;
@@ -4048,7 +4102,8 @@ public class ToolBox_Inf {
                 new EV_User_Customer_Sql_008(
                         user_code,
                         customer_code
-                ).toSqlQuery()
+                ).toSqlQuery(),
+                new ErrorCfg()
         );
         //
         if (session_info != null && session_info.size() > 0) {
@@ -4065,7 +4120,8 @@ public class ToolBox_Inf {
                 query_HM(
                         new EV_User_Customer_Sql_007(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery()
+                        ).toSqlQuery(),
+                        new ErrorCfg()
                 );
         //
         return customer_list;
@@ -4078,7 +4134,8 @@ public class ToolBox_Inf {
                 query_HM(
                         new EV_User_Customer_Sql_010(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery()
+                        ).toSqlQuery(),
+                        new ErrorCfg()
                 );
         //
         return customer_list;

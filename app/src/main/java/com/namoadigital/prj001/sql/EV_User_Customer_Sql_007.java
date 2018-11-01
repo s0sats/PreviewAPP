@@ -48,7 +48,7 @@ public class EV_User_Customer_Sql_007 implements Specification {
                         " ORDER BY\n" +
                         "  e.customer_code   \n")
                 .append(";")
-                .append(EV_User_CustomerDao.CUSTOMER_CODE + "#" + EV_User_CustomerDao.CUSTOMER_NAME + "#" + EV_User_CustomerDao.SESSION_APP)
+                //.append(EV_User_CustomerDao.CUSTOMER_CODE + "#" + EV_User_CustomerDao.CUSTOMER_NAME + "#" + EV_User_CustomerDao.SESSION_APP)
                 .toString();
     }
 }

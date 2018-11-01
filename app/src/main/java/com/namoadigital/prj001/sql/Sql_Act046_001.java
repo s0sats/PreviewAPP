@@ -25,7 +25,8 @@ public class Sql_Act046_001 implements Specification {
     }
 
     private void buildFinalSql(boolean filter_form, boolean filter_form_ap) {
-        sql_form = UNION_ALL +
+        sql_form =
+                UNION_ALL +
                 "   \nSELECT\n" +
                 "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
                 //"      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
@@ -60,14 +61,13 @@ public class Sql_Act046_001 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
-                                "  sum(t.delayed_count) " + CalendarView.DELAYED_COUNT + "\n" +
-                                " FROM(\n" +
-                                sql_sub_query +
-                                "   ) T\n" +
+                        "  sum(t.delayed_count) " + CalendarView.DELAYED_COUNT + "\n" +
+                        " FROM(\n" +
+                        sql_sub_query +
+                        "   ) T\n" +
 
-                                ";" + CalendarView.DELAYED_COUNT
-
-                )
+                        ";")
+                //.append(CalendarView.DELAYED_COUNT)
                 .toString();
 
     }

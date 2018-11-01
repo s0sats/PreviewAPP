@@ -43,7 +43,7 @@ public class Sql_Form_x_Operation implements Specification {
                             "                             and o.operation_code = '"+operation_code+"')\n" +
                             "   ) \n")
                 .append(";")
-                .append(FORM_OPERATION_PROFILE)
+                //.append(FORM_OPERATION_PROFILE)
                 .toString();
 
         /*return sb

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;

@@ -46,7 +46,7 @@ public class Sql_Act007_002 implements Specification {
                             "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )" +
                             "  ORDER BY \n" +
                             "     p.product_id;")
-                    .append("product_code#product_id#product_desc#full_product_desc#type")
+                    //.append("product_code#product_id#product_desc#full_product_desc#type")
                     .toString().replace("'%null%'","null").replace("'null'","null");
         } else {
             return sb
@@ -69,7 +69,7 @@ public class Sql_Act007_002 implements Specification {
                             "           ) \n" +
                             "     ORDER BY\n" +
                             "        P.product_id;")
-                    .append("product_code#product_id#product_desc#full_product_desc#type")
+                    //.append("product_code#product_id#product_desc#full_product_desc#type")
                     .toString().replace("'%null%'","null").replace("'null'","null");
         }
     }

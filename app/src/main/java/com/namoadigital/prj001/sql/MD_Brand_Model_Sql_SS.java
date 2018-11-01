@@ -44,7 +44,7 @@ public class MD_Brand_Model_Sql_SS implements Specification {
                                 "   and m.brand_code = '"+ brand_code +"'" +
                                 " ORDER BY " +
                                 "      m.model_id,m.model_desc;")
-                .append(SearchableSpinner.ID + "#model_id#"+SearchableSpinner.DESCRIPTION )
+                //.append(SearchableSpinner.ID + "#model_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }
 }

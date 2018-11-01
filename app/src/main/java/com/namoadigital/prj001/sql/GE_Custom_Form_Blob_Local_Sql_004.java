@@ -52,6 +52,7 @@ public class GE_Custom_Form_Blob_Local_Sql_004 implements Specification {
                         "   and bl.custom_form_version = '"+custom_form_version+"' " +
                         "    " +
                         "   and bl.blob_url_local = ''")
+                .append(";")
                 .toString();
     }
 }

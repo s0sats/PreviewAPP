@@ -197,27 +197,27 @@ public class Sql_Act043_001 implements Specification {
                        "        T.EXEC_SEQ_OPER"
                        )
                 .append(";")
-                .append(
-                        TYPE_PS+"#"+
-                        SM_SO_ServiceDao.CUSTOMER_CODE+"#"+
-                        SM_SO_ServiceDao.SO_PREFIX+"#"+
-                        SM_SO_ServiceDao.SO_CODE+"#"+
-                        SM_SO_ServiceDao.PRICE_LIST_CODE+"#"+
-                        SM_SO_ServiceDao.PACK_CODE+"#"+
-                        SM_SO_ServiceDao.PACK_SEQ+"#"+
-                        SM_SO_ServiceDao.SERVICE_CODE+"#"+
-                        SM_SO_ServiceDao.SERVICE_SEQ+"#"+
-                        PACK_SERVICE_ID+"#"+
-                        PACK_SERVICE_DESC+"#"+
-                        PACK_SERVICE_DESC_FULL+"#"+
-                        SM_SO_ServiceDao.QTY+"#"+
-                        SM_SO_ServiceDao.PRICE+"#"+
-                        SM_SO_ServiceDao.MANUAL_PRICE +"#"+
-                        SM_SO_ServiceDao.COMMENTS +"#"+
-                        SM_SO_ServiceDao.EXEC_SEQ_OPER +"#"+
-                        SM_SO_ServiceDao.STATUS +"#"+
-                        IN_PROCESS
-                )
+//                .append(
+//                        TYPE_PS+"#"+
+//                        SM_SO_ServiceDao.CUSTOMER_CODE+"#"+
+//                        SM_SO_ServiceDao.SO_PREFIX+"#"+
+//                        SM_SO_ServiceDao.SO_CODE+"#"+
+//                        SM_SO_ServiceDao.PRICE_LIST_CODE+"#"+
+//                        SM_SO_ServiceDao.PACK_CODE+"#"+
+//                        SM_SO_ServiceDao.PACK_SEQ+"#"+
+//                        SM_SO_ServiceDao.SERVICE_CODE+"#"+
+//                        SM_SO_ServiceDao.SERVICE_SEQ+"#"+
+//                        PACK_SERVICE_ID+"#"+
+//                        PACK_SERVICE_DESC+"#"+
+//                        PACK_SERVICE_DESC_FULL+"#"+
+//                        SM_SO_ServiceDao.QTY+"#"+
+//                        SM_SO_ServiceDao.PRICE+"#"+
+//                        SM_SO_ServiceDao.MANUAL_PRICE +"#"+
+//                        SM_SO_ServiceDao.COMMENTS +"#"+
+//                        SM_SO_ServiceDao.EXEC_SEQ_OPER +"#"+
+//                        SM_SO_ServiceDao.STATUS +"#"+
+//                        IN_PROCESS
+//                )
                 .toString();
     }
 }

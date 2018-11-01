@@ -61,7 +61,7 @@ public class GE_Custom_Form_Product_HMAux_Lista_SqlSpecification implements Spec
                 .append(" order by ")
                 .append(" customer_code, custom_form_type, custom_form_code, custom_form_version, product_code ")
                 .append(";")
-                .append("customer_code#custom_form_type#custom_form_code#custom_form_version#product_code")
+                //.append("customer_code#custom_form_type#custom_form_code#custom_form_version#product_code")
                 .toString();
     }
 

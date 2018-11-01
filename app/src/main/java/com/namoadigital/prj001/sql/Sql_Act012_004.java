@@ -40,7 +40,7 @@ public class Sql_Act012_004 implements Specification {
                         "   s.customer_code = '"+customer_code+"'\n" +
                         "   and (s.ret_code is null or s.ret_code = '"+ Constant.SYS_STATUS_ERROR+"') \n" +
                         ";")
-                .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
+                //.append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
     }
 }

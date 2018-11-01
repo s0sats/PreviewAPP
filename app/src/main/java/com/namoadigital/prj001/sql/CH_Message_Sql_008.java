@@ -35,7 +35,7 @@ public class CH_Message_Sql_008 implements Specification {
                         " ORDER BY\n" +
                         "   m.msg_pk asc\n")
                 .append(";")
-                .append(HmAuxFields+"#msg_date_zone")
+                //.append(HmAuxFields+"#msg_date_zone")
                 .toString();
     }
 }

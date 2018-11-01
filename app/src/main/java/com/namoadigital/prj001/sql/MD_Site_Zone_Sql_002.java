@@ -33,7 +33,8 @@ public class MD_Site_Zone_Sql_002 implements Specification {
                         " and " + MD_Site_ZoneDao.SITE_CODE +" = '"+ site_code +"' "+
                         " ORDER BY " +
                         "      zone_id,zone_desc")
-                .append(";" +HmAuxFields)
+                .append(";")
+                //.append(HmAuxFields)
                 .toString();
     }
 }

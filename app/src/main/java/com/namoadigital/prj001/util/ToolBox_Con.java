@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
+import com.namoadigital.prj001.model.ErrorCfg;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -1064,6 +1066,50 @@ public class ToolBox_Con {
         } catch (java.io.IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static String getDBHelperName(String mDBName, int mDBVersion) {
+        try {
+            if (mDBName == null || mDBName.isEmpty()) {
+                return "";
+            }
+
+            return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static ErrorCfg getSQLiteErrorCodeDescription(String errorMessage) {
+        ErrorCfg mErrorDao = new ErrorCfg();
+
+        String[] rows = errorMessage.toString().trim().split("\n");
+
+        if (rows.length > 0) {
+            String[] parts = rows[0].split(":");
+
+            if (parts.length > 1) {
+
+                String[] components = parts[1].trim()
+                        .replace("(code ", "")
+                        .replace(")", "").split(" ");
+
+                if (components.length > 1) {
+                    mErrorDao.setDescription(parts[1] + " - " + components[0]);
+                    mErrorDao.setCode(components[1]);
+
+                    return mErrorDao;
+
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 

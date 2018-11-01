@@ -91,7 +91,7 @@ public class Sql_Act034_004 implements Specification {
                         "    strftime('" + sqlite_db_format + "',m.msg_date,'localtime') desc,\n" +
                         "    r.room_desc\n")
                 .append(";")
-                .append(HmAuxFields + "#" + CH_MessageDao.MSG_DATE + "#" + CH_MessageDao.MSG_OBJ + "#" + BADGE)
+                //.append(HmAuxFields + "#" + CH_MessageDao.MSG_DATE + "#" + CH_MessageDao.MSG_OBJ + "#" + BADGE)
                 .toString();
 
 

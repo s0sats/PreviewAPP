@@ -47,7 +47,7 @@ public class SM_SO_Sql_015 implements Specification {
 //                        "    = '" + Constant.SYS_STATUS_WAITING_QUALITY + "' ")
 
                 .append(") ;")
-                .append(SENT_QTY + "#" + TYPE)
+                //.append(SENT_QTY + "#" + TYPE)
                 .toString();
     }
 }

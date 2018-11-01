@@ -23,8 +23,8 @@ public class WS_Cleaning_Sql_002 implements Specification {
                 .append("select * FROM ge_files where file_status = 'SENT' and Date(file_date) <")
                 .append("Date('")
                 .append(s_date)
-                .append("')")
-                .append(";file_code#file_path#file_status#file_date")
+                .append("');")
+                //.append(";file_code#file_path#file_status#file_date")
                 .toString();
     }
 }

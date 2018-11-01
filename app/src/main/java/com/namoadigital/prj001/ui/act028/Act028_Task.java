@@ -1163,9 +1163,8 @@ public class Act028_Task extends BaseFragment {
     private void activateUpload(Context context) {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-
+        //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -1207,6 +1206,8 @@ public class Act028_Task extends BaseFragment {
         mIntent.putExtra(ConstantBase.PTYPE, 10);
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "p");
+        mIntent.putExtra(ConstantBase.MPREMODE, true);
+
 
         if (mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
             mIntent.putExtra(ConstantBase.PENABLED, true);

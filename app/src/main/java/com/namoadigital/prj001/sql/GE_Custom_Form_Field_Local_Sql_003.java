@@ -80,7 +80,8 @@ public class GE_Custom_Form_Field_Local_Sql_003 implements Specification {
                                 "   and fl.custom_form_data_type = 'PICTURE' " +
                                 "   and fl.custom_form_local_link = ''" +
                                 " " +
-                                ";customer_code#custom_form_type")
+                                ";")
+                //.append("customer_code#custom_form_type")
                 .toString();
     }
 }

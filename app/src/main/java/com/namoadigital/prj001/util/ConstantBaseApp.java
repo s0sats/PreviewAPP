@@ -173,8 +173,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
     public static int DB_VERSION_CHAT;
 
-    public static String DB_MODE_MULTI = "MULTI";
-    public static String DB_MODE_SINGLE = "SINGLE";
+    public static final String DB_MODE_MULTI = "MULTI";
+    public static final String DB_MODE_SINGLE = "SINGLE";
     public static final String DB_MODE_CHAT = "CHAT";
 
     /**
@@ -482,6 +482,7 @@ public class ConstantBaseApp extends ConstantBase {
 
 
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+    public static final String EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE = "EXCEPTION_DATABASE_CUSTOMER_-1";
 
     public static final String WS_FCM = "WS_FCM";
     /*

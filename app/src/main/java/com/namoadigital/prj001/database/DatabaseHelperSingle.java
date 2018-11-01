@@ -2,30 +2,14 @@ package com.namoadigital.prj001.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by neomatrix on 18/01/17.
  */
 
-public class DatabaseHelperSingle extends SQLiteOpenHelper {
-
-    private static volatile DatabaseHelperSingle mInstance;
+public class DatabaseHelperSingle extends DatabaseBaseHelper {
 
     private Context context;
-
-    public static synchronized DatabaseHelperSingle getInstance(Context context, String DB_NAME, int DB_VERSION) {
-        /**
-         * use the application context as suggested by CommonsWare.
-         * this will ensure that you dont accidentally leak an Activitys
-         * context (see this article for more information:
-         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
-         */
-        if (mInstance == null) {
-            mInstance = new DatabaseHelperSingle(context.getApplicationContext(), DB_NAME, DB_VERSION);
-        }
-        return mInstance;
-    }
 
     public DatabaseHelperSingle(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, null, DB_VERSION);

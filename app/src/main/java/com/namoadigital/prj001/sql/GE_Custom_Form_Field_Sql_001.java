@@ -36,8 +36,8 @@ public class GE_Custom_Form_Field_Sql_001 implements Specification {
                         "order by \n" +
                         "\n" +
                         "customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_seq")
-                .append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_content#custom_name")
-
+                .append(";")
+                //.append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_content#custom_name")
                 .toString();
     }
 }

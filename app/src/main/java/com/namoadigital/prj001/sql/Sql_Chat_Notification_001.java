@@ -68,9 +68,9 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "        " + CH_MessageDao.TABLE + " m \n," +
                         "        " + CH_RoomDao.TABLE + " r,\n" +
                         "          ( SELECT\n" +
-                        "             count( distinct(r.room_code)) "+QTY_ROOM+",\n" +
-                        "             count(m.msg_code) "+QTY_MSG+",\n" +
-                        "             count( distinct(r.customer_code)) "+QTY_CUSTOMER+",\n" +
+                        "             count( distinct(r.room_code)) " + QTY_ROOM + ",\n" +
+                        "             count(m.msg_code) " + QTY_MSG + ",\n" +
+                        "             count( distinct(r.customer_code)) " + QTY_CUSTOMER + ",\n" +
                         "             (SELECT m.msg_pk\n" +
                         "              FROM " + CH_MessageDao.TABLE + " m\n," +
                         "                   " + CH_RoomDao.TABLE + " r\n" +
@@ -78,7 +78,7 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "                   m.room_code = r.room_code" +
                         "                   AND m.read = 0\n" +
                         "                   AND (m.user_code <> '" + user_code + "'\n" +
-                        "                        or (m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"'))\n" +
+                        "                        or (m.user_code ='" + user_code + "' AND m.msg_type not in ('" + Constant.CHAT_MESSAGE_TYPE_TEXT + "','" + Constant.CHAT_MESSAGE_TYPE_IMAGE + "'))\n" +
                         "                       )\n" +
                         "              LIMIT 1 ) last_msg_pk\n" +
                         "           FROM    \n" +
@@ -88,15 +88,17 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "           WHERE\n" +
                         "              m.read = 0\n" +
                         "              AND (m.user_code <> '" + user_code + "'\n" +
-                        "                   or (m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"'))\n" +
+                        "                   or (m.user_code ='" + user_code + "' AND m.msg_type not in ('" + Constant.CHAT_MESSAGE_TYPE_TEXT + "','" + Constant.CHAT_MESSAGE_TYPE_IMAGE + "'))\n" +
                         "                  )\n" +
                         "           )t\n" +
                         "   WHERE\n" +
                         "    m.room_code = r.room_code" +
                         "    and m.msg_pk = t.last_msg_pk\n")
-                .append(";" + QTY_ROOM + "#" + QTY_MSG + "#" + LAST_ROOM + "#" +
-                              LAST_MSG + "#" + ROOM_CODE +"#"+QTY_CUSTOMER + "#" +
-                              CH_RoomDao.CUSTOMER_CODE
-                ).toString();
+                .append(";")
+//                .append(QTY_ROOM + "#" + QTY_MSG + "#" + LAST_ROOM + "#" +
+//                              LAST_MSG + "#" + ROOM_CODE +"#"+QTY_CUSTOMER + "#" +
+//                              CH_RoomDao.CUSTOMER_CODE
+//                )
+                .toString();
     }
 }

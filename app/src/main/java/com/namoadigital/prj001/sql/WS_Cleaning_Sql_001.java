@@ -23,8 +23,8 @@ public class WS_Cleaning_Sql_001 implements Specification {
                 .append("select * FROM ge_custom_form_datas where custom_form_status = 'SENT' and Date(date_end) <")
                 .append("Date('")
                 .append(s_date)
-                .append("')")
-                .append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_data#custom_form_status#product_code")
+                .append("');")
+                //.append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_data#custom_form_status#product_code")
                 .toString();
     }
 }

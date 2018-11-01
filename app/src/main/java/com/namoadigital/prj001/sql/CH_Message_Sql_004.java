@@ -22,7 +22,7 @@ public class CH_Message_Sql_004 implements Specification {
                         " FROM\n" +
                         "   ch_messages m\n")
                 .append(";")
-                .append(CH_MessageDao.TMP+"#"+CH_MessageDao.MSG_TOKEN)
+                //.append(CH_MessageDao.TMP+"#"+CH_MessageDao.MSG_TOKEN)
                 .toString();
     }
 }

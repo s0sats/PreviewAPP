@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -45,7 +44,7 @@ public class GE_Custom_Form_Local_Sql_013 implements Specification {
                         "'\n" +
                         " ")
                 .append(";")
-                .append("type#total")
+                //.append("type#total")
                 .toString();
     }
 

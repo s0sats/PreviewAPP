@@ -47,7 +47,7 @@ public class Sql_Act010_001 implements Specification {
                 .append(s_translate_code)
                 .append("' ")
                 .append(";")
-                .append("module_code#resource_code#resource_name#txt_code#txt_value#translate_code")
+                //.append("module_code#resource_code#resource_name#txt_code#txt_value#translate_code")
                 .toString();
     }
 }

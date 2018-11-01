@@ -38,7 +38,7 @@ public class Sql_Act014_002 implements Specification {
                         "   l."+SM_SODao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+SM_SODao.STATUS+"" +
                         "    = '"+ Constant.SYS_STATUS_DONE +"' ;")
-                .append(SENT_QTY+"#"+TYPE)
+                //.append(SENT_QTY+"#"+TYPE)
                 .toString();
     }
 

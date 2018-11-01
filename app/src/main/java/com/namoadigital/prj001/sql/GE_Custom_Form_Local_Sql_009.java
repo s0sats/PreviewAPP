@@ -38,7 +38,7 @@ public class GE_Custom_Form_Local_Sql_009 implements Specification {
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
                         "    in('"+ Constant.SYS_STATUS_FINALIZED+"');")
-                .append(FINALIZED_QTY)
+                //.append(FINALIZED_QTY)
                 .toString();
     }
 }

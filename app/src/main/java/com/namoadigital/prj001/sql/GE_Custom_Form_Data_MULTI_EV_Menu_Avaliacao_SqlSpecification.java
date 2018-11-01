@@ -65,8 +65,8 @@ public class GE_Custom_Form_Data_MULTI_EV_Menu_Avaliacao_SqlSpecification implem
                 .append("\tAND D.CUSTOMER_CODE = '").append(s_customer_code).append("'\n")
                 .append("\tAND D.CUSTOMER_CODE = PRO.CUSTOMER_CODE\n")
                 .append("\tAND D.PRODUCT_CODE = PRO.PRODUCT_CODE\n")
-                .append(";cf_data#cf_date_start#cf_status#type_desc#form_desc#serial#produto")
-                //
+                .append(";")
+                //.append("cf_data#cf_date_start#cf_status#type_desc#form_desc#serial#produto")
                 .toString();
     }
 }

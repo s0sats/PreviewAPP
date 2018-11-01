@@ -30,7 +30,7 @@ public class MD_Product_HMAux_ProductCode_List_Sql implements Specification {
                 .append(" order by ")
                 .append(" product_code ")
                 .append(";")
-                .append("product_code")
+                //.append("product_code")
                 .toString();
     }
 }

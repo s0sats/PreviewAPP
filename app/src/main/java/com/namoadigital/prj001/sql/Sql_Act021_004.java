@@ -31,7 +31,7 @@ public class Sql_Act021_004 implements Specification {
                                 "  s.customer_code = '" + customer_code + "'\n" +
                                 "  and (s.sync_required = 1\n" +
                                 "  );")
-                        .append(UPDATE_SYNC_REQUIRED_QTY)
+                        //.append(UPDATE_SYNC_REQUIRED_QTY)
                         .toString();
     }
 }

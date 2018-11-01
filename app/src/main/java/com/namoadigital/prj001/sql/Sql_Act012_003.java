@@ -40,7 +40,7 @@ public class Sql_Act012_003 implements Specification {
                         "    a."+GE_Custom_Form_ApDao.CUSTOMER_CODE+" =  '" + s_customer_code + "'\n" +
                         "    AND a."+GE_Custom_Form_ApDao.AP_STATUS+" not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"')" +
                         ";")
-                .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
+                //.append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
     }
 }

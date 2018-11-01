@@ -48,7 +48,7 @@ public class MD_Product_Sql_SS_001 implements Specification {
                         "     p.product_id,\n" +
                         "     p.product_desc \n")
                 .append(";")
-                .append(SearchableSpinner.ID + "#product_code#product_id#product_desc#"+SearchableSpinner.DESCRIPTION)
+                //.append(SearchableSpinner.ID + "#product_code#product_id#product_desc#"+SearchableSpinner.DESCRIPTION)
                 .toString();
     }
 }

@@ -67,10 +67,10 @@ public class Sql_Act017_002 implements Specification {
                         "      a.custom_form_data, \n" +
                         "      a.ap_code \n" +
                         ";")
-                .append( Act017_Main.ACT017_MODULE_KEY+"#")
-                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
-                .append( Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#")
-                .append(HmAuxFields)
+//                .append( Act017_Main.ACT017_MODULE_KEY+"#")
+//                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
+//                .append( Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#")
+//                .append(HmAuxFields)
                 .toString()
                 .replace("'null'","null");
 

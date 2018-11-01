@@ -52,7 +52,7 @@ public class Sql_Act009_001 implements Specification {
                 .append("' || '|' || custom_form_type from ge_custom_forms where custom_form_status = 'ACTIVE'")
                 //
                 .append(");")
-                .append("resource_code#txt_code#txt_value")
+                //.append("resource_code#txt_code#txt_value")
                 .toString();
     }
 }

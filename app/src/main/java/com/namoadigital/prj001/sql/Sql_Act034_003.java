@@ -41,7 +41,7 @@ public class Sql_Act034_003 implements Specification {
                         "   and m.user_code <> '"+user_code+"'\n" +
                         "   and m.read = 0 \n")
                 .append(";")
-                .append(OTHER_CUSTOMER_QTY_MSG)
+                //.append(OTHER_CUSTOMER_QTY_MSG)
                 .toString();
 
     }

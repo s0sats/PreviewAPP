@@ -61,7 +61,7 @@ public class CH_Message_Sql_018 implements Specification {
                         " ORDER BY\n" +
                         "   m.msg_pk ")
                 .append(";")
-                .append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.MSG_CODE)
+                //.append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.MSG_CODE)
                 .toString();
     }
 }

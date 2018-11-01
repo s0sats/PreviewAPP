@@ -32,7 +32,7 @@ public class Sql_Act034_002 implements Specification {
                         " ORDER BY\n" +
                         "  e.customer_code   \n")
                 .append(";")
-                .append(EV_User_CustomerDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.CUSTOMER_NAME)
+                //.append(EV_User_CustomerDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.CUSTOMER_NAME)
                 .toString();
 
     }

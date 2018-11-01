@@ -47,7 +47,7 @@ order by case when msg_pk is null then 1 else 0 end, msg_pk, msg_prefix , tmp li
                         "    room_code =  '" + room_code + "'\n" +
                         "    order by case when msg_pk is null then 1 else 0 end, msg_pk, tmp limit " + offSet + " offset (select count(*) from ch_messages where (room_code = '" + room_code + "' ))-" + offSet)
                 .append(";")
-                .append(HmAuxFields+"#msg_date_zone")
+                //.append(HmAuxFields+"#msg_date_zone")
                 .toString();
     }
 }

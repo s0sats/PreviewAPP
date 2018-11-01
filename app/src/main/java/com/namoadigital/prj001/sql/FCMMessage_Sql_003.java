@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 01/03/2017.
@@ -26,7 +25,8 @@ public class FCMMessage_Sql_003 implements Specification {
                         "   fcmmessages f\n" +
                         " WHERE\n" +
                         "   f.status = '0' \n")
-                .append(";" + BADGE_MESSAGES_QTY)
+                .append(";")
+                //.append(BADGE_MESSAGES_QTY)
                 .toString();
     }
 }

@@ -28,7 +28,8 @@ public class Sql_Act005_001 implements Specification {
                         " WHERE\n" +
                         "   l.customer_code = '" + customer_code + "' \n" +
                         "   and l.custom_form_status = '" + Constant.SYS_STATUS_IN_PROCESSING + "'\n")
-                .append(";" + BADGE_IN_PROCESSING_QTY)
+                .append(";")
+                //.append(BADGE_IN_PROCESSING_QTY)
                 .toString();
         /**
          * QUERY ABAIXO É EXEMPLO DE COMO FICARA

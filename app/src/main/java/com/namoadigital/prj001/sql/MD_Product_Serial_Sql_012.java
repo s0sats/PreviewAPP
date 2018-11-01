@@ -34,7 +34,8 @@ public class MD_Product_Serial_Sql_012 implements Specification {
                         "   s.customer_code = '"+customer_code+"'\n" +
                         "   and s.product_code = '"+product_code+"'\n" +
                         "   and s.serial_code = '"+serial_code+"'\n" +
-                        ";"+EXISTS)
+                        ";")
+                //.append(EXISTS)
                 .toString();
     }
 }

@@ -28,25 +28,35 @@ public class CursorToHMAuxMapper implements Mapper<Cursor, HMAux> {
     public HMAux map(Cursor cursor) {
         HMAux hmAux = new HMAux();
 
-        String cFF[] = fields.split("#");
-
-        if (cFF != null) {
-            for (int i = 0; i < cFF.length; i++) {
-                String sAux = cFF[i];
-                //
-                hmAux.put(
-                        sAux,
-                        cursor.isNull(cursor.getColumnIndex(cFF[i])) ? "" : cursor.getString(cursor.getColumnIndex(cFF[i]))
-                );
-            }
-
-            return hmAux;
-
-        } else {
-
-            return null;
+        for (int i = 0; i < cursor.getColumnCount(); i++) {
+            hmAux.put(
+                    cursor.getColumnName(i),
+                    cursor.isNull(cursor.getColumnIndex(cursor.getColumnName(i))) ? "" : cursor.getString(i)
+            );
         }
 
+        if (hmAux.size() > 0) {
+            return hmAux;
+        } else {
+            return null;
+        }
+    }
 
+    public static HMAux mapN(Cursor cursor) {
+
+        HMAux hmAux = new HMAux();
+
+        for (int i = 0; i < cursor.getColumnCount(); i++) {
+            hmAux.put(
+                    cursor.getColumnName(i),
+                    cursor.isNull(cursor.getColumnIndex(cursor.getColumnName(i))) ? "" : cursor.getString(i)
+            );
+        }
+
+        if (hmAux.size() > 0) {
+            return hmAux;
+        } else {
+            return null;
+        }
     }
 }

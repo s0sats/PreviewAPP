@@ -2,103 +2,64 @@ package com.namoadigital.prj001.database;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+
 public class DatabaseManager {
 
-    private int mOpenCounterChat;
-    private int mOpenCounterSingle;
-    private int mOpenCounterMulti;
-
     private static DatabaseManager instance;
-    private static DatabaseHelperChat mDatabaseHelperChat;
-    private SQLiteDatabase mDatabaseChat;
 
-    private static DatabaseHelperSingle mDatabaseHelperSingle;
-    private SQLiteDatabase mDatabaseSingle;
-
-    private static DatabaseHelperMulti mDatabaseHelperMulti;
-    private SQLiteDatabase mDatabaseMulti;
+    private static ArrayList<DatabaseBaseHelper> mDBHelpers;
 
     public static synchronized void initializeInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
+            //
+            mDBHelpers = new ArrayList<>();
         }
     }
 
     public static synchronized DatabaseManager getInstance() {
         if (instance == null) {
             initializeInstance();
-
-//            throw new IllegalStateException(DatabaseManager.class.getSimpleName() +
-//                    " is not initialized, call initializeInstance(..) method first.");
         }
 
         return instance;
     }
 
-    // Chat
-    public synchronized SQLiteDatabase openDatabaseChat() {
-        mOpenCounterChat++;
-        if (mOpenCounterChat == 1) {
-            // Opening new database
-            mDatabaseChat = mDatabaseHelperChat.getWritableDatabase();
-        }
-        return mDatabaseChat;
-    }
+    public static void addDatabaseHelper(DatabaseBaseHelper mDatabaseBaseHelper) {
+        boolean mHelperExists = false;
 
-    public synchronized void closeDatabaseChat() {
-        mOpenCounterChat--;
-        if (mOpenCounterChat == 0) {
-            // Closing database
-            mDatabaseChat.close();
+        for (int i = 0; i < mDBHelpers.size(); i++) {
+            if (mDBHelpers.get(i).compareDBHelperNames(mDatabaseBaseHelper.getDBHelperName())) {
+                mHelperExists = true;
+                //
+                break;
+            }
+        }
+
+        if (!mHelperExists) {
+            mDBHelpers.add(mDatabaseBaseHelper);
         }
     }
 
-    // Single
-    public synchronized SQLiteDatabase openDatabaseSingle() {
-        mOpenCounterSingle++;
-        if (mOpenCounterSingle == 1) {
-            // Opening new database
-            mDatabaseSingle = mDatabaseHelperSingle.getWritableDatabase();
+    public synchronized SQLiteDatabase openDatabase(String fullName, boolean mIgnoreCounter) {
+        for (int i = 0; i < mDBHelpers.size(); i++) {
+            if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
+                mDBHelpers.get(i).setmIgnoreCounter(mIgnoreCounter);
+
+                return mDBHelpers.get(i).openDatabase();
+            }
         }
-        return mDatabaseSingle;
+
+        return null;
     }
 
-    public synchronized void closeDatabaseSingle() {
-        mOpenCounterSingle--;
-        if (mOpenCounterSingle == 0) {
-            // Closing database
-            mDatabaseSingle.close();
+    public synchronized void closeDatabase(String fullName, boolean mIgnoreCounter) {
+        for (int i = 0; i < mDBHelpers.size(); i++) {
+            if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
+                mDBHelpers.get(i).setmIgnoreCounter(mIgnoreCounter);
+                mDBHelpers.get(i).closeDatabase();
+            }
         }
-    }
-
-    // Single
-    public synchronized SQLiteDatabase openDatabaseMulti() {
-        mOpenCounterMulti++;
-        if (mOpenCounterMulti == 1) {
-            // Opening new database
-            mDatabaseMulti = mDatabaseHelperMulti.getWritableDatabase();
-        }
-        return mDatabaseMulti;
-    }
-
-    public synchronized void closeDatabaseMulti() {
-        mOpenCounterMulti--;
-        if (mOpenCounterMulti == 0) {
-            // Closing database
-            mDatabaseMulti.close();
-        }
-    }
-
-    // Initializers
-    public static void setmDatabaseHelperChat(DatabaseHelperChat mDatabaseHelperChat) {
-        DatabaseManager.mDatabaseHelperChat = mDatabaseHelperChat;
-    }
-
-    public static void setmDatabaseHelperSingle(DatabaseHelperSingle mDatabaseHelperSingle) {
-        DatabaseManager.mDatabaseHelperSingle = mDatabaseHelperSingle;
-    }
-
-    public static void setmDatabaseHelperMulti(DatabaseHelperMulti mDatabaseHelperMulti) {
-        DatabaseManager.mDatabaseHelperMulti = mDatabaseHelperMulti;
     }
 }

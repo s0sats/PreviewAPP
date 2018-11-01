@@ -34,7 +34,7 @@ public class SO_Pack_Express_Local_Sql_012 implements Specification {
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                         "    AND s.status in ('" + Constant.SYS_STATUS_SENT + "');")
-                .append(fields + "#" + Constant.PARAM_KEY_TYPE + "#" + SM_SODao.CLIENT_TYPE + "#" + SM_SODao.DEADLINE)
+                //.append(fields + "#" + Constant.PARAM_KEY_TYPE + "#" + SM_SODao.CLIENT_TYPE + "#" + SM_SODao.DEADLINE)
                 .toString();
     }
 }

@@ -33,15 +33,16 @@ public class MD_Class_Sql_SS implements Specification {
                         " WHERE " +
                                 MD_ClassDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
                        " ORDER BY " +
-                        "      class_id;")
-                .append(
-                        SearchableSpinner.ID + "#" +
-                        MD_ClassDao.CLASS_ID + "#" +
-                        MD_ClassDao.CLASS_TYPE + "#" +
-                        MD_ClassDao.CLASS_COLOR + "#" +
-                        MD_ClassDao.CLASS_AVAILABLE + "#" +
-                        SearchableSpinner.DESCRIPTION
-                )
+                        "      class_id")
+                .append(";")
+//                .append(
+//                        SearchableSpinner.ID + "#" +
+//                        MD_ClassDao.CLASS_ID + "#" +
+//                        MD_ClassDao.CLASS_TYPE + "#" +
+//                        MD_ClassDao.CLASS_COLOR + "#" +
+//                        MD_ClassDao.CLASS_AVAILABLE + "#" +
+//                        SearchableSpinner.DESCRIPTION
+//                )
                 .toString();
     }
 }

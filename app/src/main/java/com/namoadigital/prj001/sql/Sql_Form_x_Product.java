@@ -43,7 +43,7 @@ public class Sql_Form_x_Product implements Specification {
                             "                             and p.product_code = '"+product_code+"')\n" +
                             "   ) \n")
                 .append(";")
-                .append(FORM_PRODUCT_PROFILE)
+                //.append(FORM_PRODUCT_PROFILE)
                 .toString();
     }
 }

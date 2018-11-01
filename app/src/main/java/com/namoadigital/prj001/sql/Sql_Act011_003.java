@@ -53,7 +53,7 @@ public class Sql_Act011_003 implements Specification {
                         "      AND l.custom_form_data = '"+s_form_data+"'\n" +
                         "      AND l.custom_form_data_serv is not null \n" +
                         ";")
-                .append("custom_form_data_serv#schedule_date_start_format#schedule_date_end_format")
+                //.append("custom_form_data_serv#schedule_date_start_format#schedule_date_end_format")
                 .toString();
     }
 }

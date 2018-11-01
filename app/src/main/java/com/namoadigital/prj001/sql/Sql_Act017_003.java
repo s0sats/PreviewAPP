@@ -1,13 +1,9 @@
 package com.namoadigital.prj001.sql;
 
-import android.content.Context;
-
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by DANIEL.LUCHE on 04/07/2018.
@@ -67,7 +63,7 @@ public class Sql_Act017_003 implements Specification {
                         "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
 //                        "       AND ( '"+filter_only_delay+"' is null or ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
                         " ) T\n;")
-                .append(TOTAL_QTY)
+//                .append(TOTAL_QTY)
                 .toString()
                 .replace("'null'","null");
 

@@ -39,7 +39,8 @@ public class MD_Product_Group_Product_Sql_001 implements Specification {
                         MD_Product_Group_ProductDao.GROUP_CODE + " , " +
                         MD_Product_Group_ProductDao.PRODUCT_CODE
                 )
-                .append(";customer_code#group_code#product_code")
+                .append(";")
+                //.append("customer_code#group_code#product_code")
                 .toString();
     }
 }

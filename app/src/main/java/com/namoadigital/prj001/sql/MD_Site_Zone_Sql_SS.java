@@ -34,7 +34,7 @@ public class MD_Site_Zone_Sql_SS implements Specification {
                         " and " + MD_Site_ZoneDao.SITE_CODE +" = '"+ site_code +"' "+
                        " ORDER BY " +
                         "      process_seq,zone_id,zone_desc;")
-                .append(SearchableSpinner.ID + "#zone_id#"+SearchableSpinner.DESCRIPTION )
+                //.append(SearchableSpinner.ID + "#zone_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }
 }
