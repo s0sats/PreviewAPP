@@ -153,16 +153,12 @@ public class MD_PartnerDao extends BaseDao implements Dao<MD_Partner> {
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -206,16 +202,12 @@ public class MD_PartnerDao extends BaseDao implements Dao<MD_Partner> {
         List<HMAux> md_partners = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                md_partners.add(toHMAuxMapper.map(cursor));
+                md_partners.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

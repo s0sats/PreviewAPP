@@ -31,7 +31,7 @@ public class MD_Product_Serial_Sql_015 implements Specification {
                         "  s.customer_code = '" + customer_code + "'\n" +
                         "  and s.update_required = 1  ")
                 .append(";")
-                .append(IN_TOKEN_UR_QTY)
+                //.append(IN_TOKEN_UR_QTY)
                 .toString();
     }
 }

@@ -29,7 +29,7 @@ public class GE_Custom_Form_Ap_Sql_002 implements Specification {
                         "   a.customer_code = '"+customer_code+"'\n" +
                         "   and a.sync_required = 1\n")
                 .append(";")
-                .append(BADGE_SYNC_REQUIRED_QTY)
+                //.append(BADGE_SYNC_REQUIRED_QTY)
                 .toString();
     }
 }

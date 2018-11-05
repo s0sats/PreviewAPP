@@ -201,12 +201,10 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
-        String s_query_div[] = sQuery.split(";");
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
         try {
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
             cursor.close();
         } catch (Exception e) {
@@ -242,12 +240,11 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public List<HMAux> query_HM(String sQuery) {
         List<HMAux> custom_form_aps = new ArrayList<>();
         openDB();
-        String s_query_div[] = sQuery.split(";");
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
         try {
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
             while (cursor.moveToNext()) {
-                custom_form_aps.add(toHMAuxMapper.map(cursor));
+                custom_form_aps.add(CursorToHMAuxMapper.mapN(cursor));
             }
             cursor.close();
         } catch (Exception e) {

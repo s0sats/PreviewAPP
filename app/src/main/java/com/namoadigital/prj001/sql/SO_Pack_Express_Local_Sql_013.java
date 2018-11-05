@@ -48,7 +48,8 @@ public class SO_Pack_Express_Local_Sql_013 implements Specification {
                         "    AND S.express_code =    '" + express_code + "'\n" +
                         "    AND S.serial_id =    '" + serial_id + "'\n" +
                         "    AND S.status = 'NEW'\n")
-                .append(";"+ALREADY_NEW_EXPRESS_ORDER)
+                .append(";")
+                //.append(ALREADY_NEW_EXPRESS_ORDER)
                 .toString();
     }
 }
