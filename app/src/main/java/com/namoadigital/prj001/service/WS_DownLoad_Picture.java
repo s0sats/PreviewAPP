@@ -3,7 +3,6 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -378,9 +377,9 @@ public class WS_DownLoad_Picture extends IntentService {
             if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
                 //
                 for (HMAux hmAux : so_client_approval_image) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".png")) {
+                    if (!ToolBox_Inf.verifyDownloadFileInfV2(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".png")) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp");
+                        ToolBox_Inf.deleteDownloadFileInfV2(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp");
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_URL),
@@ -401,9 +400,9 @@ public class WS_DownLoad_Picture extends IntentService {
                 }
                 //
                 for (HMAux hmAux : so_file_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+                    if (!ToolBox_Inf.verifyDownloadFileInfV2(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        ToolBox_Inf.deleteDownloadFileInfV2(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_FileDao.FILE_URL),

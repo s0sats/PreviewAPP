@@ -47,6 +47,8 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
 
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
+            sbWhere.append(" AND ");
+            sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
 
             long rows = db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
 
@@ -82,6 +84,8 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
 
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
+                sbWhere.append(" AND ");
+                sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
 
                 long rows = db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
 
