@@ -3,6 +3,7 @@ package com.namoadigital.prj001.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -67,7 +68,7 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
                 db = getWritableDatabase();
             }
         }
-
+        Log.d("DB_NEW", mDBName.replace("/storage/emulated/0/namoa/","") +"  counter: " + String.valueOf(mOpenCounter));
         return db;
     }
 
@@ -79,6 +80,7 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
                 db = null;
             }
         }
+        Log.d("DB_NEW",mDBName.replace("/storage/emulated/0/namoa/","") +"  counter: " +String.valueOf( mOpenCounter));
     }
 
     public DatabaseBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
