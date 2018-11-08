@@ -21,7 +21,6 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
@@ -113,8 +112,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
                     new EV_User_Customer_Sql_007(
                             ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                    ).toSqlQuery(),
-                    new ErrorCfg()
+                    ).toSqlQuery()
             );
             //
             if (chatSessionCustomers != null && chatSessionCustomers.size() > 0) {

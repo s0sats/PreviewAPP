@@ -15,7 +15,7 @@ import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
@@ -104,7 +104,7 @@ public class SyncGeralDao extends BaseDao {
     private String mDB_NAME;
     private int mDB_VERSION;
 
-    private ErrorCfg mErrorCfg;
+    private DaoError mDaoError;
 
     public SyncGeralDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -128,7 +128,7 @@ public class SyncGeralDao extends BaseDao {
         EV_ProfileDao evProfileDao = new EV_ProfileDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
         //
-        mErrorCfg = new ErrorCfg();
+        mDaoError = new DaoError();
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -148,7 +148,7 @@ public class SyncGeralDao extends BaseDao {
                         }.getType()
                 );
 
-                userDao.addUpdate(users, false, new ErrorCfg());
+                userDao.addUpdate(users, false, new DaoError());
             }
 
             //Processa traduções

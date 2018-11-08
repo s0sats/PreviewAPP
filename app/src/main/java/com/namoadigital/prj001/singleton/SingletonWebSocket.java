@@ -19,7 +19,7 @@ import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Pending_Message;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Read;
@@ -264,8 +264,7 @@ public class SingletonWebSocket {
                 ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
                         new EV_User_Customer_Sql_007(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
                 //
                 if (chatSessionCustomers != null && chatSessionCustomers.size() > 0) {

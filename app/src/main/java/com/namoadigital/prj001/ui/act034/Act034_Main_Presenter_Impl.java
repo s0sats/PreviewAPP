@@ -5,7 +5,6 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.sql.Sql_Act034_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -39,8 +38,7 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
                 customerDao.query_HM(
                         new Sql_Act034_002(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
     }
 

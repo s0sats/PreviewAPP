@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteException;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -40,7 +40,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
 
 
     @Override
-    public void addUpdate(Ev_User_Customer_Parameter customer_parameter, ErrorCfg mError) {
+    public void addUpdate(Ev_User_Customer_Parameter customer_parameter, DaoError mError) {
         openDB();
 
         try {
@@ -67,7 +67,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public void addUpdate(List<Ev_User_Customer_Parameter> customer_parameters, boolean status, ErrorCfg mError) {
+    public void addUpdate(List<Ev_User_Customer_Parameter> customer_parameters, boolean status, DaoError mError) {
 
         openDB();
 
@@ -113,7 +113,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public void addUpdate(String sQuery, ErrorCfg mError) {
+    public void addUpdate(String sQuery, DaoError mError) {
         openDB();
 
         try {
@@ -135,7 +135,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public void remove(String sQuery, ErrorCfg mError) {
+    public void remove(String sQuery, DaoError mError) {
         openDB();
 
         try {
@@ -157,7 +157,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public Ev_User_Customer_Parameter getByString(String sQuery, ErrorCfg mError) {
+    public Ev_User_Customer_Parameter getByString(String sQuery) {
         Ev_User_Customer_Parameter customer_parameter = null;
 
         openDB();
@@ -169,12 +169,8 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
             while (cursor.moveToNext()) {
                 customer_parameter = toEv_User_Customer_ParameterMapper.map(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -185,7 +181,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public HMAux getByStringHM(String sQuery, ErrorCfg mError) {
+    public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
 
@@ -196,12 +192,8 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -212,10 +204,9 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public List<Ev_User_Customer_Parameter> query(String sQuery, ErrorCfg mError) {
+    public List<Ev_User_Customer_Parameter> query(String sQuery) {
         List<Ev_User_Customer_Parameter> customer_parameters = new ArrayList<>();
         openDB();
-
         try {
 
             Cursor cursor = db.rawQuery(sQuery, null);
@@ -224,12 +215,8 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
                 Ev_User_Customer_Parameter uAux = toEv_User_Customer_ParameterMapper.map(cursor);
                 customer_parameters.add(uAux);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -240,7 +227,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public List<HMAux> query_HM(String sQuery, ErrorCfg mError) {
+    public List<HMAux> query_HM(String sQuery) {
 
         List<HMAux> customer_parameters = new ArrayList<>();
 

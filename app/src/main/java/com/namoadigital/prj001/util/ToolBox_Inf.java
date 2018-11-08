@@ -75,7 +75,6 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
@@ -1925,8 +1924,7 @@ public class ToolBox_Inf {
 
         ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(
                 new EV_User_Customer_Sql_006()
-                        .toSqlQuery(),
-                new ErrorCfg()
+                        .toSqlQuery()
         );
 
         for (HMAux hmAux : customers) {
@@ -2392,8 +2390,7 @@ public class ToolBox_Inf {
                     new Ev_User_Customer_Parameter_Sql_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                             param
-                    ).toSqlQuery(),
-                    new ErrorCfg()
+                    ).toSqlQuery()
             );
 
             if (parameter != null) {
@@ -2424,8 +2421,7 @@ public class ToolBox_Inf {
                         new Ev_User_Customer_Parameter_Sql_002(
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                 param[i]
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
 
                 if (parameter != null) {
@@ -4019,8 +4015,7 @@ public class ToolBox_Inf {
         EV_User ev_user = userDao.getByString(
                 new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(context)
-                ).toSqlQuery(),
-                new ErrorCfg()
+                ).toSqlQuery()
         );
         //
         return ev_user != null && ev_user.getAdmin() == 1;
@@ -4102,8 +4097,7 @@ public class ToolBox_Inf {
                 new EV_User_Customer_Sql_008(
                         user_code,
                         customer_code
-                ).toSqlQuery(),
-                new ErrorCfg()
+                ).toSqlQuery()
         );
         //
         if (session_info != null && session_info.size() > 0) {
@@ -4120,8 +4114,7 @@ public class ToolBox_Inf {
                 query_HM(
                         new EV_User_Customer_Sql_007(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
         //
         return customer_list;
@@ -4134,8 +4127,7 @@ public class ToolBox_Inf {
                 query_HM(
                         new EV_User_Customer_Sql_010(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
         //
         return customer_list;

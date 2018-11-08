@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1083,16 +1083,28 @@ public class ToolBox_Con {
         }
     }
 
-    public static ErrorCfg getSQLiteErrorCodeDescription(String errorMessage) {
+    public static DaoError getSQLiteErrorCodeDescription(String errorMessage) {
         final String codeStr = "(code ";
-        ErrorCfg mErrorDao = new ErrorCfg();
+        DaoError mErrorDao = new DaoError();
         //
-        mErrorDao.setHasError(true);
+        mErrorDao.setError(true);
         mErrorDao.setRawMessage(errorMessage);
         //
         if(errorMessage.contains(codeStr)){
+            int maxErroCodeSize = 4;//Tamanho maximo do "result_code" do sqlite
             int codeIdxStart = errorMessage.indexOf(codeStr) + codeStr.length();
-            int codeIdxEnd = codeIdxStart + 4;
+            int codeIdxEnd = 0;
+            //Faz loop para identificar se a substring é um "numero"
+            //pois existem "result_code" de 1 a 4 "digitos"
+            for( ; maxErroCodeSize  > 0; maxErroCodeSize --){
+                codeIdxEnd = codeIdxStart + maxErroCodeSize;
+                try{
+                    String s = errorMessage.substring(codeIdxStart, codeIdxEnd);
+                    int i = Integer.parseInt(s);
+                    break;
+                }catch (Exception e){
+                }
+            }
             //
             if(codeIdxStart < errorMessage.length() && codeIdxEnd <= errorMessage.length()) {
                 String sqliteErroCode = errorMessage.substring(codeIdxStart, codeIdxEnd);
@@ -1100,35 +1112,8 @@ public class ToolBox_Con {
                 mErrorDao.setCode(sqliteErroCode);
                 mErrorDao.setDescription(sqliteErrorDescMapper(sqliteErroCode));
             }
-
         }
         //
-        /*String[] rows = errorMessage.toString().trim().split("\n");
-
-        if (rows.length > 0) {
-            String[] parts = rows[0].split(":");
-
-            if (parts.length > 1) {
-
-                String[] components = parts[1].trim()
-                        .replace("(code ", "")
-                        .replace(")", "").split(" ");
-
-                if (components.length > 1) {
-                    mErrorDao.setDescription(parts[1] + " - " + components[0]);
-                    mErrorDao.setCode(components[1]);
-
-                    return mErrorDao;
-
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }*/
         return mErrorDao;
     }
 

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.TLogout_Env;
 import com.namoadigital.prj001.model.TLogout_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -101,7 +101,7 @@ public class WS_Logout extends IntentService {
                             user_code,
                             customer_list
                         ).toSqlQuery(),
-                        new ErrorCfg()
+                        new DaoError()
                 );
 
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "", "", "0");

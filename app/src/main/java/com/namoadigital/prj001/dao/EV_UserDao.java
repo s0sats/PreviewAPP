@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteException;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -51,7 +51,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
 
     @Override
-    public void addUpdate(EV_User user, ErrorCfg mError) {
+    public void addUpdate(EV_User user, DaoError mError) {
         openDB();
 
         try {
@@ -76,7 +76,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public void addUpdate(List<EV_User> users, boolean status, ErrorCfg mError) {
+    public void addUpdate(List<EV_User> users, boolean status, DaoError mError) {
         openDB();
 
         try {
@@ -122,7 +122,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public void addUpdate(String sQuery, ErrorCfg mError) {
+    public void addUpdate(String sQuery, DaoError mError) {
         openDB();
 
         try {
@@ -144,7 +144,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public void remove(String sQuery, ErrorCfg mError) {
+    public void remove(String sQuery, DaoError mError) {
         openDB();
 
         try {
@@ -167,7 +167,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
 
     @Override
-    public EV_User getByString(String s_query, ErrorCfg mError) {
+    public EV_User getByString(String s_query) {
         EV_User user = null;
         openDB();
 
@@ -178,12 +178,8 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
             while (cursor.moveToNext()) {
                 user = toUserMapper.map(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -194,7 +190,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public HMAux getByStringHM(String sQuery, ErrorCfg mError) {
+    public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
 
@@ -205,12 +201,8 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -222,7 +214,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
 
     @Override
-    public List<EV_User> query(String sQuery, ErrorCfg mError) {
+    public List<EV_User> query(String sQuery) {
         List<EV_User> users = new ArrayList<>();
         openDB();
 
@@ -235,11 +227,8 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
                 users.add(uAux);
             }
 
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -250,7 +239,7 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public List<HMAux> query_HM(String sQuery, ErrorCfg mError) {
+    public List<HMAux> query_HM(String sQuery) {
         List<HMAux> users = new ArrayList<>();
         openDB();
 
@@ -261,12 +250,8 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
             while (cursor.moveToNext()) {
                 users.add(CursorToHMAuxMapper.mapN(cursor));
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }

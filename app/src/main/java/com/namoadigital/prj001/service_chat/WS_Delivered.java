@@ -15,7 +15,6 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Post_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
 import com.namoadigital.prj001.sql.CH_Message_Sql_021;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
@@ -69,8 +68,7 @@ public class WS_Delivered extends IntentService {
         ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
                 new EV_User_Customer_Sql_007(
                         ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                ).toSqlQuery(),
-                new ErrorCfg()
+                ).toSqlQuery()
         );
         //
         if (chatSessionCustomers != null && chatSessionCustomers.size() > 0) {

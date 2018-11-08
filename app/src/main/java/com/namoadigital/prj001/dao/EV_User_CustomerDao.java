@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteException;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User_Customer;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -57,7 +57,7 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public void addUpdate(EV_User_Customer user_customer, ErrorCfg mError) {
+    public void addUpdate(EV_User_Customer user_customer, DaoError mError) {
 
         openDB();
 
@@ -66,11 +66,18 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
             sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user_customer.getUser_code())).append("'");
             sbWhere.append(" and ");
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(user_customer.getCustomer_code())).append("'");
-
-            long rows = db.update(TABLE, toContentValuesMapper.map(user_customer), sbWhere.toString(), null);
-
-            if (rows == 0) {
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user_customer));
+            //
+            mError.setAction(DaoError.UPDATE);
+            mError.setActionReturn(
+                    db.update(TABLE, toContentValuesMapper.map(user_customer), sbWhere.toString(), null)
+            );
+            //
+            if (mError.getActionReturn() == 0) {
+                mError.setAction(DaoError.INSERT);
+                //
+                mError.setActionReturn(
+                        db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user_customer))
+                );
             }
 
             mError.clearError();
@@ -84,7 +91,7 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public void addUpdate(List<EV_User_Customer> userCustomers, boolean status, ErrorCfg mError) {
+    public void addUpdate(List<EV_User_Customer> userCustomers, boolean status, DaoError mError) {
         openDB();
 
         try {
@@ -92,6 +99,8 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
                 if (!ismIgnoreCounter()) {
                     db.beginTransaction();
                 }
+                mError.setAction(DaoError.DELETE);
+                //
                 db.delete(TABLE, null, null);
             }
 
@@ -104,10 +113,14 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
                 sbWhere.append(USER_CODE).append(" = ").append(String.valueOf(userCustomer.getUser_code()));
                 sbWhere.append(" and ");
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(userCustomer.getCustomer_code())).append("'");
-
-                long rows = db.update(TABLE, toContentValuesMapper.map(userCustomer), sbWhere.toString(), null);
-
-                if (rows == 0) {
+                //
+                mError.setAction(DaoError.UPDATE);
+                mError.setActionReturn(
+                        db.update(TABLE, toContentValuesMapper.map(userCustomer), sbWhere.toString(), null)
+                );
+                //
+                if (mError.getActionReturn() == 0) {
+                    mError.setAction(DaoError.INSERT);
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(userCustomer));
                 }
 
@@ -130,12 +143,14 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public void addUpdate(String sQuery, ErrorCfg mError) {
+    public void addUpdate(String sQuery, DaoError mError) {
         openDB();
 
         try {
-
+            mError.setAction(DaoError.INSERT_OR_UPDATE);
+            //
             db.execSQL(sQuery);
+            //
             mError.clearError();
 
             // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
@@ -152,12 +167,14 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public void remove(String sQuery, ErrorCfg mError) {
+    public void remove(String sQuery, DaoError mError) {
         openDB();
 
         try {
-
+            mError.setAction(DaoError.DELETE);
+            //
             db.execSQL(sQuery);
+            //
             mError.clearError();
 
             // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
@@ -174,23 +191,18 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public EV_User_Customer getByString(String sQuery, ErrorCfg mError) {
+    public EV_User_Customer getByString(String sQuery) {
         EV_User_Customer userCustomer = null;
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 userCustomer = toEV_User_CustomerMapper.map(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -201,7 +213,7 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public HMAux getByStringHM(String sQuery, ErrorCfg mError) {
+    public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
 
@@ -212,12 +224,8 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -229,24 +237,19 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
 
 
     @Override
-    public List<EV_User_Customer> query(String sQuery, ErrorCfg mError) {
+    public List<EV_User_Customer> query(String sQuery) {
         List<EV_User_Customer> customers = new ArrayList<>();
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 EV_User_Customer uAux = toEV_User_CustomerMapper.map(cursor);
                 customers.add(uAux);
             }
-
-            mError.clearError();
             cursor.close();
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -257,7 +260,7 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
     }
 
     @Override
-    public List<HMAux> query_HM(String sQuery, ErrorCfg mError) {
+    public List<HMAux> query_HM(String sQuery) {
         List<HMAux> userCustomers = new ArrayList<>();
         openDB();
 
@@ -272,7 +275,6 @@ public class EV_User_CustomerDao extends BaseDao implements DaoN<EV_User_Custome
             cursor.close();
         } catch (SQLiteException e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            String st = e.toString();
         } finally {
         }
 

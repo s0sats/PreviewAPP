@@ -8,9 +8,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Session;
@@ -59,8 +59,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                     ev_user_customerDao.query(
                             new EV_User_Customer_Sql_003(
                                     ToolBox_Con.getPreference_User_Code(context)
-                            ).toSqlQuery(),
-                            new ErrorCfg()
+                            ).toSqlQuery()
                     );
 
             //Verifica se o db do customer se já existe
@@ -91,15 +90,14 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 }
             }
 
-            ev_user_customerDao.addUpdate(customerList, true, new ErrorCfg());
+            ev_user_customerDao.addUpdate(customerList, true, new DaoError());
         }
 
         mView.loadCustomers(
                 ev_user_customerDao.query_HM(
                         new EV_User_Customer_Sql_001(
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 )
         );
     }
@@ -131,8 +129,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 new EV_User_Customer_Sql_002(
                         ToolBox_Con.getPreference_User_Code(context),
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery(),
-                new ErrorCfg()
+                ).toSqlQuery()
         );
 
         ArrayList<String> data_package = new ArrayList<>();
@@ -197,7 +194,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 new EV_User_Customer_Sql_009(
                         ToolBox_Con.getPreference_User_Code(context)
                 ).toSqlQuery(),
-                new ErrorCfg()
+                new DaoError()
         );
     }
 

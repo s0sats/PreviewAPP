@@ -30,8 +30,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -744,8 +744,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 new EV_User_Customer_Sql_004(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         ToolBox_Con.getPreference_User_Code(context)
-                ).toSqlQuery(),
-                new ErrorCfg()
+                ).toSqlQuery()
         );
 
         mAdapter = new Act005_Logout_Adapter(context, customer_list);
@@ -1057,8 +1056,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         new EV_User_Customer_Sql_004(
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                 ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery(),
-                        new ErrorCfg()
+                        ).toSqlQuery()
                 );
 
         if (sessionsOn != null && sessionsOn.size() != 0) {
@@ -1074,7 +1072,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ToolBox_Con.getPreference_User_Code(context),
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery(),
-                new ErrorCfg()
+                new DaoError()
         );
     }
 

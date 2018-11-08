@@ -16,8 +16,8 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.SyncGeralDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
@@ -43,7 +43,7 @@ public class WS_Sync extends IntentService {
 
     private SyncGeralDao syncGeralDao;
 
-    private ErrorCfg mErrorCfg;
+    private DaoError mDaoError;
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -60,7 +60,7 @@ public class WS_Sync extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
 
-        mErrorCfg = new ErrorCfg();
+        mDaoError = new DaoError();
 
         try {
 
@@ -269,7 +269,7 @@ public class WS_Sync extends IntentService {
 //                    }.getType()
 //            );
 //
-//            userDao.addUpdate(users, false, new ErrorCfg());
+//            userDao.addUpdate(users, false, new DaoError());
 //        }
 //
 //        //Processa traduções

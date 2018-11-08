@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.EV_User_Customer;
-import com.namoadigital.prj001.model.ErrorCfg;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
@@ -26,7 +26,7 @@ public class SyncDao extends BaseDao {
     private String mDB_NAME;
     private int mDB_VERSION;
 
-    private ErrorCfg mErrorCfg;
+    private DaoError mDaoError;
 
     public SyncDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_SINGLE);
@@ -52,14 +52,14 @@ public class SyncDao extends BaseDao {
 
             GE_Custom_Form_LocalDao customFormLocalDao = null;
 
-            mErrorCfg = new ErrorCfg();
+            mDaoError = new DaoError();
 
             Gson gson = new GsonBuilder().serializeNulls().create();
 
             ToolBox_Inf.sendBCStatus(context, "STATUS", context.getString(R.string.msg_processing_ev_user_customer), "", "0");
 
             //Apaga dados da tabela
-            ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery(), mErrorCfg);
+            ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery(), mDaoError);
 
             File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 
@@ -100,14 +100,14 @@ public class SyncDao extends BaseDao {
                     }
                 }
                 //
-                ev_user_customerDao.addUpdate(customers, true, mErrorCfg);
+                ev_user_customerDao.addUpdate(customers, true, mDaoError);
             }
 
-            if (mErrorCfg.isError()) {
-                throw new Exception(mErrorCfg.getCode() + " - " + mErrorCfg.getDescription());
+            if (mDaoError.hasError()) {
+                throw new Exception(mDaoError.getErrorMsg());
             }
 
-            ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery(), mErrorCfg);
+            ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery(), mDaoError);
 
             File[] files_Params = ToolBox_Inf.getListOfFiles_v2("ev_user_customer_parameter-");
 
@@ -121,11 +121,11 @@ public class SyncDao extends BaseDao {
                         }.getType()
                 );
 
-                ev_user_customerParamDao.addUpdate(customer_params, true, mErrorCfg);
+                ev_user_customerParamDao.addUpdate(customer_params, true, mDaoError);
             }
 
-            if (mErrorCfg.isError()) {
-                throw new Exception(mErrorCfg.getCode() + " - " + mErrorCfg.getDescription());
+            if (mDaoError.hasError()) {
+                throw new Exception(mDaoError.getErrorMsg());
             }
 
             db.setTransactionSuccessful();

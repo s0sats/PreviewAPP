@@ -11,8 +11,8 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.SyncDao;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.ErrorCfg;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
@@ -40,7 +40,7 @@ public class WS_GetCustomer extends IntentService {
 
     private SyncDao syncDao;
 
-    private ErrorCfg mErrorCfg;
+    private DaoError mDaoError;
 
     public WS_GetCustomer() {
         super("WS_GetCustomer");
@@ -51,7 +51,7 @@ public class WS_GetCustomer extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
-        mErrorCfg = new ErrorCfg();
+        mDaoError = new DaoError();
 
         try {
 
@@ -127,7 +127,7 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user), "", "0");
 
-        ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery(), mErrorCfg);
+        ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery(), mDaoError);
 
         File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
 
@@ -180,7 +180,7 @@ public class WS_GetCustomer extends IntentService {
                 ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
             }
             //
-            ev_userDao.addUpdate(users, true, mErrorCfg);
+            ev_userDao.addUpdate(users, true, mDaoError);
             //Atualiza contador
             forIdx++;
         }
@@ -211,7 +211,7 @@ public class WS_GetCustomer extends IntentService {
 
 
 //        //Apaga dados da tabela
-//        ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery(), mErrorCfg);
+//        ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery(), mDaoError);
 //
 //        File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 //
@@ -252,10 +252,10 @@ public class WS_GetCustomer extends IntentService {
 //                }
 //            }
 //            //
-//            ev_user_customerDao.addUpdate(customers, true, mErrorCfg);
+//            ev_user_customerDao.addUpdate(customers, true, mDaoError);
 //        }
 //
-//        ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery(), mErrorCfg);
+//        ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery(), mDaoError);
 //
 //        File[] files_Params = ToolBox_Inf.getListOfFiles_v2("ev_user_customer_parameter-");
 //
@@ -269,7 +269,7 @@ public class WS_GetCustomer extends IntentService {
 //                    }.getType()
 //            );
 //
-//            ev_user_customerParamDao.addUpdate(customer_params, true, mErrorCfg);
+//            ev_user_customerParamDao.addUpdate(customer_params, true, mDaoError);
 //        }
 
         // Hugo Termina aqui a analise
