@@ -8,10 +8,8 @@ import android.database.sqlite.SQLiteException;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ import java.util.List;
  * Created by neomatrix on 18/01/17.
  */
 
-public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
+public class EV_UserDao extends BaseDao implements Dao<EV_User> {
     private final Mapper<EV_User, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, EV_User> toUserMapper;
 
@@ -51,32 +49,28 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
 
 
     @Override
-    public void addUpdate(EV_User user, DaoError mError) {
+    public void addUpdate(EV_User user) {
         openDB();
 
         try {
-            StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
 
-            long rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
+            if (db.insert(TABLE, null, toContentValuesMapper.map(user)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
 
-            if (rows == 0) {
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user));
+                db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
             }
 
-            mError.clearError();
 
-        } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
-            ToolBox_Inf.registerException(getClass().getName(), e);
+        } catch (Exception e) {
+        } finally {
         }
-        //
+
         closeDB();
     }
 
     @Override
-    public void addUpdate(List<EV_User> users, boolean status, DaoError mError) {
+    public void addUpdate(Iterable<EV_User> users, boolean status) {
         openDB();
 
         try {
@@ -88,29 +82,21 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
                 db.delete(TABLE, null, null);
             }
 
-
-            StringBuilder sbWhere;
-
             for (EV_User user : users) {
 
-                sbWhere = new StringBuilder();
-                sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
+                if (db.insert(TABLE, null, toContentValuesMapper.map(user)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user.getUser_code())).append("'");
 
-                long rows = db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
-
-                if (rows == 0) {
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(user));
+                    db.update(TABLE, toContentValuesMapper.map(user), sbWhere.toString(), null);
                 }
 
-                mError.clearError();
             }
 
             if (!ismIgnoreCounter()) {
                 db.setTransactionSuccessful();
             }
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             if (!ismIgnoreCounter()) {
@@ -122,20 +108,14 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public void addUpdate(String sQuery, DaoError mError) {
+    public void addUpdate(String sQuery) {
         openDB();
 
         try {
 
             db.execSQL(sQuery);
-            mError.clearError();
-
-            // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
-            // long rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
 
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -144,20 +124,12 @@ public class EV_UserDao extends BaseDao implements DaoN<EV_User> {
     }
 
     @Override
-    public void remove(String sQuery, DaoError mError) {
+    public void remove(String sQuery) {
         openDB();
 
         try {
-
             db.execSQL(sQuery);
-            mError.clearError();
-
-            // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
-            // long rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
-
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }

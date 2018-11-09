@@ -8,7 +8,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
@@ -90,7 +89,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 }
             }
 
-            ev_user_customerDao.addUpdate(customerList, true, new DaoError());
+            ev_user_customerDao.addUpdate(customerList, true);
         }
 
         mView.loadCustomers(
@@ -193,8 +192,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         userCustomerDao.addUpdate(
                 new EV_User_Customer_Sql_009(
                         ToolBox_Con.getPreference_User_Code(context)
-                ).toSqlQuery(),
-                new DaoError()
+                ).toSqlQuery()
         );
     }
 

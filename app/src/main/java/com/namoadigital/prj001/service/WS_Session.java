@@ -11,7 +11,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.TSession_Env;
 import com.namoadigital.prj001.model.TSession_Rec;
@@ -132,7 +131,7 @@ public class WS_Session extends IntentService {
         userCustomer.setSession_app(rec.getSession_app());
 
         //Chama metodo para atualizar dados
-        ev_user_customerDao.addUpdate(userCustomer, new DaoError());
+        ev_user_customerDao.addUpdate(userCustomer);
 
         //Seta preferecia de customer
         ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());

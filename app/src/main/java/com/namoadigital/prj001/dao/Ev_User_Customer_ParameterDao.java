@@ -8,10 +8,8 @@ import android.database.sqlite.SQLiteException;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 30/03/2017.
  */
 
-public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_User_Customer_Parameter> {
+public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_User_Customer_Parameter> {
 
     private final Mapper<Ev_User_Customer_Parameter, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, Ev_User_Customer_Parameter> toEv_User_Customer_ParameterMapper;
@@ -40,34 +38,27 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
 
 
     @Override
-    public void addUpdate(Ev_User_Customer_Parameter customer_parameter, DaoError mError) {
+    public void addUpdate(Ev_User_Customer_Parameter customer_parameter) {
         openDB();
 
         try {
 
-            StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
-            sbWhere.append(" AND ");
-            sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
-
-            long rows = db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
-
-            if (rows == 0) {
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(customer_parameter));
+            if (db.insert(TABLE, null, toContentValuesMapper.map(customer_parameter)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
+                db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
             }
 
-            mError.clearError();
-
-        } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
-            ToolBox_Inf.registerException(getClass().getName(), e);
+        } catch (Exception e) {
+        } finally {
         }
         closeDB();
     }
 
     @Override
-    public void addUpdate(List<Ev_User_Customer_Parameter> customer_parameters, boolean status, DaoError mError) {
+    public void addUpdate(Iterable<Ev_User_Customer_Parameter> customer_parameters, boolean status) {
 
         openDB();
 
@@ -82,26 +73,19 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
 
             for (Ev_User_Customer_Parameter customer_parameter : customer_parameters) {
 
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
-                sbWhere.append(" AND ");
-                sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
-
-                long rows = db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
-
-                if (rows == 0) {
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(customer_parameter));
+                if (db.insert(TABLE, null, toContentValuesMapper.map(customer_parameter)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer_parameter.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(PARAMETER_CODE).append(" = '").append(String.valueOf(customer_parameter.getParameter_code())).append("'");
+                    db.update(TABLE, toContentValuesMapper.map(customer_parameter), sbWhere.toString(), null);
                 }
-
-                mError.clearError();
             }
 
             if (!ismIgnoreCounter()) {
                 db.setTransactionSuccessful();
             }
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             if (!ismIgnoreCounter()) {
@@ -113,20 +97,12 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public void addUpdate(String sQuery, DaoError mError) {
+    public void addUpdate(String sQuery) {
         openDB();
 
         try {
-
             db.execSQL(sQuery);
-            mError.clearError();
-
-            // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
-            // long rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
-
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
@@ -135,20 +111,13 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements DaoN<Ev_Us
     }
 
     @Override
-    public void remove(String sQuery, DaoError mError) {
+    public void remove(String sQuery) {
         openDB();
 
         try {
 
             db.execSQL(sQuery);
-            mError.clearError();
-
-            // Metodo nao confiavel ja que nao garante  a operacao em sequencia. Outro metodo em paralelo pode invalidar o contador
-            // long rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
-
         } catch (SQLiteException e) {
-            mError.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
-            //
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }

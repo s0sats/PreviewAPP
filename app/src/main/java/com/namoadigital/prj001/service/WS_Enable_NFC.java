@@ -10,7 +10,6 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.TEnableNFC_Env;
 import com.namoadigital.prj001.model.TEnableNFC_Rec;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
@@ -110,7 +109,7 @@ public class WS_Enable_NFC extends IntentService {
         user.setNfc_blocked(0);
         //user.setExist_nfc(1);
 
-        userDao.addUpdate(user, new DaoError());
+        userDao.addUpdate(user);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_nfc_enabled") , "", "0");
 

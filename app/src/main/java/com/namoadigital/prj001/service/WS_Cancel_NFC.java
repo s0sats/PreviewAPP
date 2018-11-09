@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_UserDao;
-import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.TCancelNFC_Env;
 import com.namoadigital.prj001.model.TCancelNFC_Rec;
@@ -112,7 +111,7 @@ public class WS_Cancel_NFC extends IntentService {
         user.setNfc_blocked(0);
         user.setExist_nfc(0);
 
-        userDao.addUpdate(user, new DaoError());
+        userDao.addUpdate(user);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_nfc_cancelled") , "", "0");
 
