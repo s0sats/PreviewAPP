@@ -318,7 +318,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             tv_prod_desc.setText("");
             iv_search_serial.setVisibility(View.GONE);
             iv_search_serial.setEnabled(false);
-
+            //Reseta configuração do produto no mket de serial
+            mket_serial.setmInputTypeValidator(null);
+            mket_serial.setmMinSize(null);
+            mket_serial.setmMaxSize(null);
+            //
             if (express_code.isEmpty()) {
                 tv_status.setText("");
             } else {
