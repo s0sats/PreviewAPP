@@ -879,9 +879,16 @@ public class ToolBox_Inf {
     }
 
     public static boolean verifyDownloadFileInf(String sName, String path) {
-        File file = new File(path + "/", sName);
+        //Alterado 13/11/2018 - Luche
+        //Add try catch pois se path ou sName for null gera exception
+        try {
+            File file = new File(path + "/", sName);
 
-        return file.exists();
+            return file.exists();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static String sFileContent(String sPath, String sFile) {

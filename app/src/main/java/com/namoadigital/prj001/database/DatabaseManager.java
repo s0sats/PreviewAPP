@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.database;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -45,7 +44,7 @@ public class DatabaseManager {
 
     public synchronized SQLiteDatabase openDatabase(String fullName, boolean mIgnoreCounter) {
 
-        Log.d("DB_NEW","Qtd de DB: " + mDBHelpers.size());
+        //Log.d("DB_NEW","Qtd de DB: " + mDBHelpers.size());
         //
         for (int i = 0; i < mDBHelpers.size(); i++) {
             if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
@@ -59,7 +58,7 @@ public class DatabaseManager {
     }
 
     public synchronized void closeDatabase(String fullName, boolean mIgnoreCounter) {
-        Log.d("DB_NEW","Qtd de DB: " + mDBHelpers.size());
+        //Log.d("DB_NEW","Qtd de DB: " + mDBHelpers.size());
         //
         for (int i = 0; i < mDBHelpers.size(); i++) {
             if (mDBHelpers.get(i).compareDBHelperNames(fullName)) {
