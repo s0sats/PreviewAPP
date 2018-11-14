@@ -195,7 +195,24 @@ public class Frg_Serial_Search extends Fragment {
                 btn_option_01.performClick();
             }
         });
+        //
+        mket_product_id.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+                //
+            }
 
+            @Override
+            public void reportTextChange(String text, boolean hasText) {
+                if(hasText) {
+                    MD_Product mdProduct = productValidCheck(text);
+                    //
+                    setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
+                }else{
+                    setSerialRule(null);
+                }
+            }
+        });
     }
 
     private View.OnClickListener btnActionListener = new View.OnClickListener() {
@@ -510,6 +527,7 @@ public class Frg_Serial_Search extends Fragment {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
 
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
+            setSerialRule(String.valueOf(pAux.getSerial_rule()));
         } else {
         }
     }
@@ -566,6 +584,21 @@ public class Frg_Serial_Search extends Fragment {
         }
         //
         return "";
+    }
+
+    /**
+     * 14/11/18 - LUCHE
+     * Adicionando metodo para que a validação a "quebra de leitura de vin" fosse possivel. Necessidade
+     * MOSOLF
+     * Seta regra de validação no campo.
+     * Seta também variaveis para ignorarem mim e max e validação de vin após leitura de barcode
+     * para true;
+     * @param serial_rule
+     */
+    public void setSerialRule(String serial_rule){
+        mket_serial.setmInputTypeValidator(serial_rule);
+        mket_serial.setmIgnoreVINValidationOnRead(true);
+        mket_serial.setmIgnoreMaxMinSize(true);
     }
 
     public static List<String> getFragTranslationsVars() {
