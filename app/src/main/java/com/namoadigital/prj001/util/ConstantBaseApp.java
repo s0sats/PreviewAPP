@@ -243,6 +243,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
     public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
     public static final String FOOTER_IMEI = "footer_imei";
+    public static final String FOOTER_SITE_NOT_FOUND = "footer_site_not_found";
+    public static final String FOOTER_OPERATION_NOT_FOUND = "footer_operation_not_found";
 
     /**
      * Sync WS

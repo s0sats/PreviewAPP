@@ -1614,6 +1614,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
+        transList.add("sys_not_found_lbl");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -1649,10 +1650,34 @@ public class ToolBox_Inf {
 
 
         customerDesc = ToolBox_Con.getPreference_Customer_Code(context) + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context);
-        operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-
-        siteDesc = site.getSite_code() + " - " + site.getSite_desc();
-
+        //
+        if(operation != null && site != null ){
+            operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
+            siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+        }else{
+            String sError = "Site ou Operação do footer não encontrado:\n";
+            //
+            if(site == null){
+                //Atualiza var de erro
+                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                siteDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+            }
+            //
+            if(operation == null){
+                //Atualiza var de erro
+                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                operationDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                operationDesc  = operation.getOperation_code() + " - " + operation.getOperation_desc();
+            }
+            //Gera arquivo de exception
+            registerException(CLASS_NAME,new Exception(sError));
+        }
+        //
         hmAux.put(Constant.FOOTER_CUSTOMER_LBL, HmTrans.get("footer_dialog_customer_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
         hmAux.put(Constant.FOOTER_SITE_LBL, HmTrans.get("footer_dialog_site_lbl"));
@@ -1700,7 +1725,22 @@ public class ToolBox_Inf {
         String siteDesc;
         String zoneDesc;
         String operationDesc;
-
+        //
+        List<String> transList = new ArrayList<>();
+        transList.add("sys_not_found_lbl");
+        //
+        HMAux HmTrans = setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+        //
         MD_Site site =
                 new MD_SiteDao(
                         context,
@@ -1724,12 +1764,38 @@ public class ToolBox_Inf {
                                 ToolBox_Con.getPreference_Operation_Code(context)
                         ).toSqlQuery()
                 );
+        //
+        if(operation != null && site != null ){
+            operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+        }else{
+            String sError = "Site ou Operação do footer não encontrado:\n";
+             //
+            if(site == null){
+                //Add chave que indica erro no carregamento do site.
+                hmAux.put(Constant.FOOTER_SITE_NOT_FOUND, HmTrans.get("footer_dialog_site_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                //Atualiza var de erro
+                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                siteDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+            }
 
-        //siteDesc = site.getSite_code() + " - " + site.getSite_desc();
-        siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
-
-        //operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-        operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            //
+            if(operation == null){
+                //Add chave que indica erro no carregamento dA operação.
+                hmAux.put(Constant.FOOTER_OPERATION_NOT_FOUND,HmTrans.get("footer_dialog_operation_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                //Atualiza var de erro
+                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                operationDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                operationDesc  = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            }
+            //Gera arquivo de exception
+            registerException(CLASS_NAME,new Exception(sError));
+        }
 
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
@@ -1758,6 +1824,7 @@ public class ToolBox_Inf {
             hmAux.put(Constant.FOOTER_ZONE, zoneDesc);
 
         }
+        //
         return hmAux;
     }
 
