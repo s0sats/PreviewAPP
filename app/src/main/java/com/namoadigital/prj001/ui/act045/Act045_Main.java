@@ -141,7 +141,13 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
         //
         btn_no_serial.setVisibility(View.GONE);
-
+        /**
+         * 20/11/18 - LUCHE
+         * NESSA TELA, ESTA LIBERADA A CRIAÇÃO DE SERIAL MESMO QUE O PRODUTO
+         * getAllow_new_serial_cl SEJA 0 , POIS ESSE MENU SERIA EQUIVALENTE
+         * A CRIAR O SERIAL PELO MENU SERIAL DA WEB, POIS NÃO SÃO TODOS OS USUARIOS QUE
+         * DEVERIAM TER ESSE ACESSO.
+         */
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
                 && md_product != null) {
             btn_create_serial.setVisibility(View.VISIBLE);
