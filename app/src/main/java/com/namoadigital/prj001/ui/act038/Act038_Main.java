@@ -250,6 +250,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("create_info_lbl");
         transList.add("alert_partial_ap_detected_tll");
         transList.add("alert_partial_ap_detected_msg");
+        transList.add("alert_form_ap_pdf_download_error_msg");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -1792,6 +1793,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         progressDialog.dismiss();
     }
 
+    /**
+     * 20/11/2018 - LUCHE
+     * BR que é acionado somente pelo serviço de download de PDF e somente essa Act recebe ele.
+     * A cada iteração do loop de download de PDF de FORM AP, esse BR é disparado.
+     * Receiver analisa se tipo é ok ou error e se BR for do Ap carregado na tela, trata
+     * o retorno, abrindo o PDF ou fechando o Dialog Informando o erro.
+     */
     protected class PDFStatusReceiver extends BroadcastReceiver {
 
         @Override
@@ -1799,9 +1807,20 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             String mType = intent.getStringExtra(ToolBox.SW_TYPE);
             HMAux hmAux = (HMAux) intent.getSerializableExtra(ToolBox.SW_HMAUX);
             //
-            if (mType.equalsIgnoreCase("AP")) {
+            if (mType.equalsIgnoreCase(Constant.TYPE_BR_AP_OK)) {
                 processPDF(hmAux);
+            }else if(mType.equalsIgnoreCase(Constant.TYPE_BR_AP_ERROR)){
+                processPDFDownloadError(hmAux);
             }
+        }
+    }
+
+    private void processPDFDownloadError(HMAux hmAux) {
+        String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data;
+        //
+        if (hmAux.get("pk").equalsIgnoreCase(sKey)) {
+            //ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("alert_form_ap_pdf_download_error_msg"), "", "0");
         }
     }
 

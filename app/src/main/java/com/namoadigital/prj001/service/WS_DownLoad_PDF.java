@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class WS_DownLoad_PDF extends IntentService {
 
     private long customer_code;
-    private boolean mAp;
+    //private boolean mAp;
 
     public WS_DownLoad_PDF() {
         super("WS_DownLoad_PDF");
@@ -42,11 +42,11 @@ public class WS_DownLoad_PDF extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
 
-            mAp = false;
+            //mAp = false;
 
             Bundle bundle = intent.getExtras();
             //
-            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
             //
             //Se parametro de customer não foi enviado, aborta chamada
             if (customer_code == -1L) {
@@ -101,7 +101,7 @@ public class WS_DownLoad_PDF extends IntentService {
             SM_SO_FileDao soFileDao = null;
             ArrayList<HMAux> so_file_list = new ArrayList<>();
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
 
                 soFileDao =
                         new SM_SO_FileDao(
@@ -120,10 +120,10 @@ public class WS_DownLoad_PDF extends IntentService {
             }//END S.O
             //endregion
             //SE NÃO PDF PARA BAIXAR, SAI DO SERVIÇO
-            if( dados_geral.size() == 0
-                && formAplist.size() == 0
-                && so_file_list.size() == 0
-            ){
+            if (dados_geral.size() == 0
+                    && formAplist.size() == 0
+                    && so_file_list.size() == 0
+                    ) {
                 return;
             }
             //SE POSSUI ITENS PARA DOWNLOAD, VERIFICA NECESSIDA DE NOTIFICAÇÃO
@@ -148,91 +148,117 @@ public class WS_DownLoad_PDF extends IntentService {
             }
             //
             for (HMAux hmAux : dados) {
-                //
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".pdf")) {
-
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
+                try {
                     //
-                    ToolBox_Inf.downloadImagePDF(
-                            hmAux.get("blob_url"),
-                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".pdf")) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get("blob_url"),
+                                Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".pdf");
+                    }
+                    //
+                    String nome_parte[] = hmAux.get("custom_name").split("_");
+                    form_blobDao.addUpdate(
+                            new GE_Custom_Form_Blob_Sql_003(
+                                    nome_parte[1],
+                                    nome_parte[2],
+                                    nome_parte[3],
+                                    nome_parte[4],
+                                    nome_parte[5],
+                                    hmAux.get("custom_name") + ".pdf"
+                            ).toSqlQuery().toLowerCase()
                     );
-                    //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".pdf");
-                }
-                //
-                String nome_parte[] = hmAux.get("custom_name").split("_");
-                form_blobDao.addUpdate(
-                        new GE_Custom_Form_Blob_Sql_003(
-                                nome_parte[1],
-                                nome_parte[2],
-                                nome_parte[3],
-                                nome_parte[4],
-                                nome_parte[5],
-                                hmAux.get("custom_name") + ".pdf"
-                        ).toSqlQuery().toLowerCase()
-                );
 
-                form_blob_localDao.addUpdate(
-                        new GE_Custom_Form_Blob_Local_Sql_003(
-                                nome_parte[1],
-                                nome_parte[2],
-                                nome_parte[3],
-                                nome_parte[4],
-                                nome_parte[5],
-                                hmAux.get("custom_name") + ".pdf"
-                        ).toSqlQuery().toLowerCase()
-                );
+                    form_blob_localDao.addUpdate(
+                            new GE_Custom_Form_Blob_Local_Sql_003(
+                                    nome_parte[1],
+                                    nome_parte[2],
+                                    nome_parte[3],
+                                    nome_parte[4],
+                                    nome_parte[5],
+                                    hmAux.get("custom_name") + ".pdf"
+                            ).toSqlQuery().toLowerCase()
+                    );
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
+                }
 
             }
             //endregion
             /**
              * Download de PDF Action Plan 01/03/2018
-            */
+             */
             //region FORM AP
-            mAp = true;
+            //mAp = true;
             //
             for (HMAux hmAux : formAplist) {
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
+                try {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                    }
                     //
-                    ToolBox_Inf.downloadImagePDF(
-                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_URL),
-                            Constant.CACHE_PATH + "/" + hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                    formApDao.addUpdate(
+                            new GE_Custom_Form_Ap_Sql_008(
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE),
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
+                                    hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf"
+                            ).toSqlQuery().toLowerCase()
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                    HMAux auxPDF = new HMAux();
+                    auxPDF.put("pk",
+                            hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
+                    );
+                    auxPDF.put("value", hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf");
+                    //
+                    ToolBox.sendBCStatusPDF(
+                            getApplicationContext(),
+                            Constant.TYPE_BR_AP_OK,
+                            auxPDF
+                    );
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
+                    //ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
+                    //Como esse serviço pode ser chamado pela act038 e concorrendo com um AsyncTask
+                    //da tela, tanto o sucesso quando a exception do download de um pdf, é enviado
+                    //broadcast para a tela para verificar se é necessario ação dela.
+                    HMAux auxPDF = new HMAux();
+                    auxPDF.put("pk",
+                            hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
+                                    hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
+                    );
+                    //
+                    ToolBox.sendBCStatusPDF(
+                            getApplicationContext(),
+                            Constant.TYPE_BR_AP_ERROR,
+                            auxPDF
+                    );
                 }
-                //
-                formApDao.addUpdate(
-                        new GE_Custom_Form_Ap_Sql_008(
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE),
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
-                                hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf"
-                        ).toSqlQuery().toLowerCase()
-                );
-                //
-                HMAux auxPDF = new HMAux();
-                auxPDF.put("pk",
-                        hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
-                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
-                );
-                auxPDF.put("value", hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf");
-                //
-                ToolBox.sendBCStatusPDF(
-                        getApplicationContext(),
-                        "AP",
-                        auxPDF
-                );
             }
-            mAp = false;
+            //mAp = false;
             //endregion
             /**
              *
@@ -241,35 +267,39 @@ public class WS_DownLoad_PDF extends IntentService {
              */
             //region S.O
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
                 //
                 String splitKey = "@#My#@Key#@";
                 for (HMAux hmAux : so_file_list) {
-                    String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
-                    String[] nameSplited = fileName.split(splitKey);
-                    String ext = "." + nameSplited[nameSplited.length - 1];
+                    try {
+                        String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
+                        String[] nameSplited = fileName.split(splitKey);
+                        String ext = "." + nameSplited[nameSplited.length - 1];
 
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
+                        if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(SM_SO_FileDao.FILE_URL),
-                                Constant.CACHE_PATH + "/" + hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                    hmAux.get(SM_SO_FileDao.FILE_URL),
+                                    Constant.CACHE_PATH + "/" + hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ext);
+                        }
+
+                        soFileDao.addUpdate(
+                                new SM_SO_File_Sql_004(
+                                        hmAux.get(SM_SO_FileDao.CUSTOMER_CODE),
+                                        hmAux.get(SM_SO_FileDao.SO_PREFIX),
+                                        hmAux.get(SM_SO_FileDao.SO_CODE),
+                                        hmAux.get(SM_SO_FileDao.FILE_CODE),
+                                        hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME) + ext
+                                ).toSqlQuery().toLowerCase()
                         );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ext);
+                    }catch (Exception e){
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-
-                    soFileDao.addUpdate(
-                            new SM_SO_File_Sql_004(
-                                    hmAux.get(SM_SO_FileDao.CUSTOMER_CODE),
-                                    hmAux.get(SM_SO_FileDao.SO_PREFIX),
-                                    hmAux.get(SM_SO_FileDao.SO_CODE),
-                                    hmAux.get(SM_SO_FileDao.FILE_CODE),
-                                    hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME) + ext
-                            ).toSqlQuery().toLowerCase()
-                    );
                 }
             }
             //endregion
@@ -280,10 +310,10 @@ public class WS_DownLoad_PDF extends IntentService {
 
         } finally {
 
-            if (mAp){
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
-                mAp = false;
-            }
+//            if (mAp) {
+//                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
+//                mAp = false;
+//            }
 
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
