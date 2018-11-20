@@ -792,21 +792,29 @@ public class ToolBox_Inf {
     }
 
     public static void deleteAllFOD(String sDir) {
-        File dir = new File(sDir);
-        //
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                new File(dir, children[i]).delete();
+        try {
+            File dir = new File(sDir);
+            //
+            if (dir.isDirectory()) {
+                String[] children = dir.list();
+                for (int i = 0; i < children.length; i++) {
+                    new File(dir, children[i]).delete();
+                }
             }
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
         }
     }
 
     public static void deleteDownloadFile(String sName) {
-        File file = new File(sName);
+        try {
+            File file = new File(sName);
 
-        if (file.exists()) {
-            file.delete();
+            if (file.exists()) {
+                file.delete();
+            }
+        }catch (Exception e){
+            registerException(CLASS_NAME, e);
         }
     }
 
