@@ -68,10 +68,14 @@ public class Sql_Act017_001 implements Specification {
                         "       ELSE d.serial_id\n" +
                         "  END  serial_id,\n" +
                         "  l.custom_form_data_serv,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+                        "  d.date_start, \n" +
+                        "  d.date_end ,\n" +
+                        "  l.schedule_date_start_format,\n"+
+                        "  l.schedule_date_end_format,\n"+
                         "  strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
                         "  (strftime('%s',l.schedule_date_start_format,'localtime') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                         "  l.require_serial,\n"+

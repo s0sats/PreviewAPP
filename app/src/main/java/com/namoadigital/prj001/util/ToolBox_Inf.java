@@ -175,6 +175,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -2634,16 +2635,56 @@ public class ToolBox_Inf {
         }
     }
 
+//  VERSÃO USADA ATÉ 26/11/18
+//  public static String millisecondsToString(long mils, String format) {
+//
+//        String sResults = "";
+//
+//        if (mils == 0L) {
+//            return "";
+//        }
+//
+//        Calendar ca1 = Calendar.getInstance();
+//        ca1.setTimeInMillis(mils);
+//        if (format == null || format.equalsIgnoreCase("")) {
+//            format = "dd-MM-yyyy";
+//        }
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat(format);
+//
+//        try {
+//            sResults = sdf.format(ca1.getTime());
+//        } catch (Exception var7) {
+//            sResults = "00:00 01-01-1900";
+//        }
+//
+//        return sResults;
+//    }
 
+    /**
+     * 26/11/18 - LUCHE
+     * Metodo que retorna data formatada ja convertida pro timezone do device.
+     *
+     * Criado nova versão do metodo millisecondsToString , forçando o timezone do Device
+     * com o de GMT retornado pelo metodo getDeviceGMT().
+     * Por mais louco que pareça, essa mudança foi necessaria pois, as vezes, no horario de verão,
+     * a conversão gerava data no timezone sem horario de verão o.O
+     * @param mils - Millisegundas da data a ser formatada
+     * @param format - Formato da data.
+     * @return - Data formatada conforme format e convertida no GMT do device.
+     */
     public static String millisecondsToString(long mils, String format) {
 
         String sResults = "";
 
+        TimeZone curTmz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone(getDeviceGMT(true)));
+        Calendar ca1 = Calendar.getInstance();
+        //
         if (mils == 0L) {
             return "";
         }
 
-        Calendar ca1 = Calendar.getInstance();
         ca1.setTimeInMillis(mils);
         if (format == null || format.equalsIgnoreCase("")) {
             format = "dd-MM-yyyy";
@@ -2652,12 +2693,25 @@ public class ToolBox_Inf {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
 
         try {
-            sResults = sdf.format(ca1.getTime());
+            Date dt = ca1.getTime();
+            sResults = sdf.format(dt);
         } catch (Exception var7) {
             sResults = "00:00 01-01-1900";
+        }finally {
+            TimeZone.setDefault(curTmz);
         }
 
         return sResults;
+    }
+
+    public static String getDeviceGMT(boolean withGMTPrefix){
+        //Inicializa SimpleDateFormat no formato GMT(-XX:XX)
+        SimpleDateFormat tmzFormat = new SimpleDateFormat("ZZZZZ");
+        Calendar ca1 = Calendar.getInstance();
+        //Formata GMT baseado a data atual do device.
+        String formatedTmz = tmzFormat.format(ca1.getTime());
+        //
+        return withGMTPrefix ? "GMT"+formatedTmz : formatedTmz ;
     }
 
     public static void copyFile(File file, File dir) throws IOException {
