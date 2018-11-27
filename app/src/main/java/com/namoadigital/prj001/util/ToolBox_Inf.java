@@ -2540,6 +2540,21 @@ public class ToolBox_Inf {
         return sdf.format(calendar.getTime());
     }
 
+    /**
+     * 27/11/18 - LUCHE
+     *
+     * Esse metodo possui um problema quando o timezone do user
+     * entra no horario de verão: Quando o timezone entra no horario de verão,
+     * o timezone usado continua sendo o padrão.
+     * EX:
+     *  Padrão Sp = GMT -03:00, Horario de Verão SP = GMT -02:00.
+     * Independentemente de estar no horario de verão ou não, o GMT usado é o -03:00
+     *
+     * É possivel corrigi-lo usando o metodo getDeviceGMT e codigo similar ao
+     * millisecondsToString()
+     * @param date_tmz
+     * @return
+     */
     public static String convertDBToDeviceTMZ(String date_tmz) {
         SimpleDateFormat sdfD = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
         SimpleDateFormat sdfS = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
@@ -2588,11 +2603,11 @@ public class ToolBox_Inf {
     public static long dateToMilliseconds(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz.isEmpty()) {
+        if (date_tmz == null ||  date_tmz.isEmpty()) {
             return 0L;
         }
 
-        if (type.equalsIgnoreCase("SECOND")) {
+        if (type.equalsIgnoreCase(Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND)) {
             sFormat = "yyyy-MM-dd HH:mm Z";
         } else {
             sFormat = "yyyy-MM-dd HH:mm:ss Z";
@@ -2613,11 +2628,11 @@ public class ToolBox_Inf {
     public static long dateToMillisecondsChat(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz != null && date_tmz.isEmpty()) {
+        if (date_tmz == null || date_tmz.isEmpty()) {
             return 0L;
         }
 
-        if (type.equalsIgnoreCase("SECOND")) {
+        if (type.equalsIgnoreCase(Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND)) {
             sFormat = "yyyy-MM-dd HH:mm";
         } else {
             sFormat = "yyyy-MM-dd HH:mm:ss";

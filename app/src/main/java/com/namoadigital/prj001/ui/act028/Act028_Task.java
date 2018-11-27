@@ -52,6 +52,14 @@ import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
 
 /**
  * Created by neomatrix on 14/07/17.
+ *
+ * 27/11/18 - LUCHE
+ *
+ * Modificado set das propriedades Start_date e End_date para
+ * ao inves de usarem o metodo convertDBToDeviceTMZ(), usarem o conjuto de chamadas
+ * millisecondsToString(dateToMilliseconds()), pois o metodo convertDBToDeviceTMZ(),
+ * apresenta o mesmo problema de conversão de timezone quando horario de verão.
+ *
  */
 
 public class Act028_Task extends BaseFragment {
@@ -152,8 +160,36 @@ public class Act028_Task extends BaseFragment {
     public void setmTask(SM_SO_Service_Exec_Task mTask) {
         this.mTask = mTask;
         //
-        this.mTask.setStart_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getStart_date()));
-        this.mTask.setEnd_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getEnd_date()));
+//        this.mTask.setStart_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getStart_date()));
+//        this.mTask.setEnd_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getEnd_date()));
+        //
+        if(mTask.getStart_date() == null) {
+            this.mTask.setStart_date("");
+        }else{
+            this.mTask.setStart_date(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(
+                                    mTask.getStart_date(),
+                                    Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                            ),
+                            Constant.DATEFORMATDBH + " Z"
+                    )
+            );
+        }
+        //
+        if(mTask.getEnd_date() == null){
+            this.mTask.setEnd_date("");
+        }else {
+            this.mTask.setEnd_date(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(
+                                    mTask.getEnd_date(),
+                                    Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                            ),
+                            Constant.DATEFORMATDBH + " Z"
+                    )
+            );
+        }
         //
         StringBuilder sFiles = new StringBuilder();
 

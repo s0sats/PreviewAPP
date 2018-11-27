@@ -12,7 +12,14 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  *
- *   Busca data serv e datas de inicio e fim do agendamento.
+ * Busca data serv e datas de inicio e fim do agendamento.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act011_003 implements Specification {
@@ -23,6 +30,7 @@ public class Sql_Act011_003 implements Specification {
     private String s_form_version;
     private String s_form_data;
     private String sqlite_date_format;
+    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
 
 
     public Sql_Act011_003(Context context,long s_customer_code, String s_form_type, String s_form_code, String s_form_version, String s_form_data) {
@@ -40,8 +48,8 @@ public class Sql_Act011_003 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "  l.custom_form_data_serv,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'"+deviceGMT+"') schedule_date_start_format,\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'"+deviceGMT+"') schedule_date_end_format\n"+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +

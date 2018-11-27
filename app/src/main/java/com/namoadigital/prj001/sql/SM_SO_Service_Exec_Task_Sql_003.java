@@ -1,9 +1,17 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 06/07/17.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
@@ -18,6 +26,7 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
     private int service_code;
     private int service_seq;
     private long exec_tmp;
+    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
 
     public SM_SO_Service_Exec_Task_Sql_003(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
         this.customer_code = customer_code;
@@ -39,8 +48,8 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
         return sb
                 .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status,\n" +
 
-                        "strftime('%Y-%m-%d %H:%M',T.start_date,'localtime') start_date_local,\n" +
-                        "strftime('%Y-%m-%d %H:%M',T.end_date,'localtime') end_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.start_date,'"+deviceGMT+"') start_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.end_date,'"+deviceGMT+"') end_date_local,\n" +
 
                         "( " +
                         " " +

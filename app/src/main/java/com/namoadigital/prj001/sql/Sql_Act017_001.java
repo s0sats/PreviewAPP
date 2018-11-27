@@ -21,6 +21,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Modificado by DANIEL.LUCHE on 16/08/2018.
  * Adicionado campos schedule_comments e require_serial_done no retorno da query.
  *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -31,6 +37,7 @@ public class Sql_Act017_001 implements Specification {
     private String serial_id;
     private String filter_only_delay;
     private String site_logged;
+    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
 
     public Sql_Act017_001(Context context, long s_customer_code ,String selected_date, String serial_id, boolean late, boolean site_logged) {
         this.s_customer_code = s_customer_code;
@@ -68,16 +75,16 @@ public class Sql_Act017_001 implements Specification {
                         "       ELSE d.serial_id\n" +
                         "  END  serial_id,\n" +
                         "  l.custom_form_data_serv,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'"+deviceGMT+"') date_start,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'"+deviceGMT+"') date_end,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'"+deviceGMT+"') schedule_date_start_format,\n"+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'"+deviceGMT+"') schedule_date_end_format,\n"+
                         "  d.date_start, \n" +
                         "  d.date_end ,\n" +
                         "  l.schedule_date_start_format,\n"+
                         "  l.schedule_date_end_format,\n"+
-                        "  strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
-                        "  (strftime('%s',l.schedule_date_start_format,'localtime') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
+                        "  strftime('%Y-%m-%d',l.schedule_date_start_format,'"+deviceGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
+                        "  (strftime('%s',l.schedule_date_start_format,'"+deviceGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                         "  l.require_serial,\n"+
                         "  l.allow_new_serial_cl,\n"+
                         "  l.schedule_comments,\n"+
@@ -95,12 +102,12 @@ public class Sql_Act017_001 implements Specification {
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                        // "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'" +
                         "      AND l.custom_form_data_serv is not null \n" +
-                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"') \n" +
+                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'"+deviceGMT+"') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or l.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or l.site_code = '"+site_logged+"') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',l.schedule_date_start_format ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime'))  and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',l.schedule_date_start_format ,'"+deviceGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                         "  ORDER BY\n" +
-                        "      strftime('%Y-%m-%d %H:%M',l.schedule_date_start_format,'localtime'), \n" +
+                        "      strftime('%Y-%m-%d %H:%M',l.schedule_date_start_format,'"+deviceGMT+"'), \n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
                         "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
                         "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +

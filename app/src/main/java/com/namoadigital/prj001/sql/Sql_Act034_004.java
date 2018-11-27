@@ -10,6 +10,13 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 30/11/2017.
  *
  * Seleciona dados para exibição da lista de room.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act034_004 implements Specification {
@@ -19,8 +26,9 @@ public class Sql_Act034_004 implements Specification {
     private Long customer_code;
     private String user_code;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_RoomDao.columns);
-    private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
     private String room_type_filter = "";
+    private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
+    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
 
     public Sql_Act034_004(Long customer_code, String user_code, boolean filter_workgroup, boolean filter_private, boolean filter_so, boolean filter_pa) {
         this.customer_code = customer_code;
@@ -88,7 +96,7 @@ public class Sql_Act034_004 implements Specification {
                         //"    and ('" + room_desc + "' is null or r.room_desc like '%" + room_desc + "%')\n" +
                         room_type_filter + //filtro de tipo
                         " ORDER BY  \n" +
-                        "    strftime('" + sqlite_db_format + "',m.msg_date,'localtime') desc,\n" +
+                        "    strftime('" + sqlite_db_format + "',m.msg_date,'"+deviceGMT+"') desc,\n" +
                         "    r.room_desc\n")
                 .append(";")
                 //.append(HmAuxFields + "#" + CH_MessageDao.MSG_DATE + "#" + CH_MessageDao.MSG_OBJ + "#" + BADGE)

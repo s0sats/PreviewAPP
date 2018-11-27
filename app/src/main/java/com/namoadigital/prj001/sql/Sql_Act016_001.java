@@ -8,6 +8,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
@@ -22,6 +23,12 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * ESSA REGRA NÃO DEVE SER APLICADA AQUI, CONFORME ACORDADO COM J.YUDICE.
  *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -32,6 +39,7 @@ public class Sql_Act016_001 implements Specification {
     private String sql_form = "";
     private String sql_form_ap = "";
     private String site_logged;
+    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
 
     public Sql_Act016_001(Context context, String customer_code, boolean filter_form, boolean filter_form_ap, boolean filter_site) {
         this.customer_code = customer_code;
@@ -43,7 +51,7 @@ public class Sql_Act016_001 implements Specification {
     private void buildFinalSql(boolean filter_form, boolean filter_form_ap) {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
-                    "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
+                    "      strftime('%Y-%m-%d',l.schedule_date_start_format,'"+deviceGMT+"') schedule_date_start,\n" +
                     "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
                     "      (l.custom_form_status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
                     "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
@@ -62,7 +70,7 @@ public class Sql_Act016_001 implements Specification {
         sql_form_ap =
                     UNION_ALL +
                     "\nSELECT\n" +
-                    "      strftime('%Y-%m-%d',a.ap_when,'localtime') schedule_date_start,\n" +
+                    "      strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') schedule_date_start,\n" +
                     "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') ) delayed_count,\n" +
                     "      0 inprocessing_count,\n" +
                     "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"')) scheduled_count,\n" +
