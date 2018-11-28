@@ -3,12 +3,12 @@ package com.namoadigital.prj001.sql;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.ctls.CalendarView;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
@@ -39,7 +39,7 @@ public class Sql_Act016_001 implements Specification {
     private String sql_form = "";
     private String sql_form_ap = "";
     private String site_logged;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act016_001(Context context, String customer_code, boolean filter_form, boolean filter_form_ap, boolean filter_site) {
         this.customer_code = customer_code;

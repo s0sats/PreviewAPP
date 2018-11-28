@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -30,7 +31,7 @@ public class Sql_Act011_003 implements Specification {
     private String s_form_version;
     private String s_form_data;
     private String sqlite_date_format;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
 
     public Sql_Act011_003(Context context,long s_customer_code, String s_form_type, String s_form_code, String s_form_version, String s_form_data) {

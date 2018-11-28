@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 07/03/2018.
@@ -36,7 +36,7 @@ public class Sql_Act005_006 implements Specification {
     public static final String BADGE_SCHEDULED_QTY = "scheduled_qty";
     private String customer_code;
     private int forward_hour;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act005_006(String customer_code, int forward_hour) {
         this.customer_code = customer_code;

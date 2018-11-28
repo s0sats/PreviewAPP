@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -21,7 +22,7 @@ public class Sql_Act035_001 implements Specification {
     private String room_code;
     private String offSet;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_MessageDao.columns);
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act035_001(String room_code, String offSet) {
         this.room_code = room_code;

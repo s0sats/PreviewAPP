@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
@@ -37,7 +38,7 @@ public class Sql_Act017_001 implements Specification {
     private String serial_id;
     private String filter_only_delay;
     private String site_logged;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act017_001(Context context, long s_customer_code ,String selected_date, String serial_id, boolean late, boolean site_logged) {
         this.s_customer_code = s_customer_code;

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.database.Specification;
@@ -28,7 +29,7 @@ public class Sql_Act034_004 implements Specification {
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_RoomDao.columns);
     private String room_type_filter = "";
     private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act034_004(Long customer_code, String user_code, boolean filter_workgroup, boolean filter_private, boolean filter_so, boolean filter_pa) {
         this.customer_code = customer_code;

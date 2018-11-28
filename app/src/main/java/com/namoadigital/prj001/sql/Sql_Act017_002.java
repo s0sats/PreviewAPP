@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -35,7 +36,7 @@ public class Sql_Act017_002 implements Specification {
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
     private String serial_id;
     private String filter_only_delay;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act017_002(Context context, long s_customer_code , String selected_date, String serial_id,boolean late) {
         this.s_customer_code = s_customer_code;

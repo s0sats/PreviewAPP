@@ -270,8 +270,8 @@ public class Act028_Task extends BaseFragment {
                 mTask.setComments(tempValues.get("comments"));
                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), tempValues.get("img")));
 
-                mTask.setStart_date(ToolBox.convertToDeviceTMZ2(tempValues.get("dts")));
-                mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(tempValues.get("dte")));
+                mTask.setStart_date(ToolBox.convertToDeviceTMZ(tempValues.get("dts")));
+                mTask.setEnd_date(ToolBox.convertToDeviceTMZ(tempValues.get("dte")));
 
                 mTask.setTask_perc(Integer.parseInt(tempValues.get("perc")));
 
@@ -805,8 +805,8 @@ public class Act028_Task extends BaseFragment {
                                 mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-                                mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
-                                mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ2(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
+                                mTask.setStart_date(ToolBox.convertToDeviceTMZ(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+                                mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
                                 mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
 
@@ -1001,8 +1001,8 @@ public class Act028_Task extends BaseFragment {
         mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-        mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
-        mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
+        mTask.setStart_date(ToolBox.convertToDeviceTMZ(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+        mTask.setEnd_date(ToolBox.convertToDeviceTMZ(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
         mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
 

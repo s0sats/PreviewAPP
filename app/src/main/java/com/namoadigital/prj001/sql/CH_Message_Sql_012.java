@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -23,7 +24,7 @@ public class CH_Message_Sql_012 implements Specification {
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_MessageDao.columns);
 
     private ArrayList<HMAux> messages;
-    private String deviceGMT = ToolBox_Inf.getDeviceGMT(false);
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
     public CH_Message_Sql_012(ArrayList<HMAux> messages) {
         this.messages = messages;
     }

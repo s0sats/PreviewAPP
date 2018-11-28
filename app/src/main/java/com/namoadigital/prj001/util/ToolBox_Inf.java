@@ -2693,7 +2693,7 @@ public class ToolBox_Inf {
         String sResults = "";
 
         TimeZone curTmz = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone(getDeviceGMT(true)));
+        TimeZone.setDefault(TimeZone.getTimeZone(ToolBox.getDeviceGMT(true)));
         Calendar ca1 = Calendar.getInstance();
         //
         if (mils == 0L) {
@@ -2712,21 +2712,11 @@ public class ToolBox_Inf {
             sResults = sdf.format(dt);
         } catch (Exception var7) {
             sResults = "00:00 01-01-1900";
-        }finally {
+        } finally {
             TimeZone.setDefault(curTmz);
         }
 
         return sResults;
-    }
-
-    public static String getDeviceGMT(boolean withGMTPrefix){
-        //Inicializa SimpleDateFormat no formato GMT(-XX:XX)
-        SimpleDateFormat tmzFormat = new SimpleDateFormat("ZZZZZ");
-        Calendar ca1 = Calendar.getInstance();
-        //Formata GMT baseado a data atual do device.
-        String formatedTmz = tmzFormat.format(ca1.getTime());
-        //
-        return withGMTPrefix ? "GMT"+formatedTmz : formatedTmz ;
     }
 
     public static void copyFile(File file, File dir) throws IOException {
