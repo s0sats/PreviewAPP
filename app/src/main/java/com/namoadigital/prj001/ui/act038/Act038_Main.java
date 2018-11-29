@@ -608,11 +608,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             et_form_when_ttl.setmLabel(hmAux_Trans.get("ap_when_lbl"));
             et_form_when_ttl.setEnabled(true);
-            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" :
-                    ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(ap.getAp_when()),
-                            Constant.DATEFORMATDBH + ":ss Z"
-                    ),ap.getAp_when() != null);
+            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : ap.getAp_when(),ap.getAp_when() != null);
             //et_form_when_ttl.setTag(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
             //
             tv_form_what_ttl.setText(hmAux_Trans.get("ap_what_lbl"));
