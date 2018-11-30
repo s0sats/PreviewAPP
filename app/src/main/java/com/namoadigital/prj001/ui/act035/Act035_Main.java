@@ -433,19 +433,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         iv_reorder.setVisibility(View.GONE);
         iv_down.setVisibility(View.GONE);
-        //
-        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-        //
-        mPresenter.updateReadStatus(
-                (ArrayList<HMAux>) chMessageDao.query_HM(
-                        new CH_Message_Sql_017(
-                                mRoom_code
-                        ).toSqlQuery()
-                ),
-                "FULL"
-        );
-        //
-        startReceivers(true);
+        //Se a room existir continua montagem da tela, se não , volta para act0034
+        if(mRoom != null) {
+            mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+            //
+            mPresenter.updateReadStatus(
+                    (ArrayList<HMAux>) chMessageDao.query_HM(
+                            new CH_Message_Sql_017(
+                                    mRoom_code
+                            ).toSqlQuery()
+                    ),
+                    "FULL"
+            );
+            //
+            startReceivers(true);
+        }else{
+            callAct034(context);
+        }
     }
 
     private void turnOnDownIcon() {
