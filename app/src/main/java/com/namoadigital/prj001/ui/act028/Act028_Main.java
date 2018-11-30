@@ -1282,7 +1282,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         this.mTask = null;
 
         act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
-        act028_task_list.loadDataToScreen();
+        //act028_task_list.loadDataToScreen();
         //
         index = 0;
         //
@@ -1333,6 +1333,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         }
 
         menuTaskCreated(task);
+        //
+        act028_task_list.loadDataToScreen();
+
     }
 
     @Override
