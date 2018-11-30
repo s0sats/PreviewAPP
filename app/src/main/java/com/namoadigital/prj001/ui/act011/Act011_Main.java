@@ -185,6 +185,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private String wsSoProcess;
     private ArrayList<HMAux> wsResults = new ArrayList<>();
+    //Implments PhotoInterface
+    private CustomFF.ICustomFFPhoto onPhotoClick;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -378,7 +380,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             @Override
             public void save() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                /*mDrawerLayout.closeDrawer(GravityCompat.START);
 
                 formData.setLocation_type("");
                 formData.setLocation_lat("");
@@ -395,7 +397,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 bNew = false;
 
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                mDrawerLayout.closeDrawer(GravityCompat.START);*/
+                //Implments PhotoInterface
+                saveV2(true);
             }
 
             @Override
@@ -485,7 +489,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         );
 
         recoverGetIntents();
-
+        //
+        onPhotoClick = new CustomFF.ICustomFFPhoto() {
+            @Override
+            public void OnPhotoClick(String s) {
+                saveV2(false);
+            }
+        };
+        //
         mPresenter.setData(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                 type,
@@ -504,6 +515,29 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mOperation_Code
         );
 
+    }
+    //Implments PhotoInterface
+    private void saveV2(boolean fieldsValidation) {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        formData.setLocation_type("");
+        formData.setLocation_lat("");
+        formData.setLocation_lng("");
+        //
+        if(fieldsValidation) {
+            returnValidCheck(String.valueOf(-1));
+        }
+
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+        }
+
+        mPresenter.saveData(formData, false);
+
+        bNew = false;
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     private void tabSelectedAction(int idtab) {
@@ -932,6 +966,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             for (CustomFF customFF : customFFs) {
                 controls_dyn.add(customFF);
+                //Implments PhotoInterface
+                customFF.setOnPhotoClickListener(onPhotoClick);
             }
 
             for (int i = 1; i <= pages; i++) {
