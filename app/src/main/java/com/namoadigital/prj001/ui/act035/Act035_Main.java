@@ -2315,7 +2315,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 //        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         //Informações da room
-        if (mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
+        if (mRoom != null && mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
             menu.add(0, 0, Menu.FIRST + 1, hmAux_Trans.get("room_ap_info_menu_lbl"));
             menu.findItem(0).setIcon(R.drawable.ic_info);
             menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
