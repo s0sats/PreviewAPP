@@ -533,7 +533,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
         }
 
-        mPresenter.saveData(formData, false);
+        mPresenter.saveData(formData, fieldsValidation);
 
         bNew = false;
 
