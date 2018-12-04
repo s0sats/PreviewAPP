@@ -48,9 +48,25 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 
 public class AppBase extends Application {
 
+    private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        /**
+         * Tratativa do Callbackl de exceptions não tratadas
+         */
+        mDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        //
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                ToolBox_Inf.registerException(ex);
+                //
+                mDefaultUncaughtExceptionHandler.uncaughtException(thread, ex);
+
+            }
+        });
         //
         // Infra PATH
         DB_PATH = Environment

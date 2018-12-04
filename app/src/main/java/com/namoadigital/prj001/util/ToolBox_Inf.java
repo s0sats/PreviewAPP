@@ -2822,6 +2822,36 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * 04/12/2018 - LUCHE
+     * Metodo chamado pelo Callback de exceptions não tratadas  gerandp arquvio de suport
+     * @param exception
+     */
+    public static void registerException(Throwable exception) {
+
+        File exception_file = new File(Constant.SUPPORT_PATH, "fatal_excep_" + getDateHourStr() + ".txt");
+
+        try {
+            //Pega o primeiro item StackTrace elemente do "cause" e obtem o nome da classe onde
+            //o erro se originou.
+            String local = (exception.getCause().getStackTrace())[0].getFileName();
+            //
+            StackTraceElement[] stackTrace = exception.getStackTrace();
+            String traceString = "";
+            String erro = "";
+
+            for (StackTraceElement trace : stackTrace) {
+                traceString += trace.toString() + "\n ";
+            }
+
+            erro = "Local:\n " + local + ";\nException:\n " + exception.toString() + ";\nTrace:\n" + traceString + ";";
+
+            ToolBox_Inf.writeIn(erro, exception_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void hideSoftKeyboard(Activity activity) {
         if (activity.getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
