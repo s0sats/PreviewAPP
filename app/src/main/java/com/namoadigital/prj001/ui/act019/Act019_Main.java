@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
-    private Context context;
+    //private Context context;
 
     private Act019_Main_Presenter mPresenter;
 
@@ -68,12 +68,11 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         long customer_code = ToolBox_Con.getPreference_Customer_Code(getBaseContext());
         String user_code = ToolBox_Con.getPreference_User_Code(getBaseContext());
 
-
         if (customer_code == -1L) {
-            if (user_code.trim().length() == 0) {
-                ToolBox_Inf.call_Act001_Main(Act019_Main.this);
-            } else {
-            }
+            //if (user_code.trim().length() == 0) {
+                ToolBox_Inf.call_Act001_Main(context);
+//            } else {
+//            }
         } else {
             iniSetup();
             //
@@ -91,7 +90,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
     private void iniSetup() {
 
-        context = Act019_Main.this;
+        //context = Act019_Main.this;
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 Act019_Main.this,
