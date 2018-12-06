@@ -99,6 +99,8 @@
     <string name="notification_messages_lbl">Mensagens</string>
     <string name="chat_fcm_offline_ttl">Mensagens Offline</string>
     <string name="chat_fcm_offline_msg">Existem novas mensagens no servidor.\nAbra o app Namoa para recebe-las.</string>
+    <string name="notification_ttl_upload">Carregando</string>
+    <string name="notification_msg_upload">Enviando arquivos para o servidor</string>
 
 
 </resources>

@@ -28,7 +28,8 @@ public class SO_Pack_Express_Local_Sql_010 implements Specification {
                         " WHERE\n" +
                         "   s.customer_code = '" + customer_code + "' \n" +
                         "   and s.status = '" + "NEW" + "'\n")
-                .append(";" + BADGE_IN_NEW_QTY)
+                .append(";")
+                //.append(BADGE_IN_NEW_QTY)
                 .toString();
     }
 }

@@ -251,16 +251,12 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -277,17 +273,12 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     private HMAux getByStringHMTmp(String sQuery) {
         HMAux hmAux = null;
         //openDB();
-
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -333,16 +324,12 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
 
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                ch_messages.add(toHMAuxMapper.map(cursor));
+                ch_messages.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

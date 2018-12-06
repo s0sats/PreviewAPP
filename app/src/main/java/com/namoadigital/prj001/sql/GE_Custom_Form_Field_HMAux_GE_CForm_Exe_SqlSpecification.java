@@ -45,7 +45,7 @@ public class GE_Custom_Form_Field_HMAux_GE_CForm_Exe_SqlSpecification implements
                 .append(opc)
                 .append("' order by ge.custom_form_order ")
                 .append(";")
-                .append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_size#custom_form_data_mask#custom_form_data_content#custom_form_order#page#required#resource_code#txt_code#txt_value#custom_form_local_link")
+                //.append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_size#custom_form_data_mask#custom_form_data_content#custom_form_order#page#required#resource_code#txt_code#txt_value#custom_form_local_link")
                 .toString();
     }
 }

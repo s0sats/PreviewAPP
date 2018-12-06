@@ -60,7 +60,7 @@ public class SM_SO_Service_Sql_005 implements Specification {
                         "    AND S.service_seq =            '" + service_seq + "' ")
                 .append(";")
                 //.append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#service_id#service_desc#service_oper_id#status#qty#optional#manual_price#express#time_exec_standard#price#cost#exec_type#exec_seq_oper#approval_budget_user#approval_budget_date#partner_code#partner_id#partner_desc#require_approval#partner_code_md1#partner_code_md2#partner_restriction#pack_id#pack_desc")
-                .append("partner_restriction#pack_id#pack_desc")
+                //.append("partner_restriction#pack_id#pack_desc")
                 .toString();
     }
 }

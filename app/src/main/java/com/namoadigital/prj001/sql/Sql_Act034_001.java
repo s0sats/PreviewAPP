@@ -59,7 +59,7 @@ public class Sql_Act034_001 implements Specification {
                         "   ordernation,\n" +
                         "   t.customer_code\n")
                 .append(";")
-                .append(CH_RoomDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.CUSTOMER_NAME+"#"+MSG_QTY)
+                //.append(CH_RoomDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.CUSTOMER_NAME+"#"+MSG_QTY)
                 .toString();
 
     }

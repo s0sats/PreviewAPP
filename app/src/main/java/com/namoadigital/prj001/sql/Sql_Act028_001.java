@@ -143,7 +143,7 @@ public class Sql_Act028_001 implements Specification {
                         " ORDER BY \n" +
                         "   E.EXEC_TMP DESC\n" +
                         ";")
-                .append(HmAuxFields+"#"+TASK_PERC+"#"+SUM_EXEC_TIME+"#"+QTY_COMMENT+"#"+QTY_FILES+"#"+MY_TASK)
+                //.append(HmAuxFields+"#"+TASK_PERC+"#"+SUM_EXEC_TIME+"#"+QTY_COMMENT+"#"+QTY_FILES+"#"+MY_TASK)
                 .toString();
     }
 }

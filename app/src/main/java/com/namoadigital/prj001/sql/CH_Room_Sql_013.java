@@ -30,7 +30,7 @@ public class CH_Room_Sql_013 implements Specification {
                         " WHERE room_type = '"+ Constant.CHAT_MESSAGE_TYPE_FORM_AP+"' and room_obj like '%\"pk\":\"" + pk_ap + "\"%'  \n"
                 )
                 .append(";")
-                .append("room_code")
+                //.append("room_code")
                 .toString();
     }
 }

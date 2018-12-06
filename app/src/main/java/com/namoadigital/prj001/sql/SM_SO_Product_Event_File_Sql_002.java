@@ -42,7 +42,7 @@ public class SM_SO_Product_Event_File_Sql_002 implements Specification {
                         "   and f.so_code = '"+so_code+"'\n" +
                         "   and f.seq_tmp = '"+seq_tmp+"'\n")
                 .append(";")
-                .append(NEXT_TMP)
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

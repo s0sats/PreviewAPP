@@ -167,16 +167,12 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -220,16 +216,12 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
         List<HMAux> md_sites = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = s_query.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
-                md_sites.add(toHMAuxMapper.map(cursor));
+                md_sites.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

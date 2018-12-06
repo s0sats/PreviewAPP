@@ -42,36 +42,36 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
         this.mView = mView;
-        this.ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
+        this.ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
     }
 
     @Override
     public void getAllCustomers(boolean offline_update) {
         /*
-        * NOVO PROCESSO getAllCustomers
-        * Se offline_update TRUE, atualiza dados da tabela de customer
-        * para que a lista offiline exibida seja a mais real possivel.
-        * Depois faz o processo normal.
-        * */
-        if (offline_update){
-           List<EV_User_Customer> customerList =
-                   ev_user_customerDao.query(
-                        new EV_User_Customer_Sql_003(
-                                ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery()
+         * NOVO PROCESSO getAllCustomers
+         * Se offline_update TRUE, atualiza dados da tabela de customer
+         * para que a lista offiline exibida seja a mais real possivel.
+         * Depois faz o processo normal.
+         * */
+        if (offline_update) {
+            List<EV_User_Customer> customerList =
+                    ev_user_customerDao.query(
+                            new EV_User_Customer_Sql_003(
+                                    ToolBox_Con.getPreference_User_Code(context)
+                            ).toSqlQuery()
                     );
 
             //Verifica se o db do customer se já existe
             //Se não existir seta chave para vazia.
             for (EV_User_Customer customer : customerList) {
-                if( !ToolBox_Inf.checkCustomerDBExists(customer.getCustomer_code()) ){
-                    if(customer.getSession_app() != null){
+                if (!ToolBox_Inf.checkCustomerDBExists(customer.getCustomer_code())) {
+                    if (customer.getSession_app() != null) {
                         customer.setSession_app(null);
                     }
-                }else{
+                } else {
                     //Se existe o banco
                     //Verifica se existe pendencia e seta propriedade
-                    customFormLocalDao =  new GE_Custom_Form_LocalDao(
+                    customFormLocalDao = new GE_Custom_Form_LocalDao(
                             context,
                             ToolBox_Con.customDBPath(customer.getCustomer_code()),
                             Constant.DB_VERSION_CUSTOM
@@ -94,15 +94,15 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
         mView.loadCustomers(
                 ev_user_customerDao.query_HM(
-                            new EV_User_Customer_Sql_001(
-                                    ToolBox_Con.getPreference_User_Code(context)
-                            ).toSqlQuery()
+                        new EV_User_Customer_Sql_001(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
                 )
         );
     }
 
     @Override
-    public void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od) {
+    public void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od) {
         Intent mIntent = new Intent(context, WBR_Session.class);
         Bundle bundle = new Bundle();
 
@@ -124,32 +124,32 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public void executeSyncProcess() {
         EV_User_Customer userCustomer;
 
-        userCustomer =  ev_user_customerDao.getByString(
-                            new EV_User_Customer_Sql_002(
-                                ToolBox_Con.getPreference_User_Code(context),
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                            ).toSqlQuery()
-                        );
+        userCustomer = ev_user_customerDao.getByString(
+                new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         //add 22/03/2018 - Forms offline
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
         //Não é necessario verificar se tem PARAM_SO_MOV,pois esse parametro sempre
         //vem acompanhado do PARAM_SO.
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
         data_package.add(DataPackage.DATA_PACKAGE_AP);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.GS_SESSION_APP,userCustomer.getSession_app());
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
+        bundle.putString(Constant.GS_SESSION_APP, userCustomer.getSession_app());
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
         bundle.putBoolean(Constant.GS_LOGIN_PROCESS, true);
@@ -179,7 +179,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     @Override
     public boolean checkPreferenceIsSet() {
-        if (ToolBox_Con.getPreference_Customer_Code(context) != -1){
+        if (ToolBox_Con.getPreference_Customer_Code(context) != -1) {
             return true;
         }
         return false;
@@ -200,7 +200,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public void executeLogoutProcess() {
         Intent mIntent = new Intent(context, WBR_Logout.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"");
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, "");
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

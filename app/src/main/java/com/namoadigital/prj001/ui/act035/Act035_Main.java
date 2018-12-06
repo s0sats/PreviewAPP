@@ -433,19 +433,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         iv_reorder.setVisibility(View.GONE);
         iv_down.setVisibility(View.GONE);
-        //
-        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-        //
-        mPresenter.updateReadStatus(
-                (ArrayList<HMAux>) chMessageDao.query_HM(
-                        new CH_Message_Sql_017(
-                                mRoom_code
-                        ).toSqlQuery()
-                ),
-                "FULL"
-        );
-        //
-        startReceivers(true);
+        //Se a room existir continua montagem da tela, se não , volta para act0034
+        if(mRoom != null) {
+            mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+            //
+            mPresenter.updateReadStatus(
+                    (ArrayList<HMAux>) chMessageDao.query_HM(
+                            new CH_Message_Sql_017(
+                                    mRoom_code
+                            ).toSqlQuery()
+                    ),
+                    "FULL"
+            );
+            //
+            startReceivers(true);
+        }else{
+            callAct034(context);
+        }
     }
 
     private void turnOnDownIcon() {
@@ -2315,7 +2319,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 //        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         //Informações da room
-        if (mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
+        if (mRoom != null && mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
             menu.add(0, 0, Menu.FIRST + 1, hmAux_Trans.get("room_ap_info_menu_lbl"));
             menu.findItem(0).setIcon(R.drawable.ic_info);
             menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);

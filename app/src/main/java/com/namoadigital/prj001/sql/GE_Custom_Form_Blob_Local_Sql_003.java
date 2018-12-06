@@ -46,7 +46,6 @@ public class GE_Custom_Form_Blob_Local_Sql_003 implements Specification {
                 .append("custom_form_version = '").append(s_formversion_code).append("' and \n")
                 .append("blob_code = '").append(s_blob_code).append("' ")
                 .append(";")
-
                 .toString();
     }
 }

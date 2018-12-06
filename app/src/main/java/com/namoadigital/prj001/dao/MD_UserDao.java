@@ -138,12 +138,11 @@ public class MD_UserDao extends BaseDao implements Dao<MD_User> {
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
-        String s_query_div[] = sQuery.split(";");
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
         try {
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
             cursor.close();
         } catch (Exception e) {
@@ -180,13 +179,12 @@ public class MD_UserDao extends BaseDao implements Dao<MD_User> {
     public List<HMAux> query_HM(String sQuery) {
         List<HMAux> md_users  = new ArrayList<>();
         openDB();
-        String s_query_div[] = sQuery.split(";");
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
         try {
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                md_users.add(toHMAuxMapper.map(cursor));
+                md_users.add(CursorToHMAuxMapper.mapN(cursor));
             }
             cursor.close();
         } catch (Exception e) {

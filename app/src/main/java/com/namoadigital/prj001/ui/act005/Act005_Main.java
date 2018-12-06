@@ -392,6 +392,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_pending_data_ttl");
         transList.add("alert_pending_data_msg");
         transList.add("alert_pending_form_logout_msg");
+        transList.add("alert_site_or_operation_not_found_ttl");
+        transList.add("alert_site_or_operation_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -870,6 +872,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+        //TRATATIVA ESPECIFICA DA ACT005
+        if( mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)
+            || mFooter.containsKey(Constant.FOOTER_OPERATION_NOT_FOUND)
+        ){
+            String msg = hmAux_Trans.get("alert_site_or_operation_not_found_msg");
+            //
+//            if( mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)){
+//                msg += mFooter.get(Constant.FOOTER_SITE_NOT_FOUND) +"\n";
+//            }
+//            if( mFooter.containsKey(Constant.FOOTER_OPERATION_NOT_FOUND)){
+//                msg += mFooter.get(Constant.FOOTER_OPERATION_NOT_FOUND) +"\n";
+//            }
+            //
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_site_or_operation_not_found_ttl"),
+                    msg,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            changeCustomer();
+                        }
+                    },
+                    0
+            );
+        }
 
     }
 

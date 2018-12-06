@@ -69,6 +69,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         initActions();
         //23/08/2018
         deleteApkFile();
+
     }
 
     /**

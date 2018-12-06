@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Pending_Message;
+import com.namoadigital.prj001.model.DaoError;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Read;

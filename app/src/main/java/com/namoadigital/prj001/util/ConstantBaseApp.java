@@ -173,8 +173,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
     public static int DB_VERSION_CHAT;
 
-    public static String DB_MODE_MULTI = "MULTI";
-    public static String DB_MODE_SINGLE = "SINGLE";
+    public static final String DB_MODE_MULTI = "MULTI";
+    public static final String DB_MODE_SINGLE = "SINGLE";
     public static final String DB_MODE_CHAT = "CHAT";
 
     /**
@@ -243,6 +243,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
     public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
     public static final String FOOTER_IMEI = "footer_imei";
+    public static final String FOOTER_SITE_NOT_FOUND = "footer_site_not_found";
+    public static final String FOOTER_OPERATION_NOT_FOUND = "footer_operation_not_found";
 
     /**
      * Sync WS
@@ -392,6 +394,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PARAM_KEY_WS_RETURN = "WS_RETURN";
     public static final String LOGIN_STATUS_OK = "LOGIN_STATUS_OK";
     public static final String LOGIN_STATUS_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
+    //
+    public static final String TYPE_BR_AP_OK = "AP_OK";
+    public static final String TYPE_BR_AP_ERROR = "AP_ERROR";
+    public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
 
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
@@ -482,6 +488,7 @@ public class ConstantBaseApp extends ConstantBase {
 
 
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+    public static final String EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE = "EXCEPTION_DATABASE_CUSTOMER_-1";
 
     public static final String WS_FCM = "WS_FCM";
     /*

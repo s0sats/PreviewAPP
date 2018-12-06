@@ -35,7 +35,7 @@ public class EV_User_Customer_Sql_001 implements Specification {
                 .append(" WHERE \n " +
                              EV_User_CustomerDao.USER_CODE +" = '"+s_user_code+"' \n " +
                         " ORDER by customer_name;")
-                .append("customer_code#" +
+                /*.append("customer_code#" +
                         "customer_name#" +
                         "translate_code#" +
                         "blocked#" +
@@ -44,7 +44,7 @@ public class EV_User_Customer_Sql_001 implements Specification {
                         "translate_code#" +
                         "nls_date_format#" +
                         "tracking"
-                )
+                )*/
                 .toString();
     }
 }

@@ -52,7 +52,7 @@ public class EV_Module_Res_Txt_Trans_HMAux_CF_Type_SqlSpecification implements S
                 .append("' || '|' || custom_form_type from ge_custom_forms where custom_form_status = 'ACTIVE'")
 //
                 .append(");")
-                .append("resource_code#txt_code#txt_value")
+                //.append("resource_code#txt_code#txt_value")
                 .toString();
     }
 }

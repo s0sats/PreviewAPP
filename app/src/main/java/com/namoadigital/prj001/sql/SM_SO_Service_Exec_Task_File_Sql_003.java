@@ -47,7 +47,8 @@ public class SM_SO_Service_Exec_Task_File_Sql_003 implements Specification {
                         "  f.customer_code = '"+customer_code+"'\n" +
                         "  and f.file_url <> ''" +
                         "  and f.file_url_local = ''")
-                .append(";customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#file_code#file_url#"+FILE_LOCAL_NAME+"#"+FILE_TYPE)
+                .append(";")
+                //.append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#file_code#file_url#"+FILE_LOCAL_NAME+"#"+FILE_TYPE)
                 .toString();
     }
 }

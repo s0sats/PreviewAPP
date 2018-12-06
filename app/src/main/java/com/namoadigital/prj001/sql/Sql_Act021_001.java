@@ -30,7 +30,7 @@ public class Sql_Act021_001 implements Specification {
                         "WHERE\n" +
                         "  s.customer_code = '"+customer_code+"'\n" +
                         "  and s.update_required = 1;")
-                .append(UPDATE_REQUIRED_QTY)
+                //.append(UPDATE_REQUIRED_QTY)
                 .toString();
     }
 }

@@ -29,7 +29,7 @@ public class CH_Room_Sql_005 implements Specification {
                         " WHERE" +
                         "   r.user_code = '" + user_code + "'\n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

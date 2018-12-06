@@ -79,10 +79,14 @@ public class Sql_Act013_001 implements Specification {
                         "  d.so_prefix,\n" +
                         "  d.so_code,\n" +
 
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n "+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n "+
+//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
+                        "  d.date_start,\n" +
+                        "  d.date_end,\n" +
+                        "  l.schedule_date_start_format,\n "+
+                        "  l.schedule_date_end_format,\n"+
                         "  l.schedule_comments,\n" +
                         "  l.require_serial_done,\n" +
                         "  l.require_serial,\n" +
@@ -132,7 +136,7 @@ public class Sql_Act013_001 implements Specification {
                         "      l.serial_id, \n" +
                         "      l.custom_form_data" +
                         "\n;")
-                .append("customer_code#custom_form_type#custom_form_type_desc#" +
+                /*.append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
@@ -142,7 +146,7 @@ public class Sql_Act013_001 implements Specification {
                         MD_SiteDao.SITE_CODE+"#"+
                         MD_SiteDao.SITE_ID+"#"+
                         MD_SiteDao.SITE_DESC
-                )
+                )*/
                 .toString();
     }
 

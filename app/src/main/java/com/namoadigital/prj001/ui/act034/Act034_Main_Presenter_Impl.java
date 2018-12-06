@@ -36,19 +36,19 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
     public ArrayList<HMAux> getCustomerNameList() {
         return (ArrayList<HMAux>)
                 customerDao.query_HM(
-                    new Sql_Act034_002(
-                            ToolBox_Con.getPreference_User_Code(context)
-                    ).toSqlQuery()
+                        new Sql_Act034_002(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
                 );
     }
 
     @Override
     public ArrayList<HMAux> getCustomerMessageList(ArrayList<HMAux> customerNameList) {
         String customer_list_filter = "";
-        for (HMAux customer  :customerNameList) {
-                customer_list_filter += customer.get(EV_User_CustomerDao.CUSTOMER_CODE) +",";
+        for (HMAux customer : customerNameList) {
+            customer_list_filter += customer.get(EV_User_CustomerDao.CUSTOMER_CODE) + ",";
         }
-        customer_list_filter = customer_list_filter.substring(0,customer_list_filter.length() -1);
+        customer_list_filter = customer_list_filter.substring(0, customer_list_filter.length() - 1);
         //
         ArrayList<HMAux> customerList = (ArrayList<HMAux>)
                 roomDao.query_HM(
@@ -58,11 +58,11 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
                                 customer_list_filter
                         ).toSqlQuery()
                 );
-        for (HMAux auxCustomer :customerList) {
-            for (HMAux auxName :customerNameList) {
-                if(auxCustomer.get(EV_User_CustomerDao.CUSTOMER_CODE)
-                    .equalsIgnoreCase(auxName.get(EV_User_CustomerDao.CUSTOMER_CODE))
-                ){
+        for (HMAux auxCustomer : customerList) {
+            for (HMAux auxName : customerNameList) {
+                if (auxCustomer.get(EV_User_CustomerDao.CUSTOMER_CODE)
+                        .equalsIgnoreCase(auxName.get(EV_User_CustomerDao.CUSTOMER_CODE))
+                        ) {
                     auxCustomer.put(
                             EV_User_CustomerDao.CUSTOMER_NAME,
                             auxName.get(EV_User_CustomerDao.CUSTOMER_NAME)
@@ -78,7 +78,7 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
 
     @Override
     public void tryToRestartChatService() {
-        if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context)){
+        if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context)) {
             //ToolBox_Inf.defineChatServiceAction(context,Constant.ACT034,true);
 //            if(!AppBackgroundService.isRunning) {
 //                Intent mIntent = new Intent(context, AppBackgroundService.class);

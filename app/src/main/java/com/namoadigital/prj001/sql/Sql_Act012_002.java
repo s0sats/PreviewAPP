@@ -40,7 +40,7 @@ public class Sql_Act012_002 implements Specification {
                         "    S."+SM_SODao.CUSTOMER_CODE+" =  '" + s_customer_code + "'\n" +
                         "    AND s."+SM_SODao.STATUS+" not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"')" +
                         ";")
-                .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
+                //.append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
     }
 }

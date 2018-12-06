@@ -416,7 +416,14 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
                 tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
 
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
+                //tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
+                tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                );
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
                 tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
                 tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
@@ -438,9 +445,24 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_71_lbl.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(GE_Custom_Form_LocalDao.SITE_ID) + " - " + item.get(GE_Custom_Form_LocalDao.SITE_DESC));
                     //
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
-                    tv_item_08_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                    tv_item_08_lbl.setText(
+                            hmAux_Trans.get("lbl_date_schedule_start") + " " +
+                            //item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)),
+                                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            )
+
+                    );
                     tv_item_09_lbl.setVisibility(View.VISIBLE);
-                    tv_item_09_lbl.setText(hmAux_Trans.get("lbl_date_schedule_end") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
+                    tv_item_09_lbl.setText(
+                        hmAux_Trans.get("lbl_date_schedule_end") + " " +
+                        //        item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT)
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                    );
 
                 } else {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
@@ -462,7 +484,16 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
+                tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                                //item.get(GE_Custom_Form_DataDao.DATE_START)
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+
+
+                );
 //                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
 //                llBackground.setBackground(llDrawable);
                 //
@@ -493,7 +524,15 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
 
             case Constant.SYS_STATUS_SCHEDULE:
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                                //item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+
+                );
                 //
 //                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
 //                llBackground.setBackground(llDrawable);

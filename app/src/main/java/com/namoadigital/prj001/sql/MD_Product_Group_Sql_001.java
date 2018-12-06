@@ -30,7 +30,8 @@ public class MD_Product_Group_Sql_001 implements Specification {
                         MD_Product_GroupDao.GROUP_CODE +" = '"+s_group_code+"'"+
                         "ORDER BY " +
                         MD_Product_GroupDao.GROUP_CODE)
-                .append(";customer_code#group_code#recursive_code#recursive_code_father#group_id#group_desc")
+                .append(";")
+                //.append("customer_code#group_code#recursive_code#recursive_code_father#group_id#group_desc")
                 .toString();
     }
 }

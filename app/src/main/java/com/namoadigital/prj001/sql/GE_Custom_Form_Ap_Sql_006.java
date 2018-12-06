@@ -41,7 +41,7 @@ public class GE_Custom_Form_Ap_Sql_006 implements Specification {
                         //para testes - VOLTAR AO CORRETO APOS TESTES
                         "    and a.upload_required = 1 \n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

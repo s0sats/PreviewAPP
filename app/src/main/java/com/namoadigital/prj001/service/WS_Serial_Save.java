@@ -115,7 +115,7 @@ public class WS_Serial_Save extends IntentService {
             if (serialList == null || serialList.size() == 0) {
                 if(menu_send_process){
                     HMAux auxApReturned = new HMAux();
-                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "", "0");
                 }else {
                     ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
                 }
@@ -311,7 +311,6 @@ public class WS_Serial_Save extends IntentService {
         translist.add("msg_updating_serial");
         translist.add("msg_loading_serial_from_token");
         translist.add("msg_token_file_error");
-        translist.add("msg_end_ap_save");
         translist.add("msg_no_serial_to_update");
         translist.add("msg_no_return_found");
 

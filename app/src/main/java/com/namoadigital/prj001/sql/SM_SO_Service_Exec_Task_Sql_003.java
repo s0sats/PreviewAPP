@@ -1,9 +1,17 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 06/07/17.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
@@ -18,6 +26,7 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
     private int service_code;
     private int service_seq;
     private long exec_tmp;
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public SM_SO_Service_Exec_Task_Sql_003(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
         this.customer_code = customer_code;
@@ -39,8 +48,8 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
         return sb
                 .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status,\n" +
 
-                        "strftime('%Y-%m-%d %H:%M',T.start_date,'localtime') start_date_local,\n" +
-                        "strftime('%Y-%m-%d %H:%M',T.end_date,'localtime') end_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.start_date,'"+deviceGMT+"') start_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.end_date,'"+deviceGMT+"') end_date_local,\n" +
 
                         "( " +
                         " " +
@@ -105,7 +114,8 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
 //                        "    exec_tmp DESC, " +
 //                        "    task_tmp DESC, " +
                 .append("    task_seq_oper DESC")
-                .append(";service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#start_date_local#end_date#end_date_local#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments#qty_photo")
+                .append(";")
+                //.append("service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#start_date_local#end_date#end_date_local#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments#qty_photo")
                 .toString();
     }
 }

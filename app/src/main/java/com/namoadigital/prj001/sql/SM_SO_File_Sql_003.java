@@ -39,7 +39,8 @@ public class SM_SO_File_Sql_003 implements Specification {
                         " WHERE\n" +
                         "  f.customer_code = '"+customer_code+"'\n" +
                         "  and f.file_url_local = ''")
-                .append(";customer_code#so_prefix#so_code#file_code#file_name#file_url#"+FILE_LOCAL_NAME+"#"+FILE_TYPE)
+                .append(";")
+                //.append("customer_code#so_prefix#so_code#file_code#file_name#file_url#"+FILE_LOCAL_NAME+"#"+FILE_TYPE)
                 .toString();
     }
 }

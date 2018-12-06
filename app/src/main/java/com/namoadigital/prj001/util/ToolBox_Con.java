@@ -6,6 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.DaoError;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -1065,6 +1068,159 @@ public class ToolBox_Con {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static String getDBHelperName(String mDBName, int mDBVersion) {
+        try {
+            if (mDBName == null || mDBName.isEmpty()) {
+                return "";
+            }
+
+            return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static DaoError getSQLiteErrorCodeDescription(String errorMessage) {
+        final String codeStr = "(code ";
+        DaoError mErrorDao = new DaoError();
+        //
+        mErrorDao.setError(true);
+        mErrorDao.setRawMessage(errorMessage);
+        //
+        if(errorMessage.contains(codeStr)){
+            int maxErroCodeSize = 4;//Tamanho maximo do "result_code" do sqlite
+            int codeIdxStart = errorMessage.indexOf(codeStr) + codeStr.length();
+            int codeIdxEnd = 0;
+            //Faz loop para identificar se a substring é um "numero"
+            //pois existem "result_code" de 1 a 4 "digitos"
+            for( ; maxErroCodeSize  > 0; maxErroCodeSize --){
+                codeIdxEnd = codeIdxStart + maxErroCodeSize;
+                try{
+                    String s = errorMessage.substring(codeIdxStart, codeIdxEnd);
+                    int i = Integer.parseInt(s);
+                    break;
+                }catch (Exception e){
+                }
+            }
+            //
+            if(codeIdxStart < errorMessage.length() && codeIdxEnd <= errorMessage.length()) {
+                String sqliteErroCode = errorMessage.substring(codeIdxStart, codeIdxEnd);
+                //
+                mErrorDao.setCode(sqliteErroCode);
+                mErrorDao.setDescription(sqliteErrorDescMapper(sqliteErroCode));
+            }
+        }
+        //
+        return mErrorDao;
+    }
+
+    /**
+     * Metodo que retorna o "result code desc" da sqlite exception
+     * fonte: https://www.sqlite.org/rescode.html
+     * @param code
+     * @return
+     */
+    public static String sqliteErrorDescMapper(String code){
+        HMAux sqliteMap = new HMAux();
+        //
+        sqliteMap.put("0","SQLITE_OK");
+        sqliteMap.put("1","SQLITE_ERROR");
+        sqliteMap.put("2","SQLITE_INTERNAL");
+        sqliteMap.put("3","SQLITE_PERM");
+        sqliteMap.put("4","SQLITE_ABORT");
+        sqliteMap.put("5","SQLITE_BUSY");
+        sqliteMap.put("6","SQLITE_LOCKED");
+        sqliteMap.put("7","SQLITE_NOMEM");
+        sqliteMap.put("8","SQLITE_READONLY");
+        sqliteMap.put("9","SQLITE_INTERRUPT");
+        sqliteMap.put("10","SQLITE_IOERR");
+        sqliteMap.put("11","SQLITE_CORRUPT");
+        sqliteMap.put("12","SQLITE_NOTFOUND");
+        sqliteMap.put("13","SQLITE_FULL");
+        sqliteMap.put("14","SQLITE_CANTOPEN");
+        sqliteMap.put("15","SQLITE_PROTOCOL");
+        sqliteMap.put("16","SQLITE_EMPTY");
+        sqliteMap.put("17","SQLITE_SCHEMA");
+        sqliteMap.put("18","SQLITE_TOOBIG");
+        sqliteMap.put("19","SQLITE_CONSTRAINT");
+        sqliteMap.put("20","SQLITE_MISMATCH");
+        sqliteMap.put("21","SQLITE_MISUSE");
+        sqliteMap.put("22","SQLITE_NOLFS");
+        sqliteMap.put("23","SQLITE_AUTH");
+        sqliteMap.put("24","SQLITE_FORMAT");
+        sqliteMap.put("25","SQLITE_RANGE");
+        sqliteMap.put("26","SQLITE_NOTADB");
+        sqliteMap.put("27","SQLITE_NOTICE");
+        sqliteMap.put("28","SQLITE_WARNING");
+        sqliteMap.put("100","SQLITE_ROW");
+        sqliteMap.put("101","SQLITE_DONE");
+        sqliteMap.put("256","SQLITE_OK_LOAD_PERMANENTLY");
+        sqliteMap.put("257","SQLITE_ERROR_MISSING_COLLSEQ");
+        sqliteMap.put("261","SQLITE_BUSY_RECOVERY");
+        sqliteMap.put("262","SQLITE_LOCKED_SHAREDCACHE");
+        sqliteMap.put("264","SQLITE_READONLY_RECOVERY");
+        sqliteMap.put("266","SQLITE_IOERR_READ");
+        sqliteMap.put("267","SQLITE_CORRUPT_VTAB");
+        sqliteMap.put("270","SQLITE_CANTOPEN_NOTEMPDIR");
+        sqliteMap.put("275","SQLITE_CONSTRAINT_CHECK");
+        sqliteMap.put("283","SQLITE_NOTICE_RECOVER_WAL");
+        sqliteMap.put("284","SQLITE_WARNING_AUTOINDEX");
+        sqliteMap.put("513","SQLITE_ERROR_RETRY");
+        sqliteMap.put("516","SQLITE_ABORT_ROLLBACK");
+        sqliteMap.put("517","SQLITE_BUSY_SNAPSHOT");
+        sqliteMap.put("520","SQLITE_READONLY_CANTLOCK");
+        sqliteMap.put("522","SQLITE_IOERR_SHORT_READ");
+        sqliteMap.put("523","SQLITE_CORRUPT_SEQUENCE");
+        sqliteMap.put("526","SQLITE_CANTOPEN_ISDIR");
+        sqliteMap.put("531","SQLITE_CONSTRAINT_COMMITHOOK");
+        sqliteMap.put("539","SQLITE_NOTICE_RECOVER_ROLLBACK");
+        sqliteMap.put("769","SQLITE_ERROR_SNAPSHOT");
+        sqliteMap.put("776","SQLITE_READONLY_ROLLBACK");
+        sqliteMap.put("778","SQLITE_IOERR_WRITE");
+        sqliteMap.put("782","SQLITE_CANTOPEN_FULLPATH");
+        sqliteMap.put("787","SQLITE_CONSTRAINT_FOREIGNKEY");
+        sqliteMap.put("1032","SQLITE_READONLY_DBMOVED");
+        sqliteMap.put("1034","SQLITE_IOERR_FSYNC");
+        sqliteMap.put("1038","SQLITE_CANTOPEN_CONVPATH");
+        sqliteMap.put("1043","SQLITE_CONSTRAINT_FUNCTION");
+        sqliteMap.put("1288","SQLITE_READONLY_CANTINIT");
+        sqliteMap.put("1290","SQLITE_IOERR_DIR_FSYNC");
+        sqliteMap.put("1294","SQLITE_CANTOPEN_DIRTYWAL");
+        sqliteMap.put("1299","SQLITE_CONSTRAINT_NOTNULL");
+        sqliteMap.put("1544","SQLITE_READONLY_DIRECTORY");
+        sqliteMap.put("1546","SQLITE_IOERR_TRUNCATE");
+        sqliteMap.put("1555","SQLITE_CONSTRAINT_PRIMARYKEY");
+        sqliteMap.put("1802","SQLITE_IOERR_FSTAT");
+        sqliteMap.put("1811","SQLITE_CONSTRAINT_TRIGGER");
+        sqliteMap.put("2058","SQLITE_IOERR_UNLOCK");
+        sqliteMap.put("2067","SQLITE_CONSTRAINT_UNIQUE");
+        sqliteMap.put("2314","SQLITE_IOERR_RDLOCK");
+        sqliteMap.put("2323","SQLITE_CONSTRAINT_VTAB");
+        sqliteMap.put("2570","SQLITE_IOERR_DELETE");
+        sqliteMap.put("2579","SQLITE_CONSTRAINT_ROWID");
+        sqliteMap.put("2826","SQLITE_IOERR_BLOCKED");
+        sqliteMap.put("3082","SQLITE_IOERR_NOMEM");
+        sqliteMap.put("3338","SQLITE_IOERR_ACCESS");
+        sqliteMap.put("3594","SQLITE_IOERR_CHECKRESERVEDLOCK");
+        sqliteMap.put("3850","SQLITE_IOERR_LOCK");
+        sqliteMap.put("4106","SQLITE_IOERR_CLOSE");
+        sqliteMap.put("4362","SQLITE_IOERR_DIR_CLOSE");
+        sqliteMap.put("4618","SQLITE_IOERR_SHMOPEN");
+        sqliteMap.put("4874","SQLITE_IOERR_SHMSIZE");
+        sqliteMap.put("5130","SQLITE_IOERR_SHMLOCK");
+        sqliteMap.put("5386","SQLITE_IOERR_SHMMAP");
+        sqliteMap.put("5642","SQLITE_IOERR_SEEK");
+        sqliteMap.put("5898","SQLITE_IOERR_DELETE_NOENT");
+        sqliteMap.put("6154","SQLITE_IOERR_MMAP");
+        sqliteMap.put("6410","SQLITE_IOERR_GETTEMPPATH");
+        sqliteMap.put("6666","SQLITE_IOERR_CONVPATH");
+        //
+        String s = "UNKNOW_ERROR";
+        //
+        return sqliteMap.containsKey(code) ? sqliteMap.get(code) : s;
     }
 
 }

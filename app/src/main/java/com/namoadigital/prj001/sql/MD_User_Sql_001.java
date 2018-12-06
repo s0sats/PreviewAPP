@@ -35,7 +35,8 @@ public class MD_User_Sql_001 implements Specification {
                                 " AND " + MD_UserDao.AP + " = '1' " +
                                 " ORDER BY " +
                                 "      user_nick")
-                .append(";" + HmAuxFields + "#" + SearchableSpinner.ID + "#" + SearchableSpinner.DESCRIPTION)
+                .append(";")
+                //.append(HmAuxFields + "#" + SearchableSpinner.ID + "#" + SearchableSpinner.DESCRIPTION)
                 .toString();
     }
 }

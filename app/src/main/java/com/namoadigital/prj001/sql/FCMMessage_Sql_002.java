@@ -26,7 +26,7 @@ public class FCMMessage_Sql_002 implements Specification {
                         " WHERE   \n" +
                         "\tfcmmessage_code = (SELECT MAX(fcmmessage_code)  FROM fcmmessages)")
                 .append(";")
-                .append("fcmmessage_code")
+                //.append("fcmmessage_code")
                 .toString();
     }
 }

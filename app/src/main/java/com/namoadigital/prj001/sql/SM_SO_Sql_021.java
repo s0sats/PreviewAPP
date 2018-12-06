@@ -40,13 +40,13 @@ public class SM_SO_Sql_021 implements Specification {
                         "   AND s.client_approval_image_url_local is null\n"
                 )
                 .append(";")
-                .append(
+                /*.append(
                         SM_SODao.CUSTOMER_CODE +"#" +
                         SM_SODao.SO_PREFIX +"#"+
                         SM_SODao.SO_CODE +"#"+
                         SM_SODao.CLIENT_APPROVAL_IMAGE_NAME + "#" +
                         SM_SODao.CLIENT_APPROVAL_IMAGE_URL
-                )
+                )*/
                 .toString();
     }
 }

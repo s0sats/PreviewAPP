@@ -422,9 +422,9 @@ public class Sql_Act027_002 implements Specification {
                                 "     1 = 1\n")
                         .append(only_avaliable_where)
                         .append(";")
-                        .append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+
-                                HmAuxFields+"#"+YES_NO_ICON+"#"+START_STOP_ACTION+"#"+START_STOP_ICON+"#"+SET_FLAG+"#"+QTY_DONE+"#"+PARTNER_RESTRICTION+"#"+SO_STATUS
-                        )
+//                        .append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+
+//                                HmAuxFields+"#"+YES_NO_ICON+"#"+START_STOP_ACTION+"#"+START_STOP_ICON+"#"+SET_FLAG+"#"+QTY_DONE+"#"+PARTNER_RESTRICTION+"#"+SO_STATUS
+//                        )
                         .toString();
     }
 }

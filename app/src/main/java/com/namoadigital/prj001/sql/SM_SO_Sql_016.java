@@ -69,12 +69,12 @@ public class SM_SO_Sql_016 implements Specification {
                             filter +
                         //"    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','" + Constant.SYS_STATUS_WAITING_QUALITY +"','"+ Constant.SYS_STATUS_DONE+"');")
                         "    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"');")
-                .append(fields+"#"+
-                        Constant.PARAM_KEY_TYPE+"#"+
-                        MD_BrandDao.BRAND_DESC+"#"+
-                        MD_Brand_ModelDao.MODEL_DESC+"#"+
-                        MD_Brand_ColorDao.COLOR_DESC
-                )
+//                .append(fields+"#"+
+//                        Constant.PARAM_KEY_TYPE+"#"+
+//                        MD_BrandDao.BRAND_DESC+"#"+
+//                        MD_Brand_ModelDao.MODEL_DESC+"#"+
+//                        MD_Brand_ColorDao.COLOR_DESC
+//                )
                 .toString();
     }
 }

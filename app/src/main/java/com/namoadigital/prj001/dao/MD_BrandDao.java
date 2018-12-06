@@ -151,16 +151,12 @@ public class MD_BrandDao extends BaseDao implements Dao<MD_Brand> {
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -204,16 +200,12 @@ public class MD_BrandDao extends BaseDao implements Dao<MD_Brand> {
         List<HMAux> md_brands = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                md_brands.add(toHMAuxMapper.map(cursor));
+                md_brands.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

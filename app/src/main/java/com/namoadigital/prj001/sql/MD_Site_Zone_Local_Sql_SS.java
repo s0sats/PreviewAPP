@@ -67,7 +67,7 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
                         " and ( length('"+site_code_restriction+"') = 0 OR l.site_code in ("+site_code_restriction+")  ) \n"+
                         " ORDER BY\n" +
                         "      l.local_id;")
-                .append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION+"#site_code#site_desc#zone_code#zone_desc")
+                //.append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION+"#site_code#site_desc#zone_code#zone_desc")
                 .toString().replace("'%null%'","null").replace("'null'","null");
     }
 }

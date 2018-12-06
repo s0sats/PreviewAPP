@@ -61,7 +61,7 @@ public class GE_Custom_Form_Field_HMAux_SqlSpecification implements Specificatio
                 .append(" order by ")
                 .append(" custom_form_order_seq ")
                 .append(";")
-                .append("custom_form_seq#custom_form_data_type#custom_form_data_size#custom_form_mask#custom_form_data_content#custom_form_order_seq#required")
+                //.append("custom_form_seq#custom_form_data_type#custom_form_data_size#custom_form_mask#custom_form_data_content#custom_form_order_seq#required")
                 .toString();
     }
 }

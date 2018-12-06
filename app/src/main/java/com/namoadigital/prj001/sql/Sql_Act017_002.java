@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -9,15 +10,22 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
- * Created by DANIEL.LUCHE on 06/03/2018.
+ * Created by LUCHE on 06/03/2018.
  *
  * Query que seleciona todos os AP agendados na data selecionada
  *
- * Modificado by DANIEL.LUCHE on 06/07/2018.
+ * Modificado by LUCHE on 06/07/2018.
  *
  * NOVO CONCEITO de atrasados 06/07/2018
  * Agora considera atrasado todos forms com data(dia, mes, ano) menor ou igual a de hoje.
  *
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act017_002 implements Specification {
@@ -28,6 +36,7 @@ public class Sql_Act017_002 implements Specification {
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
     private String serial_id;
     private String filter_only_delay;
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act017_002(Context context, long s_customer_code , String selected_date, String serial_id,boolean late) {
         this.s_customer_code = s_customer_code;
@@ -44,18 +53,18 @@ public class Sql_Act017_002 implements Specification {
                 .append(" SELECT\n" +
                         "'"+Constant.MODULE_FORM_AP +"' "+ Act017_Main.ACT017_MODULE_KEY +" ,\n" +
                         "  a.*\n," +
-                        "  strftime('%Y-%m-%d',a.ap_when,'localtime') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n" +
-                        "  (strftime('%s',a.ap_when,'localtime') * 1000) "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"\n" +
+                        "  strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n" +
+                        "  (strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"\n" +
                         "  FROM\n" +
                         GE_Custom_Form_ApDao.TABLE+ " a\n" +
                         "  WHERE\n" +
                         "      a."+GE_Custom_Form_ApDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
                         "      AND a.ap_when is not null \n" +
-                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
+                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') = '"+selected_date+"')\n" +
                         "      AND ('"+serial_id+"' is null or a.serial_id like '%"+serial_id+"%') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',a.ap_when ,'localtime' ) <= strftime('%Y-%m-%d','now','localtime')) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',a.ap_when ,'"+deviceGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"')) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
                         "  ORDER BY\n" +
-                        "      strftime('%Y-%m-%d %H:%M',a.ap_when,'localtime'), \n" +
+                        "      strftime('%Y-%m-%d %H:%M',a.ap_when,'"+deviceGMT+"'), \n" +
                         "      CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
                         "           WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +
@@ -67,10 +76,10 @@ public class Sql_Act017_002 implements Specification {
                         "      a.custom_form_data, \n" +
                         "      a.ap_code \n" +
                         ";")
-                .append( Act017_Main.ACT017_MODULE_KEY+"#")
-                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
-                .append( Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#")
-                .append(HmAuxFields)
+//                .append( Act017_Main.ACT017_MODULE_KEY+"#")
+//                .append( Act017_Main.ACT017_ADAPTER_DATE_REF+"#")
+//                .append( Act017_Main.ACT017_ADAPTER_DATE_REF_MS+"#")
+//                .append(HmAuxFields)
                 .toString()
                 .replace("'null'","null");
 

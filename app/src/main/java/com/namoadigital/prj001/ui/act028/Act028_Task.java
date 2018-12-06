@@ -52,6 +52,14 @@ import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
 
 /**
  * Created by neomatrix on 14/07/17.
+ *
+ * 27/11/18 - LUCHE
+ *
+ * Modificado set das propriedades Start_date e End_date para
+ * ao inves de usarem o metodo convertDBToDeviceTMZ(), usarem o conjuto de chamadas
+ * millisecondsToString(dateToMilliseconds()), pois o metodo convertDBToDeviceTMZ(),
+ * apresenta o mesmo problema de conversão de timezone quando horario de verão.
+ *
  */
 
 public class Act028_Task extends BaseFragment {
@@ -152,8 +160,36 @@ public class Act028_Task extends BaseFragment {
     public void setmTask(SM_SO_Service_Exec_Task mTask) {
         this.mTask = mTask;
         //
-        this.mTask.setStart_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getStart_date()));
-        this.mTask.setEnd_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getEnd_date()));
+//        this.mTask.setStart_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getStart_date()));
+//        this.mTask.setEnd_date(ToolBox_Inf.convertDBToDeviceTMZ(mTask.getEnd_date()));
+        //
+        if(mTask.getStart_date() == null) {
+            this.mTask.setStart_date("");
+        }else{
+            this.mTask.setStart_date(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(
+                                    mTask.getStart_date(),
+                                    Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                            ),
+                            Constant.DATEFORMATDBH + " Z"
+                    )
+            );
+        }
+        //
+        if(mTask.getEnd_date() == null){
+            this.mTask.setEnd_date("");
+        }else {
+            this.mTask.setEnd_date(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(
+                                    mTask.getEnd_date(),
+                                    Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                            ),
+                            Constant.DATEFORMATDBH + " Z"
+                    )
+            );
+        }
         //
         StringBuilder sFiles = new StringBuilder();
 
@@ -234,8 +270,8 @@ public class Act028_Task extends BaseFragment {
                 mTask.setComments(tempValues.get("comments"));
                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), tempValues.get("img")));
 
-                mTask.setStart_date(ToolBox.convertToDeviceTMZ2(tempValues.get("dts")));
-                mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(tempValues.get("dte")));
+                mTask.setStart_date(ToolBox.convertToDeviceTMZ(tempValues.get("dts")));
+                mTask.setEnd_date(ToolBox.convertToDeviceTMZ(tempValues.get("dte")));
 
                 mTask.setTask_perc(Integer.parseInt(tempValues.get("perc")));
 
@@ -769,8 +805,8 @@ public class Act028_Task extends BaseFragment {
                                 mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-                                mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
-                                mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ2(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
+                                mTask.setStart_date(ToolBox.convertToDeviceTMZ(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+                                mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
                                 mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
 
@@ -965,8 +1001,8 @@ public class Act028_Task extends BaseFragment {
         mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-        mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
-        mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
+        mTask.setStart_date(ToolBox.convertToDeviceTMZ(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+        mTask.setEnd_date(ToolBox.convertToDeviceTMZ(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
         mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
 
@@ -1163,9 +1199,8 @@ public class Act028_Task extends BaseFragment {
     private void activateUpload(Context context) {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-
+        //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -1207,6 +1242,8 @@ public class Act028_Task extends BaseFragment {
         mIntent.putExtra(ConstantBase.PTYPE, 10);
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "p");
+        mIntent.putExtra(ConstantBase.MPREMODE, true);
+
 
         if (mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
             mIntent.putExtra(ConstantBase.PENABLED, true);

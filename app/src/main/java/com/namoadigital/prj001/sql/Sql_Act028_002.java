@@ -117,7 +117,7 @@ public class Sql_Act028_002 implements Specification {
                                 "       s.so_code\n" +
                                 ") T")
                         .append(";")
-                        .append("full_status")
+                        //.append("full_status")
                         .toString();
     }
 }

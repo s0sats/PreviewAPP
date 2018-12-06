@@ -63,7 +63,7 @@ public class CH_Message_Sql_013 implements Specification {
                             "                   ) tt       \n" +
                             "              )\n")
                 .append(";")
-                .append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.MSG_CODE)
+                //.append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.MSG_CODE)
                 .toString();
     }
 }

@@ -145,16 +145,12 @@ public class EV_ModuleDao extends BaseDao implements Dao<EV_Module> {
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -199,16 +195,12 @@ public class EV_ModuleDao extends BaseDao implements Dao<EV_Module> {
         List<HMAux> modules = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = s_query.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
-                modules.add(toHMAuxMapper.map(cursor));
+                modules.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

@@ -24,7 +24,7 @@ public class EV_User_Customer_Sql_006 implements Specification {
                         " WHERE\n" +
                         "   session_app  <> ''")
                 .append(";")
-                .append("customer_code#customer_name#translate_code#session_app")
+                //.append("customer_code#customer_name#translate_code#session_app")
                 .toString();
     }
 }

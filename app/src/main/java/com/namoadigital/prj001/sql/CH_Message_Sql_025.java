@@ -35,7 +35,7 @@ public class CH_Message_Sql_025 implements Specification {
                         "        or (m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"'))\n" +
                         "   )\n"
                 )
-                .append(";" + BADGE_MESSAGES_QTY)
+               // .append(";" + BADGE_MESSAGES_QTY)
                 .toString();
     }
 }

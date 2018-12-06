@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
@@ -37,16 +38,16 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String LOGO_URL = "logo_url";
     public static final String TRACKING = "tracking";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP, PENDING, LOGO_URL,TRACKING};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING};
 
     public EV_User_CustomerDao(Context context) {
-        super(context,Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
+        super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
 
         this.toContentValuesMapper = new EV_CustomerToContentValuesMapper();
         this.toEV_User_CustomerMapper = new CursorToEV_CustomerMapper();
     }
 
-    public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
+    public EV_User_CustomerDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
 
         this.toContentValuesMapper = new EV_CustomerToContentValuesMapper();
@@ -55,7 +56,6 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
 
     @Override
     public void addUpdate(EV_User_Customer user_customer) {
-
         openDB();
 
         try {
@@ -74,7 +74,6 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         } finally {
         }
         closeDB();
-
     }
 
     @Override
@@ -82,17 +81,19 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         openDB();
 
         try {
-
-            db.beginTransaction();
-
             if (status) {
+                if (!ismIgnoreCounter()) {
+                    db.beginTransaction();
+                }
+                //
                 db.delete(TABLE, null, null);
             }
 
             for (EV_User_Customer userCustomer : userCustomers) {
+
                 if (db.insert(TABLE, null, toContentValuesMapper.map(userCustomer)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(USER_CODE).append(" = ").append(String.valueOf(userCustomer.getUser_code()));
+                    sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(userCustomer.getUser_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(userCustomer.getCustomer_code())).append("'");
 
@@ -100,11 +101,15 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
                 }
             }
 
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            if (!ismIgnoreCounter()) {
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            db.endTransaction();
+            if (!ismIgnoreCounter()) {
+                db.endTransaction();
+            }
         }
         closeDB();
     }
@@ -112,7 +117,6 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     @Override
     public void addUpdate(String sQuery) {
         openDB();
-
         try {
 
             db.execSQL(sQuery);
@@ -120,7 +124,6 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         } catch (Exception e) {
         } finally {
         }
-
         closeDB();
     }
 
@@ -129,12 +132,12 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         openDB();
 
         try {
-
             db.execSQL(sQuery);
-
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
+        //
         closeDB();
     }
 
@@ -144,16 +147,14 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 userCustomer = toEV_User_CustomerMapper.map(cursor);
             }
-
             cursor.close();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -167,21 +168,16 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
             cursor.close();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -197,75 +193,45 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 EV_User_Customer uAux = toEV_User_CustomerMapper.map(cursor);
                 customers.add(uAux);
             }
-
             cursor.close();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
         closeDB();
+
         return customers;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        List<HMAux>  userCustomers = new ArrayList<>();
+        List<HMAux> userCustomers = new ArrayList<>();
         openDB();
-
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
 
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                userCustomers.add(toHMAuxMapper.map(cursor));
+                userCustomers.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            String st = e.toString();
+        } catch (SQLiteException e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
         closeDB();
 
         return userCustomers;
-    }
-
-    private class CursorToEV_CustomerMapper implements Mapper<Cursor, EV_User_Customer> {
-        @Override
-        public EV_User_Customer map(Cursor cursor) {
-            EV_User_Customer ev_user_customer = new EV_User_Customer();
-
-            ev_user_customer.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
-            ev_user_customer.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
-            ev_user_customer.setCustomer_name(cursor.getString(cursor.getColumnIndex(CUSTOMER_NAME)));
-            ev_user_customer.setTranslate_code(cursor.getInt(cursor.getColumnIndex(TRANSLATE_CODE)));
-            ev_user_customer.setTranslate_desc(cursor.getString(cursor.getColumnIndex(TRANSLATE_DESC)));
-            ev_user_customer.setLanguage_code(cursor.getString(cursor.getColumnIndex(LANGUAGE_CODE)));
-            ev_user_customer.setNls_date_format(cursor.getString(cursor.getColumnIndex(NLS_DATE_FORMAT)));
-            ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
-            ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
-            ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
-            ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
-            ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
-            ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
-
-
-            return ev_user_customer;
-        }
     }
 
     private class EV_CustomerToContentValuesMapper implements Mapper<EV_User_Customer, ContentValues> {
@@ -314,6 +280,30 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             }
 
             return contentValues;
+        }
+    }
+
+    private class CursorToEV_CustomerMapper implements Mapper<Cursor, EV_User_Customer> {
+        @Override
+        public EV_User_Customer map(Cursor cursor) {
+            EV_User_Customer ev_user_customer = new EV_User_Customer();
+
+            ev_user_customer.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
+            ev_user_customer.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            ev_user_customer.setCustomer_name(cursor.getString(cursor.getColumnIndex(CUSTOMER_NAME)));
+            ev_user_customer.setTranslate_code(cursor.getInt(cursor.getColumnIndex(TRANSLATE_CODE)));
+            ev_user_customer.setTranslate_desc(cursor.getString(cursor.getColumnIndex(TRANSLATE_DESC)));
+            ev_user_customer.setLanguage_code(cursor.getString(cursor.getColumnIndex(LANGUAGE_CODE)));
+            ev_user_customer.setNls_date_format(cursor.getString(cursor.getColumnIndex(NLS_DATE_FORMAT)));
+            ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
+            ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
+            ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
+            ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
+            ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
+            ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
+
+
+            return ev_user_customer;
         }
     }
 }

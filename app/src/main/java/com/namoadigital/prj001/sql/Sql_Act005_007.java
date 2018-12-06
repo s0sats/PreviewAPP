@@ -31,7 +31,8 @@ public class Sql_Act005_007 implements Specification {
                         " WHERE\n" +
                         "   a.customer_code = '"+customer_code+"' \n" +
                         "   and a.upload_required  = 1 \n")
-                .append(";"+ BADGE_TO_SEND_QTY)
+                .append(";")
+                //.append(BADGE_TO_SEND_QTY)
                 .toString();
     }
 }

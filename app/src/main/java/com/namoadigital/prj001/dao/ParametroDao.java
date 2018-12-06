@@ -14,6 +14,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by neomatrix on 18/01/17.
  */
@@ -165,16 +166,12 @@ public class ParametroDao extends BaseDao implements Dao<Parametro> {
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -224,16 +221,12 @@ public class ParametroDao extends BaseDao implements Dao<Parametro> {
 
         openDB();
 
-        String s_query_div[] = s_query.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
-                parametros.add(toHMAuxMapper.map(cursor));
+                parametros.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

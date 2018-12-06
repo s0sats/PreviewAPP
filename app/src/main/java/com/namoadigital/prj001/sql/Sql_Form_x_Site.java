@@ -43,7 +43,7 @@ public class Sql_Form_x_Site implements Specification {
                             "                             and s.site_code = '"+site_code+"')\n" +
                             "   ) \n")
                 .append(";")
-                .append(FORM_SITE_PROFILE)
+                //.append(FORM_SITE_PROFILE)
                 .toString();
     }
 }

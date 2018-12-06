@@ -185,16 +185,12 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -239,16 +235,12 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
         List<HMAux> md_products = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = s_query.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
-                md_products.add(toHMAuxMapper.map(cursor));
+                md_products.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();
@@ -268,11 +260,11 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
         List<Long> products = new ArrayList<>();
 
         openDB();
-        String s_query_div[] = sQuery.split(";");
+        //String s_query_div[] = sQuery.split(";");
 
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 products.add(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));

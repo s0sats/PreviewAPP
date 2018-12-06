@@ -1,19 +1,23 @@
 package com.namoadigital.prj001.sql;
 
-import android.content.Context;
-
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by DANIEL.LUCHE on 04/07/2018.
  *
  * Query que seleciona total de agendados + form_ap para todos os dias ou
  * um dia especifico.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  *
  */
 
@@ -22,6 +26,7 @@ public class Sql_Act017_003 implements Specification {
 
     private long s_customer_code;
     private String selected_date;
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
     public Sql_Act017_003(long s_customer_code, String selected_date) {
         this.s_customer_code = s_customer_code;
@@ -50,7 +55,7 @@ public class Sql_Act017_003 implements Specification {
                         "       l.customer_code = '"+s_customer_code+"'\n" +
 //                        "       AND "+filter_form+" = 1\n" +
                         "       AND l.custom_form_data_serv is not null\n" +
-                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"' )\n" +
+                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',l.schedule_date_start_format,'"+deviceGMT+"') = '"+selected_date+"' )\n" +
 //                        "       AND ( '"+site_logged+"' is null or l.site_code = '"+site_logged+"') \n" +
 //                        "       AND ( '"+filter_only_delay+"' is null or (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                         "       \n" +
@@ -64,10 +69,10 @@ public class Sql_Act017_003 implements Specification {
                         "       A.customer_code = '"+s_customer_code+"'\n" +
 //                        "       AND "+filter_form_ap+" = 1\n" +
                         "       AND a.ap_when is not null \n" +
-                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'localtime') = '"+selected_date+"')\n" +
+                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') = '"+selected_date+"')\n" +
 //                        "       AND ( '"+filter_only_delay+"' is null or ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') )) \n" +
                         " ) T\n;")
-                .append(TOTAL_QTY)
+//                .append(TOTAL_QTY)
                 .toString()
                 .replace("'null'","null");
 

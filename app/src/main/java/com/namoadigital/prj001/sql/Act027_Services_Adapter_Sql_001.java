@@ -54,7 +54,7 @@ public class Act027_Services_Adapter_Sql_001 implements Specification {
                         "    AND e.service_seq =            '" + service_seq + "' " +
                         "    AND e.status = '"+ Constant.SYS_STATUS_PROCESS+"'")
                 .append(";")
-                .append(SET_FLAG)
+                //.append(SET_FLAG)
                 .toString();
     }
 }

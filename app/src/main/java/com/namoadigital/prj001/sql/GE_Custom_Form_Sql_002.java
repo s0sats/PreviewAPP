@@ -94,8 +94,8 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "    \n" +
                 "    ORDER BY\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
-                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";" +
-                GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";")
+                //GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
                 .toString()
                 .replace("'null'","null");
 

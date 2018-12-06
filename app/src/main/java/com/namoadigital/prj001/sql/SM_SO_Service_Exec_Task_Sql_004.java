@@ -55,7 +55,8 @@ public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
                         "    AND S.service_code =           '" + service_code + "'\n" +
                         "    AND S.service_seq =            '" + service_seq + "'\n" +
                         "    AND S.exec_tmp =              '" + exec_tmp + "' ")
-                .append(";"+NEXT_TMP)
+                .append(";")
+                //.append(NEXT_TMP)
                 .toString();
     }
 }

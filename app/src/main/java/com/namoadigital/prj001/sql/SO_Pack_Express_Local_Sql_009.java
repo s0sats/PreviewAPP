@@ -72,11 +72,12 @@ public class SO_Pack_Express_Local_Sql_009 implements Specification {
                         " ORDER BY \n" +
                         "       s.express_tmp asc\n")
                 .append(
-                        ";" +HmAuxFields+"#"
-                            +Constant.PARAM_KEY_TYPE+"#"
-                          //  +SM_SODao.CLIENT_TYPE+"#"
-                          //  +SM_SODao.DEADLINE
-                )
+                        ";")
+//                .append(HmAuxFields+"#"
+//                            +Constant.PARAM_KEY_TYPE+"#"
+//                          //  +SM_SODao.CLIENT_TYPE+"#"
+//                          //  +SM_SODao.DEADLINE
+//                )
                 .toString();
     }
 }

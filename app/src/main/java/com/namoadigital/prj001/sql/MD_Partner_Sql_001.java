@@ -32,8 +32,9 @@ public class MD_Partner_Sql_001 implements Specification {
                 .append(" WHERE " +
                         MD_PartnerDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                         " ORDER BY " +
-                        "      partner_desc;")
-                .append("customer_code#partner_id#id#description")
+                        "      partner_desc")
+                .append(";")
+                //.append("customer_code#partner_id#id#description")
                 .toString();
     }
 }

@@ -38,8 +38,8 @@ public class GE_Custom_Form_Blob_Local_Sql_005 implements Specification {
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' " +
                         "     AND " + GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL + " <> '' ")
 
-                .append(";blob_icon#blob_name#blob_url_local#page")
-
+                .append(";")
+                //.append("blob_icon#blob_name#blob_url_local#page")
                 .toString();
     }
 }

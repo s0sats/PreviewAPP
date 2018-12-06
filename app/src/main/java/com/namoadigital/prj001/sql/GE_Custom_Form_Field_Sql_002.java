@@ -45,7 +45,6 @@ public class GE_Custom_Form_Field_Sql_002 implements Specification {
                 .append("custom_form_version = '").append(l_custom_form_version).append("' and \n")
                 .append("custom_form_seq = '").append(l_custom_form_seq).append("' ")
                 .append(";")
-
                 .toString();
     }
 }

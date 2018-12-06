@@ -29,7 +29,7 @@ public class CH_Message_Sql_006 implements Specification {
                         " WHERE\n" +
                         "   message_image_local = '' and msg_obj like '%\"type\":\"IMAGE\"%' \n")
                 .append(";")
-                .append(HmAuxFields)
+                //.append(HmAuxFields)
                 .toString();
     }
 }

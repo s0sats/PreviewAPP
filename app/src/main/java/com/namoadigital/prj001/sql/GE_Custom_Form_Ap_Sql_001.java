@@ -29,8 +29,8 @@ public class GE_Custom_Form_Ap_Sql_001 implements Specification {
                         "WHERE\n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
                         "   and a.ap_status not in ('"+ Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"')\n")
-                .append(";" + BADGE_IN_PROCESSING_QTY )
-
+                .append(";")
+                //.append(BADGE_IN_PROCESSING_QTY)
                 .toString();
     }
 }

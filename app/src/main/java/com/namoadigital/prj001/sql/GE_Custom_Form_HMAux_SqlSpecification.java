@@ -43,7 +43,7 @@ public class GE_Custom_Form_HMAux_SqlSpecification implements Specification {
                 .append(" order by ")
                 .append(" custom_form_desc, custom_form_code, custom_form_version ")
                 .append(";")
-                .append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_status#custom_form_desc")
+                //.append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_status#custom_form_desc")
                 .toString();
     }
 }

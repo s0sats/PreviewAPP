@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -12,7 +13,14 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  *
- *   Busca data serv e datas de inicio e fim do agendamento.
+ * Busca data serv e datas de inicio e fim do agendamento.
+ *
+ * 27/11/18 - LUCHE
+ * Modificado parametro no metodo de formação de data, strftime(), que indica para qual time zone
+ * a data deve ser convertido.
+ * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
+ * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
+ * metodo getDeviceGMT().
  */
 
 public class Sql_Act011_003 implements Specification {
@@ -23,6 +31,7 @@ public class Sql_Act011_003 implements Specification {
     private String s_form_version;
     private String s_form_data;
     private String sqlite_date_format;
+    private String deviceGMT = ToolBox.getDeviceGMT(false);
 
 
     public Sql_Act011_003(Context context,long s_customer_code, String s_form_type, String s_form_code, String s_form_version, String s_form_data) {
@@ -40,8 +49,8 @@ public class Sql_Act011_003 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "  l.custom_form_data_serv,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'"+deviceGMT+"') schedule_date_start_format,\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'"+deviceGMT+"') schedule_date_end_format\n"+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -53,7 +62,7 @@ public class Sql_Act011_003 implements Specification {
                         "      AND l.custom_form_data = '"+s_form_data+"'\n" +
                         "      AND l.custom_form_data_serv is not null \n" +
                         ";")
-                .append("custom_form_data_serv#schedule_date_start_format#schedule_date_end_format")
+                //.append("custom_form_data_serv#schedule_date_start_format#schedule_date_end_format")
                 .toString();
     }
 }

@@ -749,16 +749,12 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -825,16 +821,12 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
         ArrayList<HMAux> sm_so_service_exec_tasks = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                sm_so_service_exec_tasks.add(toHMAuxMapper.map(cursor));
+                sm_so_service_exec_tasks.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

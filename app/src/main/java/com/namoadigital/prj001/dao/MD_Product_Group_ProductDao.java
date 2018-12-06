@@ -158,16 +158,12 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
         HMAux hmAux = null;
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                hmAux = toHMAuxMapper.map(cursor);
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
 
             cursor.close();
@@ -212,16 +208,12 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
         List<HMAux> md_product_group_products = new ArrayList<>();
         openDB();
 
-        String s_query_div[] = sQuery.split(";");
-
-        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
-
         try {
 
-            Cursor cursor = db.rawQuery(s_query_div[0], null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                md_product_group_products.add(toHMAuxMapper.map(cursor));
+                md_product_group_products.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();

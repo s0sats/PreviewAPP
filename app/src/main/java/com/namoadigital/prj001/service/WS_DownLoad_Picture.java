@@ -42,7 +42,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -65,15 +64,15 @@ public class WS_DownLoad_Picture extends IntentService {
 
             Bundle bundle = intent.getExtras();
             //
-            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
+            customer_code = bundle.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
             //Se parametro de customer não foi enviado, aborta chamada
             if (customer_code == -1L) {
                 return;
             }
 
             /*
-            * Download images do N-Form
-            * */
+             * Download images do N-Form
+             * */
             //
             ArrayList<HMAux> dados = new ArrayList<>();
             ArrayList<HMAux> dados_geral = new ArrayList<>();
@@ -142,8 +141,8 @@ public class WS_DownLoad_Picture extends IntentService {
             SM_SODao smSoDao = null;
             ArrayList<HMAux> so_client_approval_image = new ArrayList<>();
 
-           // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+            // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
                 //
                 smSoDao = new SM_SODao(
                         getApplicationContext(),
@@ -152,9 +151,9 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //Adiciona lista de assinaturas da s.o
                 so_client_approval_image.addAll(
-                    smSoDao.query_HM(
-                            new SM_SO_Sql_021(customer_code).toSqlQuery()
-                    )
+                        smSoDao.query_HM(
+                                new SM_SO_Sql_021(customer_code).toSqlQuery()
+                        )
                 );
                 //
                 taskFileDao =
@@ -210,32 +209,32 @@ public class WS_DownLoad_Picture extends IntentService {
             CH_MessageDao messageDao = null;
             ArrayList<HMAux> messageImgList = new ArrayList<>();
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
-                // Room
-                roomDao = new CH_RoomDao(getApplicationContext());
-                //
-                roomImgList.addAll(roomDao.query_HM(
-                        new CH_Room_Sql_002().toSqlQuery()
-                ));
-                // Messages
-                messageDao = new CH_MessageDao(getApplicationContext());
-                //
-                messageImgList.addAll(messageDao.query_HM(
-                        new CH_Message_Sql_006().toSqlQuery()
-                ));
-                //
+            // Room
+            roomDao = new CH_RoomDao(getApplicationContext());
+            //
+            roomImgList.addAll(roomDao.query_HM(
+                    new CH_Room_Sql_002().toSqlQuery()
+            ));
+            // Messages
+            messageDao = new CH_MessageDao(getApplicationContext());
+            //
+            messageImgList.addAll(messageDao.query_HM(
+                    new CH_Message_Sql_006().toSqlQuery()
+            ));
+            //
             //}
             //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
             //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
-            if(  dados_geral.size() == 0
-                 && so_file_list.size() == 0
-                 && so_client_approval_image.size() == 0
-                 && product_sketch_list.size() == 0
-                 && all_product_sketch_list.size() == 0
-                 && event_sketch_list.size() == 0
-                 && event_file_list.size() == 0
-                 && roomImgList.size() == 0
-                 && messageImgList.size() == 0
-            ){
+            if (dados_geral.size() == 0
+                    && so_file_list.size() == 0
+                    && so_client_approval_image.size() == 0
+                    && product_sketch_list.size() == 0
+                    && all_product_sketch_list.size() == 0
+                    && event_sketch_list.size() == 0
+                    && event_file_list.size() == 0
+                    && roomImgList.size() == 0
+                    && messageImgList.size() == 0
+                    ) {
                 return;
             }
             //POSSUI ITEM NA LISTA, AI SIM VERIFICA NECESSIDADE DE NOTIFICAÇÃO E INICIA DOWNLOADS
@@ -263,9 +262,9 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             for (HMAux hmAux : dados) {
                 //
-                String value = "";
-
                 try {
+                    String value = "";
+
                     JSONObject jsonObject = new JSONObject(hmAux.get("custom_form_data_content"));
                     JSONArray jsonArray = jsonObject.getJSONArray("CONTENT");
                     //
@@ -274,46 +273,45 @@ public class WS_DownLoad_Picture extends IntentService {
                         //
                         value = jo.getString("VALUE");
                     }
+                    //
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".jpg")) {
 
-                } catch (JSONException e) {
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                value,
+                                Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".jpg");
+                    }
+                    //
+                    String nome_parte[] = hmAux.get("custom_name").split("_");
+                    //
+                    form_fieldDao.addUpdate(
+                            new GE_Custom_Form_Field_Sql_002(
+                                    nome_parte[1],
+                                    nome_parte[2],
+                                    nome_parte[3],
+                                    nome_parte[4],
+                                    nome_parte[5],
+                                    hmAux.get("custom_name") + ".jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
+
+                    form_fieldLocalDao.addUpdate(
+                            new GE_Custom_Form_Field_Local_Sql_002(
+                                    nome_parte[1],
+                                    nome_parte[2],
+                                    nome_parte[3],
+                                    nome_parte[4],
+                                    nome_parte[5],
+                                    hmAux.get("custom_name") + ".jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
+                } catch (Exception e) {
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-                //
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".jpg")) {
-
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
-                    //
-                    ToolBox_Inf.downloadImagePDF(
-                            value,
-                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
-                    );
-                    //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".jpg");
-                }
-                //
-                String nome_parte[] = hmAux.get("custom_name").split("_");
-                //
-                form_fieldDao.addUpdate(
-                        new GE_Custom_Form_Field_Sql_002(
-                                nome_parte[1],
-                                nome_parte[2],
-                                nome_parte[3],
-                                nome_parte[4],
-                                nome_parte[5],
-                                hmAux.get("custom_name") + ".jpg"
-                        ).toSqlQuery().toLowerCase()
-                );
-
-                form_fieldLocalDao.addUpdate(
-                        new GE_Custom_Form_Field_Local_Sql_002(
-                                nome_parte[1],
-                                nome_parte[2],
-                                nome_parte[3],
-                                nome_parte[4],
-                                nome_parte[5],
-                                hmAux.get("custom_name") + ".jpg"
-                        ).toSqlQuery().toLowerCase()
-                );
 
             }
             //endregion
@@ -324,47 +322,55 @@ public class WS_DownLoad_Picture extends IntentService {
              */
             //
             for (HMAux hmAux : product_sketch_list) {
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
+                try {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
-                    //
-                    ToolBox_Inf.downloadImagePDF(
-                            hmAux.get(MD_ProductDao.SKETCH_URL),
-                            Constant.CACHE_PATH + "/" + hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(MD_ProductDao.SKETCH_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    productDao.addUpdate(
+                            new MD_Product_Sql_005(
+                                    customer_code,
+                                    hmAux.get(MD_ProductDao.PRODUCT_CODE),
+                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
+                            ).toSqlQuery()
                     );
-                    //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-                //Atualiza campo com url local
-                productDao.addUpdate(
-                        new MD_Product_Sql_005(
-                                customer_code,
-                                hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                                hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
-                        ).toSqlQuery()
-                );
             }
 
             for (HMAux hmAux : all_product_sketch_list) {
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
+                try {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
-                    //
-                    ToolBox_Inf.downloadImagePDF(
-                            hmAux.get(MD_All_ProductDao.SKETCH_URL),
-                            Constant.CACHE_PATH + "/" + hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(MD_All_ProductDao.SKETCH_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    allProductDao.addUpdate(
+                            new MD_All_Product_Sql_005(
+                                    customer_code,
+                                    hmAux.get(MD_All_ProductDao.PRODUCT_CODE),
+                                    hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
+                            ).toSqlQuery()
                     );
-                    //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-                //Atualiza campo com url local
-                allProductDao.addUpdate(
-                        new MD_All_Product_Sql_005(
-                                customer_code,
-                                hmAux.get(MD_All_ProductDao.PRODUCT_CODE),
-                                hmAux.get(MD_All_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
-                        ).toSqlQuery()
-                );
             }//FIM CROQUI
             //endregion  MD Product
 
@@ -374,119 +380,135 @@ public class WS_DownLoad_Picture extends IntentService {
             //region S.O
             //Download de files do S.O
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO,null)) {
+            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
                 //
                 for (HMAux hmAux : so_client_approval_image) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".png")) {
+                    try {
+                        if (!ToolBox_Inf.verifyDownloadFileInfV2(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".png")) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp");
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_URL),
-                                Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp"
+                            ToolBox_Inf.deleteDownloadFileInfV2(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp");
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                    hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_URL),
+                                    Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase() + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase(), ".png");
+                        }
+                        //Atualiza campo com url local
+                        smSoDao.addUpdate(
+                                new SM_SO_Sql_022(
+                                        hmAux.get(SM_SODao.CUSTOMER_CODE),
+                                        hmAux.get(SM_SODao.SO_PREFIX),
+                                        hmAux.get(SM_SODao.SO_CODE),
+                                        hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME)
+                                ).toSqlQuery().toLowerCase()
                         );
-                        //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME).toLowerCase(), ".png");
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-                    //Atualiza campo com url local
-                    smSoDao.addUpdate(
-                            new SM_SO_Sql_022(
-                                    hmAux.get(SM_SODao.CUSTOMER_CODE),
-                                    hmAux.get(SM_SODao.SO_PREFIX),
-                                    hmAux.get(SM_SODao.SO_CODE),
-                                    hmAux.get(SM_SODao.CLIENT_APPROVAL_IMAGE_NAME)
-                            ).toSqlQuery().toLowerCase()
-                    );
                 }
                 //
                 for (HMAux hmAux : so_file_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+                    try {
+                        if (!ToolBox_Inf.verifyDownloadFileInfV2(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(SM_SO_FileDao.FILE_URL),
-                                Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            ToolBox_Inf.deleteDownloadFileInfV2(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                    hmAux.get(SM_SO_FileDao.FILE_URL),
+                                    Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                        }
+                        //Atualiza campo com url local
+                        taskFileDao.addUpdate(
+                                new SM_SO_Service_Exec_Task_File_Sql_004(
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.CUSTOMER_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_PREFIX),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.PRICE_LIST_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_SEQ),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.CATEGORY_PRICE_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_SEQ),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.EXEC_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.TASK_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_FileDao.FILE_CODE),
+                                        hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + ".jpg"
+                                ).toSqlQuery().toLowerCase()
                         );
-                        //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-                    //Atualiza campo com url local
-                    taskFileDao.addUpdate(
-                            new SM_SO_Service_Exec_Task_File_Sql_004(
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.CUSTOMER_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_PREFIX),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PRICE_LIST_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_SEQ),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.CATEGORY_PRICE_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_SEQ),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.EXEC_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.TASK_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.FILE_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + ".jpg"
-                            ).toSqlQuery().toLowerCase()
-                    );
                 }
                 //
                 /*
-                * Download croqui dos eventos(croquis da sm_so_product_events)
-                */
+                 * Download croqui dos eventos(croquis da sm_so_product_events)
+                 */
                 //
                 for (HMAux hmAux : event_sketch_list) {
-                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4);
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH)) {
+                    try {
+                        String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4);
+                        if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH);
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(SM_SO_Product_EventDao.SKETCH_URL),
-                                Constant.CACHE_PATH + "/" + fileName + ".tmp"
+                            ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH);
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                    hmAux.get(SM_SO_Product_EventDao.SKETCH_URL),
+                                    Constant.CACHE_PATH + "/" + fileName + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInf(fileName, ".jpg");
+                        }
+                        //Atualiza campo com url local
+                        eventDao.addUpdate(
+                                new SM_SO_Product_Event_Sql_005(
+                                        customer_code,
+                                        hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
+                                        hmAux.get(SM_SO_Product_EventDao.SO_CODE),
+                                        hmAux.get(SM_SO_Product_EventDao.SEQ),
+                                        fileName + ".jpg"
+                                ).toSqlQuery()
                         );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(fileName, ".jpg");
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-                    //Atualiza campo com url local
-                    eventDao.addUpdate(
-                            new SM_SO_Product_Event_Sql_005(
-                                    customer_code,
-                                    hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
-                                    hmAux.get(SM_SO_Product_EventDao.SO_CODE),
-                                    hmAux.get(SM_SO_Product_EventDao.SEQ),
-                                    fileName + ".jpg"
-                            ).toSqlQuery()
-                    );
                 }//FIM Event File
                 /*
                  * Download da foto tirada no produto evento
                  */
                 //
                 for (HMAux hmAux : event_file_list) {
-                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4);
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH_PHOTO)) {
+                    try {
+                        String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4);
+                        if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH_PHOTO)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH_PHOTO);
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
-                                Constant.CACHE_PATH_PHOTO + "/" + fileName + ".tmp"
+                            ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH_PHOTO);
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                    hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
+                                    Constant.CACHE_PATH_PHOTO + "/" + fileName + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInfPHOTO(fileName, ".jpg");
+                        }
+                        //Atualiza campo com url local
+                        productDao.addUpdate(
+                                new SM_SO_Product_Event_File_Sql_005(
+                                        customer_code,
+                                        hmAux.get(SM_SO_Product_Event_FileDao.SO_PREFIX),
+                                        hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
+                                        hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
+                                        hmAux.get(SM_SO_Product_Event_FileDao.FILE_CODE),
+                                        fileName + ".jpg"
+                                ).toSqlQuery()
                         );
-                        //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName, ".jpg");
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-                    //Atualiza campo com url local
-                    productDao.addUpdate(
-                            new SM_SO_Product_Event_File_Sql_005(
-                                    customer_code,
-                                    hmAux.get(SM_SO_Product_Event_FileDao.SO_PREFIX),
-                                    hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
-                                    hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
-                                    hmAux.get(SM_SO_Product_Event_FileDao.FILE_CODE),
-                                    fileName + ".jpg"
-                            ).toSqlQuery()
-                    );
                 }//FIM Event File
             }
             //fim SO
@@ -496,8 +518,9 @@ public class WS_DownLoad_Picture extends IntentService {
              */
             //region CHAT
             //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
-                //
-                for (HMAux hmAux : roomImgList) {
+            //
+            for (HMAux hmAux : roomImgList) {
+                try {
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_CHAT_PATH)) {
 
                         ToolBox_Inf.deleteDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_CHAT_PATH);
@@ -528,10 +551,14 @@ public class WS_DownLoad_Picture extends IntentService {
                     }
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
+            }
 
-                // Messages
-                for (HMAux hmAux : messageImgList) {
+            // Messages
+            for (HMAux hmAux : messageImgList) {
+                try {
                     JSONObject jsonObject = new JSONObject(hmAux.get("msg_obj"));
                     JSONObject jsonObject1 = jsonObject.getJSONObject("message");
 
@@ -564,7 +591,10 @@ public class WS_DownLoad_Picture extends IntentService {
                     //
                     hmAux.put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, sFile + ".jpg");
                     ToolBox_Inf.sendBRChatDownloadUpdate(getApplicationContext(), hmAux);
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
+            }
 
             //}//FIM chat
             //endregion

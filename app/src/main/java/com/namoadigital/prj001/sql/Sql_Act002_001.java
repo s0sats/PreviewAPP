@@ -30,8 +30,8 @@ public class Sql_Act002_001 implements Specification {
                         "   and l.custom_form_status in(" +
                         "'"+ Constant.SYS_STATUS_IN_PROCESSING+"'," +
                         "'"+ Constant.SYS_STATUS_FINALIZED+"'" +
-                        ");" +
-                        QTY_CUSTOMER_PENDENCIES)
+                        ");")
+                //.append(QTY_CUSTOMER_PENDENCIES)
                 .toString();
     }
 }

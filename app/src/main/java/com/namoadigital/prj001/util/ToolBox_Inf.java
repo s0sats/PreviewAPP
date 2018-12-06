@@ -175,6 +175,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -792,21 +793,29 @@ public class ToolBox_Inf {
     }
 
     public static void deleteAllFOD(String sDir) {
-        File dir = new File(sDir);
-        //
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                new File(dir, children[i]).delete();
+        try {
+            File dir = new File(sDir);
+            //
+            if (dir.isDirectory()) {
+                String[] children = dir.list();
+                for (int i = 0; i < children.length; i++) {
+                    new File(dir, children[i]).delete();
+                }
             }
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
         }
     }
 
     public static void deleteDownloadFile(String sName) {
-        File file = new File(sName);
+        try {
+            File file = new File(sName);
 
-        if (file.exists()) {
-            file.delete();
+            if (file.exists()) {
+                file.delete();
+            }
+        }catch (Exception e){
+            registerException(CLASS_NAME, e);
         }
     }
 
@@ -879,9 +888,16 @@ public class ToolBox_Inf {
     }
 
     public static boolean verifyDownloadFileInf(String sName, String path) {
-        File file = new File(path + "/", sName);
+        //Alterado 13/11/2018 - Luche
+        //Add try catch pois se path ou sName for null gera exception
+        try {
+            File file = new File(path + "/", sName);
 
-        return file.exists();
+            return file.exists();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static String sFileContent(String sPath, String sFile) {
@@ -1233,19 +1249,24 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String getResourceCode(Context context, String module_code, String resource_name) {
+        return getResourceCode(context, module_code, resource_name, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
      *
      * @param context
      * @param module_code
      * @param resource_name
      * @return
      */
-    public static String getResourceCode(Context context, String module_code, String resource_name) {
+    public static String getResourceCode(Context context, String module_code, String resource_name, long customer_code) {
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1277,10 +1298,26 @@ public class ToolBox_Inf {
      * @return
      */
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list) {
+        return setLanguage(context, module_code, resource_code, translate_code, translation_list, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Segunda assinatura com parametro de customer para evitar customer -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param module_code
+     * @param resource_code
+     * @param translate_code
+     * @param translation_list
+     * @param customer_code
+     * @return
+     */
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list, long customer_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
@@ -1451,13 +1488,13 @@ public class ToolBox_Inf {
      * site logado.
      *
      * @param context
-     * @param site_code - Site do Serviço
+     * @param site_code   - Site do Serviço
      * @param hmAux_Trans - HmAux com as traduções
      * @return - Caso falso, exibe dialog informando que não é possivel executar a ação.
      */
     public static boolean hasServiceSiteRestriction(Context context, String site_code, HMAux hmAux_Trans) {
         boolean results = false;
-        if (site_code == null ||site_code.equalsIgnoreCase("null") || site_code.isEmpty() ) {
+        if (site_code == null || site_code.equalsIgnoreCase("null") || site_code.isEmpty()) {
             results = false;
         } else if (site_code.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))) {
             results = false;
@@ -1586,6 +1623,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
+        transList.add("sys_not_found_lbl");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -1621,10 +1659,34 @@ public class ToolBox_Inf {
 
 
         customerDesc = ToolBox_Con.getPreference_Customer_Code(context) + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context);
-        operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-
-        siteDesc = site.getSite_code() + " - " + site.getSite_desc();
-
+        //
+        if(operation != null && site != null ){
+            operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
+            siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+        }else{
+            String sError = "Site ou Operação do footer não encontrado:\n";
+            //
+            if(site == null){
+                //Atualiza var de erro
+                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                siteDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+            }
+            //
+            if(operation == null){
+                //Atualiza var de erro
+                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                operationDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                operationDesc  = operation.getOperation_code() + " - " + operation.getOperation_desc();
+            }
+            //Gera arquivo de exception
+            registerException(CLASS_NAME,new Exception(sError));
+        }
+        //
         hmAux.put(Constant.FOOTER_CUSTOMER_LBL, HmTrans.get("footer_dialog_customer_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
         hmAux.put(Constant.FOOTER_SITE_LBL, HmTrans.get("footer_dialog_site_lbl"));
@@ -1672,7 +1734,22 @@ public class ToolBox_Inf {
         String siteDesc;
         String zoneDesc;
         String operationDesc;
-
+        //
+        List<String> transList = new ArrayList<>();
+        transList.add("sys_not_found_lbl");
+        //
+        HMAux HmTrans = setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+        //
         MD_Site site =
                 new MD_SiteDao(
                         context,
@@ -1696,12 +1773,38 @@ public class ToolBox_Inf {
                                 ToolBox_Con.getPreference_Operation_Code(context)
                         ).toSqlQuery()
                 );
+        //
+        if(operation != null && site != null ){
+            operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+        }else{
+            String sError = "Site ou Operação do footer não encontrado:\n";
+             //
+            if(site == null){
+                //Add chave que indica erro no carregamento do site.
+                hmAux.put(Constant.FOOTER_SITE_NOT_FOUND, HmTrans.get("footer_dialog_site_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                //Atualiza var de erro
+                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                siteDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+            }
 
-        //siteDesc = site.getSite_code() + " - " + site.getSite_desc();
-        siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
-
-        //operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-        operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            //
+            if(operation == null){
+                //Add chave que indica erro no carregamento dA operação.
+                hmAux.put(Constant.FOOTER_OPERATION_NOT_FOUND,HmTrans.get("footer_dialog_operation_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                //Atualiza var de erro
+                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                //Define descricao
+                operationDesc = HmTrans.get("sys_not_found_lbl");
+            }else{
+                operationDesc  = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            }
+            //Gera arquivo de exception
+            registerException(CLASS_NAME,new Exception(sError));
+        }
 
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
@@ -1730,6 +1833,7 @@ public class ToolBox_Inf {
             hmAux.put(Constant.FOOTER_ZONE, zoneDesc);
 
         }
+        //
         return hmAux;
     }
 
@@ -2148,29 +2252,57 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Assinatura orignal
+     *
      * @param context
-     * @param notification_id Constant com o id da notificação;
+     * @param notification_id
      */
     public static void showNotification(Context context, int notification_id) {
+        showNotification(context, notification_id, ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    /**
+     * Assinatura com parametro de customer para evitar banco -1
+     * Problema gerado quando notificação do chat era ativado sem o usuario estar com customer logado
+     *
+     * @param context
+     * @param notification_id
+     * @param customer_code
+     */
+    public static void showNotification(Context context, int notification_id, long customer_code) {
         List<String> translist = new ArrayList<>();
         int animation = -1;
         String title = "";
         String msg = "";
+        HMAux hmAux_Trans = new HMAux();
+        //
+        Log.d("ShowNotif", "Customer: " + String.valueOf(customer_code));
 
-        HMAux hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                "",
-                "0",
-                ToolBox_Con.getPreference_Translate_Code(context),
-                translist
-        );
+        //
+        if (customer_code != -1) {
+            //
+            hmAux_Trans = ToolBox_Inf.setLanguage(
+                    context,
+                    "",
+                    "0",
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translist,
+                    customer_code
+            );
+        }
 
         switch (notification_id) {
 
             case Constant.NOTIFICATION_UPLOAD:
                 animation = R.drawable.upload_animation;
-                title = hmAux_Trans.get("notification_ttl_upload");
-                msg = hmAux_Trans.get("notification_msg_upload");
+                title = context.getString(R.string.notification_ttl_upload);
+                if (hmAux_Trans.containsKey("notification_ttl_upload")) {
+                    title = hmAux_Trans.get("notification_ttl_upload");
+                }
+                msg = context.getString(R.string.notification_msg_upload);
+                if (hmAux_Trans.containsKey("notification_msg_upload")) {
+                    msg = hmAux_Trans.get("notification_msg_upload");
+                }
                 break;
 
             case Constant.NOTIFICATION_DOWNLOAD:
@@ -2408,6 +2540,21 @@ public class ToolBox_Inf {
         return sdf.format(calendar.getTime());
     }
 
+    /**
+     * 27/11/18 - LUCHE
+     *
+     * Esse metodo possui um problema quando o timezone do user
+     * entra no horario de verão: Quando o timezone entra no horario de verão,
+     * o timezone usado continua sendo o padrão.
+     * EX:
+     *  Padrão Sp = GMT -03:00, Horario de Verão SP = GMT -02:00.
+     * Independentemente de estar no horario de verão ou não, o GMT usado é o -03:00
+     *
+     * É possivel corrigi-lo usando o metodo getDeviceGMT e codigo similar ao
+     * millisecondsToString()
+     * @param date_tmz
+     * @return
+     */
     public static String convertDBToDeviceTMZ(String date_tmz) {
         SimpleDateFormat sdfD = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
         SimpleDateFormat sdfS = new SimpleDateFormat("yyyy-MM-dd HH:mm Z");
@@ -2456,11 +2603,11 @@ public class ToolBox_Inf {
     public static long dateToMilliseconds(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz.isEmpty()) {
+        if (date_tmz == null ||  date_tmz.isEmpty()) {
             return 0L;
         }
 
-        if (type.equalsIgnoreCase("SECOND")) {
+        if (type.equalsIgnoreCase(Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND)) {
             sFormat = "yyyy-MM-dd HH:mm Z";
         } else {
             sFormat = "yyyy-MM-dd HH:mm:ss Z";
@@ -2481,11 +2628,11 @@ public class ToolBox_Inf {
     public static long dateToMillisecondsChat(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz != null && date_tmz.isEmpty()) {
+        if (date_tmz == null || date_tmz.isEmpty()) {
             return 0L;
         }
 
-        if (type.equalsIgnoreCase("SECOND")) {
+        if (type.equalsIgnoreCase(Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND)) {
             sFormat = "yyyy-MM-dd HH:mm";
         } else {
             sFormat = "yyyy-MM-dd HH:mm:ss";
@@ -2503,16 +2650,56 @@ public class ToolBox_Inf {
         }
     }
 
+//  VERSÃO USADA ATÉ 26/11/18
+//  public static String millisecondsToString(long mils, String format) {
+//
+//        String sResults = "";
+//
+//        if (mils == 0L) {
+//            return "";
+//        }
+//
+//        Calendar ca1 = Calendar.getInstance();
+//        ca1.setTimeInMillis(mils);
+//        if (format == null || format.equalsIgnoreCase("")) {
+//            format = "dd-MM-yyyy";
+//        }
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat(format);
+//
+//        try {
+//            sResults = sdf.format(ca1.getTime());
+//        } catch (Exception var7) {
+//            sResults = "00:00 01-01-1900";
+//        }
+//
+//        return sResults;
+//    }
 
+    /**
+     * 26/11/18 - LUCHE
+     * Metodo que retorna data formatada ja convertida pro timezone do device.
+     *
+     * Criado nova versão do metodo millisecondsToString , forçando o timezone do Device
+     * com o de GMT retornado pelo metodo getDeviceGMT().
+     * Por mais louco que pareça, essa mudança foi necessaria pois, as vezes, no horario de verão,
+     * a conversão gerava data no timezone sem horario de verão o.O
+     * @param mils - Millisegundas da data a ser formatada
+     * @param format - Formato da data.
+     * @return - Data formatada conforme format e convertida no GMT do device.
+     */
     public static String millisecondsToString(long mils, String format) {
 
         String sResults = "";
 
+        TimeZone curTmz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone(ToolBox.getDeviceGMT(true)));
+        Calendar ca1 = Calendar.getInstance();
+        //
         if (mils == 0L) {
             return "";
         }
 
-        Calendar ca1 = Calendar.getInstance();
         ca1.setTimeInMillis(mils);
         if (format == null || format.equalsIgnoreCase("")) {
             format = "dd-MM-yyyy";
@@ -2521,9 +2708,12 @@ public class ToolBox_Inf {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
 
         try {
-            sResults = sdf.format(ca1.getTime());
+            Date dt = ca1.getTime();
+            sResults = sdf.format(dt);
         } catch (Exception var7) {
             sResults = "00:00 01-01-1900";
+        } finally {
+            TimeZone.setDefault(curTmz);
         }
 
         return sResults;

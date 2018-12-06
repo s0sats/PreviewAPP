@@ -20,7 +20,7 @@ public class User_HMAux_SqlSpecification implements Specification {
                 .append(" select user_code, user_nick, email_p from ")
                 .append(EV_UserDao.TABLE)
                 .append(";")
-                .append("user_code#user_nick#email_p")
+                //.append("user_code#user_nick#email_p")
                 .toString();
     }
 }

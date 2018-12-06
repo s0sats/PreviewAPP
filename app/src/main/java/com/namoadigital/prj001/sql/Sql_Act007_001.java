@@ -46,7 +46,7 @@ public class Sql_Act007_001 implements Specification {
                         "   and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
                         "ORDER BY\n" +
                         "   t.group_id;")
-                .append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
+                //.append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
 
        // return teste;

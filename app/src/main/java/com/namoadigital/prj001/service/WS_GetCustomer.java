@@ -136,7 +136,7 @@ public class WS_GetCustomer extends IntentService {
 
             ArrayList<EV_User> users = gson.fromJson(
                     ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
+                            ToolBox_Inf.getContents(_file)
                     ),
                     new TypeToken<ArrayList<EV_User>>() {
                     }.getType()
@@ -197,7 +197,7 @@ public class WS_GetCustomer extends IntentService {
 
             ArrayList<EV_User_Customer> customers = gson.fromJson(
                     ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
+                            ToolBox_Inf.getContents(_file)
                     ),
                     new TypeToken<ArrayList<EV_User_Customer>>() {
                     }.getType()
@@ -221,7 +221,7 @@ public class WS_GetCustomer extends IntentService {
                     String pendencies =
                             customFormLocalDao.getByStringHM(
                                     new Sql_Act002_001(
-                                        String.valueOf(customer.getCustomer_code())
+                                            String.valueOf(customer.getCustomer_code())
                                     ).toSqlQuery()
                             ).get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES);
 
