@@ -136,6 +136,7 @@ import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
 import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
+import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -2806,6 +2807,55 @@ public class ToolBox_Inf {
 
         try {
 
+            StackTraceElement[] stackTrace = exception.getStackTrace();
+            String traceString = "";
+            String erro = "";
+
+            for (StackTraceElement trace : stackTrace) {
+                traceString += trace.toString() + "\n ";
+            }
+
+            erro = "Local:\n " + local + ";\nException:\n " + exception.toString() + ";\nTrace:\n" + traceString + ";";
+
+            ToolBox_Inf.writeIn(erro, exception_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 04/12/2018 - LUCHE
+     * Metodo chamado pelo Callback de exceptions não tratadas  gerandp arquvio de suport
+     * @param exception
+     */
+    public static void registerException(Throwable exception) {
+        String local = AppBase.class.getSimpleName();
+        File exception_file = new File(Constant.SUPPORT_PATH, "fatal_excep_" + getDateHourStr() + ".txt");
+
+        try {
+            //Tenta Pega o primeiro item StackTrace elemente do "cause" e obtem o nome da classe onde
+            //o erro se originou.
+            //O metodo getCause pode retornar null , então testa o retorno antes de tentar pegar
+            //nome do arquivo.
+            //No futuro esse if pode ser melhorado sem usar attribuição de vars
+            //porem, por hora, melhor deixar assim para debug.
+            Throwable throwable = exception.getCause();
+            if(throwable != null){
+                StackTraceElement[] stack = throwable.getStackTrace();
+                if(stack != null && stack.length > 0 && stack[0] != null){
+                    StackTraceElement stakFirst = stack[0];
+                    local = stakFirst.getFileName();
+                }
+                //local = (exception.getCause().getStackTrace())[0].getFileName();
+            }else{
+                if(exception.getStackTrace() != null
+                    &&  exception.getStackTrace().length > 0
+                    && (exception.getStackTrace())[0] != null )
+                {
+                    local = (exception.getStackTrace())[0].getFileName();
+                }
+            }
+            //
             StackTraceElement[] stackTrace = exception.getStackTrace();
             String traceString = "";
             String erro = "";
