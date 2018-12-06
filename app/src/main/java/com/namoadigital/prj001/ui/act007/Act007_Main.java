@@ -4,6 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +18,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act007_Adapter_Rv;
 import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -40,8 +45,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     private TextView tv_product_val;
     private TextView tv_serial_lbl;
     private TextView tv_serial_val;
-    private ListView lv_logs;
-    private Serial_Log_Adapter mAdapter;
+    private RecyclerView lv_logs;
+    private Act007_Adapter_Rv mAdapter;
     private Bundle bundle;
     private MD_Product_Serial mdProductSerial;
     private String file_name;
@@ -130,7 +135,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //
         tv_serial_val = (TextView) findViewById(R.id.act007_tv_serial_val);
         //
-        lv_logs = (ListView) findViewById(R.id.act007_lv_log);
+        lv_logs = (RecyclerView) findViewById(R.id.act007_lv_log);
+
         //
         //views.add(tv_product_lbl);
         //views.add(tv_serial_lbl);
@@ -173,7 +179,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     @Override
     public void loadLogList(ArrayList<Serial_Log_Obj> logList) {
-        mAdapter = new Serial_Log_Adapter(
+        mAdapter = new Act007_Adapter_Rv(
                 context,
                 logList,
                 R.layout.serial_log_cell
@@ -187,6 +193,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         });
         //
         lv_logs.setAdapter(mAdapter);
+
     }
 
     private void showDownloadMsg(final String process, final String[] pk, final boolean alreadyDownloaded) {

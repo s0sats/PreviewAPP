@@ -98,14 +98,16 @@
             <!--android:textSize="@dimen/font_size_item_md" />-->
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/act007_lv_log"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@color/padrao_TRANSPARENT"
         android:dividerHeight="5dp"
-        android:padding="10dp" />
+        android:padding="10dp"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
 
     <include layout="@layout/footer_base" />
 
