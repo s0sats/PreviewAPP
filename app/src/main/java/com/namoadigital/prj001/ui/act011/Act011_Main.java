@@ -188,6 +188,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
 
+
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
     }
@@ -2007,7 +2008,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         TextView tv_form_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_title);
         TextView tv_form_type_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
-        TextView tv_form_type_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_val);
         TextView tv_form_type_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
         //
         TextView tv_form_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_lbl);
@@ -2034,11 +2034,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
+        //Pegar info do serial
+
+        mPresenter.getSerialInfo(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.parseInt(product_code),
+                serial_id
+                );
+
+
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
         tv_product_id_lbl.setText(hmAux_Trans.get("dialog_info_product_id_lbl"));
         tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
         tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
+
         tv_form_title.setText(hmAux_Trans.get("dialog_info_form_ttl"));
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
@@ -2053,19 +2063,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         tv_serial_val.setText(serial_id);
 
-        tv_form_type_val.setText(type);
+
         tv_form_type_desc.setText(type + " - " + type_desc);
 
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
         tv_form_version_val.setText(form_version);
-
-        tv_form_code_val.setText(form);
-        tv_form_code_desc.setText(form_desc);
-
-        tv_form_code_val.setText(form);
-        tv_form_code_desc.setText(form_desc);
 
         if (mSo_Code != null) {
             tv_so_code_desc.setText(String.valueOf(mSo_Prefix) + "." + String.valueOf(mSo_Code));
