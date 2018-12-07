@@ -492,8 +492,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id) {
-        MD_Product_SerialDao serialDao =  new MD_Product_SerialDao(context);
-        MD_Product_Serial result = serialDao.getByString(new MD_Product_Serial_Sql_016(customer_code,
+        MD_Product_Serial result = md_product_serialDao.getByString(new MD_Product_Serial_Sql_016(customer_code,
                 product_code,
                 serial_id).toSqlQuery());
         return result;

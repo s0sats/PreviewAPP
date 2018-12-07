@@ -32,7 +32,7 @@ public class MD_Product_Serial_Sql_016 implements Specification {
                         " WHERE\n" +
                         "    ps.customer_code = '" + customer_code + "'\n" +
                         "    and ps.product_code = '" + product_code + "'\n" +
-                        "    and ps.serial_code = '" + serial_id + "' ")
+                        "    and ps.serial_id = '" + serial_id + "' ")
                 .toString();
     }
 }
