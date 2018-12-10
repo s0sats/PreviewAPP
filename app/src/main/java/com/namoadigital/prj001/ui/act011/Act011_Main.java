@@ -2103,8 +2103,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             setSerialInfo(ll_segment, tv_segmento_val, serial.getSegment_id(), serial.getSegment_desc());
             setSerialInfo(ll_site, tv_site_val, serial.getSite_id(), serial.getSite_desc());
             setSerialInfo(ll_zone, tv_zona_val, serial.getZone_id(), serial.getZone_desc());
-            String only_postion = getNonNullableOnlyPosition(serial.getOnly_position());
-            setSerialInfo(ll_position, tv_posicao_val, only_postion);
+            setSerialInfo(ll_position, tv_posicao_val, serial.getLocal_id());
             setSerialInfo(ll_info_1, tv_info_1_val, serial.getAdd_inf1());
             setSerialInfo(ll_info_2, tv_info_2_val, serial.getAdd_inf2());
             setSerialInfo(ll_info_3, tv_info_3_val, serial.getAdd_inf3());
