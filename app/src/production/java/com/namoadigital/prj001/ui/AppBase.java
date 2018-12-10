@@ -47,6 +47,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 
 public class AppBase extends Application {
 
+    private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
