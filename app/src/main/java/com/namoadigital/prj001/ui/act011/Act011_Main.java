@@ -2206,52 +2206,55 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 //            }
 //        }
 
+        if(pdfs_local.size()>0) {
+            String[] from = {"blob_icon", "blob_name"};
+            int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
+            lv_pdfs.setAdapter(
+                    new SimpleAdapter(
+                            Act011_Main.this,
+                            pdfs_local,
+                            R.layout.act011_dialog_form_info_cell,
+                            from,
+                            to
+                    )
+            );
 
-        String[] from = {"blob_icon", "blob_name"};
-        int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
-        lv_pdfs.setAdapter(
-                new SimpleAdapter(
-                        Act011_Main.this,
-                        pdfs_local,
-                        R.layout.act011_dialog_form_info_cell,
-                        from,
-                        to
-                )
-        );
+            // Tirar Divisao
+            lv_pdfs.setDivider(null);
 
-        // Tirar Divisao
-        lv_pdfs.setDivider(null);
+            lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux aux = (HMAux) parent.getItemAtPosition(position);
 
-        lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux aux = (HMAux) parent.getItemAtPosition(position);
+                    if (aux.get("blob_name").trim().length() != 0) {
 
-                if (aux.get("blob_name").trim().length() != 0) {
+                        File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
 
-                    File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+                        try {
 
-                    try {
+                            ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
 
-                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+                            ToolBox_Inf.copyFile(
+                                    file,
+                                    new File(Constant.CACHE_PDF)
+                            );
+                        } catch (Exception e) {
+                            ToolBox_Inf.registerException(getClass().getName(), e);
+                        }
 
-                        ToolBox_Inf.copyFile(
-                                file,
-                                new File(Constant.CACHE_PDF)
-                        );
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                        startActivity(intent);
                     }
-
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                    startActivity(intent);
                 }
-            }
-        });
+            });
+        }else{
+            lv_pdfs.setVisibility(View.GONE);
+        }
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.98F;
@@ -2275,10 +2278,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }else{
             tv_descriptions.setText(description);
         }
-    }
-
-    private String getNonNullableOnlyPosition(Integer only_position) {
-        return (only_position == null) ? "" : only_position.toString();
     }
 
     private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo_id, String conteudo_desc) {
