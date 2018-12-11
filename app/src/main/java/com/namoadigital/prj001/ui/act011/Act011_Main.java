@@ -23,9 +23,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +72,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -2045,6 +2048,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
+
 //      Para o controle de visibilidade de elementos com dados
         LinearLayout ll_serial_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial_info);
         LinearLayout ll_serial = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial);
@@ -2054,6 +2058,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         LinearLayout ll_site = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_site);
         LinearLayout ll_zone = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_zone);
         LinearLayout ll_position = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_position);
+        LinearLayout ll_tracking = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking);
+        LinearLayout ll_tracking_val = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking_val);
         LinearLayout ll_info_1 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_1);
         LinearLayout ll_info_2 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_2);
         LinearLayout ll_info_3 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_3);
@@ -2104,6 +2110,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             setSerialInfo(ll_site, tv_site_val, serial.getSite_id(), serial.getSite_desc());
             setSerialInfo(ll_zone, tv_zona_val, serial.getZone_id(), serial.getZone_desc());
             setSerialInfo(ll_position, tv_posicao_val, serial.getLocal_id());
+            setTrackingListForm(ll_tracking, ll_tracking_val, serial);
             setSerialInfo(ll_info_1, tv_info_1_val, serial.getAdd_inf1());
             setSerialInfo(ll_info_2, tv_info_2_val, serial.getAdd_inf2());
             setSerialInfo(ll_info_3, tv_info_3_val, serial.getAdd_inf3());
@@ -2206,6 +2213,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 //            }
 //        }
 
+
         if(pdfs_local.size()>0) {
             String[] from = {"blob_icon", "blob_name"};
             int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
@@ -2267,6 +2275,24 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         infoDialog.show();
 
+    }
+
+    private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {
+        if(serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
+            ll_tracking.setVisibility(View.GONE);
+        }else{
+            for (MD_Product_Serial_Tracking tracking : serial.getTracking_list()) {
+                TextView tvTracking = new TextView(Act011_Main.this);
+                tvTracking.setText(tracking.getTracking());
+                tvTracking.setTextAppearance(Act011_Main.this, R.style.TextViewForm);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                tvTracking.setLayoutParams(layoutParams);
+                ll_tracking_val.addView(tvTracking);
+            }
+
+        }
     }
 
     private void setDescriptions(TextView tv_descriptions, MD_Product_Serial serial) {
