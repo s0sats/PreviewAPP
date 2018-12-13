@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -23,5 +24,7 @@ public interface Act011_Main_Presenter {
     void onBackPressedClicked();
 
     void deleteFormLocal(GE_Custom_Form_Local formLocal);
+
+    MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id);
 
 }

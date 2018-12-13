@@ -23,9 +23,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,6 +71,8 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -188,6 +192,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
 
+
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
     }
@@ -259,6 +264,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_data_serv_lbl");
         transList.add("dialog_info_dt_schedule_start_lbl");
         transList.add("dialog_info_dt_schedule_end_lbl");
+
+        transList.add("dialog_info_class_lbl");
+        transList.add("dialog_info_category_lbl");
+        transList.add("dialog_info_segment_lbl");
+        transList.add("dialog_info_site_lbl");
+        transList.add("dialog_info_zone_lbl");
+        transList.add("dialog_info_position_lbl");
+        transList.add("dialog_info_add_info_1_lbl");
+        transList.add("dialog_info_add_info_2_lbl");
+        transList.add("dialog_info_add_info_3_lbl");
 
         transList.add("dialog_info_so_prefix_lbl");
         transList.add("dialog_info_so_code_lbl");
@@ -1994,10 +2009,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_title);
 
         TextView tv_product_title_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_title_lbl);
-        TextView tv_product_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
-        TextView tv_product_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
-        TextView tv_product_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_lbl);
-        TextView tv_product_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_val);
+//        TextView tv_product_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
+//        TextView tv_product_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
+//        TextView tv_product_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_lbl);
+//        TextView tv_product_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_val);
 
         TextView tv_product_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_desc);
         //
@@ -2007,7 +2022,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         TextView tv_form_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_title);
         TextView tv_form_type_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
-        TextView tv_form_type_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_val);
         TextView tv_form_type_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
         //
         TextView tv_form_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_lbl);
@@ -2034,11 +2048,90 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
+
+//      Para o controle de visibilidade de elementos com dados
+        LinearLayout ll_serial_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial_info);
+        LinearLayout ll_serial = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial);
+        LinearLayout ll_class = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_class);
+        LinearLayout ll_category = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_category);
+        LinearLayout ll_segment = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_segment);
+        LinearLayout ll_site = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_site);
+        LinearLayout ll_zone = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_zone);
+        LinearLayout ll_position = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_position);
+        LinearLayout ll_tracking = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking);
+        LinearLayout ll_tracking_val = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking_val);
+        LinearLayout ll_info_1 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_1);
+        LinearLayout ll_info_2 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_2);
+        LinearLayout ll_info_3 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_3);
+
+        TextView tv_descriptions = (TextView) view.findViewById(R.id.act_011_dialog_tv_description);
+        TextView tv_serial_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
+        TextView tv_classe_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_class_id_val);
+        TextView tv_categoria_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_category_code_val);
+        TextView tv_segmento_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_segment_val);
+        TextView tv_site_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_site_val);
+        TextView tv_zona_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_zone_val);
+        TextView tv_posicao_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_position_val);
+        TextView tv_info_1_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_1_val);
+        TextView tv_info_2_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_val);
+        TextView tv_info_3_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_val);
+
+
+        TextView tv_serial_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
+        TextView tv_class_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_class_id_lbl);
+        TextView tv_category_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_category_code_lbl);
+        TextView tv_segment_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_segment_lbl);
+        TextView tv_site_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_site_lbl);
+        TextView tv_zone_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_zone_lbl);
+        TextView tv_position_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_position_lbl);
+        TextView tv_info_1_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_1_lbl);
+        TextView tv_info_2_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_lbl);
+        TextView tv_info_3_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_lbl);
+
+        MD_Product_Serial serial = null;
+
+        if(serial_id == null || serial_id.isEmpty()) {
+            //Pegar info do serial
+            ll_serial_info.setVisibility(View.GONE);
+        }else{
+             serial = mPresenter.getSerialInfo(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Integer.parseInt(product_code),
+                    serial_id
+            );
+        }
+
+        if(serial!= null) {
+            setDescriptions(tv_descriptions, serial);
+            setSerialInfo(ll_serial, tv_serial_code_val, serial.getSerial_id());
+            setSerialInfo(ll_class, tv_classe_id_val, serial.getClass_id());
+            setSerialInfo(ll_category, tv_categoria_code_val, serial.getCategory_price_id(), serial.getCategory_price_desc());
+            setSerialInfo(ll_segment, tv_segmento_val, serial.getSegment_id(), serial.getSegment_desc());
+            setSerialInfo(ll_site, tv_site_val, serial.getSite_id(), serial.getSite_desc());
+            setSerialInfo(ll_zone, tv_zona_val, serial.getZone_id(), serial.getZone_desc());
+            setSerialInfo(ll_position, tv_posicao_val, serial.getLocal_id());
+            setTrackingListForm(ll_tracking, ll_tracking_val, serial);
+            setSerialInfo(ll_info_1, tv_info_1_val, serial.getAdd_inf1());
+            setSerialInfo(ll_info_2, tv_info_2_val, serial.getAdd_inf2());
+            setSerialInfo(ll_info_3, tv_info_3_val, serial.getAdd_inf3());
+        }
+
+        tv_class_id_lbl.setText(hmAux_Trans.get("dialog_info_class_lbl"));
+        tv_category_code_lbl.setText(hmAux_Trans.get("dialog_info_category_lbl"));
+        tv_segment_lbl.setText(hmAux_Trans.get("dialog_info_segment_lbl"));
+        tv_site_lbl.setText(hmAux_Trans.get("dialog_info_site_lbl"));
+        tv_zone_lbl.setText(hmAux_Trans.get("dialog_info_zone_lbl"));
+        tv_position_lbl.setText(hmAux_Trans.get("dialog_info_position_lbl"));
+        tv_info_1_lbl.setText(hmAux_Trans.get("dialog_info_add_info_1_lbl"));
+        tv_info_2_lbl.setText(hmAux_Trans.get("dialog_info_add_info_2_lbl"));
+        tv_info_3_lbl.setText(hmAux_Trans.get("dialog_info_add_info_3_lbl"));
+
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
-        tv_product_id_lbl.setText(hmAux_Trans.get("dialog_info_product_id_lbl"));
+//        tv_product_id_lbl.setText(hmAux_Trans.get("dialog_info_product_id_lbl"));
         tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
-        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
+//        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
+
         tv_form_title.setText(hmAux_Trans.get("dialog_info_form_ttl"));
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
@@ -2046,26 +2139,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
 
-        tv_product_code_val.setText(product_code);
+//        tv_product_code_val.setText(product_code);
         tv_product_desc.setText(product_desc);
 
-        tv_product_id_val.setText(product_id);
+//        tv_product_id_val.setText(product_id);
 
         tv_serial_val.setText(serial_id);
 
-        tv_form_type_val.setText(type);
+
         tv_form_type_desc.setText(type + " - " + type_desc);
 
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
         tv_form_version_val.setText(form_version);
-
-        tv_form_code_val.setText(form);
-        tv_form_code_desc.setText(form_desc);
-
-        tv_form_code_val.setText(form);
-        tv_form_code_desc.setText(form_desc);
 
         if (mSo_Code != null) {
             tv_so_code_desc.setText(String.valueOf(mSo_Prefix) + "." + String.valueOf(mSo_Code));
@@ -2127,51 +2214,55 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 //        }
 
 
-        String[] from = {"blob_icon", "blob_name"};
-        int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
-        lv_pdfs.setAdapter(
-                new SimpleAdapter(
-                        Act011_Main.this,
-                        pdfs_local,
-                        R.layout.act011_dialog_form_info_cell,
-                        from,
-                        to
-                )
-        );
+        if(pdfs_local.size()>0) {
+            String[] from = {"blob_icon", "blob_name"};
+            int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
+            lv_pdfs.setAdapter(
+                    new SimpleAdapter(
+                            Act011_Main.this,
+                            pdfs_local,
+                            R.layout.act011_dialog_form_info_cell,
+                            from,
+                            to
+                    )
+            );
 
-        // Tirar Divisao
-        lv_pdfs.setDivider(null);
+            // Tirar Divisao
+            lv_pdfs.setDivider(null);
 
-        lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux aux = (HMAux) parent.getItemAtPosition(position);
+            lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux aux = (HMAux) parent.getItemAtPosition(position);
 
-                if (aux.get("blob_name").trim().length() != 0) {
+                    if (aux.get("blob_name").trim().length() != 0) {
 
-                    File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+                        File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
 
-                    try {
+                        try {
 
-                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+                            ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
 
-                        ToolBox_Inf.copyFile(
-                                file,
-                                new File(Constant.CACHE_PDF)
-                        );
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
+                            ToolBox_Inf.copyFile(
+                                    file,
+                                    new File(Constant.CACHE_PDF)
+                            );
+                        } catch (Exception e) {
+                            ToolBox_Inf.registerException(getClass().getName(), e);
+                        }
+
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                        startActivity(intent);
                     }
-
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                    startActivity(intent);
                 }
-            }
-        });
+            });
+        }else{
+            lv_pdfs.setVisibility(View.GONE);
+        }
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.98F;
@@ -2184,6 +2275,55 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         infoDialog.show();
 
+    }
+
+    private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {
+        if(serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
+            ll_tracking.setVisibility(View.GONE);
+        }else{
+            for (MD_Product_Serial_Tracking tracking : serial.getTracking_list()) {
+                TextView tvTracking = new TextView(Act011_Main.this);
+                tvTracking.setText(tracking.getTracking());
+                tvTracking.setTextAppearance(Act011_Main.this, R.style.TextViewForm);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                tvTracking.setLayoutParams(layoutParams);
+                ll_tracking_val.addView(tvTracking);
+            }
+
+        }
+    }
+
+    private void setDescriptions(TextView tv_descriptions, MD_Product_Serial serial) {
+        String description = ( serial.getBrand_desc() == null ? "" :  serial.getBrand_desc() );
+        description = description + ( serial.getModel_desc() == null ? "" :  " - " + serial.getModel_desc() );
+        description = description + ( serial.getColor_desc() == null ? "" :  " - " + serial.getColor_desc() );
+        if(description.isEmpty()){
+            tv_descriptions.setVisibility(View.GONE);
+        }else{
+            tv_descriptions.setText(description);
+        }
+    }
+
+    private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo_id, String conteudo_desc) {
+        if (conteudo_id==null || conteudo_id.isEmpty()){
+            hideView(layout);
+        } else{
+            tvValor.setText(conteudo_id + " - " + conteudo_desc);
+        }
+    }
+
+    private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo) {
+        if (conteudo==null || conteudo.isEmpty()){
+            hideView(layout);
+        } else{
+            tvValor.setText(conteudo);
+        }
+    }
+
+    private void hideView(LinearLayout ll_info_1) {
+        ll_info_1.setVisibility(View.GONE);
     }
 
     private void showCustomDialogSignature() {

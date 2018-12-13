@@ -29,4 +29,10 @@
         <item name="windowFixedWidthMinor">90%</item>
     </style>
 
+    <style name="TextViewForm" parent="AppTheme">
+        <item name="android:textColor">@color/namoa_color_light_blue</item>
+        <item name="android:textSize">@dimen/font_size_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
