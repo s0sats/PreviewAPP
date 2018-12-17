@@ -958,7 +958,7 @@ public class ToolBox_Inf {
         context.sendBroadcast(mIntent);
     }
 
-    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD) {
+    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD,int db_version) {
         if (sVersion != null) {
             switch (sVersion) {
                 case "VERSION_INVALID":
@@ -971,7 +971,13 @@ public class ToolBox_Inf {
 
                 case "UPDATE_REQUIRED":
                     if (iStatus == 0) {
-                        sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+                        //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+                        HMAux aux = new HMAux();
+                        if(db_version > Constant.DB_VERSION_CUSTOM){
+                            //
+                            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
+                        }
+                        ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required),aux, s_Link, "0");
                         return false;
                     } else {
                         break;

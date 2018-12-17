@@ -11,6 +11,7 @@ public class TGC_Rec {
     private String link_url;
     private String login;
     private String zip;
+    private Integer db_version;
 
     public String getApp() {
         return app;
@@ -58,5 +59,13 @@ public class TGC_Rec {
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+
+    public Integer getDb_version() {
+        return db_version;
+    }
+
+    public void setDb_version(Integer db_version) {
+        this.db_version = db_version;
     }
 }

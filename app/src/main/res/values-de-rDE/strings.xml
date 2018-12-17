@@ -28,7 +28,7 @@
     <string name="msg_processing_data_step4">Daten werden verarbeitet...\nSchritt 4 von 4 (dies kann etwas länger dauern)</string>
     <string name="msg_version_invalid">Ungültige Version der App!</string>
     <string name="msg_version_expired">Die Version der App ist abgelaufen!</string>
-    <string name="msg_update_required">Neue Version verfügbar!\nUpdate durchführen?\nVorsicht! Nicht gesendete Daten können endgültig verloren gehen!</string>
+    <string name="msg_update_required">Neue Version verfügbar!\nUpdate durchführen?</string>
     <string name="msg_user_invalid">Ungültiger Benutzer</string>
     <string name="msg_user_canceled">Stornierter Benutzer</string>
     <string name="msg_user_other_device">Achtung: Ihr Benutzer ist auf einem weiteren Gerät angemeldet.</string>
@@ -97,6 +97,9 @@
     <string name="notification_messages_lbl">Nachrichten</string>
     <string name="chat_fcm_offline_ttl">Offline Nachrichten</string>
     <string name="chat_fcm_offline_msg">Sie haben neue Nachrichten erhalten!\nBitte die Namoa App öffnen.</string>
+    <string name="msg_not_sent_data_will_be_lost">VORSICHT! NICHT GESENDETE DATEN GEHEN FÜR IMMER VERLOREN!</string>
+    <string name="notification_ttl_upload">Loading</string>
+    <string name="notification_msg_upload">Sending files to server</string>
 
 
     <!--Traduções antigas em Ingles, apagar apos teste das strings em alemao-->

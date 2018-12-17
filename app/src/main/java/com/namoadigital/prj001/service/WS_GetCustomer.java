@@ -114,7 +114,8 @@ public class WS_GetCustomer extends IntentService {
                 rec.getLogin(),
                 (rec.getLink_url() != null) ? rec.getLink_url() : "",
                 statusjump,
-                1
+                1,
+                rec.getDb_version()
         )) {
             return;
         }
