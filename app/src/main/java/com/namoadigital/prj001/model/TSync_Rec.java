@@ -11,6 +11,7 @@ public class TSync_Rec {
     private String link_url;
     private String error_msg;
     private String zip;
+    private Integer db_version;
 
     public String getApp() {
         return app;
@@ -50,5 +51,13 @@ public class TSync_Rec {
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+
+    public Integer getDb_version() {
+        return db_version;
+    }
+
+    public void setDb_version(Integer db_version) {
+        this.db_version = db_version;
     }
 }

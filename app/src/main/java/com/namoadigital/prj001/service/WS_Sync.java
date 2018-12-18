@@ -176,8 +176,6 @@ public class WS_Sync extends IntentService {
 
         try {
 
-
-
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
@@ -333,7 +331,8 @@ public class WS_Sync extends IntentService {
                 rec.getError_msg(),
                 rec.getLink_url(),
                 jump_validation,
-                jump_od
+                jump_od,
+                rec.getDb_version()
         )
                 ||
                 !ToolBox_Inf.processoOthersError(

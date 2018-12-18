@@ -972,12 +972,7 @@ public class ToolBox_Inf {
                 case "UPDATE_REQUIRED":
                     if (iStatus == 0) {
                         //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-                        HMAux aux = new HMAux();
-                        if(db_version > Constant.DB_VERSION_CUSTOM){
-                            //
-                            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
-                        }
-                        ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required),aux, s_Link, "0");
+                        ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
                         return false;
                     } else {
                         break;
@@ -1038,6 +1033,117 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
+        /**
+         * LUCHE - 18/12/2018
+         * Para implementar a nova funcionalidade que informa o usr quando esse irá de fato perder os dados
+         * devido a atualização da versão do banco de dados, foi criada uma segunda assinatura desse metodo
+         * adicionando como ultimo parametro a versão do banco de dados da versão stable.
+         */
+        return processWSCheckValidation(context, validation, error_msg, s_Link,iStatus, iStatus_OD,0);
+//        validation = validation == null ? "" : validation;
+//
+//        switch (validation) {
+//            case "OK":
+//                break;
+//
+//            case "UPDATE_REQUIRED":
+//                if (iStatus == 0) {
+//                    sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+//                    return false;
+//                } else {
+//                    return true;
+//                }
+//
+//            case "VERSION_ERRO":
+//                sendBCStatus(context, "VERSION_ERRO", context.getString(R.string.msg_version_invalid), s_Link, "1");
+//
+//                return false;
+//
+//            case "VERSION_INVALID":
+//                sendBCStatus(context, "VERSION_INVALID", context.getString(R.string.msg_version_invalid), s_Link, "1");
+//
+//                return false;
+//
+//            case "EXPIRED":
+//                sendBCStatus(context, "EXPIRED", context.getString(R.string.msg_version_expired), s_Link, "1");
+//
+//                return false;
+//
+//            case "LOGIN_ERRO":
+//                sendBCStatus(context, "LOGIN_ERRO", error_msg, s_Link, "0");
+//
+//                return false;
+//
+//            case "USER_INVALID":
+//                sendBCStatus(context, "USER_INVALID", error_msg, s_Link, "0");
+//
+//                return false;
+//
+//            case "USER_BLOCKED":
+//                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//
+//                return false;
+//
+//            case "USER_CANCELLED":
+//                sendBCStatus(context, "USER_CANCELLED", error_msg, s_Link, "0");
+//
+//                return false;
+//
+//            case "USER_OTHER_DEVICE":
+//                if (iStatus_OD == 0) {
+//                    sendBCStatus(context, "USER_OTHER_DEVICE", error_msg, s_Link, "0");
+//                    return false;
+//                } else {
+//                    return true;
+//                }
+//
+//            case "SESSION_NOT_FOUND":
+//                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
+//                return false;
+//
+//            case "CREATE_SESSION_ABORT":
+//                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//                return false;
+//
+//            case "LICENSE_QTY_INVALID":
+//                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//                return false;
+//            case "PARAMETERS_ERROR":
+//                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//                return false;
+//            case "CUSTOMER_IP_REQUIRED":
+//                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//                return false;
+//            case "CUSTOMER_IP_RESTRICTION":
+//                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+//                return false;
+//            default:
+//                if (validation.trim().length() == 0) {
+//                    return processoOthersError(context, context.getResources().getString(R.string.generic_error_lbl), error_msg);
+//                }
+//                break;
+//        }
+//
+//        return true;
+    }
+
+    /**
+     * LUCHE - 18/12/2018
+     *
+     * Criado nova assinatura do metodo para receber parametro adicional db_version e verificar
+     * a necessidade de exibir ou não a msg de que dados serão perdidos.
+     *
+     * @param context
+     * @param validation
+     * @param error_msg
+     * @param s_Link
+     * @param iStatus    - Se deve validar update_required.0 valida , 1 não valida
+     * @param iStatus_OD - Se deve validar forced_login.0 valida , 1 não valida
+     * @param db_version - Versão do banco de dados do app Stable. Usada pra gerar ou não msg de perda de dados.
+     * @return
+     */
+
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD, int db_version) {
         validation = validation == null ? "" : validation;
 
         switch (validation) {
@@ -1046,8 +1152,8 @@ public class ToolBox_Inf {
 
             case "UPDATE_REQUIRED":
                 if (iStatus == 0) {
-                    sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-
+                    //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+                    ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
                     return false;
                 } else {
                     return true;
@@ -1192,6 +1298,15 @@ public class ToolBox_Inf {
         }
 
         return true;
+    }
+
+    private static HMAux checkNewDbVersion(Context context, int db_version){
+        HMAux aux = new HMAux();
+        if(db_version > Constant.DB_VERSION_CUSTOM){
+            //
+            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
+        }
+        return aux;
     }
 
     public static String BitMapToBase64(Bitmap bm) {
