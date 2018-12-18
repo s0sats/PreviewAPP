@@ -23,11 +23,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1251,11 +1249,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmPage(Integer.parseInt(cf.get("page")));
         checkBoxFF.setmType(cf.get("custom_form_data_type"));
 
-        // Teste Traducao
-        //checkBoxFF.setmOption(cf.get("custom_form_data_content"));
         checkBoxFF.setmOption(cf.get("custom_form_data_content"));
-//        checkBoxFF.setmOption(hmAux_Trans.get("NA") + "#" + hmAux_Trans.get("NO") + "#" + hmAux_Trans.get("YES") +
-//                ((cf.get("custom_form_data_content") != null && !cf.get("custom_form_data_content").isEmpty()) ? "@##@" + cf.get("custom_form_data_content") : ""));
 
         checkBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         checkBoxFF.setmPre(prefix);
