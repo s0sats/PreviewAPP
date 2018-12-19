@@ -958,7 +958,7 @@ public class ToolBox_Inf {
         context.sendBroadcast(mIntent);
     }
 
-    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD,int db_version) {
+    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD,Integer db_version) {
         if (sVersion != null) {
             switch (sVersion) {
                 case "VERSION_INVALID":
@@ -1143,7 +1143,7 @@ public class ToolBox_Inf {
      * @return
      */
 
-    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD, int db_version) {
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD, Integer db_version) {
         validation = validation == null ? "" : validation;
 
         switch (validation) {
@@ -1300,9 +1300,9 @@ public class ToolBox_Inf {
         return true;
     }
 
-    private static HMAux checkNewDbVersion(Context context, int db_version){
+    private static HMAux checkNewDbVersion(Context context, Integer db_version){
         HMAux aux = new HMAux();
-        if(db_version > Constant.DB_VERSION_CUSTOM){
+        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
             //
             aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
         }
