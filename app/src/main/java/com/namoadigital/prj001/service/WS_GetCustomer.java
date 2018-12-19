@@ -28,9 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -148,9 +146,9 @@ public class WS_GetCustomer extends IntentService {
             if(forIdx == 0 && userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
                 ArrayList<File> listToDelete = new ArrayList<>();
                 //
-                File[] files_db = getListDB("namoa_sms");
-                File[] files_db_mult = getListDB("C_");
-                File[] files_db_chat = getListDB(Constant.DB_NAME_CHAT.substring(0,Constant.DB_NAME_CHAT.length() -4));
+                File[] files_db = ToolBox_Inf.getListDB("namoa_sms");
+                File[] files_db_mult = ToolBox_Inf.getListDB("C_");
+                File[] files_db_chat = ToolBox_Inf.getListDB(Constant.DB_NAME_CHAT.substring(0,Constant.DB_NAME_CHAT.length() -4));
                 File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
                 File[] files_support = ToolBox_Inf.getListOfFiles_v5(Constant.SUPPORT_PATH,"");
                 //
@@ -264,22 +262,4 @@ public class WS_GetCustomer extends IntentService {
 
     }
 
-    public static File[] getListDB(final String prefix) {
-        File fileList = new File(Constant.DB_PATH);
-        File[] files = fileList.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                if (filename.startsWith(prefix)) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        //
-        if (files != null) {
-            Arrays.sort(files);
-        }
-        //
-        return files;
-    }
 }

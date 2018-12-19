@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 22
         versionCode 15
-        versionName "3.7.1.1"
+        versionName "3.7.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -78,7 +78,7 @@ dependencies {
 
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
 
-    implementation 'com.namoa_digital:library:0.0.378'
+    implementation 'com.namoa_digital:library:0.0.378-dl'
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.firebase:firebase-messaging:10.0.1'
