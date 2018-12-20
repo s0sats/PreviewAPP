@@ -63,7 +63,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -1313,7 +1312,7 @@ public class ToolBox_Inf {
 
     private static HMAux checkNewDbVersion(Context context, Integer db_version){
         HMAux aux = new HMAux();
-        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context)){
+        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
             //
             aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
         }
@@ -5027,131 +5026,326 @@ public class ToolBox_Inf {
         return files;
     }
 
-    private static boolean hasPendingData(Context context){
-        boolean pendingData = false;
-        File[] listDB = getListDB("C_",true);
+    /**
+     * LUCHE - 20/12/18
+     * Metodo que verifica se existem dados pendentes em uma lista de  banco de dados.
+     * A informação de customer code extraida do nome do banco.
+     * Se encontrar pendencia em algum customer, retorna true.
+     * Metodo usado quando app recebe UPDATE_REQUIRED no retorno dos WS de Sync ou GetCustomer.
+     * Metodo executa loop na lista de banco e chama a cada iteração do loop o mesmo metodo,
+     * mas com segunda assinatura que verifica as pendencias em um customer especifico
+     * @param context
+     * @param listDB - Lista de bancos de
+     * @return
+     */
+    public static boolean hasPendingData(Context context, File[] listDB) {
         //
-        if(listDB == null || listDB.length == 0){
-            return pendingData;
+        if (listDB == null || listDB.length == 0) {
+            return false;
         }
         //
-        for(File db: listDB){
+        for (File db : listDB) {
             String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
-            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1])  : -1L;
-            if(customer_code != null && customer_code != -1) {
-                /**
-                 * Pendencia de Serial
-                 * Banco e Token
-                 */
-                if(isSerialWithinTokenFile(context, customer_code) > 0){
-                    pendingData = true;
-                    break;
-                }
-                /**
-                 * Pendencias N-Form
-                 */
-                GE_Custom_Form_LocalDao customFormLocalDao = new GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(customer_code),
-                        Constant.DB_VERSION_CUSTOM
-                );
+            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
+            //
+            if(customer_code != null && customer_code != -1){
                 //
-                HMAux pendencies =
-                        customFormLocalDao.getByStringHM(
-                                new Sql_Act002_001(
-                                        String.valueOf(customer_code)
-                                ).toSqlQuery()
-                        );
-                //
-                if(pendencies != null
-                    && pendencies.hasConsistentValue(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES)
-                    && !pendencies.get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES).equalsIgnoreCase("0")
-                ){
-                    pendingData = true;
-                    break;
-                }
-                //
-                /**
-                 * Pendencias S.O
-                 */
-                pendencies.clear();
-                //
-                SM_SODao soDao = new SM_SODao(
-                        context,
-                        ToolBox_Con.customDBPath(customer_code),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                pendencies = soDao.getByStringHM(
-                        new Sql_Act021_003(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ).toSqlQuery()
-                );
-                //
-                if((pendencies != null &&
-                    pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
-                    !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
-                   ) || isSoWithinTokenFile() > 0
-                ){
-                    pendingData = true;
-                    break;
-                }
-                /**
-                 * Pendencias Form AP
-                 */
-                pendencies.clear();
-                //
-                GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(
-                        context,
-                        ToolBox_Con.customDBPath(customer_code),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                pendencies = customFormApDao.getByStringHM(
-                        new Sql_Act005_007(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                        ).toSqlQuery()
-                );
-                //
-                if(pendencies != null
-                        && pendencies.hasConsistentValue(Sql_Act005_007.BADGE_TO_SEND_QTY)
-                        && !pendencies.get(Sql_Act005_007.BADGE_TO_SEND_QTY).equalsIgnoreCase("0")
-                        ){
-                    pendingData = true;
-                    break;
-                }
-
-                /**
-                 * Pendencias Form AP
-                 */
-                pendencies.clear();
-                //
-                SO_Pack_Express_LocalDao soPackExpressLocalDao = new SO_Pack_Express_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(customer_code),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                pendencies = soPackExpressLocalDao.getByStringHM(
-                        new SO_Pack_Express_Local_Sql_010(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ).toSqlQuery()
-                );
-                //
-                if(pendencies != null
-                        && pendencies.hasConsistentValue(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY)
-                        && !pendencies.get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY).equalsIgnoreCase("0")
-                ){
-                    pendingData = true;
-                    break;
+                if(hasPendingData(context,customer_code)){
+                    return true;
                 }
             }
         }
         //
-        return pendingData;
+        return false;
     }
 
-    private static int isSoWithinTokenFile() {
+    /**
+     * LUCHE - 20/12/18
+     * Metodo que verifica se existem dados pendentes no banco do customer especificado.
+     * São considerados pendentes, itens pendentes de transmissão e N-Form no status IN_PROCESS.
+     *
+     * @param context
+     * @param customer_code
+     * @return
+     */
+    public static boolean hasPendingData(Context context, Long customer_code){
+        if(customer_code != null && customer_code != -1) {
+            /**
+             * Pendencia de Serial
+             * Banco e Token
+             */
+            //
+            MD_Product_SerialDao mdProductDao = new MD_Product_SerialDao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+
+            HMAux pendencies = mdProductDao.getByStringHM(
+                    new Sql_Act005_008(
+                            customer_code
+                    ).toSqlQuery()
+            );
+
+            if( (pendencies != null
+                    && pendencies.hasConsistentValue(Sql_Act005_008.BADGE_TO_SEND_QTY)
+                    && !pendencies.get(Sql_Act005_008.BADGE_TO_SEND_QTY).equalsIgnoreCase("0"))
+                    || isSerialWithinTokenFile() > 0
+                    ){
+                return true;
+            }
+            /**
+             * Pendencias N-Form
+             */
+            pendencies.clear();
+            //
+            GE_Custom_Form_LocalDao customFormLocalDao = new GE_Custom_Form_LocalDao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            pendencies =
+                    customFormLocalDao.getByStringHM(
+                            new Sql_Act002_001(
+                                    String.valueOf(customer_code)
+                            ).toSqlQuery()
+                    );
+            //
+            if(pendencies != null
+                    && pendencies.hasConsistentValue(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES)
+                    && !pendencies.get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES).equalsIgnoreCase("0")
+                ){
+                return true;
+            }
+            //
+            /**
+             * Pendencias S.O
+             */
+            pendencies.clear();
+            //
+            SM_SODao soDao = new SM_SODao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            pendencies = soDao.getByStringHM(
+                    new Sql_Act021_003(
+                            customer_code
+                    ).toSqlQuery()
+            );
+            //
+            if((pendencies != null &&
+                    pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
+                    !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
+            ) || isSoWithinTokenFile() > 0
+                    ){
+                return true;
+            }
+            /**
+             * Pendencias Form AP
+             */
+            pendencies.clear();
+            //
+            GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            pendencies = customFormApDao.getByStringHM(
+                    new Sql_Act005_007(
+                            String.valueOf(customer_code)
+                    ).toSqlQuery()
+            );
+            //
+            if(pendencies != null
+                    && pendencies.hasConsistentValue(Sql_Act005_007.BADGE_TO_SEND_QTY)
+                    && !pendencies.get(Sql_Act005_007.BADGE_TO_SEND_QTY).equalsIgnoreCase("0")
+                    ){
+                return true;
+            }
+
+            /**
+             * Pendencias So Pacote Expresso
+             */
+            pendencies.clear();
+            //
+            SO_Pack_Express_LocalDao soPackExpressLocalDao = new SO_Pack_Express_LocalDao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            pendencies = soPackExpressLocalDao.getByStringHM(
+                    new SO_Pack_Express_Local_Sql_010(
+                            customer_code
+                    ).toSqlQuery()
+            );
+            //
+            if(pendencies != null
+                    && pendencies.hasConsistentValue(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY)
+                    && !pendencies.get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY).equalsIgnoreCase("0")
+                    ){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+//    public static boolean hasPendingData(Context context){
+//        boolean pendingData = false;
+//        File[] listDB = getListDB("C_",true);
+//        //
+//        if(listDB == null || listDB.length == 0){
+//            return pendingData;
+//        }
+//        //
+//        for(File db: listDB){
+//            String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
+//            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1])  : -1L;
+//            if(customer_code != null && customer_code != -1) {
+//                /**
+//                 * Pendencia de Serial
+//                 * Banco e Token
+//                 */
+//                //
+//                MD_Product_SerialDao mdProductDao = new MD_Product_SerialDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(customer_code),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//                //
+//
+//                HMAux pendencies = mdProductDao.getByStringHM(
+//                            new Sql_Act005_008(
+//                                    customer_code
+//                            ).toSqlQuery()
+//                    );
+//
+//                if( (pendencies != null
+//                    && pendencies.hasConsistentValue(Sql_Act005_008.BADGE_TO_SEND_QTY)
+//                    && !pendencies.get(Sql_Act005_008.BADGE_TO_SEND_QTY).equalsIgnoreCase("0"))
+//                    || isSerialWithinTokenFile() > 0
+//                ){
+//                    pendingData = true;
+//                    break;
+//                }
+//                /**
+//                 * Pendencias N-Form
+//                 */
+//                pendencies.clear();
+//                //
+//                GE_Custom_Form_LocalDao customFormLocalDao = new GE_Custom_Form_LocalDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(customer_code),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//                //
+//                pendencies =
+//                        customFormLocalDao.getByStringHM(
+//                                new Sql_Act002_001(
+//                                        String.valueOf(customer_code)
+//                                ).toSqlQuery()
+//                        );
+//                //
+//                if(pendencies != null
+//                    && pendencies.hasConsistentValue(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES)
+//                    && !pendencies.get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES).equalsIgnoreCase("0")
+//                ){
+//                    pendingData = true;
+//                    break;
+//                }
+//                //
+//                /**
+//                 * Pendencias S.O
+//                 */
+//                pendencies.clear();
+//                //
+//                SM_SODao soDao = new SM_SODao(
+//                        context,
+//                        ToolBox_Con.customDBPath(customer_code),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//                //
+//                pendencies = soDao.getByStringHM(
+//                        new Sql_Act021_003(
+//                                customer_code
+//                        ).toSqlQuery()
+//                );
+//                //
+//                if((pendencies != null &&
+//                    pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
+//                    !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
+//                   ) || isSoWithinTokenFile() > 0
+//                ){
+//                    pendingData = true;
+//                    break;
+//                }
+//                /**
+//                 * Pendencias Form AP
+//                 */
+//                pendencies.clear();
+//                //
+//                GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(customer_code),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//                //
+//                pendencies = customFormApDao.getByStringHM(
+//                        new Sql_Act005_007(
+//                                String.valueOf(customer_code)
+//                        ).toSqlQuery()
+//                );
+//                //
+//                if(pendencies != null
+//                        && pendencies.hasConsistentValue(Sql_Act005_007.BADGE_TO_SEND_QTY)
+//                        && !pendencies.get(Sql_Act005_007.BADGE_TO_SEND_QTY).equalsIgnoreCase("0")
+//                        ){
+//                    pendingData = true;
+//                    break;
+//                }
+//
+//                /**
+//                 * Pendencias Form AP
+//                 */
+//                pendencies.clear();
+//                //
+//                SO_Pack_Express_LocalDao soPackExpressLocalDao = new SO_Pack_Express_LocalDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(customer_code),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//                //
+//                pendencies = soPackExpressLocalDao.getByStringHM(
+//                        new SO_Pack_Express_Local_Sql_010(
+//                                customer_code
+//                        ).toSqlQuery()
+//                );
+//                //
+//                if(pendencies != null
+//                        && pendencies.hasConsistentValue(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY)
+//                        && !pendencies.get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY).equalsIgnoreCase("0")
+//                ){
+//                    pendingData = true;
+//                    break;
+//                }
+//            }
+//        }
+//        //
+//        return pendingData;
+//    }
+
+    /**
+     * Metodo que retorna a qtd de S.O dentro do arquivos token de so
+     *
+     * @return
+     */
+    public static int isSoWithinTokenFile() {
         try {
             File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
             if (soToken.length > 0) {
@@ -5174,24 +5368,13 @@ public class ToolBox_Inf {
         }
     }
 
-    private static int isSerialWithinTokenFile(Context context , Long customer_code) {
-        int qty;
-        MD_ProductDao mdProductDao = new MD_ProductDao(
-                context,
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-        );
-        //
-        try {
-            qty = Integer.parseInt(mdProductDao.getByStringHM(
-                    new Sql_Act005_008(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
-            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY));
-        } catch (Exception e) {
-            qty = 0;
-        }
-
+    /**
+     * Metodo que retorna a qtd de Seriais dentro do arquivos token de Serial
+     *
+     * @return
+     */
+    public static int isSerialWithinTokenFile() {
+        int qty = 0;
         try {
             File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
             if (serialToken.length > 0) {
@@ -5205,12 +5388,12 @@ public class ToolBox_Inf {
                 //
                 return token_serial_list.size() + qty;
             } else {
-                return 0 + qty;
+                return qty;
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             //
-            return 0 + qty;
+            return qty;
         }
     }
 

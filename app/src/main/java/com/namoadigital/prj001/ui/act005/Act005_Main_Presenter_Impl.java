@@ -16,8 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
@@ -32,11 +30,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.TSO_Save_Env;
-import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
@@ -77,7 +71,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -251,6 +244,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qtySO = "";
                 String qtyAP = "";
                 String qtySO_Express = "";
+                String qtySerial = "";
                 String qtyBadge2 = "";
 
 
@@ -408,12 +402,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtySO_Express = "0";
                         }
+                        //Serial
+                        try {
+                            qtySerial = mdProductDao.getByStringHM(
+                                    new Sql_Act005_008(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY);
+                        } catch (Exception e) {
+                            qtySerial = "0";
+                        }
 
                         //Soma Qtd de n-form e n_service e form_ap
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
-                        menu.addInBadge1(isSoWithinTokenFile());
-                        menu.addInBadge1(isSerialWithinTokenFile());
+                        menu.addInBadge1(ToolBox_Inf.isSoWithinTokenFile());
+                        menu.addInBadge1(qtySerial);
+                        menu.addInBadge1(ToolBox_Inf.isSerialWithinTokenFile());
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
 //                        qty = String.valueOf(
@@ -972,63 +977,53 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
     }
 
-    private int isSoWithinTokenFile() {
-        try {
-            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
-            if (soToken.length > 0) {
-                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-                //
-                ArrayList<SM_SO> token_so_list =
-                        gsonEnv.fromJson(
-                                ToolBox_Inf.getContents(soToken[0]),
-                                TSO_Save_Env.class
-                        ).getSo();
-                //
-                return token_so_list.size();
-            } else {
-                return 0;
-            }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            //
-            return 0;
-        }
-    }
-
-    private int isSerialWithinTokenFile() {
-        int qty;
-
-        try {
-            qty = Integer.parseInt(mdProductDao.getByStringHM(
-                    new Sql_Act005_008(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
-            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY));
-        } catch (Exception e) {
-            qty = 0;
-        }
-
-        try {
-            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
-            if (serialToken.length > 0) {
-                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
-                //
-                ArrayList<MD_Product_Serial> token_serial_list =
-                        gsonEnv.fromJson(
-                                ToolBox_Inf.getContents(serialToken[0]),
-                                TSerial_Save_Env.class
-                        ).getSerial();
-                //
-                return token_serial_list.size() + qty;
-            } else {
-                return 0 + qty;
-            }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            //
-            return 0 + qty;
-        }
-    }
+//    private int isSoWithinTokenFile() {
+//        try {
+//            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+//            if (soToken.length > 0) {
+//                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+//                //
+//                ArrayList<SM_SO> token_so_list =
+//                        gsonEnv.fromJson(
+//                                ToolBox_Inf.getContents(soToken[0]),
+//                                TSO_Save_Env.class
+//                        ).getSo();
+//                //
+//                return token_so_list.size();
+//            } else {
+//                return 0;
+//            }
+//        } catch (Exception e) {
+//            ToolBox_Inf.registerException(getClass().getName(), e);
+//            //
+//            return 0;
+//        }
+//    }
+//
+//    private int isSerialWithinTokenFile() {
+//        int qty = 0;
+//        //
+//        try {
+//            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+//            if (serialToken.length > 0) {
+//                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+//                //
+//                ArrayList<MD_Product_Serial> token_serial_list =
+//                        gsonEnv.fromJson(
+//                                ToolBox_Inf.getContents(serialToken[0]),
+//                                TSerial_Save_Env.class
+//                        ).getSerial();
+//                //
+//                return token_serial_list.size() + qty;
+//            } else {
+//                return 0 + qty;
+//            }
+//        } catch (Exception e) {
+//            ToolBox_Inf.registerException(getClass().getName(), e);
+//            //
+//            return 0 + qty;
+//        }
+//    }
 
     @Override
     public void stopChatServices() {
