@@ -22,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
@@ -143,6 +144,24 @@ public class Frg_Serial_Search extends Fragment {
         tv_serial = (TextView) view.findViewById(R.id.frg_serial_search_tv_serial);
         ll_serial = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_serial);
         mket_serial = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_serial);
+        //07/01/18 - Luche
+        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
+        //via parametro do profile.
+        mket_serial.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        //
+        mket_serial.setmOCR(
+                ToolBox_Inf.profileExists(
+                    getActivity(),
+                    Constant.PROFILE_MENU_PROFILE,
+                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                )
+        );
         controls_sta.add(mket_serial);
         //
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_search_tv_tracking);
