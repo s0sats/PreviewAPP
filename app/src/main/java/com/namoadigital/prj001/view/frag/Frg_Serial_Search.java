@@ -155,7 +155,8 @@ public class Frg_Serial_Search extends Fragment {
                 )
         );
         //
-        mket_serial.setmOCR(
+        mket_serial.setmOCR(false);
+        mket_serial.setmOCRVin(
                 ToolBox_Inf.profileExists(
                     getActivity(),
                     Constant.PROFILE_MENU_PROFILE,
