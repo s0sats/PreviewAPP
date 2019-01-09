@@ -871,10 +871,11 @@ public class Frg_Serial_Edit extends BaseFragment {
         iv_serial_log.setVisibility(View.GONE);
         //
         if (!new_serial) {
-//            mket_serial_id.setmBARCODE(false);
-//            mket_serial_id.setmOCR(false);
-//            mket_serial_id.setmNFC(false);
-            setupMketSerialInputTech();
+            mket_serial_id.setmBARCODE(false);
+            mket_serial_id.setmOCR(false);
+            mket_serial_id.setmOCRVin(false);
+            mket_serial_id.setmNFC(false);
+
             mket_serial_id.setEnabled(false);
             iv_serial_log.setVisibility(View.VISIBLE);
         } else {

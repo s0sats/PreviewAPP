@@ -2932,26 +2932,35 @@ public class ToolBox_Inf {
         return dateHour;
     }
 
+    /**
+     * Metodo que gera arquivo texto com registrando dados da exception e local onde ocorreu
+     * 09/01/2019 - LUCHE
+     *
+     * Movido o metodo para biblioteca e adicionando chamada do metodo a lib dentro desse metodo.
+     * @param local
+     * @param exception
+     */
     public static void registerException(String local, Exception exception) {
 
-        File exception_file = new File(Constant.SUPPORT_PATH, "excep_" + getDateHourStr() + ".txt");
-
-        try {
-
-            StackTraceElement[] stackTrace = exception.getStackTrace();
-            String traceString = "";
-            String erro = "";
-
-            for (StackTraceElement trace : stackTrace) {
-                traceString += trace.toString() + "\n ";
-            }
-
-            erro = "Local:\n " + local + ";\nException:\n " + exception.toString() + ";\nTrace:\n" + traceString + ";";
-
-            ToolBox_Inf.writeIn(erro, exception_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        File exception_file = new File(Constant.SUPPORT_PATH, "excep_" + getDateHourStr() + ".txt");
+//
+//        try {
+//
+//            StackTraceElement[] stackTrace = exception.getStackTrace();
+//            String traceString = "";
+//            String erro = "";
+//
+//            for (StackTraceElement trace : stackTrace) {
+//                traceString += trace.toString() + "\n ";
+//            }
+//
+//            erro = "Local:\n " + local + ";\nException:\n " + exception.toString() + ";\nTrace:\n" + traceString + ";";
+//
+//            ToolBox_Inf.writeIn(erro, exception_file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        ToolBox.registerException(local,exception);
     }
 
     /**

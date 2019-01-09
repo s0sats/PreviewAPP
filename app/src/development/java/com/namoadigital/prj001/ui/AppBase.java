@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.microblink.MicroblinkSDK;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
@@ -84,6 +85,8 @@ public class AppBase extends Application {
 
         SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
+        //Add preenchimento do path do arquivo de support na lib
+        ConstantBase.LIB_SUPPORT_PATH = SUPPORT_PATH;
 
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
