@@ -49,6 +49,8 @@ public class Act011_FF extends Fragment {
     private int tabIndex = 0;
 
     private String comments;
+    //TestFrag
+    private Act011_Main mAct = null;
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
@@ -83,11 +85,25 @@ public class Act011_FF extends Fragment {
         this.formStatus = formStatus;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.act011_ff, container, false);
+        //TestFrag
+//        if(savedInstanceState != null &&
+//            savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
+//            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE)
+//        ){
+//            formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
+//            tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
+//        }
         //
         iniVars(view);
         iniActions();
@@ -97,6 +113,17 @@ public class Act011_FF extends Fragment {
 
     private void iniVars(View view) {
         context = getActivity();
+        //TestFrag
+//        if(hmAux_Trans == null){
+//            if(context instanceof Act011_Main){
+//                mAct = ((Act011_Main)context);
+//                this.hmAux_Trans = mAct.getHmAuxTrans();
+//                this.comments = mAct.getComment();
+//                this.setOnDrawerCheckListener(mAct.getFFInterface());
+//                this.customFFs = mAct.getFf();
+//            }
+//        }
+        //
         //
         tv_comments_ttl = (TextView) view.findViewById(R.id.act011_ff_tv_comments_ttl);
         tv_comments = (TextView) view.findViewById(R.id.act011_ff_tv_comments);
@@ -228,4 +255,12 @@ public class Act011_FF extends Fragment {
             tv_comments.setVisibility(View.GONE);
         }
     }
+//    //TestFrag
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        //
+//        outState.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus);
+//        outState.putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex);
+//    }
 }

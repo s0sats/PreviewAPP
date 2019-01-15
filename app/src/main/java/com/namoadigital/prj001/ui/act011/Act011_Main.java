@@ -291,6 +291,46 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 transList
         );
     }
+    //region TestFrag
+    public HMAux getHmAuxTrans(){
+        return hmAux_Trans;
+    }
+    public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
+        return  new Act011_FF.ICustom_Form_FF_ll() {
+            @Override
+            public void openDrawer() {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+
+            @Override
+            public void check() {
+                checkAction();
+            }
+
+            @Override
+            public void previosTab() {
+                if ((index - 1) >= 1) {
+                    tabSelectedAction(index - 1);
+                }
+            }
+
+            @Override
+            public void nextTab() {
+                if ((index + 1) <= pager.getAdapter().getCount()) {
+                    tabSelectedAction(index + 1);
+                }
+
+            }
+        };
+    }
+    public String getComment(){
+        return "";
+    }
+    public ArrayList<CustomFF> getFf(){
+        return customFFs;
+    }
+
+    //endregion
 
     private void initVars() {
         fm = getSupportFragmentManager();
@@ -986,7 +1026,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
                 //
-                if (i == 1) {
+                 if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                 } else {
                     custom_form_ff.setComments("");
@@ -1613,6 +1653,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 //        String sF = formData.getToken();
     }
 
+//    private class ScreenAdapter extends FragmentPagerAdapter {
+//
+//        private ArrayList<Fragment> data;
+//
+//        public ScreenAdapter(FragmentManager fm, ArrayList<Fragment> dados) {
+//            super(fm);
+//            this.data = dados;
+//        }
+//
+//        @Override
+//        public Fragment getItem(int position) {
+//            return data.get(position);
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return data.size();
+//        }
+//    }
     private class ScreenAdapter extends FragmentPagerAdapter {
 
         private ArrayList<Fragment> data;
@@ -2618,4 +2677,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //super.processNotification_close(mValue, mActivity);
     }
 
+    @Override
+    protected void onDestroy() {
+        for(Fragment ff: fm.getFragments()){
+            fm.beginTransaction().remove(ff).commit();
+        }
+        super.onDestroy();
+        //
+    }
 }
