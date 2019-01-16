@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.util.Constant;
 
 import java.util.List;
@@ -97,13 +100,13 @@ public class Act011_FF extends Fragment {
 
         View view = inflater.inflate(R.layout.act011_ff, container, false);
         //TestFrag
-//        if(savedInstanceState != null &&
-//            savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
-//            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE)
-//        ){
-//            formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
-//            tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
-//        }
+        if(savedInstanceState != null &&
+            savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE)
+        ){
+            formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
+            tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
+        }
         //
         iniVars(view);
         iniActions();
@@ -114,15 +117,15 @@ public class Act011_FF extends Fragment {
     private void iniVars(View view) {
         context = getActivity();
         //TestFrag
-//        if(hmAux_Trans == null){
-//            if(context instanceof Act011_Main){
-//                mAct = ((Act011_Main)context);
-//                this.hmAux_Trans = mAct.getHmAuxTrans();
-//                this.comments = mAct.getComment();
-//                this.setOnDrawerCheckListener(mAct.getFFInterface());
-//                this.customFFs = mAct.getFf();
-//            }
-//        }
+        if(hmAux_Trans == null){
+            if(context instanceof Act011_Main){
+                mAct = ((Act011_Main)context);
+                this.hmAux_Trans = mAct.getHmAuxTrans();
+                this.comments = mAct.getComment();
+                this.setOnDrawerCheckListener(mAct.getFFInterface());
+                this.customFFs = mAct.getFf();
+            }
+        }
         //
         //
         tv_comments_ttl = (TextView) view.findViewById(R.id.act011_ff_tv_comments_ttl);
@@ -256,11 +259,11 @@ public class Act011_FF extends Fragment {
         }
     }
 //    //TestFrag
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        //
-//        outState.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus);
-//        outState.putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex);
-//    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //
+        outState.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus);
+        outState.putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex);
+    }
 }

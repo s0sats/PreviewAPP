@@ -1109,8 +1109,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         act011_ff_options.tabsS(hmPages);
                     }
 
-                    InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    //TestFrag
+                    try {
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                 }
 
@@ -2675,14 +2680,5 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
-    }
-
-    @Override
-    protected void onDestroy() {
-        for(Fragment ff: fm.getFragments()){
-            fm.beginTransaction().remove(ff).commit();
-        }
-        super.onDestroy();
-        //
     }
 }
