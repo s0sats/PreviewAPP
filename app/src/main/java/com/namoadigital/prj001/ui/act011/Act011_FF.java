@@ -99,10 +99,17 @@ public class Act011_FF extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.act011_ff, container, false);
-        //TestFrag
+        /**
+         * LUCHE - 17/01/2019 - RotateBugFixed
+         *
+         * Recupera dados de pagina, status e comentario do bundle quando o fragmento for ser
+         * reconstruido.
+         *
+         */
         if(savedInstanceState != null &&
             savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
-            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE)
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.COMMENT)
         ){
             formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
             tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
@@ -117,7 +124,13 @@ public class Act011_FF extends Fragment {
 
     private void iniVars(View view) {
         context = getActivity();
-        //TestFrag
+        /**
+         *  LUCHE - 17/01/2019 - RotateBugFixed
+         *
+         *  Se a hmAux_Trans for null, significa que o fragmento esta sendo reconstruido , então
+         *  recupera informações primordiais atraves dos gets da Act011.
+         *
+         */
         if(hmAux_Trans == null){
             if(context instanceof Act011_Main){
                 mAct = ((Act011_Main)context);
@@ -126,7 +139,6 @@ public class Act011_FF extends Fragment {
                 this.customFFs = mAct.getFf();
             }
         }
-        //
         //
         tv_comments_ttl = (TextView) view.findViewById(R.id.act011_ff_tv_comments_ttl);
         tv_comments = (TextView) view.findViewById(R.id.act011_ff_tv_comments);
@@ -200,12 +212,16 @@ public class Act011_FF extends Fragment {
                         fAux.setmLabel(String.valueOf(count) + ". " + fAux.getmLabel());
                     }
 
-                    try {
-                        ((ViewGroup) fAux.getParent()).removeView(fAux);
-                    } catch (Exception e) {
-                        //ToolBox_Inf.registerException(getClass().getName(),e);
-                        e.printStackTrace();
-                    }
+                    /**
+                     *  LUCHE - 17/01/2019 - RotateBugFixed
+                     */
+
+//                    try {
+//                        ((ViewGroup) fAux.getParent()).removeView(fAux);
+//                    } catch (Exception e) {
+//                        //ToolBox_Inf.registerException(getClass().getName(),e);
+//                        e.printStackTrace();
+//                    }
                     //
                     ll_controls.addView(fAux);
                 } else {
@@ -258,7 +274,14 @@ public class Act011_FF extends Fragment {
             tv_comments.setVisibility(View.GONE);
         }
     }
-//    //TestFrag
+
+    /**
+     * LUCHE - 17/01/2019 - RotateBugFixed
+     *
+     * Adicionado propriedades formStatus, tabIndex e comments no bundle do SaveInstance do fragment
+     * @param outState
+     */
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

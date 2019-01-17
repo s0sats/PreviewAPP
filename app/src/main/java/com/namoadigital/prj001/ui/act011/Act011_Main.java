@@ -291,11 +291,42 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 transList
         );
     }
-    //region TestFrag
+
+    /**
+     * LUCHE - 17/01/2019 - RotateBugFixed
+     *
+     * Correção bug que crash app no Tablet Mosolf e devices Android 8.1.0 com Android puro ou quase.
+     * O crash acontecia quando o usr entrava na camera segurando o celular na horizontal e depois voltava
+     * sem tirar a foto.
+     *
+     * Problema:
+     *  - Identificamos nesse caso, que o apensar da Activity original ser destruida e reconstruida
+     *  pelo S.O, o FragmentManager(fm), guardava internamente as referencias dos Fragmentos antigo
+     *  não usandoos fragmentos recem criados. Esses fragmentos antigos ao serem recriados, tentavam
+     *  acessar propriedades null, HmAuxTrans nesse caso, o que ocasionava o crash.
+     *
+     * Solução:
+     *  - Para solucionar o problema, foram criados metodos get nessa Act011 para que o fragmento,
+     *  no momento de sua reconstrução, resgate da Activity as informações necessarias para sua
+     *  reconstrução.
+     *  - No Fragmento ,Act011_FF, foi necessario implementar o save de algumas propriedades para que
+     *  o fragmento conseguisse se reconstruir.
+
+     */
+    //region RotateBugFixed
+
+    /**
+     * Retorna a tradução contida na act.
+     * @return
+     */
     public HMAux getHmAuxTrans(){
         return hmAux_Trans;
     }
 
+    /**
+     * Retorna a implementação das interfaces,delegate, do fragmento Act011_FF
+     * @return
+     */
     public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
         return  new Act011_FF.ICustom_Form_FF_ll() {
             @Override
@@ -325,6 +356,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         };
     }
 
+    /**
+     * Retorna a lista de componente do formulário.
+     * @return
+     */
     public ArrayList<CustomFF> getFf(){
         return customFFs;
     }
@@ -1108,13 +1143,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         act011_ff_options.tabsS(hmPages);
                     }
 
-                    //TestFrag
-                    try {
-                        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+
+                    /**
+                     * LUCHE - 17/01/2019 - RotateBugFixed
+                     * Inicialmente, adicionado try/catch no comando abaixo para evitar o crash ao
+                     * reconstruir frag após rotação da tela, porem , trecho de codigo foi comentado
+                     * e o resultado manteve se igual a quando não estava comentado sendo assim,
+                     * foi comentado e poderá ser apagado no futuro.
+                     */
+//                    try {
+//                        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+//                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
 
                 }
 
@@ -1657,25 +1699,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 //        String sF = formData.getToken();
     }
 
-//    private class ScreenAdapter extends FragmentPagerAdapter {
-//
-//        private ArrayList<Fragment> data;
-//
-//        public ScreenAdapter(FragmentManager fm, ArrayList<Fragment> dados) {
-//            super(fm);
-//            this.data = dados;
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return data.get(position);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return data.size();
-//        }
-//    }
     private class ScreenAdapter extends FragmentPagerAdapter {
 
         private ArrayList<Fragment> data;
