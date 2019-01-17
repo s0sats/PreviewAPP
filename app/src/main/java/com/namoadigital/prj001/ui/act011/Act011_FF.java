@@ -106,6 +106,7 @@ public class Act011_FF extends Fragment {
         ){
             formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
             tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
+            comments = savedInstanceState.getString(GE_Custom_Form_Field_LocalDao.COMMENT);
         }
         //
         iniVars(view);
@@ -121,7 +122,6 @@ public class Act011_FF extends Fragment {
             if(context instanceof Act011_Main){
                 mAct = ((Act011_Main)context);
                 this.hmAux_Trans = mAct.getHmAuxTrans();
-                this.comments = mAct.getComment();
                 this.setOnDrawerCheckListener(mAct.getFFInterface());
                 this.customFFs = mAct.getFf();
             }
@@ -265,5 +265,6 @@ public class Act011_FF extends Fragment {
         //
         outState.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus);
         outState.putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex);
+        outState.putString(GE_Custom_Form_Field_LocalDao.COMMENT,comments);
     }
 }

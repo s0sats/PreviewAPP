@@ -295,6 +295,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     public HMAux getHmAuxTrans(){
         return hmAux_Trans;
     }
+
     public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
         return  new Act011_FF.ICustom_Form_FF_ll() {
             @Override
@@ -323,9 +324,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             }
         };
     }
-    public String getComment(){
-        return "";
-    }
+
     public ArrayList<CustomFF> getFf(){
         return customFFs;
     }
