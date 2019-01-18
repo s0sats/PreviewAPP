@@ -292,6 +292,80 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         );
     }
 
+    /**
+     * LUCHE - 17/01/2019 - RotateBugFixed
+     *
+     * Correção bug que crash app no Tablet Mosolf e devices Android 8.1.0 com Android puro ou quase.
+     * O crash acontecia quando o usr entrava na camera segurando o celular na horizontal e depois voltava
+     * sem tirar a foto.
+     *
+     * Problema:
+     *  - Identificamos nesse caso, que o apensar da Activity original ser destruida e reconstruida
+     *  pelo S.O, o FragmentManager(fm), guardava internamente as referencias dos Fragmentos antigo
+     *  não usandoos fragmentos recem criados. Esses fragmentos antigos ao serem recriados, tentavam
+     *  acessar propriedades null, HmAuxTrans nesse caso, o que ocasionava o crash.
+     *
+     * Solução:
+     *  - Para solucionar o problema, foram criados metodos get nessa Act011 para que o fragmento,
+     *  no momento de sua reconstrução, resgate da Activity as informações necessarias para sua
+     *  reconstrução.
+     *  - No Fragmento ,Act011_FF, foi necessario implementar o save de algumas propriedades para que
+     *  o fragmento conseguisse se reconstruir.
+
+     */
+    //region RotateBugFixed
+
+    /**
+     * Retorna a tradução contida na act.
+     * @return
+     */
+    public HMAux getHmAuxTrans(){
+        return hmAux_Trans;
+    }
+
+    /**
+     * Retorna a implementação das interfaces,delegate, do fragmento Act011_FF
+     * @return
+     */
+    public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
+        return  new Act011_FF.ICustom_Form_FF_ll() {
+            @Override
+            public void openDrawer() {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+
+            @Override
+            public void check() {
+                checkAction();
+            }
+
+            @Override
+            public void previosTab() {
+                if ((index - 1) >= 1) {
+                    tabSelectedAction(index - 1);
+                }
+            }
+
+            @Override
+            public void nextTab() {
+                if ((index + 1) <= pager.getAdapter().getCount()) {
+                    tabSelectedAction(index + 1);
+                }
+
+            }
+        };
+    }
+
+    /**
+     * Retorna a lista de componente do formulário.
+     * @return
+     */
+    public ArrayList<CustomFF> getFf(){
+        return customFFs;
+    }
+
+    //endregion
+
     private void initVars() {
         fm = getSupportFragmentManager();
 
@@ -1069,8 +1143,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         act011_ff_options.tabsS(hmPages);
                     }
 
-                    InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                    /**
+                     * LUCHE - 17/01/2019 - RotateBugFixed
+                     * Inicialmente, adicionado try/catch no comando abaixo para evitar o crash ao
+                     * reconstruir frag após rotação da tela, porem , trecho de codigo foi comentado
+                     * e o resultado manteve se igual a quando não estava comentado sendo assim,
+                     * foi comentado e poderá ser apagado no futuro.
+                     */
+//                    try {
+//                        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+//                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
 
                 }
 
@@ -1180,7 +1266,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
             mkEditTextNMFF.setmEnabled(true);
@@ -1215,7 +1301,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             comboBoxFF.setmEnabled(false);
         } else {
             comboBoxFF.setmEnabled(true);
@@ -1263,7 +1349,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             checkBoxFF.setmEnabled(false);
         } else {
             checkBoxFF.setmEnabled(true);
@@ -1299,7 +1385,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             ratingImageFF.setmEnabled(false);
         } else {
             ratingImageFF.setmEnabled(true);
@@ -1333,7 +1419,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             ratingBarFF.setmEnabled(false);
         } else {
             ratingBarFF.setmEnabled(true);
@@ -1368,7 +1454,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             pictureFF.setmEnabled(false);
         } else {
             pictureFF.setmEnabled(true);
@@ -1402,7 +1488,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+        ) {
             photoFF.setmEnabled(false);
         } else {
             photoFF.setmEnabled(true);
@@ -2088,7 +2174,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
         }else{
-             serial = mPresenter.getSerialInfo(
+            serial = mPresenter.getSerialInfo(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     Integer.parseInt(product_code),
                     serial_id
@@ -2617,5 +2703,4 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
-
 }
