@@ -52,7 +52,7 @@ public class Act011_FF extends Fragment {
     private int tabIndex = 0;
 
     private String comments;
-    //TestFrag
+    //LUCHE - 17/01/2019 - RotateBugFixed
     private Act011_Main mAct = null;
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
