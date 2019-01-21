@@ -5406,4 +5406,20 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * Metodo que identifica se a lib MicroBlinkId , leitor de OCR
+     * esta importada na lib.
+     * @return
+     */
+    public static boolean isMicroBlinkImported(){
+        boolean isMBImported = true;
+        try{
+            Class.forName("com.microblink.entities.recognizers.blinkinput.BlinkInputRecognizer");
+        } catch (ClassNotFoundException e) {
+            isMBImported = false;
+            e.printStackTrace();
+        }
+        return isMBImported;
+    }
+
 }

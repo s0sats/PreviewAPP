@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
+import android.os.Environment;
 
+import com.microblink.MicroblinkSDK;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
@@ -69,8 +71,8 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = getFilesDir().getPath();
-
+        DB_PATH = Environment
+                .getExternalStorageDirectory().getPath() + "/namoa";
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
@@ -89,15 +91,15 @@ public class AppBase extends Application {
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
 
-        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
-        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
+        TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
 
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
-        CACHE_PATH = DB_PATH + "/CC_CACHE";
-        CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
-        CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
+        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
+        CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
+        CACHE_CHAT_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_CHAT";
         CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
@@ -130,6 +132,8 @@ public class AppBase extends Application {
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-
+        Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
+        //
+        MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.development_BlinkID_Android_2019-02-07.mblic", this);
     }
 }
