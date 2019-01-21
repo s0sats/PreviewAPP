@@ -91,6 +91,7 @@ public class WS_GetCustomer extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
+        env.setApp_ocr_vin(ToolBox_Inf.isMicroBlinkImported() ? 1 : 0 );
         //
         env.setEmail_p(user);
         env.setPassword(password);
