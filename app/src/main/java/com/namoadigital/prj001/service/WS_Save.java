@@ -136,7 +136,7 @@ public class WS_Save extends IntentService {
         env.setForm_datas(form_datas);
         env.setForm_data_fields(form_data_fields);
         env.setToken(token);
-
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SAVE,
                 gson.toJson(env)

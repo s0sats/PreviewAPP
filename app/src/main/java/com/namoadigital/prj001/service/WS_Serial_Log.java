@@ -78,6 +78,7 @@ public class WS_Serial_Log extends IntentService {
         env.setCustomer_code(customer_code);
         env.setProduct_code(product_code);
         env.setSerial_code(serial_code);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
         //

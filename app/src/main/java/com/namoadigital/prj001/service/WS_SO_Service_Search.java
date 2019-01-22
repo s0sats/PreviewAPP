@@ -93,6 +93,7 @@ public class WS_SO_Service_Search extends IntentService {
         env.setSegment_code(segment_code);
         env.setSite_code(site_code);
         env.setOperation_code(operation_code);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
         //

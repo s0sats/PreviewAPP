@@ -82,6 +82,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
         env.setProduct_code(product_code);
         env.setSerial_code(serial_code);
         env.setTracking(tracking);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS",hmAux_Trans.get("msg_sending_data"), "", "0");
         //

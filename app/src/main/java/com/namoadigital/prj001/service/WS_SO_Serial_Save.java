@@ -168,6 +168,7 @@ public class WS_SO_Serial_Save extends IntentService {
         env.setToken(token);
         env.setSo(sos);
         env.setSerial(serialList);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
         //

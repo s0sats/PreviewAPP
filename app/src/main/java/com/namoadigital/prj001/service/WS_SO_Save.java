@@ -136,6 +136,7 @@ public class WS_SO_Save extends IntentService {
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setReprocess(1);
+            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
             //
             callSO_Save_WS(env);
 

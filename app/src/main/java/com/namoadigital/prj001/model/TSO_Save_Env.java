@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Created by d.luche on 27/06/2017.
  */
 
-public class TSO_Save_Env {
+public class TSO_Save_Env extends Main_Header_Env {
 
     @Expose
     private String app_code;

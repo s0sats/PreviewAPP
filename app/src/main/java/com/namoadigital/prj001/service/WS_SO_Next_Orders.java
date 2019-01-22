@@ -77,6 +77,7 @@ public class WS_SO_Next_Orders extends IntentService {
         env.setSite_code(site_code);
         env.setZone_code(zone_code);
         env.setOperation_code(operation_code);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
         //

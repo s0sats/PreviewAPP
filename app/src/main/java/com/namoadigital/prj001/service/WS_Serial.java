@@ -80,7 +80,7 @@ public class WS_Serial extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setProduct_code(product_code);
         env.setSerial_id(serial_id);
-
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_checking_serial"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(

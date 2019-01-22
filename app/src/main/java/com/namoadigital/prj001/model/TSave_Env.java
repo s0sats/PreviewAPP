@@ -8,13 +8,8 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 10/02/2017.
  */
 
-public class TSave_Env {
-    @Expose
-    private String app_code;
-    @Expose
-    private String app_version;
-    @Expose
-    private String session_app;
+public class TSave_Env extends Main_Header_Env {
+
     @Expose
     private String site_code;
     @Expose
@@ -26,29 +21,6 @@ public class TSave_Env {
     @Expose
     private List<GE_Custom_Form_Data_Field> form_data_fields;
 
-    public String getApp_code() {
-        return app_code;
-    }
-
-    public void setApp_code(String app_code) {
-        this.app_code = app_code;
-    }
-
-    public String getApp_version() {
-        return app_version;
-    }
-
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
-    }
-
-    public String getSession_app() {
-        return session_app;
-    }
-
-    public void setSession_app(String session_app) {
-        this.session_app = session_app;
-    }
 
     public String getSite_code() {
         return site_code;
