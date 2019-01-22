@@ -40,6 +40,7 @@ public class WS_Google extends IntentService {
                 env.setSession_app(
                         ToolBox_Con.getPreference_Session_App(getApplicationContext())
                 );
+                env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
                 env.setGcm_id(
                         ToolBox_Con.getPreference_Google_ID(getApplicationContext())
                 );

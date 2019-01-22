@@ -10,7 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.TCancelNFC_Env;
+import com.namoadigital.prj001.model.Main_Header_Env;
 import com.namoadigital.prj001.model.TCancelNFC_Rec;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
@@ -46,9 +46,6 @@ public class WS_Cancel_NFC extends IntentService {
         loadTranslation();
 
         try {
-
-
-
             processCancelNFC();
 
         } catch (Exception e) {
@@ -74,11 +71,12 @@ public class WS_Cancel_NFC extends IntentService {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
-        TCancelNFC_Env env = new TCancelNFC_Env();
+        Main_Header_Env env = new Main_Header_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_CANCEL_NFC,

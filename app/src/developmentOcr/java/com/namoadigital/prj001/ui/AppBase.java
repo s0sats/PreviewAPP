@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
+import android.os.Environment;
 
+import com.microblink.MicroblinkSDK;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
@@ -69,8 +71,8 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = getFilesDir().getPath();
-
+        DB_PATH = Environment
+                .getExternalStorageDirectory().getPath() + "/namoa";
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
@@ -89,15 +91,15 @@ public class AppBase extends Application {
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
 
-        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
-        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
+        TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
 
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
-        CACHE_PATH = DB_PATH + "/CC_CACHE";
-        CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
-        CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
+        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
+        CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
+        CACHE_CHAT_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_CHAT";
         CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
@@ -125,10 +127,10 @@ public class AppBase extends Application {
          * Por hora, esse tipo, identifica se é flavor com ou sem ocr.
          * Caso esse o tipo mude, significa que o as preferencias devem ser zeradas enviado o user
          * para a tela de login.
-         * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO Constant.PKG_APP_TYPE_DEFAULT O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
+         * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO PREFERENCIA  PKG_APP_TYPE O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
          * ENQUANTO AS SEM OCR VALOR PKG_APP_TYPE_STANDARD
          */
-        Constant.PKG_APP_TYPE_DEFAULT = Constant.PKG_APP_TYPE_STANDARD;
+        Constant.PKG_APP_TYPE_DEFAULT = Constant.PKG_APP_TYPE_MICROBLINK_OCR_VIN;
         String PGK_APP_TYPE_P = ToolBox_Con.getPreference_PKG_APP_TYPE(getApplicationContext());
         //
         if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !Constant.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
@@ -142,17 +144,14 @@ public class AppBase extends Application {
             }
         }
 
-        if (!PKG_CLEAN.equals(PGK_CLEAN_P)) {
-            ToolBox_Con.cleanPreferences(getApplicationContext());
-            ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
-        }
-
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-
+        Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
+        //
+        MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.development_BlinkID_Android_2019-02-07.mblic", this);
     }
 }

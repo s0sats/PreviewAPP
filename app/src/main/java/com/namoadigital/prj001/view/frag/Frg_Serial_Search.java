@@ -156,13 +156,19 @@ public class Frg_Serial_Search extends Fragment {
         );
         //
         mket_serial.setmOCR(false);
-        mket_serial.setmOCRVin(
-                ToolBox_Inf.profileExists(
-                    getActivity(),
-                    Constant.PROFILE_MENU_PROFILE,
-                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                )
-        );
+        //Verifica se a lib de OCR esta importada no flavor
+        //e se o user possui acesso ao OCR
+        if(ToolBox_Inf.isMicroBlinkImported()) {
+            mket_serial.setmOCRVin(
+                    ToolBox_Inf.profileExists(
+                            getActivity(),
+                            Constant.PROFILE_MENU_PROFILE,
+                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                    )
+            );
+        }else{
+            mket_serial.setmOCRVin(false);
+        }
         controls_sta.add(mket_serial);
         //
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_search_tv_tracking);

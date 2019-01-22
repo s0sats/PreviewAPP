@@ -3,31 +3,14 @@ package com.namoadigital.prj001.model;
 /**
  * Created by neomatrix on 5/9/16.
  */
-public class TGC_Env {
+public class TGC_Env extends Main_Header_Env {
 
-    private String app_code;
-    private String app_version;
     private String device_code;
 
     private String email_p;
     private String password;
     private String nfc_code;
 
-    public String getApp_code() {
-        return app_code;
-    }
-
-    public void setApp_code(String app_code) {
-        this.app_code = app_code;
-    }
-
-    public String getApp_version() {
-        return app_version;
-    }
-
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
-    }
 
     public String getDevice_code() {
         return device_code;

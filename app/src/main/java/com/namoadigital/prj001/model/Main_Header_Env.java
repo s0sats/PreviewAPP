@@ -1,17 +1,17 @@
 package com.namoadigital.prj001.model;
 
-/**
- * Created by d.luche on 08/05/2017.
- * Classe com propriedade que serão enviadas para o
- * servidor na chamada do WS server_cancel_nfc_auth.ws.*
- */
+import com.google.gson.annotations.Expose;
 
-public class TCancelNFC_Env {
+public class Main_Header_Env {
 
+    @Expose
     private String app_code;
+    @Expose
     private String app_version;
+    @Expose
+    private String app_type;
+    @Expose
     private String session_app;
-
 
     public String getApp_code() {
         return app_code;
@@ -27,6 +27,14 @@ public class TCancelNFC_Env {
 
     public void setApp_version(String app_version) {
         this.app_version = app_version;
+    }
+
+    public String getApp_type() {
+        return app_type;
+    }
+
+    public void setApp_type(String app_type) {
+        this.app_type = app_type;
     }
 
     public String getSession_app() {

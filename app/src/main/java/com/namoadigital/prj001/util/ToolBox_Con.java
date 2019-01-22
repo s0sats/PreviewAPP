@@ -209,6 +209,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region PKG_APK_TYPE
+    public static void setPreference_PKG_APP_TYPE(Context context, String PKG_APP_TYPE) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.PKG_APP_TYPE_KEY,
+                PKG_APP_TYPE
+        ).apply();
+    }
+
+    public static String getPreference_PKG_APP_TYPE(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.PKG_APP_TYPE_KEY,
+                ""
+        );
+    }
+    //endregion
+
 
     //region User_Code
     public static void setPreference_User_Code(Context context, String user_code) {
