@@ -86,6 +86,8 @@ public class WS_SO_Search extends IntentService {
         env.setSerial_id(serial_id);
         env.setSo_mult(so_mult);
         env.setProfile_check(profile_check);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
         //

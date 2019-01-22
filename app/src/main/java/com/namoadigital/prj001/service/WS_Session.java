@@ -87,6 +87,7 @@ public class WS_Session extends IntentService {
         env.setCustomer_code(customer_code);
         env.setTranslate_code(Integer.parseInt(translate_code));
         env.setGcm_id(ToolBox_Con.getPreference_Google_ID(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
 

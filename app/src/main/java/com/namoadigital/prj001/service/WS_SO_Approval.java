@@ -101,6 +101,7 @@ public class WS_SO_Approval extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         ArrayList<TSO_Approval_Env.SO_Approval_Item> so_status = new ArrayList<>();
 

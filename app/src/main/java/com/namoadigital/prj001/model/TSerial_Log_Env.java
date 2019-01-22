@@ -4,38 +4,11 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 22/05/2017.
  */
 
-public class TSerial_Log_Env {
+public class TSerial_Log_Env extends Main_Header_Env{
 
-    private String app_code;
-    private String app_version;
-    private String session_app;
     private long customer_code;
     private long product_code;
     private long serial_code;
-
-    public String getApp_code() {
-        return app_code;
-    }
-
-    public void setApp_code(String app_code) {
-        this.app_code = app_code;
-    }
-
-    public String getApp_version() {
-        return app_version;
-    }
-
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
-    }
-
-    public String getSession_app() {
-        return session_app;
-    }
-
-    public void setSession_app(String session_app) {
-        this.session_app = session_app;
-    }
 
     public long getCustomer_code() {
         return customer_code;

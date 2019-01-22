@@ -5,6 +5,7 @@ public class Main_Header_Env {
     private String app_code;
     private String app_version;
     private String app_type;
+    private String session_app;
 
     public String getApp_code() {
         return app_code;
@@ -28,5 +29,13 @@ public class Main_Header_Env {
 
     public void setApp_type(String app_type) {
         this.app_type = app_type;
+    }
+
+    public String getSession_app() {
+        return session_app;
+    }
+
+    public void setSession_app(String session_app) {
+        this.session_app = session_app;
     }
 }

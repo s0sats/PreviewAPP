@@ -4,36 +4,9 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 23/02/2018.
  */
 
-public class TSearch_Ap_Env {
+public class TSearch_Ap_Env extends Main_Header_Env {
 
-    private String app_code;
-    private String app_version;
-    private String session_app;
     private DataPackage data_package;
-
-    public String getApp_code() {
-        return app_code;
-    }
-
-    public void setApp_code(String app_code) {
-        this.app_code = app_code;
-    }
-
-    public String getApp_version() {
-        return app_version;
-    }
-
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
-    }
-
-    public String getSession_app() {
-        return session_app;
-    }
-
-    public void setSession_app(String session_app) {
-        this.session_app = session_app;
-    }
 
     public DataPackage getData_package() {
         return data_package;

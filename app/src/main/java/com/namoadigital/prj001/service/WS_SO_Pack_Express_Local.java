@@ -107,6 +107,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setPack_express(so_pack_express_List);
+            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
             //
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_express_data"), "", "0");
             //

@@ -107,7 +107,7 @@ public class WS_Upload_Support extends IntentService {
         env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         env.setCustomer_desc(ToolBox_Con.getPreference_Customer_Code_NAME(getApplicationContext()));
         env.setSupport_msg(support_msg);
-
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_waiting_answer"), "", "0");
 
         String resultado = ToolBox_Inf.uploadFileSupport(

@@ -91,6 +91,7 @@ public class WS_Serial_Search_BKP extends IntentService {
         env.setSerial_exact(serial_exact);
         env.setTracking(tracking);
         env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",hmAux_Trans.get("msg_receving_data"), "", "0");
 
