@@ -1,10 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 public class Main_Header_Env {
 
+    @Expose
     private String app_code;
+    @Expose
     private String app_version;
+    @Expose
     private String app_type;
+    @Expose
+    private String session_app;
 
     public String getApp_code() {
         return app_code;
@@ -28,5 +35,13 @@ public class Main_Header_Env {
 
     public void setApp_type(String app_type) {
         this.app_type = app_type;
+    }
+
+    public String getSession_app() {
+        return session_app;
+    }
+
+    public void setSession_app(String session_app) {
+        this.session_app = session_app;
     }
 }

@@ -50,8 +50,6 @@ public class WS_AP_Search extends IntentService {
 
         try {
 
-
-
             int sync_required = bundle.getInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 0);
             long customer_code = bundle.getLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, -1L);
             int custom_form_type = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, -1);
@@ -171,6 +169,7 @@ public class WS_AP_Search extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setData_package(dataPackage);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");

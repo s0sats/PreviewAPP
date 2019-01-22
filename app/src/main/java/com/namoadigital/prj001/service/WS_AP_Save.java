@@ -104,6 +104,7 @@ public class WS_AP_Save extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
         env.setAP(apList);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_ap_data"), "", "0");
         //
