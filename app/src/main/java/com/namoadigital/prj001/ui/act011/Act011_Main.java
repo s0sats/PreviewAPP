@@ -1060,7 +1060,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
                 //
-                if (i == 1) {
+                 if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                 } else {
                     custom_form_ff.setComments("");
@@ -1266,7 +1266,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
             mkEditTextNMFF.setmEnabled(true);
@@ -1301,7 +1301,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             comboBoxFF.setmEnabled(false);
         } else {
             comboBoxFF.setmEnabled(true);
@@ -1349,7 +1349,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             checkBoxFF.setmEnabled(false);
         } else {
             checkBoxFF.setmEnabled(true);
@@ -1385,7 +1385,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             ratingImageFF.setmEnabled(false);
         } else {
             ratingImageFF.setmEnabled(true);
@@ -1419,7 +1419,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             ratingBarFF.setmEnabled(false);
         } else {
             ratingBarFF.setmEnabled(true);
@@ -1454,7 +1454,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             pictureFF.setmEnabled(false);
         } else {
             pictureFF.setmEnabled(true);
@@ -1488,7 +1488,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-        ) {
+                ) {
             photoFF.setmEnabled(false);
         } else {
             photoFF.setmEnabled(true);
@@ -2174,7 +2174,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
         }else{
-            serial = mPresenter.getSerialInfo(
+             serial = mPresenter.getSerialInfo(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     Integer.parseInt(product_code),
                     serial_id

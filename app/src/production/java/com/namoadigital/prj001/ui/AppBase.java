@@ -82,6 +82,8 @@ public class AppBase extends Application {
 
         SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
+        //Add preenchimento do path do arquivo de support na lib
+        ConstantBase.LIB_SUPPORT_PATH = SUPPORT_PATH;
 
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";

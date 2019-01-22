@@ -113,6 +113,9 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!--Tentativa paleativa para evitar crash ao voltar da act a camera.
+        Problema q ocorria no tablet mosolf api 5.1
+        android:configChanges="orientation|screenSize"-->
 
         <!--  -->
         <activity

@@ -107,9 +107,9 @@ public class Act011_FF extends Fragment {
          *
          */
         if(savedInstanceState != null &&
-                savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
-                savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
-                savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.COMMENT)
+            savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.COMMENT)
         ){
             formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
             tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
@@ -251,7 +251,7 @@ public class Act011_FF extends Fragment {
 
             if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                     formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-            ) {
+                    ) {
                 ll_check.setVisibility(View.GONE);
             } else {
                 ll_check.setVisibility(View.VISIBLE);

@@ -532,7 +532,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         sv_serial = (ScrollView) view.findViewById(R.id.frg_serial_edit_sv_serial);
         //
         mket_serial_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_mket_serial);
-        mket_serial_id.setmBARCODE(true);
+        //mket_serial_id.setmBARCODE(true);
+        setupMketSerialInputTech();
         controls_sta.add(mket_serial_id);
         //
         iv_serial_log = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_serial_dialog_log);
@@ -698,6 +699,35 @@ public class Frg_Serial_Edit extends BaseFragment {
         listnersInitializer();
     }
 
+    /**
+     * 09/01/18 - Luche
+     *
+     * Metodo que seta quais são as tecnologias de entrada de dados
+     * usando os parametros do profile.
+     */
+    private void setupMketSerialInputTech() {
+        //09/01/18 - Luche
+        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
+        //via parametro do profile.
+        mket_serial_id.setmOCR(false);
+        mket_serial_id.setmNFC(false);
+        mket_serial_id.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        //
+        mket_serial_id.setmOCRVin(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                )
+        );
+    }
+
     private void initFabMenuItens() {
         int lblBgColor = getResources().getColor(R.color.namoa_fab_item_bg_color);
         int lblColor = getResources().getColor(R.color.padrao_WHITE);
@@ -835,14 +865,17 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setmMaxSize(mdProduct.getSerial_max_length());
         mket_serial_id.setmInputTypeValidator(mdProduct.getSerial_rule());
         mket_serial_id.setmIgnoreMaxMinSize(true);
-        mket_serial_id.setmBARCODE(true);
+        //mket_serial_id.setmBARCODE(true);
+        setupMketSerialInputTech();
         mket_serial_id.setmRequired(true);
         iv_serial_log.setVisibility(View.GONE);
         //
         if (!new_serial) {
             mket_serial_id.setmBARCODE(false);
             mket_serial_id.setmOCR(false);
+            mket_serial_id.setmOCRVin(false);
             mket_serial_id.setmNFC(false);
+
             mket_serial_id.setEnabled(false);
             iv_serial_log.setVisibility(View.VISIBLE);
         } else {

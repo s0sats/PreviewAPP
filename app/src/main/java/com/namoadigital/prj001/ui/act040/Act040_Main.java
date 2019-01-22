@@ -223,6 +223,25 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_serial = (MKEditTextNM) findViewById(R.id.act040_mket_serial);
         iv_search_serial = (ImageView) findViewById(R.id.act040_iv_search_serial);
         mket_serial.setHint(hmAux_Trans.get("tv_serial_hint"));
+        //09/01/18 - Luche
+        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
+        //via parametro do profile.
+        mket_serial.setmOCR(false);
+        mket_serial.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        context,
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        //
+        mket_serial.setmOCRVin(
+                ToolBox_Inf.profileExists(
+                        context,
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                )
+        );
         //
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
         btn_create_so.setText(hmAux_Trans.get("btn_create_so"));
