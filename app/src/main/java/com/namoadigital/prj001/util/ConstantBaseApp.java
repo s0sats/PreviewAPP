@@ -331,6 +331,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SW_REQUIRED = "sw_required";
 
     public static final String PKG_CLEAN_KEY = "pkg_clean_key";
+    public static final String PKG_APP_TYPE_KEY = "pkg_apk_type_key";
+    public static final String PKG_APP_TYPE_MICROBLINK_OCR_VIN = "MICROBLINK_OCR_VIN";
+    public static final String PKG_APP_TYPE_STANDARD = "STANDARD";
+    public static String PKG_APP_TYPE_DEFAULT;
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";

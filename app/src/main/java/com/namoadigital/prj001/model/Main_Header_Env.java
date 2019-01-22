@@ -4,7 +4,7 @@ public class Main_Header_Env {
 
     private String app_code;
     private String app_version;
-    private int app_ocr_vin;
+    private String app_type;
 
     public String getApp_code() {
         return app_code;
@@ -22,11 +22,11 @@ public class Main_Header_Env {
         this.app_version = app_version;
     }
 
-    public int getApp_ocr_vin() {
-        return app_ocr_vin;
+    public String getApp_type() {
+        return app_type;
     }
 
-    public void setApp_ocr_vin(int app_ocr_vin) {
-        this.app_ocr_vin = app_ocr_vin;
+    public void setApp_type(String app_type) {
+        this.app_type = app_type;
     }
 }
