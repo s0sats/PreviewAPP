@@ -1655,6 +1655,7 @@ public class ToolBox_Inf {
         LinearLayout ll_footer_close = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll);
 
         ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
+        ImageView iv_ocrvin = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_ocrvin_footer);
         //
         LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
         TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
@@ -1711,7 +1712,10 @@ public class ToolBox_Inf {
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
         tv_version_code_value.setText("(" + Constant.PRJ001_VERSION_CODE + ")");
-
+        iv_ocrvin.setVisibility(View.GONE);
+        if(isMicroBlinkImported()){
+            iv_ocrvin.setVisibility(View.VISIBLE);
+        }
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.9f;
         float dmH = (float) dm.heightPixels * 0.9f;

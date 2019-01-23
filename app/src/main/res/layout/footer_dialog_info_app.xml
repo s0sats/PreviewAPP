@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/footer_dialog_app_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -175,35 +176,56 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right|bottom"
-        android:orientation="horizontal">
+        android:gravity="left|bottom"
+        android:orientation="horizontal"
+        >
 
-        <TextView
-            android:id="@+id/footer_dialog_app_tv_version_lbl"
+        <ImageView
+            android:id="@+id/footer_dialog_app_iv_ocrvin_footer"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Versao"
-            android:textColor="@color/namoa_color_dark_blue_lib"
-            android:textSize="@dimen/font_size_title_md_lib"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_ocr_scan"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/footer_dialog_app_iv_customer"
+            app:layout_constraintEnd_toEndOf="@+id/footer_dialog_app_iv_customer"
+            app:layout_constraintHorizontal_bias="0.88"
+            app:layout_constraintStart_toStartOf="@+id/footer_dialog_app_iv_customer"
+            app:layout_constraintTop_toTopOf="@+id/footer_dialog_app_iv_customer"
+            app:layout_constraintVertical_bias="0.87" />
 
-        <TextView
-            android:id="@+id/footer_dialog_app_tv_version_number"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="1"
-            android:textColor="@color/namoa_color_dark_blue_lib"
-            android:textSize="@dimen/font_size_title_md_lib" />
+            android:gravity="right|bottom"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/footer_dialog_app_tv_version_number_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="1"
-            android:textColor="@color/namoa_color_dark_blue_lib"
-            android:textSize="@dimen/font_size_title_md_lib" />
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Versao"
+                android:textColor="@color/namoa_color_dark_blue_lib"
+                android:textSize="@dimen/font_size_title_md_lib"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="1"
+                android:textColor="@color/namoa_color_dark_blue_lib"
+                android:textSize="@dimen/font_size_title_md_lib" />
+
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_number_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="1"
+                android:textColor="@color/namoa_color_dark_blue_lib"
+                android:textSize="@dimen/font_size_title_md_lib" />
+        </LinearLayout>
 
     </LinearLayout>
 
