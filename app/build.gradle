@@ -76,6 +76,7 @@ repositories {
 repositories {
     maven { url 'http://maven.microblink.com' }
 }
+def namoaLibVersion = "com.namoa_digital:library:0.0.382.1"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -90,15 +91,16 @@ dependencies {
 
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
     //Import flavors sem OCR
-    developmentImplementation('com.namoa_digital:library:0.0.382.1'){
+
+    developmentImplementation(namoaLibVersion){
         exclude group:'com.microblink',module: 'blinkid'
     }
-    productionImplementation('com.namoa_digital:library:0.0.382.1'){
+    productionImplementation(namoaLibVersion){
         exclude group:'com.microblink',module: 'blinkid'
     }
     //Import flavors COM OCR
-    productionOcrImplementation 'com.namoa_digital:library:0.0.382.1'
-    developmentOcrImplementation 'com.namoa_digital:library:0.0.382.1'
+    productionOcrImplementation namoaLibVersion
+    developmentOcrImplementation namoaLibVersion
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.firebase:firebase-messaging:10.0.1'
