@@ -451,6 +451,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 TSO_SO_Service_Env env = new TSO_SO_Service_Env();
                 env.setApp_code(Constant.PRJ001_CODE);
                 env.setApp_version(Constant.PRJ001_VERSION);
+                env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
                 env.setSession_app(ToolBox_Con.getPreference_Session_App(getActivity()));
                 env.setToken(mToken);
                 env.getSo().add(soService);

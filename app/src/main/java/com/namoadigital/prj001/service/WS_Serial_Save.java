@@ -127,6 +127,7 @@ public class WS_Serial_Save extends IntentService {
             //
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setSerial(serialList);
