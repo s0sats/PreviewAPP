@@ -185,6 +185,12 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean abortReported = false;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean forceLoggedSiteRestriction = false;
+    //LUCHE - 25/01/2019
+    private LinearLayout ll_new_os;
+    private Button btn_new_os;
+    private View.OnClickListener newOSClick;
+    private I_Frg_Serial_Edit_New_Os delegateOS;
+    private boolean includeNewOsButton = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -265,12 +271,23 @@ public class Frg_Serial_Edit extends BaseFragment {
         void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add);
 
     }
+
+    public interface I_Frg_Serial_Edit_New_Os{
+        /**
+         * Interface disparada no clique do botão New OS
+         */
+        void onNewOsClick();
+    }
     //endregion
 
     //region GETTERS SETTERS
 
     public void setDelegate(I_Frg_Serial_Edit delegate) {
         this.delegate = delegate;
+    }
+
+    public void setDelegateOS(I_Frg_Serial_Edit_New_Os delegateOS) {
+        this.delegateOS = delegateOS;
     }
 
     public void setBtnActionLabel(String label) {
@@ -348,6 +365,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         this.forceLoggedSiteRestriction = forceLoggedSiteRestriction;
     }
 
+    public void includeNewOsButton(boolean includeNewOsButton) {
+        this.includeNewOsButton = includeNewOsButton;
+    }
+
     public void reApplySerialId() {
         if(
             ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS) ||
@@ -394,6 +415,11 @@ public class Frg_Serial_Edit extends BaseFragment {
                     }
             );
         }
+        //
+        if(newOsButtonAvaiable()){
+            ll_new_os.setVisibility(View.VISIBLE);
+
+        }
     }
 
     public void applyReceivedSerial(MD_Product_Serial received_serial) {
@@ -403,6 +429,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
+        if(newOsButtonAvaiable()) {
+            ll_new_os.setVisibility(View.VISIBLE);
+        }
         //
         showAlertDialog(
                 hmAux_Trans.get("alert_serial_exists_ttl"),
@@ -628,6 +657,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         btn_action = (Button) view.findViewById(R.id.frg_serial_edit_btn_action);
         //
+        ll_new_os =  view.findViewById(R.id.frg_serial_edit_ll_new_os);
+        btn_new_os =  view.findViewById(R.id.frg_serial_edit_btn_new_os);
+        btn_new_os.setTag("btn_new_os");
+        //
         ll_io_info = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_io_info);
         //
         tv_io_info_ttl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_io_info_ttl);
@@ -681,6 +714,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         views.add(tv_move_code_lbl);
         views.add(tv_move_group_lbl);
         views.add(tv_outbound_lbl);
+        views.add(btn_new_os);
 
         //Adiciona Componentes com dados do serial ao arrayList de validação
         serialProperties.add(ss_site);
@@ -1266,6 +1300,26 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             }
         };
+        //
+        newOSClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(delegateOS != null){
+                    if(validateNewOSFields()) {
+                        delegateOS.onNewOsClick();
+                    }else{
+                        ToolBox.alertMSG(
+                                context,
+                                "Nova OS",//hmAux_Trans.get("")
+                                "Os dados de Categoria e segmento são obrigatorio para criar nova O.S",//hmAux_Trans.get("")
+                                null,
+                                0
+
+                        );
+                    }
+                }
+            }
+        };
     }
 
     private void resetSaveCtrlVar() {
@@ -1470,6 +1524,38 @@ public class Frg_Serial_Edit extends BaseFragment {
                 loadModelSS(true);
                 //
                 loadColorSS(true);
+                //Se valor alterado, some com label brad|model|color
+                tv_brand_model_color.setVisibility(View.GONE);
+            }
+        });
+        //
+        ss_brand_model.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                //Se valor alterado, some com label brad|model|color
+                if(ss_brand_model.hasChanged()) {
+                    tv_brand_model_color.setVisibility(View.GONE);
+                }
+            }
+        });
+        //
+        ss_brand_color.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                //Se valor alterado, some com label brad|model|color
+                if(ss_brand_color.hasChanged()) {
+                    tv_brand_model_color.setVisibility(View.GONE);
+                }
             }
         });
         //
@@ -2015,6 +2101,10 @@ public class Frg_Serial_Edit extends BaseFragment {
                 mket_info2.setEnabled(true);
                 mket_info3.setEnabled(true);
             }
+            //Caso user possua permissão de criar OS e porcesso permita criar os, habilita botão.
+            if (newOsButtonAvaiable()){
+                ll_new_os.setVisibility(View.VISIBLE);
+            }
         }
         if (mdProduct.getLocal_control() == 0) {
             ll_serial_location.setVisibility(View.GONE);
@@ -2025,6 +2115,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             ll_tracking.setVisibility(View.GONE);
             ll_tracking_content.setVisibility(View.GONE);
         }
+
     }
 
     private void blockAllProperties() {
@@ -2049,13 +2140,19 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_info1.setEnabled(false);
         mket_info2.setEnabled(false);
         mket_info3.setEnabled(false);
+        if(newOsButtonAvaiable()) {
+            ll_new_os.setVisibility(View.GONE);
+        }
 
     }
 
     private void applyViewMode() {
         switch (viewMode) {
             case VIEW_FULL_EDIT:
-                tv_brand_model_color.setVisibility(View.GONE);
+                //LUCHE 25/01/2019
+                //Agora o fragmento de serial só usará o layout full com alterações.
+                //tv_brand_model_color.setVisibility(View.GONE);
+                tv_brand_model_color.setVisibility( brand_model_color_lbl.length() > 0 ? View.VISIBLE : View.GONE);
                 iv_serial_dialog_info.setVisibility(View.GONE);
                 //ll_serial_class.setVisibility(View.VISIBLE);
                 ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
@@ -2263,6 +2360,38 @@ public class Frg_Serial_Edit extends BaseFragment {
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * LUCHE - 25/01/2019
+     * Verifica se os campos necessarios para criar nova OS estao preenchidos
+     *
+     * @return
+     */
+    private boolean validateNewOSFields(){
+        if(
+            ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+            !ss_segment.getmValue().get(SearchableSpinner.ID).equals("") &&
+            ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+            !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("")
+        ){
+            return true;
+        }
+        //
+        return false;
+    }
+
+    /**
+     * LUCHE - 25/01/2019
+     * Verifica propriedade para exibir btn e se user tem profile de acesso a criação de O.S
+     *
+     * @return
+     */
+    private boolean newOsButtonAvaiable() {
+        if(includeNewOsButton && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
+            return true;
         }
         return false;
     }

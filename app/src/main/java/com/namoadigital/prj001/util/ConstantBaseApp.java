@@ -427,6 +427,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String PROFILE_MENU_SO_PARAM_EDIT = "EDIT";
     public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
+    public static final String PROFILE_MENU_SO_PARAM_NEW = "NEW";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";

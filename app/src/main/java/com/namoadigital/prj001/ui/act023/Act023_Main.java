@@ -187,8 +187,13 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_so_search"));
-        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
-        frgSerialEdit.setShowCategorySegmentoInfo(true);
+        //LUCHE 25/01/2019
+        //Agora o fragmento de serial só usará o layout full com alterações.
+        //frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
+        //frgSerialEdit.setShowCategorySegmentoInfo(true);
+        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
+        frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.includeNewOsButton(true);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -247,6 +252,14 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 }else{
                     controls_sta.remove(mket_control);
                 }
+            }
+        });
+        //
+        frgSerialEdit.setDelegateOS(new Frg_Serial_Edit.I_Frg_Serial_Edit_New_Os() {
+            @Override
+            public void onNewOsClick() {
+                //Salvar e Chamar act050
+                String tst = "  ";
             }
         });
     }
