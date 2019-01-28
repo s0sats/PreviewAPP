@@ -68,6 +68,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String soFlow = "";
+    private boolean bundle_new_serial = false;
 
 
     @Override
@@ -186,7 +187,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         frgSerialEdit.setmModule_Code(mModule_Code);
         frgSerialEdit.setmResource_Code(mResource_Code);
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
-        frgSerialEdit.setNew_serial(false);
+        frgSerialEdit.setNew_serial(bundle_new_serial);
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
@@ -292,6 +293,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS, "");
                 bundle_product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "0");
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
                 //
                 if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                     mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);

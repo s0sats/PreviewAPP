@@ -28,4 +28,6 @@ public interface Act025_Main_View {
     void setWs_process(String ws_process);
 
     void setProductInfo(MD_Product product);
+
+    boolean isSerial_creation();
 }
