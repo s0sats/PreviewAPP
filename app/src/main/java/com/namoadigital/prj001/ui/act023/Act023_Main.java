@@ -31,12 +31,12 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act050.Act050_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -555,7 +555,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     }
 
     private void callAct050(Context context){
-        Intent mIntent = new Intent(context, Act005_Main.class);
+        Intent mIntent = new Intent(context, Act050_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, mdProductSerial.getProduct_code());
