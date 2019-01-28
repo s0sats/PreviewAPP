@@ -48,6 +48,23 @@ public class SO_Favorite_Item {
     @Expose
     private String clientPhone;
 
+    public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
+        this.customerCode = customerCode;
+        this.profileCode = profileCode;
+        this.favoriteCode = favoriteCode;
+        this.favoriteDesc = favoriteDesc;
+        this.favoriteColor = favoriteColor;
+        this.favoriteFontColor = favoriteFontColor;
+        this.contractCode = contractCode;
+        this.packDefault = packDefault;
+        this.clientType = clientType;
+        this.clientCode = clientCode;
+        this.clientId = clientId;
+        this.clientName = clientName;
+        this.clientEmail = clientEmail;
+        this.clientPhone = clientPhone;
+    }
+
     public Integer getCustomerCode() {
         return customerCode;
     }
