@@ -1,5 +1,7 @@
-package com.namoadigital.prj001.ui.act050;
+package com.namoadigital.prj001.adapter;
 
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +10,16 @@ import android.widget.TextView;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
-import com.namoadigital.prj001.ui.act050.FavoriteFragment.OnListFragmentInteractionListener;
+import com.namoadigital.prj001.ui.act050.Act050_Favorite_Fragment.OnListFragmentInteractionListener;
 
 import java.util.List;
 
-public class FavoriteRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRecyclerViewAdapter.ViewHolder> {
+public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<Act050_Favorite_RecyclerView_Adapter.ViewHolder> {
 
     private final List<SO_Favorite_Item> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public FavoriteRecyclerViewAdapter(List<SO_Favorite_Item> items, OnListFragmentInteractionListener listener) {
+    public Act050_Favorite_RecyclerView_Adapter(List<SO_Favorite_Item> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -31,8 +33,14 @@ public class FavoriteRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        SO_Favorite_Item favorite = mValues.get(position);
         holder.mItem = mValues.get(position);
-        holder.mFavoriteTitleItem.setText("dummie");
+
+        holder.mFavoriteTitleItem.setText(favorite.getFavoriteDesc());
+
+        holder.mFavoriteTitleItem.setTextColor(Color.parseColor(favorite.getFavoriteFontColor()));
+
+        holder.cvFavorite.setCardBackgroundColor(Color.parseColor(favorite.getFavoriteColor()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,11 +63,13 @@ public class FavoriteRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRe
         public final View mView;
         public final TextView mFavoriteTitleItem;
         public SO_Favorite_Item mItem;
+        public CardView cvFavorite;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mFavoriteTitleItem = (TextView) view.findViewById(R.id.favorite_item_desc);
+            mFavoriteTitleItem = view.findViewById(R.id.favorite_item_desc);
+            cvFavorite = view.findViewById(R.id.favorite_fragment_card_view);
         }
 
         @Override

@@ -16,11 +16,9 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
     @Override
     public void getFavoriteList() {
         List<SO_Favorite_Item> dummie = new ArrayList<>();
-        dummie.add(new SO_Favorite_Item(1, 1,1,"LALALALA","s", "s", 1, "w", "w", 1, "wq","asd","asd", "asd"));
-        dummie.add(new SO_Favorite_Item(1, 1,1,"LALALALA","s", "s", 1, "w", "w", 1, "wq","asd","asd", "asd"));
-        dummie.add(new SO_Favorite_Item(1, 1,1,"LALALALA","s", "s", 1, "w", "w", 1, "wq","asd","asd", "asd"));
-        dummie.add(new SO_Favorite_Item(1, 1,1,"LALALALA","s", "s", 1, "w", "w", 1, "wq","asd","asd", "asd"));
-        dummie.add(new SO_Favorite_Item(1, 1,1,"LALALALA","s", "s", 1, "w", "w", 1, "wq","asd","asd", "asd"));
+        dummie.add(new SO_Favorite_Item(1, 16 ,3,"CESAR #1", "#C6ADFF",  "#000000",10, null, "USER", null,null,null,null,null));
+        dummie.add(new SO_Favorite_Item(1, 16 ,3,"CESAR #2", "#FFFFFF",  "#000000",10, null, "USER", null,null,null,null,null));
+        dummie.add(new SO_Favorite_Item(1, 16 ,3,"CESAR #3", "#0044FF",  "#FFFFFF",10, null, "USER", null,null,null,null,null));
         mView.populatedFavoritesList(dummie);
     }
 }

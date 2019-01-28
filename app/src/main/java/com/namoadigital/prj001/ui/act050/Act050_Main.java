@@ -18,7 +18,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act050_Main extends Base_Activity_Frag implements FavoriteFragment.OnListFragmentInteractionListener {
+public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_Fragment.OnListFragmentInteractionListener {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
     private Bundle bundle;
@@ -26,6 +26,8 @@ public class Act050_Main extends Base_Activity_Frag implements FavoriteFragment.
     private FragmentManager fm;
     private HMAux hmAux_Trans_Frag;
     private String mResource_Code_Frag;
+    private long mSerialCode;
+    private long mProductCode;
 
 
     @Override
@@ -43,14 +45,13 @@ public class Act050_Main extends Base_Activity_Frag implements FavoriteFragment.
         //
         iniUIFooter();
         //
-        initActions();
 
 
     }
 
-    private void initFragment(long productCode, long serialCode) {
+    private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.act050_frg_placeholder,FavoriteFragment.newInstance(1, productCode, serialCode), FAVORITE_LIST_FRAGMENT);
+        transaction.add(R.id.act050_frg_placeholder, Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode), FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -74,10 +75,6 @@ public class Act050_Main extends Base_Activity_Frag implements FavoriteFragment.
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        long productCode = getIntent().getLongExtra(MD_Product_SerialDao.PRODUCT_CODE, 0);
-        long serialCode = getIntent().getLongExtra(MD_Product_SerialDao.SERIAL_CODE, 0);
-
-        initFragment(serialCode, productCode);
     }
 
     private void loadTranslation() {
@@ -98,24 +95,50 @@ public class Act050_Main extends Base_Activity_Frag implements FavoriteFragment.
                 "",
                 ToolBox_Con.getPreference_Translate_Code(context),
                 //transListFrag
-                FavoriteFragment.getFragTranslationsVars()
+                Act050_Favorite_Fragment.getFragTranslationsVars()
         );
     }
 
     private void initVars() {
-
+        recoverIntentsInfo();
+        initFragment();
     }
 
     private void iniUIFooter() {
-
-    }
-
-    private void initActions() {
-
+        iniFooter();
+        //
+        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
+        mAct_Info = Constant.ACT050;
+        mAct_Title = Constant.ACT050 + "_" + "title";
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage();
+        setFooter();
     }
 
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
 
+    }
+
+    private void recoverIntentsInfo() {
+
+        bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            if (bundle.containsKey(MD_Product_SerialDao.SERIAL_CODE)) {
+                mProductCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE, 0);
+                mSerialCode = bundle.getLong(MD_Product_SerialDao.SERIAL_CODE, 0);
+            } else {
+                ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
+            }
+        } else {
+            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
+        }
     }
 }

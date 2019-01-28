@@ -6,8 +6,9 @@
     android:name="com.namoadigital.prj001.ui.act050.FavoriteFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="5dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.namoadigital.prj001.ui.act050.FavoriteFragment"
+    tools:context="com.namoadigital.prj001.ui.act050.Act050_Favorite_Fragment"
     tools:listitem="@layout/fragment_favorite" />

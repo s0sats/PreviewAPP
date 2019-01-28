@@ -12,6 +12,8 @@ public class SO_Favorite_Response {
     @SerializedName("validation")
     @Expose
     private String validation;
+    private String link_url;
+    private String error_msg;
     @SerializedName("contract")
     @Expose
     private List<SO_Favorite_Contract> contract;
@@ -71,5 +73,21 @@ public class SO_Favorite_Response {
 
     public void setPipeline(List<SO_Favorite_Pipeline> pipeline) {
         this.pipeline = pipeline;
+    }
+
+    public String getLink_url() {
+        return link_url;
+    }
+
+    public void setLink_url(String link_url) {
+        this.link_url = link_url;
+    }
+
+    public String getError_msg() {
+        return error_msg;
+    }
+
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 }
