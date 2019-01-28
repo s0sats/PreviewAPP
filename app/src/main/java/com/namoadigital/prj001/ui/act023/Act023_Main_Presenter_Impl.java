@@ -199,6 +199,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 }
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
                 aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+                aux.put(MD_Product_SerialDao.PRODUCT_CODE, pk[0]);
                 returnList.add(aux);
                 //
                 if (product_code == Long.parseLong(pk[0])
@@ -220,15 +221,22 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                mView.showSingleResultMsg(ttl, msg);
+                boolean returnOk = false;
+                if( returnList.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_3)
+                    && returnList.get(0).get(Generic_Results_Adapter.VALUE_ITEM_3).equals("OK")
+                ){
+                    returnOk = true;
+                }
+                //
+                mView.showSingleResultMsg(ttl, msg, returnOk);
             } else {
                 mView.showSerialResults(returnList);
             }
         } else {
             mView.showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_no_serial_return_msg")
-            );
+                    hmAux_Trans.get("alert_no_serial_return_msg"),
+                    false);
         }
     }
 

@@ -272,11 +272,11 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     }
 
-    public interface I_Frg_Serial_Edit_New_Os{
+    public interface I_Frg_Serial_Edit_New_Os {
         /**
          * Interface disparada no clique do botão New OS
          */
-        void onNewOsClick();
+        void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged);
     }
     //endregion
 
@@ -370,10 +370,10 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     public void reApplySerialId() {
-        if(
-            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS) ||
-            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION) ||
-            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+        if (
+                ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS) ||
+                        ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION) ||
+                        ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
         ) {
             mket_serial_id.setTag(mket_serial_id.getText().toString());
             btn_action.setText(btn_action_translation);
@@ -400,7 +400,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                         }
                     }
             );
-        }else{
+        } else {
             mket_serial_id.setEnabled(false);
             btn_action.setEnabled(false);
             //
@@ -416,7 +416,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             );
         }
         //
-        if(newOsButtonAvaiable()){
+        if (newOsButtonAvaiable()) {
             ll_new_os.setVisibility(View.VISIBLE);
 
         }
@@ -429,7 +429,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
-        if(newOsButtonAvaiable()) {
+        if (newOsButtonAvaiable()) {
             ll_new_os.setVisibility(View.VISIBLE);
         }
         //
@@ -657,8 +657,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         btn_action = (Button) view.findViewById(R.id.frg_serial_edit_btn_action);
         //
-        ll_new_os =  view.findViewById(R.id.frg_serial_edit_ll_new_os);
-        btn_new_os =  view.findViewById(R.id.frg_serial_edit_btn_new_os);
+        ll_new_os = view.findViewById(R.id.frg_serial_edit_ll_new_os);
+        btn_new_os = view.findViewById(R.id.frg_serial_edit_btn_new_os);
         btn_new_os.setTag("btn_new_os");
         //
         ll_io_info = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_io_info);
@@ -735,7 +735,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     /**
      * 09/01/18 - Luche
-     *
+     * <p>
      * Metodo que seta quais são as tecnologias de entrada de dados
      * usando os parametros do profile.
      */
@@ -754,7 +754,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         );
         //Verifica se a lib de OCR esta importada no flavor
         //e se o profise do user possui acesso ao OCR
-        if(ToolBox_Inf.isMicroBlinkImported()) {
+        if (ToolBox_Inf.isMicroBlinkImported()) {
             mket_serial_id.setmOCRVin(
                     ToolBox_Inf.profileExists(
                             getActivity(),
@@ -762,7 +762,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                             Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
                     )
             );
-        }else{
+        } else {
             mket_serial_id.setmOCRVin(false);
         }
     }
@@ -1238,54 +1238,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (delegate != null) {
-                    if (!new_serial || mket_serial_id.isValid()) {
-                        //Valida se alteração de site é valida.
-                        if (!siteChanged || validateSiteChange()) {
-                            if (validadeSerialLocation()) {
-                                if (validateSiteRestriction()) {
-                                    if (new_serial || checkSerialChanges()) {
-                                        //
-                                        setUIDataToSerialObj();
-                                        //
-                                        delegate.onSaveWithChangesClick(
-                                                mdProductSerial,
-                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                        );
-                                        //
-                                        resetSaveCtrlVar();
-                                    } else {
-                                        delegate.onSaveNoChangesClick(
-                                                mdProductSerial,
-                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                        );
-                                        //
-                                        resetSaveCtrlVar();
-                                    }
-                                } else {
-                                    showAlertDialog(
-                                            hmAux_Trans.get("alert_serial_validation_ttl"),
-                                            hmAux_Trans.get("alert_site_restriction_violation_msg")
-                                    );
-                                }
-                            } else {
-                                showAlertDialog(
-                                        hmAux_Trans.get("alert_invalid_serial_local_ttl"),
-                                        hmAux_Trans.get("alert_invalid_serial_local_msg")
-                                );
-                            }
-                        } else {
-                            showAlertDialog(
-                                    hmAux_Trans.get("alert_serial_validation_ttl"),
-                                    hmAux_Trans.get("alert_invalid_site_change_msg")
-                            );
-                        }
-
-                    } else {
-                        showAlertDialog(
-                                hmAux_Trans.get("alert_serial_validation_ttl"),
-                                mket_serial_id.getmErrorMSG()
-                        );
-                    }
+                    saveValidationFlow(v.getId());
                 }
             }
         };
@@ -1304,10 +1257,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         newOSClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(delegateOS != null){
-                    if(validateNewOSFields()) {
-                        delegateOS.onNewOsClick();
-                    }else{
+                if (delegateOS != null) {
+                    if (validateNewOSFields()) {
+                        saveValidationFlow(v.getId());
+                    } else {
                         ToolBox.alertMSG(
                                 context,
                                 "Nova OS",//hmAux_Trans.get("")
@@ -1320,6 +1273,74 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             }
         };
+    }
+
+    /**
+     * LUCHE - 28/01/2019
+     * Metodo criado a partir da validação de save ja existente.
+     * O metodofoi criado para concentrar a validação em um unico metodo,
+     * pois agora existe mais um fluxo de save, o do btnNewOs.
+     *
+     * @param btnId - ID da view(button) que chamou o metodo.
+     */
+    private void saveValidationFlow(int btnId) {
+
+        if (!new_serial || mket_serial_id.isValid()) {
+            //Valida se alteração de site é valida.
+            if (!siteChanged || validateSiteChange()) {
+                if (validadeSerialLocation()) {
+                    if (validateSiteRestriction()) {
+                        if (new_serial || checkSerialChanges()) {
+                            //
+                            setUIDataToSerialObj();
+                            //
+                            if (btnId == R.id.frg_serial_edit_btn_action) {
+                                delegate.onSaveWithChangesClick(
+                                        mdProductSerial,
+                                        !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                );
+                            } else if (btnId == R.id.frg_serial_edit_btn_new_os) {
+                                delegateOS.onNewOsClick(mdProductSerial,true);
+                            }
+                            //
+                            resetSaveCtrlVar();
+                        } else {
+                            if (btnId == R.id.frg_serial_edit_btn_action) {
+                                delegate.onSaveNoChangesClick(
+                                        mdProductSerial,
+                                        !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                );
+                            } else if (btnId == R.id.frg_serial_edit_btn_new_os) {
+                                delegateOS.onNewOsClick(mdProductSerial,false);
+                            }
+                            //
+                            resetSaveCtrlVar();
+                        }
+                    } else {
+                        showAlertDialog(
+                                hmAux_Trans.get("alert_serial_validation_ttl"),
+                                hmAux_Trans.get("alert_site_restriction_violation_msg")
+                        );
+                    }
+                } else {
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_invalid_serial_local_ttl"),
+                            hmAux_Trans.get("alert_invalid_serial_local_msg")
+                    );
+                }
+            } else {
+                showAlertDialog(
+                        hmAux_Trans.get("alert_serial_validation_ttl"),
+                        hmAux_Trans.get("alert_invalid_site_change_msg")
+                );
+            }
+
+        } else {
+            showAlertDialog(
+                    hmAux_Trans.get("alert_serial_validation_ttl"),
+                    mket_serial_id.getmErrorMSG()
+            );
+        }
     }
 
     private void resetSaveCtrlVar() {
@@ -1377,9 +1398,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         iv_serial_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ToolBox_Con.isOnline(context)){
+                if (ToolBox_Con.isOnline(context)) {
                     callLogAct();
-                }else{
+                } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
@@ -1476,7 +1497,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (
                         ss_site.getmValue().get(SearchableSpinner.ID) == null
                                 || ss_site.getmValue().get(SearchableSpinner.ID).equals("null")
-                        ) {
+                ) {
                     //Seta var para impedir que a troca de valores nos spinners dispare
                     //o evento.
                     skip_validation = true;
@@ -1499,7 +1520,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     skip_validation = false;
                 } else if (ss_site_zone.getmValue().get(SearchableSpinner.ID) == null
                         || ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null")
-                        ) {
+                ) {
                     //Se Zona estiver em branco, a seleção do local preenche os outros campos.
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
@@ -1538,7 +1559,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se valor alterado, some com label brad|model|color
-                if(ss_brand_model.hasChanged()) {
+                if (ss_brand_model.hasChanged()) {
                     tv_brand_model_color.setVisibility(View.GONE);
                 }
             }
@@ -1553,7 +1574,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se valor alterado, some com label brad|model|color
-                if(ss_brand_color.hasChanged()) {
+                if (ss_brand_color.hasChanged()) {
                     tv_brand_model_color.setVisibility(View.GONE);
                 }
             }
@@ -1646,6 +1667,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 showSerialInfoDialog();
             }
         });
+        //
+        btn_new_os.setOnClickListener(newOSClick);
     }
 
     private void initializeTrackingRemovelistner() {
@@ -2102,7 +2125,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 mket_info3.setEnabled(true);
             }
             //Caso user possua permissão de criar OS e porcesso permita criar os, habilita botão.
-            if (newOsButtonAvaiable()){
+            if (newOsButtonAvaiable()) {
                 ll_new_os.setVisibility(View.VISIBLE);
             }
         }
@@ -2140,7 +2163,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_info1.setEnabled(false);
         mket_info2.setEnabled(false);
         mket_info3.setEnabled(false);
-        if(newOsButtonAvaiable()) {
+        if (newOsButtonAvaiable()) {
             ll_new_os.setVisibility(View.GONE);
         }
 
@@ -2152,7 +2175,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 //LUCHE 25/01/2019
                 //Agora o fragmento de serial só usará o layout full com alterações.
                 //tv_brand_model_color.setVisibility(View.GONE);
-                tv_brand_model_color.setVisibility( brand_model_color_lbl.length() > 0 ? View.VISIBLE : View.GONE);
+                tv_brand_model_color.setVisibility(brand_model_color_lbl.length() > 0 ? View.VISIBLE : View.GONE);
                 iv_serial_dialog_info.setVisibility(View.GONE);
                 //ll_serial_class.setVisibility(View.VISIBLE);
                 ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
@@ -2196,7 +2219,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     mket_move_code_val.getVisibility() == View.GONE &&
                     mket_move_group_val.getVisibility() == View.GONE &&
                     mket_outbound_id.getVisibility() == View.GONE
-                    ) {
+            ) {
                 ll_io_info.setVisibility(View.GONE);
                 fabMenu_anchor.removeFabMenuItens(fabIOInfo);
             } else {
@@ -2228,7 +2251,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                         && siteSelected.containsKey(SearchableSpinner.ID)
                         && siteSelected.get(SearchableSpinner.ID).equals("null")
                 )
-                ) {
+        ) {
             Log.d("SITE_CHANGE", "true");
             return true;
         }
@@ -2254,7 +2277,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                         || (siteSelected.get(MD_SiteDao.IO_CONTROL).equals("1")
                         && siteSelected.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1")
                 )
-                        ) {
+                ) {
                     Log.d("SITE_CHANGE", "true");
                     return true;
                 }
@@ -2311,7 +2334,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                             && ss_site.getmValue().containsKey(SearchableSpinner.ID)
                             && !ss_site.getmValue().get(SearchableSpinner.ID).equalsIgnoreCase("null")
                             && ss_site.getmValue().get(SearchableSpinner.ID).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))
-                    ) {
+            ) {
                 return true;
             }
         }
@@ -2370,13 +2393,13 @@ public class Frg_Serial_Edit extends BaseFragment {
      *
      * @return
      */
-    private boolean validateNewOSFields(){
-        if(
-            ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
-            !ss_segment.getmValue().get(SearchableSpinner.ID).equals("") &&
-            ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
-            !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("")
-        ){
+    private boolean validateNewOSFields() {
+        if (
+                ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+                        !ss_segment.getmValue().get(SearchableSpinner.ID).equals("") &&
+                        ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+                        !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("")
+        ) {
             return true;
         }
         //
@@ -2390,7 +2413,7 @@ public class Frg_Serial_Edit extends BaseFragment {
      * @return
      */
     private boolean newOsButtonAvaiable() {
-        if(includeNewOsButton && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
+        if (includeNewOsButton && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
             return true;
         }
         return false;
@@ -2698,7 +2721,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                             || mdProduct.getIo_control() == 0
                             || aux.get(MD_SiteDao.IO_CONTROL).equals("0")
                             || (aux.get(SearchableSpinner.ID).equals(String.valueOf(mdProductSerial.getSite_code())))
-                            ) {
+                    ) {
                         insert = true;
                     } else {
                         insert = false;
@@ -2724,7 +2747,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             if (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction) {
                 if (ss_site.getmOption() == null
                         || ss_site.getmOption().size() == 0
-                        ) {
+                ) {
                     abortReported = true;
                     //
                     showAlertDialog(
@@ -2745,7 +2768,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     } else if ((mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
                             && mdProductSerial.getSite_code() != null
                             && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(mdProductSerial.getSite_code()))
-                            ) {
+                    ) {
                         ss_site.setmEnabled(false);
                     }
 
@@ -2834,11 +2857,11 @@ public class Frg_Serial_Edit extends BaseFragment {
      * Chama Act007, especializada em exibir o log do serial.
      * Não mata
      */
-    private void callLogAct(){
+    private void callLogAct() {
         Intent logIntent = new Intent(context, Act007_Main.class);
         //
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         logIntent.putExtras(bundle);
         //
         startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
@@ -2846,16 +2869,16 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constant.REQUEST_CODE_SERIAL_LOG){
-            if(resultCode == RESULT_OK){
-                if(data != null){
+        if (requestCode == Constant.REQUEST_CODE_SERIAL_LOG) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
                     Bundle resultBundle = data.getExtras();
-                    if( resultBundle != null
-                        && resultBundle.containsKey(SM_SODao.SO_PREFIX)
-                        && resultBundle.containsKey(SM_SODao.SO_CODE)
-                    ){
+                    if (resultBundle != null
+                            && resultBundle.containsKey(SM_SODao.SO_PREFIX)
+                            && resultBundle.containsKey(SM_SODao.SO_CODE)
+                    ) {
                         callAct027(resultBundle);
-                    }else{
+                    } else {
                         callAct032();
                     }
                 }
@@ -2866,21 +2889,21 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private void callAct027(Bundle bundle) {
-            Intent mIntent = new Intent(context, Act027_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //Sem essa flag abaixo, não reabre act027 caso o fluxo de "download de S.O"
-            //seja iniciado do fragmento serial dentro da propria act027
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            mIntent.putExtras(bundle);
-            startActivity(mIntent);
-            getActivity().finish();
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Sem essa flag abaixo, não reabre act027 caso o fluxo de "download de S.O"
+        //seja iniciado do fragmento serial dentro da propria act027
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        getActivity().finish();
     }
 
     private void callAct032() {
         Intent mIntent = new Intent(context, Act032_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT014);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         getActivity().finish();

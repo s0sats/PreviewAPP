@@ -132,6 +132,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         List<String> transList = new ArrayList<String>();
         transList.add("act021_title");
         transList.add("btn_load_so");
+        transList.add("btn_check_exists");
         transList.add("btn_pendencies_so");
         transList.add("btn_so_express");
         transList.add("btn_sync_so");
@@ -229,7 +230,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_load_so"));
+        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies_so"));
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));

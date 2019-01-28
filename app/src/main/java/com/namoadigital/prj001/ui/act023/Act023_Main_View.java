@@ -30,7 +30,7 @@ public interface Act023_Main_View {
 
     void callAct025(Context context);
 
-    void showSingleResultMsg(String ttl, String msg);
+    void showSingleResultMsg(String ttl, String msg, boolean returnOk);
 
     void showSerialResults(ArrayList<HMAux> returnList);
 

@@ -31,6 +31,7 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
@@ -51,6 +52,8 @@ import java.util.List;
 public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View {
 
     public static final String SITE_DESC_OWNER = "site_desc_owner";
+    public static final String SO_FLOW_SEARCH_SO = "SO_FLOW_SEARCH_SO";
+    public static final String SO_FLOW_NEW_SO = "SO_FLOW_NEW_SO";
 
     private Act023_Main_Presenter mPresenter;
     private Bundle bundle;
@@ -64,6 +67,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     private Frg_Serial_Edit frgSerialEdit;
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
+    private String soFlow = "";
 
 
     @Override
@@ -216,13 +220,10 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
             @Override
             public void onSaveWithChangesClick(MD_Product_Serial mdProductSerial, boolean serial_id_changes) {
-                mPresenter.updateSerialData(mdProductSerial);
+                //seta var que define o fluxo apos o save do serial.
+                soFlow = SO_FLOW_SEARCH_SO;
                 //
-                if(ToolBox_Con.isOnline(context)) {
-                    mPresenter.executeSerialSave();
-                }else{
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                }
+                saveWithChangesProcess(mdProductSerial);
             }
 
             @Override
@@ -257,11 +258,29 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //
         frgSerialEdit.setDelegateOS(new Frg_Serial_Edit.I_Frg_Serial_Edit_New_Os() {
             @Override
-            public void onNewOsClick() {
-                //Salvar e Chamar act050
-                String tst = "  ";
+            public void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged) {
+                if(serialChanged) {
+                    //seta var que define o fluxo apos o save do serial.
+                    soFlow = SO_FLOW_NEW_SO;
+                    saveWithChangesProcess(mdProductSerial);
+                }else{
+                    mPresenter.updateSerialData(mdProductSerial);
+                    //
+                    callAct050(context);
+                }
             }
         });
+    }
+
+    private void saveWithChangesProcess(MD_Product_Serial mdProductSerial) {
+        mPresenter.updateSerialData(mdProductSerial);
+        //
+        if(ToolBox_Con.isOnline(context)) {
+            mPresenter.executeSerialSave();
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+
     }
 
     private void recoverIntentsInfo() {
@@ -345,7 +364,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     }
 
     @Override
-    public void showSingleResultMsg(String ttl, String msg) {
+    public void showSingleResultMsg(String ttl, String msg, final boolean returnOk) {
         //
         ToolBox.alertMSG(
                 context,
@@ -354,7 +373,16 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+                        if(returnOk) {
+                            if (soFlow.equals(SO_FLOW_SEARCH_SO)) {
+                                mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+                            } else {
+                                callAct050(context);
+                            }
+                        }
+                        //
+                        soFlow = "";
+                        //dialog.dismiss();
                     }
                 },
                 0
@@ -398,14 +426,37 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
         builder.setCancelable(false);
         //
+        boolean hasSerialReturnedOk = false;
+        for(HMAux aux: returnList){
+            if( aux.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)
+                && aux.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
+                && aux.get(MD_Product_SerialDao.PRODUCT_CODE).equals(String.valueOf(mdProductSerial.getProduct_code()))
+                && aux.get(Generic_Results_Adapter.VALUE_ITEM_2).equals(mdProductSerial.getSerial_id())
+            ){
+                hasSerialReturnedOk = true;
+            }
+        }
+        //
         final AlertDialog show = builder.show();
         //
+        final boolean finalHasSerialReturnedOk = hasSerialReturnedOk;
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 show.dismiss();
                 //
-                mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+                if(finalHasSerialReturnedOk) {
+                    if(soFlow.equals(SO_FLOW_SEARCH_SO)) {
+                        mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+                    }else{
+                        callAct050(context);
+                    }
+                }else{
+                    //Se retorno do serial for false, não prosseguir.
+                    //Também não é necessario exibir alert, pois o usr já foi avisado no dialog.
+                }
+                //
+                soFlow = "";
             }
         });
 
@@ -427,8 +478,8 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             } else {
                 showSingleResultMsg(
                         hmAux_Trans.get("alert_save_serial_return_ttl"),
-                        hmAux_Trans.get("alert_no_serial_return_msg")
-                );
+                        hmAux_Trans.get("alert_no_serial_return_msg"),
+                        false);
             }
         }else if(ws_process.equalsIgnoreCase(WS_SO_Search.class.getName())){
             mPresenter.processSoDownloadResult(hmAux);
@@ -501,6 +552,18 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         mIntent.putExtras(bundleSingleSo);
         startActivity(mIntent);
         finish();
+    }
+
+    private void callAct050(Context context){
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, mdProductSerial.getProduct_code());
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+
     }
 
     @Override
