@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class FavoriteFragment extends BaseFragment implements Act050_Main_Contra
     private OnListFragmentInteractionListener mListener;
     public Act050_Main_Presenter mPresenter;
     public RecyclerView recyclerView;
+    private long mSerialCode;
+    private long mProductCode;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -41,10 +45,12 @@ public class FavoriteFragment extends BaseFragment implements Act050_Main_Contra
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static FavoriteFragment newInstance(int columnCount) {
+    public static FavoriteFragment newInstance(int columnCount, long productCode, long serialCode) {
         FavoriteFragment fragment = new FavoriteFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putLong(MD_Product_SerialDao.PRODUCT_CODE, productCode);
+        args.putLong(MD_Product_SerialDao.SERIAL_CODE, serialCode);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +61,10 @@ public class FavoriteFragment extends BaseFragment implements Act050_Main_Contra
         mPresenter = new Act050_Main_Presenter(this);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mProductCode = getArguments().getLong(MD_Product_SerialDao.PRODUCT_CODE);
+            mSerialCode = getArguments().getLong(MD_Product_SerialDao.SERIAL_CODE);
         }
-        mPresenter.getFavoriteList();
+
     }
 
     @Override
@@ -73,10 +81,17 @@ public class FavoriteFragment extends BaseFragment implements Act050_Main_Contra
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            mPresenter.getFavoriteList();
         }
         return view;
     }
-
+    public static List<String> getFragTranslationsVars() {
+        List<String> transListFrag = new ArrayList<String>();
+        //
+        transListFrag.add("product_label");
+        //
+        return transListFrag;
+    }
 
     @Override
     public void onAttach(Context context) {
