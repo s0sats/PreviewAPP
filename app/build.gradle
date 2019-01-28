@@ -81,6 +81,7 @@ def namoaLibVersion = "com.namoa_digital:library:0.0.383"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -93,11 +94,11 @@ dependencies {
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
     //Import flavors sem OCR
 
-    developmentImplementation(namoaLibVersion){
-        exclude group:'com.microblink',module: 'blinkid'
+    developmentImplementation(namoaLibVersion) {
+        exclude group: 'com.microblink', module: 'blinkid'
     }
-    productionImplementation(namoaLibVersion){
-        exclude group:'com.microblink',module: 'blinkid'
+    productionImplementation(namoaLibVersion) {
+        exclude group: 'com.microblink', module: 'blinkid'
     }
     //Import flavors COM OCR
     productionOcrImplementation namoaLibVersion

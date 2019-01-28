@@ -31,117 +31,93 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Customer List -->
+        </activity> <!-- Customer List -->
         <activity
             android:name=".ui.act002.Act002_Main"
             android:label="@string/act002_title_"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <!-- Site List -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Site List -->
         <activity
             android:name=".ui.act003.Act003_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <!-- Operation List -->
+            android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- Operation List -->
         <activity
             android:name=".ui.act004.Act004_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <!--  -->
+            android:windowSoftInputMode="stateHidden|adjustResize" /> <!--  -->
         <activity
             android:name=".ui.act005.Act005_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act006.Act006_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act007.Act007_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act008.Act008_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act009.Act009_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act010.Act010_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act011.Act011_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <!--Tentativa paleativa para evitar crash ao voltar da act a camera.
+        <!--
+Tentativa paleativa para evitar crash ao voltar da act a camera.
         Problema q ocorria no tablet mosolf api 5.1
-        android:configChanges="orientation|screenSize"-->
-
+        android:configChanges="orientation|screenSize"
+        -->
         <!--  -->
         <activity
             android:name=".ui.act012.Act012_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act013.Act013_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act014.Act014_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!--  -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!--  -->
         <activity
             android:name=".ui.act015.Act015_Main"
             android:label="@string/app_name"
@@ -343,19 +319,23 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".ui.act048.Act048_Main"
+        <activity
+            android:name=".ui.act048.Act048_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".ui.act049.Act049_Main"
+        <activity
+            android:name=".ui.act049.Act049_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity android:name=".ui.act050.Act050_Main"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -539,14 +519,10 @@
 
         <receiver android:name=".receiver_chat.WBR_Room_Info" />
 
-        <service android:name=".service_chat.WS_Room_Info" />
-
-        <!-- Screen On/Off Status -->
+        <service android:name=".service_chat.WS_Room_Info" /> <!-- Screen On/Off Status -->
         <receiver android:name=".service.ScreenStatusReceiver" />
 
-        <service android:name=".service.ScreenStatusService" />
-        <!-- Screen On/Off Status -->
-
+        <service android:name=".service.ScreenStatusService" /> <!-- Screen On/Off Status -->
         <receiver android:name=".receiver.NotificationReceiver" />
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
         <receiver android:name=".receiver_chat.WBR_Delivered" />
@@ -594,8 +570,6 @@
 
         <service android:name=".service.WS_Serial_Log" />
         <service android:name=".service.WS_SO_Next_Orders" />
-
-
     </application>
 
 </manifest>
