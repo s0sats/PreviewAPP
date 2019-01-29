@@ -24,30 +24,6 @@ public class Act045_Main_Presenter implements Act045_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getProductSerialList(String ws_result) {
-//        //Transforma resposta de json para obj
-//        Gson gson = new GsonBuilder().serializeNulls().create();
-//
-//        TSerial_Search_Rec rec = gson.fromJson(
-//                ws_result,
-//                TSerial_Search_Rec.class
-//        );
-//
-//        //Seta qtd de registro
-//        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-//        //chama
-//        mView.loadProductSerialList(rec.getRecord());
-//        //Se qtd 1, chama proxima define flow
-//        if (rec.getRecord().size() == 1) {
-//            defineFlow(rec.getRecord().get(0));
-//        } else if (rec.getRecord_count() > rec.getRecord_page()) {
-//            //Se qtd de registro maior que o total retornado,
-//            //exibe msg para refinar a busca.
-//            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-//        }
-    }
-
-    @Override
     public void defineFlow(MD_Product_Serial productSerial, boolean new_serial) {
         Bundle bundle = new Bundle();
         //
