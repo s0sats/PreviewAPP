@@ -248,13 +248,13 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (ToolBox_Con.isOnline(context)) {
+                //if (ToolBox_Con.isOnline(context)) {
                     MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
                     //
                     mPresenter.defineFlow(productSerial);
-                } else {
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                }
+//                } else {
+//                    ToolBox_Inf.showNoConnectionDialog(context);
+//                }
             }
         });
 

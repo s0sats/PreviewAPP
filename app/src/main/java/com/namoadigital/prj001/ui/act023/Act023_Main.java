@@ -206,10 +206,14 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
             @Override
             public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
-               mPresenter.executeSerialSearch(
-                        product_code,
-                        serial_id
-                );
+               if(ToolBox_Con.isOnline(context)) {
+                   mPresenter.executeSerialSearch(
+                           product_code,
+                           serial_id
+                   );
+               }else{
+                   ToolBox_Inf.showNoConnectionDialog(context);
+               }
             }
 
             @Override
