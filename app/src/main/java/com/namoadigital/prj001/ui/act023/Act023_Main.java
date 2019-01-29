@@ -142,8 +142,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
         //
-
-        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
