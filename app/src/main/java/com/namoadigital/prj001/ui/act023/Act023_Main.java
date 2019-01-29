@@ -133,12 +133,16 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transList.add("progress_tracking_search_msg");
         transList.add("alert_offline_data_not_saved_ttl");
         transList.add("alert_offline_data_not_saved_msg");
-        //
         transList.add("alert_save_serial_return_ttl");
         transList.add("alert_no_serial_return_msg");
         transList.add("alert_no_serial_return_msg");
         transList.add("alert_save_serial_error_msg");
         transList.add("alert_save_serial_ok_msg");
+        //
+        transList.add("dialog_serial_search_ttl");
+        transList.add("dialog_serial_search_start");
+        //
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -204,11 +208,10 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
             @Override
             public void onCheckButtonClick(long product_code, String product_id, String serial_id, String tracking) {
-                /*executeSerialSearch(
-                        product_id,
-                        serial_id,
-                        tracking
-                );*/
+               mPresenter.executeSerialSearch(
+                        product_code,
+                        serial_id
+                );
             }
 
             @Override
@@ -464,6 +467,42 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
     }
 
+    /**
+     * Metodo executado após a verificação de existencia, quando o serial verificado
+     * não existe.
+     */
+    @Override
+    public void reApplySerialIdToFrag() {
+        frgSerialEdit.reApplySerialId();
+    }
+
+    /**
+     * Metodo executado após a verificação de existencia, quando o serial verificado
+     * EXISTE.
+     * @param serial_returned
+     */
+    @Override
+    public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned) {
+        mdProductSerial = serial_returned;
+        frgSerialEdit.applyReceivedSerial(serial_returned);
+    }
+
+    /**
+     * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
+     * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
+     * consolidando as tratativas em um unico metodo.
+     *
+     * No caso dessa act, o WS_Serial_Search retorna os dados aqui.
+     * @param mLink
+     * @param mRequired
+     */
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        processCloseACT(mLink,mRequired,new HMAux());
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -471,7 +510,8 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())){
             frgSerialEdit.processTrackingResult(hmAux);
         } else if(ws_process.equalsIgnoreCase(WS_Serial_Search.class.getName())){
-            //frgSerialEdit.processTrackingResult(hmAux);
+            mPresenter.extractSearchResult(mLink);
+
         }else if(ws_process.equalsIgnoreCase(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
@@ -568,6 +608,25 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
     }
 
+    /**
+     * Metodo executado no retorno do save do serial e que atualiza o objeto serial
+     * na tela e no fragmento.
+     * Com esse refresh, no caso de um novo serial, esse metodo atualiza o serial_code
+     * que antigamente era 0.
+     * @param mdProductSerial - Produto serial atualizado e com o serial_code preenchido
+     */
+    @Override
+    public void updateProductSerialValues(MD_Product_Serial mdProductSerial) {
+        this.mdProductSerial = mdProductSerial;
+        //
+        if (frgSerialEdit != null) {
+            frgSerialEdit.setMdProductSerial(this.mdProductSerial);
+        }
+    }
+
+    /**
+     * Metodo que aciona o refresh dos dados do obj para componentes da tela.
+     */
     @Override
     public void refreshUI() {
         if(frgSerialEdit != null){

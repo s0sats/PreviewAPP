@@ -442,6 +442,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         this.mdProductSerial = mdProductSerial;
     }
 
+    /**
+     * Metodo executado no retorno do save do serial e que atualiza o objeto serial
+     * na tela e no fragmento.
+     * Com esse refresh, no caso de um novo serial, esse metodo atualiza o serial_code
+     * que antigamente era 0.
+     * @param mdProductSerial - Produto serial atualizado e com o serial_code preenchido
+     */
+
     @Override
     public void updateProductSerialValues(MD_Product_Serial mdProductSerial) {
         this.mdProductSerial = mdProductSerial;
@@ -805,11 +813,20 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         disableProgressDialog();
     }
 
+    /**
+     * Metodo executado após a verificação de existencia, quando o serial verificado
+     * não existe.
+     */
     @Override
     public void reApplySerialIdToFrag() {
         frgSerialEdit.reApplySerialId();
     }
 
+    /**
+     * Metodo executado após a verificação de existencia, quando o serial verificado
+     * EXISTE.
+     * @param serial_returned
+     */
     @Override
     public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned) {
         mdProductSerial = serial_returned;

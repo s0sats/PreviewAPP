@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -12,6 +14,7 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
@@ -20,6 +23,7 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -125,6 +129,11 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     public void executeSerialSearch(Long product_code, String serial_id) {
         mView.setWs_process(WS_Serial_Search.class.getName());
 
+        mView.showPD(
+                hmAux_Trans.get("dialog_serial_search_ttl"),
+                hmAux_Trans.get("dialog_serial_search_start")
+        );
+
         Intent mIntent = new Intent(context, WBR_Serial_Search.class);
         Bundle bundle = new Bundle();
         //
@@ -219,6 +228,9 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
             //Atualiza dados dos serial na tela e spinners
             mView.refreshUI();
             //
+            //Atualiza dados dos serial na tela e spinners
+            refreshMdProductSerialReference(product_code, serial_id);
+            //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
                 boolean returnOk = false;
@@ -239,6 +251,36 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                     false);
         }
     }
+
+    /**
+     * Metodo que resgata do banco os dados do serial recem atualizado pelo serviço,
+     * atualiza a referencia do obj na activity e por ultimo chama metodo para
+     * atualizar os dados do seral no fragmento
+     * @param product_code
+     * @param serial_id
+     */
+    private void refreshMdProductSerialReference(long product_code, String serial_id) {
+        mView.updateProductSerialValues(
+                getSerialInfo(
+                        product_code,
+                        serial_id
+                )
+        );
+        //
+        mView.refreshUI();
+    }
+    public MD_Product_Serial getSerialInfo(Long product_code, String serial_id) {
+        MD_Product_Serial serialObjDb = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+        return serialObjDb;
+    }
+
 
     @Override
     public void processSoDownloadResult(HMAux so_download_result) {
@@ -298,6 +340,29 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     public void saveSerialInfo(MD_Product_Serial md_product_serial) {
         //Salva dados do serial
         serialDao.addUpdateTmp(md_product_serial);
+    }
+
+    @Override
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        if(serial_list != null){
+            if(serial_list.size() == 0){
+                mView.reApplySerialIdToFrag();
+            }else if(serial_list.size() == 1){
+                mView.applyReceivedSerialToFrag(serial_list.get(0));
+            }else{
+                //FUDEU
+            }
+        }else{
+            //FUDEU 2
+        }
+        //
     }
 
     @Override

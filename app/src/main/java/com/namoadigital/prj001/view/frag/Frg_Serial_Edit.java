@@ -1263,8 +1263,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     } else {
                         ToolBox.alertMSG(
                                 context,
-                                "Nova OS",//hmAux_Trans.get("")
-                                "Os dados de Categoria e segmento são obrigatorio para criar nova O.S",//hmAux_Trans.get("")
+                                hmAux_Trans.get("alert_new_so_ttl"),
+                                hmAux_Trans.get("alert_new_so_fill_required_fields_msg"),
                                 null,
                                 0
 
@@ -2394,14 +2394,29 @@ public class Frg_Serial_Edit extends BaseFragment {
      * @return
      */
     private boolean validateNewOSFields() {
-        if (
-                ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
-                        !ss_segment.getmValue().get(SearchableSpinner.ID).equals("") &&
-                        ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
-                        !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("")
-        ) {
+        boolean segment = ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) && !ss_segment.getmValue().get(SearchableSpinner.ID).equals("");
+        boolean category = ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) && !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("");
+
+//        if (
+//            ss_segment.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+//            !ss_segment.getmValue().get(SearchableSpinner.ID).equals("") &&
+//            ss_category_price.getmValue().hasConsistentValue(SearchableSpinner.ID) &&
+//            !ss_category_price.getmValue().get(SearchableSpinner.ID).equals("")
+//        ) {
+//            return true;
+//        }
+//        //
+//        return false;
+        if(segment && category){
+            ss_segment.setBackground(null);
+            ss_category_price.setBackground(null);
             return true;
         }
+        //
+        ss_segment.setBackground(segment ? null : context.getDrawable(R.drawable.shape_error) );
+        ss_category_price.setBackground(category ? null :  context.getDrawable(R.drawable.shape_error) );
+        //Se chegou até aqui um dos itens é falso navega para sessão de propriedades.
+        scrollToView(ll_serial_properties);
         //
         return false;
     }
@@ -2996,11 +3011,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("alert_no_site_option_msg");
         transListFrag.add("to_top_ttl");
         transListFrag.add("class_ttl");
-        //
         transListFrag.add("alert_serial_edition_not_allowed_ttl");
         transListFrag.add("alert_serial_edition_not_allowed_msg");
-
-
+        //
+        transListFrag.add("alert_new_so_ttl");
+        transListFrag.add("alert_new_so_fill_required_fields_msg");
+        transListFrag.add("btn_new_os");
         //
         return transListFrag;
     }
