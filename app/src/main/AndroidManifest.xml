@@ -570,6 +570,11 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_Serial_Log" />
         <service android:name=".service.WS_SO_Next_Orders" />
+
+        <service android:name=".service.WS_SO_Favorite_List" />
+
+        <receiver android:name=".receiver.WBR_SO_Favorite_List" />
+
     </application>
 
 </manifest>
