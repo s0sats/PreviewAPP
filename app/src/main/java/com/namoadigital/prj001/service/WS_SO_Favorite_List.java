@@ -16,7 +16,6 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SO_Favorite_Request;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
-import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.receiver.WBR_SO_Favorite_List;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -77,12 +76,12 @@ public class WS_SO_Favorite_List extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        env.setProductCode(productCode);
-        env.setSerialCode(serialCode);
-        env.setCategoryPriceCode(categoryPriceCode);
-        env.setOperationCode(operationCode);
-        env.setSegmentCode(segmentCode);
-        env.setSiteCode(siteCode);
+        env.setProduct_code(productCode);
+        env.setSerial_code(serialCode);
+        env.setCategory_price_code(categoryPriceCode);
+        env.setOperation_code(operationCode);
+        env.setSegment_code(segmentCode);
+        env.setSite_code(siteCode);
 
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
@@ -100,8 +99,8 @@ public class WS_SO_Favorite_List extends IntentService {
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 response.getValidation(),
-                response.getError_msg(), //colocar na response
-                response.getLink_url(), //colocar na response
+                response.getError_msg(),
+                response.getLink_url(),
                 1,
                 1
         )
@@ -113,7 +112,7 @@ public class WS_SO_Favorite_List extends IntentService {
         ) {
             return;
         }
-
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_searching_sos"), resultado, "0");
 
     }
 

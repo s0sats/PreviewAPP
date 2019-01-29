@@ -6,11 +6,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_Response;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -124,6 +127,26 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
 
+    }
+
+    @Override
+    public void onProgressDialogRequest(String title, String message, String labelCancel, String labelOk) {
+        enableProgressDialog(
+                title,
+                message,
+                labelCancel,
+                labelOk
+        );
+    }
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        SO_Favorite_Response response = gson.fromJson(
+                mLink,
+                SO_Favorite_Response.class
+        );
+        Act050_Favorite_Fragment.populatedFavoritesList(response.getFavorite());
     }
 
     private void recoverIntentsInfo() {

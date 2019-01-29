@@ -12,16 +12,17 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.ui.act050.Act050_Favorite_Fragment.OnListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<Act050_Favorite_RecyclerView_Adapter.ViewHolder> {
 
-    private final List<SO_Favorite_Item> mValues;
+    private List<SO_Favorite_Item> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public Act050_Favorite_RecyclerView_Adapter(List<SO_Favorite_Item> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public Act050_Favorite_RecyclerView_Adapter(OnListFragmentInteractionListener listener) {
         mListener = listener;
+        mValues = new ArrayList<>();
     }
 
     @Override
@@ -57,6 +58,11 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    public void setFavoriteList(List<SO_Favorite_Item> favorites) {
+        this.mValues = favorites;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
