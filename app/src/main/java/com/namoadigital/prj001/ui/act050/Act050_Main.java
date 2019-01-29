@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act050;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,9 +12,13 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,13 +30,13 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
     private Bundle bundle;
-    private Act050_Main_Contract.I_Presenter mPresenter;
     private FragmentManager fm;
     private HMAux hmAux_Trans_Frag;
     private String mResource_Code_Frag;
     private long mSerialCode;
     private long mProductCode;
     private Act050_Favorite_Fragment act050_favorite_fragment;
+    private MD_Product_Serial mdProductSerial;
 
 
     @Override
@@ -55,7 +60,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode);
+        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(2, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
         transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -106,7 +111,18 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void initVars() {
         recoverIntentsInfo();
+        mdProductSerial = getProductSerial();
         initFragment();
+    }
+
+    private MD_Product_Serial getProductSerial() {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        return  serialDao.getByString(
+                new MD_Product_Serial_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mProductCode,
+                        (int) mSerialCode).toSqlQuery()
+        );
     }
 
     private void iniUIFooter() {
@@ -166,5 +182,37 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
         } else {
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+
+            //send to act023
+
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mProductCode));
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+            //O serial já foi criado nas etapas anteriores por isso o parametro é falso
+            bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+            //
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
+
+            Intent mIntent = new Intent(context, Act023_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (bundle != null) {
+                mIntent.putExtras(bundle);
+            }
+            startActivity(mIntent);
+            finish();
+
+        } else {
+            getFragmentManager().popBackStack();
+        }
+
     }
 }

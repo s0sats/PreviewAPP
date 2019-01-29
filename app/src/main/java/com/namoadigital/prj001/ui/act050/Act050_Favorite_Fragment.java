@@ -17,6 +17,8 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act050_Favorite_RecyclerView_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SegmentDao;
+import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     private long mProductCode;
     private String wsProcess ="";
     private static Act050_Favorite_RecyclerView_Adapter adapter;
+    private int mSegmentCode;
+    private int mCategoryPriceCode;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,12 +55,14 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static Act050_Favorite_Fragment newInstance(int columnCount, long productCode, long serialCode) {
+    public static Act050_Favorite_Fragment newInstance(int columnCount, long productCode, long serialCode, Integer category_price_code, Integer segment_code) {
         Act050_Favorite_Fragment fragment = new Act050_Favorite_Fragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putLong(MD_Product_SerialDao.PRODUCT_CODE, productCode);
         args.putLong(MD_Product_SerialDao.SERIAL_CODE, serialCode);
+        args.putInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, category_price_code);
+        args.putInt(MD_SegmentDao.SEGMENT_CODE, segment_code);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,6 +75,8 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mProductCode = getArguments().getLong(MD_Product_SerialDao.PRODUCT_CODE);
             mSerialCode = getArguments().getLong(MD_Product_SerialDao.SERIAL_CODE);
+            mCategoryPriceCode = getArguments().getInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE);
+            mSegmentCode = getArguments().getInt(MD_SegmentDao.SEGMENT_CODE);
         }
         adapter = new Act050_Favorite_RecyclerView_Adapter(mListener);
 
@@ -89,7 +97,7 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(adapter);
-            mPresenter.getFavoriteList(getContext(), mProductCode, mSerialCode);
+            mPresenter.getFavoriteList(getContext(), mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
 
         }
         return view;
@@ -157,12 +165,14 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     }
 
 
+
     public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
         Log.i("SO_Fav", "list size: " + favorites.size());
         if(favorites.isEmpty()){
             mListener.onListFragmentInteraction(null);
         }
         adapter.setFavoriteList(favorites);
+
     }
 
     /**
