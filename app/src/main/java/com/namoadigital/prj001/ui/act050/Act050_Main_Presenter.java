@@ -33,11 +33,11 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_SO_Favorite_List.class.getName());
-            //
-//            mView.showPD(
-//                    hmAux_trans.get("dialog_serial_log_ttl"),
-//                    hmAux_trans.get("dialog_serial_log_start")
-//            );
+
+            mView.showPD(
+                   "De Conhecimento",
+                   "Massagem"
+            );
             //
             Intent mIntent = new Intent(context, WBR_SO_Favorite_List.class);
             Bundle bundle = new Bundle();

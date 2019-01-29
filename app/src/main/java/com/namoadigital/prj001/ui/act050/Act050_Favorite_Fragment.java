@@ -34,7 +34,7 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private static OnListFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener mListener;
     public Act050_Main_Presenter mPresenter;
     public RecyclerView recyclerView;
     private long mSerialCode;
@@ -134,8 +134,8 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
 
         mListener.onProgressDialogRequest(title,
                 msg,
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
+                "Cancel",
+                "Ok"
         );
     }
 
@@ -157,7 +157,7 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     }
 
 
-    public static void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
+    public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
         Log.i("SO_Fav", "list size: " + favorites.size());
         if(favorites.isEmpty()){
             mListener.onListFragmentInteraction(null);

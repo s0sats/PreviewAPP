@@ -31,6 +31,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     private String mResource_Code_Frag;
     private long mSerialCode;
     private long mProductCode;
+    private Act050_Favorite_Fragment act050_favorite_fragment;
 
 
     @Override
@@ -54,7 +55,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.act050_frg_placeholder, Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode), FAVORITE_LIST_FRAGMENT);
+        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode);
+        transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -146,7 +148,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
                 mLink,
                 SO_Favorite_Response.class
         );
-        Act050_Favorite_Fragment.populatedFavoritesList(response.getFavorite());
+        act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
+        progressDialog.dismiss();
     }
 
     private void recoverIntentsInfo() {
