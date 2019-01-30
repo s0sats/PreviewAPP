@@ -3,14 +3,16 @@ package com.namoadigital.prj001.ui.act050;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -30,7 +32,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Main_Contract.I_Frag_Favorite{
+public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Main_Contract.I_Frag_Favorite {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -41,10 +43,11 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     public RecyclerView recyclerView;
     private long mSerialCode;
     private long mProductCode;
-    private String wsProcess ="";
-    private static Act050_Favorite_RecyclerView_Adapter adapter;
+    private String wsProcess = "";
+    private static Act050_Favorite_RecyclerView_Adapter mAdapter;
     private int mSegmentCode;
     private int mCategoryPriceCode;
+    private MKEditTextNM mket_filter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -78,7 +81,7 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
             mCategoryPriceCode = getArguments().getInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE);
             mSegmentCode = getArguments().getInt(MD_SegmentDao.SEGMENT_CODE);
         }
-        adapter = new Act050_Favorite_RecyclerView_Adapter(mListener);
+        mAdapter = new Act050_Favorite_RecyclerView_Adapter(mListener);
 
     }
 
@@ -87,21 +90,43 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(adapter);
-            mPresenter.getFavoriteList(getContext(), mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+        Context context = view.getContext();
 
-        }
+        setUI(view, context);
+
+        mPresenter.getFavoriteList(getContext(), mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+
         return view;
     }
+
+    private void setUI(View view, Context context) {
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        mket_filter = (MKEditTextNM) view.findViewById(R.id.act050_mket_filter_desc);
+//        mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
+        mket_filter.setHint("Filtrar favoritos");
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if (mAdapter != null) {
+                    mAdapter.getFilter().filter(s.trim());
+                }
+            }
+        });
+
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(mColumnCount, StaggeredGridLayoutManager.VERTICAL));
+        }
+        recyclerView.setAdapter(mAdapter);
+    }
+
+
     public static List<String> getFragTranslationsVars() {
         List<String> transListFrag = new ArrayList<String>();
         //
@@ -165,13 +190,10 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     }
 
 
-
     public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
         Log.i("SO_Fav", "list size: " + favorites.size());
-        if(favorites.isEmpty()){
-            mListener.onListFragmentInteraction(null);
-        }
-        adapter.setFavoriteList(favorites);
+
+        mAdapter.setFavoriteList(favorites);
 
     }
 
@@ -188,7 +210,9 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(SO_Favorite_Item item);
+
         void onProgressDialogRequest(String title, String message, String labelCancel, String labelOk);
+
         void disableProgressDialog();
     }
 }

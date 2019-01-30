@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,6 +39,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     private long mProductCode;
     private Act050_Favorite_Fragment act050_favorite_fragment;
     private MD_Product_Serial mdProductSerial;
+    private SO_Favorite_Response response;
 
 
     @Override
@@ -60,7 +63,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(2, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
+        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
         transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -144,7 +147,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
-
+        Toast.makeText(this, "item: " + item.getFavoriteDesc(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -159,12 +162,14 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
+        Log.i("SO_Fav", "Close ACT " + mLink);
         Gson gson = new GsonBuilder().serializeNulls().create();
-        SO_Favorite_Response response = gson.fromJson(
+         response = gson.fromJson(
                 mLink,
                 SO_Favorite_Response.class
         );
         act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
+
         progressDialog.dismiss();
     }
 
