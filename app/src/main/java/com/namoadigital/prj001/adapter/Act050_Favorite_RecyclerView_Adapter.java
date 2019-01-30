@@ -47,9 +47,9 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
 
         holder.mFavoriteTitleItem.setText(favorite.getFavoriteDesc());
 
-        holder.mFavoriteTitleItem.setTextColor(Color.parseColor(favorite.getFavoriteFontColor()));
+//        holder.mFavoriteTitleItem.setTextColor(Color.parseColor(favorite.getFavoriteFontColor()));
 
-        holder.cvFavorite.setCardBackgroundColor(Color.parseColor(favorite.getFavoriteColor()));
+        holder.favorite_item_color.setBackgroundColor(Color.parseColor(favorite.getFavoriteColor()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,12 +89,14 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
         public final TextView mFavoriteTitleItem;
         public SO_Favorite_Item mItem;
         public CardView cvFavorite;
+        public View favorite_item_color;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mFavoriteTitleItem = view.findViewById(R.id.favorite_item_desc);
             cvFavorite = view.findViewById(R.id.favorite_fragment_card_view);
+            favorite_item_color = view.findViewById(R.id.favorite_item_color);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

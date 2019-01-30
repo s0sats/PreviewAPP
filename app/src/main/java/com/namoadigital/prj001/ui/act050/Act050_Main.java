@@ -49,7 +49,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         //
         iniSetup();
         //
@@ -57,8 +56,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
         //
         iniUIFooter();
         //
-
-
     }
 
     private void initFragment() {
@@ -92,7 +89,36 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("act050_title");
+        transList.add("act023_title");
+        transList.add("alert_offine_mode_title");
+        transList.add("alert_offine_mode_msg");
+        transList.add("alert_product_not_found_title");
+        transList.add("alert_product_not_found_msg");
+        transList.add("sys_alert_btn_cancel");
+        transList.add("sys_alert_btn_ok");
+        transList.add("btn_create");
+        transList.add("btn_so_search");
+        transList.add("progress_so_search_ttl");
+        transList.add("progress_so_search_msg");
+        transList.add("progress_serial_search_ttl");
+        transList.add("progress_serial_search_msg");
+        transList.add("alert_no_so_found_ttl");
+        transList.add("alert_no_so_found_msg");
+        transList.add("alert_save_serial_error_ttl");
+        transList.add("alert_save_serial_error_msg");
+        transList.add("tracking_ttl");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_offline_data_not_saved_ttl");
+        transList.add("alert_offline_data_not_saved_msg");
+        transList.add("alert_save_serial_return_ttl");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_save_serial_error_msg");
+        transList.add("alert_save_serial_ok_msg");
+        //
+        transList.add("dialog_serial_search_ttl");
+        transList.add("dialog_serial_search_start");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -132,8 +158,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT050;
-        mAct_Title = Constant.ACT050 + "_" + "title";
+        mAct_Info = Constant.ACT023;
+        mAct_Title = Constant.ACT023 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
