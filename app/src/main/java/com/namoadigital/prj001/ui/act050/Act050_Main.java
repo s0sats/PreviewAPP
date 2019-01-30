@@ -9,9 +9,12 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
 import com.namoadigital.prj001.util.Constant;
@@ -21,9 +24,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_Fragment.OnListFragmentInteractionListener {
+public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_Fragment.OnListFragmentInteractionListener, Act050_Frag_Parameters.OnFragParameterInteraction {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
+    public static final String PARAMETERS_FRAGMENT = "PARAMETERS_FRAGMENT";
     private Bundle bundle;
     private Act050_Main_Contract.I_Presenter mPresenter;
     private FragmentManager fm;
@@ -32,6 +36,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     private long mSerialCode;
     private long mProductCode;
     private Act050_Favorite_Fragment act050_favorite_fragment;
+    private Act050_Frag_Parameters act050_frag_parameters;
 
 
     @Override
@@ -59,6 +64,16 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
         transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act050_frg_placeholder, type, sTag);
+            ft.commit();
+        } else {
+            //type.loadDataToScreen();
+        }
     }
 
     private void iniSetup() {
@@ -167,4 +182,17 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
     }
+
+    //region OnFragParameterInteraction
+    @Override
+    public MD_Product_Serial getProductSerial() {
+        return null;
+    }
+
+    @Override
+    public List<SO_Favorite_Contract> getFavoriteContracts(int profile_code, int favorite_code) {
+
+        return null;
+    }
+    //endregion
 }

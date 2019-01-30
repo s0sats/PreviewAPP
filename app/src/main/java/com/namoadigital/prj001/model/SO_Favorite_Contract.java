@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-class SO_Favorite_Contract {
+public class SO_Favorite_Contract {
 
     @SerializedName("customer_code")
     @Expose
