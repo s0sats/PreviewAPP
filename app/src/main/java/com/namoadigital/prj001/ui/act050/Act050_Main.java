@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,7 +43,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     private MD_Product_Serial mdProductSerial;
     private SO_Favorite_Response response;
     private Act050_Frag_Parameters act050_frag_parameters;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +131,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
         //
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
+        //
+        transList.addAll(act050_frag_parameters.getFragTranslationsVars());
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -193,7 +193,9 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
-        Toast.makeText(this, "item: " + item.getFavoriteDesc(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "item: " + item.getFavoriteDesc(),Toast.LENGTH_SHORT).show();
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans,item.getProfileCode(),item.getFavoriteCode(),item.getFavoriteDesc(),item.getContractCode());
+        setFrag(act050_frag_parameters,PARAMETERS_FRAGMENT);
     }
 
     @Override
@@ -215,7 +217,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
                 SO_Favorite_Response.class
         );
         act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
-
+        //
         progressDialog.dismiss();
     }
 
@@ -236,15 +238,14 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     }
 
     //region OnFragParameterInteraction
-//    @Override
-//    public MD_Product_Serial getProductSerial() {
-//        return null;
-//    }
+    @Override
+    public MD_Product_Serial getProductSerialRef() {
+        return this.mdProductSerial;
+    }
 
     @Override
-    public List<SO_Favorite_Contract> getFavoriteContracts(int profile_code, int favorite_code) {
-
-        return null;
+    public List<SO_Favorite_Contract> getContracts() {
+        return response.getContract();
     }
     //endregion
 
