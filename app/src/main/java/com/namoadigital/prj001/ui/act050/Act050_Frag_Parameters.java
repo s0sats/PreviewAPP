@@ -61,7 +61,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private OnFragParameterInteraction mFragListner;
 
     public interface OnFragParameterInteraction{
-        MD_Product_Serial getProductSerial();
+        //MD_Product_Serial getProductSerial();
         List<SO_Favorite_Contract> getFavoriteContracts(int profile_code, int favorite_code);
     }
 
@@ -166,7 +166,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         btn_next = view.findViewById(R.id.act050_frag_param_iv_next);
         //
         if(mFragListner != null){
-            mdProductSerial = mFragListner.getProductSerial();
+            //mdProductSerial = mFragListner.getProductSerial();
             //
             if(mdProductSerial != null) {
                 contracts = mFragListner.getFavoriteContracts(profile_code, favorite_code);

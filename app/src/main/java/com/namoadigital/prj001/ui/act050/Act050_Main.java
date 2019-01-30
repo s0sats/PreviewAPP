@@ -19,7 +19,6 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
@@ -187,6 +186,12 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     }
 
     @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
+
+    @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
         Toast.makeText(this, "item: " + item.getFavoriteDesc(),Toast.LENGTH_SHORT).show();
     }
@@ -231,10 +236,10 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
     }
 
     //region OnFragParameterInteraction
-    @Override
-    public MD_Product_Serial getProductSerial() {
-        return null;
-    }
+//    @Override
+//    public MD_Product_Serial getProductSerial() {
+//        return null;
+//    }
 
     @Override
     public List<SO_Favorite_Contract> getFavoriteContracts(int profile_code, int favorite_code) {
