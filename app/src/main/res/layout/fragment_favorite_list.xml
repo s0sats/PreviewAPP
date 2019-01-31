@@ -43,7 +43,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="5dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.namoadigital.prj001.ui.act050.Act050_Favorite_Fragment"
+        tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite"
         tools:listitem="@layout/fragment_favorite" />
 
 

@@ -8,17 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Act050_S0_Creation_Fragment.OnFragmentInteractionListener} interface
+ * {@link Act050_Frag_SO.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Act050_S0_Creation_Fragment#newInstance} factory method to
+ * Use the {@link Act050_Frag_SO#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Act050_S0_Creation_Fragment extends Fragment {
+public class Act050_Frag_SO extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,7 +31,7 @@ public class Act050_S0_Creation_Fragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Act050_S0_Creation_Fragment() {
+    public Act050_Frag_SO() {
         // Required empty public constructor
     }
 
@@ -40,11 +41,11 @@ public class Act050_S0_Creation_Fragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Act050_S0_Creation_Fragment.
+     * @return A new instance of fragment Act050_Frag_SO.
      */
     // TODO: Rename and change types and number of parameters
-    public static Act050_S0_Creation_Fragment newInstance(String param1, String param2) {
-        Act050_S0_Creation_Fragment fragment = new Act050_S0_Creation_Fragment();
+    public static Act050_Frag_SO newInstance(String param1, String param2) {
+        Act050_Frag_SO fragment = new Act050_Frag_SO();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -81,8 +82,8 @@ public class Act050_S0_Creation_Fragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            //throw new RuntimeException(context.toString()
+                  //  + " must implement OnFragmentInteractionListener");
         }
     }
 

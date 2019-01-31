@@ -31,20 +31,22 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_Fragment.OnListFragmentInteractionListener, Act050_Frag_Parameters.OnFragParameterInteraction {
+public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favorite.OnListFragmentInteractionListener, Act050_Frag_Parameters.OnFragParameterInteraction {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
     public static final String PARAMETERS_FRAGMENT = "PARAMETERS_FRAGMENT";
+    public static final String SO_CREATION_FRAGMENT = "SO_CREATION_FRAGMENT";
     private Bundle bundle;
     private FragmentManager fm;
     private HMAux hmAux_Trans_Frag;
     private String mResource_Code_Frag;
     private long mSerialCode;
     private long mProductCode;
-    private Act050_Favorite_Fragment act050_favorite_fragment;
+    private Act050_Frag_Favorite act050_favorite_fragment;
     private MD_Product_Serial mdProductSerial;
     private SO_Favorite_Response response;
     private Act050_Frag_Parameters act050_frag_parameters;
+    private Act050_Frag_SO act050_s0_creation_fragment;
     //Parametros de Save
     private SM_SO mSmSo = new SM_SO();
     private SO_Favorite_Item soFavoriteItem = null;
@@ -68,7 +70,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        act050_favorite_fragment = Act050_Favorite_Fragment.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
+        act050_favorite_fragment = Act050_Frag_Favorite.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
         transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -155,7 +157,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
                 "",
                 ToolBox_Con.getPreference_Translate_Code(context),
                 //transListFrag
-                Act050_Favorite_Fragment.getFragTranslationsVars()
+                Act050_Frag_Favorite.getFragTranslationsVars()
         );
     }
 
@@ -281,7 +283,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Favorite_F
 
     @Override
     public void onMoveToOSFragment() {
-        //setFrag();
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance("1","1");
+        setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }
 
     @Override

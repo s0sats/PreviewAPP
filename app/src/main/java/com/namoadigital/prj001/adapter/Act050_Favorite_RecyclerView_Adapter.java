@@ -10,11 +10,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
-import com.namoadigital.prj001.ui.act050.Act050_Favorite_Fragment.OnListFragmentInteractionListener;
+import com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;

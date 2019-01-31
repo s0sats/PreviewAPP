@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -32,7 +31,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Main_Contract.I_Frag_Favorite {
+public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Contract.I_Frag_Favorite {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -53,13 +52,13 @@ public class Act050_Favorite_Fragment extends BaseFragment implements Act050_Mai
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public Act050_Favorite_Fragment() {
+    public Act050_Frag_Favorite() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static Act050_Favorite_Fragment newInstance(int columnCount, long productCode, long serialCode, Integer category_price_code, Integer segment_code) {
-        Act050_Favorite_Fragment fragment = new Act050_Favorite_Fragment();
+    public static Act050_Frag_Favorite newInstance(int columnCount, long productCode, long serialCode, Integer category_price_code, Integer segment_code) {
+        Act050_Frag_Favorite fragment = new Act050_Frag_Favorite();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putLong(MD_Product_SerialDao.PRODUCT_CODE, productCode);
