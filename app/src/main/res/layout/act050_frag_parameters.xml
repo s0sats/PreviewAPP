@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters">
+    tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters"
+    android:background="@color/namoa_color_gray"
+    >
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,7 +21,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/namoa_color_gray"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_iv_back"
@@ -35,40 +36,17 @@
                 app:layout_constraintStart_toStartOf="parent">
                 <!--Favorite-->
                 <TextView
-                    android:id="@+id/act050_frag_param_tv_favorite_lbl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Favorito"
-                    android:textSize="@dimen/font_size_title_md"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_favorite_val"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="spread_inside" />
-
-                <TextView
                     android:id="@+id/act050_frag_param_tv_favorite_val"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
                     android:text="Ovelha #12"
-                    android:textColor="@color/namoa_light_blue"
-                    android:textSize="@dimen/font_size_item_md"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ss_contract"
+                    android:textSize="@dimen/font_size_title_dialog"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_favorite_lbl" />
-
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/act050_frag_param_ss_contract"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_product_lbl"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_favorite_val" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
 
                 <!--Product-->
                 <TextView
@@ -81,7 +59,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_product_val"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_contract" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_favorite_val" />
 
                 <TextView
                     android:id="@+id/act050_frag_param_tv_product_val"
@@ -92,11 +70,39 @@
                     android:text="Tapado1001"
                     android:textColor="@color/namoa_light_blue"
                     android:textSize="@dimen/font_size_item_md"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_category_lbl"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_serial_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_product_lbl" />
-                <!--Favorite-->
+
+                <!--Serial-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_serial_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Serial"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_serial_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_product_val" />
+
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_serial_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="TP10000-1"
+                    android:textColor="@color/namoa_light_blue"
+                    android:textSize="@dimen/font_size_item_md"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_category_lbl"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_serial_lbl" />
+
+                <!--Category-->
                 <TextView
                     android:id="@+id/act050_frag_param_tv_category_lbl"
                     android:layout_width="match_parent"
@@ -107,7 +113,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_category_val"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_product_val" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_serial_val" />
 
                 <TextView
                     android:id="@+id/act050_frag_param_tv_category_val"
@@ -122,7 +128,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_category_lbl" />
-                <!--Favorite-->
+
+                <!--Segment-->
                 <TextView
                     android:id="@+id/act050_frag_param_tv_segment_lbl"
                     android:layout_width="match_parent"
@@ -144,10 +151,24 @@
                     android:text="Usado 3"
                     android:textColor="@color/namoa_light_blue"
                     android:textSize="@dimen/font_size_item_md"
-                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_contract"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_lbl" />
+
+                <!--Contrat-->
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act050_frag_param_ss_contract"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_val"
+
+                    />
+
+                <!--Contrat_PO-->
 
                 <LinearLayout
                     android:id="@+id/act050_frag_param_ll_contract_po"
@@ -155,8 +176,8 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_val"
-                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_contract"
+                    android:visibility="gone"
                     android:orientation="vertical"
                     >
 

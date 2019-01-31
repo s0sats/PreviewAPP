@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
     public static final String PROFILE_CODE ="PROFILE_CODE";
     public static final String FAVORITE_CODE ="FAVORITE_CODE";
     public static final String FAVORITE_DESC ="FAVORITE_DESC";
-    public static final String CONTRACT_CODE ="CONTRACT_CODE";
+    public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
+    public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
 
     private Context context;
     private HMAux hmAux_Trans;
@@ -39,14 +42,17 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private int profile_code;
     private int favorite_code;
     private String favorite_desc;
-    private Integer contract_code;
+    private Integer favorite_contract_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
+    private Integer selected_contract_code = -1;
 
-    private TextView tv_favorite_lbl;
+    private ScrollView sv_main;
     private TextView tv_favorite_val;
     private SearchableSpinner ss_contract;
     private TextView tv_product_lbl;
     private TextView tv_product_val;
+    private TextView tv_serial_lbl;
+    private TextView tv_serial_val;
     private TextView tv_category_lbl;
     private TextView tv_category_val;
     private TextView tv_segment_lbl;
@@ -67,6 +73,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
     public interface OnFragParameterInteraction{
         MD_Product_Serial getProductSerialRef();
         List<SO_Favorite_Contract> getContracts();
+        void onContractSelected(int contract_code);
+        void onMoveToOSFragment();
+        void onBackButtonClick();
     }
 
     public void setmFragListner(OnFragParameterInteraction mFragListner) {
@@ -75,15 +84,32 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     public Act050_Frag_Parameters() {}
 
-    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, int profile_code, int favorite_code, String favorite_desc,Integer contract_code){
+//    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, int profile_code, int favorite_code, String favorite_desc,Integer favorite_contract_code){
+//        Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
+//        //
+//        Bundle args = new Bundle();
+//        args.putSerializable(HMAUX_KEY, hmAux_Trans);
+//        args.putInt(PROFILE_CODE, profile_code);
+//        args.putInt(FAVORITE_CODE, favorite_code);
+//        args.putString(FAVORITE_DESC, favorite_desc);
+//        //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
+//        //será passado o valor -1. Por isso a tratativa abaixo.
+//        args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
+//        fragment.setArguments(args);
+//        //
+//        return fragment;
+//    }
+
+    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code){
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
         //
         Bundle args = new Bundle();
         args.putSerializable(HMAUX_KEY, hmAux_Trans);
-        args.putInt(PROFILE_CODE, profile_code);
-        args.putInt(FAVORITE_CODE, favorite_code);
         args.putString(FAVORITE_DESC, favorite_desc);
-        args.putInt(CONTRACT_CODE, contract_code);
+        //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
+        //será passado o valor -1. Por isso a tratativa abaixo.
+        args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
+        args.putInt(SELECTED_CONTRACT_CODE, -1);
         fragment.setArguments(args);
         //
         return fragment;
@@ -118,6 +144,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        //
+        getArguments().putInt(SELECTED_CONTRACT_CODE, selected_contract_code != null ? selected_contract_code : -1);
+    }
+
     private void recoverBundleInfo(Bundle arguments) {
         this.context = getActivity();
         //
@@ -127,20 +160,27 @@ public class Act050_Frag_Parameters extends BaseFragment {
             this.profile_code = arguments.getInt(PROFILE_CODE);
             this.favorite_code = arguments.getInt(FAVORITE_CODE);
             this.favorite_desc = arguments.getString(FAVORITE_DESC);
-            this.contract_code = arguments.getInt(CONTRACT_CODE);
+            //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
+            //será passado o valor -1. Por isso a tratativa abaixo.
+            this.favorite_contract_code = arguments.getInt(FAVORITE_CONTRACT_CODE) != -1 ? arguments.getInt(FAVORITE_CONTRACT_CODE) : null;
+            this.selected_contract_code = arguments.getInt(SELECTED_CONTRACT_CODE) != -1 ? arguments.getInt(SELECTED_CONTRACT_CODE) : null;
         }
     }
 
     private void iniVars(View view) {
-        tv_favorite_lbl = view.findViewById(R.id.act050_frag_param_tv_favorite_lbl);
-        tv_favorite_lbl.setText(hmAux_Trans.get("favorite_lbl"));
+        sv_main = view.findViewById(R.id.act050_frag_param_sv_main);
         tv_favorite_val = view.findViewById(R.id.act050_frag_param_tv_favorite_val);
         ss_contract = view.findViewById(R.id.act050_frag_param_ss_contract);
         ss_contract.setmLabel(hmAux_Trans.get("contract_lbl"));
         ss_contract.setmShowLabel(true);
+        ss_contract.setmStyle(1);
+        ss_contract.setmTextSizeLabel(20);
         tv_product_lbl = view.findViewById(R.id.act050_frag_param_tv_product_lbl);
         tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
         tv_product_val = view.findViewById(R.id.act050_frag_param_tv_product_val);
+        tv_serial_lbl = view.findViewById(R.id.act050_frag_param_tv_serial_lbl);
+        tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
+        tv_serial_val = view.findViewById(R.id.act050_frag_param_tv_serial_val);
         tv_category_lbl = view.findViewById(R.id.act050_frag_param_tv_category_lbl);
         tv_category_lbl.setText(hmAux_Trans.get("category_lbl"));
         tv_category_val = view.findViewById(R.id.act050_frag_param_tv_category_val);
@@ -160,8 +200,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
         tv_info_client3_lbl = view.findViewById(R.id.act050_frag_param_tv_info_client3_lbl);
         tv_info_client3_lbl.setText(hmAux_Trans.get("info_client3_lbl"));
         tv_info_client3_val = view.findViewById(R.id.act050_frag_param_tv_info_client3_val);
-//        btn_back = view.findViewById(R.id.act050_frag_param_iv_back);
-//        btn_next = view.findViewById(R.id.act050_frag_param_iv_next);
+        btn_back = view.findViewById(R.id.act050_frag_param_iv_back);
+        btn_next = view.findViewById(R.id.act050_frag_param_iv_next);
         //
         if(mFragListner != null){
             mdProductSerial = mFragListner.getProductSerialRef();
@@ -170,18 +210,22 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 contracts = mFragListner.getContracts();
                 //
                 if (contracts != null && contracts.size() > 0) {
-                    ArrayList<HMAux> options = generateSSOption(contracts,contract_code);
+                    ArrayList<HMAux> options = generateSSOption(contracts, favorite_contract_code);
                     ss_contract.setmOption(options);
                     if (options.size() == 1) {
                         ss_contract.setmValue(options.get(0));
                         ss_contract.setmEnabled(false);
                         //
                         setContractPoInfo(options.get(0));
+                        Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.ID)) : -1;
+                        selected_contract_code = contract_code;
+                        mFragListner.onContractSelected(contract_code);
                     }
                 }
                 //
                 tv_favorite_val.setText(favorite_desc);
                 tv_product_val.setText(mdProductSerial.getProduct_id() + " - " + mdProductSerial.getProduct_desc());
+                tv_serial_val.setText(mdProductSerial.getSerial_id());
                 tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
                 tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
             }
@@ -201,17 +245,49 @@ public class Act050_Frag_Parameters extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 setContractPoInfo(hmAux);
+                //
+                if(mFragListner != null) {
+                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.ID)) : -1;
+                    mFragListner.onContractSelected(contract_code);
+                }
+            }
+        });
+        //
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mFragListner != null){
+                    mFragListner.onBackButtonClick();
+                }
+            }
+        });
+        //
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                if(mFragListner != null){
+                    mFragListner.onMoveToOSFragment();
+                }
             }
         });
     }
 
     private void setContractPoInfo(@Nullable HMAux hmAux) {
-        if (hmAux != null) {
+        if (hmAux != null && hmAux.size() > 0) {
             ll_contract_po_info.setVisibility(View.VISIBLE);
             tv_info_erp_val.setText(hmAux.get(SM_SODao.CONTRACT_PO_ERP));
             tv_info_client1_val.setText(hmAux.get(SM_SODao.CONTRACT_PO_CLIENT1));
             tv_info_client2_val.setText(hmAux.get(SM_SODao.CONTRACT_PO_CLIENT2));
             tv_info_client3_val.setText(hmAux.get(SM_SODao.CONTRACT_PO_CLIENT3));
+            //Move scroll para o final.
+            //Necessario o runnable para que funcione
+            sv_main.post(new Runnable() {
+                public void run() {
+                    sv_main.fullScroll(View.FOCUS_DOWN);
+                }
+            });
+
         }else{
             ll_contract_po_info.setVisibility(View.GONE);
             tv_info_erp_val.setText("");
@@ -232,11 +308,11 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SM_SODao.CONTRACT_PO_CLIENT1,contract.getPoClient1());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT2,contract.getPoClient2());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT3,contract.getPoClient3());
-            //Se contract_code null, insere todos os itens na lista,
+            //Se favorite_contract_code null, insere todos os itens na lista,
             //Se não insere apenas o item já determinado
             if(contract_code == null || contract_code.equals(contract.getContractCode())) {
                 options.add(aux);
-                if(contract_code.equals(contract.getContractCode())){
+                if(contract_code != null && contract_code.equals(contract.getContractCode())){
                     break;
                 }
             }
@@ -250,6 +326,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         transList.add("favorite_lbl");
         transList.add("contract_lbl");
         transList.add("product_lbl");
+        transList.add("serial_lbl");
         transList.add("category_lbl");
         transList.add("segment_lbl");
         transList.add("info_erp_lbl");

@@ -288,6 +288,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String WS_SO_SAVE_SO_ACTION = "ws_so_save_so_action";
     public static final String SO_ACTION_EXECUTION = "EXECUTION";
+    public static final String SO_ACTION_EDIT = "EDIT";
 
 
     /**
