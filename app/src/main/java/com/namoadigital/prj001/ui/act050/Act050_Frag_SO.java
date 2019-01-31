@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 
@@ -30,6 +33,24 @@ public class Act050_Frag_SO extends BaseFragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+
+
+    SearchableSpinner spinner1;
+    SearchableSpinner spinner2;
+    SearchableSpinner spinner3;
+    SearchableSpinner spinner4;
+
+    EditText text1;
+    EditText text2;
+    EditText text3;
+    EditText text4;
+    EditText text5;
+    EditText text6;
+    EditText text7;
+    EditText text8;
+    EditText text9;
+    EditText text10;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
