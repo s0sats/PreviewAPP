@@ -202,6 +202,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         tv_info_client3_val = view.findViewById(R.id.act050_frag_param_tv_info_client3_val);
         btn_back = view.findViewById(R.id.act050_frag_param_iv_back);
         btn_next = view.findViewById(R.id.act050_frag_param_iv_next);
+        btn_next.setEnabled(false);
         //
         if(mFragListner != null){
             mdProductSerial = mFragListner.getProductSerialRef();
@@ -253,21 +254,24 @@ public class Act050_Frag_Parameters extends BaseFragment {
             }
         });
         //
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mFragListner != null){
-                    mFragListner.onBackButtonClick();
-                }
-            }
-        });
+//        btn_back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(mFragListner != null){
+//                    mFragListner.onBackButtonClick();
+//                }
+//            }
+//        });
         //
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                if(mFragListner != null){
-                    mFragListner.onMoveToOSFragment();
+                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+                    if (mFragListner != null) {
+                        mFragListner.onMoveToOSFragment();
+                    }
+                }else{
+
                 }
             }
         });
@@ -287,6 +291,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                     sv_main.fullScroll(View.FOCUS_DOWN);
                 }
             });
+            btn_next.setEnabled(true);
 
         }else{
             ll_contract_po_info.setVisibility(View.GONE);
@@ -294,6 +299,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
             tv_info_client1_val.setText("");
             tv_info_client2_val.setText("");
             tv_info_client3_val.setText("");
+            btn_next.setEnabled(false);
         }
     }
 
