@@ -191,6 +191,24 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
 
     public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
         Log.i("SO_Fav", "list size: " + favorites.size());
+        List<SO_Favorite_Item> temp = new ArrayList<>();
+        SO_Favorite_Item so_favorite_item_placeholder = new SO_Favorite_Item(
+                null,
+                null,
+                null,
+                "Iniciar Vazio \n (Sem Favorito)",
+                "#FFFFFF",
+                "#000000",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        favorites.add(0,
+        so_favorite_item_placeholder);
 
         mAdapter.setFavoriteList(favorites);
 
