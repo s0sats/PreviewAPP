@@ -67,7 +67,7 @@ public class WS_SO_Client_List extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_CLIENT_LIST,
@@ -101,7 +101,7 @@ public class WS_SO_Client_List extends IntentService {
         List<String> translist = new ArrayList<>();
         //
         translist.add("msg_sending_data");
-        translist.add("msg_receving_data");
+        translist.add("msg_receiving_data");
         translist.add("msg_process_finalized");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
