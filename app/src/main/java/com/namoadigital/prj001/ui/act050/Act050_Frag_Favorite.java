@@ -87,7 +87,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favorite_list, container, false);
+        View view = inflater.inflate(R.layout.act050_frag_favorite, container, false);
 
         Context context = view.getContext();
 

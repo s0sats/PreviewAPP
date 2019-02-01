@@ -7,9 +7,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Switch;
 
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
@@ -34,23 +39,31 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private SearchableSpinner ssClientType;
+    private SearchableSpinner ssClientDesc;
+    private SearchableSpinner ssPipelineCode;
+    private SearchableSpinner ssPackageDefault;
 
+    private EditText edtClientId;
+    private EditText edtClientName;
+    private EditText edtClientEmail;
+    private EditText edtClientPhone;
+    private EditText edtSoDesc;
+    private EditText edtSoId;
+    private EditText edtSoInfo1;
+    private EditText edtSoInfo2;
+    private EditText edtSoInfo3;
 
-    SearchableSpinner spinner1;
-    SearchableSpinner spinner2;
-    SearchableSpinner spinner3;
-    SearchableSpinner spinner4;
+    private ImageButton ibBack;
+    private ImageButton ibNext;
 
-    EditText text1;
-    EditText text2;
-    EditText text3;
-    EditText text4;
-    EditText text5;
-    EditText text6;
-    EditText text7;
-    EditText text8;
-    EditText text9;
-    EditText text10;
+    private MkDateTime mkDateTime;
+
+    private LinearLayout llSoClient;
+    private LinearLayout llSoOtherInfo;
+    private Switch swHasManualDeadline;
+    private CheckBox cbOtherInfo;
+    private ScrollView sv_main;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
@@ -81,13 +94,93 @@ public class Act050_Frag_SO extends BaseFragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.act050_frag_so, container, false);
+        View view = inflater.inflate(R.layout.act050_frag_so, container, false);
+
+
+        bindSearchableSpinner(view);
+        bindEditText(view);
+        bindImageButton(view);
+        mkDateTime = view.findViewById(R.id.act050_frag_so_manual_deadline);
+        llSoClient =  view.findViewById(R.id.act050_frag_so_client_ll);
+        llSoOtherInfo =  view.findViewById(R.id.act050_frag_so_ll);
+        swHasManualDeadline =  view.findViewById(R.id.act050_frag_so_has_manual_dealine);
+        cbOtherInfo =  view.findViewById(R.id.act050_header_cb_show_hide);
+        sv_main = view.findViewById(R.id.act050_frag_so_sv_main);
+
+        initVars();
+
+        initAction();
+        return view;
+
+    }
+
+    private void initVars() {
+
+        ssClientType.setmTitle("Client Typer - trad");
+        ssClientDesc.setmTitle("Client Desc- trad");
+        ssPipelineCode.setmTitle("Pipeline - trad");
+        ssPackageDefault.setmTitle("Package Default- trad");
+
+    }
+
+    private void initAction() {
+        cbOtherInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(llSoOtherInfo.getVisibility() == View.VISIBLE) llSoOtherInfo.setVisibility(View.GONE);
+                else {
+                    llSoOtherInfo.setVisibility(View.VISIBLE);
+                    sv_main.post(new Runnable() {
+                        public void run() {
+                            sv_main.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
+                }
+            }
+        });
+
+        swHasManualDeadline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mkDateTime.getVisibility() == View.VISIBLE) mkDateTime.setVisibility(View.GONE);
+                else {
+                    mkDateTime.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void bindImageButton(View view) {
+        ibBack = view.findViewById(R.id.act050_frag_param_iv_back);
+        ibNext = view.findViewById(R.id.act050_frag_param_iv_next);
+    }
+
+    private void bindEditText(View view) {
+        edtClientId = view.findViewById(R.id.act050_frag_client_id_val);
+        edtClientName = view.findViewById(R.id.act050_frag_so_client_name_val);
+        edtClientEmail = view.findViewById(R.id.act050_frag_so_email_val);
+        edtClientPhone = view.findViewById(R.id.act050_frag_so_phone_val);
+        edtSoDesc = view.findViewById(R.id.act050_frag_so_desc_val);
+        edtSoId = view.findViewById(R.id.act050_frag_so_id_val);
+        edtSoInfo1 = view.findViewById(R.id.act050_frag_so_info1_val);
+        edtSoInfo2 = view.findViewById(R.id.act050_frag_so_info2_val);
+        edtSoInfo3 = view.findViewById(R.id.act050_frag_so_info3_val);
+    }
+
+    private void bindSearchableSpinner(View view) {
+        ssClientType = view.findViewById(R.id.act050_frag_so_client_type);
+        ssClientDesc = view.findViewById(R.id.act050_frag_so_client);
+        ssPipelineCode = view.findViewById(R.id.act050_frag_so_pipeline_code);
+        ssPackageDefault = view.findViewById(R.id.act050_frag_so_package_default);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
