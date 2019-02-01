@@ -17,6 +17,7 @@ public class WBR_SO_Client_List extends WakefulBroadcastReceiver {
         } else {
             mService.putExtras(new Bundle());
         }
+        startWakefulService(context, mService);
     }
 
 }

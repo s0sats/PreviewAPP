@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.Main_Header_Env;
 import com.namoadigital.prj001.model.SO_Client_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Client_List;
@@ -16,9 +16,10 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-public class WS_SO_Client_List extends IntentService {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final String SERIAL_LOG_FILE =  "SERIAL_LOG_FILE";
+public class WS_SO_Client_List extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -35,9 +36,7 @@ public class WS_SO_Client_List extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            long customer_code = bundle.getLong(SM_SODao.CUSTOMER_CODE);
-            //
-            processWSSOClientList(customer_code);
+            processWSSOClientList();
 
         } catch (Exception e) {
 
@@ -54,7 +53,7 @@ public class WS_SO_Client_List extends IntentService {
 
     }
 
-    private void processWSSOClientList(long customer_code) throws Exception {
+    private void processWSSOClientList() throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -68,17 +67,54 @@ public class WS_SO_Client_List extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
-        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SERIAL_LOG,
+                Constant.WS_SO_CLIENT_LIST,
                 gson.toJson(env)
         );
         //
         SO_Client_Rec rec = gson.fromJson(resultado,SO_Client_Rec.class);
+        //
+        if (!ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                1,
+                1
+        )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
+        ) {
+            return;
+        }
+        String listOfClients = gson.toJson(rec.getClient());
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_process_finalized"), listOfClients, "0");
     }
 
     private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+        //
+        translist.add("msg_sending_data");
+        translist.add("msg_receving_data");
+        translist.add("msg_process_finalized");
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
     }
 }

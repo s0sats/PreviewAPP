@@ -1,30 +1,33 @@
 package com.namoadigital.prj001.ui.act050;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
+import com.namoadigital.prj001.service.WS_SO_Client_List;
+import com.namoadigital.prj001.service.WS_SO_Favorite_List;
 import com.namoadigital.prj001.service.WS_SO_Save;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -33,17 +36,22 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favorite.OnListFragmentInteractionListener, Act050_Frag_Parameters.OnFragParameterInteraction {
+public class Act050_Main extends Base_Activity_Frag implements
+        Act050_Frag_Favorite.OnListFragmentInteractionListener,
+        Act050_Frag_Parameters.OnFragParameterInteraction,
+        Act050_Main_Contract.I_View {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
     public static final String PARAMETERS_FRAGMENT = "PARAMETERS_FRAGMENT";
     public static final String SO_CREATION_FRAGMENT = "SO_CREATION_FRAGMENT";
     private Bundle bundle;
     private FragmentManager fm;
+    private Act050_Main_Presenter mPresenter;
     private long mSerialCode;
     private long mProductCode;
-    private Act050_Frag_Favorite act050_favorite_fragment;
     private MD_Product_Serial mdProductSerial;
+    private String wsProcess;
+    private Act050_Frag_Favorite act050_favorite_fragment;
     private SO_Favorite_Response response;
     private Act050_Frag_Parameters act050_frag_parameters;
     private Act050_Frag_SO act050_s0_creation_fragment;
@@ -109,6 +117,12 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
         transList.add("act050_title");
         transList.add("alert_leave_so_creation_ttl");
         transList.add("alert_discard_so_creation_confirm");
+        transList.add("dialog_searching_favorite_ttl");
+        transList.add("dialog_searching_favorite_msg");
+        transList.add("alert_serial_not_found_tll");
+        transList.add("alert_serial_not_found_msg");
+        transList.add("dialog_loading_client_list_ttl");
+        transList.add("dialog_loading_client_list_msg");
         //Trad Frag Favoritos
         transList.addAll(act050_favorite_fragment.getFragTranslationsVars());
         //Trad Frag Parameters
@@ -125,9 +139,31 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
 
     private void initVars() {
         recoverIntentsInfo();
-        mdProductSerial = getProductSerial();
-        initSmSo();
-        initFragment();
+        //
+        mPresenter = new Act050_Main_Presenter(
+                context,
+                this,
+                hmAux_Trans
+        );
+        //
+        if(mPresenter.getProductSerial(mProductCode,mSerialCode)){
+            initSmSo();
+            initFragment();
+        }else{
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_not_found_tll"),
+                    hmAux_Trans.get("alert_serial_not_found_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+            );
+        }
+
     }
 
     private void initSmSo() {
@@ -145,14 +181,9 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
         mSmSo.setEdit_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
     }
 
-    private MD_Product_Serial getProductSerial() {
-        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
-        return  serialDao.getByString(
-                new MD_Product_Serial_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        mProductCode,
-                        (int) mSerialCode).toSqlQuery()
-        );
+    @Override
+    public void setProductSerial(MD_Product_Serial mdProductSerial) {
+        this.mdProductSerial = mdProductSerial;
     }
 
     private void iniUIFooter() {
@@ -178,6 +209,25 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
         ToolBox_Inf.buildFooterDialog(context);
     }
 
+    //region I_View
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+    //endregion
+
+
+    //region OnListFragmentInteractionListener
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
         //Atualiza favorito selecionado na Act.
@@ -188,30 +238,40 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
     }
 
     @Override
-    public void onProgressDialogRequest(String title, String message, String labelCancel, String labelOk) {
-        enableProgressDialog(
-                title,
-                message,
-                labelCancel,
-                labelOk
-        );
+    public void getFavoriteList(long mProductCode, long mSerialCode, int mCategoryPriceCode, int mSegmentCode) {
+        mPresenter.getFavoriteList(mProductCode,mSerialCode,mCategoryPriceCode,mSegmentCode);
     }
+
+    //endregion
+
+
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        Log.i("SO_Fav", "Close ACT " + mLink);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-         response = gson.fromJson(
-                mLink,
-                SO_Favorite_Response.class
-        );
-        act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
+        //
+        if(wsProcess.equals(WS_SO_Favorite_List.class.getName())){
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            response = gson.fromJson(
+                    mLink,
+                    SO_Favorite_Response.class
+            );
+            act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
+        } else if(wsProcess.equals(WS_SO_Client_List.class.getName())){
+            //MOVER ESSE GET O TRATAMENTO PARA O PRESENTER OU FRAGMENT.
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            ArrayList<SM_SO_Client> clientList =
+                    gson.fromJson(
+                        mLink,
+                        new TypeToken<ArrayList<SM_SO_Client>>() {}.getType()
+            );
+            //comando para teste
+            int clientNum = clientList.size();
+        }
         //
         progressDialog.dismiss();
     }
 
     private void recoverIntentsInfo() {
-
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
@@ -230,7 +290,8 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
      * Reseta dados de criação da O.S resetando as vars
      * mSmSo e mSoFavoriteItem
      */
-    private void clearOSCreationData(){
+    @Override
+    public void clearOSCreationData(){
         mSmSo = new SM_SO();
         initSmSo();
         mSoFavoriteItem = null;
@@ -267,45 +328,25 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
 
     @Override
     public void onBackPressed() {
-        int count = fm.getBackStackEntryCount();
+        mPresenter.onBackPressedClicked(fm,mdProductSerial);
+    }
 
-        if (count == 1) {
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
-            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mProductCode));
-            bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
-            //O serial já foi criado nas etapas anteriores por isso o parametro é falso
-            bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
-            //
-            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
+    @Override
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
-            Intent mIntent = new Intent(context, Act023_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (bundle != null) {
-                mIntent.putExtras(bundle);
-            }
-            startActivity(mIntent);
-            finish();
-        } else if(count == 2) {
-            //Se o voltar foi chamada do fragmento de parametros,
-            //Informa que os dados serão perdidos caso ele continuar.
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_leave_so_creation_ttl"),
-                    hmAux_Trans.get("alert_discard_so_creation_confirm"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            clearOSCreationData();
-                            fm.popBackStack();
-                        }
-                    },
-                    1
-            );
-
-        }else {
-            fm.popBackStack();
+    @Override
+    public void callAct023(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act023_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
         }
-
+        startActivity(mIntent);
+        finish();
     }
 }

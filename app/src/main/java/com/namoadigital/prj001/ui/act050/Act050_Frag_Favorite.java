@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act050;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act050_Favorite_RecyclerView_Adapter;
@@ -38,7 +36,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    public Act050_Main_Presenter mPresenter;
     public RecyclerView recyclerView;
     private long mSerialCode;
     private long mProductCode;
@@ -72,7 +69,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new Act050_Main_Presenter(this, hmAux_Trans);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mProductCode = getArguments().getLong(MD_Product_SerialDao.PRODUCT_CODE);
@@ -93,7 +89,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
 
         setUI(view, context);
 
-        mPresenter.getFavoriteList(getContext(), mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+        mListener.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
 
         return view;
     }
@@ -101,7 +97,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     private void setUI(View view, Context context) {
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         mket_filter = (MKEditTextNM) view.findViewById(R.id.act050_mket_filter_desc);
-//        mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
         mket_filter.setHint(hmAux_Trans.get("favorite_filter_hint"));
         mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
@@ -130,6 +125,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
         List<String> transListFrag = new ArrayList<String>();
         //
         transListFrag.add("favorite_filter_hint");
+        transListFrag.add("start_without_favorite_lbl");
         //
         return transListFrag;
     }
@@ -156,39 +152,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
         super.setHmAux_Trans(hmAux_Trans);
     }
 
-    @Override
-    public void setWsProcess(String wsProcess) {
-        this.wsProcess = wsProcess;
-    }
-
-    @Override
-    public void showPD(String title, String msg) {
-
-        mListener.onProgressDialogRequest(title,
-                msg,
-                "Cancel",
-                "Ok"
-        );
-    }
-
-    @Override
-    public void showNoConnecionMsg() {
-        ToolBox.alertMSG(
-                getContext(),
-                hmAux_Trans.get("alert_no_conection_ttl"),
-                hmAux_Trans.get("alert_no_conection_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //TODO Tratar onbackpressed
-                        dialog.dismiss();
-                    }
-                },
-                0
-        );
-    }
-
-
     public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
         Log.i("SO_Fav", "list size: " + favorites.size());
         List<SO_Favorite_Item> temp = new ArrayList<>();
@@ -196,7 +159,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
                 null,
                 null,
                 null,
-                "Iniciar Vazio \n (Sem Favorito)",
+                hmAux_Trans.get("start_without_favorite_lbl"),
                 "#FFFFFF",
                 "#000000",
                 null,
@@ -207,8 +170,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
                 null,
                 null,
                 null);
-        favorites.add(0,
-        so_favorite_item_placeholder);
+        favorites.add(0,so_favorite_item_placeholder);
 
         mAdapter.setFavoriteList(favorites);
 
@@ -227,9 +189,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(SO_Favorite_Item item);
-
-        void onProgressDialogRequest(String title, String message, String labelCancel, String labelOk);
-
-        void disableProgressDialog();
+        void getFavoriteList(long mProductCode, long mSerialCode, int mCategoryPriceCode, int mSegmentCode);
     }
 }
