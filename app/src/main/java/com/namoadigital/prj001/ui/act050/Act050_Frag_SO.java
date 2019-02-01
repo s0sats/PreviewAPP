@@ -16,8 +16,17 @@ import android.widget.Switch;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO_Client;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +49,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private OnFragmentInteractionListener mListener;
 
     private SearchableSpinner ssClientType;
-    private SearchableSpinner ssClientDesc;
+    private SearchableSpinner ssClientName;
     private SearchableSpinner ssPipelineCode;
     private SearchableSpinner ssPackageDefault;
 
@@ -64,6 +73,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
+
 
     public Act050_Frag_SO() {
         // Required empty public constructor
@@ -124,11 +134,42 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initVars() {
-
-        ssClientType.setmTitle("Client Typer - trad");
-        ssClientDesc.setmTitle("Client Desc- trad");
+        setClientTypeSearchableSpinner();
+//        setClientNameSearchableSpinner();
         ssPipelineCode.setmTitle("Pipeline - trad");
         ssPackageDefault.setmTitle("Package Default- trad");
+
+    }
+
+    private void setClientNameSearchableSpinner(List<SM_SO_Client> clients) {
+        ArrayList<HMAux> mOptionClientName = new ArrayList<>();
+
+        for (SM_SO_Client client:
+                clients) {
+            HMAux e = new HMAux();
+            e.put(SearchableSpinner.ID, client.getClient_id() );
+            e.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
+            mOptionClientName.add(e);
+        }
+
+        ssClientName.setmOption(mOptionClientName);
+        ssClientName.setmTitle("Client Desc - trad");
+    }
+
+    private void setClientTypeSearchableSpinner() {
+        ArrayList<HMAux> mOptionClientType = new ArrayList<>();
+        HMAux auxUserType = new HMAux();
+        auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER );
+        auxUserType.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_USER));
+        mOptionClientType.add(auxUserType);
+        HMAux auxUserClient = new HMAux();
+        auxUserClient.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_CLIENT );
+        auxUserClient.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_CLIENT));
+        mOptionClientType.add(auxUserClient);
+        ssClientType.setmOption(mOptionClientType);
+        ssClientType.setmTitle(hmAux_Trans.get(SM_SODao.CLIENT_TYPE));
+        ssClientType.setmLabel(hmAux_Trans.get(SM_SODao.CLIENT_TYPE));
+        ssClientType.setmShowLabel(true);
 
     }
 
@@ -157,6 +198,22 @@ public class Act050_Frag_SO extends BaseFragment {
                 }
             }
         });
+        ssClientType.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if (ssClientType.getmValue().get(SearchableSpinner.ID) == Constant.CLIENT_TYPE_CLIENT) {
+                    llSoClient.setVisibility(View.VISIBLE);
+                }else{
+                    llSoClient.setVisibility(View.GONE);
+                }
+            }
+        });
+
     }
 
     private void bindImageButton(View view) {
@@ -178,7 +235,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void bindSearchableSpinner(View view) {
         ssClientType = view.findViewById(R.id.act050_frag_so_client_type);
-        ssClientDesc = view.findViewById(R.id.act050_frag_so_client);
+        ssClientName = view.findViewById(R.id.act050_frag_so_client);
         ssPipelineCode = view.findViewById(R.id.act050_frag_so_pipeline_code);
         ssPackageDefault = view.findViewById(R.id.act050_frag_so_package_default);
     }
@@ -191,13 +248,18 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     @Override
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        super.setHmAux_Trans(hmAux_Trans);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             //throw new RuntimeException(context.toString()
-                  //  + " must implement OnFragmentInteractionListener");
+            //  + " must implement OnFragmentInteractionListener");
         }
     }
 
