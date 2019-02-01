@@ -30,8 +30,6 @@ import java.util.List;
 public class Act050_Frag_Parameters extends BaseFragment {
 
     public static final String HMAUX_KEY ="HMAUX_TRANS";
-    public static final String PROFILE_CODE ="PROFILE_CODE";
-    public static final String FAVORITE_CODE ="FAVORITE_CODE";
     public static final String FAVORITE_DESC ="FAVORITE_DESC";
     public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
     public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
@@ -39,8 +37,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private Context context;
     private HMAux hmAux_Trans;
     private MD_Product_Serial mdProductSerial;
-    private int profile_code;
-    private int favorite_code;
     private String favorite_desc;
     private Integer favorite_contract_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
@@ -145,10 +141,66 @@ public class Act050_Frag_Parameters extends BaseFragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        //super.onViewCreated(view, savedInstanceState);
+
+        ss_contract.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                setContractPoInfo(hmAux);
+                //
+                if(mFragListner != null) {
+                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.ID)) : -1;
+                    selected_contract_code = contract_code;
+                    mFragListner.onContractSelected(contract_code);
+                }
+            }
+        });
+        //
+//        btn_back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(mFragListner != null){
+//                    mFragListner.onBackButtonClick();
+//                }
+//            }
+//        });
+        //
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+                    if (mFragListner != null) {
+                        mFragListner.onMoveToOSFragment();
+                    }
+                }else{
+
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         //
         getArguments().putInt(SELECTED_CONTRACT_CODE, selected_contract_code != null ? selected_contract_code : -1);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     private void recoverBundleInfo(Bundle arguments) {
@@ -157,8 +209,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
         if(arguments != null){
             this.hmAux_Trans = (HMAux) arguments.getSerializable(HMAUX_KEY);
             this.mdProductSerial = (MD_Product_Serial) arguments.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
-            this.profile_code = arguments.getInt(PROFILE_CODE);
-            this.favorite_code = arguments.getInt(FAVORITE_CODE);
             this.favorite_desc = arguments.getString(FAVORITE_DESC);
             //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
             //será passado o valor -1. Por isso a tratativa abaixo.
@@ -221,6 +271,11 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.ID)) : -1;
                         selected_contract_code = contract_code;
                         mFragListner.onContractSelected(contract_code);
+                    } else {
+                        if (selected_contract_code != null) {
+                            ss_contract.setmValue(generateSSOption(contracts, favorite_contract_code).get(0));
+                            setContractPoInfo(ss_contract.getmValue());
+                        }
                     }
                 }
                 //
@@ -233,49 +288,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
         }
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //super.onViewCreated(view, savedInstanceState);
-
-        ss_contract.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemPreSelected(HMAux hmAux) {
-
-            }
-
-            @Override
-            public void onItemPostSelected(HMAux hmAux) {
-                setContractPoInfo(hmAux);
-                //
-                if(mFragListner != null) {
-                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.ID)) : -1;
-                    mFragListner.onContractSelected(contract_code);
-                }
-            }
-        });
-        //
-//        btn_back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(mFragListner != null){
-//                    mFragListner.onBackButtonClick();
-//                }
-//            }
-//        });
-        //
-        btn_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
-                    if (mFragListner != null) {
-                        mFragListner.onMoveToOSFragment();
-                    }
-                }else{
-
-                }
-            }
-        });
-    }
 
     private void setContractPoInfo(@Nullable HMAux hmAux) {
         if (hmAux != null && hmAux.size() > 0) {

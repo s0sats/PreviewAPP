@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act050;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
@@ -38,8 +40,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
     public static final String SO_CREATION_FRAGMENT = "SO_CREATION_FRAGMENT";
     private Bundle bundle;
     private FragmentManager fm;
-    private HMAux hmAux_Trans_Frag;
-    private String mResource_Code_Frag;
     private long mSerialCode;
     private long mProductCode;
     private Act050_Frag_Favorite act050_favorite_fragment;
@@ -49,7 +49,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
     private Act050_Frag_SO act050_s0_creation_fragment;
     //Parametros de Save
     private SM_SO mSmSo = new SM_SO();
-    private SO_Favorite_Item soFavoriteItem = null;
+    private SO_Favorite_Item mSoFavoriteItem = null;
     private boolean isContractSelected = false;
 
     @Override
@@ -71,6 +71,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
         act050_favorite_fragment = Act050_Frag_Favorite.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
+        act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
         transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -96,12 +97,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
                 Constant.ACT050
         );
         //
-        mResource_Code_Frag = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.FRG_FAVORITE_LIST
-        );
-        //
         loadTranslation();
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -110,54 +105,21 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
+        //Trad Act050
         transList.add("act050_title");
-        transList.add("alert_offine_mode_title");
-        transList.add("alert_offine_mode_msg");
-        transList.add("alert_product_not_found_title");
-        transList.add("alert_product_not_found_msg");
-        transList.add("sys_alert_btn_cancel");
-        transList.add("sys_alert_btn_ok");
-        transList.add("btn_create");
-        transList.add("btn_so_search");
-        transList.add("progress_so_search_ttl");
-        transList.add("progress_so_search_msg");
-        transList.add("progress_serial_search_ttl");
-        transList.add("progress_serial_search_msg");
-        transList.add("alert_no_so_found_ttl");
-        transList.add("alert_no_so_found_msg");
-        transList.add("alert_save_serial_error_ttl");
-        transList.add("alert_save_serial_error_msg");
-        transList.add("tracking_ttl");
-        transList.add("progress_tracking_search_ttl");
-        transList.add("progress_tracking_search_msg");
-        transList.add("alert_offline_data_not_saved_ttl");
-        transList.add("alert_offline_data_not_saved_msg");
-        transList.add("alert_save_serial_return_ttl");
-        transList.add("alert_no_serial_return_msg");
-        transList.add("alert_no_serial_return_msg");
-        transList.add("alert_save_serial_error_msg");
-        transList.add("alert_save_serial_ok_msg");
-        //
-        transList.add("dialog_serial_search_ttl");
-        transList.add("dialog_serial_search_start");
-        //
+        transList.add("alert_leave_so_creation_ttl");
+        transList.add("alert_discard_so_creation_confirm");
+        //Trad Frag Favoritos
+        transList.addAll(act050_favorite_fragment.getFragTranslationsVars());
+        //Trad Frag Parameters
         transList.addAll(act050_frag_parameters.getFragTranslationsVars());
-
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
-        );
-
-        hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                "",
-                ToolBox_Con.getPreference_Translate_Code(context),
-                //transListFrag
-                Act050_Frag_Favorite.getFragTranslationsVars()
         );
     }
 
@@ -219,7 +181,7 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
     @Override
     public void onListFragmentInteraction(SO_Favorite_Item item) {
         //Atualiza favorito selecionado na Act.
-        soFavoriteItem = item;
+        mSoFavoriteItem = item;
         //Inicializa e seta fragmento de parametros.
         act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode());
         setFrag(act050_frag_parameters,PARAMETERS_FRAGMENT);
@@ -264,6 +226,16 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
         }
     }
 
+    /**
+     * Reseta dados de criação da O.S resetando as vars
+     * mSmSo e mSoFavoriteItem
+     */
+    private void clearOSCreationData(){
+        mSmSo = new SM_SO();
+        initSmSo();
+        mSoFavoriteItem = null;
+    }
+
     //region OnFragParameterInteraction
     @Override
     public MD_Product_Serial getProductSerialRef() {
@@ -298,8 +270,6 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
         int count = fm.getBackStackEntryCount();
 
         if (count == 1) {
-            //send to act023
-
             Bundle bundle = new Bundle();
             bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
             bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mProductCode));
@@ -316,8 +286,24 @@ public class Act050_Main extends Base_Activity_Frag implements Act050_Frag_Favor
             }
             startActivity(mIntent);
             finish();
+        } else if(count == 2) {
+            //Se o voltar foi chamada do fragmento de parametros,
+            //Informa que os dados serão perdidos caso ele continuar.
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_leave_so_creation_ttl"),
+                    hmAux_Trans.get("alert_discard_so_creation_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            clearOSCreationData();
+                            fm.popBackStack();
+                        }
+                    },
+                    1
+            );
 
-        } else {
+        }else {
             fm.popBackStack();
         }
 

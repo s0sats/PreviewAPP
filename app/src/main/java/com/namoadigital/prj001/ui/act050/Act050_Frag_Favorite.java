@@ -102,7 +102,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         mket_filter = (MKEditTextNM) view.findViewById(R.id.act050_mket_filter_desc);
 //        mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
-        mket_filter.setHint("Filtrar favoritos");
+        mket_filter.setHint(hmAux_Trans.get("favorite_filter_hint"));
         mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -129,7 +129,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     public static List<String> getFragTranslationsVars() {
         List<String> transListFrag = new ArrayList<String>();
         //
-        transListFrag.add("product_label");
+        transListFrag.add("favorite_filter_hint");
         //
         return transListFrag;
     }
