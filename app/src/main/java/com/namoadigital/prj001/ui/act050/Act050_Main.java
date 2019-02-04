@@ -25,6 +25,8 @@ import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
+import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
 import com.namoadigital.prj001.service.WS_SO_Client_List;
 import com.namoadigital.prj001.service.WS_SO_Creation_Save;
@@ -43,6 +45,7 @@ import java.util.List;
 public class Act050_Main extends Base_Activity_Frag implements
         Act050_Frag_Favorite.OnListFragmentInteractionListener,
         Act050_Frag_Parameters.OnFragParameterInteraction,
+        Act050_Frag_SO.OnFragmentInteractionListener,
         Act050_Main_Contract.I_View {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
@@ -407,7 +410,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         if(isContractSelected) {
             for(SO_Favorite_Contract contract : response.getContract()) {
                 try {
-                    if (contract.getContractCode() == mSmSo.getContract_code()) {
+                    if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
                         for(SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
                             if (pipelineFav.getPipelineCode() == contract.getPipelineCode()) {
                                 pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
