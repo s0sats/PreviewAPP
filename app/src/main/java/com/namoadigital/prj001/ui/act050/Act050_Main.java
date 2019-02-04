@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act050;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -23,6 +25,8 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
+import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
 import com.namoadigital.prj001.service.WS_SO_Client_List;
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
@@ -39,6 +43,7 @@ import java.util.List;
 public class Act050_Main extends Base_Activity_Frag implements
         Act050_Frag_Favorite.OnListFragmentInteractionListener,
         Act050_Frag_Parameters.OnFragParameterInteraction,
+        Act050_Frag_SO.OnFragmentInteractionListener,
         Act050_Main_Contract.I_View {
 
     public static final String FAVORITE_LIST_FRAGMENT = "Favorite_List_Fragment";
@@ -52,7 +57,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     private MD_Product_Serial mdProductSerial;
     private String wsProcess;
     private Act050_Frag_Favorite act050_favorite_fragment;
-    private SO_Favorite_Response response;
+    public SO_Favorite_Response response;
     private Act050_Frag_Parameters act050_frag_parameters;
     private Act050_Frag_SO act050_s0_creation_fragment;
     //Parametros de Save
@@ -350,4 +355,50 @@ public class Act050_Main extends Base_Activity_Frag implements
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+
+    @Override
+    public List<SO_Favorite_Pipeline> getPipelineList() {
+        return response.getPipeline();
+    }
+
+    @Override
+    public HMAux getPipelineFavorite() {
+        HMAux pipeline = new HMAux();
+        if(isContractSelected) {
+            for(SO_Favorite_Contract contract : response.getContract()) {
+                try {
+                    if (contract.getContractCode() == mSmSo.getContract_code()) {
+                        for(SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
+                            if (pipelineFav.getPipelineCode() == contract.getPipelineCode()) {
+                                pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
+                                pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
+                                return pipeline;
+                            }
+                        }
+                    }
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return pipeline;
+    }
+
+    @Override
+    public List<SO_Favorite_Priority> getPriorityList() {
+        return response.getPriority();
+    }
+
+    @Override
+    public SO_Favorite_Item getFavoriteItem() {
+        return mSoFavoriteItem;
+    }
+
+
 }

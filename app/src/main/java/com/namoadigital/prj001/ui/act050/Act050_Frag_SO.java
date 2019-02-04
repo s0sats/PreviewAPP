@@ -19,11 +19,11 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO_Client;
+import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
+import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private SearchableSpinner ssClientType;
     private SearchableSpinner ssClientName;
     private SearchableSpinner ssPipelineCode;
-    private SearchableSpinner ssPackageDefault;
+    private SearchableSpinner ssPriority;
 
     private EditText edtClientId;
     private EditText edtClientName;
@@ -73,7 +73,6 @@ public class Act050_Frag_SO extends BaseFragment {
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
-
 
     public Act050_Frag_SO() {
         // Required empty public constructor
@@ -104,8 +103,6 @@ public class Act050_Frag_SO extends BaseFragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
     }
 
     @Override
@@ -134,29 +131,72 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initVars() {
-        setClientTypeSearchableSpinner();
-//        setClientNameSearchableSpinner();
-        ssPipelineCode.setmTitle("Pipeline - trad");
-        ssPackageDefault.setmTitle("Package Default- trad");
+        SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
+        setClientTypeSearchableSpinner(favoriteItem);
+        setClientNameSearchableSpinner(favoriteItem);
+
+        setPipelineSearchableSpinner();
+        setPrioritySearchableSpinner();
 
     }
 
-    private void setClientNameSearchableSpinner(List<SM_SO_Client> clients) {
-        ArrayList<HMAux> mOptionClientName = new ArrayList<>();
+    private void setPrioritySearchableSpinner() {
+        ssPriority.setmTitle("Priority- trad");
+        ssPriority.setmLabel("Priority- trad");
 
-        for (SM_SO_Client client:
-                clients) {
-            HMAux e = new HMAux();
-            e.put(SearchableSpinner.ID, client.getClient_id() );
-            e.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
-            mOptionClientName.add(e);
+        ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
+        for (SO_Favorite_Priority priority:
+                mListener.getPriorityList()) {
+            HMAux priorityOption = new HMAux();
+            priorityOption.put(SearchableSpinner.ID, String.valueOf(priority.getPriorityCode()));
+            priorityOption.put(SearchableSpinner.DESCRIPTION, priority.getPriorityDesc());
+            mPriorityOptions.add(priorityOption);
+            if (priority.getPriorityDefault() == 1){
+                ssPriority.setmValue(priorityOption);
+            }
+        }
+        ssPriority.setmOption(mPriorityOptions);
+    }
+
+    private void setPipelineSearchableSpinner() {
+        ssPipelineCode.setmTitle("Pipeline - trad");
+        ssPipelineCode.setmLabel("Pipeline - trad");
+
+        ArrayList<HMAux> mPipelineOptions = new ArrayList<>();
+        for (SO_Favorite_Pipeline pipeline:
+        mListener.getPipelineList()) {
+            HMAux pipelineOption = new HMAux();
+            pipelineOption.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()) );
+            pipelineOption.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
+            mPipelineOptions.add(pipelineOption);
         }
 
+        ssPipelineCode.setmOption(mPipelineOptions);
+        HMAux pipelineFav = mListener.getPipelineFavorite();
+        ssPipelineCode.setmValue(pipelineFav);
+    }
+
+    private void setClientNameSearchableSpinner(SO_Favorite_Item favoriteItem) {
+        ArrayList<HMAux> mOptionClientName = new ArrayList<>();
+
+        if(favoriteItem.getClientName() != null) {
+            llSoClient.setVisibility(View.VISIBLE);
+            setClientInfo(favoriteItem);
+        }else{
+            llSoClient.setVisibility(View.GONE);
+        }
+//        for (SM_SO_Client client:
+//                clients) {
+//            HMAux e = new HMAux();
+//            e.put(SearchableSpinner.ID, client.getClient_id() );
+//            e.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
+//            mOptionClientName.add(e);
+//        }
         ssClientName.setmOption(mOptionClientName);
         ssClientName.setmTitle("Client Desc - trad");
     }
 
-    private void setClientTypeSearchableSpinner() {
+    private void setClientTypeSearchableSpinner(SO_Favorite_Item favoriteItem) {
         ArrayList<HMAux> mOptionClientType = new ArrayList<>();
         HMAux auxUserType = new HMAux();
         auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER );
@@ -167,10 +207,14 @@ public class Act050_Frag_SO extends BaseFragment {
         auxUserClient.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_CLIENT));
         mOptionClientType.add(auxUserClient);
         ssClientType.setmOption(mOptionClientType);
-        ssClientType.setmTitle(hmAux_Trans.get(SM_SODao.CLIENT_TYPE));
-        ssClientType.setmLabel(hmAux_Trans.get(SM_SODao.CLIENT_TYPE));
+        ssClientType.setmTitle("Cliente Type -trad");
+        ssClientType.setmLabel("Cliente Type -trad");
         ssClientType.setmShowLabel(true);
-
+        if(favoriteItem.getClientType().equals(Constant.CLIENT_TYPE_CLIENT)){
+            ssClientType.setmValue(auxUserClient);
+        }else if(favoriteItem.getClientType().equals(Constant.CLIENT_TYPE_USER)){
+            ssClientType.setmValue(auxUserType);
+        }
     }
 
     private void initAction() {
@@ -208,12 +252,24 @@ public class Act050_Frag_SO extends BaseFragment {
             public void onItemPostSelected(HMAux hmAux) {
                 if (ssClientType.getmValue().get(SearchableSpinner.ID) == Constant.CLIENT_TYPE_CLIENT) {
                     llSoClient.setVisibility(View.VISIBLE);
+                    setClientInfo(mListener.getFavoriteItem());
                 }else{
                     llSoClient.setVisibility(View.GONE);
                 }
             }
         });
 
+    }
+
+    private void setClientInfo(SO_Favorite_Item favorite) {
+        edtClientId.setText(favorite.getClientId());
+        edtClientName.setText(favorite.getClientName());
+        edtClientEmail.setText(favorite.getClientEmail());
+        edtClientPhone.setText(favorite.getClientPhone());
+        HMAux clientValue = new HMAux();
+        clientValue.put(SearchableSpinner.ID, favorite.getClientId());
+        clientValue.put(SearchableSpinner.DESCRIPTION, favorite.getClientId() + " - " + favorite.getClientName());
+        ssClientName.setmValue(clientValue);
     }
 
     private void bindImageButton(View view) {
@@ -237,7 +293,8 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType = view.findViewById(R.id.act050_frag_so_client_type);
         ssClientName = view.findViewById(R.id.act050_frag_so_client);
         ssPipelineCode = view.findViewById(R.id.act050_frag_so_pipeline_code);
-        ssPackageDefault = view.findViewById(R.id.act050_frag_so_package_default);
+        ssPriority = view.findViewById(R.id.act050_frag_so_package_default);
+        ssPriority = view.findViewById(R.id.act050_frag_so_package_default);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -282,5 +339,12 @@ public class Act050_Frag_SO extends BaseFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+
+        List<SO_Favorite_Pipeline> getPipelineList();
+        HMAux getPipelineFavorite();
+
+        List<SO_Favorite_Priority> getPriorityList();
+        SO_Favorite_Item getFavoriteItem();
+
     }
 }

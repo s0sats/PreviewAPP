@@ -3,7 +3,7 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class SO_Favorite_Pipeline {
+public class SO_Favorite_Pipeline {
     @SerializedName("customer_code")
     @Expose
     private Integer customerCode;
