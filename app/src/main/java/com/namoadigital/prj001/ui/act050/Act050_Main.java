@@ -54,7 +54,6 @@ public class Act050_Main extends Base_Activity_Frag implements
     public static final String SO_CONTRACT_PIPELINE_KEY = "SO_CONTRACT_PIPELINE_KEY";
 
 
-
     private Bundle bundle;
     private FragmentManager fm;
     private Act050_Main_Presenter mPresenter;
@@ -91,7 +90,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         FragmentTransaction transaction = fm.beginTransaction();
         act050_favorite_fragment = Act050_Frag_Favorite.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
         act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.add(R.id.act050_frg_placeholder,act050_favorite_fragment , FAVORITE_LIST_FRAGMENT);
+        transaction.add(R.id.act050_frg_placeholder, act050_favorite_fragment, FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -163,10 +162,10 @@ public class Act050_Main extends Base_Activity_Frag implements
                 hmAux_Trans
         );
         //
-        if(mPresenter.getProductSerial(mProductCode,mSerialCode)){
+        if (mPresenter.getProductSerial(mProductCode, mSerialCode)) {
             initSoCreationObj();
             initFragment();
-        }else{
+        } else {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_serial_not_found_tll"),
@@ -252,12 +251,12 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSoFavoriteItem = item;
         //Inicializa e seta fragmento de parametros.
         act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode());
-        setFrag(act050_frag_parameters,PARAMETERS_FRAGMENT);
+        setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
     @Override
     public void getFavoriteList(long mProductCode, long mSerialCode, int mCategoryPriceCode, int mSegmentCode) {
-        mPresenter.getFavoriteList(mProductCode,mSerialCode,mCategoryPriceCode,mSegmentCode);
+        mPresenter.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
     }
 
     //endregion
@@ -274,24 +273,25 @@ public class Act050_Main extends Base_Activity_Frag implements
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(wsProcess.equals(WS_SO_Favorite_List.class.getName())){
+        if (wsProcess.equals(WS_SO_Favorite_List.class.getName())) {
             Gson gson = new GsonBuilder().serializeNulls().create();
             response = gson.fromJson(
                     mLink,
                     SO_Favorite_Response.class
             );
             act050_favorite_fragment.populatedFavoritesList(response.getFavorite());
-        } else if(wsProcess.equals(WS_SO_Client_List.class.getName())){
+        } else if (wsProcess.equals(WS_SO_Client_List.class.getName())) {
             //MOVER ESSE GET O TRATAMENTO PARA O PRESENTER OU FRAGMENT.
             Gson gson = new GsonBuilder().serializeNulls().create();
             ArrayList<SM_SO_Client> clientList =
                     gson.fromJson(
                             mLink,
-                            new TypeToken<ArrayList<SM_SO_Client>>() {}.getType()
+                            new TypeToken<ArrayList<SM_SO_Client>>() {
+                            }.getType()
                     );
             //comando para teste
             int clientNum = clientList.size();
-        }else if(wsProcess.equals(WS_SO_Creation_Save.class.getName())){
+        } else if (wsProcess.equals(WS_SO_Creation_Save.class.getName())) {
             mPresenter.processSoCreationRet(hmAux);
         }
         //
@@ -318,7 +318,7 @@ public class Act050_Main extends Base_Activity_Frag implements
      * mSOCreationObj e mSoFavoriteItem
      */
     @Override
-    public void clearOSCreationData(){
+    public void clearOSCreationData() {
         mSOCreationObj = new SO_Creation_Obj();
         initSoCreationObj();
         mSoFavoriteItem = null;
@@ -345,7 +345,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance("1","1");
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance("1", "1");
         act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
         //APENAS TESTE DO WS CREATION
@@ -360,7 +360,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(fm,mdProductSerial);
+        mPresenter.onBackPressedClicked(fm, mdProductSerial);
     }
 
     @Override
@@ -407,21 +407,17 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public HMAux getPipelineFavorite() {
         HMAux pipeline = new HMAux();
-        if(isContractSelected) {
-            for(SO_Favorite_Contract contract : response.getContract()) {
-                try {
-                    if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
-                        for(SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
-                            if (pipelineFav.getPipelineCode() == contract.getPipelineCode()) {
-                                pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
-                                pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
-                                return pipeline;
-                            }
-                        }
+        if (isContractSelected) {
+            try {
+                for (SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
+                    if (pipelineFav.getPipelineCode() == mSOCreationObj.getPipeline_code()) {
+                        pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
+                        pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
+                        return pipeline;
                     }
-                }catch (NullPointerException e){
-                    e.printStackTrace();
                 }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             }
         }
         return pipeline;
@@ -435,6 +431,13 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public SO_Favorite_Item getFavoriteItem() {
         return mSoFavoriteItem;
+    }
+
+    @Override
+    public void onBackButtonPressed() {
+//        salvar
+//        fm.popBackStack();
+
     }
 
 

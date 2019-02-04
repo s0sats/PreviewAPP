@@ -52,6 +52,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private SearchableSpinner ssClientName;
     private SearchableSpinner ssPipelineCode;
     private SearchableSpinner ssPriority;
+    private SearchableSpinner ssPackageDefault;
 
     private EditText edtClientId;
     private EditText edtClientName;
@@ -112,7 +113,6 @@ public class Act050_Frag_SO extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.act050_frag_so, container, false);
 
-
         bindSearchableSpinner(view);
         bindEditText(view);
         bindImageButton(view);
@@ -137,7 +137,34 @@ public class Act050_Frag_SO extends BaseFragment {
 
         setPipelineSearchableSpinner();
         setPrioritySearchableSpinner();
+        setPackageDefaultSearchableSpinner(favoriteItem);
 
+    }
+
+    private void setPackageDefaultSearchableSpinner(SO_Favorite_Item favoriteItem) {
+
+        ssPackageDefault.setmTitle("Package Default- trad");
+        ssPackageDefault.setmLabel("Package Default- trad");
+        ArrayList<HMAux> mPackageDefaultOptions = new ArrayList<>();
+
+        HMAux packageDefaultWith = new HMAux();
+        packageDefaultWith.put(SearchableSpinner.ID, "");
+        packageDefaultWith.put(SearchableSpinner.DESCRIPTION, "WITH_PACK_DEFAULT_PENDING");
+        mPackageDefaultOptions.add(packageDefaultWith);
+
+
+        HMAux packageDefaultWithout = new HMAux();
+        packageDefaultWithout.put(SearchableSpinner.ID, "");
+        packageDefaultWithout.put(SearchableSpinner.DESCRIPTION, "WITHOUT_PACK_DEFAULT_PENDING");
+        mPackageDefaultOptions.add(packageDefaultWithout);
+
+        ssPackageDefault.setmOption(mPackageDefaultOptions);
+
+        if(favoriteItem.getPackDefault().equals("WITH_PACK_DEFAULT_PENDING")) {
+            ssPackageDefault.setmValue(packageDefaultWith);
+        }else if(favoriteItem.getPackDefault().equals("WITH_PACK_DEFAULT_PENDING")) {
+            ssPackageDefault.setmValue(packageDefaultWithout);
+        }
     }
 
     private void setPrioritySearchableSpinner() {
@@ -259,6 +286,13 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+        ibBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onBackButtonPressed();
+            }
+        });
+
     }
 
     private void setClientInfo(SO_Favorite_Item favorite) {
@@ -293,8 +327,8 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType = view.findViewById(R.id.act050_frag_so_client_type);
         ssClientName = view.findViewById(R.id.act050_frag_so_client);
         ssPipelineCode = view.findViewById(R.id.act050_frag_so_pipeline_code);
-        ssPriority = view.findViewById(R.id.act050_frag_so_package_default);
-        ssPriority = view.findViewById(R.id.act050_frag_so_package_default);
+        ssPriority = view.findViewById(R.id.act050_frag_so_priority);
+        ssPackageDefault = view.findViewById(R.id.act050_frag_so_package_default);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -345,6 +379,6 @@ public class Act050_Frag_SO extends BaseFragment {
 
         List<SO_Favorite_Priority> getPriorityList();
         SO_Favorite_Item getFavoriteItem();
-
+        void onBackButtonPressed();
     }
 }
