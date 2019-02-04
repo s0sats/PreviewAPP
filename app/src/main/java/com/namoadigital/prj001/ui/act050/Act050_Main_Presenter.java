@@ -12,11 +12,15 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.receiver.WBR_SO_Client_List;
+import com.namoadigital.prj001.receiver.WBR_SO_Creation_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Favorite_List;
 import com.namoadigital.prj001.service.WS_SO_Client_List;
+import com.namoadigital.prj001.service.WS_SO_Creation_Save;
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
@@ -101,6 +105,64 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void executeWsSoCreation(SO_Creation_Obj mSoCreation) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_SO_Creation_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_so_creating_ttl"),
+                    hmAux_Trans.get("dialog_so_creating_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Creation_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(WS_SO_Creation_Save.SO_CREATION_OBJ_KEY,mSoCreation);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processSoCreationRet(final HMAux hmAuxRet) {
+        if(hmAuxRet.hasConsistentValue(SM_SODao.SO_PREFIX)
+           && hmAuxRet.hasConsistentValue(SM_SODao.SO_CODE)
+           && !hmAuxRet.get(SM_SODao.SO_PREFIX).equals("0")
+           && !hmAuxRet.get(SM_SODao.SO_CODE).equals("0")
+        ){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_creation_return_ttl"),
+                    hmAux_Trans.get("alert_so_creation_return_success"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Bundle bundle = new Bundle();
+                            //
+                            bundle.putString(SM_SODao.SO_PREFIX,hmAuxRet.get(SM_SODao.SO_PREFIX));
+                            bundle.putString(SM_SODao.SO_CODE,hmAuxRet.get(SM_SODao.SO_CODE));
+                            //
+                            mView.callAct027(context,bundle);
+                        }
+                    },
+                    0
+            );
+        }else{
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_creation_return_ttl"),
+                    hmAux_Trans.get("alert_so_creation_return_error") +"\n"+
+                         hmAuxRet.get(WS_SO_Creation_Save.SO_CREATION_MSG_KEY) ,
+                    null,
+                    0
+            );
         }
     }
 

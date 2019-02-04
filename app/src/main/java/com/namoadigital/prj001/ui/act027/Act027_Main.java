@@ -684,8 +684,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
         frgSerialEdit.setNew_serial(false);
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_serial_save"));
-        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
+        //04/02/2019
+        //Agora o fragmento de serial só usará o layout full com alterações.
+        //frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         controls_frags.add(frgSerialEdit);
         initializaFragInterfaces();
 

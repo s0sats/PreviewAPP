@@ -69,7 +69,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
     public interface OnFragParameterInteraction{
         MD_Product_Serial getProductSerialRef();
         List<SO_Favorite_Contract> getContracts();
-        void onContractSelected(int contract_code);
+        void onContractSelected(int contract_code, Integer pipeline_code);
         void onMoveToOSFragment();
         void onBackButtonClick();
     }
@@ -156,8 +156,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 //
                 if(mFragListner != null) {
                     Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.ID)) : -1;
+                    Integer pipeline_code = hmAux.hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(hmAux.get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                     selected_contract_code = contract_code;
-                    mFragListner.onContractSelected(contract_code);
+                    mFragListner.onContractSelected(contract_code,pipeline_code);
                 }
             }
         });
@@ -269,8 +270,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         //
                         setContractPoInfo(options.get(0));
                         Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.ID)) : -1;
+                        Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                         selected_contract_code = contract_code;
-                        mFragListner.onContractSelected(contract_code);
+                        mFragListner.onContractSelected(contract_code,pipeline_code);
                     } else {
                         if (selected_contract_code != null) {
                             ss_contract.setmValue(generateSSOption(contracts, favorite_contract_code).get(0));
@@ -326,6 +328,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SM_SODao.CONTRACT_PO_CLIENT1,contract.getPoClient1());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT2,contract.getPoClient2());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT3,contract.getPoClient3());
+            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(contract.getPipelineCode()));
             //Se favorite_contract_code null, insere todos os itens na lista,
             //Se não insere apenas o item já determinado
             if(contract_code == null || contract_code.equals(contract.getContractCode())) {

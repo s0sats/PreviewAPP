@@ -577,6 +577,9 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_SO_Client_List" />
         <receiver android:name=".receiver.WBR_SO_Client_List" />
 
+        <service android:name=".service.WS_SO_Creation_Save" />
+        <receiver android:name=".receiver.WBR_SO_Creation_Save" />
+
     </application>
 
 </manifest>
