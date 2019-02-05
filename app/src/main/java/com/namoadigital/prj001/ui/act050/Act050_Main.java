@@ -349,8 +349,6 @@ public class Act050_Main extends Base_Activity_Frag implements
         act050_s0_creation_fragment = Act050_Frag_SO.newInstance("1", "1");
         act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
-        //APENAS TESTE DO WS CREATION
-        //mPresenter.executeWsSoCreation(mSOCreationObj);
     }
 
     @Override
@@ -459,6 +457,8 @@ public class Act050_Main extends Base_Activity_Frag implements
 //        fm.popBackStack();
 
     }
-
-
+    @Override
+    public SO_Creation_Obj getmSOCreationObj() {
+        return mSOCreationObj;
+    }
 }

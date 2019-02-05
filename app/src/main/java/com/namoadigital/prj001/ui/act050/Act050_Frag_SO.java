@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO_Client;
+import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
@@ -236,11 +237,15 @@ public class Act050_Frag_SO extends BaseFragment {
         HMAux auxUserType = new HMAux();
         auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER );
         auxUserType.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_USER));
+
         mOptionClientType.add(auxUserType);
+
         HMAux auxUserClient = new HMAux();
         auxUserClient.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_CLIENT );
         auxUserClient.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_CLIENT));
+
         mOptionClientType.add(auxUserClient);
+
         ssClientType.setmOption(mOptionClientType);
         ssClientType.setmTitle("Cliente Type -trad");
         ssClientType.setmLabel("Cliente Type -trad");
@@ -351,6 +356,27 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+        ibNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
+
+                addClientInfoToRequest(my_so_creation_obj);
+
+                addSoInfoToRequest(my_so_creation_obj);
+
+                my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
+                my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+
+                my_so_creation_obj.setDeadline_manual((swHasManualDeadline.getShowText()) ? 1 : 0);
+                if(swHasManualDeadline.getShowText()){
+                    my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+                }
+            }
+        });
+
         ibPackageDeafultInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -380,6 +406,22 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+    }
+
+    private void addSoInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
+
+        my_so_creation_obj.setSo_desc(Integer.valueOf(edtSoDesc.getText().toString() == "" ? null: edtSoDesc.getText().toString() ));
+        my_so_creation_obj.setSo_id(edtSoId.getText().toString());
+        my_so_creation_obj.setAdd_inf1(edtSoInfo1.getText().toString());
+        my_so_creation_obj.setAdd_inf2(edtSoInfo2.getText().toString());
+        my_so_creation_obj.setAdd_inf3(edtSoInfo3.getText().toString());
+    }
+
+    private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
+        my_so_creation_obj.setClient_id(edtClientId.getText().toString());
+        my_so_creation_obj.setClient_name(edtClientName.getText().toString());
+        my_so_creation_obj.setClient_email(edtClientEmail.getText().toString());
+        my_so_creation_obj.setClient_phone(edtClientPhone.getText().toString());
     }
 
     private void setClientInfo(String clientId, String clientName, String clientPhone, String clientEmail) {
@@ -506,5 +548,6 @@ public class Act050_Frag_SO extends BaseFragment {
         SO_Favorite_Item getFavoriteItem();
         List<String> getPackageDefaultByContract();
         void onBackButtonPressed();
+        SO_Creation_Obj getmSOCreationObj();
     }
 }
