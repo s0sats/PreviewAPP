@@ -17,13 +17,16 @@ import android.widget.Switch;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO_Client;
+import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,8 @@ public class Act050_Frag_SO extends BaseFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final String WITH_PACK_DEFAULT_PENDING = "WITH_PACK_DEFAULT_PENDING";
+    public static final String WITHOUT_PACK_DEFAULT_PENDING = "WITHOUT_PACK_DEFAULT_PENDING";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,6 +71,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private ImageButton ibBack;
     private ImageButton ibNext;
+    private ImageButton ibPackageDeafultInfo;
 
     private MkDateTime mkDateTime;
 
@@ -74,7 +80,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
-
+    private List<SM_SO_Client> clientsList = new ArrayList<>();
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
@@ -144,7 +150,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void setPackageDefaultSearchableSpinner(SO_Favorite_Item favoriteItem) {
 
         ssPackageDefault.setmTitle("Package Default- trad");
-        ssPackageDefault.setmLabel("Package Default- trad");
+        ssPackageDefault.setmLabel(null);
         ArrayList<HMAux> mPackageDefaultOptions = new ArrayList<>();
 
         HMAux packageDefaultWith = new HMAux();
@@ -159,11 +165,17 @@ public class Act050_Frag_SO extends BaseFragment {
         mPackageDefaultOptions.add(packageDefaultWithout);
 
         ssPackageDefault.setmOption(mPackageDefaultOptions);
+        ibPackageDeafultInfo.setVisibility(View.GONE);
 
-        if(favoriteItem.getPackDefault().equals("WITH_PACK_DEFAULT_PENDING")) {
-            ssPackageDefault.setmValue(packageDefaultWith);
-        }else if(favoriteItem.getPackDefault().equals("WITH_PACK_DEFAULT_PENDING")) {
-            ssPackageDefault.setmValue(packageDefaultWithout);
+        try {
+            if (favoriteItem.getPackDefault().equals(WITH_PACK_DEFAULT_PENDING)) {
+                ssPackageDefault.setmValue(packageDefaultWith);
+                ibPackageDeafultInfo.setVisibility(View.VISIBLE);
+            } else if (favoriteItem.getPackDefault().equals(WITHOUT_PACK_DEFAULT_PENDING)) {
+                ssPackageDefault.setmValue(packageDefaultWithout);
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -204,23 +216,19 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setClientNameSearchableSpinner(SO_Favorite_Item favoriteItem) {
-        ArrayList<HMAux> mOptionClientName = new ArrayList<>();
-
         if(favoriteItem.getClientName() != null) {
             llSoClient.setVisibility(View.VISIBLE);
-            setClientInfo(favoriteItem);
+            setClientInfo(
+                    favoriteItem.getClientId(),
+                    favoriteItem.getClientName(),
+                    favoriteItem.getClientPhone(),
+                    favoriteItem.getClientEmail()
+            );
         }else{
             llSoClient.setVisibility(View.GONE);
         }
-//        for (SM_SO_Client client:
-//                clients) {
-//            HMAux e = new HMAux();
-//            e.put(SearchableSpinner.ID, client.getClient_id() );
-//            e.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
-//            mOptionClientName.add(e);
-//        }
-        ssClientName.setmOption(mOptionClientName);
-        ssClientName.setmTitle("Client Desc - trad");
+        ssClientName.setmTitle("Client Name - trad");
+        ssClientName.setmLabel("Client Name - trad");
     }
 
     private void setClientTypeSearchableSpinner(SO_Favorite_Item favoriteItem) {
@@ -239,6 +247,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType.setmShowLabel(true);
         if(favoriteItem.getClientType().equals(Constant.CLIENT_TYPE_CLIENT)){
             ssClientType.setmValue(auxUserClient);
+            mListener.getClientList();
         }else if(favoriteItem.getClientType().equals(Constant.CLIENT_TYPE_USER)){
             ssClientType.setmValue(auxUserType);
         }
@@ -269,6 +278,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 }
             }
         });
+
         ssClientType.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -279,9 +289,57 @@ public class Act050_Frag_SO extends BaseFragment {
             public void onItemPostSelected(HMAux hmAux) {
                 if (ssClientType.getmValue().get(SearchableSpinner.ID) == Constant.CLIENT_TYPE_CLIENT) {
                     llSoClient.setVisibility(View.VISIBLE);
-                    setClientInfo(mListener.getFavoriteItem());
+                    SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
+                    setClientInfo(
+                            favoriteItem.getClientId(),
+                            favoriteItem.getClientName(),
+                            favoriteItem.getClientPhone(),
+                            favoriteItem.getClientEmail()
+                    );
+                    if(ssClientName.getmOption().size() ==0){
+                        mListener.getClientList();
+                    }
                 }else{
                     llSoClient.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        ssClientName.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+
+                for(SM_SO_Client client : clientsList){
+                    if(client.getClient_id() == hmAux.get(SearchableSpinner.ID)){
+                        setClientInfo(
+                                client.getClient_id(),
+                                client.getClient_name(),
+                                client.getClient_phone(),
+                                client.getClient_email()
+                        );
+                    }
+                }
+            }
+        });
+
+        ssPackageDefault.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                ssPackageDefault.setmValue(hmAux);
+                if(hmAux.get(SearchableSpinner.DESCRIPTION) == WITH_PACK_DEFAULT_PENDING) {
+                    ibPackageDeafultInfo.setVisibility(View.VISIBLE);
+                }else{
+                    ibPackageDeafultInfo.setVisibility(View.GONE);
                 }
             }
         });
@@ -293,22 +351,73 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+        ibPackageDeafultInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = "Lista de pacotes - trad";
+                String msg = "";
+                List<String> msgs = mListener.getPackageDefaultByContract();
+
+                try {
+                    for (String s : msgs) {
+                        msg = s + "\n";
+                    }
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+                if(msg.isEmpty()){
+                    msg = "Não há pacotes listados - trad";
+                }
+
+                ToolBox.alertMSG(
+                        getContext(),
+                        title,
+                        msg,
+                        null,
+                        0
+                );
+            }
+        });
+
     }
 
-    private void setClientInfo(SO_Favorite_Item favorite) {
-        edtClientId.setText(favorite.getClientId());
-        edtClientName.setText(favorite.getClientName());
-        edtClientEmail.setText(favorite.getClientEmail());
-        edtClientPhone.setText(favorite.getClientPhone());
-        HMAux clientValue = new HMAux();
-        clientValue.put(SearchableSpinner.ID, favorite.getClientId());
-        clientValue.put(SearchableSpinner.DESCRIPTION, favorite.getClientId() + " - " + favorite.getClientName());
-        ssClientName.setmValue(clientValue);
+    private void setClientInfo(String clientId, String clientName, String clientPhone, String clientEmail) {
+
+        verifyPermission();
+
+        if (clientName!=null){
+            edtClientId.setText(clientId);
+            edtClientName.setText(clientName);
+            edtClientPhone.setText(clientPhone);
+            edtClientEmail.setText(clientEmail);
+            HMAux clientValue = new HMAux();
+            clientValue.put(SearchableSpinner.ID, clientId);
+            clientValue.put(SearchableSpinner.DESCRIPTION, clientId + " - " + clientName);
+            ssClientName.setmValue(clientValue);
+        }
     }
+
+    private void verifyPermission() {
+        if ( ToolBox_Inf.profileExists(getContext(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)){
+            setEnableFields(true);
+        }else{
+            setEnableFields(false);
+        }
+    }
+
+    private void setEnableFields(boolean b) {
+        edtClientPhone.setEnabled(b);
+        edtClientEmail.setEnabled(b);
+        edtClientId.setEnabled(b);
+        edtClientName.setEnabled(b);
+    }
+
 
     private void bindImageButton(View view) {
         ibBack = view.findViewById(R.id.act050_frag_param_iv_back);
         ibNext = view.findViewById(R.id.act050_frag_param_iv_next);
+        ibPackageDeafultInfo = view.findViewById(R.id.act050_frag_so_package_default_info);
     }
 
     private void bindEditText(View view) {
@@ -360,6 +469,22 @@ public class Act050_Frag_SO extends BaseFragment {
         mListener = null;
     }
 
+    public void populateClientList(ArrayList<SM_SO_Client> clientList) {
+        this.clientsList =clientList;
+
+        ArrayList<HMAux> clientListOption = new ArrayList<>();
+        for(SM_SO_Client client : clientList){
+            HMAux clientData = new HMAux();
+            clientData.put(SearchableSpinner.ID, client.getClient_id() );
+            clientData.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
+            clientListOption.add(clientData);
+        }
+
+        if(clientListOption.size() >0){
+            ssClientName.setmOption(clientListOption);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -376,9 +501,10 @@ public class Act050_Frag_SO extends BaseFragment {
 
         List<SO_Favorite_Pipeline> getPipelineList();
         HMAux getPipelineFavorite();
-
+        void getClientList();
         List<SO_Favorite_Priority> getPriorityList();
         SO_Favorite_Item getFavoriteItem();
+        List<String> getPackageDefaultByContract();
         void onBackButtonPressed();
     }
 }

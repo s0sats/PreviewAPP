@@ -291,6 +291,7 @@ public class Act050_Main extends Base_Activity_Frag implements
                     );
             //comando para teste
             int clientNum = clientList.size();
+            act050_s0_creation_fragment.populateClientList(clientList);
         } else if (wsProcess.equals(WS_SO_Creation_Save.class.getName())) {
             mPresenter.processSoCreationRet(hmAux);
         }
@@ -424,6 +425,11 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
+    public void getClientList() {
+        mPresenter.executeWsSoClient();
+    }
+
+    @Override
     public List<SO_Favorite_Priority> getPriorityList() {
         return response.getPriority();
     }
@@ -431,6 +437,20 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public SO_Favorite_Item getFavoriteItem() {
         return mSoFavoriteItem;
+    }
+
+    @Override
+    public List<String> getPackageDefaultByContract() {
+        if (isContractSelected) {
+
+            for (SO_Favorite_Contract contract : response.getContract()
+                 ) {
+                if(contract.getContractCode() == mSOCreationObj.getContract_code()){
+                   return contract.getPackDefault();
+                }
+            }
+        }
+            return null;
     }
 
     @Override
