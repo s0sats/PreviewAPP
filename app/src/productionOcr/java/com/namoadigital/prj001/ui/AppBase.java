@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 
+import com.microblink.MicroblinkSDK;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
@@ -154,6 +155,15 @@ public class AppBase extends Application {
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
+
+        //
+        try {
+            //Comando para não exibir msg de licence limited time.
+            MicroblinkSDK.setShowTimeLimitedLicenseWarning(false);
+            MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.production_BlinkID_Android_2020-06-18.mblic", this);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
 
     }
 }

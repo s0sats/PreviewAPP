@@ -152,6 +152,12 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
         //
-        MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.development_BlinkID_Android_2019-02-07.mblic", this);
+        try {
+            //Comando para não exibir msg de licence limited time.
+            MicroblinkSDK.setShowTimeLimitedLicenseWarning(false);
+            MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.development_BlinkID_Android_2019-02-07.mblic", this);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 }
