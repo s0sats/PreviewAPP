@@ -29,7 +29,7 @@ public class WS_SO_Favorite_List extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "WS_SO_Favorite_List";
+    private String mResource_Name = "ws_so_favorite_list";
     private Gson gson;
 
     public WS_SO_Favorite_List() {
@@ -82,15 +82,16 @@ public class WS_SO_Favorite_List extends IntentService {
         env.setOperation_code(operationCode);
         env.setSegment_code(segmentCode);
         env.setSite_code(siteCode);
-
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_FAVORITE_LIST,
                 gson.toJson(env)
         );
-
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
+        //
         SO_Favorite_Response response = gson.fromJson(
                 resultado,
                 SO_Favorite_Response.class
@@ -112,21 +113,17 @@ public class WS_SO_Favorite_List extends IntentService {
         ) {
             return;
         }
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_searching_sos"), resultado, "0");
-
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_process_finalized"), resultado, "0");
     }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
-        translist.add("msg_processing_list");
-        translist.add("msg_error_on_save_serial");
-        translist.add("msg_searching_sos");
-        translist.add("msg_send_serial_data");
-        translist.add("msg_end_serial_save");
-        translist.add("msg_end_so_download");
-
-
+        translist.add("msg_sending_data");
+        translist.add("msg_receiving_data");
+        translist.add("msg_process_finalized");
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
                 mModule_Code,

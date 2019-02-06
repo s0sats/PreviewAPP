@@ -28,6 +28,7 @@ import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Client_List;
 import com.namoadigital.prj001.service.WS_SO_Creation_Save;
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
@@ -143,6 +144,8 @@ public class Act050_Main extends Base_Activity_Frag implements
         transList.addAll(act050_favorite_fragment.getFragTranslationsVars());
         //Trad Frag Parameters
         transList.addAll(act050_frag_parameters.getFragTranslationsVars());
+        //Trad Frag SO
+        transList.addAll(act050_s0_creation_fragment.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -465,5 +468,45 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public SO_Creation_Obj getmSOCreationObj() {
         return mSOCreationObj;
+    }
+
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
     }
 }

@@ -29,7 +29,7 @@ public class WS_SO_Creation_Save extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_so_client_list";
+    private String mResource_Name = "ws_so_creation_save";
 
     public WS_SO_Creation_Save() { super("WS_SO_Creation_Save");}
 
@@ -103,12 +103,13 @@ public class WS_SO_Creation_Save extends IntentService {
             return;
         }
         //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_so_return"), "", "0");
+        //
         processCreationRet(rec);
     }
 
     private void processCreationRet(SO_Creation_Rec rec) {
         HMAux hmAuxRet = new HMAux();
-
 
         hmAuxRet.put(SM_SODao.SO_PREFIX, "0");
         hmAuxRet.put(SM_SODao.SO_CODE, "0");
@@ -138,15 +139,10 @@ public class WS_SO_Creation_Save extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
-        translist.add("msg_preparing_so_data");
-        translist.add("msg_loading_so_from_token");
         translist.add("msg_sending_so_data");
         translist.add("msg_receiving_so_data");
-        translist.add("msg_processing_from_to_data");
-        translist.add("msg_re_processing_so_data");
-        translist.add("msg_token_file_error");
-        translist.add("error_from_to_processing");
-
+        translist.add("msg_processing_so_return");
+        translist.add("msg_save_ok");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

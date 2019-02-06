@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act050;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -72,6 +74,15 @@ public class Act050_Frag_SO extends BaseFragment {
     private EditText edtSoInfo2;
     private EditText edtSoInfo3;
 
+    private TextView tvDeadlineLbl;
+    private TextView tvPackageDefaultLbl;
+    private TextView tvSoInfoLbl;
+    private TextView tvSoDescLbl;
+    private TextView tvSoIDLbl;
+    private TextView tvInfo1lbl;
+    private TextView tvInfo2lbl;
+    private TextView tvInfo3lbl;
+
     private ImageButton ibBack;
     private ImageButton ibNext;
     private ImageButton ibPackageDeafultInfo;
@@ -125,6 +136,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         bindSearchableSpinner(view);
         bindEditText(view);
+        bindTextView(view);
         bindImageButton(view);
         mkDateTime = view.findViewById(R.id.act050_frag_so_manual_deadline);
         llSoClient = view.findViewById(R.id.act050_frag_so_client_ll);
@@ -153,8 +165,8 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void setPackageDefaultSearchableSpinner(SO_Favorite_Item favoriteItem) {
 
-        ssPackageDefault.setmTitle("Package Default- trad");
-        ssPackageDefault.setmLabel(null);
+        ssPackageDefault.setmTitle(hmAux_Trans.get("pack_default_lbl"));
+        ssPackageDefault.setmShowLabel(false);
         ArrayList<HMAux> mPackageDefaultOptions = new ArrayList<>();
 
         HMAux packageDefaultWith = new HMAux();
@@ -184,8 +196,9 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setPrioritySearchableSpinner() {
-        ssPriority.setmTitle("Priority- trad");
-        ssPriority.setmLabel("Priority- trad");
+        ssPriority.setmTitle(hmAux_Trans.get("priority_lbl"));
+        ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
+        ssPriority.setmStyle(1);
 
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
@@ -202,8 +215,9 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setPipelineSearchableSpinner() {
-        ssPipelineCode.setmTitle("Pipeline - trad");
-        ssPipelineCode.setmLabel("Pipeline - trad");
+        ssPipelineCode.setmTitle(hmAux_Trans.get("pipeline_lbl"));
+        ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
+        ssPipelineCode.setmStyle(1);
 
         ArrayList<HMAux> mPipelineOptions = new ArrayList<>();
         for (SO_Favorite_Pipeline pipeline :
@@ -232,8 +246,9 @@ public class Act050_Frag_SO extends BaseFragment {
         } else {
             llSoClient.setVisibility(View.GONE);
         }
-        ssClientName.setmTitle("Client Name - trad");
-        ssClientName.setmLabel("Client Name - trad");
+        ssClientName.setmTitle(hmAux_Trans.get("client_name_lbl"));
+        ssClientName.setmLabel(hmAux_Trans.get("client_name_lbl"));
+        ssClientName.setmStyle(1);
     }
 
     private void setClientTypeSearchableSpinner(SO_Favorite_Item favoriteItem) {
@@ -251,9 +266,10 @@ public class Act050_Frag_SO extends BaseFragment {
         mOptionClientType.add(auxUserClient);
 
         ssClientType.setmOption(mOptionClientType);
-        ssClientType.setmTitle("Cliente Type -trad");
-        ssClientType.setmLabel("Cliente Type -trad");
+        ssClientType.setmTitle(hmAux_Trans.get("client_type_lbl"));
+        ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
+        ssClientType.setmStyle(1);
         try {
             if (favoriteItem.getClientType().equals(CLIENT_TYPE_CLIENT)) {
                 ssClientType.setmValue(auxUserClient);
@@ -369,23 +385,33 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if(formFieldsValitaded()) {
-                    SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
+                    ToolBox.alertMSG_YES_NO(
+                            getContext(),
+                            hmAux_Trans.get("alert_creation_so_save_ttl"),
+                            hmAux_Trans.get("alert_creation_so_save_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
 
+                                    addClientInfoToRequest(my_so_creation_obj);
+                                    addSoInfoToRequest(my_so_creation_obj);
 
-                    addClientInfoToRequest(my_so_creation_obj);
-                    addSoInfoToRequest(my_so_creation_obj);
+                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                                    my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
+                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
 
-                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-                    my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
-                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                                    my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
+                                    if (swHasManualDeadline.isChecked()) {
+                                        my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+                                    }
 
-                    my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
-                    if (swHasManualDeadline.isChecked()) {
-                        my_so_creation_obj.setDeadline(mkDateTime.getmValue());
-                    }
-
-                    mListener.requestSoCreation(my_so_creation_obj);
+                                    mListener.requestSoCreation(my_so_creation_obj);
+                                }
+                            },
+                            1
+                    );
                 }
             }
         });
@@ -393,7 +419,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibPackageDeafultInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = "Lista de pacotes - trad";
+                String title = hmAux_Trans.get("alert_pack_default_ttl");
                 String msg = "";
                 List<String> msgs = mListener.getPackageDefaultByContract();
 
@@ -406,7 +432,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 }
 
                 if (msg.isEmpty()) {
-                    msg = "Não há pacotes listados - trad";
+                    msg = hmAux_Trans.get("alert_no_pack_default_msg");
                 }
 
                 ToolBox.alertMSG(
@@ -424,17 +450,17 @@ public class Act050_Frag_SO extends BaseFragment {
     private boolean formFieldsValitaded() {
         if(ssClientType.getmValue().get(SearchableSpinner.DESCRIPTION) == null
         || ssClientType.getmValue().get(SearchableSpinner.DESCRIPTION).isEmpty() ){
-            alertError("Erro - trad", "Selecione o Client Type - trad");
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
             return false;
         }
         if (ssPriority.getmValue().get(SearchableSpinner.DESCRIPTION) == null
                 || ssPriority.getmValue().get(SearchableSpinner.DESCRIPTION).isEmpty()){
-            alertError("Erro - trad", "Selecione a Prioridade - trad");
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
         if(ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT
         && edtClientName.getText().toString().isEmpty()){
-            alertError("Erro - trad", "Selecione o Nome do Cliente - trad");
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
 
@@ -518,6 +544,25 @@ public class Act050_Frag_SO extends BaseFragment {
         ibPackageDeafultInfo = view.findViewById(R.id.act050_frag_so_package_default_info);
     }
 
+    private void bindTextView(View view) {
+        tvDeadlineLbl = view.findViewById(R.id.act050_frag_so_deadline_lbl);
+        tvDeadlineLbl.setText(hmAux_Trans.get("deadline_lbl"));
+        tvPackageDefaultLbl = view.findViewById(R.id.act050_frag_so_package_default_lbl);
+        tvPackageDefaultLbl.setText(hmAux_Trans.get("pack_default_lbl"));
+        tvSoInfoLbl = view.findViewById(R.id.act050_frag_so_title_lbl);
+        tvSoInfoLbl.setText(hmAux_Trans.get("so_others_info_ttl"));
+        tvSoDescLbl = view.findViewById(R.id.act050_frag_so_desc_lbl);
+        tvSoDescLbl.setText(hmAux_Trans.get("so_desc_lbl"));
+        tvSoIDLbl = view.findViewById(R.id.act050_frag_so_id_lbl);
+        tvSoIDLbl.setText(hmAux_Trans.get("so_id_lbl"));
+        tvInfo1lbl = view.findViewById(R.id.act050_frag_so_info1_lbl);
+        tvInfo1lbl.setText(hmAux_Trans.get("add_inf1_lbl"));
+        tvInfo2lbl = view.findViewById(R.id.act050_frag_so_info2_lbl);
+        tvInfo2lbl.setText(hmAux_Trans.get("add_inf2_lbl"));
+        tvInfo3lbl = view.findViewById(R.id.act050_frag_so_info3_lbl);
+        tvInfo3lbl.setText(hmAux_Trans.get("add_inf3_lbl"));
+    }
+
     private void bindEditText(View view) {
         edtClientId = view.findViewById(R.id.act050_frag_client_id_val);
         edtClientName = view.findViewById(R.id.act050_frag_so_client_name_val);
@@ -583,6 +628,35 @@ public class Act050_Frag_SO extends BaseFragment {
         if (clientListOption.size() > 0) {
             ssClientName.setmOption(clientListOption);
         }
+    }
+
+    public static List<String> getFragTranslationsVars(){
+        List<String> transList = new ArrayList<>();
+
+        transList.add("client_type_lbl");
+        transList.add("client_name_lbl");
+        transList.add("client_email_lbl");
+        transList.add("client_phone_lbl");
+        transList.add("pipeline_lbl");
+        transList.add("priority_lbl");
+        transList.add("pack_default_lbl");
+        transList.add("so_desc_lbl");
+        transList.add("so_id_lbl");
+        transList.add("add_inf1_lbl");
+        transList.add("add_inf2_lbl");
+        transList.add("add_inf3_lbl");
+        transList.add("alert_pack_default_ttl");
+        transList.add("alert_no_pack_default_msg");
+        transList.add("so_others_info_ttl");
+        transList.add("deadline_lbl");
+        transList.add("alert_so_creation_validation_ttl");
+        transList.add("alert_fill_client_type_field_msg");
+        transList.add("alert_fill_priority_field_msg");
+        transList.add("alert_fill_client_name_field_msg");
+        transList.add("alert_creation_so_save_ttl");
+        transList.add("alert_creation_so_save_confirm");
+
+        return transList;
     }
 
     /**
