@@ -428,6 +428,11 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
+    public void requestSoCreation(SO_Creation_Obj mSOCreationObj) {
+        mPresenter.executeWsSoCreation(mSOCreationObj);
+    }
+
+    @Override
     public List<SO_Favorite_Priority> getPriorityList() {
         return response.getPriority();
     }

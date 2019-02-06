@@ -272,7 +272,7 @@
                         android:id="@+id/act050_frag_so_desc_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
+                        android:inputType="number"
                         android:textColor="@color/namoa_light_blue"
                         android:textSize="@dimen/font_size_item_md" />
 
@@ -289,6 +289,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
+                        android:inputType="number"
                         android:textSize="@dimen/font_size_item_md" />
 
 
