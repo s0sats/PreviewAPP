@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.namoadigital.prj001.ui.act050.Act050_frag_so"
     android:background="@color/namoa_color_gray"
     >
 
@@ -32,10 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
-
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act050_frag_so_client_type"
@@ -44,7 +41,8 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
 
                 <LinearLayout
                     android:id="@+id/act050_frag_so_client_ll"
@@ -100,7 +98,7 @@
                         android:textSize="@dimen/font_size_item_md" />
 
                     <TextView
-                        android:id="@+id/act050_frag_so_email_lbl"
+                        android:id="@+id/act050_frag_so_client_email_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="E-mail - trad"
@@ -116,7 +114,7 @@
                         android:textSize="@dimen/font_size_item_md" />
 
                     <TextView
-                        android:id="@+id/act050_frag_so_phone_lbl"
+                        android:id="@+id/act050_frag_so_client_phone_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Telefone - trad"
@@ -127,7 +125,6 @@
                         android:id="@+id/act050_frag_so_phone_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:textColor="@color/namoa_light_blue"
                         android:textSize="@dimen/font_size_item_md" />
 
@@ -176,6 +173,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_manual_deadline" />
 
+                <TextView
+                    android:id="@+id/act050_frag_so_tv_priority_lbl"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act050_frag_so_priority"
@@ -184,7 +189,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_tv_priority_lbl" />
 
                 <LinearLayout
                     android:id="@+id/act050_frag_so_package_default_ll"
@@ -194,29 +199,30 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintLeft_toLeftOf="@+id/act050_frag_so_priority"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_priority"
-                    android:gravity="top"
                     android:paddingBottom="@dimen/searchablespinner_border_papping_half"
                     android:paddingLeft="@dimen/searchablespinner_border_papping_half"
+                    android:layout_gravity="center_vertical"
+
                     >
                     <TextView
                         android:id="@+id/act050_frag_so_package_default_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
                         android:text="Package Default- trad"
                         />
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/act050_frag_so_package_default_info"
-                        android:layout_width="16sp"
-                        android:layout_height="16sp"
-                        android:src="@drawable/ic_info"
-                        android:layout_marginLeft="5dp"
-                        android:background="@color/customff_background_error_transparent"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/namoa_icon_bg_states"
                         android:scaleType="fitXY"
-                        android:tint="@color/namoa_cell_1_font_color"/>
+                        android:src="@drawable/ic_info"
+                        android:tint="@color/namoa_color_dark_blue"
+                        />
 
                 </LinearLayout>
 

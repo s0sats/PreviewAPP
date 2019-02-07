@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
@@ -22,6 +23,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
@@ -51,6 +53,8 @@ public class Act050_Frag_SO extends BaseFragment {
     public static final String WITH_PACK_DEFAULT_PENDING = "WITH_PACK_DEFAULT_PENDING";
     public static final String WITHOUT_PACK_DEFAULT_PENDING = "WITHOUT_PACK_DEFAULT_PENDING";
     public static final String CLIENT_CODE = "CLIENT_CODE";
+    public static final String PACK_DEFAULT_CODE_KEY = "PACK_DEFAULT_CODE_KEY";
+    public static final String PRIORITY_CODE_KEY = "PRIORITY_CODE_KEY";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -74,8 +78,12 @@ public class Act050_Frag_SO extends BaseFragment {
     private EditText edtSoInfo2;
     private EditText edtSoInfo3;
 
+    private TextView tvClientIdLbl;
+    private TextView tvClientNameLbl;
+    private TextView tvClientEmailLbl;
+    private TextView tvClientPhoneLbl;
     private TextView tvDeadlineLbl;
-    private TextView tvPackageDefaultLbl;
+    private TextView tvPackDefaultLbl;
     private TextView tvSoInfoLbl;
     private TextView tvSoDescLbl;
     private TextView tvSoIDLbl;
@@ -85,7 +93,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private ImageButton ibBack;
     private ImageButton ibNext;
-    private ImageButton ibPackageDeafultInfo;
+    private ImageView ibPackageDeafultInfo;
 
     private MkDateTime mkDateTime;
 
@@ -171,13 +179,15 @@ public class Act050_Frag_SO extends BaseFragment {
 
         HMAux packageDefaultWith = new HMAux();
         packageDefaultWith.put(SearchableSpinner.ID, "");
-        packageDefaultWith.put(SearchableSpinner.DESCRIPTION, "WITH_PACK_DEFAULT_PENDING");
+        packageDefaultWith.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get("WITH_PACK_DEFAULT_PENDING"));
+        packageDefaultWith.put(PACK_DEFAULT_CODE_KEY, "WITH_PACK_DEFAULT_PENDING");
         mPackageDefaultOptions.add(packageDefaultWith);
 
 
         HMAux packageDefaultWithout = new HMAux();
         packageDefaultWithout.put(SearchableSpinner.ID, "");
-        packageDefaultWithout.put(SearchableSpinner.DESCRIPTION, "WITHOUT_PACK_DEFAULT_PENDING");
+        packageDefaultWithout.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get("WITHOUT_PACK_DEFAULT_PENDING"));
+        packageDefaultWithout.put(PACK_DEFAULT_CODE_KEY, "WITHOUT_PACK_DEFAULT_PENDING");
         mPackageDefaultOptions.add(packageDefaultWithout);
 
         ssPackageDefault.setmOption(mPackageDefaultOptions);
@@ -204,8 +214,9 @@ public class Act050_Frag_SO extends BaseFragment {
         for (SO_Favorite_Priority priority :
                 mListener.getPriorityList()) {
             HMAux priorityOption = new HMAux();
-            priorityOption.put(SearchableSpinner.ID, String.valueOf(priority.getPriorityCode()));
+            //priorityOption.put(SearchableSpinner.ID, String.valueOf(priority.getPriorityCode()));
             priorityOption.put(SearchableSpinner.DESCRIPTION, priority.getPriorityDesc());
+            priorityOption.put(PRIORITY_CODE_KEY, String.valueOf(priority.getPriorityCode()));
             mPriorityOptions.add(priorityOption);
             if (priority.getPriorityDefault() == 1) {
                 ssPriority.setmValue(priorityOption);
@@ -246,25 +257,28 @@ public class Act050_Frag_SO extends BaseFragment {
         } else {
             llSoClient.setVisibility(View.GONE);
         }
-        ssClientName.setmTitle(hmAux_Trans.get("client_name_lbl"));
-        ssClientName.setmLabel(hmAux_Trans.get("client_name_lbl"));
+        ssClientName.setmTitle(hmAux_Trans.get("client_lbl"));
+        ssClientName.setmLabel(hmAux_Trans.get("client_lbl"));
         ssClientName.setmStyle(1);
     }
 
     private void setClientTypeSearchableSpinner(SO_Favorite_Item favoriteItem) {
         ArrayList<HMAux> mOptionClientType = new ArrayList<>();
         HMAux auxUserType = new HMAux();
-        auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER);
+        //auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER);
         auxUserType.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_USER));
+        auxUserType.put(SM_SODao.CLIENT_TYPE, Constant.CLIENT_TYPE_USER);
+
 
         mOptionClientType.add(auxUserType);
 
         HMAux auxUserClient = new HMAux();
-        auxUserClient.put(SearchableSpinner.ID, CLIENT_TYPE_CLIENT);
+        //auxUserClient.put(SearchableSpinner.ID, CLIENT_TYPE_CLIENT);
         auxUserClient.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(CLIENT_TYPE_CLIENT));
+        auxUserClient.put(SM_SODao.CLIENT_TYPE, Constant.CLIENT_TYPE_CLIENT);
 
         mOptionClientType.add(auxUserClient);
-
+        //
         ssClientType.setmOption(mOptionClientType);
         ssClientType.setmTitle(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
@@ -317,7 +331,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT) {
+                if (hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
                     llSoClient.setVisibility(View.VISIBLE);
                     SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
                     setClientInfo(
@@ -365,8 +379,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                ssPackageDefault.setmValue(hmAux);
-                if (hmAux.get(SearchableSpinner.DESCRIPTION) == WITH_PACK_DEFAULT_PENDING) {
+                if (hmAux.get(PACK_DEFAULT_CODE_KEY).equals(WITH_PACK_DEFAULT_PENDING)) {
                     ibPackageDeafultInfo.setVisibility(View.VISIBLE);
                 } else {
                     ibPackageDeafultInfo.setVisibility(View.GONE);
@@ -397,11 +410,10 @@ public class Act050_Frag_SO extends BaseFragment {
                                     addClientInfoToRequest(my_so_creation_obj);
                                     addSoInfoToRequest(my_so_creation_obj);
 
-                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-                                    my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
-                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-
+                                    //my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
+                                    //my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
+                                    my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
                                     my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
                                     if (swHasManualDeadline.isChecked()) {
                                         my_so_creation_obj.setDeadline(mkDateTime.getmValue());
@@ -448,21 +460,26 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
-        if(ssClientType.getmValue().get(SearchableSpinner.DESCRIPTION) == null
-        || ssClientType.getmValue().get(SearchableSpinner.DESCRIPTION).isEmpty() ){
+        HMAux selectedClientType =  ssClientType.getmValue();
+        HMAux selectedPriority = ssPriority.getmValue();
+
+        if(selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)){
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
             return false;
         }
-        if (ssPriority.getmValue().get(SearchableSpinner.DESCRIPTION) == null
-                || ssPriority.getmValue().get(SearchableSpinner.DESCRIPTION).isEmpty()){
+        if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)){
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
-        if(ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT
+        if(selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
         && edtClientName.getText().toString().isEmpty()){
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
+//        if(swHasManualDeadline.isChecked() && mkDateTime.getmValue() == null){
+//            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
+//            return false;
+//        }
 
         return true;
     }
@@ -489,8 +506,8 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
-        my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SearchableSpinner.ID));
-        if(ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT) {
+        my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE));
+        if(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
             my_so_creation_obj.setClient_code(Integer.valueOf(ssClientName.getmValue().get(CLIENT_CODE)));
             my_so_creation_obj.setClient_id(edtClientId.getText().toString());
             my_so_creation_obj.setClient_name(edtClientName.getText().toString());
@@ -545,10 +562,18 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void bindTextView(View view) {
+        tvClientIdLbl = view.findViewById(R.id.act050_frag_client_id_lbl);
+        tvClientIdLbl.setText(hmAux_Trans.get("client_id_lbl"));
+        tvClientNameLbl = view.findViewById(R.id.act050_frag_so_client_name_lbl);
+        tvClientNameLbl.setText(hmAux_Trans.get("client_name_lbl"));
+        tvClientEmailLbl = view.findViewById(R.id.act050_frag_so_client_email_lbl);
+        tvClientEmailLbl.setText(hmAux_Trans.get("client_email_lbl"));
+        tvClientPhoneLbl = view.findViewById(R.id.act050_frag_so_client_phone_lbl);
+        tvClientPhoneLbl.setText(hmAux_Trans.get("client_phone_lbl"));
         tvDeadlineLbl = view.findViewById(R.id.act050_frag_so_deadline_lbl);
         tvDeadlineLbl.setText(hmAux_Trans.get("deadline_lbl"));
-        tvPackageDefaultLbl = view.findViewById(R.id.act050_frag_so_package_default_lbl);
-        tvPackageDefaultLbl.setText(hmAux_Trans.get("pack_default_lbl"));
+        tvPackDefaultLbl = view.findViewById(R.id.act050_frag_so_package_default_lbl);
+        tvPackDefaultLbl.setText(hmAux_Trans.get("pack_default_lbl"));
         tvSoInfoLbl = view.findViewById(R.id.act050_frag_so_title_lbl);
         tvSoInfoLbl.setText(hmAux_Trans.get("so_others_info_ttl"));
         tvSoDescLbl = view.findViewById(R.id.act050_frag_so_desc_lbl);
@@ -633,7 +658,9 @@ public class Act050_Frag_SO extends BaseFragment {
     public static List<String> getFragTranslationsVars(){
         List<String> transList = new ArrayList<>();
 
+        transList.add("client_lbl");
         transList.add("client_type_lbl");
+        transList.add("client_id_lbl");
         transList.add("client_name_lbl");
         transList.add("client_email_lbl");
         transList.add("client_phone_lbl");

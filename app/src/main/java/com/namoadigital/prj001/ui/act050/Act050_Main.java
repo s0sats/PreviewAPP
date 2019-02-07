@@ -471,6 +471,21 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
 
+    //region WS_ERRORS_RETURN
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
     //TRATA MSG SESSION NOT FOUND
     @Override
     protected void processLogin() {
@@ -509,4 +524,5 @@ public class Act050_Main extends Base_Activity_Frag implements
 
         finish();
     }
+    //endregion
 }
