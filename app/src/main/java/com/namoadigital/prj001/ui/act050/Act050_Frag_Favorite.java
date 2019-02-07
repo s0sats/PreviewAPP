@@ -89,7 +89,11 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
 
         setUI(view, context);
 
-        mListener.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+
+        if (mAdapter.getItemCount() == 0) {
+            mListener.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+        }
+
 
         return view;
     }
@@ -170,9 +174,12 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
                 null,
                 null,
                 null);
-        favorites.add(0,so_favorite_item_placeholder);
-
-        mAdapter.setFavoriteList(favorites);
+        favorites.add(0, so_favorite_item_placeholder);
+        if (favorites.size() > 1) {
+            mAdapter.setFavoriteList(favorites);
+        } else {
+            mListener.onListFragmentInteraction(favorites.get(0), true);
+        }
 
     }
 
@@ -188,7 +195,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(SO_Favorite_Item item);
+        void onListFragmentInteraction(SO_Favorite_Item item, boolean isEmptyList);
         void getFavoriteList(long mProductCode, long mSerialCode, int mCategoryPriceCode, int mSegmentCode);
     }
 }

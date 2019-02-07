@@ -70,6 +70,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     private SO_Creation_Obj mSOCreationObj = new SO_Creation_Obj();
     private SO_Favorite_Item mSoFavoriteItem = null;
     private boolean isContractSelected = false;
+    private boolean isSOCreationObjectFilled = false;
+    private boolean isEmptyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,12 +251,27 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     //region OnListFragmentInteractionListener
     @Override
-    public void onListFragmentInteraction(SO_Favorite_Item item) {
+    public void onListFragmentInteraction(SO_Favorite_Item item, boolean isEmptyList) {
         //Atualiza favorito selecionado na Act.
         mSoFavoriteItem = item;
+        this.isEmptyList = isEmptyList;
+        if(!isSOCreationObjectFilled) {
+           setMSOCreationObjByFavorite(mSoFavoriteItem);
+        }
         //Inicializa e seta fragmento de parametros.
         act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode());
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
+    }
+
+    private void setMSOCreationObjByFavorite(SO_Favorite_Item mSoFavoriteItem) {
+        mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+        mSOCreationObj.setClient_id(mSoFavoriteItem.getClientId());
+        mSOCreationObj.setClient_name(mSoFavoriteItem.getClientName());
+        mSOCreationObj.setClient_phone(mSoFavoriteItem.getClientPhone());
+        mSOCreationObj.setClient_email(mSoFavoriteItem.getClientEmail());
+        mSOCreationObj.setClient_code(mSoFavoriteItem.getClientCode());
+        mSOCreationObj.setPack_default(mSoFavoriteItem.getPackDefault());
+        isSOCreationObjectFilled = true;
     }
 
     @Override
@@ -323,6 +340,7 @@ public class Act050_Main extends Base_Activity_Frag implements
      */
     @Override
     public void clearOSCreationData() {
+        isSOCreationObjectFilled = false;
         mSOCreationObj = new SO_Creation_Obj();
         initSoCreationObj();
         mSoFavoriteItem = null;
@@ -345,6 +363,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
         mSOCreationObj.setPipeline_code(pipeline_code);
+        mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
 
     @Override
@@ -362,7 +381,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(fm, mdProductSerial);
+        mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
     }
 
     @Override
@@ -441,8 +460,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public SO_Favorite_Item getFavoriteItem() {
-        return mSoFavoriteItem;
+    public String getClientTypeFromFavorite() {
+        return mSoFavoriteItem.getClientType();
     }
 
     @Override
@@ -450,24 +469,29 @@ public class Act050_Main extends Base_Activity_Frag implements
         if (isContractSelected) {
 
             for (SO_Favorite_Contract contract : response.getContract()
-                 ) {
-                if(contract.getContractCode() == mSOCreationObj.getContract_code()){
-                   return contract.getPackDefault();
+            ) {
+                if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
+                    return contract.getPackDefault();
                 }
             }
         }
-            return null;
+        return null;
     }
 
     @Override
     public void onBackButtonPressed() {
-//        salvar
+        mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
 //        fm.popBackStack();
-
     }
+
     @Override
     public SO_Creation_Obj getmSOCreationObj() {
         return mSOCreationObj;
+    }
+
+    @Override
+    public void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj) {
+        this.mSOCreationObj = my_so_creation_obj;
     }
 
 

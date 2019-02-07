@@ -55,7 +55,7 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(holder.mItem, false);
                 }
             }
         });
@@ -95,12 +95,6 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
             mFavoriteTitleItem = view.findViewById(R.id.favorite_item_desc);
             cvFavorite = view.findViewById(R.id.favorite_fragment_card_view);
             favorite_item_color = view.findViewById(R.id.favorite_item_color);
-            mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onListFragmentInteraction(mItem);
-                }
-            });
         }
 
         @Override

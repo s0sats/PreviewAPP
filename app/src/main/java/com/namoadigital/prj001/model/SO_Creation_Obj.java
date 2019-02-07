@@ -17,7 +17,7 @@ public class SO_Creation_Obj implements Serializable {
     private long customer_code;
     private Integer so_prefix;
     private Integer so_code;
-    private Integer so_desc;
+    private String so_desc;
     private Integer so_scn;
     private long product_code;
     private long serial_code;
@@ -71,11 +71,11 @@ public class SO_Creation_Obj implements Serializable {
         this.so_code = so_code;
     }
 
-    public Integer getSo_desc() {
+    public String getSo_desc() {
         return so_desc;
     }
 
-    public void setSo_desc(Integer so_desc) {
+    public void setSo_desc(String so_desc) {
         this.so_desc = so_desc;
     }
 
