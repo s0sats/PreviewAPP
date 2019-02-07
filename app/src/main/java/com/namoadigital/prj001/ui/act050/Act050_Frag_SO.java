@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -18,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
-import android.widget.Toast;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -30,7 +28,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
-import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.util.Constant;
@@ -425,12 +422,10 @@ public class Act050_Frag_SO extends BaseFragment {
         addSoInfoToRequest(my_so_creation_obj);
 
         if (ssPriority.getmValue() != null) {
-            my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
+            my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
         }
         if (ssPackageDefault.getmValue() != null) {
-            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
         }
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
@@ -622,10 +617,10 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
-        my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SearchableSpinner.ID));
+        my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE));
         if (ssClientName.getmValue() != null
                 && ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
-                && ssClientType.getmValue().get(SearchableSpinner.ID).equals(CLIENT_TYPE_CLIENT)
+                && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
                 && !ssClientName.getmValue().isEmpty()) {
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
