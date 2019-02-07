@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -152,7 +154,18 @@ public class Act050_Frag_SO extends BaseFragment {
         setPrioritySearchableSpinner(my_so_creation_obj);
         setPackageDefaultSearchableSpinner(my_so_creation_obj);
         setSOInfo(my_so_creation_obj);
+        setDeadline(my_so_creation_obj);
+
         mListener.updateSO_Creation_Obj(my_so_creation_obj);
+    }
+
+    private void setDeadline(SO_Creation_Obj my_so_creation_obj) {
+        swHasManualDeadline.setChecked(false);
+        if (my_so_creation_obj.getDeadline_manual() == 1) {
+            swHasManualDeadline.setChecked(true);
+            mkDateTime.setmValue(my_so_creation_obj.getDeadline());
+            mkDateTime.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setSOInfo(SO_Creation_Obj my_so_creation_obj) {
@@ -206,7 +219,7 @@ public class Act050_Frag_SO extends BaseFragment {
             priorityOption.put(SearchableSpinner.ID, String.valueOf(priority.getPriorityCode()));
             priorityOption.put(SearchableSpinner.DESCRIPTION, priority.getPriorityDesc());
             mPriorityOptions.add(priorityOption);
-            if (my_so_creation_obj.getPriority_code() == priority.getPriorityCode()) {
+            if (my_so_creation_obj.getPriority_code().equals(priority.getPriorityCode())) {
                 ssPriority.setmValue(priorityOption);
             } else {
                 if (priority.getPriorityDefault() == 1) {
@@ -236,7 +249,17 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setClientNameSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
-        if (my_so_creation_obj.getClient_name() != null) {
+        setllSoClientVisibility(my_so_creation_obj);
+        ssClientName.setmTitle("Client Name - trad");
+        ssClientName.setmLabel("Client Name - trad");
+    }
+
+    private void setllSoClientVisibility(SO_Creation_Obj my_so_creation_obj) {
+
+        String clientType = my_so_creation_obj.getClient_type();
+
+        if (clientType != null
+                && clientType.equals(Constant.CLIENT_TYPE_CLIENT)) {
             llSoClient.setVisibility(View.VISIBLE);
             setClientInfo(
                     my_so_creation_obj.getClient_id(),
@@ -248,8 +271,6 @@ public class Act050_Frag_SO extends BaseFragment {
         } else {
             llSoClient.setVisibility(View.GONE);
         }
-        ssClientName.setmTitle("Client Name - trad");
-        ssClientName.setmLabel("Client Name - trad");
     }
 
     private void setClientTypeSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
@@ -301,8 +322,10 @@ public class Act050_Frag_SO extends BaseFragment {
         swHasManualDeadline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mkDateTime.getVisibility() == View.VISIBLE) mkDateTime.setVisibility(View.GONE);
-                else {
+                if (mkDateTime.getVisibility() == View.VISIBLE) {
+                    mkDateTime.setVisibility(View.GONE);
+                    mkDateTime.setmValue(null);
+                } else {
                     mkDateTime.setVisibility(View.VISIBLE);
                 }
             }
@@ -318,7 +341,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().popBackStack();
+                mListener.onBackButtonPressed();
             }
         });
 
@@ -369,10 +392,14 @@ public class Act050_Frag_SO extends BaseFragment {
         addClientInfoToRequest(my_so_creation_obj);
         addSoInfoToRequest(my_so_creation_obj);
 
-        my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-        my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
-        my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-        my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+        if (ssPriority.getmValue() != null) {
+            my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
+        }
+        if (ssPackageDefault.getmValue() != null) {
+            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+            my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
+        }
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
         if (swHasManualDeadline.isChecked()) {
@@ -390,20 +417,21 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT) {
+                if (hmAux != null && hmAux.get(SearchableSpinner.ID).equals(Constant.CLIENT_TYPE_CLIENT)) {
                     llSoClient.setVisibility(View.VISIBLE);
-                    SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
-                    setClientInfo(
-                            my_so_creation_obj.getClient_id(),
-                            my_so_creation_obj.getClient_name(),
-                            my_so_creation_obj.getClient_phone(),
-                            my_so_creation_obj.getClient_email(),
-                            my_so_creation_obj.getClient_code());
-                    if (ssClientName.getmOption().size() == 0) {
-                        mListener.getClientList();
-                    }
                 } else {
                     llSoClient.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        ssClientName.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
+            @Override
+            public void onSpinnerClickListner(boolean b) {
+                Log.w("Spinner test", "fui clickado");
+                if (ssClientName.getmOption().size() == 0) {
+                    mListener.getClientList();
                 }
             }
         });
@@ -416,9 +444,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-
+                Log.w("Spinner test", "fui post clickado");
                 for (SM_SO_Client client : clientsList) {
-                    if (client.getClient_id() == hmAux.get(SearchableSpinner.ID)) {
+                    if (client.getClient_id().equals(hmAux.get(SearchableSpinner.ID))) {
                         setClientInfo(
                                 client.getClient_id(),
                                 client.getClient_name(),
@@ -439,7 +467,7 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 ssPackageDefault.setmValue(hmAux);
-                if (hmAux.get(SearchableSpinner.DESCRIPTION) == WITH_PACK_DEFAULT_PENDING) {
+                if (hmAux.get(SearchableSpinner.DESCRIPTION).equals(WITH_PACK_DEFAULT_PENDING)) {
                     ibPackageDeafultInfo.setVisibility(View.VISIBLE);
                 } else {
                     ibPackageDeafultInfo.setVisibility(View.GONE);
@@ -459,7 +487,7 @@ public class Act050_Frag_SO extends BaseFragment {
             alertError("Erro - trad", "Selecione a Prioridade - trad");
             return false;
         }
-        if (ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT
+        if (ssClientType.getmValue().get(SearchableSpinner.ID).equals(CLIENT_TYPE_CLIENT)
                 && edtClientName.getText().toString().isEmpty()) {
             alertError("Erro - trad", "Selecione o Nome do Cliente - trad");
             return false;
@@ -488,7 +516,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
         my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SearchableSpinner.ID));
-        if (ssClientType.getmValue().get(SearchableSpinner.ID) == CLIENT_TYPE_CLIENT) {
+        if (ssClientName.getmValue() != null
+                && ssClientType.getmValue().get(SearchableSpinner.ID).equals(CLIENT_TYPE_CLIENT)
+                && !ssClientName.getmValue().isEmpty()) {
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
                     Integer.valueOf(ssClientName.getmValue().get(CLIENT_CODE)),
@@ -527,7 +557,11 @@ public class Act050_Frag_SO extends BaseFragment {
             edtClientEmail.setText(clientEmail);
             HMAux clientValue = new HMAux();
             clientValue.put(SearchableSpinner.ID, clientId);
-            clientValue.put(SearchableSpinner.DESCRIPTION, clientId + " - " + clientName);
+            String clienteSpinnerName = clientId + " - " + clientName;
+            if (clientName.isEmpty()) {
+                clienteSpinnerName = "";
+            }
+            clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
             clientValue.put(CLIENT_CODE, String.valueOf(clientCode));
             ssClientName.setmValue(clientValue);
         }
@@ -601,7 +635,7 @@ public class Act050_Frag_SO extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener.onBackButtonPressed(setSOCreationObj());
+        mListener.updateSO_Creation_Obj(setSOCreationObj());
         mListener = null;
     }
 
@@ -647,11 +681,11 @@ public class Act050_Frag_SO extends BaseFragment {
 
         List<SO_Favorite_Priority> getPriorityList();
 
-        SO_Favorite_Item getFavoriteItem();
+        String getClientTypeFromFavorite();
 
         List<String> getPackageDefaultByContract();
 
-        void onBackButtonPressed(SO_Creation_Obj so_creation_obj);
+        void onBackButtonPressed();
 
         SO_Creation_Obj getmSOCreationObj();
 

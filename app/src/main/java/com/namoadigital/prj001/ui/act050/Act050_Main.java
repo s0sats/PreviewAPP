@@ -358,6 +358,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
         mSOCreationObj.setPipeline_code(pipeline_code);
+        mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
 
     @Override
@@ -454,8 +455,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public SO_Favorite_Item getFavoriteItem() {
-        return mSoFavoriteItem;
+    public String getClientTypeFromFavorite() {
+        return mSoFavoriteItem.getClientType();
     }
 
     @Override
@@ -473,8 +474,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void onBackButtonPressed(SO_Creation_Obj so_creation_obj) {
-        this.mSOCreationObj = so_creation_obj;
+    public void onBackButtonPressed() {
+        mPresenter.onBackPressedClicked(fm, mdProductSerial);
 //        fm.popBackStack();
     }
 
