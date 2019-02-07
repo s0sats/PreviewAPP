@@ -167,23 +167,14 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void onBackPressedClicked(final FragmentManager fm, MD_Product_Serial mdProductSerial) {
+    public void onBackPressedClicked(final FragmentManager fm, final MD_Product_Serial mdProductSerial, final boolean isEmptyList) {
         int count = fm.getBackStackEntryCount();
         //
         switch (count){
             case 0:
                 mView.callAct005(context);
             case 1:
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
-                bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
-                bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
-                //O serial já foi criado nas etapas anteriores por isso o parametro é falso
-                bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
-                //
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
-                //
-                mView.callAct023(context,bundle);
+                callAct023(mdProductSerial);
                 break;
             case 2:
                 //Se o voltar foi chamada do fragmento de parametros,
@@ -196,7 +187,11 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mView.clearOSCreationData();
-                                fm.popBackStack();
+                                if(isEmptyList){
+                                    callAct023(mdProductSerial);
+                                }else{
+                                    fm.popBackStack();
+                                }
                             }
                         },
                         1
@@ -205,5 +200,18 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
             default:
                 fm.popBackStack();
         }
+    }
+
+    private void callAct023(MD_Product_Serial mdProductSerial) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+        //O serial já foi criado nas etapas anteriores por isso o parametro é falso
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+        //
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
+        //
+        mView.callAct023(context,bundle);
     }
 }

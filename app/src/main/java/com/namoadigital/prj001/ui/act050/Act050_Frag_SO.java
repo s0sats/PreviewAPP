@@ -219,8 +219,10 @@ public class Act050_Frag_SO extends BaseFragment {
             priorityOption.put(SearchableSpinner.ID, String.valueOf(priority.getPriorityCode()));
             priorityOption.put(SearchableSpinner.DESCRIPTION, priority.getPriorityDesc());
             mPriorityOptions.add(priorityOption);
-            if (my_so_creation_obj.getPriority_code().equals(priority.getPriorityCode())) {
-                ssPriority.setmValue(priorityOption);
+            if (my_so_creation_obj.getPriority_code() != null) {
+                if (my_so_creation_obj.getPriority_code().equals(priority.getPriorityCode())) {
+                    ssPriority.setmValue(priorityOption);
+                }
             } else {
                 if (priority.getPriorityDefault() == 1) {
                     ssPriority.setmValue(priorityOption);
@@ -517,6 +519,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
         my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SearchableSpinner.ID));
         if (ssClientName.getmValue() != null
+                && ssClientType.getmValue().hasConsistentValue(SearchableSpinner.ID)
                 && ssClientType.getmValue().get(SearchableSpinner.ID).equals(CLIENT_TYPE_CLIENT)
                 && !ssClientName.getmValue().isEmpty()) {
             setClientDetailsInSOCreationObj(

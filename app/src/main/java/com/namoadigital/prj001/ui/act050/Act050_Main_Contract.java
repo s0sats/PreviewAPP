@@ -19,7 +19,7 @@ public interface Act050_Main_Contract {
         void executeWsSoClient();
         void executeWsSoCreation(SO_Creation_Obj mSoCreation);
         void processSoCreationRet(HMAux hmAuxRet);
-        void onBackPressedClicked(FragmentManager fm, MD_Product_Serial mdProductSerial);
+        void onBackPressedClicked(FragmentManager fm, MD_Product_Serial mdProductSerial, boolean isEmptyList);
     }
 
     interface I_View{

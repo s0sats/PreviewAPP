@@ -70,6 +70,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     private SO_Favorite_Item mSoFavoriteItem = null;
     private boolean isContractSelected = false;
     private boolean isSOCreationObjectFilled = false;
+    private boolean isEmptyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,9 +248,10 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     //region OnListFragmentInteractionListener
     @Override
-    public void onListFragmentInteraction(SO_Favorite_Item item) {
+    public void onListFragmentInteraction(SO_Favorite_Item item, boolean isEmptyList) {
         //Atualiza favorito selecionado na Act.
         mSoFavoriteItem = item;
+        this.isEmptyList = isEmptyList;
         if(!isSOCreationObjectFilled) {
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
@@ -376,7 +378,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(fm, mdProductSerial);
+        mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
     }
 
     @Override
@@ -475,7 +477,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onBackButtonPressed() {
-        mPresenter.onBackPressedClicked(fm, mdProductSerial);
+        mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
 //        fm.popBackStack();
     }
 
