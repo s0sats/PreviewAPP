@@ -450,7 +450,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
         if (swHasManualDeadline.isChecked()) {
-            if(mkDateTime.isValid()) {
+            if (mkDateTime.isValid()) {
                 my_so_creation_obj.setDeadline(mkDateTime.getmValue());
             }
         }
@@ -475,6 +475,7 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+
         ssClientName.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -483,7 +484,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                Log.w("Spinner test", "fui post clickado");
+                if (hmAux.size() == 0) {
+                    setEdtClientContent("", "", "", "");
+                }
                 for (SM_SO_Client client : clientsList) {
                     if (client.getClient_id().equals(hmAux.get(SearchableSpinner.ID))) {
                         setClientInfo(
@@ -561,11 +564,22 @@ public class Act050_Frag_SO extends BaseFragment {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
-        if(swHasManualDeadline.isChecked() && mkDateTime.isValid()){
+        if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), ConstantBase.HMAUX_TRANS_LIB.get("msg_error_invalid_date"));
             return false;
         }
 
+        return true;
+    }
+
+    private boolean validateMkDateTime() {
+        HMAux mketContents = mkDateTime.getMketContents();
+        if ((mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && !mketContents.get(MkDateTime.HOUR_KEY).isEmpty())
+                || (!mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && (mketContents.get(MkDateTime.HOUR_KEY).isEmpty()))) {
+            return false;
+        }
         return true;
     }
 
@@ -591,6 +605,7 @@ public class Act050_Frag_SO extends BaseFragment {
         my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE));
         if (ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
                 && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
+
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
                     ssClientName.getmValue().get(CLIENT_CODE),
@@ -626,10 +641,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void setClientInfo(String clientId, String clientName, String clientPhone, String clientEmail, Integer clientCode) {
 
         verifyPermission();
-        edtClientId.setText(clientId);
-        edtClientName.setText(clientName);
-        edtClientPhone.setText(clientPhone);
-        edtClientEmail.setText(clientEmail);
+        setEdtClientContent(clientId, clientName, clientPhone, clientEmail);
         HMAux clientValue = new HMAux();
         clientValue.put(SearchableSpinner.ID, clientId);
         String clienteSpinnerName = clientId + " - " + clientName;
@@ -649,6 +661,13 @@ public class Act050_Frag_SO extends BaseFragment {
 
         clientValue.put(CLIENT_CODE, strClientCode);
         ssClientName.setmValue(clientValue);
+    }
+
+    private void setEdtClientContent(String clientId, String clientName, String clientPhone, String clientEmail) {
+        edtClientId.setText(clientId);
+        edtClientName.setText(clientName);
+        edtClientPhone.setText(clientPhone);
+        edtClientEmail.setText(clientEmail);
     }
 
     private void verifyPermission() {
