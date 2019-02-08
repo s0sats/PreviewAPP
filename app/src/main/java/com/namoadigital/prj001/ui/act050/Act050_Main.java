@@ -507,6 +507,13 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        //Se erro ao carregar lista de Cliente, reseta var que indica se lista ja
+        //foi chamada.
+        if(wsProcess.equals(WS_SO_Client_List.class.getName())){
+            onBackPressed();
+        } else if(wsProcess.equals(WS_SO_Favorite_List.class.getName())){
+            onBackPressed();
+        }
         //
         disableProgressDialog();
     }
