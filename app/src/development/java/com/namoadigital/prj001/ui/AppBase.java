@@ -150,7 +150,5 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
-        //
-        //MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.development_BlinkID_Android_2019-02-07.mblic", this);
     }
 }
