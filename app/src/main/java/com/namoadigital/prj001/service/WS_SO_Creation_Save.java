@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Creation_Env;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Creation_Rec;
@@ -126,6 +127,11 @@ public class WS_SO_Creation_Save extends IntentService {
         //
         if(rec.getSo() != null && rec.getSo().size() > 0){
             SM_SODao smSoDao = new SM_SODao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            //
+            for(SM_SO sm_so : rec.getSo() ){
+                sm_so.setPK();
+            }
+            //
             smSoDao.addUpdate(rec.getSo(),false);
             //
             hmAuxRet.put(SM_SODao.SO_PREFIX, String.valueOf(rec.getSo().get(0).getSo_prefix()));

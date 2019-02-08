@@ -309,8 +309,6 @@ public class Act050_Main extends Base_Activity_Frag implements
                             new TypeToken<ArrayList<SM_SO_Client>>() {
                             }.getType()
                     );
-            //comando para teste
-            int clientNum = clientList.size();
             act050_s0_creation_fragment.populateClientList(clientList);
         } else if (wsProcess.equals(WS_SO_Creation_Save.class.getName())) {
             mPresenter.processSoCreationRet(hmAux);
@@ -383,7 +381,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onBackPressed() {
         mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
     }
-
+    //region callActs
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
@@ -413,12 +411,13 @@ public class Act050_Main extends Base_Activity_Frag implements
         startActivity(mIntent);
         finish();
     }
+    //endregion
 
+    //region Act050_Frag_SOOnFragmentInteractionListener
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 
     @Override
     public List<SO_Favorite_Pipeline> getPipelineList() {
@@ -493,7 +492,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj) {
         this.mSOCreationObj = my_so_creation_obj;
     }
-
+    //endregion
 
     //region WS_ERRORS_RETURN
     @Override

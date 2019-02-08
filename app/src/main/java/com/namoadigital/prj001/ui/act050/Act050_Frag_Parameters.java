@@ -67,10 +67,33 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private OnFragParameterInteraction mFragListner;
 
     public interface OnFragParameterInteraction{
+        /**
+         * Interface para resgate do Serial
+         */
         MD_Product_Serial getProductSerialRef();
+
+        /**
+         * Interface que pega lista de contratos do json retornado.
+         */
         List<SO_Favorite_Contract> getContracts();
+
+        /**
+         * Interface disparada na momento que o contrato é selecionado
+         * @param contract_code - Codigo do contrato
+         * @param pipeline_code - Codigo do pipeline
+         */
         void onContractSelected(int contract_code, Integer pipeline_code);
+
+        /**
+         * Interface disparda no clique do btnNext,
+         * para mover o usuario pro proximo fragmento
+         */
         void onMoveToOSFragment();
+
+        /**
+         * Interface disparada no clique do btn_back
+         * Esse metodo não esta sendo utilizados.
+         */
         void onBackButtonClick();
     }
 
@@ -79,22 +102,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
     }
 
     public Act050_Frag_Parameters() {}
-
-//    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, int profile_code, int favorite_code, String favorite_desc,Integer favorite_contract_code){
-//        Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
-//        //
-//        Bundle args = new Bundle();
-//        args.putSerializable(HMAUX_KEY, hmAux_Trans);
-//        args.putInt(PROFILE_CODE, profile_code);
-//        args.putInt(FAVORITE_CODE, favorite_code);
-//        args.putString(FAVORITE_DESC, favorite_desc);
-//        //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
-//        //será passado o valor -1. Por isso a tratativa abaixo.
-//        args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
-//        fragment.setArguments(args);
-//        //
-//        return fragment;
-//    }
 
     public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code){
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
