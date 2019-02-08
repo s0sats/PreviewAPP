@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -561,7 +562,7 @@ public class Act050_Frag_SO extends BaseFragment {
             return false;
         }
         if(swHasManualDeadline.isChecked() && mkDateTime.isValid()){
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), ConstantBase.HMAUX_TRANS_LIB.get("msg_error_invalid_date"));
             return false;
         }
 
