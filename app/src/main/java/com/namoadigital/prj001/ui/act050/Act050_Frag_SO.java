@@ -110,15 +110,14 @@ public class Act050_Frag_SO extends BaseFragment {
 
     public static Act050_Frag_SO newInstance() {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
-        Bundle args = new Bundle();
-        args.putBoolean(RESQUEST_CLIENT, false);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isClientListRequest = true;
     }
 
     @Override
@@ -147,7 +146,7 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initVars() {
-        isClientListRequest= getArguments().getBoolean(RESQUEST_CLIENT);
+
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
 
         setClientTypeSearchableSpinner(my_so_creation_obj);
@@ -243,9 +242,16 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmStyle(1);
 
+        HMAux pipelineFav = new HMAux();
+
         ArrayList<HMAux> mPipelineOptions = new ArrayList<>();
+
         for (SO_Favorite_Pipeline pipeline :
                 mListener.getPipelineList()) {
+            if (my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
+                pipelineFav.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
+                pipelineFav.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
+            }
             HMAux pipelineOption = new HMAux();
             pipelineOption.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
@@ -253,7 +259,11 @@ public class Act050_Frag_SO extends BaseFragment {
         }
 
         ssPipelineCode.setmOption(mPipelineOptions);
-        HMAux pipelineFav = mListener.getPipelineFavorite();
+
+        if (pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
+            pipelineFav = mListener.getPipelineFavorite();
+        }
+
         ssPipelineCode.setmValue(pipelineFav);
     }
 
@@ -308,11 +318,19 @@ public class Act050_Frag_SO extends BaseFragment {
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
                 ssClientType.setmValue(auxUserClient);
+                callGetClientList();
             } else if (my_so_creation_obj.getClient_type().equals(Constant.CLIENT_TYPE_USER)) {
                 ssClientType.setmValue(auxUserType);
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void callGetClientList() {
+        if (isClientListRequest) {
+            mListener.getClientList();
+            isClientListRequest = false;
         }
     }
 
@@ -417,11 +435,16 @@ public class Act050_Frag_SO extends BaseFragment {
         addClientInfoToRequest(my_so_creation_obj);
         addSoInfoToRequest(my_so_creation_obj);
 
-        if (ssPriority.getmValue() != null) {
+        if (ssPriority.getmValue().hasConsistentValue(PRIORITY_CODE_KEY)) {
             my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
         }
-        if (ssPackageDefault.getmValue() != null) {
+
+        if (ssPackageDefault.getmValue().hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
+        }
+
+        if (ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+            my_so_creation_obj.setPipeline_code(Integer.valueOf(ssPipelineCode.getmValue().get(SearchableSpinner.ID)));
         }
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
@@ -441,9 +464,7 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
-                    if (isClientListRequest) {
-                        mListener.getClientList();
-                    }
+                    callGetClientList();
                     llSoClient.setVisibility(View.VISIBLE);
                 } else {
                     llSoClient.setVisibility(View.GONE);
@@ -616,14 +637,14 @@ public class Act050_Frag_SO extends BaseFragment {
 
         clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
         String strClientCode;
-        if(clientCode != null){
+        if (clientCode != null) {
             strClientCode = String.valueOf(clientCode);
-        }else{
+        } else {
             strClientCode = null;
 
         }
 
-        clientValue.put(CLIENT_CODE,strClientCode);
+        clientValue.put(CLIENT_CODE, strClientCode);
         ssClientName.setmValue(clientValue);
     }
 
