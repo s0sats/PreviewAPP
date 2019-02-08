@@ -449,7 +449,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
         if (swHasManualDeadline.isChecked()) {
-            my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+            if(mkDateTime.isValid()) {
+                my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+            }
         }
         return my_so_creation_obj;
     }
@@ -558,10 +560,10 @@ public class Act050_Frag_SO extends BaseFragment {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
-//        if(swHasManualDeadline.isChecked() && mkDateTime.getmValue() == null){
-//            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
-//            return false;
-//        }
+        if(swHasManualDeadline.isChecked() && mkDateTime.isValid()){
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
+            return false;
+        }
 
         return true;
     }
