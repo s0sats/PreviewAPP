@@ -56,10 +56,7 @@ public class Act050_Frag_SO extends BaseFragment {
     public static final String CLIENT_CODE = "CLIENT_CODE";
     public static final String PACK_DEFAULT_CODE_KEY = "PACK_DEFAULT_CODE_KEY";
     public static final String PRIORITY_CODE_KEY = "PRIORITY_CODE_KEY";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String RESQUEST_CLIENT = "RESQUEST_CLIENT";
 
     private OnFragmentInteractionListener mListener;
 
@@ -104,25 +101,17 @@ public class Act050_Frag_SO extends BaseFragment {
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
     private List<SM_SO_Client> clientsList = new ArrayList<>();
+    private boolean isClientListRequest = true;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Act050_Frag_SO.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Act050_Frag_SO newInstance(String param1, String param2) {
+
+    public static Act050_Frag_SO newInstance() {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(RESQUEST_CLIENT, false);
         fragment.setArguments(args);
         return fragment;
     }
@@ -130,10 +119,6 @@ public class Act050_Frag_SO extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -162,7 +147,7 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initVars() {
-
+        isClientListRequest= getArguments().getBoolean(RESQUEST_CLIENT);
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
 
         setClientTypeSearchableSpinner(my_so_creation_obj);
@@ -377,7 +362,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(formFieldsValitaded()) {
+                if (formFieldsValitaded()) {
                     ToolBox.alertMSG_YES_NO(
                             getContext(),
                             hmAux_Trans.get("alert_creation_so_save_ttl"),
@@ -456,20 +441,12 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
+                    if (isClientListRequest) {
+                        mListener.getClientList();
+                    }
                     llSoClient.setVisibility(View.VISIBLE);
                 } else {
                     llSoClient.setVisibility(View.GONE);
-                }
-            }
-        });
-
-
-        ssClientName.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
-            @Override
-            public void onSpinnerClickListner(boolean b) {
-                Log.w("Spinner test", "fui clickado");
-                if (ssClientName.getmOption().size() == 0) {
-                    mListener.getClientList();
                 }
             }
         });
@@ -544,19 +521,19 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
-        HMAux selectedClientType =  ssClientType.getmValue();
+        HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
 
-        if(selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)){
+        if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
             return false;
         }
-        if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)){
+        if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
-        if(selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
-        && edtClientName.getText().toString().isEmpty()){
+        if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
+                && edtClientName.getText().toString().isEmpty()) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
@@ -588,13 +565,11 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
         my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE));
-        if (ssClientName.getmValue() != null
-                && ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
-                && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
-                && !ssClientName.getmValue().isEmpty()) {
+        if (ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
+                && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
-                    Integer.valueOf(ssClientName.getmValue().get(CLIENT_CODE)),
+                    ssClientName.getmValue().get(CLIENT_CODE),
                     edtClientId.getText().toString(),
                     edtClientName.getText().toString(),
                     edtClientEmail.getText().toString(),
@@ -611,8 +586,13 @@ public class Act050_Frag_SO extends BaseFragment {
         }
     }
 
-    private void setClientDetailsInSOCreationObj(SO_Creation_Obj my_so_creation_obj, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
-        my_so_creation_obj.setClient_code(clientCode);
+    private void setClientDetailsInSOCreationObj(SO_Creation_Obj my_so_creation_obj, String clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
+        if (clientCode != null) {
+            my_so_creation_obj.setClient_code(Integer.valueOf(clientCode));
+        } else {
+            my_so_creation_obj.setClient_code(null);
+        }
+
         my_so_creation_obj.setClient_id(clientId);
         my_so_creation_obj.setClient_name(clientName);
         my_so_creation_obj.setClient_email(clientEmail);
@@ -622,22 +602,29 @@ public class Act050_Frag_SO extends BaseFragment {
     private void setClientInfo(String clientId, String clientName, String clientPhone, String clientEmail, Integer clientCode) {
 
         verifyPermission();
+        edtClientId.setText(clientId);
+        edtClientName.setText(clientName);
+        edtClientPhone.setText(clientPhone);
+        edtClientEmail.setText(clientEmail);
+        HMAux clientValue = new HMAux();
+        clientValue.put(SearchableSpinner.ID, clientId);
+        String clienteSpinnerName = clientId + " - " + clientName;
 
-        if (clientName != null) {
-            edtClientId.setText(clientId);
-            edtClientName.setText(clientName);
-            edtClientPhone.setText(clientPhone);
-            edtClientEmail.setText(clientEmail);
-            HMAux clientValue = new HMAux();
-            clientValue.put(SearchableSpinner.ID, clientId);
-            String clienteSpinnerName = clientId + " - " + clientName;
-            if (clientName.isEmpty()) {
-                clienteSpinnerName = "";
-            }
-            clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
-            clientValue.put(CLIENT_CODE, String.valueOf(clientCode));
-            ssClientName.setmValue(clientValue);
+        if (clientName.isEmpty()) {
+            clienteSpinnerName = "";
         }
+
+        clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
+        String strClientCode;
+        if(clientCode != null){
+            strClientCode = String.valueOf(clientCode);
+        }else{
+            strClientCode = null;
+
+        }
+
+        clientValue.put(CLIENT_CODE,strClientCode);
+        ssClientName.setmValue(clientValue);
     }
 
     private void verifyPermission() {
@@ -757,7 +744,7 @@ public class Act050_Frag_SO extends BaseFragment {
         }
     }
 
-    public static List<String> getFragTranslationsVars(){
+    public static List<String> getFragTranslationsVars() {
         List<String> transList = new ArrayList<>();
 
         transList.add("client_lbl");
