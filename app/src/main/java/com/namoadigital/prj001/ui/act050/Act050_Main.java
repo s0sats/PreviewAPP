@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act050;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -421,12 +420,6 @@ public class Act050_Main extends Base_Activity_Frag implements
         finish();
     }
     //endregion
-
-    //region Act050_Frag_SOOnFragmentInteractionListener
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     public List<SO_Favorite_Pipeline> getPipelineList() {

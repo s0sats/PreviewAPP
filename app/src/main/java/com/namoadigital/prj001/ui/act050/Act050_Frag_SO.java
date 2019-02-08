@@ -3,10 +3,8 @@ package com.namoadigital.prj001.ui.act050;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -466,11 +464,10 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
+                llSoClient.setVisibility(View.GONE);
+                if (hmAux.hasConsistentValue(SM_SODao.CLIENT_TYPE) && hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
                     callGetClientList();
                     llSoClient.setVisibility(View.VISIBLE);
-                } else {
-                    llSoClient.setVisibility(View.GONE);
                 }
             }
         });
@@ -739,13 +736,6 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPackageDefault = view.findViewById(R.id.act050_frag_so_package_default);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         super.setHmAux_Trans(hmAux_Trans);
@@ -756,9 +746,6 @@ public class Act050_Frag_SO extends BaseFragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            //throw new RuntimeException(context.toString()
-            //  + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -829,8 +816,6 @@ public class Act050_Frag_SO extends BaseFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
 
         List<SO_Favorite_Pipeline> getPipelineList();
 
