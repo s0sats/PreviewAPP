@@ -377,9 +377,20 @@ public class Act050_Frag_SO extends BaseFragment {
         ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (formFieldsValitaded()) {
-                    SO_Creation_Obj my_so_creation_obj = setSOCreationObj();
-                    mListener.requestSoCreation(my_so_creation_obj);
+                if(formFieldsValitaded()) {
+                    ToolBox.alertMSG_YES_NO(
+                            getContext(),
+                            hmAux_Trans.get("alert_creation_so_save_ttl"),
+                            hmAux_Trans.get("alert_creation_so_save_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SO_Creation_Obj my_so_creation_obj = setSOCreationObj();
+                                    mListener.requestSoCreation(my_so_creation_obj);
+                                }
+                            },
+                            1
+                    );
                 }
             }
         });
@@ -387,7 +398,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibPackageDeafultInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = "Lista de pacotes - trad";
+                String title = hmAux_Trans.get("alert_pack_default_ttl");
                 String msg = "";
                 List<String> msgs = mListener.getPackageDefaultByContract();
 
@@ -400,7 +411,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 }
 
                 if (msg.isEmpty()) {
-                    msg = "Não há pacotes listados - trad";
+                    msg = hmAux_Trans.get("alert_no_pack_default_msg");
                 }
 
                 ToolBox.alertMSG(
@@ -497,47 +508,6 @@ public class Act050_Frag_SO extends BaseFragment {
                     ibPackageDeafultInfo.setVisibility(View.VISIBLE);
                 } else {
                     ibPackageDeafultInfo.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        ibBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onBackButtonPressed();
-            }
-        });
-
-        ibNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(formFieldsValitaded()) {
-                    ToolBox.alertMSG_YES_NO(
-                            getContext(),
-                            hmAux_Trans.get("alert_creation_so_save_ttl"),
-                            hmAux_Trans.get("alert_creation_so_save_confirm"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
-
-                                    addClientInfoToRequest(my_so_creation_obj);
-                                    addSoInfoToRequest(my_so_creation_obj);
-
-                                    //my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(SearchableSpinner.DESCRIPTION));
-                                    my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
-                                    //my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(SearchableSpinner.ID)));
-                                    my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
-                                    my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
-                                    if (swHasManualDeadline.isChecked()) {
-                                        my_so_creation_obj.setDeadline(mkDateTime.getmValue());
-                                    }
-
-                                    mListener.requestSoCreation(my_so_creation_obj);
-                                }
-                            },
-                            1
-                    );
                 }
             }
         });
