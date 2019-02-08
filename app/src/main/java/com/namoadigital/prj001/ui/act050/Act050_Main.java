@@ -197,6 +197,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setSite_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
         mSOCreationObj.setOperation_code((int) ToolBox_Con.getPreference_Operation_Code(context));
         mSOCreationObj.setContract_code(-1);
+        mSOCreationObj.setPipeline_code(-1);
         mSOCreationObj.setOrigin(WS_SO_Save.SO_ORIGIN_CHANGE_APP);
         mSOCreationObj.setOrigin_change(WS_SO_Save.SO_ORIGIN_CHANGE_APP);
         mSOCreationObj.setAction(Constant.SO_ACTION_EDIT);
@@ -360,13 +361,21 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onContractSelected(int contract_code, Integer pipeline_code) {
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
-        mSOCreationObj.setPipeline_code(pipeline_code);
+
+        if(!mSOCreationObj.getPipeline_code().equals(pipeline_code)) {
+            if(pipeline_code == null) {
+                mSOCreationObj.setPipeline_code(-1);
+            }else{
+                mSOCreationObj.setPipeline_code(pipeline_code);
+            }
+        }
+
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance("1", "1");
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance();
         act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }

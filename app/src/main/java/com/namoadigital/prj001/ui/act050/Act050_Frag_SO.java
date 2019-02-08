@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -56,10 +57,7 @@ public class Act050_Frag_SO extends BaseFragment {
     public static final String CLIENT_CODE = "CLIENT_CODE";
     public static final String PACK_DEFAULT_CODE_KEY = "PACK_DEFAULT_CODE_KEY";
     public static final String PRIORITY_CODE_KEY = "PRIORITY_CODE_KEY";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String RESQUEST_CLIENT = "RESQUEST_CLIENT";
 
     private OnFragmentInteractionListener mListener;
 
@@ -104,36 +102,23 @@ public class Act050_Frag_SO extends BaseFragment {
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
     private List<SM_SO_Client> clientsList = new ArrayList<>();
+    private boolean isClientListRequest = true;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Act050_Frag_SO.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Act050_Frag_SO newInstance(String param1, String param2) {
+
+    public static Act050_Frag_SO newInstance() {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        isClientListRequest = true;
     }
 
     @Override
@@ -258,9 +243,16 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmStyle(1);
 
+        HMAux pipelineFav = new HMAux();
+
         ArrayList<HMAux> mPipelineOptions = new ArrayList<>();
+
         for (SO_Favorite_Pipeline pipeline :
                 mListener.getPipelineList()) {
+            if (my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
+                pipelineFav.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
+                pipelineFav.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
+            }
             HMAux pipelineOption = new HMAux();
             pipelineOption.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
@@ -268,7 +260,11 @@ public class Act050_Frag_SO extends BaseFragment {
         }
 
         ssPipelineCode.setmOption(mPipelineOptions);
-        HMAux pipelineFav = mListener.getPipelineFavorite();
+
+        if (pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
+            pipelineFav = mListener.getPipelineFavorite();
+        }
+
         ssPipelineCode.setmValue(pipelineFav);
     }
 
@@ -323,11 +319,19 @@ public class Act050_Frag_SO extends BaseFragment {
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
                 ssClientType.setmValue(auxUserClient);
+                callGetClientList();
             } else if (my_so_creation_obj.getClient_type().equals(Constant.CLIENT_TYPE_USER)) {
                 ssClientType.setmValue(auxUserType);
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void callGetClientList() {
+        if (isClientListRequest) {
+            mListener.getClientList();
+            isClientListRequest = false;
         }
     }
 
@@ -377,7 +381,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(formFieldsValitaded()) {
+                if (formFieldsValitaded()) {
                     ToolBox.alertMSG_YES_NO(
                             getContext(),
                             hmAux_Trans.get("alert_creation_so_save_ttl"),
@@ -432,16 +436,23 @@ public class Act050_Frag_SO extends BaseFragment {
         addClientInfoToRequest(my_so_creation_obj);
         addSoInfoToRequest(my_so_creation_obj);
 
-        if (ssPriority.getmValue() != null) {
+        if (ssPriority.getmValue().hasConsistentValue(PRIORITY_CODE_KEY)) {
             my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
         }
-        if (ssPackageDefault.getmValue() != null) {
+
+        if (ssPackageDefault.getmValue().hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
+        }
+
+        if (ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+            my_so_creation_obj.setPipeline_code(Integer.valueOf(ssPipelineCode.getmValue().get(SearchableSpinner.ID)));
         }
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
         if (swHasManualDeadline.isChecked()) {
-            my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+            if (mkDateTime.isValid()) {
+                my_so_creation_obj.setDeadline(mkDateTime.getmValue());
+            }
         }
         return my_so_creation_obj;
     }
@@ -456,6 +467,7 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
+                    callGetClientList();
                     llSoClient.setVisibility(View.VISIBLE);
                 } else {
                     llSoClient.setVisibility(View.GONE);
@@ -463,16 +475,6 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
-
-        ssClientName.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
-            @Override
-            public void onSpinnerClickListner(boolean b) {
-                Log.w("Spinner test", "fui clickado");
-                if (ssClientName.getmOption().size() == 0) {
-                    mListener.getClientList();
-                }
-            }
-        });
 
         ssClientName.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -482,7 +484,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                Log.w("Spinner test", "fui post clickado");
+                if (hmAux.size() == 0) {
+                    setEdtClientContent("", "", "", "");
+                }
                 for (SM_SO_Client client : clientsList) {
                     if (client.getClient_id().equals(hmAux.get(SearchableSpinner.ID))) {
                         setClientInfo(
@@ -544,27 +548,38 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
-        HMAux selectedClientType =  ssClientType.getmValue();
+        HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
 
-        if(selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)){
+        if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
             return false;
         }
-        if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)){
+        if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
-        if(selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
-        && edtClientName.getText().toString().isEmpty()){
+        if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
+                && edtClientName.getText().toString().isEmpty()) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
             return false;
         }
-//        if(swHasManualDeadline.isChecked() && mkDateTime.getmValue() == null){
-//            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
-//            return false;
-//        }
+        if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), ConstantBase.HMAUX_TRANS_LIB.get("msg_error_invalid_date"));
+            return false;
+        }
 
+        return true;
+    }
+
+    private boolean validateMkDateTime() {
+        HMAux mketContents = mkDateTime.getMketContents();
+        if ((mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && !mketContents.get(MkDateTime.HOUR_KEY).isEmpty())
+                || (!mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && (mketContents.get(MkDateTime.HOUR_KEY).isEmpty()))) {
+            return false;
+        }
         return true;
     }
 
@@ -588,13 +603,12 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
         my_so_creation_obj.setClient_type(ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE));
-        if (ssClientName.getmValue() != null
-                && ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
-                && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
-                && !ssClientName.getmValue().isEmpty()) {
+        if (ssClientType.getmValue().hasConsistentValue(SM_SODao.CLIENT_TYPE)
+                && ssClientType.getmValue().get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
+
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
-                    Integer.valueOf(ssClientName.getmValue().get(CLIENT_CODE)),
+                    ssClientName.getmValue().get(CLIENT_CODE),
                     edtClientId.getText().toString(),
                     edtClientName.getText().toString(),
                     edtClientEmail.getText().toString(),
@@ -611,8 +625,13 @@ public class Act050_Frag_SO extends BaseFragment {
         }
     }
 
-    private void setClientDetailsInSOCreationObj(SO_Creation_Obj my_so_creation_obj, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
-        my_so_creation_obj.setClient_code(clientCode);
+    private void setClientDetailsInSOCreationObj(SO_Creation_Obj my_so_creation_obj, String clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
+        if (clientCode != null) {
+            my_so_creation_obj.setClient_code(Integer.valueOf(clientCode));
+        } else {
+            my_so_creation_obj.setClient_code(null);
+        }
+
         my_so_creation_obj.setClient_id(clientId);
         my_so_creation_obj.setClient_name(clientName);
         my_so_creation_obj.setClient_email(clientEmail);
@@ -622,22 +641,33 @@ public class Act050_Frag_SO extends BaseFragment {
     private void setClientInfo(String clientId, String clientName, String clientPhone, String clientEmail, Integer clientCode) {
 
         verifyPermission();
+        setEdtClientContent(clientId, clientName, clientPhone, clientEmail);
+        HMAux clientValue = new HMAux();
+        clientValue.put(SearchableSpinner.ID, clientId);
+        String clienteSpinnerName = clientId + " - " + clientName;
 
-        if (clientName != null) {
-            edtClientId.setText(clientId);
-            edtClientName.setText(clientName);
-            edtClientPhone.setText(clientPhone);
-            edtClientEmail.setText(clientEmail);
-            HMAux clientValue = new HMAux();
-            clientValue.put(SearchableSpinner.ID, clientId);
-            String clienteSpinnerName = clientId + " - " + clientName;
-            if (clientName.isEmpty()) {
-                clienteSpinnerName = "";
-            }
-            clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
-            clientValue.put(CLIENT_CODE, String.valueOf(clientCode));
-            ssClientName.setmValue(clientValue);
+        if (clientName.isEmpty()) {
+            clienteSpinnerName = "";
         }
+
+        clientValue.put(SearchableSpinner.DESCRIPTION, clienteSpinnerName);
+        String strClientCode;
+        if (clientCode != null) {
+            strClientCode = String.valueOf(clientCode);
+        } else {
+            strClientCode = null;
+
+        }
+
+        clientValue.put(CLIENT_CODE, strClientCode);
+        ssClientName.setmValue(clientValue);
+    }
+
+    private void setEdtClientContent(String clientId, String clientName, String clientPhone, String clientEmail) {
+        edtClientId.setText(clientId);
+        edtClientName.setText(clientName);
+        edtClientPhone.setText(clientPhone);
+        edtClientEmail.setText(clientEmail);
     }
 
     private void verifyPermission() {
@@ -757,7 +787,7 @@ public class Act050_Frag_SO extends BaseFragment {
         }
     }
 
-    public static List<String> getFragTranslationsVars(){
+    public static List<String> getFragTranslationsVars() {
         List<String> transList = new ArrayList<>();
 
         transList.add("client_lbl");
