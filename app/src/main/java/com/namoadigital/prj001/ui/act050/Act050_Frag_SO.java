@@ -518,7 +518,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (3 && hmAux.get(PACK_DEFAULT_CODE_KEY).equals(WITH_PACK_DEFAULT_PENDING)) {
+                if (hmAux.hasConsistentValue(PACK_DEFAULT_CODE_KEY) && hmAux.get(PACK_DEFAULT_CODE_KEY).equals(WITH_PACK_DEFAULT_PENDING)) {
                     ibPackageDeafultInfo.setVisibility(View.VISIBLE);
                 } else {
                     ibPackageDeafultInfo.setVisibility(View.GONE);
