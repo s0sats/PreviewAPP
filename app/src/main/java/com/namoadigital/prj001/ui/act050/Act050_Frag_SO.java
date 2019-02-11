@@ -811,6 +811,7 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("alert_fill_client_name_field_msg");
         transList.add("alert_creation_so_save_ttl");
         transList.add("alert_creation_so_save_confirm");
+        transList.add("alert_invalid_email_msg");
 
         return transList;
     }
