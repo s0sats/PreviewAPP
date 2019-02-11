@@ -560,6 +560,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private boolean formFieldsValitaded() {
         HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
+        HMAux selectedPackageDefault = ssPackageDefault.getmValue();
 
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
@@ -569,6 +570,12 @@ public class Act050_Frag_SO extends BaseFragment {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
+
+        if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
+            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_package_default_field_msg"));
+            return false;
+        }
+
         if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)){
 
             if (edtClientName.getText().toString().isEmpty()) {
@@ -839,6 +846,7 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("alert_creation_so_save_ttl");
         transList.add("alert_creation_so_save_confirm");
         transList.add("alert_invalid_email_msg");
+        transList.add("alert_fill_package_default_field_msg");
 
         return transList;
     }
