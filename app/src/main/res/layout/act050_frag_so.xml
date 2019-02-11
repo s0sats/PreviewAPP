@@ -109,7 +109,7 @@
                         android:id="@+id/act050_frag_so_email_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
+                        android:inputType="textEmailAddress"
                         android:textColor="@color/namoa_light_blue"
                         android:textSize="@dimen/font_size_item_md" />
 
@@ -268,7 +268,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_title_lbl">
 
                     <TextView
-                        android:id="@+id/act050_frag_so_desc_lbl"
+                        android:id="@+id/act050_frag_so_id_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -279,14 +279,14 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
-                        android:id="@+id/act050_frag_so_desc_val"
+                        android:id="@+id/act050_frag_so_id_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
                         android:textSize="@dimen/font_size_item_md" />
 
                     <TextView
-                        android:id="@+id/act050_frag_so_id_lbl"
+                        android:id="@+id/act050_frag_so_desc_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="S.O. ID - trad"
@@ -294,7 +294,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/act050_frag_so_id_val"
+                        android:id="@+id/act050_frag_so_desc_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
