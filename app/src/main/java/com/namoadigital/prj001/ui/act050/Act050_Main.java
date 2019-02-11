@@ -467,11 +467,6 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public String getClientTypeFromFavorite() {
-        return mSoFavoriteItem.getClientType();
-    }
-
-    @Override
     public List<String> getPackageDefaultByContract() {
         if (isContractSelected) {
 

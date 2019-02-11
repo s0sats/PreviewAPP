@@ -839,8 +839,6 @@ public class Act050_Frag_SO extends BaseFragment {
 
         List<SO_Favorite_Priority> getPriorityList();
 
-        String getClientTypeFromFavorite();
-
         List<String> getPackageDefaultByContract();
 
         void onBackButtonPressed();
