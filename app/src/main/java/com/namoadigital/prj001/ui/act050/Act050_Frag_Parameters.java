@@ -86,6 +86,12 @@ public class Act050_Frag_Parameters extends BaseFragment {
         void onContractSelected(int contract_code, Integer pipeline_code);
 
         /**
+         * Interface que checa se contrato já foi selecionado.
+         * @return
+         */
+        boolean checkIsContractSelected();
+
+        /**
          * Interface disparda no clique do btnNext,
          * para mover o usuario pro proximo fragmento
          */
@@ -281,7 +287,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.ID)) : -1;
                         Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                         selected_contract_code = contract_code;
-                        mFragListner.onContractSelected(contract_code,pipeline_code);
+                        //Se existe apenas um contrato e ele ja foi selecionado,
+                        //não é necessario atualizar a var da act novamente.
+                        //Sem essa tratativa, ao navegar entre os fragmentos de param e so,
+                        //o pipeline era "resetado" pelo do contrato.
+                        if(!mFragListner.checkIsContractSelected()) {
+                            mFragListner.onContractSelected(contract_code, pipeline_code);
+                        }
                     } else {
                         if (selected_contract_code != null) {
                             ss_contract.setmValue(generateSSOption(contracts, favorite_contract_code).get(0));

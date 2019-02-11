@@ -341,6 +341,7 @@ public class Act050_Main extends Base_Activity_Frag implements
      */
     @Override
     public void clearOSCreationData() {
+        isContractSelected = false;
         isSOCreationObjectFilled = false;
         mSOCreationObj = new SO_Creation_Obj();
         initSoCreationObj();
@@ -358,7 +359,6 @@ public class Act050_Main extends Base_Activity_Frag implements
         return response.getContract();
     }
 
-
     @Override
     public void onContractSelected(int contract_code, Integer pipeline_code) {
         isContractSelected = true;
@@ -373,6 +373,11 @@ public class Act050_Main extends Base_Activity_Frag implements
         }
 
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+    }
+
+    @Override
+    public boolean checkIsContractSelected() {
+        return isContractSelected;
     }
 
     @Override
