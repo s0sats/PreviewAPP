@@ -363,15 +363,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onContractSelected(int contract_code, Integer pipeline_code) {
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
-
-        if(!mSOCreationObj.getPipeline_code().equals(pipeline_code)) {
-            if(pipeline_code == null) {
-                mSOCreationObj.setPipeline_code(null);
-            }else{
-                mSOCreationObj.setPipeline_code(pipeline_code);
-            }
-        }
-
+        mSOCreationObj.setPipeline_code(pipeline_code);
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
 
