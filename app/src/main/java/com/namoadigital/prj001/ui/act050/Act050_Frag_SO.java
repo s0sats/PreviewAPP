@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +96,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
-    private List<SM_SO_Client> clientsList = new ArrayList<>();
+    private ArrayList<SM_SO_Client> clientsList = new ArrayList<>();
     private boolean isClientListRequest = true;
 
     public Act050_Frag_SO() {
@@ -243,7 +244,8 @@ public class Act050_Frag_SO extends BaseFragment {
 
         for (SO_Favorite_Pipeline pipeline :
                 mListener.getPipelineList()) {
-            if (my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
+            if (my_so_creation_obj.getPipeline_code() != null
+                    && my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
                 pipelineFav.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
                 pipelineFav.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
             }
@@ -323,9 +325,12 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void callGetClientList() {
-        if (isClientListRequest) {
+        clientsList = mListener.getClientListLocal();
+        if (isClientListRequest && clientsList.isEmpty()) {
             mListener.getClientList();
             isClientListRequest = false;
+        } else {
+            populateClientList(clientsList);
         }
     }
 
@@ -552,10 +557,19 @@ public class Act050_Frag_SO extends BaseFragment {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
             return false;
         }
-        if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)
-                && edtClientName.getText().toString().isEmpty()) {
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
-            return false;
+        if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)){
+
+            if (edtClientName.getText().toString().isEmpty()) {
+                alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
+                return false;
+            }
+
+            if (!edtClientEmail.getText().toString().isEmpty()
+                    && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
+                alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), "Email inválido - trad");
+                return false;
+            }
+
         }
         if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
             alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), ConstantBase.HMAUX_TRANS_LIB.get("msg_error_invalid_date"));
@@ -610,10 +624,10 @@ public class Act050_Frag_SO extends BaseFragment {
             setClientDetailsInSOCreationObj(
                     my_so_creation_obj,
                     null,
-                    "",
-                    "",
-                    "",
-                    ""
+                    null,
+                    null,
+                    null,
+                    null
             );
         }
     }
@@ -818,6 +832,8 @@ public class Act050_Frag_SO extends BaseFragment {
         HMAux getPipelineFavorite();
 
         void getClientList();
+
+        ArrayList<SM_SO_Client> getClientListLocal();
 
         void requestSoCreation(SO_Creation_Obj mSOCreationObj);
 

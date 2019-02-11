@@ -68,6 +68,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     //Parametros de Save
     private SO_Creation_Obj mSOCreationObj = new SO_Creation_Obj();
     private SO_Favorite_Item mSoFavoriteItem = null;
+    private ArrayList<SM_SO_Client> clientList = new ArrayList<>();
     private boolean isContractSelected = false;
     private boolean isSOCreationObjectFilled = false;
     private boolean isEmptyList;
@@ -303,7 +304,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         } else if (wsProcess.equals(WS_SO_Client_List.class.getName())) {
             //MOVER ESSE GET O TRATAMENTO PARA O PRESENTER OU FRAGMENT.
             Gson gson = new GsonBuilder().serializeNulls().create();
-            ArrayList<SM_SO_Client> clientList =
+            clientList =
                     gson.fromJson(
                             mLink,
                             new TypeToken<ArrayList<SM_SO_Client>>() {
@@ -363,7 +364,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
         if(!mSOCreationObj.getPipeline_code().equals(pipeline_code)) {
             if(pipeline_code == null) {
-                mSOCreationObj.setPipeline_code(-1);
+                mSOCreationObj.setPipeline_code(null);
             }else{
                 mSOCreationObj.setPipeline_code(pipeline_code);
             }
@@ -448,6 +449,11 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public void getClientList() {
         mPresenter.executeWsSoClient();
+    }
+
+    @Override
+    public ArrayList<SM_SO_Client> getClientListLocal() {
+        return clientList;
     }
 
     @Override
