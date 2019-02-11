@@ -3,8 +3,11 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SO_Favorite_Item {
+import java.io.Serializable;
 
+public class SO_Favorite_Item implements Serializable {
+    private static final long serialVersionUID = -1138602148771599430L;
+    //
     @SerializedName("customer_code")
     @Expose
     private Integer customerCode;

@@ -53,6 +53,14 @@ public class Act050_Main extends Base_Activity_Frag implements
     public static final String PARAMETERS_FRAGMENT = "PARAMETERS_FRAGMENT";
     public static final String SO_CREATION_FRAGMENT = "SO_CREATION_FRAGMENT";
     public static final String SO_CONTRACT_PIPELINE_KEY = "SO_CONTRACT_PIPELINE_KEY";
+    //
+    public static final String RESPONSE = "RESPONSE";
+    public static final String IS_CONTRATACT_SELECTED = "IS_CONTRATACT_SELECTED";
+    public static final String IS_CREATION_FILLED = "IS_CREATION_FILLED";
+    public static final String IS_EMPTY = "IS_EMPTY";
+    public static final String IS_FINISHING = "IS_FINISHING";
+
+
 
 
     private Bundle bundle;
@@ -85,10 +93,33 @@ public class Act050_Main extends Base_Activity_Frag implements
         //
         iniSetup();
         //
-        initVars();
+        if(savedInstanceState != null){
+            restoreSavedIntance(savedInstanceState);
+        }
+        //
+        initVars(savedInstanceState == null);
         //
         iniUIFooter();
         //
+    }
+
+    private void restoreSavedIntance(Bundle savedInstanceState) {
+        Log.d("NEW_OS", "restoreSavedIntance: "  + savedInstanceState.toString());
+        response = (SO_Favorite_Response) savedInstanceState.getSerializable(RESPONSE);
+        mSOCreationObj = (SO_Creation_Obj) savedInstanceState.getSerializable(WS_SO_Creation_Save.SO_CREATION_OBJ_KEY);
+        isContractSelected = savedInstanceState.getBoolean(IS_CONTRATACT_SELECTED);
+        isSOCreationObjectFilled = savedInstanceState.getBoolean(IS_CREATION_FILLED);
+        isEmptyList = savedInstanceState.getBoolean(IS_EMPTY);
+        //Restore dos frag
+        if(fm.findFragmentByTag(FAVORITE_LIST_FRAGMENT) != null) {
+            act050_favorite_fragment = (Act050_Frag_Favorite) fm.getFragment(savedInstanceState, FAVORITE_LIST_FRAGMENT);
+        }
+        if(fm.findFragmentByTag(PARAMETERS_FRAGMENT) != null) {
+            act050_frag_parameters = (Act050_Frag_Parameters) fm.getFragment(savedInstanceState, PARAMETERS_FRAGMENT);
+        }
+        if(fm.findFragmentByTag(SO_CREATION_FRAGMENT) != null) {
+            act050_s0_creation_fragment = (Act050_Frag_SO) fm.getFragment(savedInstanceState, SO_CREATION_FRAGMENT);
+        }
     }
 
     private void initFragment() {
@@ -160,7 +191,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         );
     }
 
-    private void initVars() {
+    private void initVars(boolean savedState) {
         recoverIntentsInfo();
         //
         mPresenter = new Act050_Main_Presenter(
@@ -170,8 +201,10 @@ public class Act050_Main extends Base_Activity_Frag implements
         );
         //
         if (mPresenter.getProductSerial(mProductCode, mSerialCode)) {
-            initSoCreationObj();
-            initFragment();
+            if(savedState) {
+                initSoCreationObj();
+                initFragment();
+            }
         } else {
             ToolBox.alertMSG(
                     context,
@@ -393,6 +426,24 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.d("NEW_OS", "Act050 onSaveInstanceState - > "  + String.valueOf(outState == null));
+        //
+        outState.putSerializable(WS_SO_Creation_Save.SO_CREATION_OBJ_KEY,mSOCreationObj);
+        outState.putSerializable(RESPONSE,response);
+        outState.putBoolean(IS_CONTRATACT_SELECTED, isContractSelected);
+        outState.putBoolean(IS_CREATION_FILLED, isSOCreationObjectFilled);
+        outState.putBoolean(IS_EMPTY, isEmptyList);
+        outState.putBoolean(IS_FINISHING, this.isFinishing());
+        //
+        if(fm.findFragmentByTag(FAVORITE_LIST_FRAGMENT) != null) {
+            fm.putFragment(outState, FAVORITE_LIST_FRAGMENT, act050_favorite_fragment);
+        }
+        if(fm.findFragmentByTag(PARAMETERS_FRAGMENT) != null) {
+            fm.putFragment(outState, PARAMETERS_FRAGMENT, act050_frag_parameters);
+        }
+        if(fm.findFragmentByTag(SO_CREATION_FRAGMENT) != null) {
+            fm.putFragment(outState, SO_CREATION_FRAGMENT, act050_s0_creation_fragment);
+        }
+        //
         super.onSaveInstanceState(outState);
     }
 
