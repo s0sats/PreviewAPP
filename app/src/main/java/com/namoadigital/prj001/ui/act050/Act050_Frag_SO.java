@@ -576,7 +576,8 @@ public class Act050_Frag_SO extends BaseFragment {
                 return false;
             }
 
-            if (!edtClientEmail.getText().toString().isEmpty()
+            if (edtClientEmail.isEnabled()
+                    && !edtClientEmail.getText().toString().isEmpty()
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
                 alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_invalid_email_msg"));
                 return false;
