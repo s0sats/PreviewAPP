@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.CLIENT_TYPE_CLIENT;
@@ -103,14 +105,17 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
 
-    public static Act050_Frag_SO newInstance() {
+    public static Act050_Frag_SO newInstance(HMAux hmAux_Trans) {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
-
+        Bundle args = new Bundle();
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("NEW_OS", "onCreate - > "  + String.valueOf(savedInstanceState == null));
         super.onCreate(savedInstanceState);
         isClientListRequest = true;
     }
@@ -118,10 +123,11 @@ public class Act050_Frag_SO extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("NEW_OS", "onCreateView - > " + String.valueOf(savedInstanceState == null));
 
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.act050_frag_so, container, false);
-
+        //
+        recoverBundleInfo(getArguments());
         bindSearchableSpinner(view);
         bindEditText(view);
         bindTextView(view);
@@ -138,6 +144,13 @@ public class Act050_Frag_SO extends BaseFragment {
         initAction();
         return view;
 
+    }
+
+    private void recoverBundleInfo(Bundle arguments) {
+        Log.d("NEW_OS", "recoverBundleInfo - > Arguments null " + String.valueOf(arguments == null));
+        if(arguments != null) {
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        }
     }
 
     private void initVars() {
@@ -733,11 +746,6 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     @Override
-    public void setHmAux_Trans(HMAux hmAux_Trans) {
-        super.setHmAux_Trans(hmAux_Trans);
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -751,6 +759,25 @@ public class Act050_Frag_SO extends BaseFragment {
         mListener.updateSO_Creation_Obj(setSOCreationObj());
         mListener = null;
     }
+
+    @Override
+    public void onPause() {
+        Log.d("NEW_OS", "onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.d("NEW_OS", "onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("NEW_OS", "onDestroy");
+        super.onDestroy();
+    }
+
 
     public void populateClientList(ArrayList<SM_SO_Client> clientList) {
         this.clientsList = clientList;

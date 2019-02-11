@@ -150,6 +150,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
     public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     public static final String MAIN_SERIAL_CREATION = "main_serial_creation";
+    public static final String MAIN_HMAUX_TRANS_KEY ="main_hmaux_trans_key";
 
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";

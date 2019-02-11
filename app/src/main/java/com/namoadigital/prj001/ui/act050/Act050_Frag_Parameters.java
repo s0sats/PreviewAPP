@@ -24,12 +24,13 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class Act050_Frag_Parameters extends BaseFragment {
 
-    public static final String HMAUX_KEY ="HMAUX_TRANS";
+
     public static final String FAVORITE_DESC ="FAVORITE_DESC";
     public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
     public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
@@ -107,7 +108,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
         //
         Bundle args = new Bundle();
-        args.putSerializable(HMAUX_KEY, hmAux_Trans);
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         args.putString(FAVORITE_DESC, favorite_desc);
         //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
         //será passado o valor -1. Por isso a tratativa abaixo.
@@ -215,7 +216,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
         this.context = getActivity();
         //
         if(arguments != null){
-            this.hmAux_Trans = (HMAux) arguments.getSerializable(HMAUX_KEY);
+            //this.hmAux_Trans = (HMAux) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY);
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
             this.mdProductSerial = (MD_Product_Serial) arguments.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             this.favorite_desc = arguments.getString(FAVORITE_DESC);
             //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,

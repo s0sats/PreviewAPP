@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
@@ -74,6 +75,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("NEW_OS", "Act050 onCreate - > "  + String.valueOf(savedInstanceState == null));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act050_main);
 
@@ -374,8 +376,8 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance();
-        act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans);
+        //act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }
 
@@ -389,6 +391,19 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onBackPressed() {
         mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d("NEW_OS", "Act050 onSaveInstanceState - > "  + String.valueOf(outState == null));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("NEW_OS", "onDestroy");
+        super.onDestroy();
+    }
+
     //region callActs
     @Override
     public void callAct005(Context context) {
