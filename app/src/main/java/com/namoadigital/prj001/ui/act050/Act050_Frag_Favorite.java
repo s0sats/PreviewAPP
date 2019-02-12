@@ -19,8 +19,10 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -54,7 +56,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static Act050_Frag_Favorite newInstance(int columnCount, long productCode, long serialCode, Integer category_price_code, Integer segment_code) {
+    public static Act050_Frag_Favorite newInstance(int columnCount, long productCode, long serialCode, Integer category_price_code, Integer segment_code, HMAux hmAux_Trans) {
         Act050_Frag_Favorite fragment = new Act050_Frag_Favorite();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
@@ -62,6 +64,8 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
         args.putLong(MD_Product_SerialDao.SERIAL_CODE, serialCode);
         args.putInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, category_price_code);
         args.putInt(MD_SegmentDao.SEGMENT_CODE, segment_code);
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +79,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
             mSerialCode = getArguments().getLong(MD_Product_SerialDao.SERIAL_CODE);
             mCategoryPriceCode = getArguments().getInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE);
             mSegmentCode = getArguments().getInt(MD_SegmentDao.SEGMENT_CODE);
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
         }
         mAdapter = new Act050_Favorite_RecyclerView_Adapter(mListener);
 

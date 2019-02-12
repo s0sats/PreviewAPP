@@ -138,12 +138,28 @@ public class Act050_Frag_SO extends BaseFragment {
         swHasManualDeadline = view.findViewById(R.id.act050_frag_so_has_manual_dealine);
         cbOtherInfo = view.findViewById(R.id.act050_header_cb_show_hide);
         sv_main = view.findViewById(R.id.act050_frag_so_sv_main);
-
-        initVars();
-
-        initAction();
+//      Metodo abaixo foram movidos para o onStart , pois no restore da tela os SS estavam com informações
+//      erradas
+//        initVars();
+//
+//        initAction();
         return view;
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //
+        initVars();
+        //
+        initAction();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("NEW_OS", "onResume ");
+        super.onResume();
     }
 
     private void recoverBundleInfo(Bundle arguments) {
@@ -156,6 +172,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void initVars() {
 
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
+        //Log.d("NEW_OS", "initVars SO_Creation_Obj - > " + my_so_creation_obj.toString());
 
         setClientTypeSearchableSpinner(my_so_creation_obj);
         setClientNameSearchableSpinner(my_so_creation_obj);
@@ -769,6 +786,7 @@ public class Act050_Frag_SO extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d("NEW_OS", "onAttach");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
@@ -785,6 +803,7 @@ public class Act050_Frag_SO extends BaseFragment {
     public void onPause() {
         Log.d("NEW_OS", "onPause");
         super.onPause();
+        mListener.updateSO_Creation_Obj(setSOCreationObj());
     }
 
     @Override

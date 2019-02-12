@@ -124,8 +124,8 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        act050_favorite_fragment = Act050_Frag_Favorite.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code());
-        act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        act050_favorite_fragment = Act050_Frag_Favorite.newInstance(1, mProductCode, mSerialCode, mdProductSerial.getCategory_price_code(), mdProductSerial.getSegment_code(),hmAux_Trans);
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
         transaction.add(R.id.act050_frg_placeholder, act050_favorite_fragment, FAVORITE_LIST_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
