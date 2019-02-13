@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -94,6 +94,8 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private LinearLayout llSoClient;
     private LinearLayout llSoOtherInfo;
+    private ConstraintLayout clClientName;
+    private LinearLayout llClientEmail;
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
     private ScrollView sv_main;
@@ -132,6 +134,10 @@ public class Act050_Frag_SO extends BaseFragment {
         bindEditText(view);
         bindTextView(view);
         bindImageButton(view);
+
+        clClientName = view.findViewById(R.id.act050_frag_so_client_name_ll);
+        llClientEmail = view.findViewById(R.id.act050_frag_so_client_email_ll);
+
         mkDateTime = view.findViewById(R.id.act050_frag_so_manual_deadline);
         llSoClient = view.findViewById(R.id.act050_frag_so_client_ll);
         llSoOtherInfo = view.findViewById(R.id.act050_frag_so_ll);
@@ -286,7 +292,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         ssPipelineCode.setmOption(mPipelineOptions);
 
-        if (pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
+        if (!pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
             pipelineFav = mListener.getPipelineFavorite();
         }
 
@@ -409,6 +415,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearValidation();
                 if (formFieldsValitaded()) {
                     ToolBox.alertMSG_YES_NO(
                             getContext(),
@@ -575,45 +582,65 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
+        boolean isValitaded =true;
+        String alertMsg = "";
         HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
         HMAux selectedPackageDefault = ssPackageDefault.getmValue();
 
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_type_field_msg"));
-            return false;
+            alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") +"\n";
+            ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isValitaded = false;
         }
         if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_priority_field_msg"));
-            return false;
+            alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") +"\n";
+            ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isValitaded = false;
         }
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_package_default_field_msg"));
-            return false;
+            alertMsg = alertMsg +  hmAux_Trans.get("alert_fill_package_default_field_msg") +"\n";
+            ssPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isValitaded = false;
         }
 
-        if (selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)){
+        if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)&&selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)){
 
             if (edtClientName.getText().toString().isEmpty()) {
-                alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_fill_client_name_field_msg"));
-                return false;
+                alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") +"\n";
+                clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                isValitaded = false;
             }
 
             if (edtClientEmail.isEnabled()
                     && !edtClientEmail.getText().toString().isEmpty()
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
-                alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), hmAux_Trans.get("alert_invalid_email_msg"));
-                return false;
+                alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") +"\n";
+                llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                isValitaded = false;
             }
-
         }
         if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
-            alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), ConstantBase.HMAUX_TRANS_LIB.get("msg_error_invalid_date"));
-            return false;
+            alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") +"\n";
+            mkDateTime.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isValitaded = false;
         }
 
-        return true;
+        if(isValitaded){
+            return isValitaded;
+        }
+
+        alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"),alertMsg);
+        return isValitaded;
+    }
+
+    private void clearValidation(){
+        ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
     }
 
     private boolean validateMkDateTime() {
@@ -627,11 +654,11 @@ public class Act050_Frag_SO extends BaseFragment {
         return true;
     }
 
-    private void alertError(String s, String s2) {
+    private void alertError(String title, String msg) {
         ToolBox.alertMSG(
                 getContext(),
-                s,
-                s2,
+                title,
+                msg,
                 null,
                 0
         );
@@ -865,6 +892,7 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("alert_creation_so_save_ttl");
         transList.add("alert_creation_so_save_confirm");
         transList.add("alert_invalid_email_msg");
+        transList.add("msg_error_invalid_date");
         transList.add("alert_fill_package_default_field_msg");
 
         return transList;
