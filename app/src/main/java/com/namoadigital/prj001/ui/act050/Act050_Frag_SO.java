@@ -95,6 +95,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private LinearLayout llSoClient;
     private LinearLayout llSoOtherInfo;
     private ConstraintLayout clClientName;
+    private ConstraintLayout clPackageDefault;
     private LinearLayout llClientEmail;
     private Switch swHasManualDeadline;
     private CheckBox cbOtherInfo;
@@ -137,6 +138,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         clClientName = view.findViewById(R.id.act050_frag_so_client_name_ll);
         llClientEmail = view.findViewById(R.id.act050_frag_so_client_email_ll);
+        clPackageDefault = view.findViewById(R.id.act050_frag_so_package_default_ll);
 
         mkDateTime = view.findViewById(R.id.act050_frag_so_manual_deadline);
         llSoClient = view.findViewById(R.id.act050_frag_so_client_ll);
@@ -196,6 +198,7 @@ public class Act050_Frag_SO extends BaseFragment {
         if (my_so_creation_obj.getDeadline_manual() == 1) {
             swHasManualDeadline.setChecked(true);
             mkDateTime.setmValue(my_so_creation_obj.getDeadline());
+            mkDateTime.setmHighlightWhenInvalid(true);
             mkDateTime.setVisibility(View.VISIBLE);
         }
     }
@@ -246,7 +249,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPriority.setmTitle(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmStyle(1);
-
+        ssPriority.setmRequired(true);
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
                 mListener.getPriorityList()) {
@@ -346,6 +349,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType.setmTitle(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
+        ssClientType.setmRequired(true);
         ssClientType.setmStyle(1);
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
@@ -601,7 +605,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             alertMsg = alertMsg +  hmAux_Trans.get("alert_fill_package_default_field_msg") +"\n";
-            ssPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isValitaded = false;
         }
 
@@ -623,7 +627,6 @@ public class Act050_Frag_SO extends BaseFragment {
         }
         if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
             alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") +"\n";
-            mkDateTime.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isValitaded = false;
         }
 
@@ -638,7 +641,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void clearValidation(){
         ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        ssPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
     }

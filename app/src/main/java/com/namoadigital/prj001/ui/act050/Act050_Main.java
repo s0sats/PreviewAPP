@@ -532,7 +532,6 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public List<String> getPackageDefaultByContract() {
         if (isContractSelected) {
-
             for (SO_Favorite_Contract contract : response.getContract()
             ) {
                 if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
