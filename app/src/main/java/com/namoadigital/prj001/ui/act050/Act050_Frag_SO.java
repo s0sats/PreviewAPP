@@ -246,10 +246,10 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setPrioritySearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
+        ssPriority.setmRequired(true);
         ssPriority.setmTitle(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmStyle(1);
-        ssPriority.setmRequired(true);
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
                 mListener.getPriorityList()) {
@@ -346,10 +346,10 @@ public class Act050_Frag_SO extends BaseFragment {
         mOptionClientType.add(auxUserClient);
         //
         ssClientType.setmOption(mOptionClientType);
+        ssClientType.setmRequired(true);
         ssClientType.setmTitle(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
-        ssClientType.setmRequired(true);
         ssClientType.setmStyle(1);
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
@@ -648,10 +648,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private boolean validateMkDateTime() {
         HMAux mketContents = mkDateTime.getMketContents();
-        if ((mketContents.get(MkDateTime.DATE_KEY).isEmpty()
-                && !mketContents.get(MkDateTime.HOUR_KEY).isEmpty())
-                || (!mketContents.get(MkDateTime.DATE_KEY).isEmpty()
-                && (mketContents.get(MkDateTime.HOUR_KEY).isEmpty()))) {
+        if (!mkDateTime.isValid()) {
             return false;
         }
         return true;
