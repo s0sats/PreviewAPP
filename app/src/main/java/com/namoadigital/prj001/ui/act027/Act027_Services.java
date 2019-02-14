@@ -75,13 +75,14 @@ public class Act027_Services extends BaseFragment {
 
     public interface IAct027_Services {
         void onServiceSelected(HMAux sService);
+        void callAct005();
     }
 
     private IAct027_Services delegate;
 
-    public void setOnServiceSelectedListener(IAct027_Services delegate) {
-        this.delegate = delegate;
-    }
+//    public void setOnServiceSelectedListener(IAct027_Services delegate) {
+//        this.delegate = delegate;
+//    }
 
     public void setLastServiceUpdated(String lastServiceUpdated) {
         this.lastServiceUpdated = lastServiceUpdated;
@@ -120,6 +121,14 @@ public class Act027_Services extends BaseFragment {
         super.onResume();
 
         loadDataToScreen();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof IAct027_Services) {
+            delegate = (IAct027_Services) context;
+        }
     }
 
     @Override
@@ -195,6 +204,8 @@ public class Act027_Services extends BaseFragment {
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
+            }else{
+               delegate.callAct005();
             }
         }
     }

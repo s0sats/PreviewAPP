@@ -195,10 +195,10 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void setDeadline(SO_Creation_Obj my_so_creation_obj) {
         swHasManualDeadline.setChecked(false);
+
         if (my_so_creation_obj.getDeadline_manual() == 1) {
             swHasManualDeadline.setChecked(true);
             mkDateTime.setmValue(my_so_creation_obj.getDeadline());
-            mkDateTime.setmHighlightWhenInvalid(true);
             mkDateTime.setVisibility(View.VISIBLE);
         }
     }
