@@ -177,14 +177,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
             }
         });
         //
-//        btn_back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(mFragListner != null){
-//                    mFragListner.onBackButtonClick();
-//                }
-//            }
-//        });
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mFragListner != null){
+                    mFragListner.onBackButtonClick();
+                }
+            }
+        });
         //
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override

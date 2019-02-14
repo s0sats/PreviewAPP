@@ -298,11 +298,11 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/btn_namoa_main_2_states"
             android:padding="20dp"
-            android:src="@drawable/ic_skip_previous_white_24px"
+            android:src="@drawable/ic_cancel_white_24px"
+            android:tint="@color/padrao_WHITE"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/act050_frag_param_iv_next"
-            android:visibility="gone"
             />
 
         <ImageButton
