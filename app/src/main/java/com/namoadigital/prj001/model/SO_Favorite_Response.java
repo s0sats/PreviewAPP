@@ -3,9 +3,12 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SO_Favorite_Response {
+public class SO_Favorite_Response implements Serializable {
+    private static final long serialVersionUID = -8556367998671062222L;
+
     @SerializedName("app")
     @Expose
     private String app;

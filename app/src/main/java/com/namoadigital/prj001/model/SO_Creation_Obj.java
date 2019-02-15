@@ -302,4 +302,43 @@ public class SO_Creation_Obj implements Serializable {
     public void setEdit_user(int edit_user) {
         this.edit_user = edit_user;
     }
+
+
+    @Override
+    public String toString() {
+        return
+                "customer_code -> " +customer_code + "\n" +
+                "so_prefix -> " +so_prefix + "\n" +
+                "so_code -> " +so_code + "\n" +
+                "so_desc -> " +so_desc + "\n" +
+                "so_scn -> " + so_scn + "\n" +
+                "product_code -> " + product_code + "\n" +
+                "serial_code -> " + serial_code + "\n" +
+                "serial_id -> " +serial_id + "\n" +
+                "category_price_code -> " +category_price_code + "\n" +
+                "segment_code -> " +segment_code + "\n" +
+                "site_code -> " +site_code + "\n" +
+                "operation_code -> " +operation_code + "\n" +
+                "contract_code -> " +contract_code + "\n" +
+                "priority_code -> " +priority_code+ "\n" +
+                "pipeline_code -> " +pipeline_code+ "\n" +
+                "deadline_manual -> " +deadline_manual + "\n" +
+                "deadline -> " +deadline + "\n" +
+                "origin -> " +origin + "\n" +
+                "origin_change -> " +origin_change + "\n" +
+                "client_type -> " +client_type + "\n" +
+                "pack_default -> " +pack_default + "\n" +
+                "client_code -> " +client_code + "\n" +
+                "client_id -> " +client_id + "\n" +
+                "client_name -> " +client_name + "\n" +
+                "client_email -> " +client_email + "\n" +
+                "client_phone -> " +client_phone + "\n" +
+                "action -> " +action + "\n" +
+                "so_id -> "+ so_id + "\n" +
+                "add_inf1 -> " +add_inf1+ "\n" +
+                "add_inf2 -> " +add_inf2 + "\n" +
+                "add_inf3 -> " +add_inf3+ "\n" +
+                "edit_user -> " +edit_user+ "\n"
+                ;
+    }
 }
