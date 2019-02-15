@@ -629,7 +629,8 @@ public class Act050_Frag_SO extends BaseFragment {
             alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") +"\n";
             isValitaded = false;
         }
-
+        //chamado para limpar retangulo de validacao do componente
+        mkDateTime.isValid();
         if(isValitaded){
             return isValitaded;
         }
@@ -648,9 +649,15 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private boolean validateMkDateTime() {
         HMAux mketContents = mkDateTime.getMketContents();
-        if (!mkDateTime.isValid()) {
+        if ((mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && !mketContents.get(MkDateTime.HOUR_KEY).isEmpty())
+                || (!mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && (mketContents.get(MkDateTime.HOUR_KEY).isEmpty()))) {
+            mkDateTime.setmHighlightWhenInvalid(true);
+
             return false;
         }
+        mkDateTime.setmHighlightWhenInvalid(false);
         return true;
     }
 
