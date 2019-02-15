@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/namoa_color_gray"
-    >
+    android:background="@color/namoa_color_gray">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -36,17 +35,16 @@
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act050_frag_so_client_type"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/act050_frag_so_client_ll"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone"
@@ -69,6 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ID Cliente - trad"
+                        android:paddingStart="4dp"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
@@ -76,48 +75,80 @@
                         android:id="@+id/act050_frag_client_id_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:textColor="@color/namoa_light_blue"
                         android:textSize="@dimen/font_size_item_md" />
 
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_client_name_lbl"
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/act050_frag_so_client_name_ll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nome do Cliente - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
+                        android:layout_marginBottom="8dp">
 
-                    <EditText
-                        android:id="@+id/act050_frag_so_client_name_val"
+                        <TextView
+                            android:id="@+id/act050_frag_so_client_name_lbl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nome do Cliente - trad"
+                            android:paddingStart="4dp"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:text="*"
+                            android:textStyle="bold"
+                            android:textColor="@color/font_required"
+                            app:layout_constraintTop_toTopOf="@+id/act050_frag_so_client_name_lbl"
+                            app:layout_constraintLeft_toRightOf="@+id/act050_frag_so_client_name_lbl"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_client_name_val"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_client_name_lbl"
+                            app:layout_constraintLeft_toLeftOf="@+id/act050_frag_so_client_name_lbl"
+                            app:layout_constraintRight_toRightOf="parent"/>
+
+                    </android.support.constraint.ConstraintLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_client_email_ll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:orientation="vertical">
 
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        <TextView
+                            android:id="@+id/act050_frag_so_client_email_lbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="E-mail - trad"
+                            android:paddingStart="4dp"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/act050_frag_so_client_email_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="E-mail - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_email_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        <EditText
+                            android:id="@+id/act050_frag_so_email_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/act050_frag_so_client_phone_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Telefone - trad"
+                        android:paddingStart="4dp"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
@@ -134,8 +165,8 @@
                     android:id="@+id/act050_frag_so_deadline_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Deadline manual - trad"
                     android:layout_marginTop="8dp"
+                    android:text="Deadline manual - trad"
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -160,6 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
                     android:visibility="gone"
+                    app:mConfigType="DATE_HOUR"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_deadline_lbl" />
@@ -175,12 +207,11 @@
 
                 <TextView
                     android:id="@+id/act050_frag_so_tv_priority_lbl"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code" />
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act050_frag_so_priority"
@@ -191,48 +222,64 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_tv_priority_lbl" />
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/act050_frag_so_package_default_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/searchablespinner_border_papping_half"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_so_title_lbl"
                     app:layout_constraintLeft_toLeftOf="@+id/act050_frag_so_priority"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_priority"
-                    android:paddingBottom="@dimen/searchablespinner_border_papping_half"
-                    android:paddingLeft="@dimen/searchablespinner_border_papping_half"
-                    android:layout_gravity="center_vertical"
-
                     >
+
                     <TextView
                         android:id="@+id/act050_frag_so_package_default_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold"
                         android:text="Package Default- trad"
-                        />
+                        android:paddingLeft="@dimen/searchablespinner_border_papping_half"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_package_default_req"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="4dp"
+                        android:text="*"
+                        android:textColor="@color/font_required"
+                        app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_package_default_lbl"
+                        app:layout_constraintStart_toEndOf="@+id/act050_frag_so_package_default_lbl"
+                        app:layout_constraintTop_toTopOf="@+id/act050_frag_so_package_default_lbl" />
 
                     <ImageView
                         android:id="@+id/act050_frag_so_package_default_info"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="10dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="8dp"
                         android:background="@drawable/namoa_icon_bg_states"
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_info"
                         android:tint="@color/namoa_color_dark_blue"
-                        />
+                        app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_package_default_lbl"
+                        app:layout_constraintStart_toEndOf="@+id/act050_frag_so_package_default_req"
+                        app:layout_constraintTop_toTopOf="@+id/act050_frag_so_package_default_lbl" />
 
-                </LinearLayout>
 
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/act050_frag_so_package_default"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default_ll" />
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act050_frag_so_package_default"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/act050_frag_so_package_default_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default_lbl" />
+
+                </android.support.constraint.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act050_frag_so_title_lbl"
@@ -243,7 +290,7 @@
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default_ll" />
 
                 <CheckBox
                     android:id="@+id/act050_header_cb_show_hide"
@@ -374,8 +421,7 @@
             android:src="@drawable/ic_finalizar"
             android:tint="@color/emoticons_white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </android.support.constraint.ConstraintLayout>

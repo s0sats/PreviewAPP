@@ -33,7 +33,7 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_favorite, parent, false);
+                .inflate(R.layout.cell_favorite_item, parent, false);
         return new ViewHolder(view);
     }
 

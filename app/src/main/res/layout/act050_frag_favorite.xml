@@ -34,7 +34,7 @@
         android:layout_marginTop="5dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite"
-        tools:listitem="@layout/fragment_favorite" />
+        tools:listitem="@layout/cell_favorite_item" />
 
 
 </LinearLayout>
