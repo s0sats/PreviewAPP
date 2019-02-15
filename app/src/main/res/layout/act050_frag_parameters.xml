@@ -161,6 +161,7 @@
                     android:id="@+id/act050_frag_param_ss_contract"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="-5dp"
                     app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ll_contract_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

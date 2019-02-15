@@ -166,6 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
                     android:text="Deadline manual - trad"
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
@@ -211,7 +212,8 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code"
+                    android:visibility="gone"/>
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act050_frag_so_priority"
@@ -231,17 +233,17 @@
                     android:orientation="horizontal"
                     android:paddingBottom="@dimen/searchablespinner_border_papping_half"
                     app:layout_constraintBottom_toTopOf="@+id/act050_frag_so_title_lbl"
-                    app:layout_constraintLeft_toLeftOf="@+id/act050_frag_so_priority"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_priority"
-                    >
+                    app:layout_constraintVertical_chainStyle="spread_inside">
 
                     <TextView
                         android:id="@+id/act050_frag_so_package_default_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Package Default- trad"
-                        android:paddingLeft="@dimen/searchablespinner_border_papping_half"
-                        android:textSize="@dimen/font_size_item_md"
+                        android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
+                        android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -276,7 +278,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/act050_frag_so_package_default_lbl"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default_lbl" />
 
                 </android.support.constraint.ConstraintLayout>
@@ -286,6 +288,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
                     android:text="Outras Informações - trad"
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
@@ -308,6 +311,8 @@
                     android:id="@+id/act050_frag_so_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
+                    android:paddingStart="@dimen/searchablespinner_border_papping_half"
                     android:orientation="vertical"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -330,6 +335,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
+                        android:inputType="text"
                         android:textSize="@dimen/font_size_item_md" />
 
                     <TextView
@@ -345,7 +351,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"
+                        />
 
 
                     <TextView
@@ -361,7 +369,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"
+                        />
 
                     <TextView
                         android:id="@+id/act050_frag_so_info2_lbl"
@@ -376,7 +386,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
 
                     <TextView
                         android:id="@+id/act050_frag_so_info3_lbl"
@@ -391,7 +402,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
 
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>

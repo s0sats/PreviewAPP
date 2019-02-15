@@ -250,6 +250,8 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPriority.setmTitle(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmStyle(1);
+        ssPriority.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        //
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
                 mListener.getPriorityList()) {
@@ -275,6 +277,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmTitle(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmStyle(1);
+        ssPipelineCode.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
 
         HMAux pipelineFav = new HMAux();
 
@@ -307,6 +310,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientName.setmTitle(hmAux_Trans.get("client_lbl"));
         ssClientName.setmLabel(hmAux_Trans.get("client_lbl"));
         ssClientName.setmStyle(1);
+        ssClientName.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
     }
 
     private void setllSoClientVisibility(SO_Creation_Obj my_so_creation_obj) {
@@ -351,6 +355,8 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
         ssClientType.setmStyle(1);
+        ssClientType.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
                 ssClientType.setmValue(auxUserClient);
