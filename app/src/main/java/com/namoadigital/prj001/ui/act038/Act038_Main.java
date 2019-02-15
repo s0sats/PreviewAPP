@@ -346,6 +346,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_when_ttl.setmStyle(1);
         et_form_when_ttl.setmTextSizeLabel(15);
         et_form_when_ttl.setmTextSizeValue(15);
+        et_form_when_ttl.setmHighlightWhenInvalid(true);
         editable_views_list.add(et_form_when_ttl);
         properties.add(et_form_when_ttl);
         //
@@ -916,7 +917,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     }
 
     private boolean validate() {
-
         if (!checkDataChanges(properties)) {
             if (mGe_custom_form_ap.getUpload_required() == 1 && mGe_custom_form_ap.getSync_required() == 0) {
                 mDataChanged = false;
@@ -960,7 +960,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         ss_users.setBackground(null);
                     }
                     //
-                    if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty()) {
+                    if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty() || !et_form_when_ttl.isValid()) {
                         et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
                     } else {
                         et_form_when_ttl.setBackground(null);
