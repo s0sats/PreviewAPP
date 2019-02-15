@@ -103,11 +103,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
-        Act027_Main_View,
-        Act027_Opc.IAct027_Opc,
-        Act027_Services.IAct027_Services,
-        OnRecoveryInfoError {
+public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -664,13 +660,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         act027_services_ = new Act027_Services();
         // Dialog Acess
         act027_services_.setBaInfra(this);
-        //
-        //Delegate eh setado atraves do context no metodo onAttach de cada fragment
-//        act027_services_.setOnServiceSelectedListener(this);
         // Translation Access
         act027_services_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
         act027_services_.setmSm_so(mSm_so);
+        //
+        act027_services_.setOnServiceSelectedListener(this);
         //Se retorno da task, seta qual serviço deve ser mostrado
         act027_services_.setLastServiceUpdated(lastServiceReturned);
 
@@ -2286,14 +2281,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED, mSm_so.getUpdate_required());
 
         callAct028(context, bundle);
-    }
-
-    @Override
-    public void callAct005() {
-        Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
     }
 
     private void callAct021(Context context) {

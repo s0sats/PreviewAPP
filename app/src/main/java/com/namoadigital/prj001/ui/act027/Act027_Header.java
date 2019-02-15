@@ -41,7 +41,6 @@ public class Act027_Header extends BaseFragment {
     private Context context;
 
     private SM_SO mSm_so;
-    private OnRecoveryInfoError delegate;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -215,15 +214,6 @@ public class Act027_Header extends BaseFragment {
 
         loadDataToScreen();
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
-        }
-    }
-
 
     @Override
     public void onPause() {
@@ -555,8 +545,6 @@ public class Act027_Header extends BaseFragment {
                 tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
                 tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" : valueOf(mSm_so.getAdd_inf3()));
 
-            }else{
-                delegate.callAct005();
             }
         }
     }
