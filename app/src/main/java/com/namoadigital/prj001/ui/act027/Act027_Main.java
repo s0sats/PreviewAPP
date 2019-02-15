@@ -107,7 +107,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         Act027_Main_View,
         Act027_Opc.IAct027_Opc,
         Act027_Services.IAct027_Services,
-        OnRecoveryInfoError {
+        OnRecoveryFragmentState {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -606,7 +606,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //
         act027_approval_.setListener(actionBTN);
         //
-        act027_approval_.setmSm_so(mSm_so);
+//        act027_approval_.setmSm_so(mSm_so);
 
         // Product_List
         act027_product_list_ = new Act027_Product_List();
@@ -615,7 +615,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         // Translation Access
         act027_product_list_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        act027_product_list_.setmSm_so(mSm_so);
+//        act027_product_list_.setmSm_so(mSm_so);
         //Interface
         act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
             @Override
@@ -2460,6 +2460,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public SM_SO getSmSO() {
+        return mSm_so;
     }
 
     private class DownloadSignature extends AsyncTask<String, Void, Void> {

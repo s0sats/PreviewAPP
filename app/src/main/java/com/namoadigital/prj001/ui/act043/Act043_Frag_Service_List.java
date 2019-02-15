@@ -46,7 +46,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private SM_SO mSO_Service;
     private SM_SODao sm_so_serviceDao;
-
+    onSmSoRequestObject delegateSmSo;
     private TextView tv_title;
     private MKEditTextNM mk_desc;
     private ListView lv_services_packs;
@@ -68,7 +68,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     public interface IAct043_Frag_Service_List {
         void progressAction(String title, String message, String action);
+
     }
+
+
 
     private IAct043_Frag_Service_List delegate;
 
@@ -132,8 +135,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        delegateSmSo = (onSmSoRequestObject) context;
+    }
+
     private void iniVar(View view) {
         context = getActivity();
+        mSO_Service = delegateSmSo.getSmSo();
+        hmAux_Trans = delegateSmSo.getHMAux_Trans();
         //
         tv_title = (TextView) view.findViewById(R.id.act043_frag_service_list_tv_lbl);
         //tv_title.setText(hmAux_Trans.get("tv_service_list_title"));
@@ -162,7 +173,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                mAdapter.getFilter().filter(mk_desc.getText().toString().trim());
+                if(mAdapter != null) {
+                    mAdapter.getFilter().filter(mk_desc.getText().toString().trim());
+                }
             }
         });
 

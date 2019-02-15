@@ -41,7 +41,7 @@ public class Act027_Header extends BaseFragment {
     private Context context;
 
     private SM_SO mSm_so;
-    private OnRecoveryInfoError delegate;
+    private OnRecoveryFragmentState delegate;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -219,8 +219,8 @@ public class Act027_Header extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
         }
     }
 
@@ -405,6 +405,7 @@ public class Act027_Header extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+            mSm_so = delegate.getSmSO();
             if (mSm_so != null) {
                 tv_product_code.setText(
                         hmAux_Trans.get("product_header_lbl") + " " +
@@ -556,7 +557,7 @@ public class Act027_Header extends BaseFragment {
                 tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" : valueOf(mSm_so.getAdd_inf3()));
 
             }else{
-                delegate.callAct005();
+
             }
         }
     }

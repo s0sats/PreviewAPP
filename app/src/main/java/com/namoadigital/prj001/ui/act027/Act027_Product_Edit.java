@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,6 @@ public class Act027_Product_Edit extends BaseFragment {
     private String mErrorMSG;
 
     private boolean bStatusNew = false;
-    private OnRecoveryInfoError delegate;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -123,6 +123,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i("ACT027", "Product_edit");
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
@@ -165,13 +166,6 @@ public class Act027_Product_Edit extends BaseFragment {
         }
 
         loadDataToScreen();
-    }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
-        }
     }
 
     @Override
@@ -486,10 +480,6 @@ public class Act027_Product_Edit extends BaseFragment {
     public void loadDataToScreen() {
 
         if (bStatus) {
-
-            if(mSm_so == null){
-                delegate.callAct005();
-            }
 
             if (mSm_so_product_event.getSketch_code() != null && !ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
 

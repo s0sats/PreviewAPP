@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,7 @@ public class Act027_Product_List extends BaseFragment {
     private SM_SO_Product_EventDao sm_so_product_eventDao;
     private OnNewEventClickListner onNewEventClickListner;
     private OnItemEventClickListner onItemEventClickListner;
-    private OnRecoveryInfoError delegate;
+    private OnRecoveryFragmentState delegate;
 
     public interface OnNewEventClickListner {
         void onNewEventClick();
@@ -72,6 +73,7 @@ public class Act027_Product_List extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i("ACT027", "Product_list");
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
@@ -175,8 +177,8 @@ public class Act027_Product_List extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
         }
     }
 
@@ -197,6 +199,7 @@ public class Act027_Product_List extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+            mSm_so = delegate.getSmSO();
             if (mSm_so != null) {
                 //
                 if (!mMain.hasExecutionProfile()) {

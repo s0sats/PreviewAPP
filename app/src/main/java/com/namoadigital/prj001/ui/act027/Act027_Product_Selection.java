@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class Act027_Product_Selection extends BaseFragment {
     private MD_All_ProductDao allProductDao;
     private MD_All_Product_GroupDao allProductGroupDao;
     private onProductClickListner onProductClickListner;
-    private OnRecoveryInfoError delegate;
+    private OnRecoveryFragmentState delegate;
 
     public interface onProductClickListner {
         void onProductClick(int product_code);
@@ -68,6 +69,7 @@ public class Act027_Product_Selection extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
@@ -319,6 +321,7 @@ public class Act027_Product_Selection extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+            mSm_so = delegate.getSmSO();
             if (mSm_so != null) {
                 //
                 mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
@@ -348,8 +351,8 @@ public class Act027_Product_Selection extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
         }
     }
 

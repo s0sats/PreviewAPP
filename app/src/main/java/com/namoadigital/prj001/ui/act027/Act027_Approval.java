@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,7 +98,7 @@ public class Act027_Approval extends BaseFragment {
 
     private View.OnClickListener listener;
 
-    private OnRecoveryInfoError delegate;
+    private OnRecoveryFragmentState delegate;
 
     public void setListener(View.OnClickListener listener) {
         this.listener = listener;
@@ -182,6 +183,7 @@ public class Act027_Approval extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i("ACT027", "Product_approval");
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
@@ -217,8 +219,8 @@ public class Act027_Approval extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnRecoveryInfoError) {
-            delegate = (OnRecoveryInfoError) context;
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
         }
     }
 
@@ -396,7 +398,7 @@ public class Act027_Approval extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if(mSm_so == null){
-                delegate.callAct005();
+                mSm_so = delegate.getSmSO();
             }
 
             tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,6 +118,7 @@ public class Act027_Opc extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
+        Log.i("ACT027", "OPC");
         //
         View view = inflater.inflate(R.layout.act027_opc_content, container, false);
         //
