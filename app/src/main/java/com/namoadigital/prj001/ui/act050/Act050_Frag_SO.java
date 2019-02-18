@@ -184,11 +184,11 @@ public class Act050_Frag_SO extends BaseFragment {
 
         setClientTypeSearchableSpinner(my_so_creation_obj);
         setClientNameSearchableSpinner(my_so_creation_obj);
+        setDeadline(my_so_creation_obj);
         setPipelineSearchableSpinner(my_so_creation_obj);
         setPrioritySearchableSpinner(my_so_creation_obj);
         setPackageDefaultSearchableSpinner(my_so_creation_obj);
         setSOInfo(my_so_creation_obj);
-        setDeadline(my_so_creation_obj);
 
         mListener.updateSO_Creation_Obj(my_so_creation_obj);
     }
@@ -197,10 +197,14 @@ public class Act050_Frag_SO extends BaseFragment {
         swHasManualDeadline.setChecked(false);
 
         if (my_so_creation_obj.getDeadline_manual() == 1) {
-            swHasManualDeadline.setChecked(true);
-            mkDateTime.setmValue(my_so_creation_obj.getDeadline());
-            mkDateTime.setVisibility(View.VISIBLE);
+            setDeadlineManual(my_so_creation_obj.getDeadline());
         }
+    }
+
+    private void setDeadlineManual(String datelineValue) {
+        swHasManualDeadline.setChecked(true);
+        mkDateTime.setmValue(datelineValue);
+        mkDateTime.setVisibility(View.VISIBLE);
     }
 
     private void setSOInfo(SO_Creation_Obj my_so_creation_obj) {
@@ -298,8 +302,11 @@ public class Act050_Frag_SO extends BaseFragment {
         if (!pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
             pipelineFav = mListener.getPipelineFavorite();
         }
-
         ssPipelineCode.setmValue(pipelineFav);
+
+        if(!ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)){
+            setDeadlineManual(null);
+        }
     }
 
     private void setClientNameSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
@@ -629,7 +636,8 @@ public class Act050_Frag_SO extends BaseFragment {
             alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") +"\n";
             isValitaded = false;
         }
-
+        //chamado para limpar retangulo de validacao do componente
+        mkDateTime.isValid();
         if(isValitaded){
             return isValitaded;
         }
@@ -648,9 +656,15 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private boolean validateMkDateTime() {
         HMAux mketContents = mkDateTime.getMketContents();
-        if (!mkDateTime.isValid()) {
+        if ((mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && !mketContents.get(MkDateTime.HOUR_KEY).isEmpty())
+                || (!mketContents.get(MkDateTime.DATE_KEY).isEmpty()
+                && (mketContents.get(MkDateTime.HOUR_KEY).isEmpty()))) {
+            mkDateTime.setmHighlightWhenInvalid(true);
+
             return false;
         }
+        mkDateTime.setmHighlightWhenInvalid(false);
         return true;
     }
 

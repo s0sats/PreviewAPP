@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -183,7 +182,6 @@ public class Act027_Approval extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i("ACT027", "Product_approval");
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
