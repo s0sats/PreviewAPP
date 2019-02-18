@@ -395,8 +395,9 @@ public class Act027_Approval extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if(mSm_so == null){
-                mSm_so = delegate.getSmSO();
+            if(mSm_so == null
+                    || hmAux_Trans != null){
+                delegate.callAct005();
             }
 
             tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));

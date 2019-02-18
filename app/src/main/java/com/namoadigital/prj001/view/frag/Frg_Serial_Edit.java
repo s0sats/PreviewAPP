@@ -863,6 +863,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             } else {
                 //
+                if(hmAux_Trans == null){
+                    delegate.onProductOrSerialNull();
+                }
                 showAlertDialog(
                         hmAux_Trans.get("alert_product_not_found_title"),
                         hmAux_Trans.get("alert_product_not_found_msg"),

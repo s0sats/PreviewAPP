@@ -606,7 +606,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //
         act027_approval_.setListener(actionBTN);
         //
-//        act027_approval_.setmSm_so(mSm_so);
+        act027_approval_.setmSm_so(mSm_so);
 
         // Product_List
         act027_product_list_ = new Act027_Product_List();
@@ -615,7 +615,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         // Translation Access
         act027_product_list_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-//        act027_product_list_.setmSm_so(mSm_so);
+        act027_product_list_.setmSm_so(mSm_so);
         //Interface
         act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
             @Override
@@ -664,13 +664,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         act027_services_ = new Act027_Services();
         // Dialog Acess
         act027_services_.setBaInfra(this);
-        //
-        //Delegate eh setado atraves do context no metodo onAttach de cada fragment
-//        act027_services_.setOnServiceSelectedListener(this);
         // Translation Access
         act027_services_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
         act027_services_.setmSm_so(mSm_so);
+        //
+        act027_services_.setOnServiceSelectedListener(this);
         //Se retorno da task, seta qual serviço deve ser mostrado
         act027_services_.setLastServiceUpdated(lastServiceReturned);
 
@@ -2460,11 +2459,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-    }
-
-    @Override
-    public SM_SO getSmSO() {
-        return mSm_so;
     }
 
     private class DownloadSignature extends AsyncTask<String, Void, Void> {

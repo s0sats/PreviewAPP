@@ -102,6 +102,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private String mErrorMSG;
 
     private boolean bStatusNew = false;
+    private OnRecoveryFragmentState delegate;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -145,6 +146,12 @@ public class Act027_Product_Edit extends BaseFragment {
         super.onDestroyView();
 
         bStatus = false;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        delegate = (OnRecoveryFragmentState) context;
     }
 
     @Override
@@ -478,7 +485,10 @@ public class Act027_Product_Edit extends BaseFragment {
     public void loadDataToScreen() {
 
         if (bStatus) {
-
+            if(mSm_so_product_event == null
+                    || hmAux_Trans == null){
+                delegate.callAct005();
+            }
             if (mSm_so_product_event.getSketch_code() != null && !ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
 
                 ToolBox.alertMSG(

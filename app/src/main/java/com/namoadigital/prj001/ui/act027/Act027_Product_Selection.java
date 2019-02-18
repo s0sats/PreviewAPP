@@ -319,8 +319,9 @@ public class Act027_Product_Selection extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            mSm_so = delegate.getSmSO();
-            if (mSm_so != null) {
+
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 //
                 mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
                 //
@@ -332,7 +333,7 @@ public class Act027_Product_Selection extends BaseFragment {
                 if (mStack.size() == 0) {
                     setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
                 }
-            }else{
+            } else {
                 delegate.callAct005();
             }
 

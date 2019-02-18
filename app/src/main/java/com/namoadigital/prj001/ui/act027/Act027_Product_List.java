@@ -197,11 +197,10 @@ public class Act027_Product_List extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            mSm_so = delegate.getSmSO();
-            if (mSm_so != null) {
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 //
                 if (!mMain.hasExecutionProfile()) {
-
                     iv_new_event.setVisibility(View.GONE);
                 } else {
                     checkStatus();

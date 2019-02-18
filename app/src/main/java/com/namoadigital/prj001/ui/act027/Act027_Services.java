@@ -78,6 +78,7 @@ public class Act027_Services extends BaseFragment {
     }
 
     private IAct027_Services delegate;
+    private OnRecoveryFragmentState recoveryDelegate;
 
     public void setOnServiceSelectedListener(IAct027_Services delegate) {
         this.delegate = delegate;
@@ -113,6 +114,12 @@ public class Act027_Services extends BaseFragment {
         super.onDestroyView();
 
         bStatus = false;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        recoveryDelegate = (OnRecoveryFragmentState) context;
     }
 
     @Override
@@ -171,7 +178,8 @@ public class Act027_Services extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (mSm_so != null) {
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 //
                 original_update_required = mSm_so.getUpdate_required();
                 //
@@ -180,14 +188,14 @@ public class Act027_Services extends BaseFragment {
                 //sw_filter.setChecked(true);
                 //
                 if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) &&
-                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) ||
-                    !mMain.hasExecutionProfile()
-                        ){
+                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) ||
+                        !mMain.hasExecutionProfile()
+                ) {
                     sw_filter.setOnCheckedChangeListener(null);
                     sw_filter.setChecked(false);
                     sw_filter.setEnabled(false);
                     //
-                    if(mMain.hasExecutionProfile()) {
+                    if (mMain.hasExecutionProfile()) {
                         sw_filter.setEnabled(true);
                         sw_filter.setOnCheckedChangeListener(sw_filter_listener);
                     }
@@ -195,6 +203,8 @@ public class Act027_Services extends BaseFragment {
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
+            } else {
+                recoveryDelegate.callAct005();
             }
         }
     }
@@ -270,7 +280,7 @@ public class Act027_Services extends BaseFragment {
         //
         lv_services.setAdapter(adp);
         //
-        if (adp.getCount() == 0){
+        if (adp.getCount() == 0) {
             mMain.openDrawerInternally();
         }
 
@@ -360,7 +370,7 @@ public class Act027_Services extends BaseFragment {
         bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ));
         bundle.putString(SM_SO_Service_Exec_TaskDao.EXEC_TMP, exec_tmp);
         bundle.putString(SM_SO_Service_Exec_TaskDao.TASK_TMP, task_tmp);
-        bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED,original_update_required);
+        bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED, original_update_required);
 
         bundle.putSerializable("data", sService);
 
@@ -378,15 +388,15 @@ public class Act027_Services extends BaseFragment {
     private void createExecTask(HMAux item) {
         //Seta pk do serviço para q a lista seja recarregada no Serviço clicado
         lastServiceUpdated =
-                item.get(SM_SO_ServiceDao.CUSTOMER_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.SO_PREFIX)+"|"+
-                item.get(SM_SO_ServiceDao.SO_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.PRICE_LIST_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.PACK_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.PACK_SEQ)+"|"+
-                item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.SERVICE_CODE)+"|"+
-                item.get(SM_SO_ServiceDao.SERVICE_SEQ);
+                item.get(SM_SO_ServiceDao.CUSTOMER_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.SO_PREFIX) + "|" +
+                        item.get(SM_SO_ServiceDao.SO_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.PACK_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.PACK_SEQ) + "|" +
+                        item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.SERVICE_CODE) + "|" +
+                        item.get(SM_SO_ServiceDao.SERVICE_SEQ);
         //
         //Monta o obj serviço
         SM_SO_Service sm_so_service = sm_so_serviceDao.getByString(
@@ -438,7 +448,7 @@ public class Act027_Services extends BaseFragment {
                     vinculada a ela, pois caso a unica task existente tenha sido cancelada e não
                     há parceiro definido no serviço, o parceiro da execução é setado para null.
                  */
-                if(execAux.getPartner_code() == null && partnerAux != null && partnerAux.size() > 0 ){
+                if (execAux.getPartner_code() == null && partnerAux != null && partnerAux.size() > 0) {
                     try {
 
                         execAux.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
@@ -486,8 +496,8 @@ public class Act027_Services extends BaseFragment {
 
     private SM_SO_Service_Exec_Task createTask(SM_SO_Service_Exec serviceExec, String task_perc) {
         /*
-        * Cria Task
-        */
+         * Cria Task
+         */
         //Pega proximo task_seq_oper
         HMAux taskSeqOperAux =
                 sm_so_service_exec_taskDao.getByStringHM(
@@ -554,8 +564,8 @@ public class Act027_Services extends BaseFragment {
     private SM_SO_Service_Exec createExec(SM_SO_Service sm_so_service) {
 
         /*
-        * Cria Exec
-        */
+         * Cria Exec
+         */
         SM_SO_Service_Exec newExec = new SM_SO_Service_Exec();
         //
         newExec.setExec_code(0);
