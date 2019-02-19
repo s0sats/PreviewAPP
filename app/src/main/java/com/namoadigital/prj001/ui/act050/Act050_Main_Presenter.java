@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
@@ -27,9 +26,6 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
 
@@ -220,31 +216,11 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
     }
 
     public void showNoConnectionDialog(Context act_context, final MD_Product_Serial mdProductSerial) {
-        String title = "";
-        String msg = "";
-
-        //Se possui variavel translate code, busca tradução
-        if (!ToolBox_Con.getPreference_Translate_Code(act_context).equals("")) {
-            String mModule = "SYS";
-            String mResource_name = "SYS_APP";
-            //
-            List<String> transList = new ArrayList<>();
-            transList.add("alert_no_conection_ttl");
-            transList.add("alert_no_conection_msg");
-
-            title = hmAux_Trans.get("alert_no_conection_ttl");
-            msg = hmAux_Trans.get("alert_no_conection_msg");
-        } else {
-            //Se não busca do arquivo de Strings
-            title = act_context.getString(R.string.generic_no_connection_ttl);
-            msg = act_context.getString(R.string.generic_no_connection_msg);
-        }
-
         //Chama caixa de dialogo
         ToolBox.alertMSG(
                 act_context,
-                title,
-                msg,
+                hmAux_Trans.get("alert_no_conection_ttl"),
+                hmAux_Trans.get("alert_no_conection_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
