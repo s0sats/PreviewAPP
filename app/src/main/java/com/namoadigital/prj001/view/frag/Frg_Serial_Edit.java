@@ -63,6 +63,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -542,9 +543,17 @@ public class Frg_Serial_Edit extends BaseFragment {
 
         View view = inflater.inflate(R.layout.frg_serial_edit, container, false);
 
+        recoverBundleInfo();
+
         iniVar(view);
 
         return view;
+    }
+
+    private void recoverBundleInfo() {
+        if(getArguments() != null){
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        }
     }
 
     private void iniVar(View view) {
@@ -862,10 +871,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                     );
                 }
             } else {
-                //
-                if(hmAux_Trans == null){
-                    delegate.onProductOrSerialNull();
-                }
                 showAlertDialog(
                         hmAux_Trans.get("alert_product_not_found_title"),
                         hmAux_Trans.get("alert_product_not_found_msg"),
@@ -1250,6 +1255,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 btn_action.setEnabled(false);
+                blockAllProperties();
                 //
                 if (delegate != null) {
                     delegate.onProductOrSerialNull();
@@ -3026,6 +3032,21 @@ public class Frg_Serial_Edit extends BaseFragment {
     //endregion
 
     //region FragLifeCycle
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //
+        if(delegate == null && context instanceof I_Frg_Serial_Edit){
+            delegate = (I_Frg_Serial_Edit) context;
+        }
+        //
+        if(delegateOS == null && context instanceof I_Frg_Serial_Edit_New_Os){
+            delegateOS = (I_Frg_Serial_Edit_New_Os) context;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -3036,6 +3057,21 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         pausedByScan = false;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Salva HmAux no arguments do fragment.
+        Bundle args = getArguments();
+        if(args == null){
+            args = new Bundle();
+        }
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        //
+        this.setArguments(args);
+    }
+
+
 
     @Override
     public void onDestroyView() {
