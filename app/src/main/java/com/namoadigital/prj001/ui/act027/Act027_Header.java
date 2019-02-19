@@ -41,6 +41,7 @@ public class Act027_Header extends BaseFragment {
     private Context context;
 
     private SM_SO mSm_so;
+    private OnRecoveryFragmentState delegate;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -214,6 +215,15 @@ public class Act027_Header extends BaseFragment {
 
         loadDataToScreen();
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
+    }
+
 
     @Override
     public void onPause() {
@@ -395,7 +405,9 @@ public class Act027_Header extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (mSm_so != null) {
+
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 tv_product_code.setText(
                         hmAux_Trans.get("product_header_lbl") + " " +
                                 valueOf(mSm_so.getProduct_code())
@@ -545,6 +557,8 @@ public class Act027_Header extends BaseFragment {
                 tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
                 tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" : valueOf(mSm_so.getAdd_inf3()));
 
+            } else {
+                delegate.callAct005();
             }
         }
     }
@@ -598,7 +612,7 @@ public class Act027_Header extends BaseFragment {
         if (pdfList != null && pdfList.size() > 0) {
             //Se estava desabilitado e agora S.O possui pdf
             //Habilita btn do pdf
-            if(!rdoAttach.isEnabled()){
+            if (!rdoAttach.isEnabled()) {
                 rdoAttach.setEnabled(true);
                 //
                 rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf));

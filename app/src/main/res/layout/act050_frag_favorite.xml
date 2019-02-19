@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginHorizontal="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act050_mket_filter_desc"

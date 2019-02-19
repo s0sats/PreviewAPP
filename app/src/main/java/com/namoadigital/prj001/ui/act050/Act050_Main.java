@@ -312,7 +312,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void getFavoriteList(long mProductCode, long mSerialCode, int mCategoryPriceCode, int mSegmentCode) {
-        mPresenter.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+        mPresenter.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode, mdProductSerial);
     }
 
     //endregion

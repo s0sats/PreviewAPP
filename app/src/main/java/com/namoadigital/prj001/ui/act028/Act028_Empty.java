@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 
@@ -22,6 +23,7 @@ public class Act028_Empty extends BaseFragment {
     private Context context;
 
     private TextView tv_no_exec_selected;
+    private OnRecoveryFragmentState delegate;
 
 
     @Nullable
@@ -45,6 +47,12 @@ public class Act028_Empty extends BaseFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        delegate = (OnRecoveryFragmentState) context;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -62,8 +70,9 @@ public class Act028_Empty extends BaseFragment {
         context = getActivity();
 
         tv_no_exec_selected = (TextView) view.findViewById(R.id.act028_main_tv_no_exec_selected);
-
+        hmAux_Trans = delegate.getHMAux_Trans();
         tv_no_exec_selected.setText(hmAux_Trans.get("no_exec_selected_lbl"));
+
     }
 
     private void iniAction() {
@@ -84,4 +93,7 @@ public class Act028_Empty extends BaseFragment {
         }
     }
 
+    interface OnRecoveryFragmentState {
+        HMAux getHMAux_Trans();
+    }
 }

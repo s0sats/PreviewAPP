@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act050;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -95,12 +97,16 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
         setUI(view, context);
 
 
-        if (mAdapter.getItemCount() == 0) {
-            mListener.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
-        }
+        callGetFavoriteList();
 
 
         return view;
+    }
+
+    private void callGetFavoriteList() {
+        if (mAdapter.getItemCount() == 0) {
+            mListener.getFavoriteList(mProductCode, mSerialCode, mCategoryPriceCode, mSegmentCode);
+        }
     }
 
     private void setUI(View view, Context context) {
@@ -120,6 +126,7 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
                 }
             }
         });
+
 
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));

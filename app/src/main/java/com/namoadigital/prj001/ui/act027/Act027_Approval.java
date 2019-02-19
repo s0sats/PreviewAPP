@@ -97,6 +97,8 @@ public class Act027_Approval extends BaseFragment {
 
     private View.OnClickListener listener;
 
+    private OnRecoveryFragmentState delegate;
+
     public void setListener(View.OnClickListener listener) {
         this.listener = listener;
         //
@@ -211,6 +213,15 @@ public class Act027_Approval extends BaseFragment {
 
         loadDataToScreen();
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
+    }
+
 
     @Override
     public void onPause() {
@@ -384,6 +395,10 @@ public class Act027_Approval extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+            if(mSm_so == null
+                    || hmAux_Trans != null){
+                delegate.callAct005();
+            }
 
             tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));
             tv_so_id_value.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());

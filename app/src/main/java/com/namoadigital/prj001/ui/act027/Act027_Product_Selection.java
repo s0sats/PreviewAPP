@@ -52,6 +52,7 @@ public class Act027_Product_Selection extends BaseFragment {
     private MD_All_ProductDao allProductDao;
     private MD_All_Product_GroupDao allProductGroupDao;
     private onProductClickListner onProductClickListner;
+    private OnRecoveryFragmentState delegate;
 
     public interface onProductClickListner {
         void onProductClick(int product_code);
@@ -318,7 +319,9 @@ public class Act027_Product_Selection extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (mSm_so != null) {
+
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 //
                 mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
                 //
@@ -330,7 +333,10 @@ public class Act027_Product_Selection extends BaseFragment {
                 if (mStack.size() == 0) {
                     setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
                 }
+            } else {
+                delegate.callAct005();
             }
+
         }
     }
 
@@ -339,6 +345,14 @@ public class Act027_Product_Selection extends BaseFragment {
         super.onResume();
         //
         loadDataToScreen();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
     }
 
     @Override
