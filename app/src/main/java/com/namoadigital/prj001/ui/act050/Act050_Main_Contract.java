@@ -15,7 +15,7 @@ public interface Act050_Main_Contract {
 
     interface I_Presenter{
         boolean getProductSerial(long productCode, long serialCode);
-        void getFavoriteList(long productCode, long serialCode, int categoryPriceCode, int segmentCode);
+        void getFavoriteList(long productCode, long serialCode, int categoryPriceCode, int segmentCode, MD_Product_Serial mdProductSerial);
         void executeWsSoClient();
         void executeWsSoCreation(SO_Creation_Obj mSoCreation);
         void processSoCreationRet(HMAux hmAuxRet);
