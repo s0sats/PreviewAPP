@@ -118,7 +118,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("NEW_OS", "onCreate - > "  + String.valueOf(savedInstanceState == null));
+        Log.d("NEW_OS", "onCreate - > " + String.valueOf(savedInstanceState == null));
         super.onCreate(savedInstanceState);
         isClientListRequest = true;
     }
@@ -172,8 +172,8 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void recoverBundleInfo(Bundle arguments) {
         Log.d("NEW_OS", "recoverBundleInfo - > Arguments null " + String.valueOf(arguments == null));
-        if(arguments != null) {
-            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        if (arguments != null) {
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
         }
     }
 
@@ -184,8 +184,8 @@ public class Act050_Frag_SO extends BaseFragment {
 
         setClientTypeSearchableSpinner(my_so_creation_obj);
         setClientNameSearchableSpinner(my_so_creation_obj);
-        setDeadline(my_so_creation_obj);
         setPipelineSearchableSpinner(my_so_creation_obj);
+        setDeadline(my_so_creation_obj);
         setPrioritySearchableSpinner(my_so_creation_obj);
         setPackageDefaultSearchableSpinner(my_so_creation_obj);
         setSOInfo(my_so_creation_obj);
@@ -194,17 +194,19 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setDeadline(SO_Creation_Obj my_so_creation_obj) {
+
         swHasManualDeadline.setChecked(false);
+        mkDateTime.setmValue(my_so_creation_obj.getDeadline());
+        mkDateTime.setVisibility(View.GONE);
 
-        if (my_so_creation_obj.getDeadline_manual() == 1) {
-            setDeadlineManual(my_so_creation_obj.getDeadline());
+        if (!ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+            swHasManualDeadline.setChecked(true);
+            mkDateTime.setVisibility(View.VISIBLE);
+
+        } else if (mkDateTime.getmValue() != null) {
+            swHasManualDeadline.setChecked(true);
+            mkDateTime.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void setDeadlineManual(String datelineValue) {
-        swHasManualDeadline.setChecked(true);
-        mkDateTime.setmValue(datelineValue);
-        mkDateTime.setVisibility(View.VISIBLE);
     }
 
     private void setSOInfo(SO_Creation_Obj my_so_creation_obj) {
@@ -254,7 +256,8 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPriority.setmTitle(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmStyle(1);
-        ssPriority.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssPriority.setmCanClean(false);
+        ssPriority.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
         //
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
@@ -281,7 +284,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmTitle(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmStyle(1);
-        ssPipelineCode.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssPipelineCode.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
 
         HMAux pipelineFav = new HMAux();
 
@@ -307,9 +310,7 @@ public class Act050_Frag_SO extends BaseFragment {
         }
         ssPipelineCode.setmValue(pipelineFav);
 
-        if(!ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)){
-            setDeadlineManual(null);
-        }
+
     }
 
     private void setClientNameSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
@@ -317,7 +318,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientName.setmTitle(hmAux_Trans.get("client_lbl"));
         ssClientName.setmLabel(hmAux_Trans.get("client_lbl"));
         ssClientName.setmStyle(1);
-        ssClientName.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssClientName.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
     }
 
     private void setllSoClientVisibility(SO_Creation_Obj my_so_creation_obj) {
@@ -362,7 +363,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
         ssClientType.setmStyle(1);
-        ssClientType.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(),getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssClientType.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
 
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
@@ -490,14 +491,20 @@ public class Act050_Frag_SO extends BaseFragment {
 
         if (ssPriority.getmValue().hasConsistentValue(PRIORITY_CODE_KEY)) {
             my_so_creation_obj.setPriority_code(Integer.valueOf(ssPriority.getmValue().get(PRIORITY_CODE_KEY)));
+        }else{
+            my_so_creation_obj.setPriority_code(null);
         }
 
         if (ssPackageDefault.getmValue().hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             my_so_creation_obj.setPack_default(ssPackageDefault.getmValue().get(PACK_DEFAULT_CODE_KEY));
+        }else{
+            my_so_creation_obj.setPack_default(null);
         }
 
         if (ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
             my_so_creation_obj.setPipeline_code(Integer.valueOf(ssPipelineCode.getmValue().get(SearchableSpinner.ID)));
+        }else{
+            my_so_creation_obj.setPipeline_code(null);
         }
 
         my_so_creation_obj.setDeadline_manual((swHasManualDeadline.isChecked()) ? 1 : 0);
@@ -599,33 +606,33 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
-        boolean isValitaded =true;
+        boolean isValitaded = true;
         String alertMsg = "";
         HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
         HMAux selectedPackageDefault = ssPackageDefault.getmValue();
 
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
-            alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") +"\n";
+            alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") + "\n";
             ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isValitaded = false;
         }
         if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
-            alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") +"\n";
+            alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") + "\n";
             ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isValitaded = false;
         }
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
-            alertMsg = alertMsg +  hmAux_Trans.get("alert_fill_package_default_field_msg") +"\n";
+            alertMsg = alertMsg + hmAux_Trans.get("alert_fill_package_default_field_msg") + "\n";
             clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isValitaded = false;
         }
 
-        if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)&&selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)){
+        if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE) && selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
 
             if (edtClientName.getText().toString().isEmpty()) {
-                alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") +"\n";
+                alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") + "\n";
                 clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
                 isValitaded = false;
             }
@@ -633,26 +640,26 @@ public class Act050_Frag_SO extends BaseFragment {
             if (edtClientEmail.isEnabled()
                     && !edtClientEmail.getText().toString().isEmpty()
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
-                alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") +"\n";
+                alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") + "\n";
                 llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
                 isValitaded = false;
             }
         }
         if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
-            alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") +"\n";
+            alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") + "\n";
             isValitaded = false;
         }
         //chamado para limpar retangulo de validacao do componente
         mkDateTime.isValid();
-        if(isValitaded){
+        if (isValitaded) {
             return isValitaded;
         }
 
-        alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"),alertMsg);
+        alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), alertMsg);
         return isValitaded;
     }
 
-    private void clearValidation(){
+    private void clearValidation() {
         ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
@@ -918,36 +925,36 @@ public class Act050_Frag_SO extends BaseFragment {
         return transList;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
+/**
+ * This interface must be implemented by activities that contain this
+ * fragment to allow an interaction in this fragment to be communicated
+ * to the activity and potentially other fragments contained in that
+ * activity.
+ * <p>
+ * See the Android Training lesson <a href=
+ * "http://developer.android.com/training/basics/fragments/communicating.html"
+ * >Communicating with Other Fragments</a> for more information.
+ */
+public interface OnFragmentInteractionListener {
 
-        List<SO_Favorite_Pipeline> getPipelineList();
+    List<SO_Favorite_Pipeline> getPipelineList();
 
-        HMAux getPipelineFavorite();
+    HMAux getPipelineFavorite();
 
-        void getClientList();
+    void getClientList();
 
-        ArrayList<SM_SO_Client> getClientListLocal();
+    ArrayList<SM_SO_Client> getClientListLocal();
 
-        void requestSoCreation(SO_Creation_Obj mSOCreationObj);
+    void requestSoCreation(SO_Creation_Obj mSOCreationObj);
 
-        List<SO_Favorite_Priority> getPriorityList();
+    List<SO_Favorite_Priority> getPriorityList();
 
-        List<String> getPackageDefaultByContract();
+    List<String> getPackageDefaultByContract();
 
-        void onBackButtonPressed();
+    void onBackButtonPressed();
 
-        SO_Creation_Obj getmSOCreationObj();
+    SO_Creation_Obj getmSOCreationObj();
 
-        void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj);
-    }
+    void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj);
+}
 }
