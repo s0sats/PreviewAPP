@@ -210,10 +210,14 @@ public class Act027_Services extends BaseFragment {
     }
 
     public void setServiceAdapter(boolean isChecked) {
-        adp = new Act027_Services_Adapter(
-                getActivity(),
-                R.layout.act027_services_content_adapter_cell,
-                sm_so_serviceDao.query_HM(
+
+        if(mSm_so == null){
+            recoveryDelegate.callAct005();
+        }else {
+            adp = new Act027_Services_Adapter(
+                    getActivity(),
+                    R.layout.act027_services_content_adapter_cell,
+                    sm_so_serviceDao.query_HM(
                                 /*new SM_SO_Service_Sql_003(
                                         mSm_so.getCustomer_code(),
                                         mSm_so.getSo_prefix(),
@@ -224,75 +228,76 @@ public class Act027_Services extends BaseFragment {
                                         mSm_so.getSo_prefix(),
                                         mSm_so.getSo_code()
                                 ).toSqlQuery()*/
-                        new Sql_Act027_002(
-                                mSm_so.getCustomer_code(),
-                                mSm_so.getSo_prefix(),
-                                mSm_so.getSo_code(),
-                                ToolBox_Con.getPreference_User_Code(context),
-                                ToolBox_Con.getPreference_Site_Code(context),
-                                ToolBox_Con.getPreference_Zone_Code(context),
-                                isChecked//sw_filter != null && sw_filter.isChecked()
-                        ).toSqlQuery()
-                ),
-                mMain.hasExecutionProfile()
-        );
-        //
-        adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
-            @Override
-            public void serviceSelected(HMAux sData, String selection_type) {
-
-                HMAux sService = sm_so_serviceDao.getByStringHM(
-                        new SM_SO_Service_Sql_004(
-                                Long.parseLong(sData.get("customer_code")),
-                                Integer.parseInt(sData.get("so_prefix")),
-                                Integer.parseInt(sData.get("so_code")),
-                                Integer.parseInt(sData.get("price_list_code")),
-                                Integer.parseInt(sData.get("pack_code")),
-                                Integer.parseInt(sData.get("pack_seq")),
-                                Integer.parseInt(sData.get("category_price_code")),
-                                Integer.parseInt(sData.get("service_code")),
-                                Integer.parseInt(sData.get("service_seq"))
-                        ).toSqlQuery()
-                );
-                //Tratativa para o nova ação do btn express é que igual ao btn normal...
-                //Confuso ?! kkkk Senta e chora
-                if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
-                        sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
-                        sData.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_NONE)
-                ) {
-                    selection_type = Act027_Main.SELECTION_NORMAL;
-                }
-
-                switch (selection_type) {
-                    case Act027_Main.SELECTION_EXPRESS:
-                        serviceExpress(sData);
-                        break;
-                    case Act027_Main.SELECTION_NORMAL:
-                        if (delegate != null) {
-                            delegate.onServiceSelected(sService);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-        //
-        lv_services.setAdapter(adp);
-        //
-        if (adp.getCount() == 0) {
-            mMain.openDrawerInternally();
-        }
-
-        //Se possui var indicando qual seriviço foi alterado,
-        //Aplica "auto scroll"
-        if (!lastServiceUpdated.equals("")) {
-            int idx = adp.getPositionByPk(lastServiceUpdated);
+                            new Sql_Act027_002(
+                                    mSm_so.getCustomer_code(),
+                                    mSm_so.getSo_prefix(),
+                                    mSm_so.getSo_code(),
+                                    ToolBox_Con.getPreference_User_Code(context),
+                                    ToolBox_Con.getPreference_Site_Code(context),
+                                    ToolBox_Con.getPreference_Zone_Code(context),
+                                    isChecked//sw_filter != null && sw_filter.isChecked()
+                            ).toSqlQuery()
+                    ),
+                    mMain.hasExecutionProfile()
+            );
             //
-            if (idx > -1) {
-                lv_services.setSelection(idx);
+            adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
+                @Override
+                public void serviceSelected(HMAux sData, String selection_type) {
+
+                    HMAux sService = sm_so_serviceDao.getByStringHM(
+                            new SM_SO_Service_Sql_004(
+                                    Long.parseLong(sData.get("customer_code")),
+                                    Integer.parseInt(sData.get("so_prefix")),
+                                    Integer.parseInt(sData.get("so_code")),
+                                    Integer.parseInt(sData.get("price_list_code")),
+                                    Integer.parseInt(sData.get("pack_code")),
+                                    Integer.parseInt(sData.get("pack_seq")),
+                                    Integer.parseInt(sData.get("category_price_code")),
+                                    Integer.parseInt(sData.get("service_code")),
+                                    Integer.parseInt(sData.get("service_seq"))
+                            ).toSqlQuery()
+                    );
+                    //Tratativa para o nova ação do btn express é que igual ao btn normal...
+                    //Confuso ?! kkkk Senta e chora
+                    if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
+                            sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
+                            sData.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_NONE)
+                    ) {
+                        selection_type = Act027_Main.SELECTION_NORMAL;
+                    }
+
+                    switch (selection_type) {
+                        case Act027_Main.SELECTION_EXPRESS:
+                            serviceExpress(sData);
+                            break;
+                        case Act027_Main.SELECTION_NORMAL:
+                            if (delegate != null) {
+                                delegate.onServiceSelected(sService);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            //
+            lv_services.setAdapter(adp);
+            //
+            if (adp.getCount() == 0) {
+                mMain.openDrawerInternally();
             }
-            lastServiceUpdated = "";
+
+            //Se possui var indicando qual seriviço foi alterado,
+            //Aplica "auto scroll"
+            if (!lastServiceUpdated.equals("")) {
+                int idx = adp.getPositionByPk(lastServiceUpdated);
+                //
+                if (idx > -1) {
+                    lv_services.setSelection(idx);
+                }
+                lastServiceUpdated = "";
+            }
         }
 
     }

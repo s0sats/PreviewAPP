@@ -396,7 +396,7 @@ public class Act027_Approval extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if(mSm_so == null
-                    || hmAux_Trans != null){
+                    || hmAux_Trans == null){
                 delegate.callAct005();
             }
 

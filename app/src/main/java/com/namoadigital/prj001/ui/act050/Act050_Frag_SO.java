@@ -189,6 +189,16 @@ public class Act050_Frag_SO extends BaseFragment {
         setPrioritySearchableSpinner(my_so_creation_obj);
         setPackageDefaultSearchableSpinner(my_so_creation_obj);
         setSOInfo(my_so_creation_obj);
+        if(cbOtherInfo.isChecked()){
+            llSoOtherInfo.setVisibility(View.VISIBLE);
+            sv_main.post(new Runnable() {
+                public void run() {
+                    sv_main.fullScroll(View.FOCUS_DOWN);
+                }
+            });
+        }else{
+            llSoOtherInfo.setVisibility(View.GONE);
+        }
 
         mListener.updateSO_Creation_Obj(my_so_creation_obj);
     }
@@ -342,16 +352,14 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void setClientTypeSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
         ArrayList<HMAux> mOptionClientType = new ArrayList<>();
+
         HMAux auxUserType = new HMAux();
-        //auxUserType.put(SearchableSpinner.ID, Constant.CLIENT_TYPE_USER);
         auxUserType.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(Constant.CLIENT_TYPE_USER));
         auxUserType.put(SM_SODao.CLIENT_TYPE, Constant.CLIENT_TYPE_USER);
-
 
         mOptionClientType.add(auxUserType);
 
         HMAux auxUserClient = new HMAux();
-        //auxUserClient.put(SearchableSpinner.ID, CLIENT_TYPE_CLIENT);
         auxUserClient.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(CLIENT_TYPE_CLIENT));
         auxUserClient.put(SM_SODao.CLIENT_TYPE, Constant.CLIENT_TYPE_CLIENT);
 
@@ -529,6 +537,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 if (hmAux.hasConsistentValue(SM_SODao.CLIENT_TYPE) && hmAux.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
                     callGetClientList();
                     llSoClient.setVisibility(View.VISIBLE);
+                    verifyPermission();
                 }
             }
         });
