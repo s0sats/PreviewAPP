@@ -485,71 +485,71 @@ public class Act027_Product_Edit extends BaseFragment {
     public void loadDataToScreen() {
 
         if (bStatus) {
-            if(mSm_so_product_event == null
-                    || hmAux_Trans == null){
+            if (mSm_so_product_event == null
+                    || hmAux_Trans == null) {
                 delegate.callAct005();
-            }
-            if (mSm_so_product_event.getSketch_code() != null && !ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
+            } else {
+                if (mSm_so_product_event.getSketch_code() != null && !ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
 
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_sketch_not_ready_title"),
-                        hmAux_Trans.get("alert_sketch_not_ready_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Act027_Main mMain = (Act027_Main) getActivity();
-                                //
-                                mMain.setProductListFragOffLine();
-                            }
-                        },
-                        -1
-                );
-            }
-
-
-            tv_tmp_ref_ttl.setText(hmAux_Trans.get("event_tmp_ref_lbl"));
-            tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "");
-
-            tv_prod_ttl.setText(hmAux_Trans.get("event_product_ttl"));
-            tv_desc_ttl.setText(mSm_so_product_event.getProduct_id() + " - " + mSm_so_product_event.getProduct_desc());
-
-            try {
-                if (widgetset) {
-                    widgetset = false;
-                } else {
-                    mk_comments.setText(tempValues.get("mk_comments"));
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_sketch_not_ready_title"),
+                            hmAux_Trans.get("alert_sketch_not_ready_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Act027_Main mMain = (Act027_Main) getActivity();
+                                    //
+                                    mMain.setProductListFragOffLine();
+                                }
+                            },
+                            -1
+                    );
                 }
+
+
+                tv_tmp_ref_ttl.setText(hmAux_Trans.get("event_tmp_ref_lbl"));
+                tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "");
+
+                tv_prod_ttl.setText(hmAux_Trans.get("event_product_ttl"));
+                tv_desc_ttl.setText(mSm_so_product_event.getProduct_id() + " - " + mSm_so_product_event.getProduct_desc());
+
+                try {
+                    if (widgetset) {
+                        widgetset = false;
+                    } else {
+                        mk_comments.setText(tempValues.get("mk_comments"));
+                    }
 
 //                if (tempValues.get("mk_qty") != null && !tempValues.get("mk_qty").isEmpty()) {
 //                    mk_qty.setText(tempValues.get("mk_qty"));
 //                }
 
 
-                if (sdAvoid) {
-                    sdAvoid = false;
-                } else {
-                    iv_gallery.setTag(tempValues.get("img"));
+                    if (sdAvoid) {
+                        sdAvoid = false;
+                    } else {
+                        iv_gallery.setTag(tempValues.get("img"));
+                    }
+
+                    arff_applyrepair.setmValue(tempValues.get("arff_applyrepair"));
+
+                    cb_inspection.setChecked(tempValues.get("cb_inspection").equalsIgnoreCase("1") ? true : false);
+
+                    mk_qty.setText(tempValues.get("mk_qty"));
+
+                    pff_sketch.setmFName(tempValues.get("sketch_fname"));
+                    pff_sketch.setmOption(tempValues.get("sketch_options"));
+                    pff_sketch.setmValue(tempValues.get("sketch_mvalue"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-                arff_applyrepair.setmValue(tempValues.get("arff_applyrepair"));
+                upImgGallery();
 
-                cb_inspection.setChecked(tempValues.get("cb_inspection").equalsIgnoreCase("1") ? true : false);
-
-                mk_qty.setText(tempValues.get("mk_qty"));
-
-                pff_sketch.setmFName(tempValues.get("sketch_fname"));
-                pff_sketch.setmOption(tempValues.get("sketch_options"));
-                pff_sketch.setmValue(tempValues.get("sketch_mvalue"));
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                processTaskStatus();
             }
-
-            upImgGallery();
-
-            processTaskStatus();
-
         }
     }
 
@@ -710,7 +710,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("10")
                 && convertToDouble(mk_qty.getText().toString()) <= 0
-                ) {
+        ) {
             mErrorMSG = hmAux_Trans.get("qty_apply_error_msg");
 
             return false;
@@ -897,7 +897,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private void activateUpload(Context context) {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

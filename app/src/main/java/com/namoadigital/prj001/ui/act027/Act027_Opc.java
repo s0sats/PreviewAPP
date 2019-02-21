@@ -359,7 +359,8 @@ public class Act027_Opc extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (mSm_so != null) {
+            if (mSm_so != null
+            && hmAux_Trans != null) {
 
                 if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || mSm_so.getSync_required() == 1) {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
