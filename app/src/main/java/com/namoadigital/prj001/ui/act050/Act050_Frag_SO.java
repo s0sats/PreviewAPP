@@ -753,7 +753,7 @@ public class Act050_Frag_SO extends BaseFragment {
         clientValue.put(SearchableSpinner.ID, clientId);
         String clienteSpinnerName = clientId + " - " + clientName;
 
-        if (clientName.isEmpty()) {
+        if (clientName == null || clientName.isEmpty()) {
             clienteSpinnerName = "";
         }
 
