@@ -21,6 +21,7 @@ import java.util.List;
 
 public class Serial_Log_Adapter extends BaseAdapter {
     public static final String SYS_PROCESS_SO = "PRC_SERVICE_ORDER";
+    public static final String SYS_PROCESS_N_FORM = "PRC_CUSTOM_FORM";
 
     private Context context;
     //private ArrayList<HMAux> source;
@@ -50,9 +51,14 @@ public class Serial_Log_Adapter extends BaseAdapter {
     }
 
     public interface ivDownloadClick{
-        void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded);
+        //void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded);
+        void onIvDowloadClick(String process, Serial_Log_Obj logObj, int position);
     }
 
+    public void updateItemData(Serial_Log_Obj logObj, int position){
+        source.set(position,logObj);
+        notifyDataSetChanged();
+    }
     @Override
     public int getCount() {
         return source.size();
@@ -107,9 +113,104 @@ public class Serial_Log_Adapter extends BaseAdapter {
                     )
             );
         }
-        //Se for SO e status DONE e usr possui acesso ao menu so, exibe btn de download.
-        if( logObj.getSys_process().equals(SYS_PROCESS_SO)
-            && logObj.getSys_status().equals(Constant.SYS_STATUS_DONE)
+//        //Se for SO e status DONE e usr possui acesso ao menu so, exibe btn de download.
+//        if( logObj.getSys_process().equals(SYS_PROCESS_SO)
+//            && logObj.getSys_status().equals(Constant.SYS_STATUS_DONE)
+//            && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)
+//            && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC)
+//        ){
+//            Drawable drawable = null;
+//            if(logObj.isLog_downloaded()){
+//                //iv_download.setImageDrawable(context.getDrawable(R.drawable.ic_n_service2_24x24));
+//                drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+//                drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
+//                drawable.mutate();
+//                iv_download.setImageDrawable(drawable);
+//            }else{
+//                drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+//                drawable.setTint(context.getResources().getColor(R.color.namoa_dark_blue));
+//                drawable.mutate();
+//                iv_download.setImageDrawable(drawable);
+//            }
+//            iv_download.setVisibility(View.VISIBLE);
+//            //
+//            iv_download.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if(ivDownloadClickListner != null){
+//                        ivDownloadClickListner.onIvDowloadClick(SYS_PROCESS_SO,logObj.getSplitedPk(),logObj.isLog_downloaded());
+//                    }
+//                }
+//            });
+//        }else{
+//            iv_download.setVisibility(View.GONE);
+//            iv_download.setOnClickListener(null);
+//        }
+        //
+        switch (logObj.getSys_process()){
+            case SYS_PROCESS_SO:
+                processSOView(iv_download,logObj, position);
+                break;
+            case SYS_PROCESS_N_FORM:
+                processNFormView(iv_download,logObj,position);
+                break;
+            default:
+                iv_download.setVisibility(View.GONE);
+                iv_download.setOnClickListener(null);
+        }
+
+        return convertView;
+    }
+
+    private void processNFormView(ImageView iv_download, final Serial_Log_Obj logObj, final int position) {
+        Drawable drawable = null;
+
+        if(logObj.getSys_status().equals(Constant.SYS_STATUS_DONE)) {
+            //Se PDF ja gerado, verifica se ja foi baixado e define a cor do icone
+            //Verde: Se PDF ja existe localmente
+            //Azul: Ainda nã baixado.
+            //Se não existe PDF gerado, icone fica preto(else)
+            if (logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()) {
+                if (logObj.isLog_downloaded()) {
+                    drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+                    drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
+                    drawable.mutate();
+                    iv_download.setImageDrawable(drawable);
+                } else {
+                    drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+                    drawable.setTint(context.getResources().getColor(R.color.namoa_dark_blue));
+                    drawable.mutate();
+                    iv_download.setImageDrawable(drawable);
+                }
+            } else {
+                drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
+                drawable.setTint(context.getResources().getColor(R.color.namoa_status_process));
+                drawable.mutate();
+                iv_download.setImageDrawable(drawable);
+            }
+            //
+            iv_download.setVisibility(View.VISIBLE);
+            //
+            iv_download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ivDownloadClickListner != null) {
+                        ivDownloadClickListner.onIvDowloadClick(
+                                SYS_PROCESS_N_FORM,
+                                logObj,
+                                position
+                        );
+                    }
+                }
+            });
+        }else{
+            iv_download.setVisibility(View.GONE);
+            iv_download.setOnClickListener(null);
+        }
+    }
+
+    private void processSOView(ImageView iv_download, final Serial_Log_Obj logObj, final int position) {
+        if( logObj.getSys_status().equals(Constant.SYS_STATUS_DONE)
             && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)
             && ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC)
         ){
@@ -126,13 +227,17 @@ public class Serial_Log_Adapter extends BaseAdapter {
                 drawable.mutate();
                 iv_download.setImageDrawable(drawable);
             }
+            //
             iv_download.setVisibility(View.VISIBLE);
             //
             iv_download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(ivDownloadClickListner != null){
-                        ivDownloadClickListner.onIvDowloadClick(SYS_PROCESS_SO,logObj.getSplitedPk(),logObj.isLog_downloaded());
+                        ivDownloadClickListner.onIvDowloadClick(
+                                SYS_PROCESS_SO,
+                                logObj,
+                                position);
                     }
                 }
             });
@@ -140,8 +245,6 @@ public class Serial_Log_Adapter extends BaseAdapter {
             iv_download.setVisibility(View.GONE);
             iv_download.setOnClickListener(null);
         }
-        //
-        return convertView;
     }
 
     private void loadTransation() {

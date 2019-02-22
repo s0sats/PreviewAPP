@@ -469,7 +469,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
                 try {
                     for (String s : msgs) {
-                        msg = s + "\n";
+                        msg += s + "\n";
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();

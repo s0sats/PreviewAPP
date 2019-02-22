@@ -20,4 +20,12 @@ public interface Act007_Main_Presenter {
     void processSoDownloadResult(HMAux so_download_result);
 
     void processDownloadClick(String process, String[] pk, boolean alreadyDownloaded);
+
+    void executeNFormPDFDownload(String[] pk, String url);
+
+    void executeNFormPDFGeneratation(String pk);
+
+    void openPDF(String file_name);
+
+    void openPDF(String[] pk);
 }

@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.TNForm_PDF_Env;
 import com.namoadigital.prj001.model.TNForm_PDF_Rec;
@@ -22,11 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WS_Generate_NForm_PDF extends IntentService {
+    public static final String NFORM_PK_KEY = "NFORM_PK_KEY";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_serial_log";
+    private String mResource_Name = "ws_generate_nform_pdf";
 
     public WS_Generate_NForm_PDF() {
         super("WS_Generate_NForm_PDF");
@@ -40,7 +42,7 @@ public class WS_Generate_NForm_PDF extends IntentService {
         try {
 
             long customer_code = bundle.getLong(MD_Product_SerialDao.CUSTOMER_CODE);
-            String sys_pk = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE);
+            String sys_pk = bundle.getString(NFORM_PK_KEY);
 
 
             processGenerateNFormPDF(customer_code,sys_pk);
@@ -75,10 +77,10 @@ public class WS_Generate_NForm_PDF extends IntentService {
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setSys_pk(sys_pk);
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_generating_pdf"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SERIAL_LOG,
+                Constant.WS_GENERATE_FORM_PDF,
                 gson.toJson(env)
         );
         //
@@ -104,17 +106,21 @@ public class WS_Generate_NForm_PDF extends IntentService {
             return;
         }
         //
-        processReturn(rec);
+        processReturn(sys_pk,rec);
 
     }
 
-    private void processReturn(TNForm_PDF_Rec rec) {
+    private void processReturn(String sys_pk, TNForm_PDF_Rec rec) {
         if(rec.getUrl() != null && !rec.getUrl().isEmpty()){
+            HMAux aux  = new HMAux();
+            aux.put(NFORM_PK_KEY,sys_pk);
+            aux.put(GE_Custom_Form_BlobDao.BLOB_URL,rec.getUrl());
+            //
             ToolBox.sendBCStatus(
                     getApplicationContext(),
                     "CLOSE_ACT",
                     hmAux_Trans.get("msg_process_finalized"),
-                    new HMAux(),
+                    aux,
                     rec.getLink_url(),
                     "0"
             );
@@ -133,8 +139,8 @@ public class WS_Generate_NForm_PDF extends IntentService {
         List<String> translist = new ArrayList<>();
         //
         translist.add("msg_sending_data");
-        translist.add("msg_receving_data");
-        translist.add("msg_processing_log");
+        translist.add("msg_generating_pdf");
+        translist.add("msg_pdf_generation_error");
         translist.add("msg_process_finalized");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
