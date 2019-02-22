@@ -17,6 +17,7 @@ public class Serial_Log_Obj {
     private String location;
     private String sys_process;
     private String sys_pk;
+    private String file_url;
     private boolean log_downloaded;
 
     public String getProcess() {
@@ -81,6 +82,14 @@ public class Serial_Log_Obj {
 
     public void setSys_pk(String sys_pk) {
         this.sys_pk = sys_pk;
+    }
+
+    public String getFile_url() {
+        return file_url;
+    }
+
+    public void setFile_url(String file_url) {
+        this.file_url = file_url;
     }
 
     public boolean isLog_downloaded() {

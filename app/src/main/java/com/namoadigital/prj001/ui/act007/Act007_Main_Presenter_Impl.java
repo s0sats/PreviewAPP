@@ -164,6 +164,27 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
 
         return false;
     }
+    //Verifica se SO ja existe localmente.
+    private boolean checkPDFExists(String[] pk) {
+        HMAux auxSo = smSoDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        Long.parseLong(pk[0]),
+                        Integer.parseInt(pk[1]),
+                        Integer.parseInt(pk[2])
+                ).toSqlQuery()
+        );
+        //
+        if(auxSo != null
+                && auxSo.size() > 0
+                && auxSo.containsKey(SM_SODao.SO_PREFIX)
+                && !auxSo.get(SM_SODao.SO_PREFIX).isEmpty()
+                && auxSo.get(SM_SODao.SO_PREFIX) != null
+        ){
+            return true;
+        }
+
+        return false;
+    }
     //Verifice se serial esta salvo localmente.
     //Se não estiver, salva
     private void checkSaveSerial() {
