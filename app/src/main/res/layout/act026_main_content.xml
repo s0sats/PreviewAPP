@@ -15,94 +15,65 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="5dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="2dp">
+
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act026_mket_filter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:mOCR="false"
+                android:paddingLeft="10dp"
                 app:mBARCODE="false"
                 app:mNFC="false"
-                android:paddingLeft="10dp"
-                />
+                app:mOCR="false" />
 
             <TextView
                 android:id="@+id/act026_tv_filter_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textStyle="bold"
-                android:textSize="@dimen/font_size_title_md"
                 android:text="Filtrar "
-                android:visibility="gone"
-                />
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <Switch
                 android:id="@+id/act026_sw_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                />
+                android:checked="true" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/act026_tv_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_weight="1"
+            android:text="Não consigo listar OS - trad"/>
 
         <ListView
             android:id="@+id/act026_lv_so"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="4dp"/>
-
-        <LinearLayout
-            android:id="@+id/act026_ll_new_os"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="visible"
-            android:paddingHorizontal="8dp"
-            >
-
-            <ImageButton
-                android:id="@+id/act026_os_list_iv_back"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:background="@drawable/btn_namoa_main_2_states"
-                android:src="@drawable/ic_cancel_white_24px"
-                android:scaleType="fitXY"
-                android:padding="20dp"
-                android:tint="@color/padrao_WHITE"
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/act026_os_list_btn_new_os"
-                android:layout_width="wrap_content"
-                android:layout_height="75dp"
-                android:background="@drawable/namoa_cell_3_states"
-                android:text="NEW O.S - trad"
-                android:textColor="@color/padrao_WHITE"
-                android:focusable="true"
-                />
-
-        </LinearLayout>
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="4dp"
+            android:padding="5dp" />
 
     </LinearLayout>
+
     <include layout="@layout/footer_base" />
 
 </LinearLayout>

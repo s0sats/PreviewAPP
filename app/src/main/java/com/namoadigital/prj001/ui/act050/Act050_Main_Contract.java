@@ -28,7 +28,7 @@ public interface Act050_Main_Contract {
         void showPD(String title, String msg);
         void clearOSCreationData();
         void callAct005(Context context);
-        void callAct023(Context context, Bundle bundle);
+        void callAct026(Context context, Bundle bundle);
         void callAct027(Context context, Bundle bundle);
     }
 

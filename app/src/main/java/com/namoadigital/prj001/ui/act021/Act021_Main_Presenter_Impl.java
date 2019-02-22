@@ -203,7 +203,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 //                bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
 //                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
 //                //
-//                mView.callAct023(context, bundle);
+//                mView.callAct026(context, bundle);
 //            } else {
 //                Bundle bundle = new Bundle();
 //                bundle.putString(Constant.MAIN_SERIAL_TRACKING, tracking);

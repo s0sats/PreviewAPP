@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:visibility="visible">
+
+
+        <ImageButton
+            android:id="@+id/act026_os_list_iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_namoa_main_2_states"
+            android:src="@drawable/ic_skip_previous_white_24px"
+            android:scaleType="fitXY"
+            android:padding="10dp"
+            android:tint="@color/padrao_WHITE"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/act026_os_list_btn_new_os"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/namoa_cell_3_states"
+            android:text="NEW O.S - trad"
+            android:textColor="@color/padrao_WHITE"
+            android:focusable="true"
+            android:paddingHorizontal="15dp"
+            />
+
+</LinearLayout>

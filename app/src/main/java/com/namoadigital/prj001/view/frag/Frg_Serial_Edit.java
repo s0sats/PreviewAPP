@@ -267,13 +267,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add);
 
     }
-
-    public interface I_Frg_Serial_Edit_New_Os {
-        /**
-         * Interface disparada no clique do botão New OS
-         */
-        void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged);
-    }
     //endregion
 
     //region GETTERS SETTERS
@@ -644,10 +637,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         view_footer = view.findViewById(R.id.frg_serial_edit_view_footer);
         //
         btn_action = (Button) view.findViewById(R.id.frg_serial_edit_btn_action);
-        //
-//        ll_new_os = view.findViewById(R.id.frg_serial_edit_ll_new_os);
-//        btn_new_os = view.findViewById(R.id.frg_serial_edit_btn_new_os);
-//        btn_new_os.setTag("btn_new_os");
         //
         ll_io_info = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_io_info);
         //
@@ -1243,15 +1232,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
 
     }
-
-    /**
-     * LUCHE - 28/01/2019
-     * Metodo criado a partir da validação de save ja existente.
-     * O metodofoi criado para concentrar a validação em um unico metodo,
-     * pois agora existe mais um fluxo de save, o do btnNewOs.
-     *
-     * @param btnId - ID da view(button) que chamou o metodo.
-     */
     private void saveValidationFlow(int btnId) {
 
         if (!new_serial || mket_serial_id.isValid()) {
@@ -2958,7 +2938,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         transListFrag.add("alert_new_so_ttl");
         transListFrag.add("alert_new_so_fill_required_fields_msg");
-        transListFrag.add("btn_new_os");
+
         //
         return transListFrag;
     }

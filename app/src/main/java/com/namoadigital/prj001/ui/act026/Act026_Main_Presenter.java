@@ -13,4 +13,6 @@ public interface Act026_Main_Presenter {
     void defineForwardFlow(HMAux so);
 
     void onBackPressedClicked();
+
+    void setRequesting_act(String requesting_act);
 }

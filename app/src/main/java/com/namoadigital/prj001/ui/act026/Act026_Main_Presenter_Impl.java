@@ -31,6 +31,10 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
         this.soDao = soDao;
     }
 
+    public void setRequesting_act(String requesting_act) {
+        this.requesting_act = requesting_act;
+    }
+
     @Override
     public void getSOList(String product_code, String serial_id, boolean onlyAvaliables) {
 
@@ -82,6 +86,8 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
             mView.callAct021(context);
         }else if (requesting_act.equals(Constant.ACT023)){
             mView.callAct023(context);
+        }else if (requesting_act.equals(Constant.ACT005)){
+            mView.callAct005(context);
         }else{
             mView.callAct021(context);
         }
