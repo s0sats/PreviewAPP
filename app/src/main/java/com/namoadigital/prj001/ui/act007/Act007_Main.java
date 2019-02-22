@@ -278,7 +278,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             listener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.executeNFormPDFGeneratation(logObj.getSys_pk());
+                    mPresenter.executeNFormPDFGeneration(logObj.getSys_pk());
                 }
             };
         }
@@ -452,7 +452,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //
         disableProgressDialog();
         //
-        onBackPressed();
+        if (!wsProcess.equals(WS_Generate_NForm_PDF.class.getName())) {
+            onBackPressed();
+        }
+
     }
 
     @Override

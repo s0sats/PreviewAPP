@@ -23,7 +23,7 @@ public interface Act007_Main_Presenter {
 
     void executeNFormPDFDownload(String[] pk, String url);
 
-    void executeNFormPDFGeneratation(String pk);
+    void executeNFormPDFGeneration(String pk);
 
     void openPDF(String file_name);
 

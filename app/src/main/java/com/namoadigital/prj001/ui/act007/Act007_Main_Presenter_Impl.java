@@ -299,7 +299,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
     }
 
     @Override
-    public void executeNFormPDFGeneratation(String pk) {
+    public void executeNFormPDFGeneration(String pk) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Generate_NForm_PDF.class.getName());
             //
