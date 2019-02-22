@@ -80,6 +80,8 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
             mView.callAct012(context);
         }else if (requesting_act.equals(Constant.ACT021)){
             mView.callAct021(context);
+        }else if (requesting_act.equals(Constant.ACT023)){
+            mView.callAct023(context);
         }else{
             mView.callAct021(context);
         }

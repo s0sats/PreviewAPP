@@ -200,7 +200,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //frgSerialEdit.setShowCategorySegmentoInfo(true);
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
-        frgSerialEdit.includeNewOsButton(true);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -258,21 +257,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                     controls_sta.add(mket_control);
                 }else{
                     controls_sta.remove(mket_control);
-                }
-            }
-        });
-        //
-        frgSerialEdit.setDelegateOS(new Frg_Serial_Edit.I_Frg_Serial_Edit_New_Os() {
-            @Override
-            public void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged) {
-                if(serialChanged) {
-                    //seta var que define o fluxo apos o save do serial.
-                    soFlow = SO_FLOW_NEW_SO;
-                    saveWithChangesProcess(mdProductSerial);
-                }else{
-                    mPresenter.updateSerialData(mdProductSerial);
-                    //
-                    callAct050(context);
                 }
             }
         });

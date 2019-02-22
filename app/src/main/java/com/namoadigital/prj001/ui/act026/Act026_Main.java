@@ -7,7 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,6 +25,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -48,6 +52,9 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private TextView tv_filter_lbl;
     private Switch sw_filter;
     private MKEditTextNM mket_filter;
+    private ImageButton ivBack;
+    private Button btnNewOs;
+    private LinearLayout llNewOs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,6 +129,10 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 );
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
+        //Fluxo Nova OS
+        ivBack =  (ImageButton) findViewById(R.id.act026_os_list_iv_back);
+        btnNewOs =  (Button) findViewById(R.id.act026_os_list_btn_new_os);
+        llNewOs =  (LinearLayout) findViewById(R.id.act026_ll_new_os);
         //
         tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
         tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
@@ -213,8 +224,21 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 applySearchFilter();
             }
         });
-
         //
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onBackPressedClicked();
+            }
+        });
+        //
+
+        btnNewOs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -259,6 +283,17 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         startActivity(mIntent);
         finish();
 
+    }
+
+    @Override
+    public void callAct023(Context context) {
+        Intent mIntent = new Intent(context, Act023_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        if (bundle != null) {
+//            mIntent.putExtras(bundle);
+//        }
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

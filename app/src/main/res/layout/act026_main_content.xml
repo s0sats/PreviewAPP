@@ -65,6 +65,43 @@
             android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="4dp"/>
 
+        <LinearLayout
+            android:id="@+id/act026_ll_new_os"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:paddingHorizontal="8dp"
+            >
+
+            <ImageButton
+                android:id="@+id/act026_os_list_iv_back"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@drawable/btn_namoa_main_2_states"
+                android:src="@drawable/ic_cancel_white_24px"
+                android:scaleType="fitXY"
+                android:padding="20dp"
+                android:tint="@color/padrao_WHITE"
+                />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/act026_os_list_btn_new_os"
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:background="@drawable/namoa_cell_3_states"
+                android:text="NEW O.S - trad"
+                android:textColor="@color/padrao_WHITE"
+                android:focusable="true"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
     <include layout="@layout/footer_base" />
 
