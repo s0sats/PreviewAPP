@@ -109,6 +109,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("alert_no_so_founded_msg");
         transList.add("only_avaliable_filter_lbl");
         transList.add("filter_hint");
+        transList.add("alert_leave_so_creation_ttl");
+        transList.add("alert_leave_so_creation_confirm");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
