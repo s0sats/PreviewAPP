@@ -204,15 +204,16 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
 
     private void callAct023(MD_Product_Serial mdProductSerial) {
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.MODULE_SO_SEARCH_SERIAL);
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
         //O serial já foi criado nas etapas anteriores por isso o parametro é falso
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+
         //
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         //
-        mView.callAct023(context,bundle);
+        mView.callAct026(context,bundle);
     }
 
     public void showNoConnectionDialog(Context act_context, final MD_Product_Serial mdProductSerial) {

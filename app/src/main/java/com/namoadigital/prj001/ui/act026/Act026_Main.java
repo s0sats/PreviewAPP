@@ -1,35 +1,43 @@
 package com.namoadigital.prj001.ui.act026;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act050.Act050_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -46,8 +54,13 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private String serial_id;
     //
     private TextView tv_filter_lbl;
+    private TextView tv_empty_state;
     private Switch sw_filter;
     private MKEditTextNM mket_filter;
+    private ImageButton ivBack;
+    private Button btnNewOs;
+    private View lv_so_footer;
+    private MD_Product_Serial mdProductSerial;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,11 +93,15 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         List<String> transList = new ArrayList<String>();
         transList.add("act026_title");
         transList.add("btn_new");
+        transList.add("btn_new_os");
         transList.add("btn_download");
         transList.add("alert_download_mult_so_ttl");
         transList.add("alert_download_mult_so_msg");
         transList.add("alert_download_so_ttl");
         transList.add("alert_download_so_msg");
+        transList.add("alert_segment_price_category_so_ttl");
+        transList.add("alert_segment_price_category_so_msg");
+        transList.add("empty_list_state_so_msg");
         transList.add("alert_no_so_selected");
         transList.add("progress_downloading_so_ttl");
         transList.add("progress_downloading_so_msg");
@@ -122,9 +139,19 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 );
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
+
+        if (hasNewOsFlow()) {
+            lv_so_footer = View.inflate(this, R.layout.act026_list_os_footer, null);
+            lv_so.addFooterView(lv_so_footer, null, false);
+            ivBack = (ImageButton) findViewById(R.id.act026_os_list_iv_back);
+            setBtnNewOs();
+        }
+
+
         //
         tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
         tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
+        setTvEmptyState();
         //views.add(tv_filter_lbl);
         //
         mket_filter = (MKEditTextNM) findViewById(R.id.act026_mket_filter);
@@ -145,15 +172,30 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
 
     }
 
+    private void setBtnNewOs() {
+        btnNewOs = (Button) findViewById(R.id.act026_os_list_btn_new_os);
+        btnNewOs.setText(hmAux_Trans.get("btn_new_os"));
+    }
+
+    private void setTvEmptyState() {
+        tv_empty_state = (TextView) findViewById(R.id.act026_tv_empty_state);
+        tv_empty_state.setText(hmAux_Trans.get("empty_list_state_so_msg"));
+    }
+
+    private boolean hasNewOsFlow() {
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)
+        && mdProductSerial != null;
+    }
+
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
 
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)) {
-                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT023);
                 product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, null);
                 serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, null);
-
+                mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             } else {
                 //Tratar quando lista de s.o não for enviado.
                 //Caixa de alerta e volta para menu?!?
@@ -213,8 +255,50 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 applySearchFilter();
             }
         });
-
         //
+        if (hasNewOsFlow()) {
+            ivBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPresenter.onBackPressedClicked();
+                }
+            });
+
+            btnNewOs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean hasSegment = true;
+                    boolean hasCategory = true;
+
+                    if(mdProductSerial.getSegment_code() == null){
+                        hasSegment = false;
+                    }
+                    if(mdProductSerial.getCategory_price_code() == null){
+                        hasCategory = false;
+                    }
+
+                    if(hasSegment && hasCategory){
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, mdProductSerial.getProduct_code());
+                        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+                        callAct050(context,bundle);
+                    }else{
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_segment_price_category_so_ttl"),
+                                hmAux_Trans.get("alert_segment_price_category_so_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mPresenter.onBackPressedClicked();
+                                    }
+                                },
+                                0
+                        );
+                    }
+                }
+            });
+        }
         sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -241,7 +325,13 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 R.layout.so_header_cell
         );
         //
+        if(soList.isEmpty()) {
+            tv_empty_state.setVisibility(View.VISIBLE);
+        }else{
+            tv_empty_state.setVisibility(View.GONE);
+        }
         lv_so.setAdapter(mAdapter);
+
     }
 
     @Override
@@ -262,6 +352,29 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     }
 
     @Override
+    public void callAct023(Context context) {
+        Intent mIntent = new Intent(context, Act023_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, product_code );
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void callAct027(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         //Intent mIntent = new Intent(context, Act027_Main.class);
@@ -271,9 +384,20 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         finish();
     }
 
+    public void callAct050(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act050_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        mPresenter.setRequesting_act(Constant.ACT005);
         mPresenter.onBackPressedClicked();
 
     }

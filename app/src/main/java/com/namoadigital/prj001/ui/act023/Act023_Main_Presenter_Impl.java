@@ -287,11 +287,14 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         if (so_download_result.containsKey(WS_SO_Search.SO_PREFIX_CODE) && so_download_result.containsKey(WS_SO_Search.SO_LIST_QTY)) {
             if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 0) {
                 //
-                mView.showAlertDialog(
-                        hmAux_Trans.get("alert_no_so_found_ttl"),
-                        hmAux_Trans.get("alert_no_so_found_msg")
-                );
-
+                if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
+                    mView.showAlertDialog(
+                            hmAux_Trans.get("alert_no_so_found_ttl"),
+                            hmAux_Trans.get("alert_no_so_found_msg")
+                    );
+                } else {
+                    mView.callAct026(context);
+                }
             } else if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 1) {
                 //
                 if (so_download_result.get(WS_SO_Search.SO_PREFIX_CODE).contains(Constant.MAIN_CONCAT_STRING)) {

@@ -186,12 +186,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean abortReported = false;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean forceLoggedSiteRestriction = false;
-    //LUCHE - 25/01/2019
-    private LinearLayout ll_new_os;
-    private Button btn_new_os;
-    private View.OnClickListener newOSClick;
-    private I_Frg_Serial_Edit_New_Os delegateOS;
-    private boolean includeNewOsButton = false;
+
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -272,23 +267,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add);
 
     }
-
-    public interface I_Frg_Serial_Edit_New_Os {
-        /**
-         * Interface disparada no clique do botão New OS
-         */
-        void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged);
-    }
     //endregion
 
     //region GETTERS SETTERS
 
     public void setDelegate(I_Frg_Serial_Edit delegate) {
         this.delegate = delegate;
-    }
-
-    public void setDelegateOS(I_Frg_Serial_Edit_New_Os delegateOS) {
-        this.delegateOS = delegateOS;
     }
 
     public void setBtnActionLabel(String label) {
@@ -366,10 +350,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         this.forceLoggedSiteRestriction = forceLoggedSiteRestriction;
     }
 
-    public void includeNewOsButton(boolean includeNewOsButton) {
-        this.includeNewOsButton = includeNewOsButton;
-    }
-
     public void reApplySerialId() {
         if (
                 ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS) ||
@@ -416,11 +396,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                     }
             );
         }
-        //
-        if (newOsButtonAvaiable()) {
-            ll_new_os.setVisibility(View.VISIBLE);
-
-        }
     }
 
     public void applyReceivedSerial(MD_Product_Serial received_serial) {
@@ -430,9 +405,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
-        if (newOsButtonAvaiable()) {
-            ll_new_os.setVisibility(View.VISIBLE);
-        }
         //
         showAlertDialog(
                 hmAux_Trans.get("alert_serial_exists_ttl"),
@@ -666,10 +638,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         btn_action = (Button) view.findViewById(R.id.frg_serial_edit_btn_action);
         //
-        ll_new_os = view.findViewById(R.id.frg_serial_edit_ll_new_os);
-        btn_new_os = view.findViewById(R.id.frg_serial_edit_btn_new_os);
-        btn_new_os.setTag("btn_new_os");
-        //
         ll_io_info = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_io_info);
         //
         tv_io_info_ttl = (TextView) view.findViewById(R.id.frg_serial_edit_tv_io_info_ttl);
@@ -723,7 +691,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         views.add(tv_move_code_lbl);
         views.add(tv_move_group_lbl);
         views.add(tv_outbound_lbl);
-        views.add(btn_new_os);
 
         //Adiciona Componentes com dados do serial ao arrayList de validação
         serialProperties.add(ss_site);
@@ -1263,35 +1230,8 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         };
         //
-        newOSClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (delegateOS != null) {
-                    if (validateNewOSFields()) {
-                        saveValidationFlow(v.getId());
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_new_so_ttl"),
-                                hmAux_Trans.get("alert_new_so_fill_required_fields_msg"),
-                                null,
-                                0
 
-                        );
-                    }
-                }
-            }
-        };
     }
-
-    /**
-     * LUCHE - 28/01/2019
-     * Metodo criado a partir da validação de save ja existente.
-     * O metodofoi criado para concentrar a validação em um unico metodo,
-     * pois agora existe mais um fluxo de save, o do btnNewOs.
-     *
-     * @param btnId - ID da view(button) que chamou o metodo.
-     */
     private void saveValidationFlow(int btnId) {
 
         if (!new_serial || mket_serial_id.isValid()) {
@@ -1308,10 +1248,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                                         mdProductSerial,
                                         !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
                                 );
-                            } else if (btnId == R.id.frg_serial_edit_btn_new_os) {
-                                delegateOS.onNewOsClick(mdProductSerial,true);
                             }
-                            //
                             resetSaveCtrlVar();
                         } else {
                             if (btnId == R.id.frg_serial_edit_btn_action) {
@@ -1319,10 +1256,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                                         mdProductSerial,
                                         !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
                                 );
-                            } else if (btnId == R.id.frg_serial_edit_btn_new_os) {
-                                delegateOS.onNewOsClick(mdProductSerial,false);
                             }
-                            //
                             resetSaveCtrlVar();
                         }
                     } else {
@@ -1677,7 +1611,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         });
         //
-        btn_new_os.setOnClickListener(newOSClick);
+
     }
 
     private void initializeTrackingRemovelistner() {
@@ -2133,10 +2067,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                 mket_info2.setEnabled(true);
                 mket_info3.setEnabled(true);
             }
-            //Caso user possua permissão de criar OS e porcesso permita criar os, habilita botão.
-            if (newOsButtonAvaiable()) {
-                ll_new_os.setVisibility(View.VISIBLE);
-            }
         }
         if (mdProduct.getLocal_control() == 0) {
             ll_serial_location.setVisibility(View.GONE);
@@ -2172,9 +2102,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_info1.setEnabled(false);
         mket_info2.setEnabled(false);
         mket_info3.setEnabled(false);
-        if (newOsButtonAvaiable()) {
-            ll_new_os.setVisibility(View.GONE);
-        }
 
     }
 
@@ -2429,20 +2356,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         return false;
     }
-
-    /**
-     * LUCHE - 25/01/2019
-     * Verifica propriedade para exibir btn e se user tem profile de acesso a criação de O.S
-     *
-     * @return
-     */
-    private boolean newOsButtonAvaiable() {
-        if (includeNewOsButton && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
-            return true;
-        }
-        return false;
-    }
-    //endregion
 
     private void spinnersInitializer() {
         // Site
@@ -3025,7 +2938,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         transListFrag.add("alert_new_so_ttl");
         transListFrag.add("alert_new_so_fill_required_fields_msg");
-        transListFrag.add("btn_new_os");
+
         //
         return transListFrag;
     }
@@ -3042,9 +2955,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             delegate = (I_Frg_Serial_Edit) context;
         }
         //
-        if(delegateOS == null && context instanceof I_Frg_Serial_Edit_New_Os){
-            delegateOS = (I_Frg_Serial_Edit_New_Os) context;
-        }
     }
 
     @Override

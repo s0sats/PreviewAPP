@@ -200,7 +200,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //frgSerialEdit.setShowCategorySegmentoInfo(true);
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
-        frgSerialEdit.includeNewOsButton(true);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -258,21 +257,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                     controls_sta.add(mket_control);
                 }else{
                     controls_sta.remove(mket_control);
-                }
-            }
-        });
-        //
-        frgSerialEdit.setDelegateOS(new Frg_Serial_Edit.I_Frg_Serial_Edit_New_Os() {
-            @Override
-            public void onNewOsClick(MD_Product_Serial mdProductSerial, boolean serialChanged) {
-                if(serialChanged) {
-                    //seta var que define o fluxo apos o save do serial.
-                    soFlow = SO_FLOW_NEW_SO;
-                    saveWithChangesProcess(mdProductSerial);
-                }else{
-                    mPresenter.updateSerialData(mdProductSerial);
-                    //
-                    callAct050(context);
                 }
             }
         });
@@ -575,8 +559,11 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //
         bundle.remove(Constant.MAIN_REQUESTING_PROCESS);
         bundle.remove(Constant.MAIN_IS_SCHEDULE);
-        bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL);
+//        bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT023);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle_product_code);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle_serial_id);
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         //Quando o fluxo é vindo da seleção de produto e não serial
         //Não existe o serial no bundle, então é necessario adicioná-lo para que
         //a Act026 filtre apenas as SO's desse produto/serial.

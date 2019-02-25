@@ -35,6 +35,7 @@ import com.namoadigital.prj001.service.WS_SO_Favorite_List;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -464,8 +465,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void callAct023(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act023_Main.class);
+    public void callAct026(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             mIntent.putExtras(bundle);
