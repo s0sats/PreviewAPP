@@ -139,13 +139,15 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 );
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
+
         if (hasNewOsFlow()) {
             lv_so_footer = View.inflate(this, R.layout.act026_list_os_footer, null);
             lv_so.addFooterView(lv_so_footer, null, false);
+            ivBack = (ImageButton) findViewById(R.id.act026_os_list_iv_back);
+            setBtnNewOs();
         }
-        //Fluxo Nova OS
-        ivBack = (ImageButton) findViewById(R.id.act026_os_list_iv_back);
-        setBtnNewOs();
+
+
         //
         tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
         tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
