@@ -610,7 +610,8 @@ public class Act027_Product_Edit extends BaseFragment {
 
         Act027_Main mMain = (Act027_Main) getActivity();
 
-        if (!mMain.hasExecutionProfile()) {
+        if (!mMain.hasExecutionProfile()
+                || hasSOStatusStopOrEdit()) {
             arff_applyrepair.setmEnabled(false);
             cb_inspection.setEnabled(false);
             cb_inspection.setTextColor(0xFF000000);
@@ -672,6 +673,11 @@ public class Act027_Product_Edit extends BaseFragment {
 
         }
 
+    }
+
+    private boolean hasSOStatusStopOrEdit() {
+        return mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)
+                || mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT);
     }
 
     private View.OnClickListener save_listener = new View.OnClickListener() {
@@ -929,7 +935,8 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     public String getEventStatus() {
-        if (mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
+        if ((mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))
+        && !hasSOStatusStopOrEdit()) {
             return EVENT_EDIT_MODE;
         } else {
             return mSm_so_product_event.getStatus();
