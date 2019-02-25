@@ -98,6 +98,9 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("alert_download_mult_so_msg");
         transList.add("alert_download_so_ttl");
         transList.add("alert_download_so_msg");
+        transList.add("alert_segment_price_category_so_ttl");
+        transList.add("alert_segment_price_category_so_msg");
+        transList.add("empty_list_state_so_msg");
         transList.add("alert_no_so_selected");
         transList.add("progress_downloading_so_ttl");
         transList.add("progress_downloading_so_msg");
