@@ -135,7 +135,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 );
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
+        if (hasNewOsFlow()) {
             lv_so_footer = View.inflate(this, R.layout.act026_list_os_footer, null);
             lv_so.addFooterView(lv_so_footer, null, false);
         }
@@ -164,6 +164,11 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 )
         );
 
+    }
+
+    private boolean hasNewOsFlow() {
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)
+        && mdProductSerial != null;
     }
 
     private void recoverIntentsInfo() {
@@ -235,7 +240,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             }
         });
         //
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_NEW)) {
+        if (hasNewOsFlow()) {
             ivBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
