@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act001;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -267,7 +266,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
         //
+        if (ToolBox_Con.getPreference_CleanTokenFiles(getApplicationContext()) == 1) {
+            File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, "");
+            ToolBox_Inf.deleteFileListExceptionSafe(files_token);
+            ToolBox_Con.setPreference_CleanTokenFiles(getApplicationContext(),-1);
+        }
+        //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+
     }
 
     @Override
@@ -290,7 +296,12 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void processGo() {
         super.processGo();
-
+        //Se processo de troca de banco de dados com dados pendentes
+        //mas usr não decidiu atualizar o app, reseta var.
+        if(ToolBox_Con.getPreference_CleanTokenFiles(context) == 1){
+            ToolBox_Con.setPreference_CleanTokenFiles(context, -1);
+        }
+        //
         mPresenter.executeLoginProcess(
                 mEmail,
                 mPassWord,
@@ -322,15 +333,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private class hugo extends AsyncTask<Void, Void, Integer> {
-
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            return null;
-        }
     }
 
     @Override

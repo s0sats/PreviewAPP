@@ -1315,6 +1315,7 @@ public class ToolBox_Inf {
         if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
             //
             aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
+            ToolBox_Con.setPreference_CleanTokenFiles(context,1);
         }
         return aux;
     }
