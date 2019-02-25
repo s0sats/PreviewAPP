@@ -93,6 +93,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         List<String> transList = new ArrayList<String>();
         transList.add("act026_title");
         transList.add("btn_new");
+        transList.add("btn_new_os");
         transList.add("btn_download");
         transList.add("alert_download_mult_so_ttl");
         transList.add("alert_download_mult_so_msg");
@@ -144,11 +145,11 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         }
         //Fluxo Nova OS
         ivBack = (ImageButton) findViewById(R.id.act026_os_list_iv_back);
-        btnNewOs = (Button) findViewById(R.id.act026_os_list_btn_new_os);
+        setBtnNewOs();
         //
         tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
-        tv_empty_state = (TextView) findViewById(R.id.act026_tv_empty_state);
         tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
+        setTvEmptyState();
         //views.add(tv_filter_lbl);
         //
         mket_filter = (MKEditTextNM) findViewById(R.id.act026_mket_filter);
@@ -167,6 +168,16 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 )
         );
 
+    }
+
+    private void setBtnNewOs() {
+        btnNewOs = (Button) findViewById(R.id.act026_os_list_btn_new_os);
+        btnNewOs.setText(hmAux_Trans.get("btn_new_os"));
+    }
+
+    private void setTvEmptyState() {
+        tv_empty_state = (TextView) findViewById(R.id.act026_tv_empty_state);
+        tv_empty_state.setText(hmAux_Trans.get("empty_list_state_so_msg"));
     }
 
     private boolean hasNewOsFlow() {
@@ -272,10 +283,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                     }else{
                         ToolBox.alertMSG(
                                 context,
-//                                hmAux_Trans.get("Verifiquei Segmento ou Categoria -trad"),
-//                                hmAux_Trans.get("Verifiquei Segmento ou Categoria -trad"),
-                                "Verifiquei Segmento ou Categoria -trad",
-                                "Verifiquei Segmento ou Categoria -trad",
+                                hmAux_Trans.get("alert_segment_price_category_so_ttl"),
+                                hmAux_Trans.get("alert_segment_price_category_so_msg"),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

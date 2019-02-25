@@ -60,7 +60,7 @@
             android:gravity="center"
             android:textSize="20sp"
             android:layout_weight="1"
-            android:text="Não consigo listar OS - trad"/>
+            />
 
         <ListView
             android:id="@+id/act026_lv_so"
