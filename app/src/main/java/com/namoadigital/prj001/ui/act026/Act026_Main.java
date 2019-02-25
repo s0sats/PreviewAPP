@@ -260,7 +260,18 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             ivBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPresenter.onBackPressedClicked();
+                    ToolBox.alertMSG_YES_NO(
+                            context,
+                            hmAux_Trans.get("alert_leave_so_creation_ttl"),
+                            hmAux_Trans.get("alert_leave_so_creation_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mPresenter.onBackPressedClicked();
+                                }
+                            },
+                            1
+                    );
                 }
             });
 
