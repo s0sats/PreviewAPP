@@ -27,6 +27,7 @@ import com.namoadigital.prj001.service.WS_Serial_Log;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -335,6 +336,13 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
             );
         }
 
+        /**
+         *
+         * @param strings
+         *          0 -> URL
+         *          1 -> FileName
+         * @return
+         */
         @Override
         protected String doInBackground(String... strings) {
             //String...
@@ -445,7 +453,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         String gFileName = "";
         try {
             gFileName =
-                    "form_" +
+                    ConstantBaseApp.N_FORM_PDF_PREFIX +
                             pk[0] + "_" +
                             pk[1] + "_" +
                             pk[2] + "_" +

@@ -17,6 +17,7 @@ public class SM_SO_File {
     private String file_name;
     private String file_url;
     private String file_url_local = "";
+    private String file_custom_form_pk;
 
     public SM_SO_File() {
         this.customer_code = -1;
@@ -85,5 +86,13 @@ public class SM_SO_File {
 
     public void setFile_url_local(String file_url_local) {
         this.file_url_local = file_url_local;
+    }
+
+    public String getFile_custom_form_pk() {
+        return file_custom_form_pk;
+    }
+
+    public void setFile_custom_form_pk(String file_custom_form_pk) {
+        this.file_custom_form_pk = file_custom_form_pk;
     }
 }
