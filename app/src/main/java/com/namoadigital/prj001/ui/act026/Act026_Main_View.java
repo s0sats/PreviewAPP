@@ -15,6 +15,8 @@ public interface Act026_Main_View {
 
     void loadSOList(List<HMAux> soList);
 
+    void setListSOSize(int listSize);
+
     void callAct012(Context context);
 
     void callAct021(Context context);

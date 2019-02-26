@@ -61,6 +61,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private Button btnNewOs;
     private View lv_so_footer;
     private MD_Product_Serial mdProductSerial;
+    private int listSize;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("filter_hint");
         transList.add("alert_leave_so_creation_ttl");
         transList.add("alert_leave_so_creation_confirm");
+        transList.add("empty_list_state_so_not_listed_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -161,6 +163,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         //
         sw_filter = (Switch) findViewById(R.id.act026_sw_filter);
         //
+        mPresenter.getSOListTotalCount(product_code, serial_id);
         mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
         //
         ToolBox_Inf.cleanUpApproval(
@@ -339,12 +342,22 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         );
         //
         if(soList.isEmpty()) {
+            if(this.listSize >0){
+                tv_empty_state.setText(hmAux_Trans.get("empty_list_state_so_not_listed_msg"));
+
+                tv_empty_state.setTextColor(getResources().getColor(R.color.customff_background_error));
+            }
             tv_empty_state.setVisibility(View.VISIBLE);
         }else{
             tv_empty_state.setVisibility(View.GONE);
         }
         lv_so.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public void setListSOSize(int listSize) {
+        this.listSize = listSize;
     }
 
     @Override
@@ -410,7 +423,6 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.setRequesting_act(Constant.ACT005);
         mPresenter.onBackPressedClicked();
 
     }

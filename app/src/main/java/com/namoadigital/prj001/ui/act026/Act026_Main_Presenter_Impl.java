@@ -68,6 +68,38 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
     }
 
     @Override
+    public void getSOListTotalCount(String product_code, String serial_id) {
+
+//        List<SM_SO> soList = soDao.query(
+//                    new SM_SO_Sql_003(
+//                            ToolBox_Con.getPreference_Customer_Code(context),
+//                            product_code,
+//                            serial_id
+//                    ).toSqlQuery()
+//        );
+//        //
+//        int tam = soList.size();
+        List<HMAux> soList = soDao.query_HM(
+                /*new SM_SO_Sql_011(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+                */
+                new Sql_Act026_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        ToolBox_Con.getPreference_Zone_Code(context),
+                        product_code,
+                        serial_id,
+                        false
+                ).toSqlQuery()
+        );
+        //
+        mView.setListSOSize(soList.size());
+    }
+
+    @Override
     public void defineForwardFlow(HMAux so) {
         Bundle bundle = new Bundle();
 
