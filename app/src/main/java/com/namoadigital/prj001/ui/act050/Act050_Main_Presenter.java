@@ -174,7 +174,7 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
             case 0:
                 mView.callAct005(context);
             case 1:
-                callAct023(mdProductSerial);
+                callAct026(mdProductSerial);
                 break;
             case 2:
                 //Se o voltar foi chamada do fragmento de parametros,
@@ -188,7 +188,7 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                             public void onClick(DialogInterface dialog, int which) {
                                 mView.clearOSCreationData();
                                 if(isEmptyList){
-                                    callAct023(mdProductSerial);
+                                    callAct026(mdProductSerial);
                                 }else{
                                     fm.popBackStack();
                                 }
@@ -202,9 +202,9 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
         }
     }
 
-    private void callAct023(MD_Product_Serial mdProductSerial) {
+    private void callAct026(MD_Product_Serial mdProductSerial) {
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.MODULE_SO_SEARCH_SERIAL);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT023);
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
         //O serial já foi criado nas etapas anteriores por isso o parametro é falso
@@ -225,7 +225,7 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callAct023(mdProductSerial);
+                        callAct026(mdProductSerial);
                     }
                 },
                 0
