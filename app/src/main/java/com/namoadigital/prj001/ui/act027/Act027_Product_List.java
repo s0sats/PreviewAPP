@@ -132,6 +132,11 @@ public class Act027_Product_List extends BaseFragment {
             }
         });
 
+        if(mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
+        || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)){
+            iv_new_event.setEnabled(false);
+        }
+
         iv_new_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
