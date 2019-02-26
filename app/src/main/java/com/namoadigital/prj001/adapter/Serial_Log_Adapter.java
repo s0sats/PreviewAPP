@@ -169,7 +169,7 @@ public class Serial_Log_Adapter extends BaseAdapter {
             //Se PDF ja gerado, verifica se ja foi baixado e define a cor do icone
             //Verde: Se PDF ja existe localmente
             //Azul: Ainda nã baixado.
-            //Se não existe PDF gerado, icone fica preto(else)
+            //Se não existe PDF gerado, icone ficará azul também
             if (logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()) {
                 if (logObj.isLog_downloaded()) {
                     drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
@@ -183,8 +183,10 @@ public class Serial_Log_Adapter extends BaseAdapter {
                     iv_download.setImageDrawable(drawable);
                 }
             } else {
+
                 drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
-                drawable.setTint(context.getResources().getColor(R.color.namoa_status_process));
+                //drawable.setTint(context.getResources().getColor(R.color.namoa_status_process));
+                drawable.setTint(context.getResources().getColor(R.color.namoa_dark_blue));
                 drawable.mutate();
                 iv_download.setImageDrawable(drawable);
             }

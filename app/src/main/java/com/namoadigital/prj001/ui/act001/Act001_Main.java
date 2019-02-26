@@ -265,7 +265,18 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        //
+        /**
+         * LUCHE - 25/02/2019
+         * A validação abaixo ,getPreference_CleanTokenFiles,faz parte da solução de remoção de arquivos
+         * de token quando for identificado:
+         *  - Haverá troca da versão do banco de dados;
+         *  - Existem dados a serem transmitidos
+         *  - Usuario , mesmo recebendo a mensagem de que perderá dados, decidiu realizar a atualização
+         *  do app.
+         *  Se essas tres condições foram contempladas, o app apagara todos os arquivos de token existentes na maquina
+         *  pois, sem essa ação, ao tentar transmitir um arquivo de token sem a o.s existir mais no banco local,
+         *  gera sempre erro.
+         */
         if (ToolBox_Con.getPreference_CleanTokenFiles(getApplicationContext()) == 1) {
             File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, "");
             ToolBox_Inf.deleteFileListExceptionSafe(files_token);
