@@ -57,7 +57,6 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private TextView tv_empty_state;
     private Switch sw_filter;
     private MKEditTextNM mket_filter;
-    private ImageButton ivBack;
     private Button btnNewOs;
     private View lv_so_footer;
     private MD_Product_Serial mdProductSerial;
@@ -147,7 +146,6 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         if (hasNewOsFlow()) {
             lv_so_footer = View.inflate(this, R.layout.act026_list_os_footer, null);
             lv_so.addFooterView(lv_so_footer, null, false);
-            ivBack = (ImageButton) findViewById(R.id.act026_os_list_iv_back);
             setBtnNewOs();
         }
 
@@ -262,23 +260,6 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         });
         //
         if (hasNewOsFlow()) {
-            ivBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToolBox.alertMSG_YES_NO(
-                            context,
-                            hmAux_Trans.get("alert_leave_so_creation_ttl"),
-                            hmAux_Trans.get("alert_leave_so_creation_confirm"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mPresenter.onBackPressedClicked();
-                                }
-                            },
-                            1
-                    );
-                }
-            });
 
             btnNewOs.setOnClickListener(new View.OnClickListener() {
                 @Override
