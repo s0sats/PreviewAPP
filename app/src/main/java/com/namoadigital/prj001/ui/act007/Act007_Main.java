@@ -15,11 +15,13 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Serial_Log_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Generate_NForm_PDF;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Log;
 import com.namoadigital.prj001.util.Constant;
@@ -46,6 +48,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     private MD_Product_Serial mdProductSerial;
     private String file_name;
     private String wsProcess ="";
+    private int itemPosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +93,23 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         transList.add("dialog_so_download_ttl");
         transList.add("dialog_so_download_start");
         transList.add("alert_go_to_so_confirm_msg");
+        //
+        transList.add("alert_download_form_pdf_ttl");
+        transList.add("alert_download_form_pdf_confirm");
+        transList.add("alert_generate_form_pdf_ttl");
+        transList.add("alert_generate_form_pdf_confirm");
+        transList.add("dialog_generate_form_pdf_ttl");
+        transList.add("dialog_generate_form_pdf_start");
+        transList.add("alert_form_pdf_not_found_ttl");
+        transList.add("alert_form_pdf_not_found_msg");
+        transList.add("alert_form_pdf_download_error_ttl");
+        transList.add("alert_form_pdf_download_error_msg");
+        transList.add("alert_form_pdf_name_error_ttl");
+        transList.add("alert_form_pdf_name_error_msg");
+        transList.add("alert_generate_form_pdf_error_ttl");
+        transList.add("alert_generate_form_pdf_error_msg");
+        transList.add("dialog_download_form_pdf_ttl");
+        transList.add("dialog_download_form_pdf_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -172,7 +192,32 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     }
 
     @Override
-    public void loadLogList(ArrayList<Serial_Log_Obj> logList) {
+    public void disablePD() {
+        disableProgressDialog();
+    }
+
+    @Override
+    public void setItemGeneratedUrl(String url) {
+        if(mAdapter != null && itemPosition != -1) {
+            Serial_Log_Obj logObj = (Serial_Log_Obj) mAdapter.getItem(itemPosition);
+            logObj.setFile_url(url);
+            mAdapter.updateItemData(logObj, itemPosition);
+        }
+    }
+
+    @Override
+    public void setItemAsDownloaded() {
+        if(mAdapter != null && itemPosition != -1) {
+            Serial_Log_Obj logObj = (Serial_Log_Obj) mAdapter.getItem(itemPosition);
+            logObj.setLog_downloaded(true);
+            mAdapter.updateItemData(logObj, itemPosition);
+            //Reseta var de position
+            itemPosition = -1;
+        }
+    }
+
+    @Override
+    public void loadLogList(final ArrayList<Serial_Log_Obj> logList) {
         mAdapter = new Serial_Log_Adapter(
                 context,
                 logList,
@@ -180,13 +225,71 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         );
         //
         mAdapter.setIvDownloadClickListner(new Serial_Log_Adapter.ivDownloadClick() {
+//            @Override
+//            public void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded) {
+//                showDownloadMsg(process,pk,alreadyDownloaded);
+//            }
+
             @Override
-            public void onIvDowloadClick(String process, String[] pk, boolean alreadyDownloaded) {
-                showDownloadMsg(process,pk,alreadyDownloaded);
+            public void onIvDowloadClick(String process, Serial_Log_Obj logObj, int position) {
+                switch (process) {
+                    case Serial_Log_Adapter.SYS_PROCESS_SO:
+                        showDownloadMsg(process,logObj.getSplitedPk(),logObj.isLog_downloaded());
+                        break;
+                    case Serial_Log_Adapter.SYS_PROCESS_N_FORM:
+                        itemPosition = position;
+                        //
+                        if(logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()){
+                            if(logObj.isLog_downloaded()){
+                                mPresenter.openPDF(logObj.getSplitedPk());
+                            }else{
+                                showNFormPDFOptions(logObj);
+                            }
+                        } else{
+                            showNFormPDFOptions(logObj);
+                        }
+                        break;
+                    default:
+
+                }
             }
         });
         //
         lv_logs.setAdapter(mAdapter);
+    }
+
+    private void showNFormPDFOptions(final Serial_Log_Obj logObj) {
+        String ttl = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+        //
+        if(logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()){
+            ttl = hmAux_Trans.get("alert_download_form_pdf_ttl");
+            msg = hmAux_Trans.get("alert_download_form_pdf_confirm");
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.executeNFormPDFDownload(logObj.getSplitedPk(),logObj.getFile_url());
+                }
+            };
+        }else{
+            ttl = hmAux_Trans.get("alert_generate_form_pdf_ttl");
+            msg = hmAux_Trans.get("alert_generate_form_pdf_confirm");
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.executeNFormPDFGeneration(logObj.getSys_pk());
+                }
+            };
+        }
+        //
+        ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                listener,
+                1
+        );
     }
 
     private void showDownloadMsg(final String process, final String[] pk, final boolean alreadyDownloaded) {
@@ -317,6 +420,28 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             disableProgressDialog();
             //
             mPresenter.processSoDownloadResult(hmAux);
+        }else if(wsProcess.equals(WS_Generate_NForm_PDF.class.getName())){
+            disableProgressDialog();
+            //
+            if( hmAux != null
+                && hmAux.hasConsistentValue(WS_Generate_NForm_PDF.NFORM_PK_KEY)
+                && hmAux.hasConsistentValue(GE_Custom_Form_BlobDao.BLOB_URL)
+            ) {
+                setItemGeneratedUrl(hmAux.get(GE_Custom_Form_BlobDao.BLOB_URL));
+                //
+                mPresenter.executeNFormPDFDownload(
+                        hmAux.get(WS_Generate_NForm_PDF.NFORM_PK_KEY).replace("|","@@@").split("@@@"),
+                        hmAux.get(GE_Custom_Form_BlobDao.BLOB_URL)
+                );
+            }else{
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_generate_form_pdf_error_ttl"),
+                        hmAux_Trans.get("alert_generate_form_pdf_error_msg"),
+                        null,
+                        0
+                );
+            }
         }
 
     }
@@ -327,7 +452,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         //
         disableProgressDialog();
         //
-        onBackPressed();
+        if (!wsProcess.equals(WS_Generate_NForm_PDF.class.getName())) {
+            onBackPressed();
+        }
+
     }
 
     @Override

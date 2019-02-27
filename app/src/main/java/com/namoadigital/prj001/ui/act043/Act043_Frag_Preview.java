@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ public class Act043_Frag_Preview extends BaseFragment {
     private Act043_Main mMain;
     private boolean isDialogOpen = false;
     private DialogInterface.OnDismissListener dismissListener;
+    onSmSoRequestObject delegateSmSo;
 
 
 
@@ -59,9 +61,11 @@ public class Act043_Frag_Preview extends BaseFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         //
         setRetainInstance(true);
+        mSm_so = delegateSmSo.getSmSo();
     }
 
     @Nullable
@@ -159,36 +163,52 @@ public class Act043_Frag_Preview extends BaseFragment {
         context.sendBroadcast(mIntent);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        delegateSmSo = (onSmSoRequestObject) context;
+    }
+
     public void loadDataToScreen() {
         if (bStatus) {
             if (mSm_so != null) {
-                tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
-                //
-                btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
-                if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
-                    || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-                    || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
-                ){
-                    btn_search_service.setEnabled(true);
-                }else{
-                    btn_search_service.setEnabled(false);
-                }
-                //
-                tv_service_pack_ttl.setText(hmAux_Trans.get("services_tll"));
-                //
-                tv_total_lbl.setText(hmAux_Trans.get("total_lbl"));
-                //
-                tv_total_val.setText(hmAux_Trans.get("total_val"));
-                tv_total_val.setText(getTotalPrice());
-                //
-                mAdapter = new Act043_Adapter_Services_Preview(
-                        context,
-                        R.layout.act043_adapter_services_preview_cell,
-                        //getServicesAsHmAux(),
-                        getPackServiceList(),
-                        hmAux_Trans
-                );
-                //
+                setContentIntoView();
+            }else{
+                mSm_so = delegateSmSo.getSmSo();
+                hmAux_Trans = delegateSmSo.getHMAux_Trans();
+                setContentIntoView();
+            }
+        }
+    }
+
+    private void setContentIntoView() {
+        tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
+        //
+        btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
+        if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
+            || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+            || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
+        ){
+            btn_search_service.setEnabled(true);
+        }else{
+            btn_search_service.setEnabled(false);
+        }
+        //
+        tv_service_pack_ttl.setText(hmAux_Trans.get("services_tll"));
+        //
+        tv_total_lbl.setText(hmAux_Trans.get("total_lbl"));
+        //
+        tv_total_val.setText(hmAux_Trans.get("total_val"));
+        tv_total_val.setText(getTotalPrice());
+        //
+        mAdapter = new Act043_Adapter_Services_Preview(
+                context,
+                R.layout.act043_adapter_services_preview_cell,
+                //getServicesAsHmAux(),
+                getPackServiceList(),
+                hmAux_Trans
+        );
+        //
                /* mAdapter.setOnInfoClickListner(new Act043_Adapter_Services_Preview.OnInfoClickListner() {
                     @Override
                     public void OnInfoClick(HMAux service) {
@@ -198,10 +218,8 @@ public class Act043_Frag_Preview extends BaseFragment {
                         }
                     }
                 });*/
-                //
-                lv_service_pack.setAdapter(mAdapter);
-            }
-        }
+        //
+        lv_service_pack.setAdapter(mAdapter);
     }
 
     private String getTotalPrice(){

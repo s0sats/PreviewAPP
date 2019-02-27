@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act050_mket_filter_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="Search Desc - Trad"
+            android:inputType="text"
+            android:paddingLeft="10dp"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:name="com.namoadigital.prj001.ui.act050.FavoriteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="5dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite"
+        tools:listitem="@layout/cell_favorite_item" />
+
+
+</LinearLayout>
+

@@ -126,22 +126,6 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     }
 
     @Override
-    public void defineFlow(HMAux item) {
-
-        switch (item.get(Act021_Main.NEW_OPT_ID)) {
-            case Act021_Main.NEW_OPT_TP_PRODUCT:
-                mView.callAct022(context);
-                break;
-            case Act021_Main.NEW_OPT_TP_SERIAL:
-                mView.callAct025(context, null);
-                break;
-            case Act021_Main.NEW_OPT_TP_LOCATION:
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void executeSerialTracking(String serial, String tracking) {
 //        if (ToolBox_Con.isOnline(context)) {
 //            mView.showPD(
@@ -219,7 +203,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 //                bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
 //                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
 //                //
-//                mView.callAct023(context, bundle);
+//                mView.callAct026(context, bundle);
 //            } else {
 //                Bundle bundle = new Bundle();
 //                bundle.putString(Constant.MAIN_SERIAL_TRACKING, tracking);
@@ -245,7 +229,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 
     @Override
     public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
-        if ((serial_list == null || serial_list.size() == 0)) {
+        if (serial_list == null /*|| serial_list.size() == 0*/) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
                     hmAux_Trans.get("alert_no_serial_found_msg")

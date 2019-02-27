@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act021;
 
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
@@ -19,8 +18,6 @@ public interface Act021_Main_Presenter {
     void getMD_Products();
 
     void getSync();
-
-    void defineFlow(HMAux hmAux);
 
     void executeSerialTracking(String serial, String tracking);
 

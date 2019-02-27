@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,7 @@ public interface Act023_Main_View {
 
     void callAct025(Context context);
 
-    void showSingleResultMsg(String ttl, String msg);
+    void showSingleResultMsg(String ttl, String msg, boolean returnOk);
 
     void showSerialResults(ArrayList<HMAux> returnList);
 
@@ -39,5 +40,12 @@ public interface Act023_Main_View {
     void callAct027(Context context,Bundle bundle);
 
     void refreshUI();
+
+    void reApplySerialIdToFrag();
+
+    void applyReceivedSerialToFrag(MD_Product_Serial serial_returned);
+
+    void updateProductSerialValues(MD_Product_Serial mdProductSerial);
+
 
 }

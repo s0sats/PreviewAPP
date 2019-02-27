@@ -1310,11 +1310,22 @@ public class ToolBox_Inf {
         return true;
     }
 
+    /**
+     * LUCHE - 26/02/2019 - Alteração
+     *  Metodo que verifica se existe um troca de versão do db local e se existe dados pendentens de envio.
+     *  Caso as duas condições sejam satisfeitas, adiciona msg de PERDA DE DADOS e seta preferencia do
+     *  processo de apagar dados de token para 1
+     *
+     * @param context - Contexto
+     * @param db_version - Versão do banco de dados enviada pelo server.
+     * @return
+     */
     private static HMAux checkNewDbVersion(Context context, Integer db_version){
         HMAux aux = new HMAux();
         if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
             //
             aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
+            ToolBox_Con.setPreference_CleanTokenFiles(context,1);
         }
         return aux;
     }

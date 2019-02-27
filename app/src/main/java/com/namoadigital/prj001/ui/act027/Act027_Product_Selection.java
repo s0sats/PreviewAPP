@@ -52,6 +52,7 @@ public class Act027_Product_Selection extends BaseFragment {
     private MD_All_ProductDao allProductDao;
     private MD_All_Product_GroupDao allProductGroupDao;
     private onProductClickListner onProductClickListner;
+    private OnRecoveryFragmentState delegate;
 
     public interface onProductClickListner {
         void onProductClick(int product_code);
@@ -318,17 +319,22 @@ public class Act027_Product_Selection extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+
             if (mSm_so != null) {
-                //
-                mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
-                //
-                btn_back.setText(hmAux_Trans.get("btn_back"));
-                btn_back.setVisibility(View.INVISIBLE);
-                //
-                btn_home.setText(hmAux_Trans.get("btn_home"));
-                //
-                if (mStack.size() == 0) {
-                    setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
+                if (hmAux_Trans == null) {
+                    delegate.callAct005();
+                } else {
+                    //
+                    mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
+                    //
+                    btn_back.setText(hmAux_Trans.get("btn_back"));
+                    btn_back.setVisibility(View.INVISIBLE);
+                    //
+                    btn_home.setText(hmAux_Trans.get("btn_home"));
+                    //
+                    if (mStack.size() == 0) {
+                        setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
+                    }
                 }
             }
         }
@@ -339,6 +345,14 @@ public class Act027_Product_Selection extends BaseFragment {
         super.onResume();
         //
         loadDataToScreen();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
     }
 
     @Override

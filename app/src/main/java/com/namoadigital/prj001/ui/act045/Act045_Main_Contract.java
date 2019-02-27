@@ -24,8 +24,6 @@ public interface Act045_Main_Contract {
 
     interface I_Presenter {
 
-        void getProductSerialList(String ws_result);
-
         void defineFlow(MD_Product_Serial productSerial, boolean new_serial);
 
         void onBackPressedClicked();

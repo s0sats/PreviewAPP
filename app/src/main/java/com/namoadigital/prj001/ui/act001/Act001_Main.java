@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act001;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -266,8 +265,26 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
+        /**
+         * LUCHE - 25/02/2019
+         * A validação abaixo ,getPreference_CleanTokenFiles,faz parte da solução de remoção de arquivos
+         * de token quando for identificado:
+         *  - Haverá troca da versão do banco de dados;
+         *  - Existem dados a serem transmitidos
+         *  - Usuario , mesmo recebendo a mensagem de que perderá dados, decidiu realizar a atualização
+         *  do app.
+         *  Se essas tres condições foram contempladas, o app apagara todos os arquivos de token existentes na maquina
+         *  pois, sem essa ação, ao tentar transmitir um arquivo de token sem a o.s existir mais no banco local,
+         *  gera sempre erro.
+         */
+        if (ToolBox_Con.getPreference_CleanTokenFiles(getApplicationContext()) == 1) {
+            File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, "");
+            ToolBox_Inf.deleteFileListExceptionSafe(files_token);
+            ToolBox_Con.setPreference_CleanTokenFiles(getApplicationContext(),-1);
+        }
         //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+
     }
 
     @Override
@@ -290,7 +307,12 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void processGo() {
         super.processGo();
-
+        //Se processo de troca de banco de dados com dados pendentes
+        //mas usr não decidiu atualizar o app, reseta var.
+        if(ToolBox_Con.getPreference_CleanTokenFiles(context) == 1){
+            ToolBox_Con.setPreference_CleanTokenFiles(context, -1);
+        }
+        //
         mPresenter.executeLoginProcess(
                 mEmail,
                 mPassWord,
@@ -322,15 +344,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private class hugo extends AsyncTask<Void, Void, Integer> {
-
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            return null;
-        }
     }
 
     @Override

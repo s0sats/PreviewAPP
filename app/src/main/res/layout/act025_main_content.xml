@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
             <TextView
                 android:id="@+id/act025_tv_record_info"
                 android:layout_width="match_parent"
@@ -30,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
                 <TextView
                     android:id="@+id/act025_tv_record_limit"
                     android:layout_width="0dp"
@@ -52,6 +53,17 @@
                     android:text="Registros retornados: 1000"/>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/act025_btn_create_serial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Create Serial"
+                android:textColor="@color/padrao_WHITE" />
 
             <FrameLayout
                 android:layout_width="match_parent"

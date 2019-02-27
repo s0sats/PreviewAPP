@@ -106,7 +106,7 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 31;
+        DB_VERSION_CUSTOM = 32;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -155,6 +155,14 @@ public class AppBase extends Application {
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
+        //
+        try {
+            //Comando para não exibir msg de licence limited time.
+            MicroblinkSDK.setShowTimeLimitedLicenseWarning(false);
+            MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.production_BlinkID_Android_2020-06-18.mblic", this);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
 
         //
         try {

@@ -84,7 +84,7 @@ import java.util.Map;
  * Created by neomatrix on 18/08/17.
  */
 
-public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
+public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task, Act028_Empty.OnRecoveryFragmentState {
 
     public static final String SELECTION_EMPTY = "EMPTY";
     public static final String SELECTION_TASK_LIST = "TASK_LIST";
@@ -1903,7 +1903,17 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+    }
+
+    @Override
+    public HMAux getHMAux_Trans() {
+        return hmAux_Trans;
     }
 }

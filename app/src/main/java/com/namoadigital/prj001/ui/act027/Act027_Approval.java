@@ -97,6 +97,8 @@ public class Act027_Approval extends BaseFragment {
 
     private View.OnClickListener listener;
 
+    private OnRecoveryFragmentState delegate;
+
     public void setListener(View.OnClickListener listener) {
         this.listener = listener;
         //
@@ -211,6 +213,15 @@ public class Act027_Approval extends BaseFragment {
 
         loadDataToScreen();
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
+    }
+
 
     @Override
     public void onPause() {
@@ -384,56 +395,61 @@ public class Act027_Approval extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+            if(mSm_so == null
+                    || hmAux_Trans == null){
+                delegate.callAct005();
+            }else {
 
-            tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));
-            tv_so_id_value.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
+                tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));
+                tv_so_id_value.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
 
-            tv_so_approval_quality_type_lbl.setText(hmAux_Trans.get("quality_approval_lbl"));
-            tv_so_approval_type_lbl.setText(hmAux_Trans.get("so_client_approval_type_lbl"));
+                tv_so_approval_quality_type_lbl.setText(hmAux_Trans.get("quality_approval_lbl"));
+                tv_so_approval_type_lbl.setText(hmAux_Trans.get("so_client_approval_type_lbl"));
 
-            tv_client_approval_quality_user_nick_lbl.setText(hmAux_Trans.get("quality_approval_user_nick_lbl"));
-            tv_client_approval_quality_date_lbl.setText(hmAux_Trans.get("quality_approval_date_lbl"));
+                tv_client_approval_quality_user_nick_lbl.setText(hmAux_Trans.get("quality_approval_user_nick_lbl"));
+                tv_client_approval_quality_date_lbl.setText(hmAux_Trans.get("quality_approval_date_lbl"));
 
-            tv_client_approval_user_nick_lbl.setText(hmAux_Trans.get("client_approval_user_nick_lbl"));
-            tv_client_approval_date_lbl.setText(hmAux_Trans.get("client_approval_date_lbl"));
+                tv_client_approval_user_nick_lbl.setText(hmAux_Trans.get("client_approval_user_nick_lbl"));
+                tv_client_approval_date_lbl.setText(hmAux_Trans.get("client_approval_date_lbl"));
 
-            tv_name_lbl.setText(hmAux_Trans.get("user_name_lbl"));
+                tv_name_lbl.setText(hmAux_Trans.get("user_name_lbl"));
 
-            approvalApprovalUser.setText(hmAux_Trans.get("approval_quality_lbl"));
-            approvalNFC.setText(hmAux_Trans.get("approval_nfc_lbl"));
-            approvalUser_Password.setText(hmAux_Trans.get("approval_user_password_lbl"));
-            approvalApproval.setText(hmAux_Trans.get("approval_signature_lbl"));
+                approvalApprovalUser.setText(hmAux_Trans.get("approval_quality_lbl"));
+                approvalNFC.setText(hmAux_Trans.get("approval_nfc_lbl"));
+                approvalUser_Password.setText(hmAux_Trans.get("approval_user_password_lbl"));
+                approvalApproval.setText(hmAux_Trans.get("approval_signature_lbl"));
 
-            rb_user.setText(hmAux_Trans.get("user_lbl"));
-            rb_other.setText(hmAux_Trans.get("other_lbl"));
+                rb_user.setText(hmAux_Trans.get("user_lbl"));
+                rb_other.setText(hmAux_Trans.get("other_lbl"));
 
-            rg_opc.setOnCheckedChangeListener(null);
+                rg_opc.setOnCheckedChangeListener(null);
 
-            approvalNFC.setOnClickListener(listener);
+                approvalNFC.setOnClickListener(listener);
 
-            Bitmap bm = BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + mSm_so.getClient_approval_image_name());
+                Bitmap bm = BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + mSm_so.getClient_approval_image_name());
 
-            if (bm != null) {
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        ToolBox.dbToPixel(context, 300), ToolBox.dbToPixel(context, 200)
-                );
+                if (bm != null) {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            ToolBox.dbToPixel(context, 300), ToolBox.dbToPixel(context, 200)
+                    );
 
-                layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
-                layoutParams.setMargins(0, 0, 0, 0);
+                    layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    layoutParams.setMargins(0, 0, 0, 0);
 
-                iv_signature.setLayoutParams(layoutParams);
-                iv_signature.setImageBitmap(bm);
-            } else {
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
+                    iv_signature.setLayoutParams(layoutParams);
+                    iv_signature.setImageBitmap(bm);
+                } else {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
 
-                layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
-                layoutParams.setMargins(0, 100, 0, 0);
+                    layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    layoutParams.setMargins(0, 100, 0, 0);
 
-                iv_signature.setLayoutParams(layoutParams);
-                iv_signature.setImageResource(R.drawable.sand_watch_transp);
+                    iv_signature.setLayoutParams(layoutParams);
+                    iv_signature.setImageResource(R.drawable.sand_watch_transp);
+                }
+
+                approvalStatus();
             }
-
-            approvalStatus();
         }
     }
 

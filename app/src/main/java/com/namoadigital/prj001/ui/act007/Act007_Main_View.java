@@ -25,4 +25,10 @@ public interface Act007_Main_View {
     void loadLogList(ArrayList<Serial_Log_Obj> logList);
 
     void sendResult(Intent intent);
+
+    void disablePD();
+
+    void setItemGeneratedUrl(String url);
+
+    void setItemAsDownloaded();
 }

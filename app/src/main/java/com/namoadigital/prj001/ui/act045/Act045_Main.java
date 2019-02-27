@@ -275,7 +275,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         tv_no_result.setVisibility(View.GONE);
         ll_records.setVisibility(View.GONE);
         //
-        setRecordInfo(record_count, record_page);
+        //setRecordInfo(record_count, record_page);
+        setRecordInfo(prod_serial_list.size(), record_page);
         //
         mAdapter = new Act020_Prod_Serial_Adapter(
                 context,
@@ -299,7 +300,7 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
         }
 
         if (record_count > record_page) {
-            showQtyExceededMsg(record_count, record_page);
+            showQtyExceededMsg(record_page,record_count);
         }
     }
 

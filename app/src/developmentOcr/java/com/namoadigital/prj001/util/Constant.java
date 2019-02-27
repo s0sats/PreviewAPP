@@ -33,9 +33,11 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_so.ws";
     public static final String WS_SO_SERVICE_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_list_app.ws";
     public static final String WS_SO_SERVICE_REMOVE = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_cancel_app.ws";
-
     public static final String WS_SO_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_so.ws";
     public static final String WS_SO_PACK_SERVICE = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
+    public static final String WS_SO_FAVORITE_LIST = "https://dev.namoadigital.com/ws/prj001/sm_order/server_main.ws";
+    public static final String WS_SO_CLIENT_LIST = "https://dev.namoadigital.com/ws/prj001/sm_order/server_client.ws";
+    public static final String WS_SO_CREATION = "https://dev.namoadigital.com/ws/prj001/sm_order/server_save_so.ws";
 
     public static final String WS_AP_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_ap.ws";
     public static final String WS_AP_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_ap.ws";
@@ -61,6 +63,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_ADD_USER_FORM_AP = "https://nchatdev.namoadigital.com/addUserFormAp";
     //
     public static final String WS_SERIAL_LOG = "https://dev.namoadigital.com/ws/prj001/server_serial_log.ws";
+    public static final String WS_GENERATE_FORM_PDF = "https://dev.namoadigital.com/ws/prj001/server_checklist_url.ws";
     public static final String WS_SO_NEXT_ORDERS = "https://dev.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
 
     // Connection Test

@@ -31,8 +31,6 @@ public interface Act021_Main_View {
 
     void callAct040(Context context);
 
-    void showNewOptDialog();
-
     void showMsg(String ttl,String msg);
 
     void showPD(String ttl, String msg);

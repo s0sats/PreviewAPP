@@ -104,4 +104,7 @@
     <string name="notification_msg_upload">Sending files to server</string>
     <string name="msg_not_sent_data_will_be_lost">WARNING: DATA NOT YET TRANSMITTED WILL BE LOST!</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

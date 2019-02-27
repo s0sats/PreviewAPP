@@ -251,8 +251,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_partial_ap_detected_tll");
         transList.add("alert_partial_ap_detected_msg");
         transList.add("alert_form_ap_pdf_download_error_msg");
-
-
+        transList.add("alert_invalid_date_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -608,7 +608,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             et_form_when_ttl.setmLabel(hmAux_Trans.get("ap_when_lbl"));
             et_form_when_ttl.setEnabled(true);
-            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : ap.getAp_when(),ap.getAp_when() != null);
+            //LUCHE - 19/02
+            //Setado parameto setAsmValueDb sempre como true, para que o valor carregado , seja considerado
+            //como valor origem.
+            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : ap.getAp_when(),true);
             //et_form_when_ttl.setTag(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
             //
             tv_form_what_ttl.setText(hmAux_Trans.get("ap_what_lbl"));
@@ -894,22 +897,51 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validate()) {
+                //LUCHE  - 18/02/2019
+                HMAux aux = ss_status.getmValue();
+                //
+                switch (aux.get(SearchableSpinner.ID)) {
+                    case Constant.SYS_STATUS_PROCESS:
+                    case Constant.SYS_STATUS_WAITING_ACTION:
+                    case Constant.SYS_STATUS_DONE:
+                        //LUCHE  - 18/02/2019
+                        et_form_when_ttl.setmHighlightWhenInvalid(true);
+                        et_form_when_ttl.setmRequired(true);
+                        break;
+                    default:
+                        et_form_when_ttl.setmHighlightWhenInvalid(false);
+                        et_form_when_ttl.setmRequired(false);
+                        break;
+
+                }
+                //
+                if(!et_form_when_ttl.isValid()){
                     ToolBox.alertMSG(
                             Act038_Main.this,
-                            hmAux_Trans.get("alert_ap_save_tll"),
-                            hmAux_Trans.get("alert_ap_save_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    save();
-                                }
-                            },
-                            2,
-                            null
+                            hmAux_Trans.get("alert_invalid_data_local_ttl"),
+                            hmAux_Trans.get("alert_invalid_date_msg"),
+                            null,
+                            0
                     );
-                } else {
-                    showError();
+                }else {
+                    //
+                    if (validate()) {
+                        ToolBox.alertMSG(
+                                Act038_Main.this,
+                                hmAux_Trans.get("alert_ap_save_tll"),
+                                hmAux_Trans.get("alert_ap_save_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        save();
+                                    }
+                                },
+                                2,
+                                null
+                        );
+                    } else {
+                        showError();
+                    }
                 }
             }
         });
@@ -943,7 +975,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_WAITING_ACTION:
             case Constant.SYS_STATUS_DONE:
-
                 HMAux mUser = ss_users.getmValue();
 
                 if (mUser.get(SearchableSpinner.ID) == null ||
@@ -960,11 +991,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         ss_users.setBackground(null);
                     }
                     //
-                    if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty()) {
-                        et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
-                    } else {
-                        et_form_when_ttl.setBackground(null);
-                    }
+//                    if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty() || !et_form_when_ttl.isValid()) {
+//                        et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
+//                    } else {
+//                        et_form_when_ttl.setBackground(null);
+//                    }
+
                     return false;
 
                 }
@@ -979,7 +1011,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //Se tudo ok, remove borda de erro dos campos
         ss_status.setBackground(null);
         ss_users.setBackground(null);
-        et_form_when_ttl.setBackground(null);
+        //et_form_when_ttl.setBackground(null);
         return true;
     }
 

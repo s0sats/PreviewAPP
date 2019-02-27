@@ -42,62 +42,6 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
     }
 
     @Override
-    public void getProductSerialList(String ws_result) {
-        //Transforma resposta de json para obj
-        Gson gson = new GsonBuilder().serializeNulls().create();
-
-        TSerial_Search_Rec rec = gson.fromJson(
-                ws_result,
-                TSerial_Search_Rec.class
-        );
-        //
-//        //Se qtd 1, chama proxima define flow
-//        if (rec.getRecord_count() == 1) {
-//            defineFlow(rec.getRecord().get(0));
-//
-//        }else {
-        //Seta qtd de registro
-        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-        //chama
-        mView.loadProductSerialList(rec.getRecord());
-        //
-        //Se qtd 1, chama proxima define flow
-        if (rec.getRecord_count() == 1) {
-            defineFlow(rec.getRecord().get(0));
-            //Se qtd de registro maior que o total retornado,
-            //exibe msg para refinar a busca.
-        } else if (rec.getRecord_count() > rec.getRecord_page()) {
-            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-        }
-        // }
-    }
-
-    @Override
-    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
-
-        if (ToolBox_Con.isOnline(context)) {
-            mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
-            mView.showPD();
-
-            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
-            Bundle bundle = new Bundle();
-            //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
-            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
-            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
-            //
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
-            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-        } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
-        }
-    }
-
-    @Override
     public void defineFlow(MD_Product_Serial productSerial) {
         Bundle bundle = new Bundle();
         //
@@ -105,40 +49,11 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
         bundle.putString(MD_ProductDao.PRODUCT_CODE, productSerial != null ? String.valueOf(productSerial.getProduct_code()) : null);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial);
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
         //
         mView.callAct023(context, bundle);
     }
 
-    @Override
-    public String searchProductInfo(String product_code, String product_id) {
-        MD_Product md_product = productDao.getByString(
-                new MD_Product_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
-                        product_id
-                ).toSqlQuery()
-        );
-        //
-        if (md_product != null) {
-            return md_product.getProduct_id();
-        }
-        //
-        return "";
-    }
-
-    @Override
-    public void checkSingleProduct() {
-        List<MD_Product> products = productDao.query(
-                new MD_Product_Sql_002(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-        //Se só um produto, chama metodo que carrega info na tela.
-        if (products != null && products.size() == 1) {
-            mView.setProductInfo(products.get(0));
-        }
-
-    }
 
     @Override
     public void onBackPressedClicked() {

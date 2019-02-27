@@ -1,0 +1,332 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters"
+    android:background="@color/namoa_color_gray"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/act050_frag_param_sv_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_iv_next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <!--Favorite-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_favorite_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Ovelha #12"
+                    android:textSize="@dimen/font_size_title_dialog"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <!--Product-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_product_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Product"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_product_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_favorite_val" />
+
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_product_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Tapado1001"
+                    android:textColor="@color/namoa_light_blue"
+                    android:textSize="@dimen/font_size_item_md"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_serial_lbl"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_product_lbl" />
+
+                <!--Serial-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_serial_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Serial"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_serial_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_product_val" />
+
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_serial_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="TP10000-1"
+                    android:textColor="@color/namoa_light_blue"
+                    android:textSize="@dimen/font_size_item_md"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_category_lbl"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_serial_lbl" />
+
+                <!--Category-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_category_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Category"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_category_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_serial_val" />
+
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_category_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Medio 2"
+                    android:textColor="@color/namoa_light_blue"
+                    android:textSize="@dimen/font_size_item_md"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_segment_lbl"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_category_lbl" />
+
+                <!--Segment-->
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_segment_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Segment"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_segment_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_category_val" />
+
+                <TextView
+                    android:id="@+id/act050_frag_param_tv_segment_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Usado 3"
+                    android:textColor="@color/namoa_light_blue"
+                    android:textSize="@dimen/font_size_item_md"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_contract"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_lbl" />
+
+                <!--Contrat-->
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act050_frag_param_ss_contract"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-5dp"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_val"
+
+                    />
+
+                <!--Contrat_PO-->
+
+                <LinearLayout
+                    android:id="@+id/act050_frag_param_ll_contract_po"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_contract"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_erp_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Info Erp"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_erp_val"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_erp_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="MicroZica"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client1_lbl"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_erp_lbl" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client1_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Info Client1"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client1_val"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_erp_val" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client1_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="Client 1"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client2_lbl"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_client1_lbl" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client2_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Info Client2"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client2_val"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_client1_val" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client2_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="Client 2"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client3_lbl"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_client2_lbl" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client3_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Info Client3"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_tv_info_client3_val"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_client2_val" />
+
+                    <TextView
+                        android:id="@+id/act050_frag_param_tv_info_client3_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="Client 3"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_info_client3_lbl" />
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ScrollView>
+
+        <ImageButton
+            android:id="@+id/act050_frag_param_iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/btn_namoa_main_2_states"
+            android:padding="20dp"
+            android:src="@drawable/ic_cancel_white_24px"
+            android:tint="@color/padrao_WHITE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act050_frag_param_iv_next"
+            />
+
+        <ImageButton
+            android:id="@+id/act050_frag_param_iv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:padding="20dp"
+            android:src="@drawable/ic_skip_next_white_24px"
+            android:background="@drawable/btn_namoa_main_2_states"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <!--<android.support.constraint.Guideline-->
+        <!--android:id="@+id/guideline5"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:isScrollContainer="true"-->
+        <!--android:orientation="vertical"-->
+        <!--app:layout_constraintGuide_percent="0.5" />-->
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

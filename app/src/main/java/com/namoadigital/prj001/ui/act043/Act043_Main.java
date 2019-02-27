@@ -24,6 +24,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
 import com.namoadigital.prj001.util.Constant;
@@ -33,7 +34,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject {
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
@@ -264,7 +265,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_preview = new Act043_Frag_Preview();
         act043_frag_preview.setBaInfra(this);
         act043_frag_preview.setHmAux_Trans(hmAux_Trans);
-        act043_frag_preview.setmSm_so(mSm_so);
+//        act043_frag_preview.setmSm_so(mSm_so);
         //
         act043_frag_service_list = new Act043_Frag_Service_List();
         act043_frag_service_list.setProgressAction(new Act043_Frag_Service_List.IAct043_Frag_Service_List() {
@@ -300,8 +301,20 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         });
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
-        act043_frag_service_list.setmService(mSm_so);
+//        act043_frag_service_list.setmService(mSm_so);
     }
+
+    @Override
+    public SM_SO getSmSo() {
+        return mSm_so;
+    }
+
+    @Override
+    public HMAux getHMAux_Trans() {
+        return hmAux_Trans;
+    }
+
+
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
@@ -530,6 +543,14 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //Bundle bundle = new Bundle();
         bundle.putString(Act027_Main.REQUEST_SET_FRAG,type);
         mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct005() {
+        Intent mIntent = new Intent(getApplicationContext(), Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }

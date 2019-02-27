@@ -2,11 +2,14 @@ package com.namoadigital.prj001.ui.act007;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -15,13 +18,16 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Serial_Log_Obj;
+import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Log;
+import com.namoadigital.prj001.service.WS_Generate_NForm_PDF;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Log;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -98,9 +104,20 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 //
                 if (logList != null && logList.size() > 0) {
                     for (Serial_Log_Obj aux:logList){
-                        if(aux.getSys_process().equals(Serial_Log_Adapter.SYS_PROCESS_SO)){
-                            boolean tst = checkSoExists(aux.getSplitedPk());
-                            aux.setLog_downloaded(tst);
+//                        if(aux.getSys_process().equals(Serial_Log_Adapter.SYS_PROCESS_SO)){
+//                            boolean tst = checkSoExists(aux.getSplitedPk());
+//                            aux.setLog_downloaded(tst);
+//                        }
+                        switch (aux.getSys_process()){
+                            case Serial_Log_Adapter.SYS_PROCESS_SO:
+                                aux.setLog_downloaded(checkSoExists(aux.getSplitedPk()));
+                                break;
+                            case Serial_Log_Adapter.SYS_PROCESS_N_FORM:
+                                if(aux.getFile_url() != null && !aux.getFile_url().isEmpty()) {
+                                    aux.setLog_downloaded(checkPDFExists(aux.getSplitedPk()));
+                                }
+                                break;
+                            default:
                         }
                     }
                     mView.loadLogList(logList);
@@ -159,6 +176,16 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 && !auxSo.get(SM_SODao.SO_PREFIX).isEmpty()
                 && auxSo.get(SM_SODao.SO_PREFIX) != null
         ){
+            return true;
+        }
+
+        return false;
+    }
+    //Verifica se SO ja existe localmente.
+    private boolean checkPDFExists(String[] pk) {
+        String file_name = generateFileName(pk,true);
+        //form_1_31_34_1_31.pdf
+        if(ToolBox_Inf.verifyDownloadFileInf(file_name, ConstantBase.CACHE_PATH)){
             return true;
         }
 
@@ -251,4 +278,192 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         ToolBox_Inf.deleteFileListExceptionSafe(Constant.TOKEN_PATH, Constant.PREFIX_LOG_FILE_SERIAL);
     }
 
+    @Override
+    public void executeNFormPDFDownload(String[] pk, String url) {
+        if(ToolBox_Con.isOnline(context)) {
+            String file_name = generateFileName(pk, false);
+            //
+            if (!file_name.isEmpty()) {
+                new NformPDFDownload().execute(url, file_name);
+            } else {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_trans.get("alert_form_pdf_name_error_ttl"),
+                        hmAux_trans.get("alert_form_pdf_name_error_msg"),
+                        null,
+                        0
+                );
+            }
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void executeNFormPDFGeneration(String pk) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Generate_NForm_PDF.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_generate_form_pdf_ttl"),
+                    hmAux_trans.get("dialog_generate_form_pdf_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Generate_NForm_PDF.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(WS_Generate_NForm_PDF.NFORM_PK_KEY,pk);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showNoConnecionMsg();
+        }
+    }
+
+    /**
+     *
+     */
+    private class NformPDFDownload extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mView.showPD(
+                    hmAux_trans.get("dialog_download_form_pdf_ttl"),
+                    hmAux_trans.get("dialog_download_form_pdf_msg")
+            );
+        }
+
+        /**
+         *
+         * @param strings
+         *          0 -> URL
+         *          1 -> FileName
+         * @return
+         */
+        @Override
+        protected String doInBackground(String... strings) {
+            //String...
+            //0 -> URL
+            //1 -> FileName
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(Constant.CACHE_PATH + "/" +
+                        strings[1] + ".pdf")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(Constant.CACHE_PATH + "/" +
+                            strings[1] + ".tmp");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            strings[0],
+                            Constant.CACHE_PATH + "/" +
+                                    strings[1] + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(strings[1], ".pdf");
+                }
+                //
+                return strings[1] + ".pdf";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //Atualiza views do Adapter
+            mView.setItemAsDownloaded();
+            //Remove progress da act
+            mView.disablePD();
+            //
+            if(s != null) {
+                openPDF(s);
+            }else{
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_trans.get("alert_form_pdf_download_error_ttl"),
+                        hmAux_trans.get("alert_form_pdf_download_error_msg"),
+                        null,
+                        0
+                );
+            }
+        }
+    }
+
+    @Override
+    public void openPDF(String[] pk) {
+        String file_name = generateFileName(pk,true);
+        //
+        openPDF(file_name);
+    }
+
+    @Override
+    public void openPDF(String file_name) {
+        File pdfFile = new File(Constant.CACHE_PATH + "/" + file_name);
+        //
+        if (pdfFile.exists()) {
+            try {
+
+                ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                ToolBox_Inf.copyFile(
+                        pdfFile,
+                        new File(Constant.CACHE_PDF)
+                );
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+            //
+            File copiedPDF = new File(Constant.CACHE_PDF + "/" + file_name);
+            //
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(
+                    Uri.fromFile(
+                            copiedPDF
+                    ),
+                    "application/pdf"
+            );
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+            context.startActivity(intent);
+
+
+        }else{
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_trans.get("alert_form_pdf_not_found_ttl"),
+                    hmAux_trans.get("alert_form_pdf_not_found_msg"),
+                    null,
+                    0
+            );
+        }
+    }
+
+    /**
+     *
+     * @param pk - Pk do pdf explodida
+     * @param withExt - Flag que indica se a extensão deve ser adicionada
+     * @return Nome do arquivo pdf.
+     */
+    private String generateFileName(String[] pk, boolean withExt){
+        String gFileName = "";
+        try {
+            gFileName =
+                    ConstantBaseApp.N_FORM_PDF_PREFIX +
+                            pk[0] + "_" +
+                            pk[1] + "_" +
+                            pk[2] + "_" +
+                            pk[3] + "_" +
+                            pk[4] +
+                            (withExt ? ".pdf" : "");
+        }catch (Exception e){
+            gFileName = "";
+        }
+        //
+        return gFileName;
+    }
 }

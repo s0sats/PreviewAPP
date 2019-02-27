@@ -231,6 +231,36 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region CLEAN_TOKEN_FILE_KEY
+
+    /**
+     * Preferencia para identificar se os arquivos de token devem ou não ser apagados
+     * após atualização de software com troca de versão de banco de dados e dados pendentes
+     * de envio.
+     * @param context
+     * @param CLEAN_TOKEN_FILE_KEY
+     */
+    public static void setPreference_CleanTokenFiles(Context context, int CLEAN_TOKEN_FILE_KEY) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putInt(
+                Constant.CLEAN_TOKEN_FILE_KEY,
+                CLEAN_TOKEN_FILE_KEY
+        ).apply();
+    }
+
+    public static int getPreference_CleanTokenFiles(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getInt(
+                Constant.CLEAN_TOKEN_FILE_KEY,
+                -1
+        );
+    }
+    //endregion
+
 
     //region User_Code
     public static void setPreference_User_Code(Context context, String user_code) {

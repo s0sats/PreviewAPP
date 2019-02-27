@@ -10,7 +10,11 @@ public interface Act026_Main_Presenter {
 
     void getSOList(String product_code, String serial_id, boolean onlyAvaliables);
 
+    void getSOListTotalCount(String product_code, String serial_id);
+
     void defineForwardFlow(HMAux so);
 
     void onBackPressedClicked();
+
+    void setRequesting_act(String requesting_act);
 }

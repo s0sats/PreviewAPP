@@ -77,6 +77,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
     public static final String FRG_SERIAL_EDIT = "frg_serial_edit";
 
+    public static final String FRG_FAVORITE_LIST = "act050_frag_favorite";
+
+
     public static final String FRAG_SEARCH_PRODUCT_ID_RECOVER = "frag_search_product_id_recover";
     public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
     public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
@@ -147,6 +150,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
     public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     public static final String MAIN_SERIAL_CREATION = "main_serial_creation";
+    public static final String MAIN_HMAUX_TRANS_KEY ="main_hmaux_trans_key";
 
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
@@ -285,6 +289,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String WS_SO_SAVE_SO_ACTION = "ws_so_save_so_action";
     public static final String SO_ACTION_EXECUTION = "EXECUTION";
+    public static final String SO_ACTION_EDIT = "EDIT";
 
 
     /**
@@ -335,6 +340,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PKG_APP_TYPE_MICROBLINK_OCR_VIN = "MICROBLINK_OCR_VIN";
     public static final String PKG_APP_TYPE_STANDARD = "STANDARD";
     public static String PKG_APP_TYPE_DEFAULT;
+    public static final String CLEAN_TOKEN_FILE_KEY = "clean_token_file_key";
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
@@ -402,6 +408,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TYPE_BR_AP_OK = "AP_OK";
     public static final String TYPE_BR_AP_ERROR = "AP_ERROR";
     public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
+    //
+    public static final String N_FORM_PDF_PREFIX = "form_";
 
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
@@ -427,6 +435,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String PROFILE_MENU_SO_PARAM_EDIT = "EDIT";
     public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
+    public static final String PROFILE_MENU_SO_PARAM_NEW = "NEW";
+    public static final String PROFILE_MENU_SO_PARAM_EDIT_CLIENT = "EDIT_CLIENT";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
     public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";

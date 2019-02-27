@@ -47,10 +47,12 @@ public class Act027_Product_List extends BaseFragment {
     private SM_SO_Product_EventDao sm_so_product_eventDao;
     private OnNewEventClickListner onNewEventClickListner;
     private OnItemEventClickListner onItemEventClickListner;
+    private OnRecoveryFragmentState delegate;
 
     public interface OnNewEventClickListner {
         void onNewEventClick();
     }
+
 
     public interface OnItemEventClickListner {
         void onItemEventClick(HMAux hmAux);
@@ -117,7 +119,11 @@ public class Act027_Product_List extends BaseFragment {
         mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
-                loadEventList();
+                if(mSm_so != null) {
+                    loadEventList();
+                }else{
+                    delegate.callAct005();
+                }
             }
 
             @Override
@@ -125,6 +131,11 @@ public class Act027_Product_List extends BaseFragment {
 
             }
         });
+
+        if(mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
+        || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)){
+            iv_new_event.setEnabled(false);
+        }
 
         iv_new_event.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +177,13 @@ public class Act027_Product_List extends BaseFragment {
         //
         loadDataToScreen();
     }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecoveryFragmentState) {
+            delegate = (OnRecoveryFragmentState) context;
+        }
+    }
 
     @Override
     public void onPause() {
@@ -184,10 +202,10 @@ public class Act027_Product_List extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (mSm_so != null) {
+            if (mSm_so != null
+                    && hmAux_Trans != null) {
                 //
                 if (!mMain.hasExecutionProfile()) {
-
                     iv_new_event.setVisibility(View.GONE);
                 } else {
                     checkStatus();
@@ -200,6 +218,8 @@ public class Act027_Product_List extends BaseFragment {
                 tv_empty_lbl.setText(hmAux_Trans.get("empty_list_lbl"));
                 //
                 loadEventList();
+            }else{
+                delegate.callAct005();
             }
         }
     }

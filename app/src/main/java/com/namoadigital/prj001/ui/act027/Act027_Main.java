@@ -103,7 +103,11 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
+public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
+        Act027_Main_View,
+        Act027_Opc.IAct027_Opc,
+        Act027_Services.IAct027_Services,
+        OnRecoveryFragmentState {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -684,8 +688,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         frgSerialEdit.setHmAux_Trans(hmAux_Trans_Frag);
         frgSerialEdit.setNew_serial(false);
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_serial_save"));
-        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
+        //04/02/2019
+        //Agora o fragmento de serial só usará o layout full com alterações.
+        //frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_SO_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         controls_frags.add(frgSerialEdit);
         initializaFragInterfaces();
 
@@ -2278,6 +2285,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED, mSm_so.getUpdate_required());
 
         callAct028(context, bundle);
+    }
+
+    @Override
+    public void callAct005() {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     private void callAct021(Context context) {

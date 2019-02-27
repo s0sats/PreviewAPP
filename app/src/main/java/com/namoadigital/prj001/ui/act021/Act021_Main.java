@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act021;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,14 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -132,6 +127,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         List<String> transList = new ArrayList<String>();
         transList.add("act021_title");
         transList.add("btn_load_so");
+        transList.add("btn_check_exists");
         transList.add("btn_pendencies_so");
         transList.add("btn_so_express");
         transList.add("btn_sync_so");
@@ -229,7 +225,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_load_so"));
+        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies_so"));
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));
@@ -459,75 +455,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         } else {
             mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         }
-    }
-
-    @Override
-    public void showNewOptDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act006_dialog_new_opt, null);
-
-        /**
-         * Ini Vars
-         */
-        ListView lv_opt = (ListView) view.findViewById(R.id.act006_dialog_opt_lv_opt);
-
-        String[] from = {NEW_OPT_LABEL};
-        //int[] to = {android.R.id.text1};
-        int[] to = {R.id.namoa_custom_cell_3_tv_item};
-
-
-        lv_opt.setAdapter(
-                new SimpleAdapter(
-                        context,
-                        getNewOpts(),
-                        //android.R.layout.simple_list_item_1,
-                        R.layout.namoa_custom_cell_3,
-                        from,
-                        to
-                )
-        );
-
-        /**
-         * Ini Action
-         */
-        lv_opt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.defineFlow(item);
-
-            }
-        });
-
-        builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
-        builder.setView(view);
-        builder.setCancelable(true);
-
-        builder.show();
-    }
-
-    private List<HMAux> getNewOpts() {
-        List<HMAux> opts = new ArrayList<>();
-
-        HMAux aux = new HMAux();
-        aux.put(NEW_OPT_ID, NEW_OPT_TP_PRODUCT);
-        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_product_lbl"));
-        opts.add(aux);
-
-        aux = new HMAux();
-        aux.put(NEW_OPT_ID, NEW_OPT_TP_SERIAL);
-        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_serial_lbl"));
-        opts.add(aux);
-
-        aux = new HMAux();
-        aux.put(NEW_OPT_ID, NEW_OPT_TP_LOCATION);
-        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_location_lbl"));
-        //opts.add(aux);
-
-        return opts;
     }
 
     @Override

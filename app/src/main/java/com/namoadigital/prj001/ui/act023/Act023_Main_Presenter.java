@@ -31,5 +31,7 @@ public interface Act023_Main_Presenter {
 
     void saveSerialInfo(MD_Product_Serial md_product_serial);
 
+    void extractSearchResult(String result);
+
 
 }
