@@ -164,14 +164,5 @@ public class AppBase extends Application {
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
 
-        //
-        try {
-            //Comando para não exibir msg de licence limited time.
-            MicroblinkSDK.setShowTimeLimitedLicenseWarning(false);
-            MicroblinkSDK.setLicenseFile("MB_com.namoadigital.prj001.production_BlinkID_Android_2020-06-18.mblic", this);
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-        }
-
     }
 }
