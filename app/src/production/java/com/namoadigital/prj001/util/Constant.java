@@ -46,6 +46,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_PACK_EXPRESSION = "https://portal.namoadigital.com/ws/prj001/server_save_so_pack_express.ws";
 
     public static final String WS_SERIAL_LOG = "https://portal.namoadigital.com/ws/prj001/server_serial_log.ws";
+    public static final String WS_GENERATE_FORM_PDF = "https://portal.namoadigital.com/ws/prj001/server_checklist_url.ws";
     public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
 
     public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
