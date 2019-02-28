@@ -11,6 +11,10 @@
     tools:context=".ui.act008.Act008_Main"
     tools:showIn="@layout/act008_main">
 
+    <include
+        android:id="@+id/act008_nform_in_progress"
+        layout="@layout/nform_in_progress"
+        android:visibility="gone"/>
 
     <fragment
         android:id="@+id/act008_frg_serial_edit"

@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -43,6 +45,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 
     private Act006_Main_Presenter mPresenter;
 
+    private View vNFormSelected;
+
     private int pendencies_qty;
 
     private FragmentManager fm;
@@ -60,6 +64,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act006_main);
+
+        vNFormSelected = findViewById(R.id.act006_nform_in_progress);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,6 +95,11 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         );
         //
         loadTranslationFrg_Serial_Search();
+
+    }
+
+    private boolean hasNFormSelected() {
+        return false;
     }
 
     private void loadTranslation() {
@@ -208,6 +219,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
         }
+
+        if(hasNFormSelected()){
+            vNFormSelected.setVisibility(View.VISIBLE);
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -274,6 +289,22 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void initActions() {
+        if(hasNFormSelected()){
+            ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vNFormSelected.setVisibility(View.GONE);
+                    recoverInitialNFormState();
+                }
+            });
+            tvNFormSelected.setText("Descricao do Formulario - trad");
+        }
+    }
+
+    private void recoverInitialNFormState() {
+
     }
 
     private void hideSoftKeyboard() {
