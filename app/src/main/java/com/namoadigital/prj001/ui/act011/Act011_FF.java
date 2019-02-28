@@ -17,6 +17,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -77,6 +79,8 @@ public class Act011_FF extends Fragment {
         public void previosTab();
 
         public void nextTab();
+
+        public void checkWithNew();
     }
 
     private ICustom_Form_FF_ll delegate_ll;
@@ -158,6 +162,7 @@ public class Act011_FF extends Fragment {
         //
         tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
         tv_check.setText(hmAux_Trans.get("btn_check"));
+        tv_check_new.setText(hmAux_Trans.get("btn_check_new"));
         //
         loadControls(ll_controls);
     }
@@ -195,6 +200,15 @@ public class Act011_FF extends Fragment {
             public void onClick(View v) {
                 if (delegate_ll != null) {
                     delegate_ll.nextTab();
+                }
+            }
+        });
+        //
+        tv_check_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.checkWithNew();
                 }
             }
         });
@@ -255,8 +269,12 @@ public class Act011_FF extends Fragment {
                     formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                     ) {
                 ll_check.setVisibility(View.GONE);
+                tv_check_new.setVisibility(View.GONE);
             } else {
                 ll_check.setVisibility(View.VISIBLE);
+                if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)){
+                    tv_check_new.setVisibility(View.VISIBLE);
+                }
             }
         }
     }

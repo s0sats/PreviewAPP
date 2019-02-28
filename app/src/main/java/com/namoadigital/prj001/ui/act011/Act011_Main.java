@@ -88,9 +88,11 @@ import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -191,7 +193,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private ArrayList<HMAux> wsResults = new ArrayList<>();
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
-    private boolean finalizaNewFlow = false;
+    private boolean finalizeNewFlow = false;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -289,6 +291,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_finalize_option_ttl");
         transList.add("dialog_finalize_option_finalize_lbl");
         transList.add("dialog_finalize_option_finalize_new_lbl");
+        transList.add("btn_check_new");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -336,31 +339,37 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
      */
     public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
         return  new Act011_FF.ICustom_Form_FF_ll() {
-            @Override
-            public void openDrawer() {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
+                    @Override
+                    public void openDrawer() {
+                        mDrawerLayout.openDrawer(GravityCompat.START);
+                    }
 
-            @Override
-            public void check() {
-                checkAction();
-            }
+                    @Override
+                    public void check() {
+                        checkAction(false);
+                    }
 
-            @Override
-            public void previosTab() {
-                if ((index - 1) >= 1) {
-                    tabSelectedAction(index - 1);
-                }
-            }
+                    @Override
+                    public void previosTab() {
+                        if ((index - 1) >= 1) {
+                            tabSelectedAction(index - 1);
+                        }
+                    }
 
-            @Override
-            public void nextTab() {
-                if ((index + 1) <= pager.getAdapter().getCount()) {
-                    tabSelectedAction(index + 1);
-                }
+                    @Override
+                    public void nextTab() {
+                        if ((index + 1) <= pager.getAdapter().getCount()) {
+                            tabSelectedAction(index + 1);
+                        }
+                    }
 
-            }
-        };
+                    @Override
+                    public void checkWithNew() {
+                        finalizeNewFlow = true;
+                        //
+                        checkAction(false);
+                    }
+                };
     }
 
     /**
@@ -498,7 +507,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             @Override
             public void check() {
-                checkAction();
+                checkAction(true);
             }
 
             @Override
@@ -649,7 +658,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pager.setCurrentItem(idtab - 1);
     }
 
-    private void checkAction() {
+    private void checkAction(boolean showFinalizeOpt) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
         /**
@@ -667,49 +676,29 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         int sum = returnValidCheck(String.valueOf(-1));
 
         if (sum == 0) {
-
-            // Mudar Aqui
-            ToolBox.alertMSG(
-                    Act011_Main.this,
-                    hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
-                    hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (formLocal.getRequire_location() == 1) {
-                                enableProgressDialog(
-                                        hmAux_Trans.get("alert_location_info_title"),
-                                        hmAux_Trans.get("alert_location_info_required"),
-                                        hmAux_Trans.get("sys_alert_btn_cancel"),
-                                        hmAux_Trans.get("sys_alert_btn_ok")
-                                );
-                                //
-                                ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
-
-                            } else {
-                                startCheckIN();
+            if(showFinalizeOpt && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)){
+                showFinalizeDialogOpt();
+            }else {
+                // Mudar Aqui
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
+                        hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                checkGpsFlow();
                             }
-                        }
-                    },
-                    1
-            );
-
-//                    if (formLocal.getRequire_location() == 1) {
-//                        enableProgressDialog(
-//                                hmAux_Trans.get("alert_location_info_title"),
-//                                hmAux_Trans.get("alert_location_info_required"),
-//                                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                                hmAux_Trans.get("sys_alert_btn_ok")
-//                        );
-//                        //
-//                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
-//
-//                    } else {
-//                        startCheckIN();
-//                    }
+                        },
+                        1
+                );
+            }
 
         } else {
-
+            //Luche - 28/02/2019
+            //Reseta var de fluxo finaliza + novo
+            finalizeNewFlow = false;
+            //
             ToolBox.alertMSG(
                     Act011_Main.this,
                     hmAux_Trans.get("alert_error_on_finalize_title"),
@@ -717,6 +706,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     null,
                     0
             );
+
+        }
+    }
+
+    private void checkGpsFlow(){
+        if (formLocal.getRequire_location() == 1) {
+            enableProgressDialog(
+                    hmAux_Trans.get("alert_location_info_title"),
+                    hmAux_Trans.get("alert_location_info_required"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+
+        } else {
+            startCheckIN();
         }
     }
 
@@ -1075,32 +1081,40 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 custom_form_ff.setCustomFFs(customFFs, i);
                 custom_form_ff.setHmAux_Trans(hmAux_Trans);
-                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
-                    @Override
-                    public void openDrawer() {
-                        mDrawerLayout.openDrawer(GravityCompat.START);
-                    }
-
-                    @Override
-                    public void check() {
-                        checkAction();
-                    }
-
-                    @Override
-                    public void previosTab() {
-                        if ((index - 1) >= 1) {
-                            tabSelectedAction(index - 1);
-                        }
-                    }
-
-                    @Override
-                    public void nextTab() {
-                        if ((index + 1) <= pager.getAdapter().getCount()) {
-                            tabSelectedAction(index + 1);
-                        }
-
-                    }
-                });
+//                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
+//                    @Override
+//                    public void openDrawer() {
+//                        mDrawerLayout.openDrawer(GravityCompat.START);
+//                    }
+//
+//                    @Override
+//                    public void check() {
+//                        checkAction();
+//                    }
+//
+//                    @Override
+//                    public void previosTab() {
+//                        if ((index - 1) >= 1) {
+//                            tabSelectedAction(index - 1);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void nextTab() {
+//                        if ((index + 1) <= pager.getAdapter().getCount()) {
+//                            tabSelectedAction(index + 1);
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void checkWithNew() {
+//                        finalizeNewFlow = true;
+//                        //
+//                        checkAction();
+//                    }
+//                });
+                custom_form_ff.setOnDrawerCheckListener(getFFInterface());
                 //
                 custom_form_ff.setFormStatus(formData.getCustom_form_status());
                 //
@@ -1881,7 +1895,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private void flowControl() {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
         if (mSo_Prefix == null || mSo_Code == null) {
-            callAct005(context);
+            if(finalizeNewFlow) {
+                callAct006(context);
+            }else{
+                callAct005(context);
+            }
         } else {
             nservCall();
         }
@@ -1952,6 +1970,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
+    public void callAct006(Context context) {
+        Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
+        bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id()  );
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.getCustom_form_type_desc());
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void callAct027(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         //Intent mIntent = new Intent(context, Act027_Main.class);
@@ -2002,6 +2041,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 bNew = false;
             } else {
                 formData.setSignature_name("");
+                //Luche - 28/02/2019
+                //Reseta var de fluxo finaliza + novo
+                finalizeNewFlow = false;
                 if (signature == 0) {
                     //mPresenter.checkData(formData);
                 }
@@ -2029,10 +2071,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
+    /**
+     * Resultado da leitura de NFC do serial
+     * @param mValue
+     */
     @Override
     protected void getNFCResults(String mValue) {
         String sResults = mValue;
-
+        //Se resultado
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
             require_serial_done_ok = "OK";
             formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -2040,6 +2086,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //
             bNew = false;
         } else {
+            //Se cancelou
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
                 sFile.delete();
@@ -2051,6 +2098,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             formData.setLocation_lng("");
             formData.setLocation_type("");
             formData.setDate_end("1900-01-01 00:00:00 +00:00");
+            //Luche - 28/02/2019
+            //Reseta var de finaliza + novo
+            finalizeNewFlow = false;
+
         }
     }
 
@@ -2481,7 +2532,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                                finalizaNewFlow = rdgFinalize.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                                finalizeNewFlow = rdgFinalize.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                                //
+                                checkGpsFlow();
                             }
                         }
 
@@ -2534,6 +2587,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             startCheckIN();
         } else {
             gpsCanceled = false;
+            //Luche - 28/02/2019
+            //reseta var de fluxo finaliza  + novo
+            finalizeNewFlow = false;
         }
     }
 
@@ -2551,6 +2607,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ToolBox_Inf.stop_Location_Tracker(context);
 
         gpsCanceled = true;
+        //Luche - 28/02/2019
+        //reseta var de finaliza + novo
+        finalizeNewFlow = false;
 
         progressDialog.dismiss();
     }

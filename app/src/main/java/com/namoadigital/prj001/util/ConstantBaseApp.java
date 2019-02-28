@@ -444,6 +444,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS = "CHANGE_CLASS";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION = "CHANGE_LOCATION";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT = "EDIT";
+    public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
     public static final String PROFILE_PRJ001_AP = "PRJ001_AP";
