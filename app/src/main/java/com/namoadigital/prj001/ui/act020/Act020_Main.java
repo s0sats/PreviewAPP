@@ -20,9 +20,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -83,6 +86,16 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String fragSerial_ID;
     private String fragTracking;
     private View vNFormSelected;
+
+    private String productCode;
+    private String productDesc;
+    private String productId;
+    private String serialId;
+    private String customFormType;
+    private String customFormTypeDesc;
+    private String customFormCode;
+    private String customFormVersion;
+    private String customFormCodeDesc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -256,7 +269,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private boolean hasNFormSelected() {
-        return false;
+        if(customFormTypeDesc.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     private void recoverIntentsInfo() {
@@ -286,6 +302,28 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                                 product_id
                         ).toSqlQuery()
                 );
+            }
+            if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
+
+                productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
+                productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
+                productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
+                serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                customFormType = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
+                customFormTypeDesc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
+                customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
+                customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
+                customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+            }else{
+                productCode = "";
+                productDesc = "";
+                productId = "";
+                serialId = "";
+                customFormType = "";
+                customFormTypeDesc = "";
+                customFormCode = "";
+                customFormVersion = "";
+                customFormCodeDesc = "";
             }
         }
     }
