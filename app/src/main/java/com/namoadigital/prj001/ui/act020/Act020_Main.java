@@ -89,7 +89,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act020_main);
 
-        vNFormSelected = findViewById(R.id.act008_nform_in_progress);
+        vNFormSelected = findViewById(R.id.act020_nform_in_progress);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
