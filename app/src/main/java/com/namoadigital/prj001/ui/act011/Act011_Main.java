@@ -30,6 +30,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -189,6 +191,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private ArrayList<HMAux> wsResults = new ArrayList<>();
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
+    private boolean finalizaNewFlow = false;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -282,6 +285,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_location_info_aquired_succesfully");
         transList.add("alert_location_info_aquired_unsuccesfully");
         transList.add("alert_schedule_comment_ttl");
+
+        transList.add("dialog_finalize_option_ttl");
+        transList.add("dialog_finalize_option_finalize_lbl");
+        transList.add("dialog_finalize_option_finalize_new_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2438,6 +2445,51 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         infoDialog.getWindow().setLayout((int) dmW, (int) dmH);
 
         infoDialog.show();
+
+    }
+
+    private void showFinalizeDialogOpt(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //
+        View view = LayoutInflater.from(context).inflate(R.layout.act011_dialog_finalize_option,null);
+        final RadioGroup rdgFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rg);
+        RadioButton rdoFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize);
+        RadioButton rdoFinalizeNew = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize_new);
+        //
+        rdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
+        rdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
+        //
+        rdgFinalize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.act011_dialog_finalize_option_rdo_finalize:
+                        break;
+                    case R.id.act011_dialog_finalize_option_rdo_finalize_new:
+                        break;
+                }
+            }
+        });
+        //
+        builder.
+                setTitle(hmAux_Trans.get("dialog_finalize_option_ttl"))
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton(
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                                finalizaNewFlow = rdgFinalize.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                            }
+                        }
+
+                )
+                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null)
+        ;
+        //
+        builder.create().show();
 
     }
 
