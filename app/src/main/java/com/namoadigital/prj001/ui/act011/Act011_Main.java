@@ -676,7 +676,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         int sum = returnValidCheck(String.valueOf(-1));
 
         if (sum == 0) {
-            if(showFinalizeOpt && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)){
+            if(showFinalizeOpt && allowFinalizeWithNewBtn()){
                 showFinalizeDialogOpt();
             }else {
                 // Mudar Aqui
@@ -708,6 +708,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             );
 
         }
+    }
+
+    /**
+     * Valida se botão de finaliza + novo deve aparecer no fluxo.
+     * Regras:
+     *  - O Usr deve ter o perfil de acesso ao botão.
+     *  - O N-Form não pode ter sido gerado pela O.S
+     *  - O N-Form não pode ter sido gerado pelo Agendamento
+     * @return
+     */
+    @Override
+    public boolean allowFinalizeWithNewBtn() {
+        if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
+            && mSo_Prefix == null
+            && mSo_Code == null
+            && formLocal.getCustom_form_data_serv() == null
+        ){
+            return true;
+        }
+
+        return false;
     }
 
     private void checkGpsFlow(){

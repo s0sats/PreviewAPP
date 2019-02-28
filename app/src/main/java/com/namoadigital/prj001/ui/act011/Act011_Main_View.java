@@ -30,4 +30,6 @@ public interface Act011_Main_View {
     void showSignature();
 
     void callAct006(Context context);
+
+    boolean allowFinalizeWithNewBtn();
 }

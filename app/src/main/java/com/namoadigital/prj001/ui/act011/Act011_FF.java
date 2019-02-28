@@ -17,8 +17,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -129,6 +127,7 @@ public class Act011_FF extends Fragment {
 
     private void iniVars(View view) {
         context = getActivity();
+        mAct = ((Act011_Main)context);
         /**
          *  LUCHE - 17/01/2019 - RotateBugFixed
          *
@@ -137,12 +136,13 @@ public class Act011_FF extends Fragment {
          *
          */
         if(hmAux_Trans == null){
-            if(context instanceof Act011_Main){
-                mAct = ((Act011_Main)context);
+            //if(context != null){
+            //if(context instanceof Act011_Main){
+                //mAct = ((Act011_Main)context);
                 this.hmAux_Trans = mAct.getHmAuxTrans();
                 this.setOnDrawerCheckListener(mAct.getFFInterface());
                 this.customFFs = mAct.getFf();
-            }
+            //}
         }
         //
         tv_comments_ttl = (TextView) view.findViewById(R.id.act011_ff_tv_comments_ttl);
@@ -272,7 +272,7 @@ public class Act011_FF extends Fragment {
                 tv_check_new.setVisibility(View.GONE);
             } else {
                 ll_check.setVisibility(View.VISIBLE);
-                if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)){
+                if(mAct != null && mAct.allowFinalizeWithNewBtn()){
                     tv_check_new.setVisibility(View.VISIBLE);
                 }
             }
