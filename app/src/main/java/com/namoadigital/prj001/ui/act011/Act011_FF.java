@@ -43,6 +43,7 @@ public class Act011_FF extends Fragment {
     private transient LinearLayout ll_drawer;
     private transient LinearLayout ll_check;
 
+    private transient TextView tv_check_new;
     private transient TextView tv_drawer;
     private transient TextView tv_check;
     private HMAux hmAux_Trans;
@@ -153,6 +154,7 @@ public class Act011_FF extends Fragment {
         ll_check = (LinearLayout) view.findViewById(R.id.act011_ff_ll_check);
         tv_drawer = (TextView) view.findViewById(R.id.act011_ff_tv_drawer);
         tv_check = (TextView) view.findViewById(R.id.act011_ff_tv_check);
+        tv_check_new = (TextView) view.findViewById(R.id.act011_ff_tv_check_new);
         //
         tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
         tv_check.setText(hmAux_Trans.get("btn_check"));

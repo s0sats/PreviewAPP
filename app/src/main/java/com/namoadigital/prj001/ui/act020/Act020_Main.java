@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,11 +82,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String fragProduct_ID;
     private String fragSerial_ID;
     private String fragTracking;
+    private View vNFormSelected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act020_main);
+
+        vNFormSelected = findViewById(R.id.act008_nform_in_progress);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -244,6 +249,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if (btn_create_serial.getVisibility() == View.VISIBLE){
             btn_no_serial.setVisibility(View.GONE);
         }
+
+        if(hasNFormSelected()){
+            vNFormSelected.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean hasNFormSelected() {
+        return false;
     }
 
     private void recoverIntentsInfo() {
@@ -359,6 +372,21 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         } else {
         }
         //
+        if(hasNFormSelected()){
+            ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vNFormSelected.setVisibility(View.GONE);
+                    recoverInitialNFormState();
+                }
+            });
+            tvNFormSelected.setText("Descricao do Formulario - trad");
+        }
+    }
+
+    private void recoverInitialNFormState() {
 
     }
 

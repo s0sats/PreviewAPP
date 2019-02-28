@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -77,11 +78,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private boolean isSchedule;////agendamento
     private boolean forceCheckSerial = false;
     private String scheduled_site;
+    private View vNFormSelected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act008_main);
+
+        vNFormSelected = findViewById(R.id.act008_nform_in_progress);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -211,6 +215,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mPresenter.getProductInfo(bundle);
         //
         initFrag();
+
+        if(hasNFormSelected()){
+            vNFormSelected.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean hasNFormSelected() {
+        return false;
     }
 
     private void initFrag() {
@@ -428,7 +440,21 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void initActions() {
+        if(hasNFormSelected()){
+            ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vNFormSelected.setVisibility(View.GONE);
+                    recoverInitialNFormState();
+                }
+            });
+            tvNFormSelected.setText("Descricao do Formulario - trad");
+        }
+    }
 
+    private void recoverInitialNFormState() {
 
     }
 
