@@ -221,8 +221,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
 
-        if(!productDesc.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(productDesc);
+        if(!productId.isEmpty()) {
+            mFrgSerialSearch.setProductIdText(productId);
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
         }
@@ -342,12 +342,12 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText("Descricao do Formulario - trad");
+            tvNFormSelected.setText(customFormTypeDesc);
         }
     }
 
     private void recoverInitialNFormState() {
-
+        mPresenter.getMD_Products();
     }
 
     private void hideSoftKeyboard() {
