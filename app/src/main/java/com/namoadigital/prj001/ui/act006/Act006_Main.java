@@ -342,7 +342,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText(customFormTypeDesc);
+            tvNFormSelected.setText(customFormCodeDesc);
         }
     }
 

@@ -59,11 +59,12 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private HMAux hmAux_Trans;
     private GE_Custom_Form_OperationDao formOperationDao;
     private boolean isSchedule;
+    private boolean isFinishPlusNew;
     private String requesting_process;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -75,6 +76,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.requesting_process = requesting_process;
         this.serialDao = serialDao;
         this.trackingDao = trackingDao;
+        this.isFinishPlusNew = isFinishPlusNew;
     }
 
     @Override
@@ -611,7 +613,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-        if (isSchedule) {
+        if (isSchedule || isFinishPlusNew) {
             mView.callAct011(context);
         } else {
             mView.callAct009(context);
