@@ -240,7 +240,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private boolean hasNFormSelected() {
-        if(customFormTypeDesc.isEmpty()) {
+        if(customFormTypeDesc.isEmpty() || isSchedule) {
             return false;
         }
         return true;
