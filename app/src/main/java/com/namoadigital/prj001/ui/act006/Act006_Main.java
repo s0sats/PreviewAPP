@@ -221,8 +221,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
 
-        if(!productDesc.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(productDesc);
+        if(!productId.isEmpty()) {
+            mFrgSerialSearch.setProductIdText(productId);
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
         }
@@ -342,12 +342,12 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText("Descricao do Formulario - trad");
+            tvNFormSelected.setText(customFormCodeDesc);
         }
     }
 
     private void recoverInitialNFormState() {
-
+        mPresenter.getMD_Products();
     }
 
     private void hideSoftKeyboard() {
@@ -425,6 +425,18 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     @Override
     public void callAct020(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
+        if(!customFormCodeDesc.isEmpty()){
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+            bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
+            bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+
+        }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             mIntent.putExtras(bundle);

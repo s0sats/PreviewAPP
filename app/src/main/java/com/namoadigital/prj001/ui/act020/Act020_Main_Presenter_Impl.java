@@ -9,8 +9,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -45,6 +47,7 @@ import java.util.List;
 
 public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
+    private final Bundle bundleForNFormFinishPlusNew;
     private Context context;
     private Act020_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
@@ -57,7 +60,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     private boolean downloadStarted = false;
     private MD_Product_Serial tProductSerial;
 
-    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao) {
+    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao, Bundle bundleForNFormFinishPlusNew) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -66,6 +69,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         this.formOperationDao = formOperationDao;
         this.productDao = productDao;
         this.serialDao = new MD_Product_SerialDao(context);
+        this.bundleForNFormFinishPlusNew = bundleForNFormFinishPlusNew;
     }
 
     @Override
@@ -387,6 +391,18 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, tProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
+        //bundle for NForm loop creation process
+        if((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
+        && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty())
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
+        bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundleForNFormFinishPlusNew.getString(MD_Product_SerialDao.SERIAL_ID));
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
         //
         mView.callAct008(context,bundle);
     }

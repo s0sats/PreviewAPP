@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -84,13 +88,22 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String fragTracking;
     private View vNFormSelected;
 
+    private String productCode;
+    private String productDesc;
+    private String productId;
+    private String serialId;
+    private String customFormType;
+    private String customFormTypeDesc;
+    private String customFormCode;
+    private String customFormVersion;
+    private String customFormCodeDesc;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act020_main);
 
         vNFormSelected = findViewById(R.id.act020_nform_in_progress);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -195,7 +208,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                getBundleForNFormFinishPlusNew()
         );
         //
         btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
@@ -255,8 +269,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         }
     }
 
+    private Bundle getBundleForNFormFinishPlusNew() {
+        Bundle bundle = new Bundle();
+        if(!customFormCodeDesc.isEmpty()){
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+            bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
+            bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+        }
+        return bundle;
+    }
+
     private boolean hasNFormSelected() {
-        return false;
+        if(customFormTypeDesc.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     private void recoverIntentsInfo() {
@@ -286,6 +319,28 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                                 product_id
                         ).toSqlQuery()
                 );
+            }
+            if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
+
+                productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
+                productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
+                productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
+                serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                customFormType = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
+                customFormTypeDesc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
+                customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
+                customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
+                customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+            }else{
+                productCode = "";
+                productDesc = "";
+                productId = "";
+                serialId = "";
+                customFormType = "";
+                customFormTypeDesc = "";
+                customFormCode = "";
+                customFormVersion = "";
+                customFormCodeDesc = "";
             }
         }
     }
@@ -382,12 +437,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText("Descricao do Formulario - trad");
+            tvNFormSelected.setText(customFormCodeDesc);
         }
     }
 
     private void recoverInitialNFormState() {
-
+        fragProduct_ID = "";
+        fragSerial_ID = "";
+        fragTracking = "";
+        callAct006(this);
     }
 
     @Override

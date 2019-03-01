@@ -201,7 +201,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:gravity="center_vertical"
-                        android:background="@color/grid_header_highlight"
+                        android:background="@drawable/namoa_cell_3_states"
                         android:drawableStart="@drawable/ic_loop_white_24dp"
                         android:drawablePadding="10dp"
                         android:paddingStart="20dp"

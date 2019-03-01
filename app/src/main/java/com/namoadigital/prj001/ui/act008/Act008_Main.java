@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -80,6 +81,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String scheduled_site;
     private View vNFormSelected;
 
+    private String productCode;
+    private String productDesc;
+    private String productId;
+    private String serialId;
+    private String customFormType;
+    private String customFormTypeDesc;
+    private String customFormCode;
+    private String customFormVersion;
+    private String customFormCodeDesc;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,7 +219,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 isSchedule,
                 requesting_process,
                 new MD_Product_SerialDao(context),
-                new MD_Product_Serial_TrackingDao(context)
+                new MD_Product_Serial_TrackingDao(context),
+                isFinishPlusNew()
         );
         //
         mPresenter.getProductInfo(bundle);
@@ -221,8 +232,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }
     }
 
+    private boolean isFinishPlusNew() {
+        if (customFormCodeDesc != null && !customFormCodeDesc.isEmpty()){
+            return true;
+        }
+        return  false;
+    }
+
     private boolean hasNFormSelected() {
-        return false;
+        if(customFormTypeDesc.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     private void initFrag() {
@@ -405,6 +426,30 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             } else {
                 mdProductSerial = new MD_Product_Serial();
             }
+
+            if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
+
+                productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
+                productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
+                productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
+                serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+                customFormType = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
+                customFormTypeDesc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
+                customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
+                customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
+                customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+            }else{
+                productCode = "";
+                productDesc = "";
+                productId = "";
+                serialId = "";
+                customFormType = "";
+                customFormTypeDesc = "";
+                customFormCode = "";
+                customFormVersion = "";
+                customFormCodeDesc = "";
+            }
+
         } else {
             bundle_product_code = 0L;
         }
@@ -450,12 +495,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText("Descricao do Formulario - trad");
+            tvNFormSelected.setText(customFormCodeDesc);
         }
     }
 
     private void recoverInitialNFormState() {
-
+        callAct006(this);
     }
 
     @Override
