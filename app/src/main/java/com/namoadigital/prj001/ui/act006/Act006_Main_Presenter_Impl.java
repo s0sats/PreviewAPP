@@ -137,7 +137,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             if (serial_list.size() > 0) {
                 defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
             } else {
-                if (mdProduct == null || mdProduct.getAllow_new_serial_cl() == 0) {
+                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
                     // mudar mensagem
                     ToolBox_Inf.showNoConnectionDialog(context);
                 } else {
