@@ -98,6 +98,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String EDIT_MODE = "edit_mode";
     public static final String PROFILE = "profile";
     public static final String LOG_DATE = "log_date";
+    public static final String REASON_CODE = "reason_code";
 
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
@@ -108,7 +109,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
-            EDIT_MODE, PROFILE, LOG_DATE
+            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -1037,6 +1038,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             md_product_serial.setEdit_mode(cursor.getString(cursor.getColumnIndex(EDIT_MODE)));
             md_product_serial.setProfile(cursor.getString(cursor.getColumnIndex(PROFILE)));
             md_product_serial.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
+            if(cursor.isNull(cursor.getColumnIndex(REASON_CODE))){
+               md_product_serial.setReason_code(null);
+            }else{
+                md_product_serial.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
+            }
             //
             return md_product_serial;
         }
@@ -1145,6 +1151,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if (md_product_serial.getLog_date() != null) {
                 contentValues.put(LOG_DATE, md_product_serial.getLog_date());
             }
+            contentValues.put(REASON_CODE, md_product_serial.getReason_code());
 
             return contentValues;
         }

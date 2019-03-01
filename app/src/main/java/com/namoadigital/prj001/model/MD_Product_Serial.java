@@ -97,6 +97,8 @@ public class MD_Product_Serial implements Serializable {
     private String profile;
     @Expose
     private String log_date;
+    @Expose
+    private Integer reason_code;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -590,6 +592,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setLog_date(String log_date) {
         this.log_date = log_date;
+    }
+
+    public Integer getReason_code() {
+        return reason_code;
+    }
+
+    public void setReason_code(Integer reason_code) {
+        this.reason_code = reason_code;
     }
 
     /**

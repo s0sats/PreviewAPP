@@ -28,9 +28,10 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
     public static final String IO_CONTROL = "io_control";
+    public static final String REASON_CODE = "reason_code";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC,IO_CONTROL,INBOUND_AUTO_CREATE};
+    private String[] columns = {CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC,IO_CONTROL,REASON_CODE,INBOUND_AUTO_CREATE};
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
@@ -233,6 +234,11 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             md_site.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             md_site.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
             md_site.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
+            if(cursor.isNull(cursor.getColumnIndex(REASON_CODE))) {
+                md_site.setReason_code(null);
+            }else{
+                md_site.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
+            }
             md_site.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
             return md_site;
         }
@@ -259,6 +265,9 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             if (md_site.getIo_control() > -1) {
                 contentValues.put(IO_CONTROL, md_site.getIo_control());
             }
+
+            contentValues.put(REASON_CODE, md_site.getReason_code());
+
             if (md_site.getInbound_auto_create() > -1) {
                 contentValues.put(INBOUND_AUTO_CREATE, md_site.getInbound_auto_create());
             }
