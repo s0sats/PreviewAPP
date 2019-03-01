@@ -227,7 +227,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             mFrgSerialSearch.setShowAll(false);
         }
 
-        if (!fragProduct_ID.isEmpty()) {
+        if (!fragProduct_ID.isEmpty()&& productId.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
 
             if (fragIsOnlyOne) {
@@ -347,6 +347,15 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     }
 
     private void recoverInitialNFormState() {
+        productCode = "";
+        productDesc = "";
+        productId = "";
+        serialId = "";
+        customFormType = "";
+        customFormTypeDesc = "";
+        customFormCode = "";
+        customFormVersion = "";
+        customFormCodeDesc = "";
         mPresenter.getMD_Products();
     }
 
@@ -426,15 +435,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     public void callAct020(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
         if(!customFormCodeDesc.isEmpty()){
-            bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
-            bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
-            bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
-            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+            buildBundleFOrNforFinishPlusNew(bundle);
 
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -443,6 +444,18 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         }
         startActivity(mIntent);
         finish();
+    }
+
+    private void buildBundleFOrNforFinishPlusNew(Bundle bundle) {
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+        bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
+        bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
     }
 
     @Override

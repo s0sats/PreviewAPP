@@ -445,6 +445,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         fragProduct_ID = "";
         fragSerial_ID = "";
         fragTracking = "";
+        productCode = "";
+        productDesc = "";
+        productId = "";
+        serialId = "";
+        customFormType = "";
+        customFormTypeDesc = "";
+        customFormCode = "";
+        customFormVersion = "";
+        customFormCodeDesc = "";
         callAct006(this);
     }
 
@@ -540,7 +549,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
         bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
         bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
-
+        buildBundleFOrNforFinishPlusNew(bundle);
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
@@ -724,5 +733,17 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+    }
+
+    private void buildBundleFOrNforFinishPlusNew(Bundle bundle) {
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+        bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
+        bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
     }
 }
