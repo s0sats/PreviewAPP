@@ -439,20 +439,24 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
                 customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
             }else{
-                productCode = "";
-                productDesc = "";
-                productId = "";
-                serialId = "";
-                customFormType = "";
-                customFormTypeDesc = "";
-                customFormCode = "";
-                customFormVersion = "";
-                customFormCodeDesc = "";
+                initalizeBundleForFinishPlusNew();
             }
 
         } else {
             bundle_product_code = 0L;
         }
+    }
+
+    private void initalizeBundleForFinishPlusNew() {
+        productCode = "";
+        productDesc = "";
+        productId = "";
+        serialId = "";
+        customFormType = "";
+        customFormTypeDesc = "";
+        customFormCode = "";
+        customFormVersion = "";
+        customFormCodeDesc = "";
     }
 
     @Override
@@ -500,6 +504,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void recoverInitialNFormState() {
+        initalizeBundleForFinishPlusNew();
         callAct006(this);
     }
 
@@ -802,9 +807,25 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
+        if(!customFormCodeDesc.isEmpty()){
+            buildBundleFOrNforFinishPlusNew(bundle);
+            mIntent.putExtras(bundle);
+        }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    private void buildBundleFOrNforFinishPlusNew(Bundle bundle) {
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+        bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
+        bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
     }
 
     /**
