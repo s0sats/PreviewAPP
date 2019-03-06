@@ -11,6 +11,7 @@ public class MD_Site {
     private String site_id;
     private String site_desc;
     private int io_control;
+    private Integer reason_code;
     private int inbound_auto_create;
 
     public long getCustomer_code() {
@@ -51,6 +52,14 @@ public class MD_Site {
 
     public void setIo_control(int io_control) {
         this.io_control = io_control;
+    }
+
+    public Integer getReason_code() {
+        return reason_code;
+    }
+
+    public void setReason_code(Integer reason_code) {
+        this.reason_code = reason_code;
     }
 
     public int getInbound_auto_create() {

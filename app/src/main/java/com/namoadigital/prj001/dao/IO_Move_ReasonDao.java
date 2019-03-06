@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IO_Move_ReasonDao extends BaseDao implements Dao<IO_Move_Reason> {
@@ -31,43 +34,173 @@ public class IO_Move_ReasonDao extends BaseDao implements Dao<IO_Move_Reason> {
     }
 
     @Override
-    public void addUpdate(IO_Move_Reason item) {
+    public void addUpdate(IO_Move_Reason  io_move_reason) {
+        openDB();
+        try {
+            if (db.insert(TABLE, null, toContentValuesMapper.map(io_move_reason)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_move_reason.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(REASON_CODE).append(" = '").append(String.valueOf(io_move_reason.getReason_code())).append("'");
 
+                db.update(TABLE, toContentValuesMapper.map(io_move_reason), sbWhere.toString(), null);
+            }
+
+        } catch (Exception e) {
+        } finally {
+        }
+        closeDB();
     }
 
     @Override
-    public void addUpdate(Iterable<IO_Move_Reason> items, boolean status) {
+    public void addUpdate(Iterable<IO_Move_Reason> io_move_reasons, boolean status) {
+        openDB();
 
+        try {
+
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (IO_Move_Reason io_move_reason : io_move_reasons) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(io_move_reason)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_move_reason.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(REASON_CODE).append(" = '").append(String.valueOf(io_move_reason.getReason_code())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(io_move_reason), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String sQuery) {
+        openDB();
+        try {
+            db.execSQL(sQuery);
 
+        } catch (Exception e) {
+        } finally {
+        }
+        closeDB();
     }
 
     @Override
     public void remove(String sQuery) {
+        openDB();
+        try {
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+        closeDB();
 
     }
 
     @Override
     public IO_Move_Reason getByString(String sQuery) {
-        return null;
+        IO_Move_Reason io_move_reason = null;
+        openDB();
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                io_move_reason = toIO_Move_ReasonMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+        closeDB();
+
+        return io_move_reason;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        return null;
+        HMAux hmAux = null;
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
     }
 
     @Override
     public List<IO_Move_Reason> query(String sQuery) {
-        return null;
+        List<IO_Move_Reason> io_move_reasons = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                IO_Move_Reason uAux = toIO_Move_ReasonMapper.map(cursor);
+                io_move_reasons.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_move_reasons;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+        List<HMAux> io_move_reasons = new ArrayList<>();
+        openDB();
+        try {
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                io_move_reasons.add(CursorToHMAuxMapper.mapN(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_move_reasons;
     }
 
     private class CursorIO_Move_ReasonMapper implements Mapper<Cursor, IO_Move_Reason> {
