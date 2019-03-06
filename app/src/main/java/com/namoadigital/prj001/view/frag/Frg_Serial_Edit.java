@@ -974,7 +974,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 MD_SiteDao.SITE_ID, mdProductSerial.getSite_id(),
                 MD_SiteDao.IO_CONTROL, String.valueOf(mdProductSerial.getSite_io_control()),
                 MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(mdProductSerial.getInbound_auto_create()),
-                MD_SiteDao.REASON_CODE, String.valueOf(mdProductSerial.getReason_code())
+                MD_SiteDao.REASON_CODE, String.valueOf(mdProductSerial.getSite_reason_code())
         );
         //endregion
         //region SS Site Zone
