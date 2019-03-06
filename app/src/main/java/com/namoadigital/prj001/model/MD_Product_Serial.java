@@ -28,6 +28,7 @@ public class MD_Product_Serial implements Serializable {
     private Integer site_code;
     private String site_id;
     private String site_desc;
+    private String site_reason_code;
     @Expose
     private Integer zone_code;
     private String zone_id;
@@ -320,6 +321,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setSite_desc(String site_desc) {
         this.site_desc = site_desc;
+    }
+
+    public String getSite_reason_code() {
+        return site_reason_code;
+    }
+
+    public void setSite_reason_code(String site_reason_code) {
+        this.site_reason_code = site_reason_code;
     }
 
     public String getZone_id() {

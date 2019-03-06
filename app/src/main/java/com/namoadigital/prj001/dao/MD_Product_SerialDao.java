@@ -49,6 +49,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String SITE_CODE = "site_code";
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
+    public static final String SITE_REASON_CODE = "site_reason_code";
     public static final String ZONE_CODE = "zone_code";
     public static final String ZONE_ID = "zone_id";
     public static final String ZONE_DESC = "zone_desc";
@@ -105,7 +106,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
             MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1,
             ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,
-            SYNC_PROCESS, SITE_ID, SITE_DESC, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
+            SYNC_PROCESS, SITE_ID, SITE_DESC,SITE_REASON_CODE, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
@@ -829,6 +830,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             } else {
                 md_product_serial.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(SITE_REASON_CODE))) {
+                md_product_serial.setSite_reason_code(null);
+            } else {
+                md_product_serial.setSite_reason_code(cursor.getString(cursor.getColumnIndex(SITE_REASON_CODE)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
                 md_product_serial.setZone_code(null);
             } else {
@@ -1083,6 +1089,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(SITE_CODE, md_product_serial.getSite_code());
             contentValues.put(SITE_ID, md_product_serial.getSite_id());
             contentValues.put(SITE_DESC, md_product_serial.getSite_desc());
+            contentValues.put(SITE_REASON_CODE, md_product_serial.getSite_reason_code());
             contentValues.put(ZONE_CODE, md_product_serial.getZone_code());
             contentValues.put(ZONE_ID, md_product_serial.getZone_id());
             contentValues.put(ZONE_DESC, md_product_serial.getZone_desc());
