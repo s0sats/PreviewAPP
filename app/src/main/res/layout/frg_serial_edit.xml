@@ -141,29 +141,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         >
-                    <TextView
-                        android:id="@+id/frg_serial_edit_tv_serial_ttl"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingBottom="2dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="2dp"
-                        android:paddingTop="2dp"
-                        android:text="Serial Data"
-                        android:textSize="@dimen/font_size_title_md" />
+                        <TextView
+                            android:id="@+id/frg_serial_edit_tv_serial_ttl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="2dp"
+                            android:paddingTop="2dp"
+                            android:text="Serial Data"
+                            android:textSize="@dimen/font_size_title_md" />
 
-                    <ImageView
-                        android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginEnd="13dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/ic_clock_chat"
-                        android:tint="@color/light_to_dark_blue_color"
-                        android:visibility="visible" />
-                </LinearLayout>
+                        <ImageView
+                            android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginEnd="13dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_clock_chat"
+                            android:tint="@color/light_to_dark_blue_color"
+                            android:visibility="visible" />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -311,6 +311,13 @@
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_site_zone_local"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:text="Local" />
+
+                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                            android:id="@+id/frg_serial_edit_ss_site_reason"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
@@ -692,17 +699,17 @@
             />
 
         <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/frg_serial_edit_fab_anchor"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="bottom|end"-->
-            <!--android:layout_margin="15dp"-->
-            <!--android:background="@color/namoa_dark_blue"-->
-            <!--android:backgroundTint="@color/namoa_dark_blue"-->
-            <!--android:src="@drawable/ic_swap_vert_black_25dp"-->
-            <!--android:tint="@color/padrao_WHITE"-->
-            <!--android:visibility="gone"-->
-            <!--/>-->
+        <!--android:id="@+id/frg_serial_edit_fab_anchor"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="15dp"-->
+        <!--android:background="@color/namoa_dark_blue"-->
+        <!--android:backgroundTint="@color/namoa_dark_blue"-->
+        <!--android:src="@drawable/ic_swap_vert_black_25dp"-->
+        <!--android:tint="@color/padrao_WHITE"-->
+        <!--android:visibility="gone"-->
+        <!--/>-->
 
         <com.namoa_digital.namoa_library.ctls.FabMenu
             android:id="@+id/frg_serial_edit_fabMenu_anchor"
