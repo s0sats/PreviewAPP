@@ -29,6 +29,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
@@ -40,12 +41,12 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
@@ -128,7 +129,6 @@ public class Frg_Serial_Edit extends BaseFragment {
     private View view_footer;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
-    private IO_Move_Reason ioMoveReason;
     private ArrayList<Object> serialProperties;
     private boolean skip_validation = false;
     private boolean serialInfoChanges = false;
@@ -591,6 +591,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_zone_local);
         //
         ss_site_reason = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_reason);
+        ss_site_reason.setVisibility(View.GONE);
         //
         ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_serial_tracking);
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_edit_tv_serial_tracking_ttl);
@@ -972,7 +973,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                 true,
                 MD_SiteDao.SITE_ID, mdProductSerial.getSite_id(),
                 MD_SiteDao.IO_CONTROL, String.valueOf(mdProductSerial.getSite_io_control()),
-                MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(mdProductSerial.getInbound_auto_create())
+                MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(mdProductSerial.getInbound_auto_create()),
+                MD_SiteDao.REASON_CODE, String.valueOf(mdProductSerial.getReason_code())
         );
         //endregion
         //region SS Site Zone
@@ -1433,6 +1435,10 @@ public class Frg_Serial_Edit extends BaseFragment {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
                     }
                 }
+                if(ss_site_zone.hasChanged()){
+                    setMoveReasonSS();
+                }
+
             }
         });
         //
@@ -1480,6 +1486,10 @@ public class Frg_Serial_Edit extends BaseFragment {
                     loadLocalSS(false);
                     //
                     skip_validation = false;
+                }
+
+                if(ss_site_zone_local.hasChanged()){
+                    setMoveReasonSS();
                 }
             }
         });
@@ -1620,6 +1630,48 @@ public class Frg_Serial_Edit extends BaseFragment {
         });
         //
 
+    }
+
+    private void setMoveReasonSS() {
+
+        if(mdProduct.getIo_control() == 1
+                && mdProductSerial.getSite_io_control() != null
+                && mdProductSerial.getSite_io_control() == 1
+        ) {
+            if(ss_site_reason.getVisibility() == View.GONE) {
+                getMoveReasonList();
+                ss_site_reason.setVisibility(View.VISIBLE);
+            }
+        }
+
+    }
+
+    private void getMoveReasonList() {
+        ArrayList<HMAux> moveReasonList = new ArrayList<>();
+
+        IO_Move_ReasonDao ioMoveReasonDao =
+                new IO_Move_ReasonDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        moveReasonList = (ArrayList<HMAux>) ioMoveReasonDao.query_HM(
+                new IO_Move_Reason_Sql_SS(ToolBox_Con.getPreference_Customer_Code(context))
+                        .toSqlQuery());
+        //
+        ss_site_reason.setmOption(moveReasonList);
+        //
+        if(ss_site.getmValue().hasConsistentValue(MD_SiteDao.REASON_CODE)){
+            HMAux ss_site_reason_value = new HMAux();
+            ss_site_reason_value.put(SearchableSpinner.ID, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
+            for (HMAux moveReason :
+                    moveReasonList) {
+                if(moveReason.get(IO_Move_ReasonDao.REASON_CODE) ==  ss_site.getmValue().get(MD_SiteDao.REASON_CODE)) {
+                    ss_site_reason_value.put(SearchableSpinner.DESCRIPTION, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
+                    ss_site_reason.setmValue(moveReason);
+                }
+            }
+        }
     }
 
     private void initializeTrackingRemovelistner() {
