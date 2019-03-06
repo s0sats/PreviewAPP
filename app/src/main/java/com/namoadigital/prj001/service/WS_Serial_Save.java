@@ -219,6 +219,9 @@ public class WS_Serial_Save extends IntentService {
                     );
                 }*/
                 serialAux.setSerial_code(serialSaveReturn.getSerial_code());
+                //Luche - 06/03/2019
+                //Limpa campo de reason.
+                serialAux.setReason_code(null);
                 serialDao.addUpdateTmp(serialAux);
                 //
                 hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
@@ -226,6 +229,10 @@ public class WS_Serial_Save extends IntentService {
                 //Setar para atualização novamente
                 if(!serialSaveReturn.getRet_status().toUpperCase().equals(Constant.SYS_STATUS_DENIED)) {
                     serialAux.setUpdate_required(1);
+                }else{
+                    //Luche - 06/03/2019
+                    //Limpa campo de reason.
+                    serialAux.setReason_code(null);
                 }
                 serialDao.addUpdateTmp(serialAux);
                 //

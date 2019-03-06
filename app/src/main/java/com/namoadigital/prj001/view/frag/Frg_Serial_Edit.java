@@ -2596,12 +2596,14 @@ public class Frg_Serial_Edit extends BaseFragment {
             loggedSite.put(MD_SiteDao.SITE_ID, md_site.getSite_id());
             loggedSite.put(MD_SiteDao.IO_CONTROL, String.valueOf(md_site.getIo_control()));
             loggedSite.put(MD_SiteDao.INBOUND_AUTO_CREATE, String.valueOf(md_site.getInbound_auto_create()));
+            loggedSite.put(MD_SiteDao.REASON_CODE, String.valueOf(md_site.getReason_code()));
         } else {
             loggedSite.put(SearchableSpinner.ID, "null");
             loggedSite.put(SearchableSpinner.DESCRIPTION, "null");
             loggedSite.put(MD_SiteDao.SITE_ID, "null");
             loggedSite.put(MD_SiteDao.IO_CONTROL, "null");
             loggedSite.put(MD_SiteDao.INBOUND_AUTO_CREATE, "null");
+            loggedSite.put(MD_SiteDao.REASON_CODE, "null");
         }
         //
 

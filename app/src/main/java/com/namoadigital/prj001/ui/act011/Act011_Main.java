@@ -292,6 +292,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_finalize_option_finalize_lbl");
         transList.add("dialog_finalize_option_finalize_new_lbl");
         transList.add("btn_check_new");
+        transList.add("alert_results_ttl");
+        transList.add("lbl_serial_data");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
