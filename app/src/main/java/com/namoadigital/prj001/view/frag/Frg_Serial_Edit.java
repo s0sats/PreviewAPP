@@ -40,6 +40,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -99,6 +100,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private SearchableSpinner ss_site;
     private SearchableSpinner ss_site_zone;
     private SearchableSpinner ss_site_zone_local;
+    private SearchableSpinner ss_site_reason;
     private LinearLayout ll_serial_add_info;
     private TextView tv_serial_add_info_ttl;
     private MKEditTextNM mket_info1;
@@ -126,6 +128,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private View view_footer;
     private MD_Product mdProduct;
     private MD_Product_Serial mdProductSerial;
+    private IO_Move_Reason ioMoveReason;
     private ArrayList<Object> serialProperties;
     private boolean skip_validation = false;
     private boolean serialInfoChanges = false;
@@ -470,6 +473,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_site_zone.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
         ss_site_zone_local.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
+        ss_site_reason.setmLabel(hmAux_Trans.get("site_reason_lbl"));
+        ss_site_reason.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         tv_tracking.setText(hmAux_Trans.get("tracking_ttl"));
         mket_info1.setHint(hmAux_Trans.get("add_info1_lbl"));
         mket_info2.setHint(hmAux_Trans.get("add_info2_lbl"));
@@ -585,6 +590,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_zone_local);
         //
+        ss_site_reason = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_reason);
+        //
         ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_serial_tracking);
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_edit_tv_serial_tracking_ttl);
         tv_tracking.setTag("tracking_ttl");
@@ -696,6 +703,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         serialProperties.add(ss_site);
         serialProperties.add(ss_site_zone);
         serialProperties.add(ss_site_zone_local);
+        serialProperties.add(ss_site_reason);
         serialProperties.add(ss_brand);
         serialProperties.add(ss_brand_model);
         serialProperties.add(ss_brand_color);
@@ -2870,6 +2878,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("site_lbl");
         transListFrag.add("site_zone_lbl");
         transListFrag.add("site_zone_local_lbl");
+        transListFrag.add("site_reason_lbl");
         transListFrag.add("serial_add_info_ttl");
         transListFrag.add("add_info1_lbl");
         transListFrag.add("add_info2_lbl");
