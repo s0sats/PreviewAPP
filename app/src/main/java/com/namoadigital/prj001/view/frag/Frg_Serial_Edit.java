@@ -1666,7 +1666,9 @@ public class Frg_Serial_Edit extends BaseFragment {
             ss_site_reason_value.put(SearchableSpinner.ID, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
             for (HMAux moveReason :
                     moveReasonList) {
-                if(moveReason.get(IO_Move_ReasonDao.REASON_CODE) ==  ss_site.getmValue().get(MD_SiteDao.REASON_CODE)) {
+                String reasonId = moveReason.get(IO_Move_ReasonDao.REASON_ID);
+                String reasonCode = ss_site.getmValue().get(MD_SiteDao.REASON_CODE);
+                if(reasonId.equals(reasonCode)) {
                     ss_site_reason_value.put(SearchableSpinner.DESCRIPTION, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
                     ss_site_reason.setmValue(moveReason);
                 }

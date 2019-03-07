@@ -22,7 +22,7 @@ public class IO_Move_ReasonDao extends BaseDao implements Dao<IO_Move_Reason> {
     public static final String TABLE = "io_move_reason";
     public static final String CUSTOMER_CODE = "CUSTOMER_CODE";
     public static final String REASON_CODE = "REASON_CODE";
-    public static final String REASON_ID = "REASON_ID";
+    public static final String REASON_ID = "reason_id";
     public static final String REASON_DESC = "REASON_DESC";
 
 
