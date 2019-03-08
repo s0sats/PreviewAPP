@@ -75,6 +75,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     //SE FOR ALTERAR AVISAR CESAR CALDI
     public static final String VIEW_FULL_EDIT = "VIEW_FULL_EDIT";
     public static final String VIEW_SO_EDIT = "VIEW_SO_EDIT";
+    public static final String REASON_ID = "reason_id";
 
     private Context context;
     private boolean bStatus;
@@ -704,7 +705,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         serialProperties.add(ss_site);
         serialProperties.add(ss_site_zone);
         serialProperties.add(ss_site_zone_local);
-        serialProperties.add(ss_site_reason);
         serialProperties.add(ss_brand);
         serialProperties.add(ss_brand_model);
         serialProperties.add(ss_brand_color);
@@ -1248,31 +1248,38 @@ public class Frg_Serial_Edit extends BaseFragment {
             //Valida se alteração de site é valida.
             if (!siteChanged || validateSiteChange()) {
                 if (validadeSerialLocation()) {
-                    if (validateSiteRestriction()) {
-                        if (new_serial || checkSerialChanges()) {
-                            //
-                            setUIDataToSerialObj();
-                            //
-                            if (btnId == R.id.frg_serial_edit_btn_action) {
-                                delegate.onSaveWithChangesClick(
-                                        mdProductSerial,
-                                        !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                );
+                    if(validateMoveReasonSS()) {
+                        if (validateSiteRestriction()) {
+                            if (new_serial || checkSerialChanges()) {
+                                //
+                                setUIDataToSerialObj();
+                                //
+                                if (btnId == R.id.frg_serial_edit_btn_action) {
+                                    delegate.onSaveWithChangesClick(
+                                            mdProductSerial,
+                                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                    );
+                                }
+                                resetSaveCtrlVar();
+                            } else {
+                                if (btnId == R.id.frg_serial_edit_btn_action) {
+                                    delegate.onSaveNoChangesClick(
+                                            mdProductSerial,
+                                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                    );
+                                }
+                                resetSaveCtrlVar();
                             }
-                            resetSaveCtrlVar();
                         } else {
-                            if (btnId == R.id.frg_serial_edit_btn_action) {
-                                delegate.onSaveNoChangesClick(
-                                        mdProductSerial,
-                                        !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                );
-                            }
-                            resetSaveCtrlVar();
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_serial_validation_ttl"),
+                                    hmAux_Trans.get("alert_site_restriction_violation_msg")
+                            );
                         }
-                    } else {
+                    }else{
                         showAlertDialog(
-                                hmAux_Trans.get("alert_serial_validation_ttl"),
-                                hmAux_Trans.get("alert_site_restriction_violation_msg")
+                                hmAux_Trans.get("alert_reason_validation_ttl"),
+                                hmAux_Trans.get("alert_reason_required_msg")
                         );
                     }
                 } else {
@@ -1435,10 +1442,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
                     }
                 }
-                if(ss_site_zone.hasChanged()){
-                    setMoveReasonSS();
-                }
-
             }
         });
         //
@@ -1488,7 +1491,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     skip_validation = false;
                 }
 
-                if(ss_site_zone_local.hasChanged()){
+                if(ss_site_zone_local.hasChanged()
+                        && ss_site_zone_local.getmValue().hasConsistentValue(SearchableSpinner.ID)){
                     setMoveReasonSS();
                 }
             }
@@ -1641,6 +1645,11 @@ public class Frg_Serial_Edit extends BaseFragment {
             if(ss_site_reason.getVisibility() == View.GONE) {
                 getMoveReasonList();
                 ss_site_reason.setVisibility(View.VISIBLE);
+            }else{
+                if(!ss_site_zone_local.hasChangedBD()){
+                    ss_site_reason.clearChange();
+                    ss_site_reason.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -1666,9 +1675,10 @@ public class Frg_Serial_Edit extends BaseFragment {
             ss_site_reason_value.put(SearchableSpinner.ID, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
             for (HMAux moveReason :
                     moveReasonList) {
-                String reasonId = moveReason.get(IO_Move_ReasonDao.REASON_ID);
+                String reasonId = moveReason.get(REASON_ID);
                 String reasonCode = ss_site.getmValue().get(MD_SiteDao.REASON_CODE);
-                if(reasonId.equals(reasonCode)) {
+
+                if(reasonId !=null && reasonId.equals(reasonCode)) {
                     ss_site_reason_value.put(SearchableSpinner.DESCRIPTION, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
                     ss_site_reason.setmValue(moveReason);
                 }
@@ -2290,6 +2300,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && !ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
         boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
         boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
+
         //
         if (site && zone && local) {
             //limpa marcação de erro.
@@ -2310,12 +2321,25 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_site.setBackground(context.getDrawable(R.drawable.shape_error));
         ss_site_zone.setBackground(context.getDrawable(R.drawable.shape_error));
         ss_site_zone_local.setBackground(context.getDrawable(R.drawable.shape_error));
+
         //Pega posição do ultimo item e faz Scroll
         int x = (int) ss_site_zone_local.getX();
         int y = ss_site_zone_local.getTop() + ((View) ss_site_zone_local.getParent()).getTop();
         sv_serial.smoothScrollTo(x, y);
 
         return false;
+    }
+
+    private boolean validateMoveReasonSS() {
+        if(ss_site_reason.getVisibility() == View.VISIBLE) {
+            if(ss_site_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)){
+                ss_site_reason.setBackground(null);
+                return true;
+            }
+            ss_site_reason.setBackground(context.getDrawable(R.drawable.shape_error));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -2981,6 +3005,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("dialog_serial_move_group_lbl");
         transListFrag.add("dialog_serial_outbound_lbl");
         transListFrag.add("alert_serial_validation_ttl");
+        transListFrag.add("alert_reason_validation_ttl");
+        transListFrag.add("alert_reason_required_msg");
         transListFrag.add("alert_invalid_site_change_msg");
         transListFrag.add("btn_check_exists");
         transListFrag.add("alert_site_restriction_ttl");
