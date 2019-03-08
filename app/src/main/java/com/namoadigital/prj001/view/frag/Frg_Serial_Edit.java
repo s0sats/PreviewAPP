@@ -2091,6 +2091,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setEdit_mode(viewMode);
         //
         mdProductSerial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        //
+        if(ss_site_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+            mdProductSerial.setReason_code(Integer.parseInt(ss_site_reason.getmValue().get(SearchableSpinner.ID)));
+        }
     }
 
     //region Profile And View
