@@ -718,6 +718,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
      *  - O Usr deve ter o perfil de acesso ao botão.
      *  - O N-Form não pode ter sido gerado pela O.S
      *  - O N-Form não pode ter sido gerado pelo Agendamento
+     *  - 0 Serial deve ser informdo
      * @return
      */
     @Override
@@ -726,6 +727,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             && mSo_Prefix == null
             && mSo_Code == null
             && formLocal.getCustom_form_data_serv() == null
+            && serial_id != null
+            && !serial_id.isEmpty()
         ){
             return true;
         }
