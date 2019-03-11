@@ -133,7 +133,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
@@ -1771,6 +1771,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
         transList.add("sys_not_found_lbl");
+        transList.add("sys_site_or_operation_not_found_error");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -1786,7 +1787,7 @@ public class ToolBox_Inf {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ).getByString(
-                        new MD_Site_Sql_001(
+                        new MD_Site_Sql_Footer(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context)
                         ).toSqlQuery()
@@ -1809,9 +1810,13 @@ public class ToolBox_Inf {
         //
         if(operation != null && site != null ){
             operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
-            siteDesc = site.getSite_code() + " - " + site.getSite_desc();
+            //LUCHE - 11/03/2018
+            //Modificado query de site para trazer todos os dados e modificado a construção do texto site desc
+            //para a linha abaixo.
+            siteDesc = site.getSite_code() + " - " + site.getSite_id() + " - " + site.getSite_desc();
         }else{
-            String sError = "Site ou Operação do footer não encontrado:\n";
+            //String sError = "Site ou Operação do footer não encontrado:\n";
+            String sError = HmTrans.get("sys_site_or_operation_not_found_error") +"\n";
             //
             if(site == null){
                 //Atualiza var de erro
@@ -1903,7 +1908,7 @@ public class ToolBox_Inf {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ).getByString(
-                        new MD_Site_Sql_001(
+                        new MD_Site_Sql_Footer(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context)
                         ).toSqlQuery()
@@ -1923,9 +1928,15 @@ public class ToolBox_Inf {
         //
         if(operation != null && site != null ){
             operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
-            siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+            //siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
+            //LUCHE - 11/03/2019
+            //Comentado a linha a cima e modificado query usada no carregamento do obj site.
+            siteDesc = site.getSite_desc();
         }else{
-            String sError = "Site ou Operação do footer não encontrado:\n";
+            //String sError = "Site ou Operação do footer não encontrado:\n";
+            //LUCHE - 11/03/2019
+            //Comentado a linha a cima e add tradução
+            String sError = HmTrans.get("sys_site_or_operation_not_found_error") +"\n";
              //
             if(site == null){
                 //Add chave que indica erro no carregamento do site.

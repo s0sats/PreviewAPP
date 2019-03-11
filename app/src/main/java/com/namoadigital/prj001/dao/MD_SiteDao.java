@@ -30,8 +30,23 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String IO_CONTROL = "io_control";
     public static final String REASON_CODE = "reason_code";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
+    public static final String IN_ALLOW_NEW_ITEM = "in_allow_new_item";
+    public static final String IN_PUT_AWAY_PROCESS = "in_put_away_process" ;
+    public static final String IN_ZONE_CODE_CONF = "in_zone_code_conf";
+    public static final String IN_LOCAL_CODE_CONF = "in_local_code_conf";
+    public static final String IN_DONE_AUTOMATIC = "in_done_automatic";
+    public static final String OUT_ALLOW_NEW_ITEM = "out_allow_new_item";
+    public static final String OUT_PICKING_PROCESS = "out_picking_process";
+    public static final String OUT_ZONE_CODE_PICKING = "out_zone_code_picking";
+    public static final String OUT_LOCAL_CODE_PICKING = "out_local_code_picking";
+    public static final String OUT_DONE_AUTOMATIC = "out_done_automatic";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC,IO_CONTROL,REASON_CODE,INBOUND_AUTO_CREATE};
+    private String[] columns = {
+            CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC,IO_CONTROL,REASON_CODE,INBOUND_AUTO_CREATE,
+            IN_ALLOW_NEW_ITEM,IN_PUT_AWAY_PROCESS,IN_ZONE_CODE_CONF,IN_LOCAL_CODE_CONF, IN_DONE_AUTOMATIC,
+            OUT_ALLOW_NEW_ITEM, OUT_PICKING_PROCESS, OUT_ZONE_CODE_PICKING, OUT_LOCAL_CODE_PICKING, OUT_DONE_AUTOMATIC
+    };
+
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
@@ -240,6 +255,34 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                 md_site.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
             }
             md_site.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
+
+            md_site.setIn_allow_new_item(cursor.getInt(cursor.getColumnIndex(IN_ALLOW_NEW_ITEM)));
+            md_site.setIn_put_away_process(cursor.getInt(cursor.getColumnIndex(IN_PUT_AWAY_PROCESS)));
+            if(cursor.isNull(cursor.getColumnIndex(IN_ZONE_CODE_CONF))) {
+                md_site.setIn_zone_code_conf(null);
+            }else{
+                md_site.setIn_zone_code_conf(cursor.getInt(cursor.getColumnIndex(IN_ZONE_CODE_CONF)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(IN_LOCAL_CODE_CONF))) {
+                md_site.setIn_local_code_conf(null);
+            }else{
+                md_site.setIn_local_code_conf(cursor.getInt(cursor.getColumnIndex(IN_LOCAL_CODE_CONF)));
+            }
+            md_site.setIn_done_automatic(cursor.getInt(cursor.getColumnIndex(IN_DONE_AUTOMATIC)));
+            md_site.setOut_allow_new_item(cursor.getInt(cursor.getColumnIndex(OUT_ALLOW_NEW_ITEM)));
+            md_site.setOut_picking_process(cursor.getInt(cursor.getColumnIndex(OUT_PICKING_PROCESS)));
+            if(cursor.isNull(cursor.getColumnIndex(OUT_ZONE_CODE_PICKING))) {
+                md_site.setOut_zone_code_picking(null);
+            }else{
+                md_site.setOut_zone_code_picking(cursor.getInt(cursor.getColumnIndex(OUT_ZONE_CODE_PICKING)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING))) {
+                md_site.setOut_local_code_picking(null);
+            }else{
+                md_site.setOut_local_code_picking(cursor.getInt(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING)));
+            }
+            md_site.setOut_done_automatic(cursor.getInt(cursor.getColumnIndex(OUT_DONE_AUTOMATIC)));
+
             return md_site;
         }
 
@@ -271,6 +314,29 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             if (md_site.getInbound_auto_create() > -1) {
                 contentValues.put(INBOUND_AUTO_CREATE, md_site.getInbound_auto_create());
             }
+            if(md_site.getIn_allow_new_item() > -1){
+                contentValues.put(IN_ALLOW_NEW_ITEM,md_site.getIn_allow_new_item());
+            }
+            if(md_site.getIn_put_away_process() > -1){
+                contentValues.put(IN_PUT_AWAY_PROCESS,md_site.getIn_put_away_process());
+            }
+            contentValues.put(IN_ZONE_CODE_CONF,md_site.getIn_zone_code_conf());
+            contentValues.put(IN_LOCAL_CODE_CONF,md_site.getIn_local_code_conf());
+            if(md_site.getIn_done_automatic() > -1){
+                contentValues.put(IN_DONE_AUTOMATIC,md_site.getIn_done_automatic());
+            }
+            if(md_site.getOut_allow_new_item() > -1){
+                contentValues.put(OUT_ALLOW_NEW_ITEM,md_site.getOut_allow_new_item());
+            }
+            if(md_site.getOut_picking_process() > -1){
+                contentValues.put(OUT_PICKING_PROCESS,md_site.getOut_picking_process());
+            }
+            contentValues.put(OUT_ZONE_CODE_PICKING,md_site.getOut_zone_code_picking());
+            contentValues.put(OUT_LOCAL_CODE_PICKING,md_site.getOut_local_code_picking());
+            if(md_site.getOut_done_automatic() > -1){
+                contentValues.put(OUT_DONE_AUTOMATIC,md_site.getOut_done_automatic());
+            }
+
             return contentValues;
 
         }
