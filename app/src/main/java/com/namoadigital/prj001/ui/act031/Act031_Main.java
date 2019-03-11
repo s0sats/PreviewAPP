@@ -378,6 +378,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
                 mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
+                refreshUI();
             } else {
                 showSingleResultMsg(
                         hmAux_Trans.get("alert_save_serial_return_ttl"),

@@ -592,7 +592,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_zone_local);
         //
         ss_site_reason = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_reason);
-        ss_site_reason.setVisibility(View.GONE);
+
         //
         ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_serial_tracking);
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_edit_tv_serial_tracking_ttl);
@@ -1034,6 +1034,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                 MD_Product_SerialDao.COLOR_ID, mdProductSerial.getColor_id()
         );
         //endregion
+        //region SS Site Reason
+        ss_site_reason.setVisibility(View.GONE);
+        //endregion
         //region BrandModelColor
         brand_model_color_lbl = mdProductSerial.getBrand_desc() == null ? "" : "| " + mdProductSerial.getBrand_desc() + " ";
         brand_model_color_lbl += mdProductSerial.getModel_desc() == null ? "" : "| " + mdProductSerial.getModel_desc() + " ";
@@ -1440,19 +1443,23 @@ public class Frg_Serial_Edit extends BaseFragment {
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
                     if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
+                        setMoveReasonSS();
                     }
                 }
+
+
             }
         });
         //
         ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
-
+                Log.i("MoveReason", "onItemPreSelected");
             }
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                Log.i("MoveReason", "onItemPostSelected");
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
                 if (
                         ss_site.getmValue().get(SearchableSpinner.ID) == null
@@ -1491,12 +1498,10 @@ public class Frg_Serial_Edit extends BaseFragment {
                     skip_validation = false;
                 }
 
-                if(ss_site_zone_local.hasChanged()
-                        && ss_site_zone_local.getmValue().hasConsistentValue(SearchableSpinner.ID)){
-                    setMoveReasonSS();
-                }
+                handleMoveReasonSS();
             }
         });
+
         //
         ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -1634,6 +1639,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         });
         //
 
+    }
+
+    private void handleMoveReasonSS() {
+        if(ss_site_zone_local.hasChanged()){
+            setMoveReasonSS();
+        }
     }
 
     private void setMoveReasonSS() {
