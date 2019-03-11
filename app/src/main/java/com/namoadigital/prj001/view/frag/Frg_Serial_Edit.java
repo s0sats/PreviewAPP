@@ -1443,7 +1443,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
                     if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
-                        setMoveReasonSS();
+                        setMoveReasonSS(ss_site_zone);
                     }
                 }
 
@@ -1498,7 +1498,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     skip_validation = false;
                 }
 
-                handleMoveReasonSS();
+                handleMoveReasonSS(ss_site_zone_local);
             }
         });
 
@@ -1641,13 +1641,19 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     }
 
-    private void handleMoveReasonSS() {
+    private void handleMoveReasonSS(SearchableSpinner searchableSpinner) {
         if(ss_site_zone_local.hasChanged()){
-            setMoveReasonSS();
+            setMoveReasonSS(searchableSpinner);
         }
     }
-
-    private void setMoveReasonSS() {
+    /*
+        rotina responsavel pela visibilidade do SS de Motivo de movimentação
+        Se o serial possui perfil de movimentação é verificado se o SS está visível,
+        se não estiver ele busca a lista de motivos, seta o motivo padrão para aquele site
+        e torna-o visivel. Caso contrario é verificado se o SS que gerou o processo mudou do original.
+        caso negatio ele some com o spinner de motivo da movimentação
+    */
+    private void setMoveReasonSS(SearchableSpinner searchableSpinner) {
 
         if(mdProduct.getIo_control() == 1
                 && mdProductSerial.getSite_io_control() != null
@@ -1657,7 +1663,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 getMoveReasonList();
                 ss_site_reason.setVisibility(View.VISIBLE);
             }else{
-                if(!ss_site_zone_local.hasChangedBD()){
+                if(!searchableSpinner.hasChangedBD()){
                     ss_site_reason.clearChange();
                     ss_site_reason.setVisibility(View.GONE);
                 }
