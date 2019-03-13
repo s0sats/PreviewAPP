@@ -175,6 +175,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         menuList.add(
                 new MenuMainNamoa(
+                        Act005_Main.MENU_ID_IO_ASSETS,
+                        "",
+                        "lbl_io_assets",
+                        "lbl_io_assets",
+                        R.drawable.previous_icon
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
                         Act005_Main.MENU_ID_PENDING_DATA,
                         "",
                         "lbl_pending_data",
@@ -286,6 +296,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge2(qtyBadge2);
                         break;
 
+                    case Act005_Main.MENU_ID_IO_ASSETS:
+                        //tratar badges de pendentes.
+                        break;
+
                     case Act005_Main.MENU_ID_PENDING_DATA:
                         try {
                             qty = customFormLocalDao.getByStringHM(
@@ -297,7 +311,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qty = "0";
                         }
                         //24/08/2018 - Add validação se usr tem acesso a S.O
-                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
                             try {
                                 qtySO = soDao.getByStringHM(
                                         new Sql_Act021_002(
@@ -307,7 +321,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             } catch (Exception e) {
                                 qtySO = "0";
                             }
-                        }else{
+                        } else {
                             qtySO = "0";
                         }
                         //
@@ -321,7 +335,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtyAP = "0";
                         }
                         //24/08/2018 - Add validação se usr tem acesso a S.O Express
-                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_EXPRESS)) {
                             try {
                                 qtySO_Express = soPackExpressLocalDao.getByStringHM(
                                         new SO_Pack_Express_Local_Sql_010(
@@ -331,7 +345,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             } catch (Exception e) {
                                 qtySO_Express = "0";
                             }
-                        }else{
+                        } else {
                             qtySO_Express = "0";
                         }
                         //Soma Qtd de n-form ,n_service, n_form_ap e so_express
@@ -347,7 +361,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 //                        );
                         //
                         //24/08/2018 - Add valudação se usr tem acesso a S.O
-                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
                             try {
                                 qtyBadge2 = soDao.getByStringHM(
                                         new Sql_Act005_004(
@@ -359,7 +373,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             } catch (Exception e) {
                                 qtyBadge2 = "0";
                             }
-                        }else{
+                        } else {
                             qtyBadge2 = "0";
                         }
                         menu.addInBadge2(qtyBadge2);
@@ -555,14 +569,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST,null)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SCHEDULE_CHECKLIST, null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
         //Não é necessario verificar se tem PARAM_SO_MOV,pois esse parametro sempre
         //vem acompanhado do PARAM_SO.
         //
         // if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
         data_package.add(DataPackage.DATA_PACKAGE_AP);
@@ -607,6 +621,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                 case Act005_Main.MENU_ID_SERIAL:
                     mView.callAct030(context);
+                    break;
+
+                case Act005_Main.MENU_ID_IO_ASSETS:
+                    mView.callAct051(context);
                     break;
 
                 case Act005_Main.MENU_ID_PENDING_DATA:

@@ -80,6 +80,7 @@ import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -110,6 +111,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_ID_SERIAL = "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
+    public static final String MENU_ID_IO_ASSETS = "menu_io_assets";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
     public static final String MENU_ID_MESSAGES = "menu_messages";
 
@@ -138,6 +140,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String WS_LIST_ITEM = "ws_list_item";
     public static final String WS_LIST_ITEM_RETURN = "ws_list_item_return";
     public static final String WS_LIST_ITEM_LABEL = "ws_list_item_label";
+
 
     //toolbar constants
     private static final int TOOLBAR_NAMOA_LOGO = 1;
@@ -832,6 +835,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         return pendingExists;
 
+    }
+
+    @Override
+    public void callAct051(Context context) {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     private void changeCustomer() {
