@@ -1124,6 +1124,10 @@ public class Frg_Serial_Edit extends BaseFragment {
             btn_action.setOnClickListener(checkExistSerialListner);
         }
 
+        //cria referencia de primeiro valor para os spinners de zona e local
+        oldZone.putAll(ss_site_zone.getmValue());
+        oldLocal.putAll(ss_site_zone_local.getmValue());
+
     }
 
     private boolean checkDbValInOption(SearchableSpinner ssComponent, String value) {
@@ -1443,8 +1447,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
                     if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
-                        setMoveReasonSS(ss_site_zone);
                     }
+                    handleMoveReasonSS();
                 }
 
 
@@ -1498,7 +1502,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     skip_validation = false;
                 }
 
-                handleMoveReasonSS(ss_site_zone_local);
+                handleMoveReasonSS();
             }
         });
 
@@ -1641,9 +1645,17 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     }
 
-    private void handleMoveReasonSS(SearchableSpinner searchableSpinner) {
-        if(ss_site_zone_local.hasChanged()){
-            setMoveReasonSS(searchableSpinner);
+    private void handleMoveReasonSS() {
+        if( (oldLocal.hasConsistentValue(SearchableSpinner.DESCRIPTION)
+        && !oldLocal.get(SearchableSpinner.DESCRIPTION).equals(ss_site_zone_local.getmValue().get(SearchableSpinner.DESCRIPTION)))
+        || (oldZone.hasConsistentValue(SearchableSpinner.DESCRIPTION)
+                && !oldZone.get(SearchableSpinner.DESCRIPTION).equals(ss_site_zone.getmValue().get(SearchableSpinner.DESCRIPTION)))){
+            setMoveReasonSS();
+        }else{
+            if (ss_site_reason.getVisibility() == View.VISIBLE){
+                ss_site_reason.clearChange();
+                ss_site_reason.setVisibility(View.GONE);
+            }
         }
     }
     /*
@@ -1653,7 +1665,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         e torna-o visivel. Caso contrario é verificado se o SS que gerou o processo mudou do original.
         caso negatio ele some com o spinner de motivo da movimentação
     */
-    private void setMoveReasonSS(SearchableSpinner searchableSpinner) {
+    private void setMoveReasonSS() {
 
         if(mdProduct.getIo_control() == 1
                 && mdProductSerial.getSite_io_control() != null
@@ -1662,11 +1674,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             if(ss_site_reason.getVisibility() == View.GONE) {
                 getMoveReasonList();
                 ss_site_reason.setVisibility(View.VISIBLE);
-            }else{
-                if(!searchableSpinner.hasChangedBD()){
-                    ss_site_reason.clearChange();
-                    ss_site_reason.setVisibility(View.GONE);
-                }
             }
         }
 
