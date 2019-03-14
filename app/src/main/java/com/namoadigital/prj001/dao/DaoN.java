@@ -2,7 +2,7 @@ package com.namoadigital.prj001.dao;
 
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.DaoError;
+import com.namoadigital.prj001.model.DaoObjReturn;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 
 public interface DaoN<T> {
 
-    void addUpdate(T item, DaoError mDaoError);
+    void addUpdate(T item, DaoObjReturn mDaoError);
 
-    void addUpdate(List<T> items, boolean status, DaoError mDaoError);
+    void addUpdate(List<T> items, boolean status, DaoObjReturn mDaoError);
 
-    void addUpdate(String sQuery, DaoError mDaoError);
+    void addUpdate(String sQuery, DaoObjReturn mDaoError);
 
-    void remove(String sQuery, DaoError mDaoError);
+    void remove(String sQuery, DaoObjReturn mDaoError);
 
     T getByString(String sQuery);
 

@@ -17,6 +17,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -34,7 +35,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.Constant;
@@ -95,6 +95,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         boolean bNew = false;
         bAgendado = false;
+        //LUCHE - 14/03/2019
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -194,103 +196,117 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
             customFormLocal.setSchedule_comments("");
 
-            custom_form_LocalDao.addUpdate(customFormLocal);
-
-            ArrayList<HMAux> items = (ArrayList<HMAux>) custom_form_fieldDao.query_HM(
-                    new Sql_Act011_002(
-                            String.valueOf(customFormLocal.getCustomer_code()),
-                            String.valueOf(customFormLocal.getCustom_form_type()),
-                            String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version()),
-                            ToolBox_Con.getPreference_Translate_Code(context),
-                            String.valueOf(customFormLocal.getCustom_form_data())
-                    ).toSqlQuery().toString().toLowerCase()
-            );
-
-            custom_form_field_LocalDao.addUpdate(items);
-
-            cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
-                    new GE_Custom_Form_Fields_Local_Sql_001(
-                            String.valueOf(customFormLocal.getCustomer_code()),
-                            String.valueOf(customFormLocal.getCustom_form_type()),
-                            String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version()),
-                            String.valueOf(customFormLocal.getCustom_form_data())
-                    ).toSqlQuery().toString().toLowerCase()
-            );
-
-            custom_form_blob_localDao.addUpdate(
-                    custom_form_blob_localDao.query(
-                            new GE_Custom_Form_Blob_Sql_001(
-                                    String.valueOf(customFormLocal.getCustomer_code()),
-                                    String.valueOf(customFormLocal.getCustom_form_type()),
-                                    String.valueOf(customFormLocal.getCustom_form_code()),
-                                    String.valueOf(customFormLocal.getCustom_form_version())
-                            ).toSqlQuery().toString().toLowerCase()
-                    )
-                    ,
-                    false
-            );
-        }
-
-        GE_Custom_Form_Data formData = loadAnswer(
-                customFormLocal.getCustomer_code(),
-                Long.parseLong(product_code),
-                customFormLocal.getCustom_form_type(),
-                customFormLocal.getCustom_form_code(),
-                customFormLocal.getCustom_form_version(),
-                customFormLocal.getCustom_form_data(),
-                customFormLocal.getCustom_form_data_serv(),
-                so_prefix,
-                so_code,
-                so_site_code,
-                so_operation_code,
-                serial_id
-        );
-
-        if (bAgendado) {
-            if (serial_id == null || serial_id.isEmpty()) {
-                formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
-                formData.setZone_code(null);
-                formData.setLocal_code(null);
-            } else {
-                MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
-                        new MD_Product_Serial_Sql_002(
-                                Long.parseLong(customer_code),
-                                Long.parseLong(product_code),
-                                serial_id
-                        ).toSqlQuery()
+            //LUCHE -  14/03/2019
+            //Alteração Dao de insert com exception NOVO METODO DAO
+            //custom_form_LocalDao.addUpdate(customFormLocal);
+            daoObjReturn = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
+            //
+            if(!daoObjReturn.hasError()) {
+                ArrayList<HMAux> items = (ArrayList<HMAux>) custom_form_fieldDao.query_HM(
+                        new Sql_Act011_002(
+                                String.valueOf(customFormLocal.getCustomer_code()),
+                                String.valueOf(customFormLocal.getCustom_form_type()),
+                                String.valueOf(customFormLocal.getCustom_form_code()),
+                                String.valueOf(customFormLocal.getCustom_form_version()),
+                                ToolBox_Con.getPreference_Translate_Code(context),
+                                String.valueOf(customFormLocal.getCustom_form_data())
+                        ).toSqlQuery().toString().toLowerCase()
                 );
 
-                if (md_product_serialAux != null) {
-                    formData.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
-                    formData.setZone_code(md_product_serialAux.getZone_code());
-                    formData.setLocal_code(md_product_serialAux.getLocal_code());
-                } else {
-                    // Erro Nao deve Acontecer
+                custom_form_field_LocalDao.addUpdate(items);
+
+                cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
+                        new GE_Custom_Form_Fields_Local_Sql_001(
+                                String.valueOf(customFormLocal.getCustomer_code()),
+                                String.valueOf(customFormLocal.getCustom_form_type()),
+                                String.valueOf(customFormLocal.getCustom_form_code()),
+                                String.valueOf(customFormLocal.getCustom_form_version()),
+                                String.valueOf(customFormLocal.getCustom_form_data())
+                        ).toSqlQuery().toString().toLowerCase()
+                );
+
+                custom_form_blob_localDao.addUpdate(
+                        custom_form_blob_localDao.query(
+                                new GE_Custom_Form_Blob_Sql_001(
+                                        String.valueOf(customFormLocal.getCustomer_code()),
+                                        String.valueOf(customFormLocal.getCustom_form_type()),
+                                        String.valueOf(customFormLocal.getCustom_form_code()),
+                                        String.valueOf(customFormLocal.getCustom_form_version())
+                                ).toSqlQuery().toString().toLowerCase()
+                        )
+                        ,
+                        false
+                );
+
+            }
+        }
+        //Verifica se houve erro ao inserir tabela form_local.
+        if(daoObjReturn.hasError()) {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_error_on_create_form_ttl"),
+                    hmAux_Trans.get("alert_error_on_create_form_msg"),
+                    Act011_Main.SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR
+            );
+        }else{
+            GE_Custom_Form_Data formData = loadAnswer(
+                    customFormLocal.getCustomer_code(),
+                    Long.parseLong(product_code),
+                    customFormLocal.getCustom_form_type(),
+                    customFormLocal.getCustom_form_code(),
+                    customFormLocal.getCustom_form_version(),
+                    customFormLocal.getCustom_form_data(),
+                    customFormLocal.getCustom_form_data_serv(),
+                    so_prefix,
+                    so_code,
+                    so_site_code,
+                    so_operation_code,
+                    serial_id
+            );
+
+            if (bAgendado) {
+                if (serial_id == null || serial_id.isEmpty()) {
                     formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
                     formData.setZone_code(null);
                     formData.setLocal_code(null);
+                } else {
+                    MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                            new MD_Product_Serial_Sql_002(
+                                    Long.parseLong(customer_code),
+                                    Long.parseLong(product_code),
+                                    serial_id
+                            ).toSqlQuery()
+                    );
+
+                    if (md_product_serialAux != null) {
+                        formData.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+                        formData.setZone_code(md_product_serialAux.getZone_code());
+                        formData.setLocal_code(md_product_serialAux.getLocal_code());
+                    } else {
+                        // Erro Nao deve Acontecer
+                        formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                        formData.setZone_code(null);
+                        formData.setLocal_code(null);
+                    }
                 }
+
+                formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                //
+                custom_form_dataDao.addUpdate(formData);
+                custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
             }
 
-            formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
-            //
-            custom_form_dataDao.addUpdate(formData);
-            custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
+            ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
+
+                    new GE_Custom_Form_Blob_Local_Sql_005(
+                            String.valueOf(customFormLocal.getCustomer_code()),
+                            String.valueOf(customFormLocal.getCustom_form_type()),
+                            String.valueOf(customFormLocal.getCustom_form_code()),
+                            String.valueOf(customFormLocal.getCustom_form_version())
+                    ).toSqlQuery().toString()
+            );
+
+            mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
         }
-
-        ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
-
-                new GE_Custom_Form_Blob_Local_Sql_005(
-                        String.valueOf(customFormLocal.getCustomer_code()),
-                        String.valueOf(customFormLocal.getCustom_form_type()),
-                        String.valueOf(customFormLocal.getCustom_form_code()),
-                        String.valueOf(customFormLocal.getCustom_form_version())
-                ).toSqlQuery().toString()
-        );
-
-        mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {

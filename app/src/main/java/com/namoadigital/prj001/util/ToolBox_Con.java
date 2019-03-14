@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.DaoError;
+import com.namoadigital.prj001.model.DaoObjReturn;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1135,9 +1135,9 @@ public class ToolBox_Con {
         }
     }
 
-    public static DaoError getSQLiteErrorCodeDescription(String errorMessage) {
+    public static DaoObjReturn getSQLiteErrorCodeDescription(String errorMessage) {
         final String codeStr = "(code ";
-        DaoError mErrorDao = new DaoError();
+        DaoObjReturn mErrorDao = new DaoObjReturn();
         //
         mErrorDao.setError(true);
         mErrorDao.setRawMessage(errorMessage);
