@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-public class DaoError {
+public class DaoObjReturn {
 
     public static final String DAO_ERROR_EXCEPTION = "DAO_ERROR_EXCEPTION";
 
@@ -15,23 +15,23 @@ public class DaoError {
     private String code;
     private String description;
     private String rawMessage;
-    private long actionReturn;
+    private long actionReturn;//Qtd de linhas afetadas
 
-    public DaoError() {
+    public DaoObjReturn() {
         this.error = false;
         this.action = "";
         this.code = "";
         this.description = "";
         this.rawMessage = "";
-        this.actionReturn = -2;
+        this.actionReturn = -2;//Default menos 2 pois o retorno de dado não inserido é -1
     }
 
-    public DaoError(String code, String description) {
+    public DaoObjReturn(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-    public void copyError(DaoError DaoError){
+    public void copyError(DaoObjReturn DaoError){
         if (DaoError == null) {
             return;
         }

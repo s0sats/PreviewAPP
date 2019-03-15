@@ -114,6 +114,10 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  */
 
 public class Act011_Main extends Base_Activity implements Act011_Main_View {
+
+    public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
+
+
     private Act011_Main_Presenter mPresenter;
 
     private DrawerLayout mDrawerLayout;
@@ -294,6 +298,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("btn_check_new");
         transList.add("alert_results_ttl");
         transList.add("lbl_serial_data");
+        transList.add("alert_error_on_create_form_ttl");
+        transList.add("alert_error_on_create_form_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -987,7 +993,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+        //LUCHE - 14/03/2018
+        //Tratativa necessaria quando o carregamento dos itens é abortado pelo erro de insert na ge_custom_form_local
+        //pois nesse fluxo, o adapter do pager não é setado.
+        if(pager != null && pager.getAdapter() != null) {
+            setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+        }else{
+            setTitleLanguage();
+        }
         setFooter();
     }
 
@@ -1913,6 +1926,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         }
                 );
 
+                break;
+            //Msg quando ocorre erro ao criar registro na ge_custom_form_local
+            case SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR:
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                flowControl();
+                            }
+                        },
+                        0
+                );
                 break;
 
         }
