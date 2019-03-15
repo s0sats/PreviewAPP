@@ -63,4 +63,5 @@ public interface Act005_Main_View {
 
     boolean getPendingForms();
 
+    void callAct051(Context context);
 }

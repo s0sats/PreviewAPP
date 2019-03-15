@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/namoa_cell_8">
+
+        <ImageView
+            android:id="@+id/act052_main_iv_offline_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_status_desc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act052_tv_io_status_desc"
+            app:srcCompat="@drawable/ic_signal_wifi_off_black_24dp" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_status_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_product_lbl"
+            app:layout_constraintEnd_toStartOf="@+id/act052_tv_io_status_icon"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/act052_main_iv_offline_mode"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/act052_tv_io_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_status_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act052_tv_io_status_desc"
+            app:srcCompat="@drawable/ic_swap_horiz_black_24dp" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:text="Product - trad"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_product_ext_code_lbl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_status_desc" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_ext_code_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Ext Code: - trad"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_product_desc_lbl"
+            app:layout_constraintStart_toStartOf="@+id/act052_tv_io_product_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_product_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_ext_code_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_product_ext_code_lbl"
+            app:layout_constraintStart_toEndOf="@+id/act052_tv_io_product_ext_code_lbl"
+            app:layout_constraintTop_toTopOf="@+id/act052_tv_io_product_ext_code_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_desc_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Desc: - trad"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_serial_lbl"
+            app:layout_constraintStart_toStartOf="@+id/act052_tv_io_product_ext_code_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_product_ext_code_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_desc_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_product_desc_lbl"
+            app:layout_constraintStart_toEndOf="@+id/act052_tv_io_product_desc_lbl"
+            app:layout_constraintTop_toTopOf="@+id/act052_tv_io_product_desc_lbl" />
+
+
+        <TextView
+            android:id="@+id/act052_tv_io_serial_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:text="Serial - trad"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_serial_ext_code_lbl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_product_desc_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_serial_ext_code_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Ext Code: - trad"
+            app:layout_constraintBottom_toTopOf="@+id/act052_tv_io_serial_location"
+            app:layout_constraintStart_toStartOf="@+id/act052_tv_io_serial_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_serial_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_serial_ext_code_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_serial_ext_code_lbl"
+            app:layout_constraintStart_toEndOf="@+id/act052_tv_io_serial_ext_code_lbl"
+            app:layout_constraintTop_toTopOf="@+id/act052_tv_io_serial_ext_code_lbl" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_serial_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Site | Zona | Posição"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_serial_ext_code_lbl" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
