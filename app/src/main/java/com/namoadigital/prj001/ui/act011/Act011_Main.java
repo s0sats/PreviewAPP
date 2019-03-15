@@ -996,6 +996,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //pois nesse fluxo, o adapter do pager não é setado.
         if(pager != null && pager.getAdapter() != null) {
             setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+        }else{
+            setTitleLanguage();
         }
         setFooter();
     }
