@@ -45,6 +45,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
@@ -1123,11 +1124,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             btn_action.setText(hmAux_Trans.get("btn_check_exists"));
             btn_action.setOnClickListener(checkExistSerialListner);
         }
-
-        //cria referencia de primeiro valor para os spinners de zona e local
-        oldZone.putAll(ss_site_zone.getmValue());
-        oldLocal.putAll(ss_site_zone_local.getmValue());
-
     }
 
     private boolean checkDbValInOption(SearchableSpinner ssComponent, String value) {
@@ -1645,11 +1641,11 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     }
 
+    /**
+     *
+     */
     private void handleMoveReasonSS() {
-        if( (oldLocal.hasConsistentValue(SearchableSpinner.DESCRIPTION)
-        && !oldLocal.get(SearchableSpinner.DESCRIPTION).equals(ss_site_zone_local.getmValue().get(SearchableSpinner.DESCRIPTION)))
-        || (oldZone.hasConsistentValue(SearchableSpinner.DESCRIPTION)
-                && !oldZone.get(SearchableSpinner.DESCRIPTION).equals(ss_site_zone.getmValue().get(SearchableSpinner.DESCRIPTION)))){
+        if(hasLocationChanged()){
             setMoveReasonSS();
         }else{
             if (ss_site_reason.getVisibility() == View.VISIBLE){
@@ -1657,19 +1653,41 @@ public class Frg_Serial_Edit extends BaseFragment {
                 ss_site_reason.setVisibility(View.GONE);
             }
         }
+
     }
-    /*
-        rotina responsavel pela visibilidade do SS de Motivo de movimentação
-        Se o serial possui perfil de movimentação é verificado se o SS está visível,
-        se não estiver ele busca a lista de motivos, seta o motivo padrão para aquele site
-        e torna-o visivel. Caso contrario é verificado se o SS que gerou o processo mudou do original.
-        caso negatio ele some com o spinner de motivo da movimentação
-    */
+
+    /**
+     * LUCHE - 15/03/2019
+     *
+     * Metodo que avalia se local atual do spinner é diferente do que esta salvo no "banco"
+     *
+     * @return
+     */
+    private boolean hasLocationChanged() {
+        return ss_site.getmValueBD().hasConsistentValue(SearchableSpinner.ID)
+        && ss_site_zone.getmValueBD().hasConsistentValue(SearchableSpinner.ID)
+        && ss_site_zone_local.getmValueBD().hasConsistentValue(SearchableSpinner.ID)
+        && ss_site_zone_local.getmValue().hasConsistentValue(SearchableSpinner.ID)
+        && (!ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.SITE_CODE).equals(ss_site.getmValueBD().get(SearchableSpinner.ID))
+             || !ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.ZONE_CODE).equals(ss_site_zone.getmValueBD().get(SearchableSpinner.ID))
+             || !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals(ss_site_zone_local.getmValueBD().get(SearchableSpinner.ID))
+            );
+    }
+
+    /**
+     * LUCAS Barrionuevo
+     *
+     * Rotina responsavel pela visibilidade do SS de Motivo de movimentação
+     * Se o serial possui perfil de movimentação é verificado se o SS está visível,
+     * se não estiver ele busca a lista de motivos, seta o motivo padrão para aquele site
+     * e torna-o visivel. Caso contrario é verificado se o SS que gerou o processo mudou do original.
+     * caso negatio ele some com o spinner de motivo da movimentação
+     */
     private void setMoveReasonSS() {
 
-        if(mdProduct.getIo_control() == 1
-                && mdProductSerial.getSite_io_control() != null
-                && mdProductSerial.getSite_io_control() == 1
+        if( mdProduct.getIo_control() == 1
+            && mdProductSerial.getSite_io_control() != null
+            && mdProductSerial.getSite_io_control() == 1
         ) {
             if(ss_site_reason.getVisibility() == View.GONE) {
                 getMoveReasonList();
