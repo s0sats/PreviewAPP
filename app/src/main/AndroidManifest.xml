@@ -19,7 +19,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".ui.act052.Act052_Main"></activity>
         <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
@@ -335,7 +335,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:name=".ui.act050.Act050_Main"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act051.Act051_Main"
             android:label="@string/app_name"
@@ -356,9 +356,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:name=".view.act.test2.Teste2"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Receivers -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
