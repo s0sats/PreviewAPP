@@ -3,12 +3,15 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -78,6 +81,150 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
         //
         this.toContentValuesMapper = new GE_Custom_FormToContentValuesMapper();
         this.toGE_Custom_Form_LocalMapper = new CursorGE_Custom_FormMapper();
+    }
+
+    /**
+     * LUCHE - 15/03/2019
+     *
+     * Metodo insert ou update criado usando nova metodologia.
+     * Diferente dos metodo usados até hoje, nesse metodo, esse metodo retorna
+     * um objeto com informações referente a ação executada.
+     *
+     * Esse metodo primeiro tenta executar o update do registro e caso a qtd
+     * de linhas alterdas seja 0, executa o insert usando o metodo insertOrThrow
+     * que retorna SQLiteException em caso de erro no insert.
+     *
+     * O obj de retorno contem a informação de se houve erro ao executar o metodo
+     * e deve ser SEMPRE avalidado após ser retornado.
+     *
+     * Em caso de exception, o obj de retorno recebe a flag de erro e msg do erro
+     * além de gerar um arquivo de exception
+     *
+     * @param custom_form_local -> form a ser inserido
+     * @return Obj com informação referentes a operação executada, seu sucesso e
+     * info de qtd de registros alterados ou row id do insert
+     */
+    public DaoObjReturn addUpdateThrowException(GE_Custom_Form_Local custom_form_local){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        openDB();
+
+        try{
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if(addUpdateRet == 0){
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
+            }
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+        return daoObjReturn;
+    }
+
+    /**
+     * Metodo de insert ou update em massa usando nova metodologia com obj de retorno da operação.
+     *
+     * @param custom_form_locals
+     * @param status -> Var que identifica se antes da operação deve executar um TRUNCATE  na tabela.
+     * @return
+     */
+    public DaoObjReturn addUpdateThrowException(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        openDB();
+
+        try{
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
+                curAction = DaoObjReturn.UPDATE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                //
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                //Se nenhuma linha afetada, tenta insert
+                if (addUpdateRet == 0) {
+                    curAction = DaoObjReturn.INSERT;
+                    addUpdateRet = db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
+                }
+            }
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        return daoObjReturn;
     }
 
     @Override
