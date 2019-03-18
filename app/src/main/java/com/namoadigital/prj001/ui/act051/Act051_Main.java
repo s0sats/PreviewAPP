@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act051;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act052.Act052_Main;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -38,6 +42,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     private String fragTracking;
     private boolean fragIsOnlyOne;
     private Act051_Main_Presenter mPresenter;
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +215,11 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         }
     }
 
+    @Override
+    public void setWsProcess(String process) {
+        this.wsProcess = process;
+    }
+
     private void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -220,7 +230,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
         ) {
-            mPresenter.executeSerialSearch(
+            mPresenter.executeSerialProcessSearch(
                     optionsInfo.get(PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
                     optionsInfo.get(Frg_Serial_Search.TRACKING)
@@ -322,7 +332,45 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     @Override
-    public void callAct020(Context context, Bundle bundle) {
+    public void callAct052(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act052_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        if(bundle != null){
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(wsProcess.equals(WS_IO_Serial_Process_Search.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processSearchResult(mLink);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
 
     }
 }
