@@ -1,0 +1,525 @@
+package com.namoadigital.prj001.dao;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
+import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
+
+    private final Mapper<IO_Inbound, ContentValues> toContentValuesMapper;
+    private final Mapper<Cursor, IO_Inbound> toIO_InboundMapper;
+
+    public static final String TABLE = "io_inbound";
+    public static final String CUSTOMER_CODE = "customer_code";
+    public static final String INBOUND_PREFIX = "inbound_prefix";
+    public static final String INBOUND_CODE = "inbound_code";
+    public static final String INBOUND_DESC = "inbound_desc";
+    public static final String INBOUND_ID = "inbound_id";
+    public static final String INVOICE_NUMBER = "invoice_number";
+    public static final String INVOICE_DATE = "invoice_date";
+    public static final String ETA_DATE = "eta_date";
+    public static final String ARRIVAL_DATE = "arrival_date";
+    public static final String FROM_TYPE = "from_type";
+    public static final String FROM_PARTNER_CODE = "from_partner_code";
+    public static final String FROM_PARTNER_ID = "from_partner_id";
+    public static final String FROM_PARTNER_DESC = "from_partner_desc";
+    public static final String FROM_SITE_CODE = "from_site_code";
+    public static final String FROM_SITE_ID = "from_site_id";
+    public static final String FROM_SITE_DESC = "from_site_desc";
+    public static final String TO_SITE_CODE = "to_site_code";
+    public static final String TO_SITE_ID = "to_site_id";
+    public static final String TO_SITE_DESC = "to_site_desc";
+    public static final String CARRIER_CODE = "carrier_code";
+    public static final String CARRIER_ID = "carrier_id";
+    public static final String CARRIER_DESC = "carrier_desc";
+    public static final String TRUCK_NUMBER = "truck_number";
+    public static final String DRIVER = "driver";
+    public static final String COMMENTS = "comments";
+    public static final String STATUS = "status";
+    public static final String INBOUND_AUTO_SEQ = "inbound_auto_seq";
+    public static final String MODAL_CODE = "modal_code";
+    public static final String ALLOW_NEW_ITEM = "allow_new_item";
+    public static final String ZONE_CODE_CONF = "zone_code_conf";
+    public static final String LOCAL_CODE_CONF = "local_code_conf";
+    public static final String PUT_AWAY_PROCESS = "put_away_process";
+    public static final String DONE_AUTOMATIC = "done_automatic";
+
+    public static String[] columns = {
+            CUSTOMER_CODE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_DESC, INBOUND_ID, INVOICE_NUMBER, INVOICE_DATE,
+            ETA_DATE, ARRIVAL_DATE, FROM_TYPE, FROM_PARTNER_CODE, FROM_PARTNER_ID, FROM_PARTNER_DESC, FROM_SITE_CODE,
+            FROM_SITE_ID, FROM_SITE_DESC, TO_SITE_CODE, TO_SITE_ID, TO_SITE_DESC, CARRIER_CODE, CARRIER_ID, CARRIER_DESC,
+            TRUCK_NUMBER, DRIVER, COMMENTS, STATUS, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
+            PUT_AWAY_PROCESS, DONE_AUTOMATIC
+
+    };
+
+    public IO_InboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
+        super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
+        //
+        this.toContentValuesMapper = new IO_InboundToContentValuesMapper();
+        this.toIO_InboundMapper = new CursorIO_InboundMapper();
+
+    }
+
+    /**
+     * LUCHE - 18/03/2019
+     *
+     * Metodo insert ou update criado usando nova metodologia.
+     * Diferente dos metodo usados até hoje, nesse metodo, esse metodo retorna
+     * um objeto com informações referente a ação executada.
+     *
+     * Esse metodo primeiro tenta executar o update do registro e caso a qtd
+     * de linhas alterdas seja 0, executa o insert usando o metodo insertOrThrow
+     * que retorna SQLiteException em caso de erro no insert.
+     *
+     * O obj de retorno contem a informação de se houve erro ao executar o metodo
+     * e deve ser SEMPRE avalidado após ser retornado.
+     *
+     * Em caso de exception, o obj de retorno recebe a flag de erro e msg do erro
+     * além de gerar um arquivo de exception
+     *
+     * @param io_inbound -> form a ser inserido
+     * @return Obj com informação referentes a operação executada, seu sucesso e
+     * info de qtd de registros alterados ou row id do insert
+     */
+    @Override
+    public DaoObjReturn addUpdate(IO_Inbound io_inbound) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        openDB();
+
+        try{
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_inbound.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_PREFIX).append(" = '").append(String.valueOf(io_inbound.getInbound_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_inbound.getInbound_code())).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_inbound), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if(addUpdateRet == 0){
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_inbound));
+            }
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+
+        return daoObjReturn;
+    }
+
+    @Override
+    public DaoObjReturn addUpdate(List<IO_Inbound>  io_inbounds, boolean status) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        openDB();
+
+        try{
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (IO_Inbound io_inbound : io_inbounds) {
+                curAction = DaoObjReturn.UPDATE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_inbound.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(INBOUND_PREFIX).append(" = '").append(String.valueOf(io_inbound.getInbound_prefix())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_inbound.getInbound_code())).append("'");
+                //Tenta update e armazena retorno
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_inbound), sbWhere.toString(), null);
+                //Se nenhuma linha afetada, tenta insert
+                if(addUpdateRet == 0){
+                    curAction = DaoObjReturn.INSERT;
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_inbound));
+                }
+            }
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        return daoObjReturn;
+    }
+
+    @Override
+    public void addUpdate(String sQuery) {
+        openDB();
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public void remove(String sQuery) {
+        openDB();
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public IO_Inbound getByString(String sQuery) {
+        IO_Inbound io_inbound = null;
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                io_inbound = toIO_InboundMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_inbound;
+    }
+
+    @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                hmAux = CursorToHMAuxMapper.mapN(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
+    @Override
+    public List<IO_Inbound> query(String sQuery) {
+        List<IO_Inbound> io_inbounds = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                IO_Inbound uAux = toIO_InboundMapper.map(cursor);
+                io_inbounds.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_inbounds;
+    }
+
+    @Override
+    public List<HMAux> query_HM(String sQuery) {
+        List<HMAux> io_inbounds = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                io_inbounds.add(CursorToHMAuxMapper.mapN(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_inbounds;
+    }
+
+    private class CursorIO_InboundMapper implements Mapper<Cursor, IO_Inbound> {
+        @Override
+        public IO_Inbound map(Cursor cursor) {
+            IO_Inbound io_inbound = new IO_Inbound();
+            //
+            io_inbound.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            io_inbound.setInbound_prefix(cursor.getInt(cursor.getColumnIndex(INBOUND_PREFIX)));
+            io_inbound.setInbound_code(cursor.getInt(cursor.getColumnIndex(INBOUND_CODE)));
+            io_inbound.setInbound_id(cursor.getString(cursor.getColumnIndex(INBOUND_ID)));
+            if(cursor.isNull(cursor.getColumnIndex(INBOUND_DESC))){
+                io_inbound.setInbound_desc(null);
+            }else {
+                io_inbound.setInbound_desc(cursor.getString(cursor.getColumnIndex(INBOUND_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(INVOICE_NUMBER))){
+                io_inbound.setInvoice_number(null);
+            }else {
+                io_inbound.setInvoice_number(cursor.getString(cursor.getColumnIndex(INVOICE_NUMBER)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(INVOICE_DATE))){
+                io_inbound.setInvoice_date(null);
+            }else {
+                io_inbound.setInvoice_date(cursor.getString(cursor.getColumnIndex(INVOICE_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ETA_DATE))){
+                io_inbound.setEta_date(null);
+            }else {
+                io_inbound.setEta_date(cursor.getString(cursor.getColumnIndex(ETA_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ARRIVAL_DATE))){
+                io_inbound.setArrival_date(null);
+            }else {
+                io_inbound.setArrival_date(cursor.getString(cursor.getColumnIndex(ARRIVAL_DATE)));
+            }
+            io_inbound.setFrom_type(cursor.getString(cursor.getColumnIndex(FROM_TYPE)));
+            if(cursor.isNull(cursor.getColumnIndex(FROM_PARTNER_CODE))){
+                io_inbound.setFrom_partner_code(null);
+            }else {
+                io_inbound.setFrom_partner_code(cursor.getInt(cursor.getColumnIndex(FROM_PARTNER_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FROM_PARTNER_ID))){
+                io_inbound.setFrom_partner_id(null);
+            }else {
+                io_inbound.setFrom_partner_id(cursor.getString(cursor.getColumnIndex(FROM_PARTNER_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FROM_PARTNER_DESC))){
+                io_inbound.setFrom_partner_desc(null);
+            }else {
+                io_inbound.setFrom_partner_desc(cursor.getString(cursor.getColumnIndex(FROM_PARTNER_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FROM_SITE_CODE))){
+                io_inbound.setFrom_site_code(null);
+            }else {
+                io_inbound.setFrom_site_code(cursor.getInt(cursor.getColumnIndex(FROM_SITE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FROM_SITE_ID))){
+                io_inbound.setFrom_site_id(null);
+            }else {
+                io_inbound.setFrom_site_id(cursor.getString(cursor.getColumnIndex(FROM_SITE_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FROM_SITE_DESC))){
+                io_inbound.setFrom_site_desc(null);
+            }else {
+                io_inbound.setFrom_site_desc(cursor.getString(cursor.getColumnIndex(FROM_SITE_DESC)));
+            }
+            io_inbound.setTo_site_code(cursor.getInt(cursor.getColumnIndex(TO_SITE_CODE)));
+            io_inbound.setTo_site_id(cursor.getString(cursor.getColumnIndex(TO_SITE_ID)));
+            io_inbound.setTo_site_desc(cursor.getString(cursor.getColumnIndex(TO_SITE_DESC)));
+            if(cursor.isNull(cursor.getColumnIndex(CARRIER_CODE))){
+                io_inbound.setCarrier_code(null);
+            }else {
+                io_inbound.setCarrier_code(cursor.getInt(cursor.getColumnIndex(CARRIER_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CARRIER_ID))){
+                io_inbound.setCarrier_id(null);
+            }else {
+                io_inbound.setCarrier_id(cursor.getString(cursor.getColumnIndex(CARRIER_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CARRIER_DESC))){
+                io_inbound.setCarrier_desc(null);
+            }else {
+                io_inbound.setCarrier_desc(cursor.getString(cursor.getColumnIndex(CARRIER_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(TRUCK_NUMBER))){
+                io_inbound.setTruck_number(null);
+            }else {
+                io_inbound.setTruck_number(cursor.getString(cursor.getColumnIndex(TRUCK_NUMBER)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DRIVER))){
+                io_inbound.setDriver(null);
+            }else {
+                io_inbound.setDriver(cursor.getString(cursor.getColumnIndex(DRIVER)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(COMMENTS))){
+                io_inbound.setComments(null);
+            }else {
+                io_inbound.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
+            }
+            io_inbound.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            io_inbound.setInbound_auto_seq(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_SEQ)));
+            if(cursor.isNull(cursor.getColumnIndex(MODAL_CODE))){
+                io_inbound.setModal_code(null);
+            }else {
+                io_inbound.setModal_code(cursor.getInt(cursor.getColumnIndex(MODAL_CODE)));
+            }
+            io_inbound.setAllow_new_item(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_ITEM)));
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_CODE_CONF))){
+                io_inbound.setZone_code_conf(null);
+            }else {
+                io_inbound.setZone_code_conf(cursor.getInt(cursor.getColumnIndex(ZONE_CODE_CONF)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LOCAL_CODE_CONF))){
+                io_inbound.setLocal_code_conf(null);
+            }else {
+                io_inbound.setLocal_code_conf(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE_CONF)));
+            }
+            io_inbound.setPut_away_process(cursor.getInt(cursor.getColumnIndex(PUT_AWAY_PROCESS)));
+            io_inbound.setDone_automatic(cursor.getInt(cursor.getColumnIndex(DONE_AUTOMATIC)));
+            //
+            return io_inbound;
+        }
+    }
+
+    private class IO_InboundToContentValuesMapper implements Mapper<IO_Inbound, ContentValues> {
+        @Override
+        public ContentValues map(IO_Inbound io_inbound) {
+            ContentValues contentValues = new ContentValues();
+            //
+            if(io_inbound.getCustomer_code() > -1){
+                contentValues.put(CUSTOMER_CODE,io_inbound.getCustomer_code());
+            }
+            if(io_inbound.getInbound_prefix() > -1){
+                contentValues.put(INBOUND_PREFIX,io_inbound.getInbound_prefix());
+            }
+            if(io_inbound.getInbound_code() > -1){
+                contentValues.put(INBOUND_CODE,io_inbound.getInbound_code());
+            }
+            if(io_inbound.getInbound_id() != null){
+                contentValues.put(INBOUND_ID,io_inbound.getInbound_id());
+            }
+            contentValues.put(INBOUND_DESC,io_inbound.getInbound_desc());
+            contentValues.put(INVOICE_NUMBER,io_inbound.getInvoice_number());
+            contentValues.put(INVOICE_DATE,io_inbound.getInvoice_date());
+            contentValues.put(ETA_DATE,io_inbound.getEta_date());
+            contentValues.put(ARRIVAL_DATE,io_inbound.getArrival_date());
+            if(io_inbound.getFrom_type() != null){
+                contentValues.put(FROM_TYPE,io_inbound.getFrom_type());
+            }
+            contentValues.put(FROM_PARTNER_CODE,io_inbound.getFrom_partner_code());
+            contentValues.put(FROM_PARTNER_ID,io_inbound.getFrom_partner_id());
+            contentValues.put(FROM_PARTNER_DESC,io_inbound.getFrom_partner_desc());
+            contentValues.put(FROM_SITE_CODE,io_inbound.getFrom_site_code());
+            contentValues.put(FROM_SITE_ID,io_inbound.getFrom_site_id());
+            contentValues.put(FROM_SITE_DESC,io_inbound.getFrom_site_desc());
+            if(io_inbound.getTo_site_code() > -1){
+                contentValues.put(TO_SITE_CODE,io_inbound.getTo_site_code());
+            }
+            if(io_inbound.getTo_site_id() != null){
+                contentValues.put(TO_SITE_ID,io_inbound.getTo_site_id());
+            }
+            if(io_inbound.getTo_site_desc() != null){
+                contentValues.put(TO_SITE_DESC,io_inbound.getTo_site_desc());
+            }
+            contentValues.put(CARRIER_CODE,io_inbound.getCarrier_code());
+            contentValues.put(CARRIER_ID,io_inbound.getCarrier_id());
+            contentValues.put(CARRIER_DESC,io_inbound.getCarrier_desc());
+            contentValues.put(TRUCK_NUMBER,io_inbound.getTruck_number());
+            contentValues.put(DRIVER,io_inbound.getDriver());
+            contentValues.put(COMMENTS,io_inbound.getComments());
+            if(io_inbound.getStatus() != null){
+                contentValues.put(STATUS,io_inbound.getStatus());
+            }
+            if(io_inbound.getInbound_auto_seq() > -1){
+                contentValues.put(INBOUND_AUTO_SEQ,io_inbound.getInbound_auto_seq());
+            }
+            contentValues.put(MODAL_CODE,io_inbound.getModal_code());
+            if(io_inbound.getAllow_new_item() > -1){
+                contentValues.put(ALLOW_NEW_ITEM,io_inbound.getAllow_new_item());
+            }
+            contentValues.put(ZONE_CODE_CONF,io_inbound.getZone_code_conf());
+            contentValues.put(LOCAL_CODE_CONF,io_inbound.getLocal_code_conf());
+            if(io_inbound.getPut_away_process() > -1){
+                contentValues.put(PUT_AWAY_PROCESS,io_inbound.getPut_away_process());
+            }
+            if(io_inbound.getDone_automatic() > -1){
+                contentValues.put(DONE_AUTOMATIC,io_inbound.getDone_automatic());
+            }
+            //
+            return contentValues;
+        }
+    }
+}
