@@ -13,17 +13,14 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
-import com.namoadigital.prj001.model.TSerial_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
-import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -114,7 +111,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 //                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
 //                }
 //            }
-            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            ArrayList<IO_Serial_Process_Record> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), isOnline);
         }
@@ -137,17 +134,19 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
         return md_product;
     }
 
-    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
-        ArrayList<MD_Product_Serial> serial_list =
-                (ArrayList<MD_Product_Serial>) serialDao.query(
-                        new Sql_Act020_002(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ToolBox_Con.getPreference_Site_Code(context),
-                                product_id,
-                                serial_id,
-                                tracking
-                        ).toSqlQuery()
-                );
+    private ArrayList<IO_Serial_Process_Record> hasLocalSerial(String product_id, String serial_id, String tracking) {
+//        ArrayList<MD_Product_Serial> serial_list =
+//                (ArrayList<MD_Product_Serial>) serialDao.query(
+//                        new Sql_Act020_002(
+//                                ToolBox_Con.getPreference_Customer_Code(context),
+//                                ToolBox_Con.getPreference_Site_Code(context),
+//                                product_id,
+//                                serial_id,
+//                                tracking
+//                        ).toSqlQuery()
+//                );
+
+        ArrayList<IO_Serial_Process_Record> serial_list = new ArrayList<>();
 
         return serial_list;
     }
@@ -160,8 +159,8 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                 T_IO_Serial_Process_Response.class);
         //
         ArrayList<IO_Serial_Process_Record> serial_list = rec.getRecord();
-        //
-        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page());
+        //Ultimo parametro forçado como true pois a resposta veio do WS
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page(),true);
     }
 
     @Override

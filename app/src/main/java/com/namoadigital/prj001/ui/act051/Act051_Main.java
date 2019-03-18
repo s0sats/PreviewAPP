@@ -366,4 +366,11 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
             mPresenter.processSearchResult(mLink);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+
+    }
 }

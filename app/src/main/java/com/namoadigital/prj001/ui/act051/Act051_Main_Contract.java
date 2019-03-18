@@ -20,7 +20,7 @@ public interface Act051_Main_Contract {
 
         MD_Product searchProduct(String product_id);
 
-        void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page);
+        void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page, boolean isOnline);
 
         void processSearchResult(String result);
 
