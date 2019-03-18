@@ -44,6 +44,8 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_SERIAL_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_serial.ws";
 
+    public static final String WS_IO_SERIAL_PROCESS_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_product_serial.ws";
+
     public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";
 

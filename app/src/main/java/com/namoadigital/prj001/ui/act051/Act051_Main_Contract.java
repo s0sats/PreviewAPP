@@ -3,8 +3,8 @@ package com.namoadigital.prj001.ui.act051;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -16,11 +16,13 @@ public interface Act051_Main_Contract {
     interface I_Presenter{
         void getMD_Products();
 
-        void executeSerialSearch(String product_id, String serial_id, String tracking);
+        void executeSerialProcessSearch(String product_id, String serial_id, String tracking);
 
         MD_Product searchProduct(String product_id);
 
-        void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
+        void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page);
+
+        void processSearchResult(String result);
     }
 
     interface I_View{
@@ -31,6 +33,8 @@ public interface Act051_Main_Contract {
 
         void showMsg(String title, String msg);
 
-        void callAct020(Context context, Bundle bundle);
+        void callAct052(Context context, Bundle bundle);
+
+        void setWsProcess(String process);
     }
 }

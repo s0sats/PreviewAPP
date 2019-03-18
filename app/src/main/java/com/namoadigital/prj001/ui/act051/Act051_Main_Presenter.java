@@ -4,13 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
+import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
@@ -57,44 +63,56 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+    public void executeSerialProcessSearch(String product_id, String serial_id, String tracking) {
         mdProduct = searchProduct(product_id);
         mProduct_id = product_id;
         mSerial_id = serial_id;
         mTracking = tracking;
 
         if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Serial_Process_Search.class.getName());
+            //
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
             );
             //
-            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+            Intent mIntent = new Intent(context, WBR_IO_Serial_Process_Search.class);
             Bundle bundle = new Bundle();
             //
+            bundle.putString(MD_SiteDao.SITE_CODE,ToolBox_Con.getPreference_Site_Code(context));
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct!= null ?  String.valueOf(mdProduct.getProduct_code()) : null );
-            //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
-            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
-            //
-            if (serial_list.size() > 0) {
-                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-            } else {
-                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-                    // mudar mensagem
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                } else {
-                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-                }
-            }
+            /**
+             *
+             *
+             * CRIAR METODO QUE GERARÁ ITENS OFFLINE
+             *
+             * PRIMEIRO NECESSARIO CRIAÇÃO DAS TABELAS DE IO
+             *
+             *
+             */
+            ToolBox_Inf.showNoConnectionDialog(context);
+
+//            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+//            //
+//            if (serial_list.size() > 0) {
+//                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+//            } else {
+//                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
+//                    // mudar mensagem
+//                    ToolBox_Inf.showNoConnectionDialog(context);
+//                } else {
+//                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+//                }
+//            }
         }
     }
 
@@ -131,7 +149,19 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
+    public void processSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        T_IO_Serial_Process_Response rec = gson.fromJson(
+                result,
+                T_IO_Serial_Process_Response.class);
+        //
+        ArrayList<IO_Serial_Process_Record> serial_list = rec.getRecord();
+        //
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page());
+    }
+
+    @Override
+    public void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -139,7 +169,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             );
         } else {
 
-            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+            ArrayList<IO_Serial_Process_Record> results = processEqualCheck(serial_list);
 
             Bundle bundle = new Bundle();
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
@@ -165,18 +195,18 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
 
-            mView.callAct020(context, bundle);
+            mView.callAct052(context, bundle);
         }
     }
 
-    private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
-        ArrayList<MD_Product_Serial> results = new ArrayList<>();
+    private ArrayList<IO_Serial_Process_Record> processEqualCheck(ArrayList<IO_Serial_Process_Record> serial_list) {
+        ArrayList<IO_Serial_Process_Record> results = new ArrayList<>();
 
         if (mdProduct == null) {
             return results;
         } else {
 
-            for (MD_Product_Serial psAux : serial_list) {
+            for (IO_Serial_Process_Record psAux : serial_list) {
                 String res = "";
 
                 if (!mdProduct.getProduct_id().equalsIgnoreCase(psAux.getProduct_id())) {
