@@ -23,6 +23,9 @@ public interface Act051_Main_Contract {
         void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page);
 
         void processSearchResult(String result);
+
+        void onBackPressedClicked();
+
     }
 
     interface I_View{
@@ -36,5 +39,7 @@ public interface Act051_Main_Contract {
         void callAct052(Context context, Bundle bundle);
 
         void setWsProcess(String process);
+
+        void callAct005(Context context);
     }
 }

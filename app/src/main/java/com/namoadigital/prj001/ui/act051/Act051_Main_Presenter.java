@@ -17,12 +17,13 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -68,8 +69,8 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
         mProduct_id = product_id;
         mSerial_id = serial_id;
         mTracking = tracking;
-
-        if (ToolBox_Con.isOnline(context)) {
+        boolean isOnline = ToolBox_Con.isOnline(context);
+        if (isOnline) {
             mView.setWsProcess(WS_IO_Serial_Process_Search.class.getName());
             //
             mView.showPD(
@@ -113,6 +114,9 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 //                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
 //                }
 //            }
+            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            //
+            defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), isOnline);
         }
     }
 
@@ -161,7 +165,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page) {
+    public void defineSearchResultFlow(ArrayList<IO_Serial_Process_Record> serial_list, long record_count, long record_page, boolean isOnline) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -190,6 +194,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
+            bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS, isOnline);
             //
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mProduct_id); //mdProduct != null ? mdProduct.getProduct_id() : "");
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
@@ -197,6 +202,11 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 
             mView.callAct052(context, bundle);
         }
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct005(context);
     }
 
     private ArrayList<IO_Serial_Process_Record> processEqualCheck(ArrayList<IO_Serial_Process_Record> serial_list) {

@@ -14,8 +14,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,8 +28,6 @@ import java.util.List;
 import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
 
 public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_Main_Contract.I_View {
-
-    //public static final String SERIAL_PROCESS_LIST_KEY = "SERIAL_PROCESS_LIST";
 
     public static final String title_lbl = "_title";
     private FragmentManager fm;
@@ -340,6 +339,14 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         if(bundle != null){
             mIntent.putExtras(bundle);
         }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
