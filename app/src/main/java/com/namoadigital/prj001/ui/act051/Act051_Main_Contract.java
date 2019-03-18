@@ -20,7 +20,12 @@ public interface Act051_Main_Contract {
 
         MD_Product searchProduct(String product_id);
 
-        void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
+        void extractSearchResult(String result);
+
+        void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page, boolean isOnline);
+
+        void onBackPressedClicked();
+
     }
 
     interface I_View{
@@ -31,6 +36,8 @@ public interface Act051_Main_Contract {
 
         void showMsg(String title, String msg);
 
-        void callAct020(Context context, Bundle bundle);
+        void callAct052(Context context, Bundle bundle);
+
+        void callAct005(Context context);
     }
 }

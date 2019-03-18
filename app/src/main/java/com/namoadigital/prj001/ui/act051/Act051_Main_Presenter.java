@@ -4,19 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -62,8 +64,8 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
         mProduct_id = product_id;
         mSerial_id = serial_id;
         mTracking = tracking;
-
-        if (ToolBox_Con.isOnline(context)) {
+        boolean isOnline = ToolBox_Con.isOnline(context);
+        if (isOnline) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
@@ -72,7 +74,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct!= null ?  String.valueOf(mdProduct.getProduct_code()) : null );
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct != null ? String.valueOf(mdProduct.getProduct_code()) : null);
             //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
@@ -85,16 +87,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
         } else {
             ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
-            if (serial_list.size() > 0) {
-                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-            } else {
-                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-                    // mudar mensagem
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                } else {
-                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-                }
-            }
+            defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), isOnline);
         }
     }
 
@@ -131,7 +124,19 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
+        //
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page(), true);
+    }
+
+    @Override
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page, boolean isOnline) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -160,13 +165,19 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
+            bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS, isOnline);
             //
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mProduct_id); //mdProduct != null ? mdProduct.getProduct_id() : "");
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
 
-            mView.callAct020(context, bundle);
+            mView.callAct052(context, bundle);
         }
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct005(context);
     }
 
     private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
