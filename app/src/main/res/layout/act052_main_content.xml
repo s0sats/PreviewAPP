@@ -12,10 +12,10 @@
     tools:showIn="@layout/act052_main">
 
     <TextView
-        android:id="@+id/act052_tv_record_info"
+        android:id="@+id/act052_tv_serial_list_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Exibindo NN Registros"
         android:textSize="@dimen/font_size_title"
         app:layout_constraintBottom_toTopOf="@+id/act052_btn_create_serial"
@@ -28,8 +28,9 @@
         android:id="@+id/act052_btn_create_serial"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/namoa_cell_2_states"
         android:gravity="left"
         android:padding="20dp"
@@ -39,13 +40,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act052_tv_record_info" />
+        app:layout_constraintTop_toBottomOf="@+id/act052_tv_serial_list_size" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/act052_rv_serial"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/act052_footer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

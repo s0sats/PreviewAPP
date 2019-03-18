@@ -9,24 +9,38 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_IO_Serial_List_Adapter.ViewHolder> implements Filterable {
 
-    private List<Object> mValues;
-    private List<Object> mFilteredValues;
+    private final boolean isOnline;
+    private List<IO_Serial_Process_Record> mValues;
+//    private List<IO_Serial_Process_Record> mFilteredValues;
     private Context context;
+    private OnRecyclerViewClickListener mListener;
+    private HMAux hmAux_Trans;
 
-    public Act052_IO_Serial_List_Adapter(Context context) {
+    private static final String IN_CONF  = "IN_CONF";
+    private static final String IN_PUT_AWAY  = "IN_PUT_AWAY";
+    private static final String MOVE_PLANNED  = "MOVE_PLANNED";
+    private static final String MOVE  = "MOVE";
+    private static final String OUT_PICKING = "OUT_PICKING";
+    private static final String OUT_CONF  = "OUT_CONF";
+
+    public Act052_IO_Serial_List_Adapter(Context context,List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline) {
         this.context = context;
-
-        mValues = new ArrayList<>();
-        mFilteredValues = new ArrayList<>();
+        this.mValues = mValues;
+        this.mListener = mListener;
+        this.hmAux_Trans = hmAux_Trans;
+        this.isOnline = isOnline;
     }
 
     @NonNull
@@ -40,7 +54,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-
+        viewHolder.bindData(mValues.get(position));
     }
 
     @Override
@@ -73,5 +87,41 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
             tvSerialLocation = itemView.findViewById(R.id.act052_tv_io_serial_location);
             ivOfflineMode = itemView.findViewById(R.id.act052_main_iv_offline_mode);
         }
+
+        public void bindData(IO_Serial_Process_Record data){
+            String processType = data.getProcess_type();
+            setProcessStatus(processType);
+
+            tvProductExtCodeVal.setText(data.getProduct_id());
+            tvProductDescVal.setText(data.getProduct_desc());
+            tvSerialExtCodeVal.setText(data.getSerial_id());
+            tvSerialLocation.setText(formatSerialLocation(data));
+            if(isOnline){
+                ivOfflineMode.setVisibility(View.INVISIBLE);
+            }else{
+                ivOfflineMode.setVisibility(View.VISIBLE);
+            }
+//            ivOfflineMode
+        }
+
+        private String formatSerialLocation(IO_Serial_Process_Record data) {
+            return data.getSite_desc() + " | "+data.getZone_desc() + " | " +data.getLocal_id();
+        }
+
+
+        private void setProcessStatus(String processType) {
+            switch (processType){
+                case IN_CONF:
+                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
+                    break;
+                case OUT_CONF:
+                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
+                    break;
+                default:
+                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
+            }
+            tvStatusDesc.setText(hmAux_Trans.get(processType));
+        }
+
     }
 }
