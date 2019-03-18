@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class IO_Serial_Process_Record implements Serializable {
     private static final long serialVersionUID = -3829891887006189025L;
 
-
     private long customer_code;
     private long product_code;
     private String product_id;
@@ -152,7 +151,9 @@ public class IO_Serial_Process_Record implements Serializable {
         this.tracking_list = tracking_list;
     }
 
-    public class TrackingObj{
+    public class TrackingObj implements Serializable{
+        private static final long serialVersionUID = 4479285985116101246L;
+
         private String tracking;
 
         public String getTracking() {
