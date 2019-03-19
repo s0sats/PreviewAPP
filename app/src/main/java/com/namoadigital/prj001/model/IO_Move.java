@@ -27,6 +27,7 @@ public class IO_Move {
     private  Integer outbound_item;
     private  String done_date;
     private  Integer done_user;
+    private  String done_user_nick;
     private  String status;
 
     public long getCustomer_code() {
@@ -227,6 +228,14 @@ public class IO_Move {
 
     public void setDone_user(Integer done_user) {
         this.done_user = done_user;
+    }
+
+    public String getDone_user_nick() {
+        return done_user_nick;
+    }
+
+    public void setDone_user_nick(String done_user_nick) {
+        this.done_user_nick = done_user_nick;
     }
 
     public String getStatus() {

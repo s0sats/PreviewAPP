@@ -6,19 +6,26 @@ public class IO_Inbound_Item {
     private  int inbound_code;
     private  int inbound_item;
     private  long product_code;
-    private  String product_id;
-    private  String product_desc;
     private  long serial_code;
-    private  String serial_id;
     private  Integer site_code;
     private  Integer zone_code;
-    private  String zone_id;
-    private  String zone_desc;
     private  Integer local_code;
-    private  String local_id;
     private  String conf_date;
     private  String status;
     private  String comments;
+
+    public IO_Inbound_Item() {
+        this.customer_code = -1;
+        this.inbound_prefix = -1;
+        this.inbound_code = -1;
+        this.inbound_item = -1;
+    }
+
+    public void setPK(IO_Inbound io_inbound){
+        this.customer_code = io_inbound.getCustomer_code();
+        this.inbound_prefix = io_inbound.getInbound_prefix();
+        this.inbound_code = io_inbound.getInbound_code();
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -60,36 +67,12 @@ public class IO_Inbound_Item {
         this.product_code = product_code;
     }
 
-    public String getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
-    }
-
-    public String getProduct_desc() {
-        return product_desc;
-    }
-
-    public void setProduct_desc(String product_desc) {
-        this.product_desc = product_desc;
-    }
-
     public long getSerial_code() {
         return serial_code;
     }
 
     public void setSerial_code(long serial_code) {
         this.serial_code = serial_code;
-    }
-
-    public String getSerial_id() {
-        return serial_id;
-    }
-
-    public void setSerial_id(String serial_id) {
-        this.serial_id = serial_id;
     }
 
     public Integer getSite_code() {
@@ -108,36 +91,12 @@ public class IO_Inbound_Item {
         this.zone_code = zone_code;
     }
 
-    public String getZone_id() {
-        return zone_id;
-    }
-
-    public void setZone_id(String zone_id) {
-        this.zone_id = zone_id;
-    }
-
-    public String getZone_desc() {
-        return zone_desc;
-    }
-
-    public void setZone_desc(String zone_desc) {
-        this.zone_desc = zone_desc;
-    }
-
     public Integer getLocal_code() {
         return local_code;
     }
 
     public void setLocal_code(Integer local_code) {
         this.local_code = local_code;
-    }
-
-    public String getLocal_id() {
-        return local_id;
-    }
-
-    public void setLocal_id(String local_id) {
-        this.local_id = local_id;
     }
 
     public String getConf_date() {

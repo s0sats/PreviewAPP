@@ -6,16 +6,26 @@ public class IO_Outbound_Item {
     private  int outbound_code;
     private  int outbound_item;
     private  long product_code;
-    private  String product_id;
-    private  String product_desc;
     private  long serial_code;
-    private  String serial_id;
     private  String conf_date;
     private  String status;
     private  Integer inbound_code;
     private  Integer inbound_item;
     private  String comments;
     private  Integer inbound_prefix;
+
+    public void IO_Outbound_Item(){
+        this.customer_code = -1;
+        this.outbound_prefix = -1;
+        this.outbound_code = -1;
+        this.outbound_item = -1;
+    }
+
+    public void setPK(IO_Outbound io_outbound){
+        this.customer_code = io_outbound.getCustomer_code();
+        this.outbound_prefix = io_outbound.getOutbound_prefix();
+        this.outbound_code = io_outbound.getOutbound_code();
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -57,36 +67,12 @@ public class IO_Outbound_Item {
         this.product_code = product_code;
     }
 
-    public String getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
-    }
-
-    public String getProduct_desc() {
-        return product_desc;
-    }
-
-    public void setProduct_desc(String product_desc) {
-        this.product_desc = product_desc;
-    }
-
     public long getSerial_code() {
         return serial_code;
     }
 
     public void setSerial_code(long serial_code) {
         this.serial_code = serial_code;
-    }
-
-    public String getSerial_id() {
-        return serial_id;
-    }
-
-    public void setSerial_id(String serial_id) {
-        this.serial_id = serial_id;
     }
 
     public String getConf_date() {

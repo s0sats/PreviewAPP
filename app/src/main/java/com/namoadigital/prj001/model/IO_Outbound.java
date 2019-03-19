@@ -1,41 +1,51 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class IO_Outbound {
-    private  long customer_code;
-    private  int outbound_prefix;
-    private  int outbound_code;
-    private  String outbound_desc;
-    private  String outbound_id;
-    private  int scn;
-    private  String origin;
-    private  String invoice_number;
-    private  String invoice_date;
-    private  String eta_date;
-    private  String departure_date;
-    private  String loading_date;
-    private  int from_site_code;
-    private  String from_site_id;
-    private  String from_site_desc;
-    private  String to_type;
-    private  Integer to_partner_code;
-    private  String to_partner_id;
-    private  String to_partner_desc;
-    private  Integer to_site_code;
-    private  String to_site_id;
-    private  String to_site_desc;
-    private  Integer carrier_code;
-    private  String carrier_id;
-    private  String carrier_desc;
-    private  String truck_number;
-    private  String driver;
-    private  String comments;
-    private  String status;
-    private  Integer modal_code;
-    private  int allow_new_item;
-    private  Integer zone_code_picking;
-    private  Integer local_code_picking;
-    private  int picking_process;
-    private  int done_automatic;
+
+    private long customer_code;
+    private int outbound_prefix;
+    private int outbound_code;
+    private String outbound_desc;
+    private String outbound_id;
+    private int scn;
+    private String origin;
+    private String invoice_number;
+    private String invoice_date;
+    private String eta_date;
+    private String departure_date;
+    private String loading_date;
+    private int from_site_code;
+    private String to_type;
+    private Integer to_partner_code;
+    private String to_partner_id;
+    private String to_partner_desc;
+    private Integer to_site_code;
+    private String to_site_id;
+    private String to_site_desc;
+    private Integer carrier_code;
+    private String carrier_id;
+    private String carrier_desc;
+    private String truck_number;
+    private String driver;
+    private String comments;
+    private String status;
+    private Integer modal_code;
+    private int allow_new_item;
+    private Integer zone_code_picking;
+    private Integer local_code_picking;
+    private int picking_process;
+    private int done_automatic;
+    private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
+
+    //Metodo necessario para repassar a pk do cabeçalho para o item
+    //Como esse metodo, exugamos o tamanho do json enviado pelo server
+    public void setPK(){
+        for (IO_Outbound_Item ioOutboundItem:items){
+            ioOutboundItem.setPK(this);
+        }
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -139,22 +149,6 @@ public class IO_Outbound {
 
     public void setFrom_site_code(int from_site_code) {
         this.from_site_code = from_site_code;
-    }
-
-    public String getFrom_site_id() {
-        return from_site_id;
-    }
-
-    public void setFrom_site_id(String from_site_id) {
-        this.from_site_id = from_site_id;
-    }
-
-    public String getFrom_site_desc() {
-        return from_site_desc;
-    }
-
-    public void setFrom_site_desc(String from_site_desc) {
-        this.from_site_desc = from_site_desc;
     }
 
     public String getTo_type() {
@@ -315,5 +309,13 @@ public class IO_Outbound {
 
     public void setDone_automatic(int done_automatic) {
         this.done_automatic = done_automatic;
+    }
+
+    public ArrayList<IO_Outbound_Item> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<IO_Outbound_Item> items) {
+        this.items = items;
     }
 }

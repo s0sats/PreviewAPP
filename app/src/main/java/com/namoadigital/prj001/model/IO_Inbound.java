@@ -1,40 +1,51 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class IO_Inbound {
 
-    private  long customer_code;
-    private  int inbound_prefix;
-    private  int inbound_code;
-    private  String inbound_desc;
-    private  String inbound_id;
-    private  String invoice_number;
-    private  String invoice_date;
-    private  String eta_date;
-    private  String arrival_date;
-    private  String from_type;
-    private  Integer from_partner_code;
-    private  String from_partner_id;
-    private  String from_partner_desc;
-    private  Integer from_site_code;
-    private  String from_site_id;
-    private  String from_site_desc;
-    private  int to_site_code;
-    private  String to_site_id;
-    private  String to_site_desc;
-    private  Integer carrier_code;
-    private  String carrier_id;
-    private  String carrier_desc;
-    private  String truck_number;
-    private  String driver;
-    private  String comments;
-    private  String status;
-    private  int inbound_auto_seq;
-    private  Integer modal_code;
-    private  int allow_new_item;
-    private  Integer zone_code_conf;
-    private  Integer local_code_conf;
-    private  int put_away_process;
-    private  int done_automatic;
+    private long customer_code;
+    private int inbound_prefix;
+    private int inbound_code;
+    private String inbound_id;
+    private String inbound_desc;
+    private int scn;
+    private String origin;
+    private String invoice_number;
+    private String invoice_date;
+    private String eta_date;
+    private String arrival_date;
+    private String from_type;
+    private Integer from_partner_code;
+    private String from_partner_id;
+    private String from_partner_desc;
+    private Integer from_site_code;
+    private String from_site_id;
+    private String from_site_desc;
+    private int to_site_code;
+    private Integer carrier_code;
+    private String carrier_id;
+    private String carrier_desc;
+    private String truck_number;
+    private String driver;
+    private String comments;
+    private String status;
+    private int inbound_auto_seq;
+    private Integer modal_code;
+    private int allow_new_item;
+    private Integer zone_code_conf;
+    private Integer local_code_conf;
+    private int put_away_process;
+    private int done_automatic;
+    private ArrayList<IO_Inbound_Item> items = new ArrayList<>();
+
+    //Metodo necessario para repassar a pk do cabeçalho para o item
+    //Como esse metodo, exugamos o tamanho do json enviado pelo server
+    public void setPK(){
+        for (IO_Inbound_Item inboundItem:items){
+            inboundItem.setPK(this);
+        }
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -74,6 +85,22 @@ public class IO_Inbound {
 
     public void setInbound_id(String inbound_id) {
         this.inbound_id = inbound_id;
+    }
+
+    public int getScn() {
+        return scn;
+    }
+
+    public void setScn(int scn) {
+        this.scn = scn;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 
     public String getInvoice_number() {
@@ -170,22 +197,6 @@ public class IO_Inbound {
 
     public void setTo_site_code(int to_site_code) {
         this.to_site_code = to_site_code;
-    }
-
-    public String getTo_site_id() {
-        return to_site_id;
-    }
-
-    public void setTo_site_id(String to_site_id) {
-        this.to_site_id = to_site_id;
-    }
-
-    public String getTo_site_desc() {
-        return to_site_desc;
-    }
-
-    public void setTo_site_desc(String to_site_desc) {
-        this.to_site_desc = to_site_desc;
     }
 
     public Integer getCarrier_code() {
@@ -298,5 +309,13 @@ public class IO_Inbound {
 
     public void setDone_automatic(int done_automatic) {
         this.done_automatic = done_automatic;
+    }
+
+    public ArrayList<IO_Inbound_Item> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<IO_Inbound_Item> items) {
+        this.items = items;
     }
 }
