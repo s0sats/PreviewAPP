@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act052;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,10 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.ui.act002.Act002_Main_Presenter;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -28,6 +32,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private RecyclerView mSerialRecyclerView;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     Act052_IO_Serial_List_Adapter mSerialListAdapter;
+    private Act052_Main_Presenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         recoverIntentsInfo();
         setSerialList();
         setTvSerialListSize();
+
+        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
+
     }
 
     private void setSerialList() {
@@ -125,7 +133,20 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void initFooter() {
-
+        iniFooter();
+        //
+        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
+        mAct_Info = Constant.ACT052;
+        mAct_Title = Constant.ACT052 + Constant.title_lbl;
+        //
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        //
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage();
+        setFooter();
     }
 
     private void initAction() {
@@ -155,5 +176,18 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     @Override
     public void onClickListButton() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        mPresenter.onBackPressedClicked();
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 }

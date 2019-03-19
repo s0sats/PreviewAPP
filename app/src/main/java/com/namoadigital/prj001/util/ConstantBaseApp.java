@@ -73,6 +73,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT049 = "act049";
     public static final String ACT050 = "act050";
     public static final String ACT051 = "act051";
+    public static final String ACT052 = "act052";
+
+    public static final String title_lbl = "_title";
 
     public static final String ACT_PRODUCT_SELECTION = "act_product_selection";
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
