@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -170,12 +171,13 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
-
+        mPresenter.defineIOSerialFlow(data);
     }
 
     @Override
     public void onClickListButton() {
-
+        Log.i("onClickListButton", "entrei e não fiz nada");
+        Toast.makeText(context, "Indo para a movimentação cega", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -3,9 +3,11 @@ package com.namoadigital.prj001.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -22,7 +24,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     private final boolean isOnline;
     private List<IO_Serial_Process_Record> mValues;
-//    private List<IO_Serial_Process_Record> mFilteredValues;
     private Context context;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
@@ -46,25 +47,30 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view;
-        if(viewType == R.layout.act052_main_serial_list_item) {
+        if(viewType == R.layout.act052_rv_blind_move_btn) {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
-            return new ListItemViewHolder(view);
+                    .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
+            return new FooterViewHolder(view);
         }
-
         view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
-        return new FooterViewHolder(view);
-
+                .inflate(R.layout.act052_main_serial_list_itemv2, viewGroup, false);
+        return new ListItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+
         try {
             if (viewHolder instanceof ListItemViewHolder) {
                 ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
-
-                vh.bindData(mValues.get(position));
+                final IO_Serial_Process_Record record = mValues.get(position);
+                vh.bindData(record);
+                vh.getItemView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onClickListItem(record);
+                    }
+                });
             } else if (viewHolder instanceof FooterViewHolder) {
                 FooterViewHolder vh = (FooterViewHolder) viewHolder;
             }
@@ -90,7 +96,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemViewType(int position) {
-        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
+        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_itemv2;
     }
 
     @Override
@@ -105,18 +111,31 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         protected final TextView tvProductDescVal;
         protected final TextView tvSerialExtCodeVal;
         protected final TextView tvSerialLocation;
+        protected final TextView tvSerialZone;
+        protected final TextView tvSerialPosition;
+        protected final TextView tvSerialListPosition;
         protected final ImageView ivOfflineMode;
         protected final ImageView ivStatusIcon;
+        private final View itemVIew;
+
 
         public ListItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.itemVIew = itemView;
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
             tvProductDescVal = itemView.findViewById(R.id.act052_tv_io_product_desc_val);
             tvSerialExtCodeVal = itemView.findViewById(R.id.act052_tv_io_serial_ext_code_val);
-            tvSerialLocation = itemView.findViewById(R.id.act052_tv_io_serial_location);
+            tvSerialLocation = itemView.findViewById(R.id.act052_tv_io_serial_desc);
             ivOfflineMode = itemView.findViewById(R.id.act052_main_iv_offline_mode);
+            tvSerialListPosition = itemView.findViewById(R.id.act052_tv_serial_list_position);
+            tvSerialZone = itemView.findViewById(R.id.act052_tv_io_serial_zone);
+            tvSerialPosition = itemView.findViewById(R.id.act052_tv_io_serial_position);
+        }
+
+        public View getItemView() {
+            return itemVIew;
         }
 
         public void bindData(IO_Serial_Process_Record data){
@@ -126,19 +145,23 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvProductExtCodeVal.setText(data.getProduct_id());
             tvProductDescVal.setText(data.getProduct_desc());
             tvSerialExtCodeVal.setText(data.getSerial_id());
+            tvSerialZone.setText(data.getZone_desc());
+            tvSerialPosition.setText(data.getLocal_id());
             tvSerialLocation.setText(formatSerialLocation(data));
+
+            int pos = getAdapterPosition() +1;
+            tvSerialListPosition.setText(String.valueOf(pos));
             if(isOnline){
                 ivOfflineMode.setVisibility(View.INVISIBLE);
             }else{
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
-//            ivOfflineMode
+
         }
 
         private String formatSerialLocation(IO_Serial_Process_Record data) {
-            return data.getSite_desc() + " | "+data.getZone_desc() + " | " +data.getLocal_id();
+            return data.getBrand_desc() + " | " + data.getModel_desc() + " | " + data.getColor_desc();
         }
-
 
         private void setProcessStatus(String processType) {
             switch (processType){
@@ -157,16 +180,17 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     }
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {
-
+        private final Button btnBlindMove;
         public FooterViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
+            btnBlindMove = itemView.findViewById(R.id.act052_btn_blind_move);
+            btnBlindMove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Do whatever you want on clicking the normal items
+                    mListener.onClickListButton();
                 }
             });
         }
+
     }
 }

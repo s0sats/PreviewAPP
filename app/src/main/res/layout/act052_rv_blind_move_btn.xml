@@ -7,7 +7,7 @@
     android:layout_margin="8dp">
 
     <Button
-        android:id="@+id/act052_btn_create_serial"
+        android:id="@+id/act052_btn_blind_move"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/namoa_cell_2_states"
