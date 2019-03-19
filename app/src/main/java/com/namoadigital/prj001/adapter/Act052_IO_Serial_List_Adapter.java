@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -19,7 +18,7 @@ import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
 
 import java.util.List;
 
-public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_IO_Serial_List_Adapter.ViewHolder> implements Filterable {
+public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private final boolean isOnline;
     private List<IO_Serial_Process_Record> mValues;
@@ -45,21 +44,53 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
 
     @NonNull
     @Override
-    public Act052_IO_Serial_List_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        View view;
+        if(viewType == R.layout.act052_main_serial_list_item) {
+            view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
+            return new ListItemViewHolder(view);
+        }
+
+        view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
+        return new FooterViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.bindData(mValues.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        try {
+            if (viewHolder instanceof ListItemViewHolder) {
+                ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
+
+                vh.bindData(mValues.get(position));
+            } else if (viewHolder instanceof FooterViewHolder) {
+                FooterViewHolder vh = (FooterViewHolder) viewHolder;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        //Tratamento para visualização de botão de movimento offline
+        if (mValues == null) {
+            return 0;
+        }
+
+        if (mValues.size() == 0) {
+            return 1;
+        }
+
+        return mValues.size() + 1;
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
     }
 
     @Override
@@ -67,7 +98,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
         return null;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ListItemViewHolder extends RecyclerView.ViewHolder {
 
         protected final TextView tvStatusDesc;
         protected final TextView tvProductExtCodeVal;
@@ -77,7 +108,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
         protected final ImageView ivOfflineMode;
         protected final ImageView ivStatusIcon;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ListItemViewHolder(@NonNull View itemView) {
             super(itemView);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
@@ -123,5 +154,19 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Act052_I
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }
 
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Do whatever you want on clicking the normal items
+                }
+            });
+        }
     }
 }
