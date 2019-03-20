@@ -29,7 +29,6 @@ import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
 
 public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_Main_Contract.I_View {
 
-    public static final String title_lbl = "_title";
     private FragmentManager fm;
     private Frg_Serial_Search mFrgSerialSearch;
     private HMAux hmAux_Trans_frg_serial_search;
@@ -281,7 +280,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT051;
-        mAct_Title = Constant.ACT051 + title_lbl;
+        mAct_Title = Constant.ACT051 + Constant.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);

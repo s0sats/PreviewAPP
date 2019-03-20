@@ -20,6 +20,15 @@ public class IO_Serial_Process_Record implements Serializable {
     private String zone_desc;
     private int local_code;
     private String local_id;
+    private int brand_code;
+    private String brand_id;
+    private String brand_desc;
+    private int model_code;
+    private String model_id;
+    private String model_desc;
+    private int color_code;
+    private String color_id;
+    private String color_desc;
     private String process_type;
     private ArrayList<TrackingObj> tracking_list;
 
@@ -135,6 +144,78 @@ public class IO_Serial_Process_Record implements Serializable {
         this.local_id = local_id;
     }
 
+    public int getBrand_code() {
+        return brand_code;
+    }
+
+    public void setBrand_code(int brand_code) {
+        this.brand_code = brand_code;
+    }
+
+    public String getBrand_id() {
+        return brand_id;
+    }
+
+    public void setBrand_id(String brand_id) {
+        this.brand_id = brand_id;
+    }
+
+    public String getBrand_desc() {
+        return brand_desc;
+    }
+
+    public void setBrand_desc(String brand_desc) {
+        this.brand_desc = brand_desc;
+    }
+
+    public int getModel_code() {
+        return model_code;
+    }
+
+    public void setModel_code(int model_code) {
+        this.model_code = model_code;
+    }
+
+    public String getModel_id() {
+        return model_id;
+    }
+
+    public void setModel_id(String model_id) {
+        this.model_id = model_id;
+    }
+
+    public String getModel_desc() {
+        return model_desc;
+    }
+
+    public void setModel_desc(String model_desc) {
+        this.model_desc = model_desc;
+    }
+
+    public int getColor_code() {
+        return color_code;
+    }
+
+    public void setColor_code(int color_code) {
+        this.color_code = color_code;
+    }
+
+    public String getColor_id() {
+        return color_id;
+    }
+
+    public void setColor_id(String color_id) {
+        this.color_id = color_id;
+    }
+
+    public String getColor_desc() {
+        return color_desc;
+    }
+
+    public void setColor_desc(String color_desc) {
+        this.color_desc = color_desc;
+    }
+
     public String getProcess_type() {
         return process_type;
     }
@@ -151,7 +232,7 @@ public class IO_Serial_Process_Record implements Serializable {
         this.tracking_list = tracking_list;
     }
 
-    public class TrackingObj implements Serializable{
+    public class TrackingObj implements Serializable {
         private static final long serialVersionUID = 4479285985116101246L;
 
         private String tracking;
