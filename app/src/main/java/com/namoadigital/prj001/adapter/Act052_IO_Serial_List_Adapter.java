@@ -3,7 +3,6 @@ package com.namoadigital.prj001.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +109,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         protected final TextView tvProductExtCodeVal;
         protected final TextView tvProductDescVal;
         protected final TextView tvSerialExtCodeVal;
-        protected final TextView tvSerialLocation;
+        protected final TextView tvSerialBrandModelColor;
         protected final TextView tvSerialZone;
         protected final TextView tvSerialPosition;
         protected final TextView tvSerialListPosition;
@@ -127,7 +126,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
             tvProductDescVal = itemView.findViewById(R.id.act052_tv_io_product_desc_val);
             tvSerialExtCodeVal = itemView.findViewById(R.id.act052_tv_io_serial_ext_code_val);
-            tvSerialLocation = itemView.findViewById(R.id.act052_tv_io_serial_desc);
+            tvSerialBrandModelColor = itemView.findViewById(R.id.act052_tv_io_serial_desc);
             ivOfflineMode = itemView.findViewById(R.id.act052_main_iv_offline_mode);
             tvSerialListPosition = itemView.findViewById(R.id.act052_tv_serial_list_position);
             tvSerialZone = itemView.findViewById(R.id.act052_tv_io_serial_zone);
@@ -147,7 +146,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvSerialExtCodeVal.setText(data.getSerial_id());
             tvSerialZone.setText(data.getZone_desc());
             tvSerialPosition.setText(data.getLocal_id());
-            tvSerialLocation.setText(formatSerialLocation(data));
+            setTvSerialBrandModelColor(data);
 
             int pos = getAdapterPosition() +1;
             tvSerialListPosition.setText(String.valueOf(pos));
@@ -159,8 +158,20 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
         }
 
-        private String formatSerialLocation(IO_Serial_Process_Record data) {
-            return data.getBrand_desc() + " | " + data.getModel_desc() + " | " + data.getColor_desc();
+        private void setTvSerialBrandModelColor(IO_Serial_Process_Record data) {
+            String serialBrandModelColor = formatSerialBrandModelColor(data);
+            if(serialBrandModelColor == null || serialBrandModelColor.isEmpty()){
+                tvSerialBrandModelColor.setVisibility(View.GONE);
+            }else{
+                tvSerialBrandModelColor.setText(serialBrandModelColor);
+            }
+        }
+
+        private String formatSerialBrandModelColor(IO_Serial_Process_Record data) {
+            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc() + " | " ;
+            serialBrandModelColor = serialBrandModelColor + data.getModel_desc() == null ? "": data.getModel_desc() + " | ";
+            serialBrandModelColor = serialBrandModelColor + data.getColor_desc() == null ? "": data.getColor_desc();
+            return serialBrandModelColor;
         }
 
         private void setProcessStatus(String processType) {

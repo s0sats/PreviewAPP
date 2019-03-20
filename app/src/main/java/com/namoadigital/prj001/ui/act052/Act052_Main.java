@@ -69,8 +69,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("btn_blind_serial_move");
         transList.add("empty_list_state_so_msg");
 
-
-
         transList.add("alert_new_opt_ttl");
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
@@ -165,8 +163,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             isOnline = true;
         }
         //
-
-
     }
 
     @Override
