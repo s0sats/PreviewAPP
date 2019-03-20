@@ -30,10 +30,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
 
     private TextView tvSerialListSize;
+    private TextView tvSerialListRecordLimit;
+    private TextView tvSerialListRecordCount;
     private RecyclerView mSerialRecyclerView;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     Act052_IO_Serial_List_Adapter mSerialListAdapter;
     private Act052_Main_Presenter mPresenter;
+    private long record_count;
+    private long record_page;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +132,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void setTvSerialListSize() {
         tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
+        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
+        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
+
         tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
+        tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
+        tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
+
+
     }
 
     private void initFooter() {
@@ -158,6 +169,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         if (bundle != null) {
             serialListData = (ArrayList<IO_Serial_Process_Record>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             isOnline = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS, true);
+            record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
+            record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
         } else {
             serialListData = new ArrayList<>();
             isOnline = true;

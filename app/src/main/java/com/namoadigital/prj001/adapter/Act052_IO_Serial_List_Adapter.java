@@ -187,7 +187,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }
-
     }
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {

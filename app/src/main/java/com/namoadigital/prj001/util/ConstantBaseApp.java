@@ -74,6 +74,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT050 = "act050";
     public static final String ACT051 = "act051";
     public static final String ACT052 = "act052";
+    public static final String ACT053 = "act052";
 
     public static final String title_lbl = "_title";
 
