@@ -10,6 +10,8 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Outbound;
+import com.namoadigital.prj001.model.IO_Outbound_Item;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -93,17 +95,17 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }
             //Se operação de insert ou update executada com sucesso
             //Segue para inserção dos itens.
-//            IO_Inbound_ItemDao inboundItemDao = new IO_Inbound_ItemDao(
-//                    context,
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                    Constant.DB_VERSION_CUSTOM
-//            );
-//            //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
-//            DaoObjReturn inboundItemRet = inboundItemDao.addUpdate(io_outbound.getItems(),false,db);
-//            //Se erro durante insert, dispara exception abortando o processamento.
-//            if(inboundItemRet.hasError()){
-//                throw new Exception(inboundItemRet.getErrorMsg());
-//            }
+            IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
+            DaoObjReturn outboundItemRet = ioInboundItemDao.addUpdate(io_outbound.getItems(),false,db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if(outboundItemRet.hasError()){
+                throw new Exception(outboundItemRet.getErrorMsg());
+            }
             //
             db.setTransactionSuccessful();
         }catch (SQLiteException e){
@@ -136,8 +138,78 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     }
 
     @Override
-    public DaoObjReturn addUpdate(List<IO_Outbound> items, boolean status) {
-        return null;
+    public DaoObjReturn addUpdate(List<IO_Outbound> io_outbounds, boolean status) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        openDB();
+
+        try{
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (IO_Outbound io_outbound : io_outbounds) {
+                curAction = DaoObjReturn.UPDATE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_outbound.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(OUTBOUND_PREFIX).append(" = '").append(String.valueOf(io_outbound.getOutbound_prefix())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(OUTBOUND_CODE).append(" = '").append(String.valueOf(io_outbound.getOutbound_code())).append("'");
+                //Tenta update e armazena retorno
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_outbound), sbWhere.toString(), null);
+                //Se nenhuma linha afetada, tenta insert
+                if(addUpdateRet == 0){
+                    curAction = DaoObjReturn.INSERT;
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_outbound));
+                }
+                //Se operação de insert ou update executada com sucesso
+                //Segue para inserção dos itens.
+                IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
+                DaoObjReturn outboundItemRet = ioInboundItemDao.addUpdate(io_outbound.getItems(),false,db);
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if(outboundItemRet.hasError()){
+                    throw new Exception(outboundItemRet.getErrorMsg());
+                }
+            }
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+
+        return daoObjReturn;
     }
 
     @Override
@@ -166,7 +238,47 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
 
     @Override
     public IO_Outbound getByString(String sQuery) {
-        return null;
+        IO_Outbound io_outbound = null;
+        openDB();
+
+        try {
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                io_outbound = toIO_OutboundMapper.map(cursor);
+            }
+            //
+            if(io_outbound != null){
+                //Se operação de insert ou update executada com sucesso
+                //Segue para inserção dos itens.
+                IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                io_outbound.setItems(
+                        (ArrayList<IO_Outbound_Item>) ioInboundItemDao.query(
+                                new IO_Outbound_Item_Sql_001(
+                                        io_outbound.getCustomer_code(),
+                                        io_outbound.getOutbound_prefix(),
+                                        io_outbound.getOutbound_code()
+                                ).toSqlQuery()
+
+                        )
+                );
+
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_outbound;
     }
 
     @Override
@@ -195,7 +307,49 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
 
     @Override
     public List<IO_Outbound> query(String sQuery) {
-        return null;
+        List<IO_Outbound> io_outbounds = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                IO_Outbound uAux = toIO_OutboundMapper.map(cursor);
+                //
+                if(uAux != null){
+                    //Se operação de insert ou update executada com sucesso
+                    //Segue para inserção dos itens.
+                    IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    uAux.setItems(
+                            (ArrayList<IO_Outbound_Item>) ioInboundItemDao.query(
+                                    new IO_Outbound_Item_Sql_001(
+                                            uAux.getCustomer_code(),
+                                            uAux.getOutbound_prefix(),
+                                            uAux.getOutbound_code()
+                                    ).toSqlQuery()
+
+                            )
+                    );
+                }
+                //
+                io_outbounds.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return io_outbounds;
     }
 
     @Override
@@ -257,11 +411,6 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                 io_outbound.setDeparture_date(null);
             }else{
                 io_outbound.setDeparture_date(cursor.getString(cursor.getColumnIndex(DEPARTURE_DATE)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(LOADING_DATE))){
-                io_outbound.setLoading_date(null);
-            }else{
-                io_outbound.setLoading_date(cursor.getString(cursor.getColumnIndex(LOADING_DATE)));
             }
             if(cursor.isNull(cursor.getColumnIndex(LOADING_DATE))){
                 io_outbound.setLoading_date(null);
