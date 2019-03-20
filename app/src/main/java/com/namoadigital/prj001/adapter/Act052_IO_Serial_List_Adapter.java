@@ -59,7 +59,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     }
 
     private boolean hasMoveBlind() {
-        return true;
+        return false;
 //        return ToolBox_Inf.profileExists(
 //                context,
 //                Constant.PROFILE_MENU_SO,
@@ -95,8 +95,10 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         if (mValues == null) {
             return 0;
         }
-
-        return mValues.size() + 1;
+        if(hasMoveBlind()) {
+            return mValues.size() + 1;
+        }
+        return mValues.size();
 
     }
 

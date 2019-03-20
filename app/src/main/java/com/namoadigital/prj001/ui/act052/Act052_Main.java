@@ -47,6 +47,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private String mSerial_id;
     private Button btn_create_serial;
     private String mProduct_id;
+    private MD_Product md_product;
+    private String ws_process;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +134,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void setBtnCreateSerial() {
         btn_create_serial = findViewById(R.id.act052_btn_create_serial);
 
-        MD_Product md_product = getMd_product();
+        md_product = getMd_product();
 
         btn_create_serial.setVisibility(View.GONE);
         if (mProduct_id != null) {
@@ -196,7 +198,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void initAction() {
-
+        btn_create_serial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean serial_creation = true;
+                //
+                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(mSerial_id),false);
+                //mPresenter.createNewSerialFlow(md_product,serial_id);
+            }
+        });
     }
 
     private void recoverIntentsInfo() {
@@ -242,5 +252,29 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        if(title != null && title.length() > 0 && msg != null && msg.length() > 0 ) {
+            if (progressDialog == null || !progressDialog.isShowing()) {
+                enableProgressDialog(
+                        title,
+                        msg,
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        hmAux_Trans.get("sys_alert_btn_ok")
+                );
+            }
+            //
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.setTitle(title);
+                progressDialog.setMessage(msg);
+            }
+        }
+    }
+
+    @Override
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
     }
 }
