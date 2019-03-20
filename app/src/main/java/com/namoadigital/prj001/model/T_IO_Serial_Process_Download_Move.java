@@ -1,13 +1,13 @@
 package com.namoadigital.prj001.model;
 
-public class IO_Move {
+public class T_IO_Serial_Process_Download_Move {
 
-    private long customer_code;
-    private int move_prefix;
-    private int move_code;
-    private long product_code;
-    private int serial_code;
-    private int site_code;
+    private Long customer_code;
+    private Integer move_prefix;
+    private Integer move_code;
+    private Long product_code;
+    private Integer serial_code;
+    private Integer site_code;
     private Integer from_zone_code;
     private Integer from_local_code;
     private Integer from_class_code;
@@ -29,52 +29,53 @@ public class IO_Move {
     private Integer done_user;
     private String done_user_nick;
     private String status;
+    private MD_Product_Serial serial;
 
-    public long getCustomer_code() {
+    public Long getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(long customer_code) {
+    public void setCustomer_code(Long customer_code) {
         this.customer_code = customer_code;
     }
 
-    public int getMove_prefix() {
+    public Integer getMove_prefix() {
         return move_prefix;
     }
 
-    public void setMove_prefix(int move_prefix) {
+    public void setMove_prefix(Integer move_prefix) {
         this.move_prefix = move_prefix;
     }
 
-    public int getMove_code() {
+    public Integer getMove_code() {
         return move_code;
     }
 
-    public void setMove_code(int move_code) {
+    public void setMove_code(Integer move_code) {
         this.move_code = move_code;
     }
 
-    public long getProduct_code() {
+    public Long getProduct_code() {
         return product_code;
     }
 
-    public void setProduct_code(long product_code) {
+    public void setProduct_code(Long product_code) {
         this.product_code = product_code;
     }
 
-    public int getSerial_code() {
+    public Integer getSerial_code() {
         return serial_code;
     }
 
-    public void setSerial_code(int serial_code) {
+    public void setSerial_code(Integer serial_code) {
         this.serial_code = serial_code;
     }
 
-    public int getSite_code() {
+    public Integer getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(int site_code) {
+    public void setSite_code(Integer site_code) {
         this.site_code = site_code;
     }
 
@@ -246,4 +247,11 @@ public class IO_Move {
         this.status = status;
     }
 
+    public MD_Product_Serial getSerial() {
+        return serial;
+    }
+
+    public void setSerial(MD_Product_Serial serial) {
+        this.serial = serial;
+    }
 }
