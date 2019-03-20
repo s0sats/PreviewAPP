@@ -11,5 +11,6 @@ public class Act053_Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act053_main);
+
     }
 }
