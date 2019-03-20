@@ -16,6 +16,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view;
-        if(viewType == R.layout.act052_rv_blind_move_btn) {
+        if(viewType == R.layout.act052_rv_blind_move_btn && hasMoveBlind()) {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
             return new FooterViewHolder(view);
@@ -54,6 +56,15 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.act052_main_serial_list_itemv2, viewGroup, false);
         return new ListItemViewHolder(view);
+    }
+
+    private boolean hasMoveBlind() {
+        return true;
+//        return ToolBox_Inf.profileExists(
+//                context,
+//                Constant.PROFILE_MENU_SO,
+//                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
+//        ) && !ToolBox_Con.isOnline(context);
     }
 
     @Override
@@ -83,10 +94,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         //Tratamento para visualização de botão de movimento offline
         if (mValues == null) {
             return 0;
-        }
-
-        if (mValues.size() == 0) {
-            return 1;
         }
 
         return mValues.size() + 1;

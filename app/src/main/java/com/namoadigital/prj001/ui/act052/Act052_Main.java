@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,13 +15,17 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act002.Act002_Main_Presenter;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +44,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private Act052_Main_Presenter mPresenter;
     private long record_count;
     private long record_page;
+    private String mSerial_id;
+    private Button btn_create_serial;
+    private String mProduct_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,9 +124,36 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         recoverIntentsInfo();
         setSerialList();
         setTvSerialListSize();
-
+        setBtnCreateSerial();
         mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
+    }
+
+    private void setBtnCreateSerial() {
+        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
+
+        MD_Product md_product = getMd_product();
+
+        btn_create_serial.setVisibility(View.GONE);
+        if (mProduct_id != null) {
+            if (md_product.getAllow_new_serial_cl() == 1) {
+                if(mSerial_id != null && !mSerial_id.isEmpty()) {
+                    btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
+                    btn_create_serial.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    private MD_Product getMd_product() {
+        MD_ProductDao mdProductDao = new MD_ProductDao(context);
+        return mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        mProduct_id
+                ).toSqlQuery()
+        );
     }
 
     private void setSerialList() {
@@ -171,9 +207,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             isOnline = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS, true);
             record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
             record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
+            mSerial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
+            mProduct_id = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER);
         } else {
             serialListData = new ArrayList<>();
             isOnline = true;
+            record_count = 0;
+            record_page = 0;
+            mSerial_id = "";
+            mProduct_id = "";
         }
         //
     }
