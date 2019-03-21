@@ -73,9 +73,9 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_move.getCustomer_code())).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(MOVE_PREFIX).append(" = '").append(String.valueOf(io_move.getInbound_prefix())).append("'");
+            sbWhere.append(MOVE_PREFIX).append(" = '").append(String.valueOf(io_move.getMove_prefix())).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(MOVE_CODE).append(" = '").append(String.valueOf(io_move.getInbound_code())).append("'");
+            sbWhere.append(MOVE_CODE).append(" = '").append(String.valueOf(io_move.getMove_code())).append("'");
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_move), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -133,9 +133,9 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_move.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(MOVE_PREFIX).append(" = '").append(String.valueOf(io_move.getInbound_prefix())).append("'");
+                sbWhere.append(MOVE_PREFIX).append(" = '").append(String.valueOf(io_move.getMove_prefix())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(MOVE_CODE).append(" = '").append(String.valueOf(io_move.getInbound_code())).append("'");
+                sbWhere.append(MOVE_CODE).append(" = '").append(String.valueOf(io_move.getMove_code())).append("'");
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_move), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
