@@ -11,9 +11,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
@@ -160,11 +162,49 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
-                    sendCloseAct(hmAuxRet);
+                    if(rec.getOutbound() != null && rec.getOutbound().size() > 0){
+                        processOutConfResponse(rec.getProcess_type(),rec.getOutbound());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
                     break;
             }
         }
+    }
+
+    private void processOutConfResponse(String process_type, ArrayList<IO_Outbound> outbound) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        //
+        IO_OutboundDao outboundDao = new IO_OutboundDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        if(outbound.get(0) != null){
+            if(outbound.get(0).getSerial() != null && outbound.get(0).getSerial().size() > 0) {
+                //Seta pk nos itens da outbound
+                for(IO_Outbound aux : outbound){
+                    aux.setPK();
+                }
+                //Insere outbound no banco.
+                DaoObjReturn daoReturn = outboundDao.addUpdate(outbound.get(0));
+                if (!daoReturn.hasError()) {
+                    serialDao.addUpdate(outbound.get(0).getSerial().get(0));
+                    //
+                    hmAuxRet.put(HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));
+                    hmAuxRet.put(HMAUX_CODE_KEY, String.valueOf(outbound.get(0).getOutbound_code()));
+                    //
+                    sendCloseAct(hmAuxRet);
+                } else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+                }
+            }
+        }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+        }
+
     }
 
     /**

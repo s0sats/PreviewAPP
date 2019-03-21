@@ -14,12 +14,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
-import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
-import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,7 +30,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private ArrayList<IO_Serial_Process_Record> serialListData;
     private boolean isOnline;
-
 
     private TextView tvSerialListSize;
     private TextView tvSerialListRecordLimit;
@@ -47,7 +45,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private Button btn_create_serial;
     private String mProduct_id;
     private MD_Product md_product;
-    private String ws_process;
     private boolean serial_jump;
 
     @Override
@@ -131,10 +128,10 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void initVars() {
         recoverIntentsInfo();
+        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
         setSerialList();
         setTvSerialListSize();
         setBtnCreateSerial();
-        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
     }
     @Override
@@ -144,29 +141,16 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void setBtnCreateSerial() {
         btn_create_serial = findViewById(R.id.act052_btn_create_serial);
-
-        md_product = getMd_product();
-
         btn_create_serial.setVisibility(View.GONE);
-        if (mProduct_id != null) {
-            if (md_product.getAllow_new_serial_cl() == 1) {
-                if(mSerial_id != null && !mSerial_id.isEmpty() && !serial_jump) {
-                    btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
-                    btn_create_serial.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-    }
 
-    private MD_Product getMd_product() {
-        MD_ProductDao mdProductDao = new MD_ProductDao(context);
-        return mdProductDao.getByString(
-                new MD_Product_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        "",
-                        mProduct_id
-                ).toSqlQuery()
-        );
+        md_product = mPresenter.getMd_product(mProduct_id);
+        //
+        if (md_product != null && mSerial_id != null && !mSerial_id.isEmpty() && !serial_jump
+            && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+        ) {
+            btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
+            btn_create_serial.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setSerialList() {
@@ -210,8 +194,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean serial_creation = true;
-                //mPresenter.createNewSerialFlow(md_product,serial_id);
+                mPresenter.createNewSerialFlow(md_product.createNewSerialForThisProduct(mSerial_id));
             }
         });
     }
@@ -268,6 +251,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct053(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act053_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

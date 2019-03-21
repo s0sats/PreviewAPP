@@ -38,6 +38,8 @@ public class IO_Outbound {
     private int picking_process;
     private int done_automatic;
     private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
+    //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -317,5 +319,13 @@ public class IO_Outbound {
 
     public void setItems(ArrayList<IO_Outbound_Item> items) {
         this.items = items;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
     }
 }

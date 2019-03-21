@@ -10,6 +10,7 @@ public class T_IO_Serial_Process_Download_Rec{
     private String error_msg;
     private String process_type;
     private ArrayList<T_IO_Serial_Process_Download_Move> move;
+    private ArrayList<IO_Outbound> outbound;
 
     public String getApp() {
         return app;
@@ -57,5 +58,13 @@ public class T_IO_Serial_Process_Download_Rec{
 
     public void setMove(ArrayList<T_IO_Serial_Process_Download_Move> move) {
         this.move = move;
+    }
+
+    public ArrayList<IO_Outbound> getOutbound() {
+        return outbound;
+    }
+
+    public void setOutbound(ArrayList<IO_Outbound> outbound) {
+        this.outbound = outbound;
     }
 }
