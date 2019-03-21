@@ -63,7 +63,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         initFooter();
         initAction();
 
-
     }
 
     private void initSetup() {
@@ -111,7 +110,12 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("alert_results_ttl");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
-        transList.add("btn_so_next_orders");
+        transList.add("btn_create_serial");
+        transList.add("records_found_lbl");
+        transList.add("records_display_limit_lbl");
+        transList.add("records_found_lbl");
+        transList.add("sys_alert_btn_cancel");
+        transList.add("sys_alert_btn_ok");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -237,7 +241,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     @Override
     public void onClickListButton() {
-        Log.i("onClickListButton", "entrei e não fiz nada");
         Toast.makeText(context, "Indo para a movimentação cega", Toast.LENGTH_SHORT).show();
     }
 

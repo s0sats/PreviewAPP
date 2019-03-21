@@ -177,9 +177,9 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         }
 
         private String formatSerialBrandModelColor(IO_Serial_Process_Record data) {
-            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc() + " | " ;
-            serialBrandModelColor = serialBrandModelColor + data.getModel_desc() == null ? "": data.getModel_desc() + " | ";
-            serialBrandModelColor = serialBrandModelColor + data.getColor_desc() == null ? "": data.getColor_desc();
+            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc()  ;
+            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null ? "": " | " + data.getModel_desc());
+            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "":  " | "+ data.getColor_desc());
             return serialBrandModelColor;
         }
 
