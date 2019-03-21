@@ -216,8 +216,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             @Override
             public void onClick(View v) {
                 boolean serial_creation = true;
-                //
-                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(mSerial_id),false);
                 //mPresenter.createNewSerialFlow(md_product,serial_id);
             }
         });
