@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,16 +16,14 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
-import com.namoadigital.prj001.ui.act002.Act002_Main_Presenter;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,8 +187,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
         tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
         tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
-
-
     }
 
     private void initFooter() {

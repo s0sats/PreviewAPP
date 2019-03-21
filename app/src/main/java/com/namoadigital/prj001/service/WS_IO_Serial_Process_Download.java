@@ -128,11 +128,18 @@ public class WS_IO_Serial_Process_Download extends IntentService {
     }
 
     private void processResponse(T_IO_Serial_Process_Download_Rec rec) {
+        //Apagar a var hmAuxRet após todos os process serem implementados.
+        HMAux hmAuxRet = new HMAux();
+
         if(rec.getProcess_type() != null && !rec.getProcess_type().isEmpty()) {
             switch (rec.getProcess_type()) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
+                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     if(rec.getMove() != null && rec.getMove().size() > 0){
@@ -149,8 +156,12 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    sendCloseAct(hmAuxRet);
                     break;
             }
         }
