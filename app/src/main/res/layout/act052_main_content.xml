@@ -18,18 +18,50 @@
         android:layout_marginTop="8dp"
         android:text="Exibindo NN Registros - trad"
         android:textSize="@dimen/font_size_title"
-        app:layout_constraintBottom_toTopOf="@+id/act052_btn_create_serial"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/act052_ll_limit_exceeded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/act052_btn_create_serial"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act052_tv_serial_list_size">
+
+        <TextView
+            android:id="@+id/act052_tv_record_limit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Limite de exibição: 10000"
+            android:textSize="@dimen/font_size_item" />
+
+        <TextView
+            android:id="@+id/act052_tv_record_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Registros retornados: 1000"
+            android:textSize="@dimen/font_size_item" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/act052_btn_create_serial"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/namoa_cell_2_states"
         android:gravity="left"
@@ -40,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act052_tv_serial_list_size" />
+        app:layout_constraintTop_toBottomOf="@+id/act052_ll_limit_exceeded" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/act052_rv_serial"

@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,13 +15,18 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.ui.act002.Act002_Main_Presenter;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +37,21 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
 
     private TextView tvSerialListSize;
+    private TextView tvSerialListRecordLimit;
+    private TextView tvSerialListRecordCount;
     private RecyclerView mSerialRecyclerView;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     private Act052_IO_Serial_List_Adapter mSerialListAdapter;
     private Act052_Main_Presenter mPresenter;
     private String wsProcess ="";
+    private long record_count;
+    private long record_page;
+    private String mSerial_id;
+    private Button btn_create_serial;
+    private String mProduct_id;
+    private MD_Product md_product;
+    private String ws_process;
+    private boolean serial_jump;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +65,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         initVars();
         initFooter();
         initAction();
-
 
     }
 
@@ -97,7 +113,12 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("alert_results_ttl");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
-        transList.add("btn_so_next_orders");
+        transList.add("btn_create_serial");
+        transList.add("records_found_lbl");
+        transList.add("records_display_limit_lbl");
+        transList.add("records_found_lbl");
+        transList.add("sys_alert_btn_cancel");
+        transList.add("sys_alert_btn_ok");
         //
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
@@ -115,13 +136,40 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         recoverIntentsInfo();
         setSerialList();
         setTvSerialListSize();
-
+        setBtnCreateSerial();
         mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
     }
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    private void setBtnCreateSerial() {
+        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
+
+        md_product = getMd_product();
+
+        btn_create_serial.setVisibility(View.GONE);
+        if (mProduct_id != null) {
+            if (md_product.getAllow_new_serial_cl() == 1) {
+                if(mSerial_id != null && !mSerial_id.isEmpty() && !serial_jump) {
+                    btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
+                    btn_create_serial.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    private MD_Product getMd_product() {
+        MD_ProductDao mdProductDao = new MD_ProductDao(context);
+        return mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        mProduct_id
+                ).toSqlQuery()
+        );
     }
 
     private void setSerialList() {
@@ -136,7 +184,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void setTvSerialListSize() {
         tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
+        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
+        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
+
         tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
+        tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
+        tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
+
+
     }
 
     private void initFooter() {
@@ -157,7 +212,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void initAction() {
-
+        btn_create_serial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean serial_creation = true;
+                //
+                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(mSerial_id),false);
+                //mPresenter.createNewSerialFlow(md_product,serial_id);
+            }
+        });
     }
 
     private void recoverIntentsInfo() {
@@ -166,9 +229,19 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         if (bundle != null) {
             serialListData = (ArrayList<IO_Serial_Process_Record>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             isOnline = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS, true);
+            record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
+            record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
+            mSerial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
+            mProduct_id = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER);
+            serial_jump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
         } else {
             serialListData = new ArrayList<>();
             isOnline = true;
+            record_count = 0;
+            record_page = 0;
+            mSerial_id = "";
+            mProduct_id = "";
+            serial_jump = false;
         }
         //
     }
@@ -190,7 +263,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     @Override
     public void onClickListButton() {
-        Log.i("onClickListButton", "entrei e não fiz nada");
         Toast.makeText(context, "Indo para a movimentação cega", Toast.LENGTH_SHORT).show();
     }
 

@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -40,14 +42,23 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view;
-        if(viewType == R.layout.act052_rv_blind_move_btn) {
+        if(viewType == R.layout.act052_rv_blind_move_btn && hasMoveBlind()) {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
             return new FooterViewHolder(view);
         }
         view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.act052_main_serial_list_itemv2, viewGroup, false);
+                .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
         return new ListItemViewHolder(view);
+    }
+
+    private boolean hasMoveBlind() {
+        return false;
+//        return ToolBox_Inf.profileExists(
+//                context,
+//                Constant.PROFILE_MENU_SO,
+//                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
+//        ) && !ToolBox_Con.isOnline(context);
     }
 
     @Override
@@ -64,6 +75,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                         mListener.onClickListItem(record);
                     }
                 });
+
+
             } else if (viewHolder instanceof FooterViewHolder) {
                 FooterViewHolder vh = (FooterViewHolder) viewHolder;
             }
@@ -78,18 +91,16 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         if (mValues == null) {
             return 0;
         }
-
-        if (mValues.size() == 0) {
-            return 1;
+        if(hasMoveBlind()) {
+            return mValues.size() + 1;
         }
-
-        return mValues.size() + 1;
+        return mValues.size();
 
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_itemv2;
+        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
     }
 
     @Override
@@ -99,6 +110,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
 
+        protected final ConstraintLayout clBackground;
         protected final TextView tvStatusDesc;
         protected final TextView tvProductExtCodeVal;
         protected final TextView tvProductDescVal;
@@ -115,6 +127,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         public ListItemViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemVIew = itemView;
+            clBackground = itemView.findViewById(R.id.act052_main_cl_background);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
@@ -149,6 +162,12 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }else{
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
+            if(data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))){
+                clBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+            }else{
+                clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+            }
+
 
         }
 
@@ -162,9 +181,9 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         }
 
         private String formatSerialBrandModelColor(IO_Serial_Process_Record data) {
-            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc() + " | " ;
-            serialBrandModelColor = serialBrandModelColor + data.getModel_desc() == null ? "": data.getModel_desc() + " | ";
-            serialBrandModelColor = serialBrandModelColor + data.getColor_desc() == null ? "": data.getColor_desc();
+            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc()  ;
+            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null ? "": " | " + data.getModel_desc());
+            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "":  " | "+ data.getColor_desc());
             return serialBrandModelColor;
         }
 
@@ -181,7 +200,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }
-
     }
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {
