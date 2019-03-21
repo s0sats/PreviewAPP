@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
-import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             return new FooterViewHolder(view);
         }
         view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.act052_main_serial_list_itemv2, viewGroup, false);
+                .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
         return new ListItemViewHolder(view);
     }
 
@@ -81,6 +81,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                         mListener.onClickListItem(record);
                     }
                 });
+
+
             } else if (viewHolder instanceof FooterViewHolder) {
                 FooterViewHolder vh = (FooterViewHolder) viewHolder;
             }
@@ -104,7 +106,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemViewType(int position) {
-        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_itemv2;
+        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
     }
 
     @Override
@@ -114,6 +116,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
 
+        protected final ConstraintLayout clBackground;
         protected final TextView tvStatusDesc;
         protected final TextView tvProductExtCodeVal;
         protected final TextView tvProductDescVal;
@@ -130,6 +133,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         public ListItemViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemVIew = itemView;
+            clBackground = itemView.findViewById(R.id.act052_main_cl_background);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
@@ -164,6 +168,12 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }else{
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
+            if(data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))){
+                clBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+            }else{
+                clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+            }
+
 
         }
 

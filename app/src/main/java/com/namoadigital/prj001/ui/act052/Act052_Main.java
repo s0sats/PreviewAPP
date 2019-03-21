@@ -49,6 +49,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private String mProduct_id;
     private MD_Product md_product;
     private String ws_process;
+    private boolean serial_jump;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         btn_create_serial.setVisibility(View.GONE);
         if (mProduct_id != null) {
             if (md_product.getAllow_new_serial_cl() == 1) {
-                if(mSerial_id != null && !mSerial_id.isEmpty()) {
+                if(mSerial_id != null && !mSerial_id.isEmpty() && !serial_jump) {
                     btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
                     btn_create_serial.setVisibility(View.VISIBLE);
                 }
@@ -223,6 +224,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
             mSerial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
             mProduct_id = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER);
+            serial_jump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
         } else {
             serialListData = new ArrayList<>();
             isOnline = true;
@@ -230,6 +232,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             record_page = 0;
             mSerial_id = "";
             mProduct_id = "";
+            serial_jump = false;
         }
         //
     }
