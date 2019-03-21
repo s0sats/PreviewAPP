@@ -73,6 +73,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT049 = "act049";
     public static final String ACT050 = "act050";
     public static final String ACT051 = "act051";
+    public static final String ACT052 = "act052";
+    public static final String ACT053 = "act052";
+
+    public static final String title_lbl = "_title";
 
     public static final String ACT_PRODUCT_SELECTION = "act_product_selection";
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
@@ -537,6 +541,16 @@ public class ConstantBaseApp extends ConstantBase {
 //    public static final String SYS_STATUS_IN_PROCESSING = "IN_PROCESSING";
 //    public static final String SYS_STATUS_FINALIZED = "FINALIZED";
 //    public static final String SYS_STATUS_SENT = "SENT";
+
+    /*
+    * Constantes I/O
+    */
+    public static final String IO_PROCESS_IN_CONF = "IN_CONF";
+    public static final String IO_PROCESS_IN_PUT_AWAY = "IN_PUT_AWAY";
+    public static final String IO_PROCESS_MOVE_PLANNED = "MOVE_PLANNED";
+    public static final String IO_PROCESS_MOVE = "MOVE";
+    public static final String IO_PROCESS_OUT_PICKING = "OUT_PICKING";
+    public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
 
     /*
      * Constantes CHAT

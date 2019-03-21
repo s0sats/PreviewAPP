@@ -1,0 +1,260 @@
+package com.namoadigital.prj001.service;
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class WS_IO_Serial_Process_Download extends IntentService {
+
+    public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
+    public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
+    public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
+    public static final String HMAUX_PLANNED_ZONE_CODE_KEY = "HMAUX_PLANNED_ZONE_CODE_KEY";
+    public static final String HMAUX_PLANNED_LOCAL_CODE_KEY = "HMAUX_PLANNED_LOCAL_CODE_KEY";
+    public static final String HMAUX_PLANNED_CLASS_CODE_KEY = "HMAUX_PLANNED_CLASS_CODE_KEY";
+
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "ws_io_serial_process_download";
+    private Gson gson = new GsonBuilder().serializeNulls().create();
+    private MD_Product_SerialDao serialDao;
+
+
+    public WS_IO_Serial_Process_Download() {
+        super("WS_IO_Serial_Process_Download");
+    }
+
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+        StringBuilder sb = new StringBuilder();
+        Bundle bundle = intent.getExtras();
+
+        try {
+            serialDao = new MD_Product_SerialDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            String product_code = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE);
+            String serial_code = bundle.getString(MD_Product_SerialDao.SERIAL_CODE);
+
+            processWsIoSerialProcessDownload(product_code, serial_code);
+
+        } catch (Exception e) {
+
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
+
+            ToolBox_Inf.registerException(getClass().getName(), e);
+
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+
+        } finally {
+
+            WBR_IO_Serial_Process_Download.completeWakefulIntent(intent);
+        }
+    }
+
+    private void processWsIoSerialProcessDownload(String product_code, String serial_code) throws Exception {
+        //Seleciona traduções
+        loadTranslation();
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
+        //
+        T_IO_Serial_Process_Download_Env env = new T_IO_Serial_Process_Download_Env();
+        //
+        env.setApp_code(Constant.PRJ001_CODE);
+        env.setApp_version(Constant.PRJ001_VERSION);
+        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setProduct_code(product_code);
+        env.setSerial_code(serial_code);
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
+
+        String resultado = ToolBox_Con.connWebService(
+                Constant.WS_IO_SERIAL_PROCESS_DOWNLOAD,
+                gson.toJson(env)
+        );
+        //
+        T_IO_Serial_Process_Download_Rec rec = gson.fromJson(
+                resultado,
+                T_IO_Serial_Process_Download_Rec.class
+        );
+        //
+        if (!ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                1,
+                1
+        )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
+        ) {
+            return;
+        }
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data"), "", "0");
+        //
+        processResponse(rec);
+    }
+
+    private void processResponse(T_IO_Serial_Process_Download_Rec rec) {
+        if(rec.getProcess_type() != null && !rec.getProcess_type().isEmpty()) {
+            switch (rec.getProcess_type()) {
+                case ConstantBaseApp.IO_PROCESS_IN_CONF:
+                    break;
+                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                    break;
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                    if(rec.getMove() != null && rec.getMove().size() > 0){
+                        processMovePlannedResponse(rec.getProcess_type(), rec.getMove());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
+                    break;
+                case ConstantBaseApp.IO_PROCESS_MOVE:
+                    if(rec.getMove() != null && rec.getMove().size() > 0){
+                        processMoveResponse(rec.getProcess_type(),rec.getMove());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
+                    break;
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                    break;
+                case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Processa response tipo MOVE_PLANNED
+     *
+     * Salva o retorno no banco de dados, pois já existe pk
+     *
+     * @param process_type
+     * @param move - Array com movimentações planejadas
+     */
+    private void processMovePlannedResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        //
+        IO_MoveDao ioMoveDao = new IO_MoveDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        IO_Move io_move = T_IO_Serial_Process_Download_Move.getIO_MoveObj(move.get(0));
+        //
+        if(io_move != null){
+            if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0) {
+                DaoObjReturn daoReturn = ioMoveDao.addUpdate(io_move);
+                if (!daoReturn.hasError()) {
+                    serialDao.addUpdate(move.get(0).getSerial().get(0));
+                    //
+                    hmAuxRet.put(HMAUX_PREFIX_KEY, String.valueOf(io_move.getMove_prefix()));
+                    hmAuxRet.put(HMAUX_CODE_KEY, String.valueOf(io_move.getMove_code()));
+                    //
+                    sendCloseAct(hmAuxRet);
+                } else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+                }
+            }
+        }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+        }
+    }
+
+    /**
+     * Processa response tipo MOVE
+     * @param process_type
+     * @param move - Array com movimentações
+     */
+    private void processMoveResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        //
+        if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
+            serialDao.addUpdate(move.get(0).getSerial().get(0));
+            //
+            hmAuxRet.put(HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_zone_code()));
+            hmAuxRet.put(HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_local_code()));
+            hmAuxRet.put(HMAUX_PLANNED_CLASS_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+            //
+            sendCloseAct(hmAuxRet);
+        }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move"), "", "0");
+        }
+    }
+
+    /**
+     * Envia close act com HmAux.
+     * @param hmAuxRet
+     */
+    private void sendCloseAct(HMAux hmAuxRet) {
+        ToolBox.sendBCStatus(
+                getApplicationContext(),
+                "CLOSE_ACT",
+                hmAux_Trans.get("msg_process_finalized"),
+                hmAuxRet,
+                "",
+                "0");
+
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_sending_data");
+        translist.add("msg_receiving_data");
+        translist.add("msg_processing_data");
+        translist.add("msg_empty_list");
+        translist.add("msg_error_processing_move_planned");
+        translist.add("msg_error_processing_move");
+        translist.add("msg_process_finalized");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
+
+    }
+}
