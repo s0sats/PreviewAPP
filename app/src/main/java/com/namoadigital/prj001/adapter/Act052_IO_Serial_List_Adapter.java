@@ -22,20 +22,23 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
-public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final boolean isOnline;
+    private final boolean serial_jump;
     private List<IO_Serial_Process_Record> mValues;
     private Context context;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
 
-    public Act052_IO_Serial_List_Adapter(Context context,List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline) {
+    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline, boolean serial_jump) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
         this.hmAux_Trans = hmAux_Trans;
         this.isOnline = isOnline;
+        this.serial_jump = serial_jump;
+
     }
 
     @NonNull
@@ -72,16 +75,27 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 vh.getItemView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mListener.onClickListItem(record);
+                        handleListItemClick(record);
+
                     }
                 });
-
+                if(serial_jump){
+                    handleListItemClick(record);
+                }
 
             } else if (viewHolder instanceof FooterViewHolder) {
                 FooterViewHolder vh = (FooterViewHolder) viewHolder;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleListItemClick(IO_Serial_Process_Record record) {
+        if(record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))){
+            mListener.showAlertSerialOut( hmAux_Trans.get("alert_serial_out_site_title"),   hmAux_Trans.get("alert_serial_out_site_msg"));
+        }else{
+            mListener.onClickListItem(record);
         }
     }
 
@@ -101,11 +115,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     @Override
     public int getItemViewType(int position) {
         return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {

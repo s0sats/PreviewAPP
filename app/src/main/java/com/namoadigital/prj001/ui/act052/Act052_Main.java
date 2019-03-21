@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
@@ -119,6 +120,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         //
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
+        transList.add("alert_serial_out_site_title");
+        transList.add("alert_serial_out_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -131,20 +134,28 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void initVars() {
         recoverIntentsInfo();
+        bindViews();
         setSerialList();
         setTvSerialListSize();
         setBtnCreateSerial();
         mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
     }
+
+    private void bindViews() {
+        mSerialRecyclerView = findViewById(R.id.act052_rv_serial);
+        tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
+        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
+        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
+        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
+    }
+
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
     }
 
     private void setBtnCreateSerial() {
-        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
-
         md_product = getMd_product();
 
         btn_create_serial.setVisibility(View.GONE);
@@ -170,20 +181,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void setSerialList() {
-        mSerialRecyclerView = findViewById(R.id.act052_rv_serial);
-
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
 
-        mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline);
+        mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline,serial_jump);
         mSerialRecyclerView.setAdapter(mSerialListAdapter);
     }
 
     private void setTvSerialListSize() {
-        tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
-        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
-        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
-
         tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
         tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
         tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
@@ -248,6 +253,19 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
+
+    @Override
+    public void showAlertSerialOut(String title, String msg) {
+        ToolBox.alertMSG(
+                context,
+                title,
+                msg,
+                null,
+                0
+        );
+    }
+
+
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
