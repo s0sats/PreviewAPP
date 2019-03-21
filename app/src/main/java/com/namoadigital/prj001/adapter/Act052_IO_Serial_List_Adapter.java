@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 import java.util.List;
 
@@ -26,13 +27,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     private Context context;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
-
-    private static final String IN_CONF  = "IN_CONF";
-    private static final String IN_PUT_AWAY  = "IN_PUT_AWAY";
-    private static final String MOVE_PLANNED  = "MOVE_PLANNED";
-    private static final String MOVE  = "MOVE";
-    private static final String OUT_PICKING = "OUT_PICKING";
-    private static final String OUT_CONF  = "OUT_CONF";
 
     public Act052_IO_Serial_List_Adapter(Context context,List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline) {
         this.context = context;
@@ -176,10 +170,10 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
         private void setProcessStatus(String processType) {
             switch (processType){
-                case IN_CONF:
+                case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
                     break;
-                case OUT_CONF:
+                case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
                     break;
                 default:

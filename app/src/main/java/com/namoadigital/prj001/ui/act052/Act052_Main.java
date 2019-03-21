@@ -14,7 +14,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.ui.act002.Act002_Main_Presenter;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -32,8 +32,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private TextView tvSerialListSize;
     private RecyclerView mSerialRecyclerView;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
-    Act052_IO_Serial_List_Adapter mSerialListAdapter;
+    private Act052_IO_Serial_List_Adapter mSerialListAdapter;
     private Act052_Main_Presenter mPresenter;
+    private String wsProcess ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("alert_local_product_not_found_msg");
         transList.add("btn_so_next_orders");
         //
+        transList.add("dialog_process_download_ttl");
+        transList.add("dialog_process_download_starting_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -114,6 +118,10 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
         mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
+    }
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
     }
 
     private void setSerialList() {
@@ -166,8 +174,18 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
-        mPresenter.defineIOSerialFlow(data);
+        mPresenter.executeWsProcessDownload(data);
     }
 
     @Override
@@ -187,5 +205,54 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(wsProcess.equals(WS_IO_Serial_Process_Download.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.defineIOSerialFlow(hmAux);
+        }
+    }
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
     }
 }

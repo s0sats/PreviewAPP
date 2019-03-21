@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class T_IO_Serial_Process_Download_Move {
 
     private Long customer_code;
@@ -29,7 +31,7 @@ public class T_IO_Serial_Process_Download_Move {
     private Integer done_user;
     private String done_user_nick;
     private String status;
-    private MD_Product_Serial serial;
+    private ArrayList<MD_Product_Serial> serial;
 
     public Long getCustomer_code() {
         return customer_code;
@@ -247,11 +249,57 @@ public class T_IO_Serial_Process_Download_Move {
         this.status = status;
     }
 
-    public MD_Product_Serial getSerial() {
+    public ArrayList<MD_Product_Serial> getSerial() {
         return serial;
     }
 
-    public void setSerial(MD_Product_Serial serial) {
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    /**
+     *
+     * Gera obj IO_Move , baseado no obj move da response.
+     * @param downloadMove - Obj de response
+     * @return IO_Move: Se Ok, obj valido, se erro, obj null.
+     *
+     */
+    public static IO_Move getIO_MoveObj(T_IO_Serial_Process_Download_Move downloadMove){
+        IO_Move io_move = new IO_Move();
+        //
+        try {
+            io_move.setCustomer_code(downloadMove.getCustomer_code());
+            io_move.setMove_prefix(downloadMove.getMove_prefix());
+            io_move.setMove_code(downloadMove.getMove_code());
+            io_move.setMove_code(downloadMove.getMove_code());
+            io_move.setProduct_code(downloadMove.getProduct_code());
+            io_move.setSerial_code(downloadMove.getSerial_code());
+            io_move.setSite_code(downloadMove.getSite_code());
+            io_move.setFrom_zone_code(downloadMove.getFrom_zone_code());
+            io_move.setFrom_local_code(downloadMove.getFrom_local_code());
+            io_move.setFrom_class_code(downloadMove.getFrom_class_code());
+            io_move.setPlanned_zone_code(downloadMove.getPlanned_zone_code());
+            io_move.setPlanned_local_code(downloadMove.getPlanned_local_code());
+            io_move.setPlanned_class_code(downloadMove.getPlanned_class_code());
+            io_move.setTo_zone_code(downloadMove.getTo_zone_code());
+            io_move.setTo_local_code(downloadMove.getTo_local_code());
+            io_move.setTo_class_code(downloadMove.getTo_class_code());
+            io_move.setMove_type(downloadMove.getMove_type());
+            io_move.setReason_code(downloadMove.getReason_code());
+            io_move.setInbound_prefix(downloadMove.getInbound_prefix());
+            io_move.setInbound_code(downloadMove.getInbound_code());
+            io_move.setInbound_item(downloadMove.getInbound_item());
+            io_move.setOutbound_prefix(downloadMove.getOutbound_prefix());
+            io_move.setOutbound_code(downloadMove.getOutbound_code());
+            io_move.setOutbound_item(downloadMove.getOutbound_item());
+            io_move.setDone_date(downloadMove.getDone_date());
+            io_move.setDone_user(downloadMove.getDone_user());
+            io_move.setDone_user_nick(downloadMove.getDone_user_nick());
+            io_move.setStatus(downloadMove.getStatus());
+        }catch (Exception e){
+            io_move = null;
+        }
+        //
+        return io_move;
     }
 }

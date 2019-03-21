@@ -542,6 +542,16 @@ public class ConstantBaseApp extends ConstantBase {
 //    public static final String SYS_STATUS_SENT = "SENT";
 
     /*
+    * Constantes I/O
+    */
+    public static final String IO_PROCESS_IN_CONF = "IN_CONF";
+    public static final String IO_PROCESS_IN_PUT_AWAY = "IN_PUT_AWAY";
+    public static final String IO_PROCESS_MOVE_PLANNED = "MOVE_PLANNED";
+    public static final String IO_PROCESS_MOVE = "MOVE";
+    public static final String IO_PROCESS_OUT_PICKING = "OUT_PICKING";
+    public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
+
+    /*
      * Constantes CHAT
      */
     //Eventos Client
