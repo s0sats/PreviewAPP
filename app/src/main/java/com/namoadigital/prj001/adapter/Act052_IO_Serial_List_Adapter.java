@@ -48,7 +48,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         if(viewType == R.layout.act052_rv_blind_move_btn && hasMoveBlind()) {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
-            return new FooterViewHolder(view);
+            return new FooterViewHolder(view, mValues.size());
         }
         view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
@@ -213,15 +213,22 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {
         private final Button btnBlindMove;
-        public FooterViewHolder(@NonNull View itemView) {
+        private final TextView tvEmptyState;
+        public FooterViewHolder(@NonNull View itemView, int listSize) {
             super(itemView);
             btnBlindMove = itemView.findViewById(R.id.act052_btn_blind_move);
+            tvEmptyState = itemView.findViewById(R.id.act052_tv_empty_state);
             btnBlindMove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mListener.onClickListButton();
                 }
             });
+            if((listSize == 1 && hasMoveBlind()) || (listSize <1 && !hasMoveBlind())){
+                tvEmptyState.setVisibility(View.GONE);
+            }else{
+                tvEmptyState.setVisibility(View.VISIBLE);
+            }
         }
 
     }
