@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.view.frag;
+package com.namoadigital.prj001.view.frag.frg_serial_edit;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,7 +45,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;

@@ -61,7 +61,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT021
+                Constant.ACT051
         );
         //
         loadTranslation();
@@ -82,36 +82,15 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         transList.add("btn_move_order");
         transList.add("btn_inbound");
         transList.add("btn_outbound");
-
-
-        transList.add("alert_new_opt_ttl");
-        transList.add("alert_new_opt_product_lbl");
-        transList.add("alert_new_opt_serial_lbl");
-        transList.add("alert_new_opt_location_lbl");
-        transList.add("alert_so_to_send_ttl");
-        transList.add("alert_so_to_send_msg");
-        transList.add("alert_no_pendencies_title");
-        transList.add("alert_no_pendencies_msg");
-        transList.add("mket_serial_hint");
-        transList.add("mket_tracking_hint");
         transList.add("dialog_serial_search_ttl");
         transList.add("dialog_serial_search_start");
         transList.add("alert_no_value_filled_ttl");
         transList.add("alert_no_value_filled_msg");
         transList.add("alert_no_serial_found_ttl");
         transList.add("alert_no_serial_found_msg");
-        transList.add("alert_sync_success_ttl");
-        transList.add("alert_sync_success_msg");
-        transList.add("progress_so_save_approval_ttl");
-        transList.add("progress_so_save_approval_msg");
-        transList.add("progress_so_sync_ttl");
-        transList.add("progress_so_sync_msg");
-        transList.add("progress_so_save_ttl");
-        transList.add("progress_so_save_msg");
-        transList.add("alert_results_ttl");
-        transList.add("alert_local_product_not_found_ttl");
-        transList.add("alert_local_product_not_found_msg");
-        transList.add("btn_so_next_orders");
+
+//        transList.add("mket_serial_hint");
+//        transList.add("mket_tracking_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -181,15 +160,10 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-//        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_move_order"));
-        mFrgSerialSearch.setBtn_Option_02_Label("btn_move_order - trad");
-
-//        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_inbound"));
-        mFrgSerialSearch.setBtn_Option_03_Label("btn_inbound - trad");
-//        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_outbound"));
-        mFrgSerialSearch.setBtn_Option_04_Label("btn_outbound - trad");
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_move_order"));
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_inbound"));
+        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_outbound"));
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
 
         hideSoftKeyboard();

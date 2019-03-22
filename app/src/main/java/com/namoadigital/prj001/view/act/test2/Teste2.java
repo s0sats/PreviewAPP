@@ -37,7 +37,7 @@ import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Edit;
+import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
 
 import java.util.ArrayList;
 import java.util.List;

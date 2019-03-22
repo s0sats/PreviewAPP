@@ -23,17 +23,27 @@ public class MD_Site_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      s.customer_code,\n " +
-                        "      s.site_code,\n " +
-                        "      s.site_id,\n " +
-                        "      s.site_id||' - '||s.site_desc site_desc,\n " +
-                        "      s.io_control,\n " +
-                        "      s.inbound_auto_create\n " +
-                        " FROM " +
-                        MD_SiteDao.TABLE + " s" +
-                        " WHERE " +
-                        MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
-                        "AND " + MD_SiteDao.SITE_CODE + " = '" + s_site_code + "' ")
+                        "       s.customer_code,\n " +
+                        "       s.site_code,\n " +
+                        "       s.site_id,\n " +
+                        "       s.site_id||' - '||s.site_desc site_desc,\n " +
+                        "       s.io_control,\n " +
+                        "       s.inbound_auto_create\n ," +
+                        "       s.in_allow_new_item,\n" +
+                        "       s.in_put_away_process,\n" +
+                        "       s.in_zone_code_conf,\n" +
+                        "       s.in_local_code_conf,\n" +
+                        "       s.in_done_automatic,\n" +
+                        "       s.out_allow_new_item,\n" +
+                        "       s.out_picking_process,\n" +
+                        "       s.out_zone_code_picking,\n" +
+                        "       s.out_local_code_picking,\n" +
+                        "       s.out_done_automatic \n" +
+                        " FROM \n " +
+                        MD_SiteDao.TABLE + " s\n" +
+                        " WHERE \n" +
+                        MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
+                        " AND " + MD_SiteDao.SITE_CODE + " = '" + s_site_code + "' \n")
                 .toString();
     }
 

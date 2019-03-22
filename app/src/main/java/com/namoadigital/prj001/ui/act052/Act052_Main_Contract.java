@@ -20,6 +20,8 @@ public interface Act052_Main_Contract {
         MD_Product getMd_product(String mProduct_id);
 
         void createNewSerialFlow(MD_Product_Serial productSerial);
+
+        boolean isSiteInboundAutoCreation();
     }
 
     interface I_View{

@@ -8,12 +8,15 @@ import android.widget.Toast;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -91,7 +94,11 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
 
     @Override
     public MD_Product getMd_product(String mProduct_id) {
-        MD_ProductDao mdProductDao = new MD_ProductDao(context);
+        MD_ProductDao mdProductDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
         return mdProductDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -111,5 +118,30 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
         //
         mView.callAct053(bundle);
+    }
+
+    /**
+     * Verifica se site logado permite Inbound_auto_create
+     * @return
+     */
+    @Override
+    public boolean isSiteInboundAutoCreation() {
+        MD_SiteDao mdSiteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        MD_Site mdSite = mdSiteDao.getByString(
+                new MD_Site_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        if(mdSite != null && mdSite.getInbound_auto_create() == 1){
+            return true;
+        }
+        return false;
     }
 }

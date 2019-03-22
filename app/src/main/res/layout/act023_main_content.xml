@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/act023_frg_serial_edit"
-        android:name="com.namoadigital.prj001.view.frag.Frg_Serial_Edit"
+        android:name="com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
