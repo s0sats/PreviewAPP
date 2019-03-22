@@ -463,6 +463,16 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_PROFILE_SERIAL_BARCODE = "SERIAL_BARCODE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_OCR_VIN = "SERIAL_OCR_VIN";
 
+     //Profiles IO
+    public static final String PROFILE_MENU_IO = "PRJ001_IO";
+    public static final String PROFILE_MENU_IO_BLIND_MOVE = "BLIND_MOVE";
+    public static final String PROFILE_MENU_IO_INBOUND = "INBOUND";
+    public static final String PROFILE_MENU_IO_INBOUND_NEW = "INBOUND_NEW";
+    public static final String PROFILE_MENU_IO_MOVE_REQUEST = "MOVE_REQUEST";
+    public static final String PROFILE_MENU_IO_OUTBOUND = "OUTBOUND";
+    public static final String PROFILE_MENU_IO_OUTBOUND_NEW = "OUTBOUND_NEW";
+
+
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";

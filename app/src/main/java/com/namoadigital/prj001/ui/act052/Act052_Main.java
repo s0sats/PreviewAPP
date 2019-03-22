@@ -1,12 +1,16 @@
 package com.namoadigital.prj001.ui.act052;
 
+import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +42,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private TextView tvSerialListRecordLimit;
     private TextView tvSerialListRecordCount;
     private RecyclerView mSerialRecyclerView;
+    private Button btn_create_serial;
+    private Button btnBlindMove;
+    private TextView tvEmptyState;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     private Act052_IO_Serial_List_Adapter mSerialListAdapter;
     private Act052_Main_Presenter mPresenter;
@@ -45,11 +52,11 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private long record_count;
     private long record_page;
     private String mSerial_id;
-    private Button btn_create_serial;
     private String mProduct_id;
     private MD_Product md_product;
     private String ws_process;
     private boolean serial_jump;
+    private LinearLayout llLimitExceeded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +127,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
         tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
         btn_create_serial = findViewById(R.id.act052_btn_create_serial);
+        btnBlindMove = findViewById(R.id.act052_btn_blind_move);
+        tvEmptyState = findViewById(R.id.act052_tv_empty_state);
+        llLimitExceeded = findViewById(R.id.act052_ll_limit_exceeded);
     }
 
     @Override
@@ -155,9 +165,46 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void setSerialList() {
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
+        if(serialListData.isEmpty()) {
+            mSerialRecyclerView.setVisibility(View.INVISIBLE);
+            tvEmptyState.setVisibility(View.VISIBLE);
+            llLimitExceeded.setVisibility(View.GONE);
+            tvSerialListSize.setVisibility(View.GONE);
+            if(hasMoveBlind()){
+                btnBlindMove.setVisibility(View.VISIBLE);
+            }
+        }else{
+            tvEmptyState.setVisibility(View.GONE);
+            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline, serial_jump);
+            mSerialRecyclerView.setAdapter(mSerialListAdapter);
+            mSerialRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                private boolean isScrolling;
 
-        mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline,serial_jump);
-        mSerialRecyclerView.setAdapter(mSerialListAdapter);
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int visibleItemCount = mSerialListLayoutManager.getChildCount();
+                    int totalItemCount = mSerialListLayoutManager.getItemCount();
+                    int pastVisibleItems = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                    if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                        //End of list
+                        if(hasMoveBlind()) {
+                            btnBlindMove.setVisibility(View.VISIBLE);
+                        }
+                    }else {
+                        if (hasMoveBlind()) {
+                            btnBlindMove.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
     private void setTvSerialListSize() {
@@ -181,6 +228,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    private boolean hasMoveBlind() {
+        return ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_IO,
+                Constant.PROFILE_MENU_IO_BLIND_MOVE
+        ) && !ToolBox_Con.isOnline(context);
     }
 
     private void initAction() {
