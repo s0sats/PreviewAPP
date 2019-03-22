@@ -108,12 +108,11 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void initVars() {
         recoverIntentsInfo();
+        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
         bindViews();
         setSerialList();
         setTvSerialListSize();
         setBtnCreateSerial();
-        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
-
     }
 
     private void bindViews() {
@@ -151,6 +150,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void setSerialList() {
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
+        btnBlindMove.setText(hmAux_Trans.get("btn_blind_serial_move"));
         if(serialListData.isEmpty()) {
             mSerialRecyclerView.setVisibility(View.INVISIBLE);
             tvEmptyState.setText(hmAux_Trans.get("no_record_found_lbl"));
