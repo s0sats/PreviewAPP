@@ -1,16 +1,21 @@
 package com.namoadigital.prj001.ui.act052;
 
+import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
@@ -35,6 +40,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private TextView tvSerialListRecordLimit;
     private TextView tvSerialListRecordCount;
     private RecyclerView mSerialRecyclerView;
+    private Button btn_create_serial;
+    private Button btnBlindMove;
+    private TextView tvEmptyState;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     private Act052_IO_Serial_List_Adapter mSerialListAdapter;
     private Act052_Main_Presenter mPresenter;
@@ -42,10 +50,10 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private long record_count;
     private long record_page;
     private String mSerial_id;
-    private Button btn_create_serial;
     private String mProduct_id;
     private MD_Product md_product;
     private boolean serial_jump;
+    private LinearLayout llLimitExceeded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +86,16 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("act052_title");
         transList.add("btn_create_serial");
         transList.add("btn_blind_serial_move");
-        transList.add("empty_list_state_so_msg");
+        transList.add("no_record_found_lbl");
         transList.add("records_lbl");
         transList.add("records_found_lbl");
         transList.add("records_display_limit_lbl");
         transList.add("btn_create_serial");
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
+        //
+        transList.add("alert_serial_out_site_title");
+        transList.add("alert_serial_out_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -97,19 +108,31 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void initVars() {
         recoverIntentsInfo();
-        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
+        bindViews();
         setSerialList();
         setTvSerialListSize();
         setBtnCreateSerial();
+        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
 
     }
+
+    private void bindViews() {
+        mSerialRecyclerView = findViewById(R.id.act052_rv_serial);
+        tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
+        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
+        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
+        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
+        btnBlindMove = findViewById(R.id.act052_btn_blind_move);
+        tvEmptyState = findViewById(R.id.act052_tv_empty_state);
+        llLimitExceeded = findViewById(R.id.act052_ll_limit_exceeded);
+    }
+
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
     }
 
     private void setBtnCreateSerial() {
-        btn_create_serial = findViewById(R.id.act052_btn_create_serial);
         btn_create_serial.setVisibility(View.GONE);
         md_product = mPresenter.getMd_product(mProduct_id);
         //
@@ -126,21 +149,53 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void setSerialList() {
-        mSerialRecyclerView = findViewById(R.id.act052_rv_serial);
-
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
+        if(serialListData.isEmpty()) {
+            mSerialRecyclerView.setVisibility(View.INVISIBLE);
+            tvEmptyState.setText(hmAux_Trans.get("no_record_found_lbl"));
+            tvEmptyState.setVisibility(View.VISIBLE);
+            llLimitExceeded.setVisibility(View.GONE);
+            tvSerialListSize.setVisibility(View.GONE);
+            if(hasMoveBlind()){
+                btnBlindMove.setVisibility(View.VISIBLE);
+            }
+        }else{
+            tvEmptyState.setVisibility(View.GONE);
+            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline, serial_jump);
+            mSerialRecyclerView.setAdapter(mSerialListAdapter);
+            mSerialRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                private boolean isScrolling;
 
-        mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline);
-        mSerialRecyclerView.setAdapter(mSerialListAdapter);
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int visibleItemCount = mSerialListLayoutManager.getChildCount();
+                    int totalItemCount = mSerialListLayoutManager.getItemCount();
+                    int pastVisibleItems = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                    if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                        //End of list
+                        if(hasMoveBlind()) {
+                            btnBlindMove.setVisibility(View.VISIBLE);
+                        }
+                    }else {
+                        if (hasMoveBlind()) {
+                            btnBlindMove.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
     private void setTvSerialListSize() {
-        tvSerialListSize = findViewById(R.id.act052_tv_serial_list_size);
-        tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
-        tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
-
-        tvSerialListSize.setText(hmAux_Trans.get("records_lbl") + " " + serialListData.size());
+        tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
         tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
         tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
     }
@@ -160,6 +215,14 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    private boolean hasMoveBlind() {
+        return ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_IO,
+                Constant.PROFILE_MENU_IO_BLIND_MOVE
+        ) && !ToolBox_Con.isOnline(context);
     }
 
     private void initAction() {
@@ -203,6 +266,19 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
+
+    @Override
+    public void showAlertSerialOut(String title, String msg) {
+        ToolBox.alertMSG(
+                context,
+                title,
+                msg,
+                null,
+                0
+        );
+    }
+
+
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {

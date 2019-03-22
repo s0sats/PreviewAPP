@@ -22,90 +22,64 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
-public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final boolean isOnline;
+    private final boolean serial_jump;
     private List<IO_Serial_Process_Record> mValues;
     private Context context;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
 
-    public Act052_IO_Serial_List_Adapter(Context context,List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline) {
+    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline, boolean serial_jump) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
         this.hmAux_Trans = hmAux_Trans;
         this.isOnline = isOnline;
+        this.serial_jump = serial_jump;
+
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view;
-        if(viewType == R.layout.act052_rv_blind_move_btn && hasMoveBlind()) {
-            view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.act052_rv_blind_move_btn, viewGroup, false);
-            return new FooterViewHolder(view);
-        }
-        view = LayoutInflater.from(viewGroup.getContext())
+        View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
         return new ListItemViewHolder(view);
     }
 
-    private boolean hasMoveBlind() {
-        return false;
-//        return ToolBox_Inf.profileExists(
-//                context,
-//                Constant.PROFILE_MENU_SO,
-//                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
-//        ) && !ToolBox_Con.isOnline(context);
-    }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
 
-        try {
-            if (viewHolder instanceof ListItemViewHolder) {
-                ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
-                final IO_Serial_Process_Record record = mValues.get(position);
-                vh.bindData(record);
-                vh.getItemView().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mListener.onClickListItem(record);
-                    }
-                });
+        ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
+        final IO_Serial_Process_Record record = mValues.get(position);
+        vh.bindData(record);
+        vh.getItemView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleListItemClick(record);
 
-
-            } else if (viewHolder instanceof FooterViewHolder) {
-                FooterViewHolder vh = (FooterViewHolder) viewHolder;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        });
+        if (serial_jump) {
+            handleListItemClick(record);
+        }
+
+    }
+
+    private void handleListItemClick(IO_Serial_Process_Record record) {
+        if (record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+            mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
+        } else {
+            mListener.onClickListItem(record);
         }
     }
 
     @Override
     public int getItemCount() {
-        //Tratamento para visualização de botão de movimento offline
-        if (mValues == null) {
-            return 0;
-        }
-        if(hasMoveBlind()) {
-            return mValues.size() + 1;
-        }
         return mValues.size();
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return (position == mValues.size()) ? R.layout.act052_rv_blind_move_btn : R.layout.act052_main_serial_list_item;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
@@ -144,7 +118,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             return itemVIew;
         }
 
-        public void bindData(IO_Serial_Process_Record data){
+        public void bindData(IO_Serial_Process_Record data) {
             String processType = data.getProcess_type();
             setProcessStatus(processType);
 
@@ -155,16 +129,16 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvSerialPosition.setText(data.getLocal_id());
             setTvSerialBrandModelColor(data);
 
-            int pos = getAdapterPosition() +1;
+            int pos = getAdapterPosition() + 1;
             tvSerialListPosition.setText(String.valueOf(pos));
-            if(isOnline){
+            if (isOnline) {
                 ivOfflineMode.setVisibility(View.INVISIBLE);
-            }else{
+            } else {
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
-            if(data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))){
+            if (data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
                 clBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
-            }else{
+            } else {
                 clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
             }
 
@@ -173,22 +147,22 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
         private void setTvSerialBrandModelColor(IO_Serial_Process_Record data) {
             String serialBrandModelColor = formatSerialBrandModelColor(data);
-            if(serialBrandModelColor == null || serialBrandModelColor.isEmpty()){
+            if (serialBrandModelColor == null || serialBrandModelColor.isEmpty()) {
                 tvSerialBrandModelColor.setVisibility(View.GONE);
-            }else{
+            } else {
                 tvSerialBrandModelColor.setText(serialBrandModelColor);
             }
         }
 
         private String formatSerialBrandModelColor(IO_Serial_Process_Record data) {
-            String serialBrandModelColor = data.getBrand_desc() == null ? "": data.getBrand_desc()  ;
-            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null ? "": " | " + data.getModel_desc());
-            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "":  " | "+ data.getColor_desc());
+            String serialBrandModelColor = data.getBrand_desc() == null ? "" : data.getBrand_desc();
+            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null ? "" : " | " + data.getModel_desc());
+            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "" : " | " + data.getColor_desc());
             return serialBrandModelColor;
         }
 
         private void setProcessStatus(String processType) {
-            switch (processType){
+            switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
                     break;
@@ -200,20 +174,5 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }
-    }
-
-    public class FooterViewHolder extends RecyclerView.ViewHolder {
-        private final Button btnBlindMove;
-        public FooterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            btnBlindMove = itemView.findViewById(R.id.act052_btn_blind_move);
-            btnBlindMove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onClickListButton();
-                }
-            });
-        }
-
     }
 }
