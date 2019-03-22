@@ -77,7 +77,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT021
+                Constant.ACT052
         );
         //
         loadTranslation();
@@ -86,19 +86,17 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("act051_title");
-        transList.add("btn_new_serial");
-        transList.add("btn_blind_serial_move");
-        transList.add("empty_list_state_io_msg");
+        transList.add("act052_title");
         transList.add("btn_create_serial");
+        transList.add("btn_blind_serial_move");
+        transList.add("no_record_found_lbl");
+        transList.add("records_lbl");
         transList.add("records_found_lbl");
         transList.add("records_display_limit_lbl");
-        transList.add("records_found_lbl");
-        transList.add("sys_alert_btn_cancel");
-        transList.add("sys_alert_btn_ok");
-        //
+        transList.add("btn_create_serial");
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
+        //
         transList.add("alert_serial_out_site_title");
         transList.add("alert_serial_out_site_msg");
         //
@@ -167,6 +165,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
         if(serialListData.isEmpty()) {
             mSerialRecyclerView.setVisibility(View.INVISIBLE);
+            tvEmptyState.setText(hmAux_Trans.get("no_record_found_lbl"));
             tvEmptyState.setVisibility(View.VISIBLE);
             llLimitExceeded.setVisibility(View.GONE);
             tvSerialListSize.setVisibility(View.GONE);
