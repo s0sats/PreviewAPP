@@ -188,7 +188,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 //Insere outbound no banco.
                 DaoObjReturn daoReturn = outboundDao.addUpdate(outbound.get(0));
                 if (!daoReturn.hasError()) {
-                    serialDao.addUpdate(outbound.get(0).getSerial().get(0));
+                    serialDao.addUpdateTmp(outbound.get(0).getSerial().get(0));
                     //
                     hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));
                     hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(outbound.get(0).getOutbound_code()));
@@ -228,7 +228,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
             if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0) {
                 DaoObjReturn daoReturn = ioMoveDao.addUpdate(io_move);
                 if (!daoReturn.hasError()) {
-                    serialDao.addUpdate(move.get(0).getSerial().get(0));
+                    serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
                     //
                     hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(io_move.getMove_prefix()));
                     hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(io_move.getMove_code()));
@@ -253,7 +253,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
         //
         if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
-            serialDao.addUpdate(move.get(0).getSerial().get(0));
+            serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
             //
             hmAuxRet.put(HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_zone_code()));
             hmAuxRet.put(HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_local_code()));

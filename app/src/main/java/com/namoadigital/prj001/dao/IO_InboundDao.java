@@ -51,6 +51,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
     public static final String DRIVER = "driver";
     public static final String COMMENTS = "comments";
     public static final String STATUS = "status";
+    public static final String PERC_DONE = "perc_done";
     public static final String INBOUND_AUTO_SEQ = "inbound_auto_seq";
     public static final String MODAL_CODE = "modal_code";
     public static final String ALLOW_NEW_ITEM = "allow_new_item";
@@ -63,7 +64,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             CUSTOMER_CODE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_DESC, INBOUND_ID, SCN, ORIGIN, INVOICE_NUMBER, INVOICE_DATE,
             ETA_DATE, ARRIVAL_DATE, FROM_TYPE, FROM_PARTNER_CODE, FROM_PARTNER_ID, FROM_PARTNER_DESC, FROM_SITE_CODE,
             FROM_SITE_ID, FROM_SITE_DESC, TO_SITE_CODE, CARRIER_CODE, CARRIER_ID, CARRIER_DESC,
-            TRUCK_NUMBER, DRIVER, COMMENTS, STATUS, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
+            TRUCK_NUMBER, DRIVER, COMMENTS, STATUS,PERC_DONE, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
             PUT_AWAY_PROCESS, DONE_AUTOMATIC
     };
 
@@ -507,6 +508,11 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 io_inbound.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
             io_inbound.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            if(cursor.isNull(cursor.getColumnIndex(PERC_DONE))){
+                io_inbound.setPerc_done(null);
+            }else {
+                io_inbound.setPerc_done(cursor.getDouble(cursor.getColumnIndex(PERC_DONE)));
+            }
             io_inbound.setInbound_auto_seq(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_SEQ)));
             if(cursor.isNull(cursor.getColumnIndex(MODAL_CODE))){
                 io_inbound.setModal_code(null);
@@ -580,6 +586,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             if(io_inbound.getStatus() != null){
                 contentValues.put(STATUS,io_inbound.getStatus());
             }
+            contentValues.put(PERC_DONE,io_inbound.getPerc_done());
             if(io_inbound.getInbound_auto_seq() > -1){
                 contentValues.put(INBOUND_AUTO_SEQ,io_inbound.getInbound_auto_seq());
             }

@@ -52,6 +52,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String DRIVER = "driver";
     public static final String COMMENTS = "comments";
     public static final String STATUS = "status";
+    public static final String PERC_DONE = "perc_done";
     public static final String MODAL_CODE = "modal_code";
     public static final String ALLOW_NEW_ITEM = "allow_new_item";
     public static final String ZONE_CODE_PICKING = "zone_code_picking";
@@ -480,6 +481,11 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                 io_outbound.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
             io_outbound.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            if(cursor.isNull(cursor.getColumnIndex(PERC_DONE))){
+                io_outbound.setPerc_done(null);
+            }else {
+                io_outbound.setPerc_done(cursor.getDouble(cursor.getColumnIndex(PERC_DONE)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(MODAL_CODE))){
                 io_outbound.setModal_code(null);
             }else{
@@ -553,6 +559,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             if(io_outbound.getStatus() != null){
                 contentValues.put(STATUS ,io_outbound.getStatus());
             }
+            contentValues.put(PERC_DONE ,io_outbound.getPerc_done());
             contentValues.put(MODAL_CODE ,io_outbound.getModal_code());
             if(io_outbound.getAllow_new_item() > -1){
                 contentValues.put(ALLOW_NEW_ITEM ,io_outbound.getAllow_new_item());

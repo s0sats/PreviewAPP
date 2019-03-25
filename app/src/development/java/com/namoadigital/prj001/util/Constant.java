@@ -51,6 +51,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_IO_INBOUND_SEARCH = "https://dev.namoadigital.com/ws/prj001/io/server_inbound.ws";
     public static final String WS_IO_OUTBOUND_SEARCH = "https://dev.namoadigital.com/ws/prj001/io/server_outbound.ws";
     public static final String WS_IO_MOVE_DOWNLOAD = "https://dev.namoadigital.com/ws/prj001/io/server_move_obj.ws";
+    public static final String WS_IO_INBOUND_DOWNLOAD = "https://dev.namoadigital.com/ws/prj001/io/server_inbound_obj.ws";
 
     public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";

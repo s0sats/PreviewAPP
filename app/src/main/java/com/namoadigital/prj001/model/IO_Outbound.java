@@ -31,6 +31,7 @@ public class IO_Outbound {
     private String driver;
     private String comments;
     private String status;
+    private Double perc_done;
     private Integer modal_code;
     private int allow_new_item;
     private Integer zone_code_picking;
@@ -263,6 +264,14 @@ public class IO_Outbound {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getPerc_done() {
+        return perc_done;
+    }
+
+    public void setPerc_done(Double perc_done) {
+        this.perc_done = perc_done;
     }
 
     public Integer getModal_code() {

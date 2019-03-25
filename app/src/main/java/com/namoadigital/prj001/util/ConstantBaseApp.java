@@ -562,6 +562,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_PROCESS_MOVE = "MOVE";
     public static final String IO_PROCESS_OUT_PICKING = "OUT_PICKING";
     public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
+    public static final String IO_INBOUND = "IO_INBOUND";
+    public static final String IO_OUTBOUND = "IO_OUTBOUND";
 
     /*
      * Constantes CHAT
