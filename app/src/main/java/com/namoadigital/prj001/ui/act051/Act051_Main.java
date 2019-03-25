@@ -27,6 +27,8 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
+import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
+import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -230,6 +232,10 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     private void processIOMove(HMAux optionsInfo) {
+        Intent mIntent = new Intent(context, Act054_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
 
         /**
          *
@@ -241,25 +247,25 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
          *
          *
          */
-        setWsProcess(WS_IO_Move_Search.class.getName());
-        //
-        showPD(
-                hmAux_Trans.get("dialog_serial_search_ttl"),
-                hmAux_Trans.get("dialog_serial_search_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Move_Search.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(MD_SiteDao.SITE_CODE,"24");
-        bundle.putString(IO_MoveDao.MOVE_TYPE,"MOVE_PLANNED");
-        //bundle.putString(IO_MoveDao.FROM_ZONE_CODE,ToolBox_Con.getPreference_Site_Code(context));
-        //bundle.putString(WS_IO_Move_Search.MOVE_ORIENTATION,ToolBox_Con.getPreference_Site_Code(context));
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
+//        setWsProcess(WS_IO_Move_Search.class.getName());
+//        //
+//        showPD(
+//                hmAux_Trans.get("dialog_serial_search_ttl"),
+//                hmAux_Trans.get("dialog_serial_search_start")
+//        );
+//        //
+//        Intent mIntent = new Intent(context, WBR_IO_Move_Search.class);
+//        Bundle bundle = new Bundle();
+//        //
+//        bundle.putString(MD_SiteDao.SITE_CODE,"24");
+//        bundle.putString(IO_MoveDao.MOVE_TYPE,"MOVE_PLANNED");
+//        //bundle.putString(IO_MoveDao.FROM_ZONE_CODE,ToolBox_Con.getPreference_Site_Code(context));
+//        //bundle.putString(WS_IO_Move_Search.MOVE_ORIENTATION,ToolBox_Con.getPreference_Site_Code(context));
+//        //
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
     }
 

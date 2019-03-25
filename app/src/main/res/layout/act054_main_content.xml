@@ -9,7 +9,9 @@
     android:gravity="center_vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act054.Act054_Main"
-    tools:showIn="@layout/act054_main">
+    tools:showIn="@layout/act054_main"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <CheckBox
         android:id="@+id/act054_cb_inbound"
@@ -19,6 +21,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Inbound - trad"
+        android:checked="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +34,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Outbound - trad"
+        android:checked="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/act054_cb_inbound"
@@ -43,6 +47,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Movimentação Planejada - trad"
+        android:checked="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/act054_cb_outbound"
@@ -55,6 +60,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border_back"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/act054_cb_planned_move"
         app:layout_constraintTop_toBottomOf="@+id/act054_cb_planned_move" >
@@ -63,7 +70,8 @@
             android:id="@+id/act054_mke_io_zone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:hint="Zona"/>
 
         <ImageView
             android:id="@+id/act054_iv_io_zone_remove"
@@ -135,18 +143,27 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/namoa_cell_2_states"
         android:gravity="left"
         android:padding="20dp"
         android:text="Pendentes(0/0) - trad"
         android:textColor="@color/padrao_WHITE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act054_search_btn_move_order" />
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/footer_base"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act054_search_btn_move_order"
-        app:layout_constraintVertical_bias="0.0" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/act054_btn_move_order_pendency"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>
