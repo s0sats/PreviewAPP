@@ -13,6 +13,8 @@ public interface Act054_Main_Contract {
 
     interface I_Presenter{
 
+        void onBackPressedClicked(String requesting_act);
+
         void getMovements(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String zone, boolean originStatus, boolean destinyStatus);
 
         void processIOMoveSearch(String resultado);
@@ -27,5 +29,7 @@ public interface Act054_Main_Contract {
         void setWsProcess(String name);
 
         void callAct055(ArrayList<IO_Move_Search_Record> record_list);
+
+        void callAct051();
     }
 }

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -18,10 +17,10 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
-import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -53,7 +52,15 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
 
-
+    @Override
+    public void onBackPressedClicked(String requesting_act) {
+        switch (requesting_act){
+            case ConstantBaseApp.ACT051:
+            default:
+                mView.callAct051();
+                break;
+        }
+    }
 
     @Override
     public void getMovements(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String zone, boolean originStatus, boolean destinyStatus) {

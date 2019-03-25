@@ -18,6 +18,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -229,6 +231,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         finish();
     }
 
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
     /**
      * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
      * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
@@ -277,5 +286,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mPresenter.onBackPressedClicked(Constant.ACT051);
     }
 }
