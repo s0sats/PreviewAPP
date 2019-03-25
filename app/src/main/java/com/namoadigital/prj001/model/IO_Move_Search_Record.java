@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.model;
 
-public class IO_Move_Search_Record {
+import java.io.Serializable;
+
+public class IO_Move_Search_Record implements Serializable {
 
     private int customer_code;
     private int move_prefix;

@@ -8,21 +8,23 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
-import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
-import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
-import com.namoadigital.prj001.sql.MD_Product_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+
+import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
 
 public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
@@ -49,4 +51,99 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
 
+
+
+    @Override
+    public void getMovements(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String zone, boolean originStatus, boolean destinyStatus) {
+
+        mView.setWsProcess(WS_IO_Move_Search.class.getName());
+
+        mView.showPD(
+                hmAux_Trans.get("dialog_serial_search_ttl"),
+                hmAux_Trans.get("dialog_serial_search_start")
+        );
+
+        String moveType ="";
+        String moveOrientation ="";
+
+        moveType = getMoveTypeParams(inboundStatus, outboundStatus, movePlannedStatus, moveType);
+
+        moveOrientation = getMoveOrientationParams(originStatus, destinyStatus, moveOrientation);
+
+        Intent mIntent = new Intent(context, WS_IO_Move_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(MD_SiteDao.SITE_CODE,ToolBox_Con.getPreference_Site_Code(context));
+        bundle.putString(IO_MoveDao.MOVE_TYPE,moveType);
+        bundle.putString(IO_MoveDao.FROM_ZONE_CODE, zone);
+        bundle.putString(MOVE_ORIENTATION,moveOrientation);
+        //
+        mIntent.putExtras(bundle);
+        context.sendBroadcast(mIntent);
+        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
+    }
+
+    @Override
+    public void processIOMoveSearch(String resultado) {
+
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        T_IO_Move_Search_Rec rec = gson.fromJson(
+                resultado,
+                T_IO_Move_Search_Rec.class
+        );
+        //
+        ArrayList<IO_Move_Search_Record> record_list = rec.getRecord();
+
+        mView.callAct055(record_list);
+    }
+
+    @Override
+    public String getZoneDesc() {
+
+        MD_Site_Zone zone =
+                new MD_Site_ZoneDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).getByString(
+                        new MD_Site_Zone_Sql_003(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
+                                ToolBox_Con.getPreference_Zone_Code(context)
+
+                        ).toSqlQuery()
+                );
+        return zone.getZone_desc();
+    }
+
+    private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
+        if(inboundStatus){
+            moveType = "INBOUND";
+        }
+        moveType = addParamToString(outboundStatus, moveType, "OUTBOUND");
+        moveType = addParamToString(movePlannedStatus, moveType, "MOVE_PLANNED");
+        return moveType;
+    }
+
+    private String getMoveOrientationParams(boolean outboundStatus, boolean originStatus, String moveOrientation) {
+        if(originStatus){
+            moveOrientation = "ORIGIN";
+        }
+        moveOrientation = addParamToString(outboundStatus, moveOrientation, "DESTINY");
+        return moveOrientation;
+    }
+
+    private String addParamToString(boolean cbStatus, String params, String param) {
+        if (cbStatus) {
+            params = addPipe(params) + param;
+        }
+        return params;
+    }
+
+    private String addPipe(String field) {
+        if(!field.isEmpty()){
+            field = field + "|";
+        }
+        return field;
+    }
 }

@@ -19,7 +19,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-         <!-- Login -->
+        <activity android:name=".ui.act055.Act055_Main"></activity>
+        <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
             android:label="@string/app_name"
@@ -345,17 +346,16 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".ui.act053.Act053_Main"
+        <activity
+            android:name=".ui.act053.Act053_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".ui.act054.Act054_Main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act054.Act054_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -606,18 +606,23 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Generate_NForm_PDF" />
 
         <service android:name=".service.WS_IO_Serial_Process_Search" />
+
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Search" />
 
         <service android:name=".service.WS_IO_Serial_Process_Download" />
+
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Download" />
 
         <service android:name=".service.WS_IO_Move_Search" />
+
         <receiver android:name=".receiver.WBR_IO_Move_Search" />
 
         <service android:name=".service.WS_IO_Inbound_Search" />
+
         <receiver android:name=".receiver.WBR_IO_Inbound_Search" />
 
         <service android:name=".service.WS_IO_Outbound_Search" />
+
         <receiver android:name=".receiver.WBR_IO_Outbound_Search" />
     </application>
 

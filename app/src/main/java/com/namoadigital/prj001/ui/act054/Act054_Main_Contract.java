@@ -1,10 +1,8 @@
 package com.namoadigital.prj001.ui.act054;
 
-import android.content.Context;
-import android.os.Bundle;
-
-import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.model.MD_Product;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 
 import java.util.ArrayList;
 
@@ -15,9 +13,19 @@ public interface Act054_Main_Contract {
 
     interface I_Presenter{
 
+        void getMovements(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String zone, boolean originStatus, boolean destinyStatus);
+
+        void processIOMoveSearch(String resultado);
+
+        String getZoneDesc();
     }
 
     interface I_View{
 
+        void showPD(String dialog_serial_search_ttl, String dialog_serial_search_start);
+
+        void setWsProcess(String name);
+
+        void callAct055(ArrayList<IO_Move_Search_Record> record_list);
     }
 }
