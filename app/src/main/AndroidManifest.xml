@@ -619,6 +619,9 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_IO_Outbound_Search" />
         <receiver android:name=".receiver.WBR_IO_Outbound_Search" />
+
+        <service android:name=".service.WS_IO_Move_Download" />
+        <receiver android:name=".receiver.WBR_IO_Move_Download" />
     </application>
 
 </manifest>

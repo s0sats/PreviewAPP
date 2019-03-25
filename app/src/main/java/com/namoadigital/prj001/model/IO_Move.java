@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class IO_Move {
 
     private long customer_code;
@@ -29,6 +31,8 @@ public class IO_Move {
     private Integer done_user;
     private String done_user_nick;
     private String status;
+    //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
     public long getCustomer_code() {
         return customer_code;
@@ -246,4 +250,11 @@ public class IO_Move {
         this.status = status;
     }
 
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
+    }
 }

@@ -42,8 +42,8 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
 
     @Override
     public void defineIOSerialFlow(HMAux hmAuxRet) {
-        if(hmAuxRet.hasConsistentValue(WS_IO_Serial_Process_Download.HMAUX_PROCESS_KEY)) {
-            String processType = hmAuxRet.get(WS_IO_Serial_Process_Download.HMAUX_PROCESS_KEY);
+        if(hmAuxRet.hasConsistentValue(Constant.HMAUX_PROCESS_KEY)) {
+            String processType = hmAuxRet.get(Constant.HMAUX_PROCESS_KEY);
             //
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:

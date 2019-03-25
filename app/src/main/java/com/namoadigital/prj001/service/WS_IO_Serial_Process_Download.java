@@ -30,9 +30,6 @@ import java.util.List;
 
 public class WS_IO_Serial_Process_Download extends IntentService {
 
-    public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
-    public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
-    public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
     public static final String HMAUX_PLANNED_ZONE_CODE_KEY = "HMAUX_PLANNED_ZONE_CODE_KEY";
     public static final String HMAUX_PLANNED_LOCAL_CODE_KEY = "HMAUX_PLANNED_LOCAL_CODE_KEY";
     public static final String HMAUX_PLANNED_CLASS_CODE_KEY = "HMAUX_PLANNED_CLASS_CODE_KEY";
@@ -136,11 +133,11 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         if(rec.getProcess_type() != null && !rec.getProcess_type().isEmpty()) {
             switch (rec.getProcess_type()) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
-                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
                     sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
                     sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
@@ -158,7 +155,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                    hmAuxRet.put(HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
                     sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
@@ -174,7 +171,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
 
     private void processOutConfResponse(String process_type, ArrayList<IO_Outbound> outbound) {
         HMAux hmAuxRet = new HMAux();
-        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
         //
         IO_OutboundDao outboundDao = new IO_OutboundDao(
                 getApplicationContext(),
@@ -193,8 +190,8 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 if (!daoReturn.hasError()) {
                     serialDao.addUpdate(outbound.get(0).getSerial().get(0));
                     //
-                    hmAuxRet.put(HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));
-                    hmAuxRet.put(HMAUX_CODE_KEY, String.valueOf(outbound.get(0).getOutbound_code()));
+                    hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));
+                    hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(outbound.get(0).getOutbound_code()));
                     //
                     sendCloseAct(hmAuxRet);
                 } else {
@@ -217,7 +214,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
      */
     private void processMovePlannedResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
         HMAux hmAuxRet = new HMAux();
-        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
         //
         IO_MoveDao ioMoveDao = new IO_MoveDao(
                 getApplicationContext(),
@@ -233,8 +230,8 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 if (!daoReturn.hasError()) {
                     serialDao.addUpdate(move.get(0).getSerial().get(0));
                     //
-                    hmAuxRet.put(HMAUX_PREFIX_KEY, String.valueOf(io_move.getMove_prefix()));
-                    hmAuxRet.put(HMAUX_CODE_KEY, String.valueOf(io_move.getMove_code()));
+                    hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(io_move.getMove_prefix()));
+                    hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(io_move.getMove_code()));
                     //
                     sendCloseAct(hmAuxRet);
                 } else {
@@ -253,7 +250,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
      */
     private void processMoveResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
         HMAux hmAuxRet = new HMAux();
-        hmAuxRet.put(HMAUX_PROCESS_KEY,process_type);
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
         //
         if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
             serialDao.addUpdate(move.get(0).getSerial().get(0));
