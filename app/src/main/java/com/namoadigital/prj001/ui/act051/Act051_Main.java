@@ -13,15 +13,13 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Download;
-import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
-import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
@@ -357,34 +355,60 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     private void processIOOutbound(HMAux optionsInfo) {
+//
+//        /**
+//         *
+//         *
+//         *
+//         * teste do WS_IO_Outbound_Search
+//         *
+//         * apagar após testes
+//         *
+//         *
+//         */
+//
+//        setWsProcess(WS_IO_Outbound_Search.class.getName());
+//        //
+//        showPD(
+//                hmAux_Trans.get("dialog_serial_search_ttl"),
+//                hmAux_Trans.get("dialog_serial_search_start")
+//        );
+//        //
+//        Intent mIntent = new Intent(context, WBR_IO_Outbound_Search.class);
+//        Bundle bundle = new Bundle();
+//        //
+//        bundle.putString(MD_SiteDao.SITE_CODE,"24");
+//        bundle.putString(IO_InboundDao.STATUS,"PROCESS");
+//        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE,"");
+//        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE,"");
+//        bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID,"");
+//        bundle.putString(IO_InboundDao.INVOICE_NUMBER,"");
+//        //
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
         /**
          *
          *
-         *
-         * teste do WS_IO_Outbound_Search
+         * teste do WS_IO_Outbound_Download
          *
          * apagar após testes
          *
-         *
          */
 
-        setWsProcess(WS_IO_Outbound_Search.class.getName());
+        setWsProcess(WS_IO_Outbound_Download.class.getName());
         //
         showPD(
                 hmAux_Trans.get("dialog_serial_search_ttl"),
                 hmAux_Trans.get("dialog_serial_search_start")
         );
         //
-        Intent mIntent = new Intent(context, WBR_IO_Outbound_Search.class);
+        Intent mIntent = new Intent(context, WBR_IO_Outbound_Download.class);
         Bundle bundle = new Bundle();
         //
-        bundle.putString(MD_SiteDao.SITE_CODE,"24");
-        bundle.putString(IO_InboundDao.STATUS,"PROCESS");
-        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE,"");
-        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE,"");
-        bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID,"");
-        bundle.putString(IO_InboundDao.INVOICE_NUMBER,"");
+        bundle.putString(IO_OutboundDao.OUTBOUND_CODE,"2018.34|2019.35");
         //
         mIntent.putExtras(bundle);
         //

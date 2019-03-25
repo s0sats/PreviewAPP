@@ -10,14 +10,14 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.T_IO_Inbound_Download_Env;
-import com.namoadigital.prj001.model.T_IO_Inbound_Download_Rec;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Download;
+import com.namoadigital.prj001.model.T_IO_Outbound_Download_Env;
+import com.namoadigital.prj001.model.T_IO_Outbound_Download_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,16 +27,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WS_IO_Inbound_Download extends IntentService {
+public class WS_IO_Outbound_Download extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_io_move_download";
+    private String mResource_Name = "ws_io_outbound_download";
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
-    public WS_IO_Inbound_Download() {
-        super("WS_IO_Inbound_Download");
+    public WS_IO_Outbound_Download() {
+        super("WS_IO_Outbound_Download");
     }
 
 
@@ -47,9 +47,9 @@ public class WS_IO_Inbound_Download extends IntentService {
 
         try {
             //
-            String inboundPk = bundle.getString(IO_InboundDao.INBOUND_CODE);
+            String outboundPk = bundle.getString(IO_OutboundDao.OUTBOUND_CODE);
             //
-            processWsIoInboundDownload(inboundPk);
+            processWsIoOutboundDownload(outboundPk);
 
         } catch (Exception e) {
 
@@ -61,34 +61,34 @@ public class WS_IO_Inbound_Download extends IntentService {
 
         } finally {
 
-            WBR_IO_Inbound_Download.completeWakefulIntent(intent);
+            WBR_IO_Outbound_Download.completeWakefulIntent(intent);
         }
     }
 
-    private void processWsIoInboundDownload(String inboundPk)  throws Exception {
+    private void processWsIoOutboundDownload(String outboundPk) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
-        T_IO_Inbound_Download_Env env = new T_IO_Inbound_Download_Env();
+        T_IO_Outbound_Download_Env env = new T_IO_Outbound_Download_Env();
         //
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        env.setInbound(inboundPk);
+        env.setOutbound(outboundPk);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_IO_INBOUND_DOWNLOAD,
+                Constant.WS_IO_OUTBOUND_DOWNLOAD,
                 gson.toJson(env)
         );
         //
-        T_IO_Inbound_Download_Rec rec = gson.fromJson(
+        T_IO_Outbound_Download_Rec rec = gson.fromJson(
                 resultado,
-                T_IO_Inbound_Download_Rec.class
+                T_IO_Outbound_Download_Rec.class
         );
         //
         if (!ToolBox_Inf.processWSCheckValidation(
@@ -109,20 +109,20 @@ public class WS_IO_Inbound_Download extends IntentService {
         }
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data"), "", "0");
         //
-        processResponse(rec.getInbound());
+        processResponse(rec.getOutbound());
     }
 
     /**
-     * Processa response tipo INBOUND
-     * @param inbounds_list
+     * Processa response tipo OUTBOUND
+     * @param outbounds_list
      */
-    private void processResponse(ArrayList<IO_Inbound> inbounds_list) {
-        if(inbounds_list != null && inbounds_list.size() > 0 ) {
+    private void processResponse(ArrayList<IO_Outbound> outbounds_list) {
+        if(outbounds_list != null && outbounds_list.size() > 0 ) {
             Set<MD_Product_Serial> serialHashList = new HashSet<>();
             HMAux hmAuxRet = new HMAux();
-            hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+            hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
             //
-            IO_InboundDao inboundDao = new IO_InboundDao(
+            IO_OutboundDao outboundDao = new IO_OutboundDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                     Constant.DB_VERSION_CUSTOM
@@ -135,25 +135,25 @@ public class WS_IO_Inbound_Download extends IntentService {
             );
             //Faz loop na lista retornada setando pk nos itens e adicionando seriais a serem salvos
             //na lista de seriais.
-            for(IO_Inbound io_inbound: inbounds_list){
-                io_inbound.setPK();
-                serialHashList.addAll(io_inbound.getSerial());
+            for(IO_Outbound io_outbound: outbounds_list){
+                io_outbound.setPK();
+                serialHashList.addAll(io_outbound.getSerial());
             }
             //Inserte/Atualiza seriais
             serialDao.addUpdate(serialHashList,false);
-            //Insere / Atualiza lista de inbound
-            DaoObjReturn daoReturn = inboundDao.addUpdate(inbounds_list,false);
-            //Caso sucesso ao inserir inbound, envia retorno com a pk do item selecionado
+            //Insere / Atualiza lista de outbound
+            DaoObjReturn daoReturn = outboundDao.addUpdate(outbounds_list,false);
+            //Caso sucesso ao inserir outbound, envia retorno com a pk do item selecionado
             //ou sem pk se mais de um item for selecionado.
             if (!daoReturn.hasError()) {
-                if(inbounds_list.size() == 1) {
-                    hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(inbounds_list.get(0).getInbound_prefix()));
-                    hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(inbounds_list.get(0).getInbound_code()));
+                if(outbounds_list.size() == 1) {
+                    hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(outbounds_list.get(0).getOutbound_prefix()));
+                    hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(outbounds_list.get(0).getOutbound_code()));
                 }
                 //
                 sendCloseAct(hmAuxRet);
             }else{
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_inbound"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_outbound"), "", "0");
             }
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
@@ -183,7 +183,7 @@ public class WS_IO_Inbound_Download extends IntentService {
         translist.add("msg_receiving_data");
         translist.add("msg_processing_data");
         translist.add("msg_empty_list");
-        translist.add("msg_error_processing_inbound");
+        translist.add("msg_error_processing_outbound");
         translist.add("msg_process_finalized");
 
         mResource_Code = ToolBox_Inf.getResourceCode(

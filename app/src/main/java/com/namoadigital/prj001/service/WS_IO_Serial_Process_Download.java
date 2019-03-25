@@ -180,7 +180,6 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         );
         //
         if(outbound.get(0) != null){
-            if(outbound.get(0).getSerial() != null && outbound.get(0).getSerial().size() > 0) {
                 //Seta pk nos itens da outbound
                 for(IO_Outbound aux : outbound){
                     aux.setPK();
@@ -188,7 +187,9 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 //Insere outbound no banco.
                 DaoObjReturn daoReturn = outboundDao.addUpdate(outbound.get(0));
                 if (!daoReturn.hasError()) {
-                    serialDao.addUpdateTmp(outbound.get(0).getSerial().get(0));
+                    if(outbound.get(0).getSerial() != null && outbound.get(0).getSerial().size() > 0) {
+                        serialDao.addUpdateTmp(outbound.get(0).getSerial().get(0));
+                    }
                     //
                     hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));
                     hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(outbound.get(0).getOutbound_code()));
@@ -197,7 +198,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 } else {
                     ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
                 }
-            }
+
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
         }
