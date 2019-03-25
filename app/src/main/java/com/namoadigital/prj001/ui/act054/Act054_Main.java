@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act054;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -12,8 +13,12 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -23,6 +28,7 @@ import java.util.List;
 
 public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I_View{
 
+    public static final String IO_MOVE_RECORDS = "IO_MOVE_RECORDS";
     CheckBox cbInbound;
     CheckBox cbOutbound;
     CheckBox cbPlannedMove;
@@ -36,6 +42,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     Button btnMoveOrderPendency;
 
     private Act054_Main_Presenter mPresenter;
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,17 +113,22 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void initVars() {
+        mPresenter = new Act054_Main_Presenter(context,this, hmAux_Trans);
         recoverIntentsInfo();
         bindViews();
         setInitialView();
-        mPresenter = new Act054_Main_Presenter(context,this, hmAux_Trans);
-
     }
 
     private void setInitialView() {
-        cbIoDestiny.setEnabled(false);
-        cbIoOrigins.setEnabled(false);
+
         mkeIoZone.setHint(hmAux_Trans.get("mket_zone_hint"));
+        String zoneDesc = mPresenter.getZoneDesc();
+        if(zoneDesc.isEmpty()){
+            cbIoDestiny.setEnabled(false);
+            cbIoOrigins.setEnabled(false);
+        }else{
+            mkeIoZone.setText(zoneDesc);
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -186,13 +198,84 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             @Override
             public void onClick(View v) {
                 if(validateField()){
-
+                    mPresenter.getMovements(
+                            cbInbound.isChecked(),
+                            cbOutbound.isChecked(),
+                            cbPlannedMove.isChecked(),
+                            mkeIoZone.getText().toString(),
+                            cbIoOrigins.isChecked(),
+                            cbIoDestiny.isChecked()
+                    );
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_value_filled_ttl"),
+                            hmAux_Trans.get("alert_no_value_filled_msg"),
+                            null,
+                            0
+                    );
                 }
             }
         });
     }
+    @Override
+    public void callAct055(ArrayList<IO_Move_Search_Record> record_list) {
+        Intent mIntent = new Intent(context, Act055_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(IO_MOVE_RECORDS, record_list);
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    /**
+     * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
+     * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
+     * consolidando as tratativas em um unico metodo.
+     *
+     * No caso dessa act, o WS_Serial_Search retorna os dados aqui.
+     * @param mLink
+     * @param mRequired
+     */
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        processCloseACT(mLink,mRequired,new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(wsProcess.equals(WS_IO_Move_Search.class.getName())) {
+            mPresenter.processIOMoveSearch(mLink);
+        }
+        //
+        progressDialog.dismiss();
+    }
+
 
     private boolean validateField() {
-        return false;
+
+        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked() )
+                && ((!mkeIoZone.getText().toString().isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || mkeIoZone.getText().toString().isEmpty()
+        );
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
     }
 }
