@@ -17,6 +17,8 @@ import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -70,7 +72,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
         moveOrientation = getMoveOrientationParams(originStatus, destinyStatus, moveOrientation);
 
-        Intent mIntent = new Intent(context, WS_IO_Move_Search.class);
+        Intent mIntent = new Intent(context, WBR_IO_Move_Search.class);
         Bundle bundle = new Bundle();
         //
         bundle.putString(MD_SiteDao.SITE_CODE,ToolBox_Con.getPreference_Site_Code(context));
@@ -80,8 +82,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         //
         mIntent.putExtras(bundle);
         context.sendBroadcast(mIntent);
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-    }
+}
 
     @Override
     public void processIOMoveSearch(String resultado) {
