@@ -120,10 +120,15 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void setInitialView() {
-        cbIoDestiny.setEnabled(false);
-        cbIoOrigins.setEnabled(false);
+
         mkeIoZone.setHint(hmAux_Trans.get("mket_zone_hint"));
-        mkeIoZone.setText(mPresenter.getZoneDesc());
+        String zoneDesc = mPresenter.getZoneDesc();
+        if(zoneDesc.isEmpty()){
+            cbIoDestiny.setEnabled(false);
+            cbIoOrigins.setEnabled(false);
+        }else{
+            mkeIoZone.setText(zoneDesc);
+        }
     }
 
     private void recoverIntentsInfo() {
