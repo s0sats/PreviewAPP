@@ -12,13 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -37,7 +37,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     CheckBox cbIoOrigins;
     CheckBox cbIoDestiny;
     LinearLayout llIoZone;
-    MKEditTextNM mkeIoZone;
+    SearchableSpinner ssIoZone;
     ImageView ivIoZoneRemove;
     TextView tvIoOrientationLbl;
     Button searchBtnMoveOrder;
@@ -122,15 +122,28 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void setInitialView() {
-
-        mkeIoZone.setHint(hmAux_Trans.get("mket_zone_hint"));
-        String zoneDesc = mPresenter.getZoneDesc();
-        if(zoneDesc.isEmpty()){
-            cbIoDestiny.setEnabled(false);
-            cbIoOrigins.setEnabled(false);
-        }else{
-            mkeIoZone.setText(zoneDesc);
+        ArrayList<HMAux> zoneList = new ArrayList<>();
+        zoneList.addAll(mPresenter.getZoneList());
+        ssIoZone.setmOption(zoneList);
+        ssIoZone.setmTitle(hmAux_Trans.get("user_zone_lbl"));
+        ssIoZone.setmLabel(hmAux_Trans.get("user_zone_lbl"));
+        ssIoZone.setmShowLabel(true);
+        ssIoZone.setmStyle(1);
+        cbIoDestiny.setEnabled(false);
+        cbIoOrigins.setEnabled(false);
+        for (HMAux hmAux: zoneList) {
+            if(hmAux.hasConsistentValue(SearchableSpinner.ID)){
+                String s = hmAux.get(SearchableSpinner.ID);
+                String preference_zone_code = String.valueOf(ToolBox_Con.getPreference_Zone_Code(this));
+                if (hmAux.get(SearchableSpinner.ID).equals(preference_zone_code)){
+                    ssIoZone.setmValue(hmAux);
+                    cbIoDestiny.setEnabled(true);
+                    cbIoOrigins.setEnabled(true);
+                    break;
+                }
+            }
         }
+
     }
 
     private void recoverIntentsInfo() {
@@ -142,7 +155,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         cbOutbound = findViewById(R.id.act054_cb_outbound);
         cbPlannedMove = findViewById(R.id.act054_cb_planned_move);
         llIoZone = findViewById(R.id.act054_ll_io_zone);
-        mkeIoZone = findViewById(R.id.act054_mke_io_zone);
+        ssIoZone = findViewById(R.id.act054_ss_io_zone);
         ivIoZoneRemove = findViewById(R.id.act054_iv_io_zone_remove);
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         cbIoOrigins = findViewById(R.id.act054_cb_io_origins);
@@ -169,22 +182,22 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void initActions() {
-        mkeIoZone.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+        ssIoZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void reportTextChange(String s) {
+            public void onItemPreSelected(HMAux hmAux) {
 
             }
 
             @Override
-            public void reportTextChange(String s, boolean b) {
-                if(s == null || s.isEmpty()){
+            public void onItemPostSelected(HMAux hmAux) {
+                if(hmAux.hasConsistentValue(SearchableSpinner.ID)){
+                    cbIoDestiny.setEnabled(true);
+                    cbIoOrigins.setEnabled(true);
+                }else{
                     cbIoDestiny.setEnabled(false);
                     cbIoDestiny.setChecked(false);
                     cbIoOrigins.setEnabled(false);
                     cbIoOrigins.setChecked(false);
-                }else{
-                    cbIoDestiny.setEnabled(true);
-                    cbIoOrigins.setEnabled(true);
                 }
             }
         });
@@ -192,19 +205,24 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ivIoZoneRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mkeIoZone.setText("");
             }
         });
 
         searchBtnMoveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateField()){
+                String zoneDesc;
+                if(!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)){
+                    zoneDesc = "";
+                }else{
+                    zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.ID);
+                }
+                if(validateField(zoneDesc)){
                     mPresenter.getMovements(
                             cbInbound.isChecked(),
                             cbOutbound.isChecked(),
                             cbPlannedMove.isChecked(),
-                            mkeIoZone.getText().toString(),
+                            zoneDesc,
                             cbIoOrigins.isChecked(),
                             cbIoDestiny.isChecked()
                     );
@@ -266,10 +284,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
 
-    private boolean validateField() {
-
+    private boolean validateField(String zoneDesc) {
         return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked() )
-                && ((!mkeIoZone.getText().toString().isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || mkeIoZone.getText().toString().isEmpty()
+                && ((!zoneDesc.isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || zoneDesc.isEmpty()
         );
     }
 

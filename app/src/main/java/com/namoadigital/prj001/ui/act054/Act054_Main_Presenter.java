@@ -14,16 +14,16 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
 
@@ -106,22 +106,19 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     @Override
-    public String getZoneDesc() {
-
-        MD_Site_Zone zone =
+    public List<HMAux> getZoneList() {
+        return
                 new MD_Site_ZoneDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                ).getByString(
-                        new MD_Site_Zone_Sql_003(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
-                                ToolBox_Con.getPreference_Zone_Code(context)
+                ).query_HM((
+                        new MD_Site_Zone_Sql_SS(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                ToolBox_Con.getPreference_Site_Code(context))
 
                         ).toSqlQuery()
                 );
-        return zone.getZone_desc();
     }
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {

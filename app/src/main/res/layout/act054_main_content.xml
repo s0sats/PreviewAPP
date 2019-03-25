@@ -66,8 +66,8 @@
         app:layout_constraintStart_toStartOf="@+id/act054_cb_planned_move"
         app:layout_constraintTop_toBottomOf="@+id/act054_cb_planned_move" >
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act054_mke_io_zone"
+        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+            android:id="@+id/act054_ss_io_zone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -75,11 +75,12 @@
 
         <ImageView
             android:id="@+id/act054_iv_io_zone_remove"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_minus_circle_outline_24dp" />
+            android:layout_marginHorizontal="80dp"
+            android:src="@drawable/barcode" />
 
     </LinearLayout>
 
