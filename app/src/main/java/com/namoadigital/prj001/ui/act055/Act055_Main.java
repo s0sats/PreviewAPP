@@ -10,6 +10,6 @@ public class Act055_Main extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_act055);
+        setContentView(R.layout.act055_main);
     }
 }
