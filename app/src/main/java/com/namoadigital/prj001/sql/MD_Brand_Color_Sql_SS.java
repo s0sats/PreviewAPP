@@ -28,9 +28,9 @@ public class MD_Brand_Color_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                                "   c.color_code "+ SearchableSpinner.ID +", " +
-                                "   c.color_id , " +
-                                "   c.color_desc "+ SearchableSpinner.DESCRIPTION +
+                                "   c.color_code " + SearchableSpinner.CODE +", " +
+                                "   c.color_id  " + SearchableSpinner.ID +", " +
+                                "   c.color_desc " + SearchableSpinner.DESCRIPTION +
                                 " FROM " +
                                 MD_Brand_ColorDao.TABLE +" c ,\n" +
                                 MD_Product_BrandDao.TABLE +" pb \n" +

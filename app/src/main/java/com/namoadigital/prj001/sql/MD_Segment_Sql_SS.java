@@ -25,8 +25,8 @@ public class MD_Segment_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                                "  s.segment_code "+ SearchableSpinner.ID +", " +
-                                "  s.segment_id , " +
+                                "  s.segment_code " + SearchableSpinner.CODE +", " +
+                                "  s.segment_id " + SearchableSpinner.ID +", " +
                                 "  s.segment_desc "+ SearchableSpinner.DESCRIPTION +
                                 " FROM " +
                                 MD_SegmentDao.TABLE +" s ,\n" +

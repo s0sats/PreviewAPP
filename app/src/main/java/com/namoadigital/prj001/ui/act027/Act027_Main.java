@@ -2616,7 +2616,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         ss_product.setmOption(nFormProductList);
         //
         HMAux auxProd = new HMAux();
-        auxProd.put(SearchableSpinner.ID, String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SearchableSpinner.CODE, String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SearchableSpinner.ID, String.valueOf(mSm_so.getProduct_id()));
         auxProd.put(SearchableSpinner.DESCRIPTION, mSm_so.getProduct_desc());
         auxProd.put(SM_SODao.PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
         auxProd.put(SM_SODao.PRODUCT_ID, mSm_so.getProduct_id());
@@ -2643,7 +2644,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (!hmAux.containsKey(SearchableSpinner.ID) || !hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))) {
+                if (!hmAux.containsKey(SearchableSpinner.CODE) || !hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))) {
                     tv_serial_lbl.setVisibility(View.GONE);
                     tv_serial_val.setVisibility(View.GONE);
                     tv_serial_val.setText("");
@@ -2662,7 +2663,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.ID));
+                                // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.CODE));
                                 if(ss_product.getmValue().size() == 0) {
                                     resetHmAuxProdutcSelected();
                                 }else {
@@ -2690,6 +2691,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     private void resetHmAuxProdutcSelected() {
+        nFormProductSelected.put(SearchableSpinner.CODE, "-1");
         nFormProductSelected.put(SearchableSpinner.ID, "-1");
         nFormProductSelected.put(SearchableSpinner.DESCRIPTION, "");
         nFormProductSelected.put(SM_SODao.PRODUCT_CODE, "-1");

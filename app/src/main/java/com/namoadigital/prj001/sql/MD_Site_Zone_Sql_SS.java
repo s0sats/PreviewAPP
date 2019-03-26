@@ -24,8 +24,8 @@ public class MD_Site_Zone_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   zone_code "+ SearchableSpinner.ID +", " +
-                        "   zone_id , " +
+                        "   zone_code "+ SearchableSpinner.CODE +", " +
+                        "   zone_id " + SearchableSpinner.ID +", " +
                         "   zone_desc "+ SearchableSpinner.DESCRIPTION +
                         " FROM " +
                         MD_Site_ZoneDao.TABLE +

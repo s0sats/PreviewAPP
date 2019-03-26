@@ -55,7 +55,7 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
@@ -1159,7 +1159,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
 
-                new MD_Partner_Sql_001(
+                new MD_Partner_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
@@ -1637,7 +1637,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         ss_product.setmOption(nFormProductList);
         //
         HMAux auxProd = new HMAux();
-        auxProd.put(SearchableSpinner.ID, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        auxProd.put(SearchableSpinner.CODE, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        auxProd.put(SearchableSpinner.ID, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_ID)));
         auxProd.put(SearchableSpinner.DESCRIPTION, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_DESC)));
         auxProd.put(SM_SODao.PRODUCT_CODE, String.valueOf(mSoAux.get(SM_SODao.PRODUCT_CODE)));
         auxProd.put(SM_SODao.PRODUCT_ID,String.valueOf(mSoAux.get(SM_SODao.PRODUCT_ID)));
@@ -1664,7 +1665,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (!hmAux.containsKey(SearchableSpinner.ID) ||!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE))) {
+                if (!hmAux.containsKey(SearchableSpinner.CODE) ||!hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE))) {
                     tv_serial_lbl.setVisibility(View.GONE);
                     tv_serial_val.setVisibility(View.GONE);
                     tv_serial_val.setText("");
@@ -1710,6 +1711,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void resetHmAuxProdutcSelected() {
+        nFormProductSelected.put(SearchableSpinner.CODE, "-1");
         nFormProductSelected.put(SearchableSpinner.ID, "-1");
         nFormProductSelected.put(SearchableSpinner.DESCRIPTION, "");
         nFormProductSelected.put(SM_SODao.PRODUCT_CODE, "-1");

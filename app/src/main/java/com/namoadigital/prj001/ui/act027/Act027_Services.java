@@ -30,7 +30,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
@@ -456,8 +456,8 @@ public class Act027_Services extends BaseFragment {
                 if (execAux.getPartner_code() == null && partnerAux != null && partnerAux.size() > 0) {
                     try {
 
-                        execAux.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
-                        execAux.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
+                        execAux.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.CODE)));
+                        execAux.setPartner_id(partnerAux.get(SearchableSpinner.ID));
                         execAux.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -598,8 +598,8 @@ public class Act027_Services extends BaseFragment {
         if (sm_so_service.getPartner_code() == null) {
             try {
                 partnerAux.size();
-                newExec.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
-                newExec.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
+                newExec.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.CODE)));
+                newExec.setPartner_id(partnerAux.get(SearchableSpinner.ID));
                 newExec.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -637,7 +637,7 @@ public class Act027_Services extends BaseFragment {
 
         final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
 
-                new MD_Partner_Sql_001(
+                new MD_Partner_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
@@ -668,8 +668,9 @@ public class Act027_Services extends BaseFragment {
 
             if (partners.size() > 0) {
                 HMAux hmAux = new HMAux();
-                hmAux.put("id", "0");
-                hmAux.put("description", hmAux_Trans.get("select_partner_lbl"));
+                hmAux.put(SearchableSpinner.CODE, "0");
+                hmAux.put(SearchableSpinner.ID, "0");
+                hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get("select_partner_lbl"));
 
                 ss_partner.setmValue(hmAux);
             }

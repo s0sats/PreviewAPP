@@ -528,15 +528,15 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
-                if (ss_site.getmValue().get(SearchableSpinner.ID) == null) {
+                if (ss_site.getmValue().get(SearchableSpinner.CODE) == null) {
                     //Seta var para impedir que a troca de valores nos spinners dispare
                     //o evento.
                     skip_validation = true;
                     //Seta valor do site
-                    setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
+                    setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_ID), hmAux.get(MD_SiteDao.SITE_DESC), false);
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
-                    setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
+                    setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_ID), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
                     //
                     loadLocalSS(false);
                     //
@@ -563,7 +563,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         iv_add_tracking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String site_val = ss_site.getmValue().get(SearchableSpinner.ID);
+                String site_val = ss_site.getmValue().get(SearchableSpinner.CODE);
                 if (site_val != null && !site_val.equals("null")) {
                     showTrackingDialog();
                 } else {
@@ -745,20 +745,20 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
-        setSSmValue(ss_site, String.valueOf(serialObj.getSite_code()), md_product_serial.get(MD_SiteDao.SITE_DESC), true, true);
+        setSSmValue(ss_site, String.valueOf(serialObj.getSite_code()), serialObj.getSite_id(), md_product_serial.get(MD_SiteDao.SITE_DESC), true, true);
         //
-        setSSmValue(ss_site_zone, String.valueOf(serialObj.getZone_code()), md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC), true, true);
+        setSSmValue(ss_site_zone, String.valueOf(serialObj.getZone_code()), serialObj.getZone_id(), md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC), true, true);
         //
-        setSSmValue(ss_site_zone_local, String.valueOf(serialObj.getLocal_code()), md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID), true, true);
+        setSSmValue(ss_site_zone_local, String.valueOf(serialObj.getLocal_code()), String.valueOf(serialObj.getLocal_code()), md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID), true, true);
         //
         //
-        setSSmValue(ss_brand, String.valueOf(serialObj.getBrand_code()), md_product_serial.get(MD_BrandDao.BRAND_DESC), true, false);
+        setSSmValue(ss_brand, String.valueOf(serialObj.getBrand_code()), serialObj.getBrand_id(), md_product_serial.get(MD_BrandDao.BRAND_DESC), true, false);
         brand_model_color_lbl =  md_product_serial.get(MD_BrandDao.BRAND_DESC).length() == 0 ? "" : "| " + md_product_serial.get(MD_BrandDao.BRAND_DESC) + " ";
         //
-        setSSmValue(ss_brand_model, String.valueOf(serialObj.getModel_code()), md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC), true, false);
+        setSSmValue(ss_brand_model, String.valueOf(serialObj.getModel_code()), serialObj.getModel_id(), md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC), true, false);
         brand_model_color_lbl += md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC).length() == 0 ? "" :  "| " +  md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC)+ " ";
         //
-        setSSmValue(ss_brand_color, String.valueOf(serialObj.getColor_code()), md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC), true, false);
+        setSSmValue(ss_brand_color, String.valueOf(serialObj.getColor_code()), serialObj.getColor_id(), md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC), true, false);
         brand_model_color_lbl += md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC).length() == 0 ? "" :"| " +   md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC)+ " ";
         //
         if( brand_model_color_lbl.length() > 0){
@@ -770,14 +770,14 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
             tv_brand_model_color.setVisibility(View.GONE);
         }
         //
-        setSSmValue(ss_segment, String.valueOf(serialObj.getSegment_code()), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true, false);
+        setSSmValue(ss_segment, String.valueOf(serialObj.getSegment_code()), serialObj.getSegment_id(), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true, false);
         dialog_serial_segment_desc = md_product_serial.get(MD_SegmentDao.SEGMENT_ID) + " - " + md_product_serial.get(MD_SegmentDao.SEGMENT_DESC);
         //
-        setSSmValue(ss_category_price, String.valueOf(serialObj.getCategory_price_code()), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true, false);
+        setSSmValue(ss_category_price, String.valueOf(serialObj.getCategory_price_code()), serialObj.getCategory_price_id(), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true, false);
         dialog_serial_category_price_desc = md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_ID) + " - " + md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC);
         //
         //
-        setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
+        setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
         //
         et_info1.setText(serialObj.getAdd_inf1());
         et_info1.setTag(serialObj.getAdd_inf1());
@@ -905,7 +905,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                                     serialObj.getProduct_code(),
                                     serialObj.getSerial_code(),
                                     mket_text,
-                                    ss_site.getmValue().get(SearchableSpinner.ID)
+                                    ss_site.getmValue().get(SearchableSpinner.CODE)
                             );
                             //
                             show.dismiss();
@@ -934,20 +934,20 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     private void buildSerialFull() {
-        serialObj.setSite_code(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setZone_code(ToolBox_Inf.mIntegerParse(ss_site_zone.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setLocal_code(ToolBox_Inf.mIntegerParse(ss_site_zone_local.getmValue().get(SearchableSpinner.ID)));
+        serialObj.setSite_code(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setZone_code(ToolBox_Inf.mIntegerParse(ss_site_zone.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setLocal_code(ToolBox_Inf.mIntegerParse(ss_site_zone_local.getmValue().get(SearchableSpinner.CODE)));
         //
         serialObj.setAdd_inf1(et_info1.getText().toString().trim());
         serialObj.setAdd_inf2(et_info2.getText().toString().trim());
         serialObj.setAdd_inf3(et_info3.getText().toString().trim());
         //
-        serialObj.setBrand_code(ToolBox_Inf.mIntegerParse(ss_brand.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setModel_code(ToolBox_Inf.mIntegerParse(ss_brand_model.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setColor_code(ToolBox_Inf.mIntegerParse(ss_brand_color.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setSegment_code(ToolBox_Inf.mIntegerParse(ss_segment.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setCategory_price_code(ToolBox_Inf.mIntegerParse(ss_category_price.getmValue().get(SearchableSpinner.ID)));
-        serialObj.setSite_code_owner(ToolBox_Inf.mIntegerParse(ss_site_owner.getmValue().get(SearchableSpinner.ID)));
+        serialObj.setBrand_code(ToolBox_Inf.mIntegerParse(ss_brand.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setModel_code(ToolBox_Inf.mIntegerParse(ss_brand_model.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setColor_code(ToolBox_Inf.mIntegerParse(ss_brand_color.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setSegment_code(ToolBox_Inf.mIntegerParse(ss_segment.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setCategory_price_code(ToolBox_Inf.mIntegerParse(ss_category_price.getmValue().get(SearchableSpinner.CODE)));
+        serialObj.setSite_code_owner(ToolBox_Inf.mIntegerParse(ss_site_owner.getmValue().get(SearchableSpinner.CODE)));
         //
         serialObj.setUpdate_required(1);
         serialObj.setOnly_position(1);
@@ -1037,9 +1037,9 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     private boolean validadeSerialLocation() {
-        boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && !ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
-        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
-        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean site = ss_site.getmValue().get(SearchableSpinner.CODE) != null && !ss_site.getmValue().get(SearchableSpinner.CODE).equals("null") && ss_site.getmValue().get(SearchableSpinner.CODE).length() > 0;
+        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.CODE) != null && !ss_site_zone.getmValue().get(SearchableSpinner.CODE).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.CODE).length() > 0;
+        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.CODE) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.CODE).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.CODE).length() > 0;
         //
         if (site && zone && local) {
             //limpa marcação de erro.
@@ -1137,7 +1137,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
      */
     private void loadSiteOwner(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_owner, null, null, false, false);
+            setSSmValue(ss_site_owner, null, null, null, false, false);
         }
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1153,7 +1153,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadCategoryPrice(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_category_price, null, null, false, false);
+            setSSmValue(ss_category_price, null, null, null, false, false);
         }
         //
         MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1170,7 +1170,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadSegment(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_segment, null, null, false, false);
+            setSSmValue(ss_segment, null, null, null, false, false);
         }
         //
         MD_SegmentDao segmentDao = new MD_SegmentDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1187,7 +1187,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadColorSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand_color, null, null, false, false);
+            setSSmValue(ss_brand_color, null, null, null, false, false);
         }
         //
         MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1196,7 +1196,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 new MD_Brand_Color_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(product_code),
-                        ss_brand.getmValue().get(SearchableSpinner.ID)
+                        ss_brand.getmValue().get(SearchableSpinner.CODE)
                 ).toSqlQuery()
         );
         //
@@ -1205,7 +1205,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadModelSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand_model, null, null, false, false);
+            setSSmValue(ss_brand_model, null, null, null, false, false);
         }
         //
         MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1214,7 +1214,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 new MD_Brand_Model_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(product_code),
-                        ss_brand.getmValue().get(SearchableSpinner.ID)
+                        ss_brand.getmValue().get(SearchableSpinner.CODE)
                 ).toSqlQuery()
         );
         //
@@ -1223,7 +1223,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadBrandSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand, null, null, false, false);
+            setSSmValue(ss_brand, null, null, null, false, false);
         }
         //
         MD_BrandDao brandDao = new MD_BrandDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1241,7 +1241,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadSiteSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site, null, null, false, true);
+            setSSmValue(ss_site, null, null, null, false, true);
         }
 
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1257,14 +1257,14 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadZoneSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_zone, null, null, false, true);
+            setSSmValue(ss_site_zone, null, null, null, false, true);
         }
         //
         MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> zoneList = (ArrayList<HMAux>) siteZoneDao.query_HM(
                 new MD_Site_Zone_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        ss_site.getmValue().get(SearchableSpinner.ID)
+                        ss_site.getmValue().get(SearchableSpinner.CODE)
                 ).toSqlQuery()
         );
         //
@@ -1273,7 +1273,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadLocalSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_zone_local, null, null, false, true);
+            setSSmValue(ss_site_zone_local, null, null, null, false, true);
         }
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1281,8 +1281,8 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         ArrayList<HMAux> localList = (ArrayList<HMAux>) siteZoneLocalDao.query_HM(
                 new MD_Site_Zone_Local_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        ss_site.getmValue().get(SearchableSpinner.ID),
-                        ss_site_zone.getmValue().get(SearchableSpinner.ID)
+                        ss_site.getmValue().get(SearchableSpinner.CODE),
+                        ss_site_zone.getmValue().get(SearchableSpinner.CODE)
                 ).toSqlQuery()
         );
         //

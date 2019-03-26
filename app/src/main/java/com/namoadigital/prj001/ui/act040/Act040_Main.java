@@ -375,8 +375,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         try {
             mdPartner.setCustomer_code(Long.parseLong(partner.get(MD_PartnerDao.CUSTOMER_CODE)));
-            mdPartner.setPartner_code(Integer.parseInt(partner.get(SearchableSpinner.ID)));
-            mdPartner.setPartner_id(partner.get(MD_PartnerDao.PARTNER_ID));
+            mdPartner.setPartner_code(Integer.parseInt(partner.get(SearchableSpinner.CODE)));
+            //mdPartner.setPartner_id(partner.get(MD_PartnerDao.PARTNER_ID));
+            mdPartner.setPartner_id(partner.get(SearchableSpinner.ID));
             mdPartner.setPartner_desc(partner.get(SearchableSpinner.DESCRIPTION));
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);

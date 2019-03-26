@@ -22,8 +22,8 @@ public class MD_Site_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT \n" +
-                        "   site_code " + SearchableSpinner.ID + ", \n" +
-                        "   site_id ,\n " +
+                        "   site_code " + SearchableSpinner.CODE + ", \n" +
+                        "   site_id "+ SearchableSpinner.ID + ", \n" +
                         "   site_desc " + SearchableSpinner.DESCRIPTION + ", \n" +
                         "   io_control,\n " +
                         "   inbound_auto_create \n ," +

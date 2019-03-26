@@ -28,7 +28,7 @@ import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
@@ -560,15 +560,15 @@ public class Act028_Opc extends BaseFragment {
 
         final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
 
-                new MD_Partner_Sql_001(
+                new MD_Partner_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
 
         if (partners.size() == 1) {
-            sm_so_service_exec.setPartner_code(Integer.parseInt(partners.get(0).get("id")));
-            sm_so_service_exec.setPartner_id(partners.get(0).get("partner_id"));
-            sm_so_service_exec.setPartner_desc(partners.get(0).get("description"));
+            sm_so_service_exec.setPartner_code(Integer.parseInt(partners.get(0).get(SearchableSpinner.CODE)));
+            sm_so_service_exec.setPartner_id(partners.get(0).get(SearchableSpinner.ID));
+            sm_so_service_exec.setPartner_desc(partners.get(0).get(SearchableSpinner.DESCRIPTION));
             //
             sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
             //
@@ -606,8 +606,9 @@ public class Act028_Opc extends BaseFragment {
 
             if (partners.size() > 0) {
                 HMAux hmAux = new HMAux();
-                hmAux.put("id", "0");
-                hmAux.put("description", hmAux_Trans.get("ss_partner_list_ttl"));
+                hmAux.put(SearchableSpinner.CODE, "0");
+                hmAux.put(SearchableSpinner.ID, "0");
+                hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get("ss_partner_list_ttl"));
 
                 ss_partner.setmValue(hmAux);
             }
@@ -660,9 +661,9 @@ public class Act028_Opc extends BaseFragment {
                                 false
                         );
                     } else {
-                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
-                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
-                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
+                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get(SearchableSpinner.CODE)));
+                        sm_so_service_exec.setPartner_id(partnerAux.get(SearchableSpinner.ID));
+                        sm_so_service_exec.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
                         //
                         sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
                         //

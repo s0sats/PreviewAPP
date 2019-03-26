@@ -29,10 +29,10 @@ public class MD_Product_Sql_SS_001 implements Specification {
 
         return sb
                 .append(" SELECT \n" +
-                        "    p.product_code " + SearchableSpinner.ID + ",\n"+
+                        "    p.product_code " + SearchableSpinner.CODE + ",\n"+
                         "    p.product_id ||' - '|| p.product_desc " + SearchableSpinner.DESCRIPTION + "\n," +
                         "    p.product_code, \n"+
-                        "    p.product_id, \n"+
+                        "    p.product_id "+ SearchableSpinner.ID + ",\n"+
                         "    p.product_desc, \n"+
                         "    CASE WHEN p.product_code = '"+product_code+"'\n" +
                         "         THEN 0 ELSE 1 \n" +

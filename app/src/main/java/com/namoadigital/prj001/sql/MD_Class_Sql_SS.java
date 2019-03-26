@@ -22,8 +22,8 @@ public class MD_Class_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   class_code "+ SearchableSpinner.ID +", \n" +
-                        "   class_id ,\n " +
+                        "   class_code "+ SearchableSpinner.CODE +", \n" +
+                        "   class_id "+ SearchableSpinner.ID +", \n" +
                         "   class_type ,\n " +
                         "   class_color , \n" +
                         "   class_available ,\n " +

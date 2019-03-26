@@ -209,7 +209,7 @@ public class Act050_Frag_SO extends BaseFragment {
         mkDateTime.setmValue(my_so_creation_obj.getDeadline());
         mkDateTime.setVisibility(View.GONE);
 
-        if (!ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+        if (!ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             swHasManualDeadline.setChecked(true);
             mkDateTime.setVisibility(View.VISIBLE);
 
@@ -304,10 +304,12 @@ public class Act050_Frag_SO extends BaseFragment {
                 mListener.getPipelineList()) {
             if (my_so_creation_obj.getPipeline_code() != null
                     && my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
+                pipelineFav.put(SearchableSpinner.CODE, String.valueOf(pipeline.getPipelineCode()));
                 pipelineFav.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
                 pipelineFav.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
             }
             HMAux pipelineOption = new HMAux();
+            pipelineOption.put(SearchableSpinner.CODE, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
             mPipelineOptions.add(pipelineOption);
@@ -315,7 +317,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         ssPipelineCode.setmOption(mPipelineOptions);
 
-        if (!pipelineFav.hasConsistentValue(SearchableSpinner.ID)) {
+        if (!pipelineFav.hasConsistentValue(SearchableSpinner.CODE)) {
             pipelineFav = mListener.getPipelineFavorite();
         }
         ssPipelineCode.setmValue(pipelineFav);
@@ -509,8 +511,8 @@ public class Act050_Frag_SO extends BaseFragment {
             my_so_creation_obj.setPack_default(null);
         }
 
-        if (ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
-            my_so_creation_obj.setPipeline_code(Integer.valueOf(ssPipelineCode.getmValue().get(SearchableSpinner.ID)));
+        if (ssPipelineCode.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            my_so_creation_obj.setPipeline_code(Integer.valueOf(ssPipelineCode.getmValue().get(SearchableSpinner.CODE)));
         }else{
             my_so_creation_obj.setPipeline_code(null);
         }
@@ -555,7 +557,7 @@ public class Act050_Frag_SO extends BaseFragment {
                     setEdtClientContent("", "", "", "");
                 }
                 for (SM_SO_Client client : clientsList) {
-                    if (client.getClient_id().equals(hmAux.get(SearchableSpinner.ID))) {
+                    if (client.getClient_id().equals(hmAux.get(SearchableSpinner.CODE))) {
                         setClientInfo(
                                 client.getClient_id(),
                                 client.getClient_name(),
@@ -750,6 +752,7 @@ public class Act050_Frag_SO extends BaseFragment {
         verifyPermission();
         setEdtClientContent(clientId, clientName, clientPhone, clientEmail);
         HMAux clientValue = new HMAux();
+        clientValue.put(SearchableSpinner.CODE, String.valueOf(clientCode));
         clientValue.put(SearchableSpinner.ID, clientId);
         String clienteSpinnerName = clientId + " - " + clientName;
 
@@ -888,6 +891,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ArrayList<HMAux> clientListOption = new ArrayList<>();
         for (SM_SO_Client client : clientList) {
             HMAux clientData = new HMAux();
+            clientData.put(SearchableSpinner.CODE, String.valueOf(client.getClient_code()));
             clientData.put(SearchableSpinner.ID, client.getClient_id());
             clientData.put(SearchableSpinner.DESCRIPTION, client.getClient_name());
             clientData.put(CLIENT_CODE, String.valueOf(client.getClient_code()));

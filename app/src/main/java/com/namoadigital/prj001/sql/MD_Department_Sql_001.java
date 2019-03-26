@@ -23,8 +23,8 @@ public class MD_Department_Sql_001 implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                                "   department_code " + SearchableSpinner.ID + ", " +
-                                "   department_id , " +
+                                "   department_code " + SearchableSpinner.CODE + ", " +
+                                "   department_id " + SearchableSpinner.ID + ", " +
                                 "   department_desc " + SearchableSpinner.DESCRIPTION +
                                 " FROM " +
                                 MD_DepartmentDao.TABLE +

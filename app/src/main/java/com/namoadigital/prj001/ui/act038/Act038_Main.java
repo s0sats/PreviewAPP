@@ -680,7 +680,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ToolBox_Inf.setSSmValue(
                 ss_status,
                 String.valueOf(mGe_custom_form_ap.getAp_status()),
-                hmAux_Trans.get(mGe_custom_form_ap.getAp_status()),
+                String.valueOf(mGe_custom_form_ap.getAp_status()), hmAux_Trans.get(mGe_custom_form_ap.getAp_status()),
                 true
         );
     }
@@ -699,6 +699,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             if (mUser != null) {
                 ToolBox_Inf.setSSmValue(
                         ss_users,
+                        String.valueOf(mUser.getUser_code()),
                         String.valueOf(mUser.getUser_code()),
                         mUser.getUser_nick(),
                         true
@@ -722,6 +723,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 ToolBox_Inf.setSSmValue(
                         ss_departments,
                         String.valueOf(dpto.getDepartment_code()),
+                        dpto.getDepartment_id(),
                         dpto.getDepartment_desc(),
                         true,
                         "department_id",
@@ -900,7 +902,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 //LUCHE  - 18/02/2019
                 HMAux aux = ss_status.getmValue();
                 //
-                switch (aux.get(SearchableSpinner.ID)) {
+                switch (aux.get(SearchableSpinner.CODE)) {
                     case Constant.SYS_STATUS_PROCESS:
                     case Constant.SYS_STATUS_WAITING_ACTION:
                     case Constant.SYS_STATUS_DONE:
@@ -971,21 +973,21 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             ss_status.setBackground(null);
         }
 
-        switch (aux.get(SearchableSpinner.ID)) {
+        switch (aux.get(SearchableSpinner.CODE)) {
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_WAITING_ACTION:
             case Constant.SYS_STATUS_DONE:
                 HMAux mUser = ss_users.getmValue();
 
-                if (mUser.get(SearchableSpinner.ID) == null ||
-                        mUser.get(SearchableSpinner.ID) == "null" ||
-                        mUser.get(SearchableSpinner.ID).isEmpty() ||
+                if (mUser.get(SearchableSpinner.CODE) == null ||
+                        mUser.get(SearchableSpinner.CODE) == "null" ||
+                        mUser.get(SearchableSpinner.CODE).isEmpty() ||
                         et_form_when_ttl.getmValue() == null ||
                         et_form_when_ttl.getmValue().isEmpty()) {
 
-                    if (mUser.get(SearchableSpinner.ID) == null ||
-                            mUser.get(SearchableSpinner.ID) == "null" ||
-                            mUser.get(SearchableSpinner.ID).isEmpty()) {
+                    if (mUser.get(SearchableSpinner.CODE) == null ||
+                            mUser.get(SearchableSpinner.CODE) == "null" ||
+                            mUser.get(SearchableSpinner.CODE).isEmpty()) {
                         ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
                     } else {
                         ss_users.setBackground(null);
@@ -1092,14 +1094,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             );
         } else {
 
-            mGe_custom_form_ap.setAp_status(ss_status.getmValue().get(SearchableSpinner.ID));
+            mGe_custom_form_ap.setAp_status(ss_status.getmValue().get(SearchableSpinner.CODE));
             mGe_custom_form_ap.setAp_when(et_form_when_ttl.getmValue());
 
-            if (ss_users.getmValue().get(SearchableSpinner.ID) != null && ss_users.getmValue().get(SearchableSpinner.ID) != "null" && !ss_users.getmValue().get(SearchableSpinner.ID).isEmpty()) {
-                mGe_custom_form_ap.setAp_who(Integer.parseInt(ss_users.getmValue().get(SearchableSpinner.ID)));
+            if (ss_users.getmValue().get(SearchableSpinner.CODE) != null && ss_users.getmValue().get(SearchableSpinner.CODE) != "null" && !ss_users.getmValue().get(SearchableSpinner.CODE).isEmpty()) {
+                mGe_custom_form_ap.setAp_who(Integer.parseInt(ss_users.getmValue().get(SearchableSpinner.CODE)));
                 mGe_custom_form_ap.setAp_who_nick(ToolBox_Inf.getFullNick(
                         ss_users.getmValue().get(SearchableSpinner.DESCRIPTION),
-                        ss_users.getmValue().get(SearchableSpinner.ID)
+                        ss_users.getmValue().get(SearchableSpinner.CODE)
                 ));
 
             } else {
@@ -1107,10 +1109,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mGe_custom_form_ap.setAp_who_nick(null);
             }
 
-            if (ss_departments.getmValue().get(SearchableSpinner.ID) != null && ss_departments.getmValue().get(SearchableSpinner.ID) != "null" && !ss_departments.getmValue().get(SearchableSpinner.ID).isEmpty()) {
-                mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.ID)));
+            if (ss_departments.getmValue().get(SearchableSpinner.CODE) != null && ss_departments.getmValue().get(SearchableSpinner.CODE) != "null" && !ss_departments.getmValue().get(SearchableSpinner.CODE).isEmpty()) {
+                mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.CODE)));
                 mGe_custom_form_ap.setDepartment_desc(ss_departments.getmValue().get(SearchableSpinner.DESCRIPTION));
-                mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get("department_id"));
+                mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get(SearchableSpinner.ID));
             } else {
                 mGe_custom_form_ap.setDepartment_code(null);
                 mGe_custom_form_ap.setDepartment_desc(null);
@@ -1167,12 +1169,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ToolBox_Inf.setSSmValue(
                 ss_status,
                 String.valueOf(mGe_custom_form_ap.getAp_status()),
+                String.valueOf(mGe_custom_form_ap.getAp_status()),
                 hmAux_Trans.get(mGe_custom_form_ap.getAp_status()),
                 true
         );
 
         ToolBox_Inf.setSSmValue(
                 ss_users,
+                String.valueOf(mGe_custom_form_ap.getAp_who()),
                 String.valueOf(mGe_custom_form_ap.getAp_who()),
                 mGe_custom_form_ap.getAp_who_nick(),
                 true
@@ -1181,6 +1185,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ToolBox_Inf.setSSmValue(
                 ss_departments,
                 String.valueOf(mGe_custom_form_ap.getDepartment_code()),
+                mGe_custom_form_ap.getDepartment_id(),
                 mGe_custom_form_ap.getDepartment_desc(),
                 true,
                 "department_id",

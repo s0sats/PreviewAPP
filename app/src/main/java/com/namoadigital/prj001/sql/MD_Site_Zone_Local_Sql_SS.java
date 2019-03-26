@@ -41,7 +41,7 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   l.local_code "+ SearchableSpinner.ID +",\n " +
+                        "   l.local_code "+ SearchableSpinner.CODE +",\n " +
                         "   l.local_id "+ SearchableSpinner.DESCRIPTION +",\n " +
                         "   s.site_code,\n" +
                         "   s.site_desc,\n" +

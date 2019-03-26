@@ -7,9 +7,6 @@ import com.namoadigital.prj001.database.Specification;
 public class IO_Move_Reason_Sql_SS implements Specification {
 
     private long customer_code;
-    private int reason_code;
-    private String reason_id;
-    private String reason_desc;
 
     public IO_Move_Reason_Sql_SS(long customer_code) {
         this.customer_code = customer_code;
@@ -22,8 +19,8 @@ public class IO_Move_Reason_Sql_SS implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "  f.customer_code , " +
-                        "  f.reason_code "+ SearchableSpinner.ID +", " +
-                        "  f.reason_id , " +
+                        "  f.reason_code "+ SearchableSpinner.CODE +", " +
+                        "  f.reason_id  " + SearchableSpinner.ID +", " +
                         "  f.reason_desc "+ SearchableSpinner.DESCRIPTION +
                         " FROM\n" +
                         IO_Move_ReasonDao.TABLE +"  f\n" +

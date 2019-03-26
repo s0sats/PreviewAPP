@@ -169,7 +169,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 setContractPoInfo(hmAux);
                 //
                 if(mFragListner != null) {
-                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.ID)) : -1;
+                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
                     Integer pipeline_code = hmAux.hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(hmAux.get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                     selected_contract_code = contract_code;
                     mFragListner.onContractSelected(contract_code,pipeline_code);
@@ -189,7 +189,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     if (mFragListner != null) {
                         mFragListner.onMoveToOSFragment();
                     }
@@ -284,7 +284,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         ss_contract.setmEnabled(false);
                         //
                         setContractPoInfo(options.get(0));
-                        Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.ID) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.ID)) : -1;
+                        Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
                         Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                         selected_contract_code = contract_code;
                         //Se existe apenas um contrato e ele ja foi selecionado,
@@ -343,6 +343,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         //
         for(SO_Favorite_Contract contract: contracts){
             HMAux aux = new HMAux();
+            aux.put(SearchableSpinner.CODE, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.ID, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.DESCRIPTION, contract.getContractDesc());
             aux.put(SM_SODao.CONTRACT_PO_ERP,contract.getPoErp());

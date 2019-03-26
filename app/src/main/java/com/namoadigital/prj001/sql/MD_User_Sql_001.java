@@ -26,6 +26,7 @@ public class MD_User_Sql_001 implements Specification {
                 .append(
                         " SELECT \n" +
 //                                "   *,  \n" +
+                                MD_UserDao.USER_CODE + " " + SearchableSpinner.CODE + "," +
                                 MD_UserDao.USER_CODE + " " + SearchableSpinner.ID + "," +
                                 MD_UserDao.USER_NICK + " " + SearchableSpinner.DESCRIPTION +
                                 " FROM \n" +

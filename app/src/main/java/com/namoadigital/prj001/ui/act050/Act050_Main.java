@@ -34,7 +34,6 @@ import com.namoadigital.prj001.service.WS_SO_Creation_Save;
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -499,6 +498,7 @@ public class Act050_Main extends Base_Activity_Frag implements
             try {
                 for (SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
                     if (pipelineFav.getPipelineCode() == mSOCreationObj.getPipeline_code()) {
+                        pipeline.put(SearchableSpinner.CODE, String.valueOf(pipelineFav.getPipelineCode()));
                         pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
                         pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
                         return pipeline;

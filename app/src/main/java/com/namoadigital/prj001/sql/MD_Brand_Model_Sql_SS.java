@@ -28,8 +28,8 @@ public class MD_Brand_Model_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                                "   m.model_code "+ SearchableSpinner.ID +", " +
-                                "   m.model_id , " +
+                                "   m.model_code " + SearchableSpinner.CODE +", " +
+                                "   m.model_id " + SearchableSpinner.ID +", " +
                                 "   m.model_desc "+ SearchableSpinner.DESCRIPTION +
                                 " FROM " +
                                 MD_Brand_ModelDao.TABLE +" m ,\n" +

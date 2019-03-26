@@ -25,9 +25,9 @@ public class MD_Category_Price_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                                "  c.category_price_code "+ SearchableSpinner.ID +", " +
-                                "  c.category_price_id , " +
-                                "  c.category_price_desc "+ SearchableSpinner.DESCRIPTION +
+                                "  c.category_price_code " + SearchableSpinner.CODE +", " +
+                                "  c.category_price_id  " + SearchableSpinner.ID +", " +
+                                "  c.category_price_desc " + SearchableSpinner.DESCRIPTION +
                                 " FROM " +
                                 MD_Category_PriceDao.TABLE +" c ,\n" +
                                 MD_Product_Category_PriceDao.TABLE +" pc \n" +

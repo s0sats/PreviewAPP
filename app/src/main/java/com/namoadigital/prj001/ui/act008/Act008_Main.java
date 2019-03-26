@@ -317,7 +317,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         //Busca se o site
                         boolean isSiteScheduleInList = false;
                         for (HMAux aux : frgSerialEdit.getSS_SiteOption()) {
-                            if (aux.get(SearchableSpinner.ID).equals(scheduled_site)) {
+                            if (aux.get(SearchableSpinner.CODE).equals(scheduled_site)) {
                                 isSiteScheduleInList = true;
                                 break;
                             }

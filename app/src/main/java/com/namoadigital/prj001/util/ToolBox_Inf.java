@@ -3175,6 +3175,7 @@ public class ToolBox_Inf {
                 continue;
             } else {
                 HMAux hmAux = new HMAux();
+                hmAux.put(SearchableSpinner.CODE, mStatus[i]);
                 hmAux.put(SearchableSpinner.ID, mStatus[i]);
                 hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_trans.get(mStatus[i]));
                 //
@@ -3186,9 +3187,10 @@ public class ToolBox_Inf {
         return statusList;
     }
 
-    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, String... extra) {
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String id, String desc, boolean source_val, String... extra) {
         HMAux hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID, code);
+        hmAux.put(SearchableSpinner.CODE, code);
+        hmAux.put(SearchableSpinner.ID, id);
         hmAux.put(SearchableSpinner.DESCRIPTION, desc);
         //
         if (extra.length > 0 && extra.length % 2 == 0) {
@@ -3216,15 +3218,17 @@ public class ToolBox_Inf {
     /**
      * @param ss_component
      * @param code         - Codigo interno do server(code)
+     * @param id           - Codigo externo (id)
      * @param desc         - Descrição do item
      * @param source_val   - Seta esse code, como valor default no sppiner
      * @param acceptNull   - Seta tag indicanda se spinner aceita valor null
      */
-    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String id, String desc, boolean source_val, boolean acceptNull) {
         try {
             HMAux hmAux = new HMAux();
             if (code != null && code != "null") {
-                hmAux.put(SearchableSpinner.ID, code);
+                hmAux.put(SearchableSpinner.CODE, code);
+                hmAux.put(SearchableSpinner.ID, id);
                 hmAux.put(SearchableSpinner.DESCRIPTION, desc);
             }
             //ss_component.setmValue(hmAux);

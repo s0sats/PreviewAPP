@@ -32,7 +32,7 @@ import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
@@ -129,7 +129,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     @Override
     public void loadPartners(String partner_code) {
         ArrayList<HMAux> partnerList = (ArrayList<HMAux>) md_partnerDao.query_HM(
-                new MD_Partner_Sql_001(
+                new MD_Partner_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
@@ -147,7 +147,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         } else if (!partner_code.equalsIgnoreCase("-1")) {
             boolean partnerFound = false;
             for (HMAux aux : partnerList) {
-                if (aux.get(SearchableSpinner.ID).equalsIgnoreCase(partner_code)) {
+                if (aux.get(SearchableSpinner.CODE).equalsIgnoreCase(partner_code)) {
                     partnerFound = true;
                     mView.setPartner(aux);
                     break;
