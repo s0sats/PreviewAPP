@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="TextView"
             app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_product_ext_code_val"
-            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_product_separator"
             app:layout_constraintTop_toTopOf="@+id/act055_tv_io_product_ext_code_val" />
 
 
@@ -93,7 +93,7 @@
             app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_serial_ext_code_lbl" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/act055_tv_io_product_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" - "
@@ -185,7 +185,7 @@
             app:layout_constraintTop_toTopOf="@+id/act055_tv_io_current_position_lbl" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/act055_tv_io_current_position_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -200,9 +200,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="Local"
-            app:layout_constraintBottom_toBottomOf="@+id/textView6"
-            app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toTopOf="@+id/textView6" />
+            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_current_position_separator"
+            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_current_position_separator"
+            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_current_position_separator" />
 
         <TextView
             android:id="@+id/act055_tv_io_suggested_position_lbl"
@@ -217,7 +217,7 @@
             app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_current_position_lbl" />
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/act055_tv_io_suggested_position_zone_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -227,24 +227,24 @@
             app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_lbl" />
 
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/act055_tv_io_suggested_position_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="|"
-            app:layout_constraintBottom_toBottomOf="@+id/textView9"
-            app:layout_constraintStart_toEndOf="@+id/textView9"
-            app:layout_constraintTop_toTopOf="@+id/textView9" />
+            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_suggested_position_zone_val"
+            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_suggested_position_zone_val"
+            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_zone_val" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/act055_tv_io_suggested_position_local_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="Local"
-            app:layout_constraintBottom_toBottomOf="@+id/textView10"
-            app:layout_constraintStart_toEndOf="@+id/textView10"
-            app:layout_constraintTop_toTopOf="@+id/textView10" />
+            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_suggested_position_separator"
+            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_suggested_position_separator"
+            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_separator" />
 
     </android.support.constraint.ConstraintLayout>
 

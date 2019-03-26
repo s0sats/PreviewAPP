@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="TextView"
             app:layout_constraintBottom_toBottomOf="@+id/act052_tv_io_product_ext_code_val"
-            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_product_separator"
             app:layout_constraintTop_toTopOf="@+id/act052_tv_io_product_ext_code_val" />
 
 
@@ -127,7 +127,7 @@
             app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_serial_ext_code_lbl" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/act055_tv_io_product_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" - "
