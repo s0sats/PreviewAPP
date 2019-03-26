@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -38,7 +37,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     CheckBox cbIoDestiny;
     LinearLayout llIoZone;
     SearchableSpinner ssIoZone;
-    ImageView ivIoZoneRemove;
+    ImageView ivIoZoneBarcode;
     TextView tvIoOrientationLbl;
     Button searchBtnMoveOrder;
     Button btnMoveOrderPendency;
@@ -156,7 +155,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         cbPlannedMove = findViewById(R.id.act054_cb_planned_move);
         llIoZone = findViewById(R.id.act054_ll_io_zone);
         ssIoZone = findViewById(R.id.act054_ss_io_zone);
-        ivIoZoneRemove = findViewById(R.id.act054_iv_io_zone_remove);
+        ivIoZoneBarcode = findViewById(R.id.act054_iv_io_zone_remove);
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         cbIoOrigins = findViewById(R.id.act054_cb_io_origins);
         cbIoDestiny = findViewById(R.id.act054_cb_io_destiny);
@@ -202,7 +201,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             }
         });
 
-        ivIoZoneRemove.setOnClickListener(new View.OnClickListener() {
+        ivIoZoneBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
@@ -307,7 +306,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
         mPresenter.onBackPressedClicked(Constant.ACT051);
     }
 }
