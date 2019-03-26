@@ -19,7 +19,6 @@ public class MD_Site_Zone_Sql_001 implements Specification {
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
-
         return sb
                 .append(
                         " SELECT " +
