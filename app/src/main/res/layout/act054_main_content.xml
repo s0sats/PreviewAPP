@@ -73,15 +73,6 @@
             android:layout_weight="1"
             android:hint="Zona"/>
 
-        <ImageView
-            android:id="@+id/act054_iv_io_zone_remove"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
-            android:layout_gravity="bottom"
-            android:layout_marginHorizontal="80dp"
-            android:src="@drawable/barcode" />
-
     </LinearLayout>
 
 

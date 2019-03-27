@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
@@ -27,7 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I_View{
+public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I_View {
 
     public static final String IO_MOVE_RECORDS = "IO_MOVE_RECORDS";
     CheckBox cbInbound;
@@ -37,7 +38,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     CheckBox cbIoDestiny;
     LinearLayout llIoZone;
     SearchableSpinner ssIoZone;
-    ImageView ivIoZoneBarcode;
     TextView tvIoOrientationLbl;
     Button searchBtnMoveOrder;
     Button btnMoveOrderPendency;
@@ -114,7 +114,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void initVars() {
-        mPresenter = new Act054_Main_Presenter(context,this, hmAux_Trans);
+        mPresenter = new Act054_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         bindViews();
         setInitialView();
@@ -127,14 +127,15 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ssIoZone.setmTitle(hmAux_Trans.get("user_zone_lbl"));
         ssIoZone.setmLabel(hmAux_Trans.get("user_zone_lbl"));
         ssIoZone.setmShowLabel(true);
+        ssIoZone.setmShowBarcode(true);
         ssIoZone.setmStyle(1);
         cbIoDestiny.setEnabled(false);
         cbIoOrigins.setEnabled(false);
-        for (HMAux hmAux: zoneList) {
-            if(hmAux.hasConsistentValue(SearchableSpinner.ID)){
-                String s = hmAux.get(SearchableSpinner.ID);
+        for (HMAux hmAux : zoneList) {
+            if (hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
+                String s = hmAux.get(SearchableSpinner.CODE);
                 String preference_zone_code = String.valueOf(ToolBox_Con.getPreference_Zone_Code(this));
-                if (hmAux.get(SearchableSpinner.ID).equals(preference_zone_code)){
+                if (hmAux.get(SearchableSpinner.CODE).equals(preference_zone_code)) {
                     ssIoZone.setmValue(hmAux);
                     cbIoDestiny.setEnabled(true);
                     cbIoOrigins.setEnabled(true);
@@ -142,6 +143,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 }
             }
         }
+        controls_ss.add(ssIoZone);
 
     }
 
@@ -155,7 +157,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         cbPlannedMove = findViewById(R.id.act054_cb_planned_move);
         llIoZone = findViewById(R.id.act054_ll_io_zone);
         ssIoZone = findViewById(R.id.act054_ss_io_zone);
-        ivIoZoneBarcode = findViewById(R.id.act054_iv_io_zone_remove);
+
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         cbIoOrigins = findViewById(R.id.act054_cb_io_origins);
         cbIoDestiny = findViewById(R.id.act054_cb_io_destiny);
@@ -189,10 +191,10 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if(hmAux.hasConsistentValue(SearchableSpinner.ID)){
+                if (hmAux.hasConsistentValue(SearchableSpinner.ID)) {
                     cbIoDestiny.setEnabled(true);
                     cbIoOrigins.setEnabled(true);
-                }else{
+                } else {
                     cbIoDestiny.setEnabled(false);
                     cbIoDestiny.setChecked(false);
                     cbIoOrigins.setEnabled(false);
@@ -201,22 +203,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             }
         });
 
-        ivIoZoneBarcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
         searchBtnMoveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String zoneDesc;
-                if(!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)){
+                if (!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
                     zoneDesc = "";
-                }else{
+                } else {
                     zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.ID);
                 }
-                if(validateField(zoneDesc)){
+                if (validateField(zoneDesc)) {
                     mPresenter.getMovements(
                             cbInbound.isChecked(),
                             cbOutbound.isChecked(),
@@ -225,7 +221,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             cbIoOrigins.isChecked(),
                             cbIoDestiny.isChecked()
                     );
-                }else{
+                } else {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_value_filled_ttl"),
@@ -237,10 +233,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             }
         });
     }
+
     @Override
     public void callAct055(Bundle bundle) {
         Intent mIntent = new Intent(context, Act055_Main.class);
-        if(bundle != null) {
+        if (bundle != null) {
             mIntent.putExtras(bundle);
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -255,12 +252,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         startActivity(mIntent);
         finish();
     }
+
     /**
      * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
      * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
      * consolidando as tratativas em um unico metodo.
-     *
+     * <p>
      * No caso dessa act, o WS_Serial_Search retorna os dados aqui.
+     *
      * @param mLink
      * @param mRequired
      */
@@ -268,14 +267,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
         //
-        processCloseACT(mLink,mRequired,new HMAux());
+        processCloseACT(mLink, mRequired, new HMAux());
     }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(wsProcess.equals(WS_IO_Move_Search.class.getName())) {
+        if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
             mPresenter.processIOMoveSearch(mLink);
         }
         //
@@ -284,7 +283,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
 
     private boolean validateField(String zoneDesc) {
-        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked() )
+        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked())
                 && ((!zoneDesc.isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || zoneDesc.isEmpty()
         );
     }
@@ -309,4 +308,49 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 //        super.onBackPressed();
         mPresenter.onBackPressedClicked(Constant.ACT051);
     }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //Se erro ao carregar lista de Cliente, reseta var que indica se lista ja
+        //foi chamada.
+        if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
+//            onBackPressed();
+            //
+            disableProgressDialog();
+        }
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+
 }
