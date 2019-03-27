@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.ui.act055;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -12,6 +14,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act055_IO_Move_Order_List_Adapter;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -68,6 +71,8 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         transList.add("act055_title");
         transList.add("act055_lbl_new");
         transList.add("move_order_filter_hint");
+        //Traducao para itens da lista
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -124,7 +129,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     }
 
     private void initActions() {
-        mketFilterDesc.setHint(hmAux_Trans.get("favorite_filter_hint"));
+
         mketFilterDesc.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -142,13 +147,19 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     }
 
     @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        mPresenter.onBackPressedClicked(Constant.ACT054);
+    }
+
+    @Override
     public void showAlertSerialOut(String alert_serial_out_site_title, String alert_serial_out_site_msg) {
 
     }
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-
+        Toast.makeText(context, String.valueOf(record.getMove_code()), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -163,6 +174,9 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void callAct054() {
-
+        Intent mIntent = new Intent(context, Act054_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 }

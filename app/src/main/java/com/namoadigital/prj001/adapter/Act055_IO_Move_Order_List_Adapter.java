@@ -15,7 +15,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +30,47 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
     private IOMoveOrderFilter valueFilter;
     private Context context;
     private Act055ListListener mListener;
+    private String mResource_Code;
     private HMAux hmAux_Trans;
+    private String mResource_Name = "act055_io_move_order_list_adapter";
 
     public Act055_IO_Move_Order_List_Adapter(Context context, List<IO_Move_Search_Record> mValues, Act055ListListener mListener, HMAux hmAux_Trans) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
-        this.hmAux_Trans = hmAux_Trans;
+        this.hmAux_Trans = new HMAux();
         this.mValues = mValues;
         this.mFilteredValues = (mValues);
+
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                mResource_Name
+        );
+        //
+        loadTranslation();
     }
+
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<>();
+        transList.add("product_lbl");
+        transList.add("serial_lbl");
+        transList.add("serial_code_lbl");
+        transList.add("move_order_lbl");
+        transList.add("inbound_lbl");
+        transList.add("inbound_not_found");
+        transList.add("current_position_lbl");
+        transList.add("suggested_position_lbl");
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+    }
+
 //    public Act055_IO_Move_Order_List_Adapter(Context context, List<IO_Move_Search_Record> mValues, Act055ListListener mListener, HMAux hmAux_Trans, boolean serial_jump) {
 //        this.context = context;
 //        this.mValues = mValues;
@@ -150,28 +183,28 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         }
 
         public void bindData(IO_Move_Search_Record data) {
-            tv_io_product_lbl.setText("Produto - trad");
-//            tv_io_product_lbl.setText(hmAux_Trans.get(""));
+
+            tv_io_product_lbl.setText(hmAux_Trans.get("product_lbl"));
             tv_io_product_ext_code_val.setText(data.getProduct_id());
             tv_io_product_desc_val.setText(data.getProduct_desc());
-            tv_io_serial_lbl.setText("Serial - trad");
-//            tv_io_serial_lbl.setText(hmAux_Trans.get(""));
-            tv_io_serial_ext_code_lbl.setText("Cod. Ext: - trad");
+
+            tv_io_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
+            tv_io_serial_ext_code_lbl.setText(hmAux_Trans.get("serial_code_lbl"));
             tv_io_serial_ext_code_val.setText(String.valueOf(data.getSerial_code()));
             tv_io_serial_desc.setText(formatSerialBrandModelColor(data));
             tv_io_move_order_list_position.setText(String.valueOf(getAdapterPosition() + 1));
-            tv_io_move_order_lbl.setText("Ordem De Mov - trad");
+            tv_io_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
             tv_io_move_order_val.setText(formatPrefixSufix(data.getMove_prefix(),data.getMove_code()));
-            tv_io_inbound_lbl.setText("Inbound - trad");
+            tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
             if(data.getInbound_prefix() != null || data.getInbound_code() != null) {
                 tv_io_inbound_val.setText(formatPrefixSufix(data.getInbound_prefix(), data.getInbound_code()));
             }else{
-                tv_io_inbound_val.setText("Não possui inbound -trad");
+                tv_io_inbound_val.setText(hmAux_Trans.get("inbound_not_found"));
             }
-            tv_io_current_position_lbl.setText("Posição Atual - trad");
+            tv_io_current_position_lbl.setText(hmAux_Trans.get("current_position_lbl"));
             tv_io_current_position_zone_val.setText(data.getZone_id());
             tv_io_current_position_local_val.setText(data.getLocal_id());
-            tv_io_suggested_position_lbl.setText("Posição Sugerida - trad");
+            tv_io_suggested_position_lbl.setText(hmAux_Trans.get("suggested_position_lbl"));
             tv_io_suggested_position_zone_val.setText(data.getPlanned_zone_id());
             tv_io_suggested_position_local_val.setText(data.getPlanned_local_id());
 
@@ -205,16 +238,12 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             } else {
                 List<IO_Move_Search_Record> filteredList = new ArrayList<>();
                 for (IO_Move_Search_Record row : mValues) {
-
-                    // name match condition. this might differ depending on your requirement
-                    // here we are looking for name or phone number match
                     if (row.getAllFieldForFilter().toLowerCase().contains(charString.toLowerCase())) {
                         filteredList.add(row);
                     }
                 }
                 mFilteredValues = filteredList;
             }
-
             FilterResults filterResults = new FilterResults();
             filterResults.values = mFilteredValues;
             return filterResults;
@@ -223,7 +252,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         @Override
         protected void publishResults(CharSequence constraint, Filter.FilterResults results) {
             mFilteredValues = (ArrayList<IO_Move_Search_Record>) results.values;
-
             notifyDataSetChanged();
         }
     }
