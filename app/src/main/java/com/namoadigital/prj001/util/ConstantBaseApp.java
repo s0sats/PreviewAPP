@@ -76,6 +76,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT052 = "act052";
     public static final String ACT053 = "act053";
     public static final String ACT054 = "act054";
+    public static final String ACT056 = "act056";
 
     public static final String title_lbl = "_title";
 
@@ -418,7 +419,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
     //
     public static final String N_FORM_PDF_PREFIX = "form_";
-
+    public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
+    public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
+    public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

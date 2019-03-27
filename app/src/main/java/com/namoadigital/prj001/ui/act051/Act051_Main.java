@@ -12,18 +12,16 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Download;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
+import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -293,6 +291,11 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 
     private void processIOInbound(HMAux optionsInfo) {
 
+        Intent mIntent = new Intent(context, Act056_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+
 
 //        /**
 //         *
@@ -326,31 +329,31 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 //        context.sendBroadcast(mIntent);
 //        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
-        /**
-         *
-         *
-         * teste do WS_IO_Inbound_Download
-         *
-         * apagar após testes
-         *
-         */
-
-        setWsProcess(WS_IO_Inbound_Download.class.getName());
-        //
-        showPD(
-                hmAux_Trans.get("dialog_serial_search_ttl"),
-                hmAux_Trans.get("dialog_serial_search_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Inbound_Download.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(IO_InboundDao.INBOUND_CODE,"2019.107|2019.108");
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
+//        /**
+//         *
+//         *
+//         * teste do WS_IO_Inbound_Download
+//         *
+//         * apagar após testes
+//         *
+//         */
+//
+//        setWsProcess(WS_IO_Inbound_Download.class.getName());
+//        //
+//        showPD(
+//                hmAux_Trans.get("dialog_serial_search_ttl"),
+//                hmAux_Trans.get("dialog_serial_search_start")
+//        );
+//        //
+//        Intent mIntent = new Intent(context, WBR_IO_Inbound_Download.class);
+//        Bundle bundle = new Bundle();
+//        //
+//        bundle.putString(IO_InboundDao.INBOUND_CODE,"2019.107|2019.108");
+//        //
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
     }
 
