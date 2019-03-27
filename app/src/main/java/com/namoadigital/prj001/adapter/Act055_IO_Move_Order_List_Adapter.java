@@ -196,10 +196,11 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
             tv_io_move_order_val.setText(formatPrefixSufix(data.getMove_prefix(),data.getMove_code()));
             tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
-            if(data.getInbound_prefix() != null || data.getInbound_code() != null) {
-                tv_io_inbound_val.setText(formatPrefixSufix(data.getInbound_prefix(), data.getInbound_code()));
+            if(data.getInbound_prefix() == null || data.getInbound_code() == null) {
+                tv_io_inbound_val.setVisibility(View.GONE);
             }else{
-                tv_io_inbound_val.setText(hmAux_Trans.get("inbound_not_found"));
+                tv_io_inbound_val.setVisibility(View.VISIBLE);
+                tv_io_inbound_val.setText(formatPrefixSufix(data.getInbound_prefix(), data.getInbound_code()));
             }
             tv_io_current_position_lbl.setText(hmAux_Trans.get("current_position_lbl"));
             tv_io_current_position_zone_val.setText(data.getZone_id());

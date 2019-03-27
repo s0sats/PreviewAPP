@@ -17,9 +17,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -30,15 +33,38 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     private Context context;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
+    private String mResource_Code;
+    private String mResource_Name = "act052_io_serial_list_adapter";
 
-    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, HMAux hmAux_Trans, boolean isOnline, boolean serial_jump) {
+    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, boolean isOnline, boolean serial_jump) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
-        this.hmAux_Trans = hmAux_Trans;
+        this.hmAux_Trans = new HMAux();
         this.isOnline = isOnline;
         this.serial_jump = serial_jump;
 
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                mResource_Name
+        );
+        //
+        loadTranslation();
+    }
+
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<>();
+        transList.add("product_lbl");
+        transList.add("serial_lbl");
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
     }
 
     @NonNull
@@ -85,6 +111,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
 
         protected final ConstraintLayout clBackground;
+        protected final TextView tvIoProductLbl;
+        protected final TextView tvIoSerialLbl;
         protected final TextView tvStatusDesc;
         protected final TextView tvProductExtCodeVal;
         protected final TextView tvProductDescVal;
@@ -102,6 +130,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             super(itemView);
             this.itemVIew = itemView;
             clBackground = itemView.findViewById(R.id.act052_main_cl_background);
+            tvIoProductLbl = itemView.findViewById(R.id.act052_tv_io_product_lbl);
+            tvIoSerialLbl = itemView.findViewById(R.id.act052_tv_io_serial_lbl);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
@@ -121,6 +151,9 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         public void bindData(IO_Serial_Process_Record data) {
             String processType = data.getProcess_type();
             setProcessStatus(processType);
+
+            tvIoProductLbl.setText(hmAux_Trans.get("product_lbl"));
+            tvIoSerialLbl.setText(hmAux_Trans.get("serial_lbl"));
 
             tvProductExtCodeVal.setText(data.getProduct_id());
             tvProductDescVal.setText(data.getProduct_desc());

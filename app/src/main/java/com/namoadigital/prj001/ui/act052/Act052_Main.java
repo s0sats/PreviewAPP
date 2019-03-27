@@ -108,7 +108,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void initVars() {
         recoverIntentsInfo();
-        mPresenter = new Act052_Main_Presenter(this, Act052_Main.this, hmAux_Trans);
+        mPresenter = new Act052_Main_Presenter(context, this, hmAux_Trans);
         bindViews();
         setSerialList();
         setTvSerialListSize();
@@ -162,7 +162,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             }
         }else{
             tvEmptyState.setVisibility(View.GONE);
-            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, hmAux_Trans, isOnline, serial_jump);
+            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, isOnline, serial_jump);
             mSerialRecyclerView.setAdapter(mSerialListAdapter);
             mSerialRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 private boolean isScrolling;
