@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act054;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
+import static com.namoadigital.prj001.ui.act054.Act054_Main.IO_MOVE_RECORDS;
+
 
 public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
@@ -102,7 +105,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         //
         ArrayList<IO_Move_Search_Record> record_list = rec.getRecord();
 
-        mView.callAct055(record_list);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(IO_MOVE_RECORDS, record_list);
+        mView.callAct055(bundle);
     }
 
     @Override

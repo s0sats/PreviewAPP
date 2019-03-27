@@ -238,11 +238,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         });
     }
     @Override
-    public void callAct055(ArrayList<IO_Move_Search_Record> record_list) {
+    public void callAct055(Bundle bundle) {
         Intent mIntent = new Intent(context, Act055_Main.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(IO_MOVE_RECORDS, record_list);
-        mIntent.putExtras(bundle);
+        if(bundle != null) {
+            mIntent.putExtras(bundle);
+        }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
