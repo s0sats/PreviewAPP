@@ -31,7 +31,6 @@ import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION
 
 public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
-    public static final String IO_MOVE_RECORDS = "IO_MOVE_RECORDS";
     private Context context;
     private Act054_Main_Contract.I_View mView;
 
@@ -110,7 +109,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                  hmAux_Trans.get("dialog_serial_search_start"));
         }else {
             Bundle bundle = new Bundle();
-            bundle.putSerializable(IO_MOVE_RECORDS, record_list);
+            bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
             mView.callAct055(bundle);
         }
     }

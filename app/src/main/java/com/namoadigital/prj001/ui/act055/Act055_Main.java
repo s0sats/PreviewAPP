@@ -22,9 +22,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act054.Act054_Main_Presenter.IO_MOVE_RECORDS;
-
-
 public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I_View, Act055_IO_Move_Order_List_Adapter.Act055ListListener {
 
     private Act055_Main_Presenter mPresenter;
@@ -106,7 +103,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
-            mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(IO_MOVE_RECORDS);
+            mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
         }else{
             mMoveSearchList = new ArrayList<>();
         }
