@@ -100,7 +100,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("alert_move_order_not_found_ttl");
         transList.add("alert_move_order_not_found_msg");
         //
-        transList.add("mket_zone_hint");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
