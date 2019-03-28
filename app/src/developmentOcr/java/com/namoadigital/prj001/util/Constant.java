@@ -53,10 +53,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_IO_INBOUND_DOWNLOAD = "https://dev.namoadigital.com/ws/prj001/io/server_inbound_obj.ws";
     public static final String WS_IO_OUTBOUND_DOWNLOAD = "https://dev.namoadigital.com/ws/prj001/io/server_outbound_obj.ws";
 
-    public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
-    public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
-    public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
-
     public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";
 

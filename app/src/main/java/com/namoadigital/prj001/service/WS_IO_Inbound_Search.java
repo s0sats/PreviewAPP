@@ -24,6 +24,7 @@ import java.util.List;
 
 public class WS_IO_Inbound_Search extends IntentService {
     public static final String KEY_CODE_ID = "KEY_CODE_ID";
+    public static final String WS_NAME = WS_IO_Inbound_Search.class.getName();
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -43,13 +44,12 @@ public class WS_IO_Inbound_Search extends IntentService {
 
         try {
             String site_code = bundle.getString(MD_Site_Zone_LocalDao.SITE_CODE,"-1");
-            String status = bundle.getString(IO_InboundDao.STATUS,"");
             String zone_code = bundle.getString(MD_Site_Zone_LocalDao.ZONE_CODE,"");
             String local_code = bundle.getString(MD_Site_Zone_LocalDao.LOCAL_CODE,"");
             String code_id = bundle.getString(KEY_CODE_ID,"");
             String invoice = bundle.getString(IO_InboundDao.INVOICE_NUMBER,"");
             //
-            processWsInboundSearch(site_code,status,zone_code,local_code,code_id,invoice);
+            processWsInboundSearch(site_code,zone_code,local_code,code_id,invoice);
 
         } catch (Exception e) {
 
@@ -65,7 +65,7 @@ public class WS_IO_Inbound_Search extends IntentService {
         }
     }
 
-    private void processWsInboundSearch(String site_code, String status, String zone_code, String local_code, String code_id, String invoice) throws Exception {
+    private void processWsInboundSearch(String site_code, String zone_code, String local_code, String code_id, String invoice) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -80,7 +80,6 @@ public class WS_IO_Inbound_Search extends IntentService {
         env.setSite_code(site_code);
         env.setZone_code(zone_code);
         env.setLocal_code(local_code);
-        env.setStatus(status);
         env.setCode_id(code_id);
         env.setInvoice(invoice);
         //

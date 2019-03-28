@@ -77,6 +77,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT053 = "act053";
     public static final String ACT054 = "act054";
     public static final String ACT055 = "act055";
+    public static final String ACT056 = "act056";
 
     public static final String title_lbl = "_title";
 
@@ -154,6 +155,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE = "main_md_product_serial_record_page";
     //constante utilizada para informar act052 se a origem da lista é online ou offline.
     public static final String MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS = "main_md_product_serial_is_online_process";
+    public static final String MAIN_WS_LIST_VALUES = "main_ws_list_values";
 
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
@@ -419,7 +421,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
     //
     public static final String N_FORM_PDF_PREFIX = "form_";
-
+    public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
+    public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
+    public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
