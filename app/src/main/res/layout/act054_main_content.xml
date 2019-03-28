@@ -89,27 +89,27 @@
 
     <CheckBox
         android:id="@+id/act054_cb_io_origins"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
         android:text="Origem - trad"
-        app:layout_constraintEnd_toStartOf="@+id/act054_cb_io_destiny"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintStart_toStartOf="@+id/act054_tv_io_orientation_lbl"
         app:layout_constraintTop_toBottomOf="@+id/act054_tv_io_orientation_lbl" />
 
     <CheckBox
         android:id="@+id/act054_cb_io_destiny"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:ellipsize="end"
         android:text="Destino - trad"
         app:layout_constraintBottom_toBottomOf="@+id/act054_cb_io_origins"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/act054_cb_io_origins"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="@+id/act054_cb_io_origins" />
 
     <Button
@@ -122,7 +122,7 @@
         android:background="@drawable/namoa_cell_3_states"
         android:gravity="left"
         android:padding="20dp"
-        android:text="Busca Ordem de modificação - trad"
+        android:text="Busca Ordem de movimentação - trad"
         android:textColor="@color/padrao_WHITE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -153,5 +153,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/act054_btn_move_order_pendency"
         app:layout_constraintVertical_bias="1.0" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
 
 </android.support.constraint.ConstraintLayout>

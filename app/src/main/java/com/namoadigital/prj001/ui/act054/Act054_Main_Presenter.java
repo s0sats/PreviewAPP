@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act054;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +17,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
-import static com.namoadigital.prj001.ui.act054.Act054_Main.IO_MOVE_RECORDS;
 
 
 public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
+    public static final String IO_MOVE_RECORDS = "IO_MOVE_RECORDS";
     private Context context;
     private Act054_Main_Contract.I_View mView;
 
@@ -105,9 +105,14 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         //
         ArrayList<IO_Move_Search_Record> record_list = rec.getRecord();
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(IO_MOVE_RECORDS, record_list);
-        mView.callAct055(bundle);
+        if(record_list.isEmpty()){
+         mView.showPD(hmAux_Trans.get("dialog_serial_search_ttl"),
+                 hmAux_Trans.get("dialog_serial_search_start"));
+        }else {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(IO_MOVE_RECORDS, record_list);
+            mView.callAct055(bundle);
+        }
     }
 
     @Override
@@ -124,6 +129,27 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
                         ).toSqlQuery()
                 );
+    }
+
+    @Override
+    public String getPendecies() {
+        IO_MoveDao io_moveDao = new IO_MoveDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        HMAux result = io_moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+
+                ).toSqlQuery()
+        );
+        if(result!= null && result.hasConsistentValue(IO_Move_Order_Item_Sql_002.PENDING_QTY)){
+            return "(" + result.get(IO_Move_Order_Item_Sql_002.PENDING_QTY) + ")";
+        }
+        return "(0)";
     }
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {

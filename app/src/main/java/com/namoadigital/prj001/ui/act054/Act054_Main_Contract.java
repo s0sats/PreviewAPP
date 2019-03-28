@@ -3,9 +3,7 @@ package com.namoadigital.prj001.ui.act054;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.IO_Move_Search_Record;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Act054_Main_Contract {
@@ -19,6 +17,8 @@ public interface Act054_Main_Contract {
         void processIOMoveSearch(String resultado);
 
         List<HMAux> getZoneList();
+
+        String getPendecies();
     }
 
     interface I_View{

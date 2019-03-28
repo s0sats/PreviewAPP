@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,7 +15,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
@@ -30,7 +28,8 @@ import java.util.List;
 
 public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I_View {
 
-    public static final String IO_MOVE_RECORDS = "IO_MOVE_RECORDS";
+
+    public static final String ZERO_PENDENCY = "(0)";
     CheckBox cbInbound;
     CheckBox cbOutbound;
     CheckBox cbPlannedMove;
@@ -39,11 +38,12 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     LinearLayout llIoZone;
     SearchableSpinner ssIoZone;
     TextView tvIoOrientationLbl;
-    Button searchBtnMoveOrder;
+    Button btnSearchMoveOrder;
     Button btnMoveOrderPendency;
 
     private Act054_Main_Presenter mPresenter;
     private String wsProcess;
+    private String pendeciesCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +82,27 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("act054_lbl_barcode");
         transList.add("btn_pendencies");
         transList.add("btn_check_exists");
+        //
+        transList.add("user_zone_lbl");
+        transList.add("btn_search_move_order");
+        transList.add("btn_pendencies");
+        transList.add("check_destiny");
+        transList.add("check_origin");
+        transList.add("check_planned_move");
+        transList.add("check_outbound");
+        transList.add("check_inbound");
+        //
         transList.add("alert_no_pendencies_title");
         transList.add("alert_no_pendencies_msg");
         transList.add("alert_new_opt_ttl");
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
-        transList.add("mket_serial_hint");
+        //
         transList.add("alert_no_value_filled_ttl");
         transList.add("alert_no_value_filled_msg");
-        transList.add("alert_no_serial_found_ttl");
-        transList.add("alert_no_serial_found_msg");
-        transList.add("dialog_serial_search_ttl");
-        transList.add("dialog_serial_search_start");
         //
-        transList.add("alert_local_product_not_found_ttl");
-        transList.add("alert_local_product_not_found_msg");
+        transList.add("alert__ttl");
+        transList.add("alert_no_value_filled_msg");
         //
         transList.add("mket_zone_hint");
         transList.add("alert_local_product_not_found_msg");
@@ -145,6 +151,20 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         }
         controls_ss.add(ssIoZone);
 
+        setViewsTranslation();
+
+
+    }
+
+    private void setViewsTranslation() {
+        pendeciesCount = mPresenter.getPendecies();
+        btnSearchMoveOrder.setText(hmAux_Trans.get("btn_search_move_order"));
+        btnMoveOrderPendency.setText(hmAux_Trans.get("btn_pendencies") + pendeciesCount);
+        cbIoDestiny.setText(hmAux_Trans.get("check_destiny"));
+        cbIoOrigins.setText(hmAux_Trans.get("check_origin"));
+        cbPlannedMove.setText(hmAux_Trans.get("check_planned_move"));
+        cbOutbound.setText(hmAux_Trans.get("check_outbound"));
+        cbInbound.setText(hmAux_Trans.get("check_inbound"));
     }
 
     private void recoverIntentsInfo() {
@@ -161,7 +181,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         cbIoOrigins = findViewById(R.id.act054_cb_io_origins);
         cbIoDestiny = findViewById(R.id.act054_cb_io_destiny);
-        searchBtnMoveOrder = findViewById(R.id.act054_search_btn_move_order);
+        btnSearchMoveOrder = findViewById(R.id.act054_search_btn_move_order);
         btnMoveOrderPendency = findViewById(R.id.act054_btn_move_order_pendency);
     }
 
@@ -203,7 +223,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             }
         });
 
-        searchBtnMoveOrder.setOnClickListener(new View.OnClickListener() {
+        btnSearchMoveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String zoneDesc;
@@ -226,6 +246,21 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             context,
                             hmAux_Trans.get("alert_no_value_filled_ttl"),
                             hmAux_Trans.get("alert_no_value_filled_msg"),
+                            null,
+                            0
+                    );
+                }
+            }
+        });
+
+        btnMoveOrderPendency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(pendeciesCount.equals(ZERO_PENDENCY)){
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_pendencies_title"),
+                            hmAux_Trans.get("alert_no_pendencies_msg"),
                             null,
                             0
                     );

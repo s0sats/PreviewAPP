@@ -22,7 +22,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act054.Act054_Main.IO_MOVE_RECORDS;
+import static com.namoadigital.prj001.ui.act054.Act054_Main_Presenter.IO_MOVE_RECORDS;
+
 
 public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I_View, Act055_IO_Move_Order_List_Adapter.Act055ListListener {
 
