@@ -82,13 +82,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         //
         transList.add("user_zone_ttl");
         transList.add("user_zone_hint");
-        transList.add("btn_search_move_order");
-        transList.add("btn_pendencies");
-        transList.add("check_destiny");
-        transList.add("check_origin");
-        transList.add("check_planned_move");
-        transList.add("check_outbound");
-        transList.add("check_inbound");
+        transList.add("search_move_order_lbl");
+        transList.add("pendencies_lbl");
+        transList.add("destiny_lbl");
+        transList.add("origin_lbl");
+        transList.add("planned_move_lbl");
+        transList.add("outbound_lbl");
+        transList.add("inbound_lbl");
         transList.add("orientation_lbl");
         //
         transList.add("alert_no_pendencies_title");
@@ -152,13 +152,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private void setViewsTranslation() {
         pendeciesCount = mPresenter.getPendecies();
         ssIoZone.setmTitle(hmAux_Trans.get("user_zone_lbl"));
-        btnSearchMoveOrder.setText(hmAux_Trans.get("btn_search_move_order"));
-        btnMoveOrderPendency.setText(hmAux_Trans.get("btn_pendencies") + pendeciesCount);
-        cbIoDestiny.setText(hmAux_Trans.get("check_destiny"));
-        cbIoOrigins.setText(hmAux_Trans.get("check_origin"));
-        cbPlannedMove.setText(hmAux_Trans.get("check_planned_move"));
-        cbOutbound.setText(hmAux_Trans.get("check_outbound"));
-        cbInbound.setText(hmAux_Trans.get("check_inbound"));
+        btnSearchMoveOrder.setText(hmAux_Trans.get("search_move_order_lbl"));
+        btnMoveOrderPendency.setText(hmAux_Trans.get("pendencies_lbl") + pendeciesCount);
+        cbIoDestiny.setText(hmAux_Trans.get("destiny_lbl"));
+        cbIoOrigins.setText(hmAux_Trans.get("origin_lbl"));
+        cbPlannedMove.setText(hmAux_Trans.get("planned_move_lbl"));
+        cbOutbound.setText(hmAux_Trans.get("outbound_lbl"));
+        cbInbound.setText(hmAux_Trans.get("inbound_lbl"));
         tvIoOrientationLbl.setText(hmAux_Trans.get("orientation_lbl"));
     }
 
@@ -228,20 +228,30 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 } else {
                     zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.ID);
                 }
-                if (validateField(zoneDesc)) {
-                    mPresenter.getMovements(
-                            cbInbound.isChecked(),
-                            cbOutbound.isChecked(),
-                            cbPlannedMove.isChecked(),
-                            zoneDesc,
-                            cbIoOrigins.isChecked(),
-                            cbIoDestiny.isChecked()
-                    );
+                if (validateOrderCategory()) {
+                    if(validateOrientation(zoneDesc))
+                        mPresenter.getMovements(
+                                cbInbound.isChecked(),
+                                cbOutbound.isChecked(),
+                                cbPlannedMove.isChecked(),
+                                zoneDesc,
+                                cbIoOrigins.isChecked(),
+                                cbIoDestiny.isChecked()
+                        );
+                    else{
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_must_fill_orientation_ttl"),
+                                hmAux_Trans.get("alert_must_fill_orientation_msg"),
+                                null,
+                                0
+                        );
+                    }
                 } else {
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("alert_no_value_filled_ttl"),
-                            hmAux_Trans.get("alert_no_value_filled_msg"),
+                            hmAux_Trans.get("alert_must_classify_order_ttl"),
+                            hmAux_Trans.get("alert_must_classify_order_msg"),
                             null,
                             0
                     );
@@ -263,6 +273,10 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 }
             }
         });
+    }
+
+    private boolean validateOrientation(String zoneDesc) {
+        return ((!zoneDesc.isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || zoneDesc.isEmpty());
     }
 
     @Override
@@ -313,10 +327,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
 
-    private boolean validateField(String zoneDesc) {
-        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked())
-                && ((!zoneDesc.isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || zoneDesc.isEmpty()
-        );
+    private boolean validateOrderCategory() {
+        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked());
     }
 
     @Override

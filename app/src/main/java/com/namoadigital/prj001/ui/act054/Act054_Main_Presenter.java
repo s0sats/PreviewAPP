@@ -70,8 +70,8 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         mView.setWsProcess(WS_IO_Move_Search.class.getName());
 
         mView.showPD(
-                hmAux_Trans.get("dialog_serial_search_ttl"),
-                hmAux_Trans.get("dialog_serial_search_start")
+                hmAux_Trans.get("dialog_move_order_search_ttl"),
+                hmAux_Trans.get("dialog_move_order_search_start")
         );
 
         String moveType = "";
@@ -105,8 +105,10 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         ArrayList<IO_Move_Search_Record> record_list = rec.getRecord();
 
         if (record_list.isEmpty()) {
-            mView.showMsg(hmAux_Trans.get("dialog_serial_search_ttl"),
-                    hmAux_Trans.get("dialog_serial_search_start"));
+            mView.showMsg(
+                    hmAux_Trans.get("alert_move_order_not_found_ttl"),
+                    hmAux_Trans.get("alert_move_order_not_found_msg")
+            );
         } else {
             Bundle bundle = new Bundle();
             bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
