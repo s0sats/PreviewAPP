@@ -1,15 +1,12 @@
 package com.namoadigital.prj001.ui.act054;
 
-import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import android.os.Bundle;
 
-import java.util.ArrayList;
+import com.namoa_digital.namoa_library.util.HMAux;
+
 import java.util.List;
 
 public interface Act054_Main_Contract {
-
-    interface I_Frag_Favorite{
-    }
 
     interface I_Presenter{
 
@@ -20,6 +17,8 @@ public interface Act054_Main_Contract {
         void processIOMoveSearch(String resultado);
 
         List<HMAux> getZoneList();
+
+        String getPendecies();
     }
 
     interface I_View{
@@ -28,7 +27,7 @@ public interface Act054_Main_Contract {
 
         void setWsProcess(String name);
 
-        void callAct055(ArrayList<IO_Move_Search_Record> record_list);
+        void callAct055(Bundle bundle);
 
         void callAct051();
     }

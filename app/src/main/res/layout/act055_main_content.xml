@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:gravity="center_vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act055.Act055_Main"
-    tools:showIn="@layout/act055_main"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    >
+    tools:showIn="@layout/act055_main">
 
     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
         android:id="@+id/act050_mket_filter_desc"
@@ -21,7 +20,9 @@
         android:layout_marginEnd="8dp"
         android:hint="Search Desc - Trad"
         android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/act055_rv_move_order_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:mBARCODE="false"
@@ -29,26 +30,30 @@
         app:mOCR="false" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:name="com.namoadigital.prj001.ui.act050.FavoriteFragment"
+        android:id="@+id/act055_rv_move_order_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/act050_mket_filter_desc"
         tools:listitem="@layout/act055_io_move_cell" />
 
     <include
+        android:id="@+id/include"
+        layout="@layout/footer_base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/footer_base"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act054_btn_move_order_pendency"
+        app:layout_constraintTop_toBottomOf="@+id/act055_rv_move_order_list"
         app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
