@@ -97,7 +97,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     private void bindViews() {
         rvMoveOrderList = findViewById(R.id.act055_rv_move_order_list);
-        mketFilterDesc = findViewById(R.id.act050_mket_filter_desc);
+        mketFilterDesc = findViewById(R.id.act055_mket_filter_desc);
     }
 
     private void recoverIntentsInfo() {
