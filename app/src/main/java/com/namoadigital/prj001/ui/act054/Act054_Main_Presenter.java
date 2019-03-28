@@ -57,7 +57,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked(String requesting_act) {
-        switch (requesting_act){
+        switch (requesting_act) {
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
@@ -75,8 +75,8 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 hmAux_Trans.get("dialog_serial_search_start")
         );
 
-        String moveType ="";
-        String moveOrientation ="";
+        String moveType = "";
+        String moveOrientation = "";
 
         moveType = getMoveTypeParams(inboundStatus, outboundStatus, movePlannedStatus, moveType);
 
@@ -85,14 +85,14 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         Intent mIntent = new Intent(context, WBR_IO_Move_Search.class);
         Bundle bundle = new Bundle();
         //
-        bundle.putString(MD_SiteDao.SITE_CODE,ToolBox_Con.getPreference_Site_Code(context));
-        bundle.putString(IO_MoveDao.MOVE_TYPE,moveType);
+        bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+        bundle.putString(IO_MoveDao.MOVE_TYPE, moveType);
         bundle.putString(IO_MoveDao.FROM_ZONE_CODE, zone);
-        bundle.putString(MOVE_ORIENTATION,moveOrientation);
+        bundle.putString(MOVE_ORIENTATION, moveOrientation);
         //
         mIntent.putExtras(bundle);
         context.sendBroadcast(mIntent);
-}
+    }
 
     @Override
     public void processIOMoveSearch(String resultado) {
@@ -105,10 +105,10 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         //
         ArrayList<IO_Move_Search_Record> record_list = rec.getRecord();
 
-        if(record_list.isEmpty()){
-         mView.showPD(hmAux_Trans.get("dialog_serial_search_ttl"),
-                 hmAux_Trans.get("dialog_serial_search_start"));
-        }else {
+        if (record_list.isEmpty()) {
+            mView.showMsg(hmAux_Trans.get("dialog_serial_search_ttl"),
+                    hmAux_Trans.get("dialog_serial_search_start"));
+        } else {
             Bundle bundle = new Bundle();
             bundle.putSerializable(IO_MOVE_RECORDS, record_list);
             mView.callAct055(bundle);
@@ -123,9 +123,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ).query_HM((
-                        new MD_Site_Zone_Sql_SS(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                ToolBox_Con.getPreference_Site_Code(context))
+                                new MD_Site_Zone_Sql_SS(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                        ToolBox_Con.getPreference_Site_Code(context))
 
                         ).toSqlQuery()
                 );
@@ -146,14 +146,14 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
                 ).toSqlQuery()
         );
-        if(result!= null && result.hasConsistentValue(IO_Move_Order_Item_Sql_002.PENDING_QTY)){
+        if (result != null && result.hasConsistentValue(IO_Move_Order_Item_Sql_002.PENDING_QTY)) {
             return "(" + result.get(IO_Move_Order_Item_Sql_002.PENDING_QTY) + ")";
         }
         return "(0)";
     }
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
-        if(inboundStatus){
+        if (inboundStatus) {
             moveType = "INBOUND";
         }
         moveType = addParamToString(outboundStatus, moveType, "OUTBOUND");
@@ -162,7 +162,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     private String getMoveOrientationParams(boolean outboundStatus, boolean originStatus, String moveOrientation) {
-        if(originStatus){
+        if (originStatus) {
             moveOrientation = "ORIGIN";
         }
         moveOrientation = addParamToString(outboundStatus, moveOrientation, "DESTINY");
@@ -177,7 +177,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     private String addPipe(String field) {
-        if(!field.isEmpty()){
+        if (!field.isEmpty()) {
             field = field + "|";
         }
         return field;
