@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act057.Act057_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -84,6 +85,10 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         transList.add("alert_no_pendencies_msg");
         transList.add("alert_fill_search_field_ttl");
         transList.add("alert_fill_search_field_msg");
+        transList.add("alert_error_on_processing_return_ttl");
+        transList.add("alert_error_on_processing_return_msg");
+        transList.add("alert_no_inbound_found_ttl");
+        transList.add("alert_no_inbound_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -319,7 +324,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
 
     @Override
     public void callAct057(Bundle bundle) {
-        Intent mIntent = new Intent(context, Act051_Main.class);
+        Intent mIntent = new Intent(context, Act057_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
