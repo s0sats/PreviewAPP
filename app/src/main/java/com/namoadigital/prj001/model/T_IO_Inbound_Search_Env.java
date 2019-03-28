@@ -3,7 +3,6 @@ package com.namoadigital.prj001.model;
 public class T_IO_Inbound_Search_Env extends Main_Header_Env {
 
     private String site_code;
-    private String status;
     private String zone_code;
     private String local_code;
     private String code_id;
@@ -15,14 +14,6 @@ public class T_IO_Inbound_Search_Env extends Main_Header_Env {
 
     public void setSite_code(String site_code) {
         this.site_code = site_code;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getZone_code() {

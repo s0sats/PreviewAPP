@@ -154,6 +154,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE = "main_md_product_serial_record_page";
     //constante utilizada para informar act052 se a origem da lista é online ou offline.
     public static final String MAIN_MD_PRODUCT_SERIAL_IS_ONLINE_PROCESS = "main_md_product_serial_is_online_process";
+    public static final String MAIN_WS_LIST_VALUES = "main_ws_list_values";
 
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
