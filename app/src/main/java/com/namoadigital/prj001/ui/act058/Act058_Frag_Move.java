@@ -8,7 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,14 +22,14 @@ import com.namoadigital.prj001.R;
  * Use the {@link Act058_Frag_Move#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Act058_Frag_Move extends Fragment {
+public class Act058_Frag_Move extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String VIEW_PARAM = "view_param";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String view_param;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
@@ -46,7 +50,7 @@ public class Act058_Frag_Move extends Fragment {
     public static Act058_Frag_Move newInstance(String param1, String param2) {
         Act058_Frag_Move fragment = new Act058_Frag_Move();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(VIEW_PARAM, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +60,7 @@ public class Act058_Frag_Move extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            view_param = getArguments().getString(VIEW_PARAM);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -90,6 +94,10 @@ public class Act058_Frag_Move extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public List<String> getFragTranslationsVars() {
+        return new ArrayList<>();
     }
 
     /**
