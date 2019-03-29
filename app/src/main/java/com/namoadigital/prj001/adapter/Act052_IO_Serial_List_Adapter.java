@@ -7,9 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -96,7 +93,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     }
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
-        if (record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+        if (record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
             mListener.onClickListItem(record);

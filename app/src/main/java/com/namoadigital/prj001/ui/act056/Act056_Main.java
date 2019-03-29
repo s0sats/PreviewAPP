@@ -326,6 +326,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
     public void callAct057(Bundle bundle) {
         Intent mIntent = new Intent(context, Act057_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

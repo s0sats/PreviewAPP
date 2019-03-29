@@ -10,10 +10,12 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
@@ -133,8 +135,11 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         if(rec.getProcess_type() != null && !rec.getProcess_type().isEmpty()) {
             switch (rec.getProcess_type()) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
-                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
-                    sendCloseAct(hmAuxRet);
+                    if(rec.getInbound() != null && rec.getInbound().size() > 0){
+                        processInConfResponse(rec.getProcess_type(), rec.getInbound());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
                     hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
@@ -167,6 +172,42 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     break;
             }
         }
+    }
+
+    private void processInConfResponse(String process_type, ArrayList<IO_Inbound> inbound) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
+        //
+        IO_InboundDao inboundDao = new IO_InboundDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        if(inbound.get(0) != null){
+            //Seta pk nos itens da outbound
+            for(IO_Inbound aux : inbound){
+                aux.setPK();
+            }
+            //Insere outbound no banco.
+            DaoObjReturn daoReturn = inboundDao.addUpdate(inbound.get(0));
+            if (!daoReturn.hasError()) {
+                if(inbound.get(0).getSerial() != null && inbound.get(0).getSerial().size() > 0) {
+                    serialDao.addUpdateTmp(inbound.get(0).getSerial().get(0));
+                }
+                //
+                hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(inbound.get(0).getInbound_prefix()));
+                hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(inbound.get(0).getInbound_code()));
+                //
+                sendCloseAct(hmAuxRet);
+            } else {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_in_conf"), "", "0");
+            }
+
+        }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_in_conf"), "", "0");
+        }
+
     }
 
     private void processOutConfResponse(String process_type, ArrayList<IO_Outbound> outbound) {

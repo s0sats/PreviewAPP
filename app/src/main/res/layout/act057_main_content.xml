@@ -69,7 +69,8 @@
         app:layout_constraintEnd_toEndOf="@id/act057_guide_end"
         app:layout_constraintStart_toStartOf="@id/act057_guide_start"
         app:layout_constraintTop_toBottomOf="@+id/act057_mket_filter"
-        tools:listitem="@layout/act057_io_inbound_cell" />
+        tools:listitem="@layout/act057_io_inbound_cell"
+        />
 
     <include
         android:id="@+id/include"

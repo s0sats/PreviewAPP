@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.model;
 
-public class IO_Inbound_Search_Record {
+import java.io.Serializable;
 
+public class IO_Inbound_Search_Record implements Serializable {
+    private static final long serialVersionUID = -590062680310963072L;
     private int customer_code;
     private int inbound_prefix;
     private int inbound_code;
@@ -12,7 +14,7 @@ public class IO_Inbound_Search_Record {
     private String invoice_number;
     private String status;
     private String comments;
-    private Double perc_done;
+    private Float perc_done;
     private String from;
     private String modal;
 
@@ -96,11 +98,11 @@ public class IO_Inbound_Search_Record {
         this.comments = comments;
     }
 
-    public Double getPerc_done() {
+    public Float getPerc_done() {
         return perc_done;
     }
 
-    public void setPerc_done(Double perc_done) {
+    public void setPerc_done(Float perc_done) {
         this.perc_done = perc_done;
     }
 
@@ -118,5 +120,19 @@ public class IO_Inbound_Search_Record {
 
     public void setModal(String modal) {
         this.modal = modal;
+    }
+
+    public String getAllFieldForFilter(){
+        return  inbound_prefix +
+                inbound_code +
+                inbound_id +
+                inbound_desc +
+                //create_date +
+                //eta_date +
+                invoice_number +
+                //status +
+                //comments +
+                from +
+                modal;
     }
 }

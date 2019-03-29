@@ -5,246 +5,264 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="5dp"
+    >
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/act055_main_cl_background"
+        android:id="@+id/act057_main_cl_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/namoa_cell_8">
+        android:background="@drawable/namoa_cell_8"
+        android:paddingBottom="8dp"
+        >
 
-        <TextView
-            android:id="@+id/act055_tv_io_product_lbl"
+        <android.support.constraint.Guideline
+            android:id="@+id/act057_io_inbound_cell_guide_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Product - trad"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_move_order_list_position"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_product_ext_code_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_product_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_product_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_product_desc_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_product_ext_code_val"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_product_separator"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_product_ext_code_val" />
-
-
-        <TextView
-            android:id="@+id/act055_tv_io_serial_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Serial - trad"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_move_order_list_position"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_product_ext_code_val" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_serial_ext_code_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="Ext Code: - trad"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_serial_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_serial_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_serial_ext_code_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_serial_ext_code_lbl"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_serial_ext_code_lbl"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_serial_ext_code_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_serial_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="31dp"
-            android:text="Marca | Modelo | Cor"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_serial_ext_code_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_product_separator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" - "
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_product_desc_val"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_product_ext_code_val"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_product_desc_val" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_move_order_list_position"
-            android:layout_width="25dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="100"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintGuide_begin="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/act055_tv_io_move_order_lbl"
+        <android.support.constraint.Guideline
+            android:id="@+id/act057_io_inbound_cell_guide_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Ordem de Movimentação - trad"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act055_tv_io_move_order_val"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_serial_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_serial_desc" />
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintGuide_end="8dp"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/act055_tv_io_move_order_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="2019.149"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_move_order_lbl"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_move_order_lbl"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_move_order_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_inbound_lbl"
+        <ImageView
+            android:id="@+id/act057_io_inbound_cell_iv_offline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Inbound - trad"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_move_order_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_move_order_lbl" />
+            android:layout_marginBottom="8dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_signal_wifi_off_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_pv_done"
+            app:layout_constraintStart_toStartOf="@id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/act055_tv_io_inbound_val"
+            android:id="@+id/act057_io_inbound_cell_tv_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="STATUS - trad"
+            android:textSize="@dimen/font_size_title"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_pv_done"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_pv_done"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_iv_offline"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_id"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID - Trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_pv_done" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_id_val"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="99"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_inbound_lbl"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="2019.Trad"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_id"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_inbound_lbl"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_inbound_lbl" />
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_id"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_id" />
 
         <TextView
-            android:id="@+id/act055_tv_io_current_position_lbl"
-            android:layout_width="wrap_content"
+            android:id="@+id/act057_io_inbound_cell_tv_desc"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Posição Atual - trad"
+            android:text="Desc - Trad"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_inbound_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_inbound_lbl" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_id_val" />
 
         <TextView
-            android:id="@+id/act055_tv_io_current_position_zone_val"
-            android:layout_width="wrap_content"
+            android:id="@+id/act057_io_inbound_cell_tv_desc_val"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Zona"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_current_position_lbl"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_current_position_lbl"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_current_position_lbl" />
+            android:layout_marginEnd="8dp"
+            android:text="Desc"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_desc"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_desc"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_desc" />
+
+        <az.plainpie.PieView
+            android:id="@+id/act057_io_inbound_cell_pv_done"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:percentage="50"
+            app:percentage_size="12"
+            />
 
         <TextView
-            android:id="@+id/act055_tv_io_current_position_separator"
-            android:layout_width="wrap_content"
+            android:id="@+id/act057_io_inbound_cell_tv_create_date"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="|"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_current_position_zone_val"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_current_position_zone_val"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_current_position_zone_val" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_current_position_local_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Local"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_current_position_separator"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_current_position_separator"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_current_position_separator" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_suggested_position_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:text="Posição Sugerida - trad"
+            android:layout_marginTop="8dp"
+            android:text="Data: - Trad"
             android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_desc_val" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_create_date_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="99/99/9999"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_create_date"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_create_date"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_create_date"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_eta_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="ETA: - Trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_create_date_val" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_eta_date_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="99/99/9999"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_eta_date"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_eta_date"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_eta_date" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_invoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Invoice: -Trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_eta_date_val" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_invoice_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="666 - trad"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_invoice"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_invoice"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_invoice" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="From: -Trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_invoice_val" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_from_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="FromH - trad"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_from"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_from"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_from" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_modal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Modal - Trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_from_val" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_modal_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Aereo - Trad"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_modal"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_modal"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_modal" />
+
+        <TextView
+            android:id="@+id/act057_io_inbound_cell_tv_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Commets: - trad"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act057_io_inbound_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_modal_val"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/act055_tv_io_current_position_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act055_tv_io_current_position_lbl" />
+            android:layout_marginBottom="8dp"
+            />
 
         <TextView
-            android:id="@+id/act055_tv_io_suggested_position_zone_val"
-            android:layout_width="wrap_content"
+            android:id="@+id/act057_io_inbound_cell_tv_comment_val"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Zona"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_suggested_position_lbl"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_suggested_position_lbl"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_lbl" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_suggested_position_separator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="|"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_suggested_position_zone_val"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_suggested_position_zone_val"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_zone_val" />
-
-        <TextView
-            android:id="@+id/act055_tv_io_suggested_position_local_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Local"
-            app:layout_constraintBottom_toBottomOf="@+id/act055_tv_io_suggested_position_separator"
-            app:layout_constraintStart_toEndOf="@+id/act055_tv_io_suggested_position_separator"
-            app:layout_constraintTop_toTopOf="@+id/act055_tv_io_suggested_position_separator" />
+            android:layout_marginEnd="8dp"
+            android:text="Comments - trad"
+            app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_comment"
+            app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_comment"
+            app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_comment"
+            />
 
     </android.support.constraint.ConstraintLayout>
 

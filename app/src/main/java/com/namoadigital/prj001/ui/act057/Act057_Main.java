@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act057_Inbound_Download_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Inbound_Search_Record;
@@ -47,6 +49,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     private long bundle_record_count;
     private long bundle_record_page;
     private ArrayList<IO_Inbound_Search_Record> records = new ArrayList<>();
+    private Act057_Inbound_Download_Adapter mAdapter;
 
 
     @Override
@@ -82,7 +85,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("act056_title");
+        transList.add("act057_title");
         transList.add("filter_hint");
         transList.add("dialog_filter_title");
         //
@@ -105,8 +108,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         );
         //
         bindViews();
-
-
+        //
+        mPresenter.processListInfo(bundle_record_count,bundle_record_page,records);
     }
 
     private void recoverIntentsInfo() {
@@ -174,6 +177,45 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                 showStatusFilterDialog();
             }
         });
+        //
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if(mAdapter != null){
+                    mAdapter.getFilter().filter(s.trim());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setRecordInfo() {
+
+    }
+
+    @Override
+    public void showQtyExceededMsg() {
+
+    }
+
+    @Override
+    public void loadInboundList() {
+        mAdapter = new Act057_Inbound_Download_Adapter(
+                context,
+                records,
+                filter_pending,
+                filter_process
+        );
+        //
+        rv_inbound.setAdapter(mAdapter);
+        rv_inbound.setLayoutManager(
+                new LinearLayoutManager(context)
+        );
     }
 
     private void showStatusFilterDialog() {
@@ -206,6 +248,10 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                             public void onClick(DialogInterface dialog, int which) {
                                 filter_pending = chkPending.isChecked();
                                 filter_process = chkProcess.isChecked();
+                                if(mAdapter != null){
+                                    mAdapter.updateStatusFilter(filter_pending,filter_process);
+                                    mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+                                }
                             }
                         }
                 )

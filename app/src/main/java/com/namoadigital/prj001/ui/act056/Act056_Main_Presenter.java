@@ -168,8 +168,9 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
         if(!mket_invoice.getText().toString().trim().isEmpty()){
             return true;
         }
-        //
-        return false;
+        //VOLTAR FALSE APÓS TESTES
+        //return false;
+        return true;
     }
 
     @Override
