@@ -80,7 +80,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("act054_title");
         transList.add("btn_check_exists");
         //
-        transList.add("user_zone_ttl");
+        transList.add("user_zone_lbl");
         transList.add("user_zone_hint");
         transList.add("search_move_order_lbl");
         transList.add("pendencies_lbl");
@@ -94,8 +94,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("alert_no_pendencies_title");
         transList.add("alert_no_pendencies_msg");
         //
-        transList.add("orientation_not_found_ttl");
-        transList.add("orientation_not_found_msg");
+        transList.add("alert_must_fill_orientation_ttl");
+        transList.add("alert_must_fill_orientation_msg");
+        //
+        transList.add("alert_must_classify_order_ttl");
+        transList.add("alert_must_classify_order_msg");
         //
         transList.add("alert_move_order_not_found_ttl");
         transList.add("alert_move_order_not_found_msg");
