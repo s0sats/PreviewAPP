@@ -1,8 +1,9 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Move {
+public class IO_Move implements Serializable {
 
     private long customer_code;
     private int move_prefix;

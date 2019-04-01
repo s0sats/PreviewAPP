@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.IO_Move;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,8 @@ public class Act058_Frag_Move extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String VIEW_PARAM = "view_param";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String IO_MOVE = "io_move";
+    public static final String ORIGIN_PARAM = "ORIGIN";
 
     // TODO: Rename and change types of parameters
     private String view_param;
@@ -42,16 +44,18 @@ public class Act058_Frag_Move extends BaseFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param param1 Informacao da Movimentacao.
+     * @param param2 Controle de visualizacao de elementos, 0 = oculta Comentario e data
+     *                                                      1 = oculta Reason.
+     * @param param3 Controla visualizacao do checkbox para mudanca de zona.
      * @return A new instance of fragment Act058_Frag_Move.
      */
-    // TODO: Rename and change types and number of parameters
-    public static Act058_Frag_Move newInstance(String param1, String param2) {
+    public static Act058_Frag_Move newInstance(IO_Move param1, int param2, boolean param3) {
         Act058_Frag_Move fragment = new Act058_Frag_Move();
         Bundle args = new Bundle();
-        args.putString(VIEW_PARAM, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(IO_MOVE, param1);
+        args.putInt(VIEW_PARAM, param2);
+        args.putBoolean(ORIGIN_PARAM, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +65,7 @@ public class Act058_Frag_Move extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             view_param = getArguments().getString(VIEW_PARAM);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getString(IO_MOVE);
         }
     }
 
