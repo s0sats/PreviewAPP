@@ -7,11 +7,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +30,29 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class Act058_Frag_Move extends BaseFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String VIEW_PARAM = "view_param";
     private static final String IO_MOVE = "io_move";
     public static final String ORIGIN_PARAM = "ORIGIN";
 
-    // TODO: Rename and change types of parameters
-    private String view_param;
-    private String mParam2;
+    private int view_param;
+    private boolean fromMove;
+    private IO_Move ioMove;
+
+    TextView tv_zone_position;
+    TextView tv_inbound_val;
+    TextView tv_move_order_val;
+    TextView tv_move_to_val;
+
+    MKEditTextNM mkedit_zone;
+    MKEditTextNM mkedit_position;
+    MKEditTextNM mkedit_coments;
+
+    MkDateTime mkdate_confirm;
+
+    SearchableSpinner ss_reason;
+
+    CheckBox chk_change_zone;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,17 +65,17 @@ public class Act058_Frag_Move extends BaseFragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Informacao da Movimentacao.
-     * @param param2 Controle de visualizacao de elementos, 0 = oculta Comentario e data
-     *                                                      1 = oculta Reason.
-     * @param param3 Controla visualizacao do checkbox para mudanca de zona.
+     * @param viewParam Controle de visualizacao de elementos, 0 = oculta Comentario e data
+     *                                                         1 = oculta Reason.
+     * @param originParam Controla visualizacao do checkbox para mudanca de zona.
      * @return A new instance of fragment Act058_Frag_Move.
      */
-    public static Act058_Frag_Move newInstance(IO_Move param1, int param2, boolean param3) {
+    public static Act058_Frag_Move newInstance(IO_Move param1, int viewParam, boolean originParam) {
         Act058_Frag_Move fragment = new Act058_Frag_Move();
         Bundle args = new Bundle();
         args.putSerializable(IO_MOVE, param1);
-        args.putInt(VIEW_PARAM, param2);
-        args.putBoolean(ORIGIN_PARAM, param3);
+        args.putInt(VIEW_PARAM, viewParam);
+        args.putBoolean(ORIGIN_PARAM, originParam);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,19 +84,34 @@ public class Act058_Frag_Move extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            view_param = getArguments().getString(VIEW_PARAM);
-            mParam2 = getArguments().getString(IO_MOVE);
+            fromMove = getArguments().getBoolean(ORIGIN_PARAM);
+            view_param = getArguments().getInt(VIEW_PARAM);
+            ioMove = (IO_Move) getArguments().getSerializable(IO_MOVE);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.act058_frag_move, container, false);
+        View fragView = inflater.inflate(R.layout.act058_frag_move, container, false);
+
+        tv_zone_position = fragView.findViewById(R.id.act058_tv_zone_position);
+        tv_inbound_val = fragView.findViewById(R.id.act058_tv_inbound_val);
+        tv_move_order_val = fragView.findViewById(R.id.act058_tv_move_order_val);
+        tv_move_to_val = fragView.findViewById(R.id.act058_tv_move_to_val);
+
+        mkedit_zone = fragView.findViewById(R.id.act058_mkedit_zone);
+        mkedit_position = fragView.findViewById(R.id.act058_mkedit_position);
+        mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
+
+        mkdate_confirm = fragView.findViewById(R.id.act058_mkdate_confirm);
+
+        ss_reason = fragView.findViewById(R.id.act058_ss_reason);
+        chk_change_zone = fragView.findViewById(R.id.act058_chk_change_zone);
+
+        return fragView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
