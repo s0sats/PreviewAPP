@@ -51,15 +51,19 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
                     Toast.makeText(context, "IN_PUT_AWAY", Toast.LENGTH_SHORT).show();
+                    //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     Toast.makeText(context, "MOVE_PLANNED", Toast.LENGTH_SHORT).show();
+                    //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
                     Toast.makeText(context, "MOVE", Toast.LENGTH_SHORT).show();
+                    //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                     Toast.makeText(context, "OUT_PICKING", Toast.LENGTH_SHORT).show();
+                    //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     Toast.makeText(context, "OUT_CONF", Toast.LENGTH_SHORT).show();

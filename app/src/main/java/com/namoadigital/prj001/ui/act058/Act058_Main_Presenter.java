@@ -9,4 +9,6 @@ class Act058_Main_Presenter {
     public Act058_Main_Presenter(Context context, Act058_Main act058_main, HMAux hmAux_trans) {
 
     }
+
+
 }

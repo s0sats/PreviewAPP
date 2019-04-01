@@ -225,7 +225,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
     }
     public interface Act055ListListener {
 
-        void showAlertSerialOut(String alert_serial_out_site_title, String alert_serial_out_site_msg);
+        void showAlertSerialOut(String title, String msg);
 
         void onClickListItem(IO_Move_Search_Record record);
     }

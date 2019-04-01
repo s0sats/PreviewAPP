@@ -49,6 +49,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Frag_Move.
 
     private void iniSetup() {
         fm = getSupportFragmentManager();
+        act058_frag_move = Act058_Frag_Move.newInstance("1", "1");
+        setFrag(act058_frag_move, FRAGMENT_MOVE);
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -56,6 +58,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Frag_Move.
                 Constant.ACT050
         );
         //
+
         loadTranslation();
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -84,8 +87,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Frag_Move.
     private void initVars() {
         recoverIntentsInfo();
         //
-        act058_frag_move = Act058_Frag_Move.newInstance("1", "1");
-        setFrag(act058_frag_move, FRAGMENT_MOVE);
+
     }
 
     private void recoverIntentsInfo() {
