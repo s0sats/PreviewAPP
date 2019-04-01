@@ -26,10 +26,12 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
@@ -55,6 +57,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
@@ -68,6 +71,7 @@ import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -93,6 +97,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private GE_Custom_Form_ApDao customFormApDao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
+    private MD_SiteDao siteDao;
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
@@ -116,6 +121,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.soPackExpressLocalDao = soPackExpressLocalDao;
         this.mdProductDao = mdProductDao;
         this.chMessageDao = chMessageDao;
+        this.siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
         buildMenuList();
     }
 
@@ -176,7 +186,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         menuList.add(
                 new MenuMainNamoa(
                         Act005_Main.MENU_ID_IO_ASSETS,
-                        "",
+                        ConstantBaseApp.PROFILE_PRJ001_OI,
                         "lbl_io_assets",
                         "lbl_io_assets",
                         R.drawable.previous_icon
@@ -297,6 +307,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_IO_ASSETS:
+                        MD_Site mdSite = siteDao.getByString(
+                              new MD_Site_Sql_001(
+                                      ToolBox_Con.getPreference_Customer_Code(context),
+                                      ToolBox_Con.getPreference_Site_Code(context)
+                              ).toSqlQuery()
+                        );
+                        //
+                        if(mdSite != null && mdSite.getIo_control() == 1){
+                            menu.setIcon(R.drawable.ic_block_helper_grey600_48dp);
+                        }
                         //tratar badges de pendentes.
                         break;
 

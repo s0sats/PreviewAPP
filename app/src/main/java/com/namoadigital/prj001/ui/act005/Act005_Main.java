@@ -397,6 +397,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_pending_form_logout_msg");
         transList.add("alert_site_or_operation_not_found_ttl");
         transList.add("alert_site_or_operation_not_found_msg");
+        transList.add("lbl_io_assets");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

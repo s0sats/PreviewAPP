@@ -23,6 +23,7 @@ import com.namoadigital.prj001.ui.act052.Act052_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
@@ -171,6 +172,8 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_outbound"));
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
 
+        applyProfile();
+
         hideSoftKeyboard();
 
         mPresenter.getMD_Products();
@@ -190,6 +193,26 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
+        }
+    }
+
+    private void applyProfile() {
+        //Seta todos btn como invisiveis
+        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+        //Se profile de movimentação, exibi btn
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_MOVE_REQUEST)) {
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
+        }
+        //Se profile de inbound, exibi btn
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND)) {
+            mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
+        }
+        //Se profile de outbound, exibi btn
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_OUTBOUND)) {
+            mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
         }
     }
 

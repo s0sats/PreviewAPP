@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act052;
 
-import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -221,7 +219,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         return ToolBox_Inf.profileExists(
                 context,
                 Constant.PROFILE_MENU_IO,
-                Constant.PROFILE_MENU_IO_BLIND_MOVE
+                Constant.PROFILE_MENU_IO_PARAM_BLIND_MOVE
         ) && !ToolBox_Con.isOnline(context);
     }
 

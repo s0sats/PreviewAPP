@@ -469,6 +469,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_SO = "PRJ001_SO";
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
+    public static final String PROFILE_PRJ001_OI = "PRJ001_IO";
     //Profiles Mket Serial
     public static final String PROFILE_MENU_PROFILE = "PROFILE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_BARCODE = "SERIAL_BARCODE";
@@ -476,12 +477,12 @@ public class ConstantBaseApp extends ConstantBase {
 
      //Profiles IO
     public static final String PROFILE_MENU_IO = "PRJ001_IO";
-    public static final String PROFILE_MENU_IO_BLIND_MOVE = "BLIND_MOVE";
-    public static final String PROFILE_MENU_IO_INBOUND = "INBOUND";
-    public static final String PROFILE_MENU_IO_INBOUND_NEW = "INBOUND_NEW";
-    public static final String PROFILE_MENU_IO_MOVE_REQUEST = "MOVE_REQUEST";
-    public static final String PROFILE_MENU_IO_OUTBOUND = "OUTBOUND";
-    public static final String PROFILE_MENU_IO_OUTBOUND_NEW = "OUTBOUND_NEW";
+    public static final String PROFILE_MENU_IO_PARAM_BLIND_MOVE = "BLIND_MOVE";
+    public static final String PROFILE_MENU_IO_PARAM_INBOUND = "INBOUND";
+    public static final String PROFILE_MENU_IO_PARAM_INBOUND_NEW = "INBOUND_NEW";
+    public static final String PROFILE_MENU_IO_PARAM_MOVE_REQUEST = "MOVE_REQUEST";
+    public static final String PROFILE_MENU_IO_PARAM_OUTBOUND = "OUTBOUND";
+    public static final String PROFILE_MENU_IO_PARAM_OUTBOUND_NEW = "OUTBOUND_NEW";
 
 
     //Modulos

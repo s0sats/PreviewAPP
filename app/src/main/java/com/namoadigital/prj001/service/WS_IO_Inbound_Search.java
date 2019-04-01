@@ -24,7 +24,6 @@ import java.util.List;
 
 public class WS_IO_Inbound_Search extends IntentService {
     public static final String KEY_CODE_ID = "KEY_CODE_ID";
-    public static final String WS_NAME = WS_IO_Inbound_Search.class.getName();
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

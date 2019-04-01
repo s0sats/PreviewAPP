@@ -20,6 +20,7 @@ import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -108,6 +109,8 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         //
         bindViews();
         //
+        setupViews();
+        //
         configSS();
 
     }
@@ -120,6 +123,9 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         btn_search = findViewById(R.id.act056_btn_inbound_search);
         btn_creation = findViewById(R.id.act056_btn_inbound_creation);
         btn_pendencies = findViewById(R.id.act056_btn_inbound_pendency);
+    }
+
+    private void setupViews() {
         //Seta Traduções
         ss_zone.setmHint(hmAux_Trans.get("zone_hint"));
         ss_local.setmHint(hmAux_Trans.get("local_hint"));
@@ -127,7 +133,13 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         mket_invoice.setHint(hmAux_Trans.get("invoince_hint"));
         btn_search.setText(hmAux_Trans.get("btn_search_inbound"));
         btn_creation.setText(hmAux_Trans.get("btn_new_inbound"));
+        btn_creation.setVisibility(View.GONE);
         btn_pendencies.setText(setBtnPendenciesQty());
+        //
+        //Se profile de criação de inbound, exibi btn
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND_NEW)) {
+            btn_creation.setVisibility(View.VISIBLE);
+        }
         //Add componentes nas listas da base act
         controls_ss.add(ss_zone);
         controls_ss.add(ss_local);

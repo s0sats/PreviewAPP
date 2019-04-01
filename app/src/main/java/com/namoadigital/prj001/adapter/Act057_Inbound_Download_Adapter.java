@@ -6,15 +6,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Inbound_Search_Record;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -35,6 +38,33 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private InboundDownloadFilter valueFilter;
     private boolean pendingFilter;
     private boolean processFilter;
+    private int downloadCounter;
+   // private OnItemClickListner mOnItemClickListner;
+    private OnItemCheckedChangeListener mOnItemCheckedChangeListener;
+
+    public interface OnItemClickListner{
+        void onItemClick(IO_Inbound_Search_Record item);
+    }
+
+    public interface OnItemCheckedChangeListener{
+        void onItemCheckedChange(int downloadCounter);
+    }
+
+//    public OnItemClickListner getOnItemClickListner() {
+//        return mOnItemClickListner;
+//    }
+//
+//    public void setOnItemClickListner(OnItemClickListner mOnItemClickListner) {
+//        this.mOnItemClickListner = mOnItemClickListner;
+//    }
+
+    public OnItemCheckedChangeListener getmOnItemCheckedChangeListener() {
+        return mOnItemCheckedChangeListener;
+    }
+
+    public void setOnItemCheckedChangeListener(OnItemCheckedChangeListener mOnItemCheckedChangeListener) {
+        this.mOnItemCheckedChangeListener = mOnItemCheckedChangeListener;
+    }
 
     public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter) {
         this.context = context;
@@ -43,10 +73,11 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         this.pendingFilter = pendingFilter;
         this.processFilter = processFilter;
         this.mFilteredValues = mValues;
+        this.downloadCounter = 0;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
-                Constant.APP_MODULE,
+                ConstantBaseApp.APP_MODULE,
                 mResource_Name
         );
         //
@@ -66,7 +97,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
-                Constant.APP_MODULE,
+                ConstantBaseApp.APP_MODULE,
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
@@ -99,7 +130,22 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
 
     }
 
-    public class InboundDownloadViewHolder extends RecyclerView.ViewHolder{
+    public String getInboundsToDownload(){
+        String inboundToDownload = "";
+        //
+        for(int i = 0;i < mFilteredValues.size(); i++){
+            if(mFilteredValues.get(i).isToDownload()){
+                inboundToDownload += "|"+
+                            mFilteredValues.get(i).getInbound_prefix()+"."+
+                            mFilteredValues.get(i).getInbound_code();
+            }
+        }
+        //
+        return inboundToDownload.substring(1);
+    }
+
+    public class InboundDownloadViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+        private CheckBox chkDownload;
         private ImageView iv_offline;
         private TextView tv_status;
         private PieView pv_done;
@@ -124,7 +170,10 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         public InboundDownloadViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
+            //this.itemView.setOnClickListener(this);
             //
+            chkDownload = itemView.findViewById(R.id.act057_io_inbound_cell_chk_download);
+            chkDownload.setOnCheckedChangeListener(this);
             iv_offline = itemView.findViewById(R.id.act057_io_inbound_cell_iv_offline);
             tv_status = itemView.findViewById(R.id.act057_io_inbound_cell_tv_status);
             pv_done = itemView.findViewById(R.id.act057_io_inbound_cell_pv_done);
@@ -161,7 +210,30 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             return itemView;
         }
 
+        @Override
+        public void onClick(View v) {
+//            if(mOnItemClickListner != null){
+//                mOnItemClickListner.onItemClick(mFilteredValues.get(getAdapterPosition()));
+//            }
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mFilteredValues.get(getAdapterPosition()).setToDownload(isChecked);
+            //
+            if(isChecked){
+                downloadCounter++;
+            }else{
+                downloadCounter--;
+            }
+            //
+            if(mOnItemCheckedChangeListener != null){
+                mOnItemCheckedChangeListener.onItemCheckedChange(downloadCounter);
+            }
+        }
+
         public void bindData(IO_Inbound_Search_Record data){
+            chkDownload.setChecked(data.isToDownload());
             iv_offline.setVisibility(View.GONE);
             tv_status.setText(hmAux_Trans.get(data.getStatus()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(data.getStatus())));
@@ -248,18 +320,19 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private class InboundDownloadFilter extends Filter{
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            String charString = constraint.toString();
+            String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
 //            if (charString.isEmpty()) {
 //                mFilteredValues = mValues;
 //            } else {
                 List<IO_Inbound_Search_Record> filteredList = new ArrayList<>();
                 for (IO_Inbound_Search_Record row : mValues) {
-                    if (
-                        row.getAllFieldForFilter().toLowerCase().contains(charString.toLowerCase())
+                    //Resgata todos os campos concatenado e com remoção de acentuacao
+                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
+                    if (rowFields.contains(charString)
                         && (
                             (pendingFilter && processFilter)
-                            || (!pendingFilter || (pendingFilter && row.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)))
-                            && (!processFilter || (processFilter && row.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)))
+                            || (!pendingFilter || (pendingFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)))
+                            && (!processFilter || (processFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)))
                         )
                     ) {
                         filteredList.add(row);

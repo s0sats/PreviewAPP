@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,19 +13,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act057_Inbound_Download_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Inbound_Search_Record;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -36,12 +42,20 @@ import java.util.List;
 public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I_View {
 
     private Act057_Main_Presenter mPresenter;
+    private ConstraintLayout cl_no_result;
+    private ConstraintLayout cl_result;
+    private ConstraintLayout cl_limit_exceeded;
+    private TextView tv_no_records;
+    private TextView tv_records;
+    private TextView tv_record_limit;
+    private TextView tv_record_count;
     private MKEditTextNM mket_filter;
     private ImageView iv_status_filter;
     private RecyclerView rv_inbound;
+    private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
-
+    private String wsProcess;
     private String bundle_zone_code;
     private String bundle_local_code;
     private String bundle_inbound_id;
@@ -89,6 +103,22 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         transList.add("filter_hint");
         transList.add("dialog_filter_title");
         //
+        transList.add("dialog_inbound_download_ttl");
+        transList.add("dialog_inbound_download_start");
+        transList.add("download_lbl");
+        transList.add("alert_no_inbound_selected_ttl");
+        transList.add("alert_no_inbound_selected_msg");
+        transList.add("no_record_found_lbl");
+        transList.add("records_found_lbl");
+        transList.add("records_display_limit_lbl");
+        transList.add("records_lbl");
+        transList.add("showing_lbl");
+        transList.add("alert_qty_records_exceeded_ttl");
+        transList.add("alert_qty_records_exceeded_msg");
+        transList.add("alert_qty_records_founded");
+        transList.add("alert_download_return_ttl");
+        transList.add("alert_download_return_error_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -108,8 +138,11 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         );
         //
         bindViews();
+        setupViews();
         //
         mPresenter.processListInfo(bundle_record_count,bundle_record_page,records);
+        //
+        updateIvFilterState();
     }
 
     private void recoverIntentsInfo() {
@@ -139,13 +172,28 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     private void bindViews() {
+        cl_no_result = findViewById(R.id.act057_cl_no_result);
+        cl_result = findViewById(R.id.act057_cl_result);
+        cl_limit_exceeded = findViewById(R.id.act057_cl_limit_exceeded);
+        tv_no_records = findViewById(R.id.act057_tv_no_result);
+        tv_records = findViewById(R.id.act057_tv_records);
+        tv_record_limit = findViewById(R.id.act057_tv_record_limit);
+        tv_record_count = findViewById(R.id.act057_tv_record_count);
         mket_filter = findViewById(R.id.act057_mket_filter);
         iv_status_filter = findViewById(R.id.act057_iv_status_filter);
         rv_inbound = findViewById(R.id.act057_rv_inbound_list);
-        //
+        btn_download = findViewById(R.id.act057_btn_download);
+    }
+
+    private void setupViews() {
+        tv_no_records.setText(hmAux_Trans.get("no_record_found_lbl"));
+        //tv_records.setText(hmAux_Trans.get("records_found_lbl"));
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
+        btn_download.setText(hmAux_Trans.get("download_lbl"));
+        btn_download.setEnabled(false);
         controls_sta.add(mket_filter);
     }
+
 
     private void iniUIFooter() {
         iniFooter();
@@ -191,15 +239,76 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                 }
             }
         });
+        //
+        if(mAdapter != null){
+//            mAdapter.setOnItemClickListner(new Act057_Inbound_Download_Adapter.OnItemClickListner() {
+//                @Override
+//                public void onItemClick(IO_Inbound_Search_Record item) {
+//                    String s = item.getAllFieldForFilter();
+//                    Toast.makeText(context, s,Toast.LENGTH_LONG).show();
+//                }
+//            });
+            //
+            mAdapter.setOnItemCheckedChangeListener(new Act057_Inbound_Download_Adapter.OnItemCheckedChangeListener() {
+                @Override
+                public void onItemCheckedChange(int downloadCounter) {
+                    btn_download.setText(
+                            hmAux_Trans.get("download_lbl") + " ("+downloadCounter+")"
+                    );
+                    //
+                    btn_download.setEnabled(downloadCounter > 0);
+                }
+            });
+        }
+        //
+        btn_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAdapter != null){
+                    String inbounds = mAdapter.getInboundsToDownload();
+                    if(inbounds != null && inbounds.trim().length() > 0){
+                        mPresenter.executeInboundDownload(inbounds);
+
+                    }else{
+                        showAlert(
+                                hmAux_Trans.get("alert_no_inbound_selected_ttl"),
+                                hmAux_Trans.get("alert_no_inbound_selected_msg")
+                        );
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void setRecordInfo() {
-
+        if (records.size() > 0) {
+            cl_no_result.setVisibility(View.GONE);
+            cl_limit_exceeded.setVisibility(View.GONE);
+            cl_result.setVisibility(View.VISIBLE);
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + records.size() + " " + hmAux_Trans.get("records_lbl"));
+            //
+            if (bundle_record_count > bundle_record_page) {
+                showQtyExceededMsg();
+            }
+        } else {
+            tv_records.setVisibility(View.GONE);
+            cl_no_result.setVisibility(View.VISIBLE);
+            tv_no_records.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void showQtyExceededMsg() {
+        cl_limit_exceeded.setVisibility(View.VISIBLE);
+        tv_record_limit.setText(hmAux_Trans.get("records_display_limit_lbl") + " "+ bundle_record_page);
+        tv_record_count.setText(hmAux_Trans.get("records_lbl") + " "+ bundle_record_count);
+        //
+        showAlert(
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" +
+                    bundle_record_count + " " + hmAux_Trans.get("alert_qty_records_founded")
+        );
 
     }
 
@@ -215,6 +324,31 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         rv_inbound.setAdapter(mAdapter);
         rv_inbound.setLayoutManager(
                 new LinearLayoutManager(context)
+        );
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    public void showAlert(String ttl, String msg){
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null
+                ,0
         );
     }
 
@@ -248,6 +382,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                             public void onClick(DialogInterface dialog, int which) {
                                 filter_pending = chkPending.isChecked();
                                 filter_process = chkProcess.isChecked();
+                                updateIvFilterState();
                                 if(mAdapter != null){
                                     mAdapter.updateStatusFilter(filter_pending,filter_process);
                                     mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
@@ -263,6 +398,17 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         builder.show();
     }
 
+    /**
+     * Aplica cor no icone de filtro dependendo do valor dos filtros
+     */
+    private void updateIvFilterState() {
+        if(filter_pending || filter_process ){
+            iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        }else{
+            iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
+    }
+
     @Override
     public void callAct056() {
         Intent mIntent = new Intent(context, Act056_Main.class);
@@ -275,6 +421,94 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         bundle.putString(IO_InboundDao.INVOICE_NUMBER,bundle_invoice);
         //
         startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct061(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct062() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(wsProcess.equals(WS_IO_Inbound_Download.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processDownloadReturn(hmAux);
+        }else{
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
         finish();
     }
 

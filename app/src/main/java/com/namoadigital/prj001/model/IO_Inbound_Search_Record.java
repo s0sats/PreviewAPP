@@ -17,6 +17,8 @@ public class IO_Inbound_Search_Record implements Serializable {
     private Float perc_done;
     private String from;
     private String modal;
+    //Propriedade usada somente no adapter
+    private boolean toDownload;
 
     public int getCustomer_code() {
         return customer_code;
@@ -122,17 +124,30 @@ public class IO_Inbound_Search_Record implements Serializable {
         this.modal = modal;
     }
 
+    public boolean isToDownload() {
+        return toDownload;
+    }
+
+    public void setToDownload(boolean toDownload) {
+        this.toDownload = toDownload;
+    }
+
     public String getAllFieldForFilter(){
-        return  inbound_prefix +
-                inbound_code +
-                inbound_id +
-                inbound_desc +
-                //create_date +
-                //eta_date +
-                invoice_number +
-                //status +
-                //comments +
-                from +
-                modal;
+
+        return  (
+                inbound_prefix + "|" +
+                inbound_code + "|" +
+                inbound_id + "|" +
+                inbound_desc + "|" +
+                create_date + "|" +
+                eta_date + "|" +
+                invoice_number + "|" +
+                //status + "|" +
+                //comments + "|" +
+                from + "|" +
+                modal)
+                .replace("null|","")
+                .replace("null","")
+                ;
     }
 }

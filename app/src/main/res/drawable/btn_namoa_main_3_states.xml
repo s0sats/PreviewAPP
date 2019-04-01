@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/namoa_cell_2_pressed" android:state_pressed="true"/>
+    <item android:state_enabled="false">
+        <shape>
+            <solid
+                android:color="@color/namoa_color_light_blue2_alpha"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/namoa_cell_2"/>
+
+</selector>
