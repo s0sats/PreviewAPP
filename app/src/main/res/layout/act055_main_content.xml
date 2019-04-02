@@ -12,7 +12,7 @@
     tools:showIn="@layout/act055_main">
 
     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-        android:id="@+id/act050_mket_filter_desc"
+        android:id="@+id/act055_mket_filter_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act050_mket_filter_desc"
+        app:layout_constraintTop_toBottomOf="@+id/act055_mket_filter_desc"
         tools:listitem="@layout/act055_io_move_cell" />
 
     <include

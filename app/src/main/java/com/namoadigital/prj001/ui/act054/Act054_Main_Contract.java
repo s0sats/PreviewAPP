@@ -25,6 +25,8 @@ public interface Act054_Main_Contract {
 
         void showPD(String dialog_serial_search_ttl, String dialog_serial_search_start);
 
+        void showMsg(String title, String msg);
+
         void setWsProcess(String name);
 
         void callAct055(Bundle bundle);

@@ -363,8 +363,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <activity
             android:name=".ui.act055.Act055_Main"
-            android:launchMode="singleTask"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -381,6 +381,14 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".ui.act058.Act058_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+
 
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
@@ -652,14 +660,16 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_IO_Outbound_Search" />
 
         <service android:name=".service.WS_IO_Move_Download" />
+
         <receiver android:name=".receiver.WBR_IO_Move_Download" />
 
         <service android:name=".service.WS_IO_Inbound_Download" />
+
         <receiver android:name=".receiver.WBR_IO_Inbound_Download" />
 
         <service android:name=".service.WS_IO_Outbound_Download" />
-        <receiver android:name=".receiver.WBR_IO_Outbound_Download" />
 
+        <receiver android:name=".receiver.WBR_IO_Outbound_Download" />
     </application>
 
 </manifest>

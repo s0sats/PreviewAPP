@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act055;
 
+import android.os.Bundle;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 
@@ -10,14 +12,22 @@ public interface Act055_Main_Contract {
 
     interface I_Presenter{
         void onBackPressedClicked(String requesting_act);
+
+        void getDownloadedMove(String moveCode);
+
+        void processSearchReturn(HMAux searchRet);
     }
 
     interface I_View{
 
-        void showPD(String dialog_serial_search_ttl, String dialog_serial_search_start);
+        void showPD(String title, String desc);
 
         void setWsProcess(String name);
 
         void callAct054();
+
+        void showAlert(String title, String msg);
+
+        void callAct058(Bundle bundle);
     }
 }

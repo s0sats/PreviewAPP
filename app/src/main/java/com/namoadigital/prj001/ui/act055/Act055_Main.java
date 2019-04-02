@@ -10,11 +10,15 @@ import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act055_IO_Move_Order_List_Adapter;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
+import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
+import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
+import com.namoadigital.prj001.ui.act058.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -28,8 +32,9 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private RecyclerView rvMoveOrderList;
     private MKEditTextNM mketFilterDesc;
     private Act055_IO_Move_Order_List_Adapter mAdapter;
-//    private boolean serial_jump;
+    //    private boolean serial_jump;
     private List<IO_Move_Search_Record> mMoveSearchList;
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,10 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         transList.add("act055_title");
         transList.add("act055_lbl_new");
         transList.add("move_order_filter_hint");
+        transList.add("alert_error_on_processing_return_ttl");
+        transList.add("alert_error_on_processing_return_msg");
+        transList.add("alert_error_on_move_downloaded_not_found_ttl");
+        transList.add("alert_error_on_move_downloaded_not_found_msg");
         //Traducao para itens da lista
 
 
@@ -82,7 +91,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     }
 
     private void initVars() {
-        mPresenter = new Act055_Main_Presenter(context,this, hmAux_Trans);
+        mPresenter = new Act055_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         bindViews();
         setInitialView();
@@ -97,14 +106,14 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     private void bindViews() {
         rvMoveOrderList = findViewById(R.id.act055_rv_move_order_list);
-        mketFilterDesc = findViewById(R.id.act050_mket_filter_desc);
+        mketFilterDesc = findViewById(R.id.act055_mket_filter_desc);
     }
 
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
+        if (bundle != null) {
             mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
-        }else{
+        } else {
             mMoveSearchList = new ArrayList<>();
         }
     }
@@ -144,35 +153,75 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     }
 
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (wsProcess.equals(WS_IO_Move_Download.class.getName())) {
+            mPresenter.processSearchReturn(hmAux);
+        }
+
+        disableProgressDialog();
+
+    }
+
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         mPresenter.onBackPressedClicked(Constant.ACT054);
     }
 
     @Override
-    public void showAlertSerialOut(String alert_serial_out_site_title, String alert_serial_out_site_msg) {
-
+    public void showAlertSerialOut(String title, String msg) {
+        showAlert(title, msg);
     }
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-        Toast.makeText(context, String.valueOf(record.getMove_code()), Toast.LENGTH_SHORT).show();
+        mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
+    }
+
+
+    @Override
+    public void showPD(String title, String desc) {
+        enableProgressDialog(
+                title,
+                desc,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
-    public void showPD(String dialog_serial_search_ttl, String dialog_serial_search_start) {
-
-    }
-
-    @Override
-    public void setWsProcess(String name) {
-
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
     }
 
     @Override
     public void callAct054() {
         Intent mIntent = new Intent(context, Act054_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void showAlert(String title, String msg) {
+        ToolBox.alertMSG(
+                context,
+                title,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void callAct058(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act058_Main.class);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
