@@ -398,6 +398,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_site_or_operation_not_found_ttl");
         transList.add("alert_site_or_operation_not_found_msg");
         transList.add("lbl_io_assets");
+        transList.add("alert_site_no_io_control_ttl");
+        transList.add("alert_site_no_io_control_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

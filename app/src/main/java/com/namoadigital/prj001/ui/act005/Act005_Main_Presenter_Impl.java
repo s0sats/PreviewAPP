@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -307,16 +308,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_IO_ASSETS:
-                        MD_Site mdSite = siteDao.getByString(
-                              new MD_Site_Sql_001(
-                                      ToolBox_Con.getPreference_Customer_Code(context),
-                                      ToolBox_Con.getPreference_Site_Code(context)
-                              ).toSqlQuery()
-                        );
-                        //
-                        if(mdSite != null && mdSite.getIo_control() == 1){
-                            menu.setIcon(R.drawable.ic_block_helper_grey600_48dp);
-                        }
+                         if(!isSiteLoggedIoControl()){
+                             menu.setIcon(R.drawable.ic_block_helper_grey600_48dp);
+                         }else{
+                             menu.setIcon(R.drawable.previous_icon);
+                         }
                         //tratar badges de pendentes.
                         break;
 
@@ -644,7 +640,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_IO_ASSETS:
-                    mView.callAct051(context);
+                    if(isSiteLoggedIoControl()) {
+                        mView.callAct051(context);
+                    }else{
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_site_no_io_control_ttl"),
+                                hmAux_Trans.get("alert_site_no_io_control_msg"),
+                                null,
+                                0
+                        );
+                    }
                     break;
 
                 case Act005_Main.MENU_ID_PENDING_DATA:
@@ -1148,5 +1154,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } else {
             return "";
         }
+    }
+
+    private boolean isSiteLoggedIoControl(){
+        MD_Site mdSite = siteDao.getByString(
+                new MD_Site_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        if(mdSite != null && mdSite.getIo_control() == 1){
+            return true;
+        }
+        return false;
     }
 }
