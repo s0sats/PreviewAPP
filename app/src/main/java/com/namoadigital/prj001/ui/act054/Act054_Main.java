@@ -200,6 +200,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         setFooter();
     }
 
+    @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
+
+
     private void initActions() {
         ssIoZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override

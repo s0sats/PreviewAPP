@@ -253,63 +253,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         startActivity(mIntent);
         finish();
 
-        /**
-         *
-         *
-         *
-         * teste do WS_IO_Move_Search
-         *
-         * apagar após testes
-         *
-         *
-         */
-//        setWsProcess(WS_IO_Move_Search.class.getName());
-//        //
-//        showPD(
-//                hmAux_Trans.get("dialog_serial_search_ttl"),
-//                hmAux_Trans.get("dialog_serial_search_start")
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_IO_Move_Search.class);
-//        Bundle bundle = new Bundle();
-//        //
-//        bundle.putString(MD_SiteDao.SITE_CODE,"24");
-//        bundle.putString(IO_MoveDao.MOVE_TYPE,"MOVE_PLANNED");
-//        //bundle.putString(IO_MoveDao.FROM_ZONE_CODE,ToolBox_Con.getPreference_Site_Code(context));
-//        //bundle.putString(WS_IO_Move_Search.MOVE_ORIENTATION,ToolBox_Con.getPreference_Site_Code(context));
-//        //
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-
-        /**
-         *
-         *
-         *
-         * teste do WS_IO_Move_Download
-         *
-         * apagar após testes
-         *
-         *
-         */
-
-//        setWsProcess(WS_IO_Move_Download.class.getName());
-//        //
-//        showPD(
-//                hmAux_Trans.get("dialog_serial_search_ttl"),
-//                hmAux_Trans.get("dialog_serial_search_start")
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_IO_Move_Download.class);
-//        Bundle bundle = new Bundle();
-//        //
-//        bundle.putString(IO_MoveDao.MOVE_CODE,"2019.6");
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-
     }
 
     private void processIOInbound(HMAux optionsInfo) {
@@ -320,110 +263,9 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         finish();
 
 
-//        /**
-//         *
-//         *
-//         *
-//         * teste do WS_IO_Inbound_Search
-//         *
-//         * apagar após testes
-//         *
-//         *
-//         */
-//        setWsProcess(WS_IO_Inbound_Search.class.getName());
-//        //
-//        showPD(
-//                hmAux_Trans.get("dialog_serial_search_ttl"),
-//                hmAux_Trans.get("dialog_serial_search_start")
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_IO_Inbound_Search.class);
-//        Bundle bundle = new Bundle();
-//        //
-//        bundle.putString(MD_SiteDao.SITE_CODE,"24");
-//        bundle.putString(IO_InboundDao.STATUS,"PROCESS");
-//        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE,"");
-//        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE,"");
-//        bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID,"");
-//        bundle.putString(IO_InboundDao.INVOICE_NUMBER,"");
-//        //
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-
-//        /**
-//         *
-//         *
-//         * teste do WS_IO_Inbound_Download
-//         *
-//         * apagar após testes
-//         *
-//         */
-//
-//        setWsProcess(WS_IO_Inbound_Download.class.getName());
-//        //
-//        showPD(
-//                hmAux_Trans.get("dialog_serial_search_ttl"),
-//                hmAux_Trans.get("dialog_serial_search_start")
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_IO_Inbound_Download.class);
-//        Bundle bundle = new Bundle();
-//        //
-//        bundle.putString(IO_InboundDao.INBOUND_CODE,"2019.107|2019.108");
-//        //
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-
     }
 
     private void processIOOutbound(HMAux optionsInfo) {
-//
-//        /**
-//         *
-//         *
-//         *
-//         * teste do WS_IO_Outbound_Search
-//         *
-//         * apagar após testes
-//         *
-//         *
-//         */
-//
-//        setWsProcess(WS_IO_Outbound_Search.class.getName());
-//        //
-//        showPD(
-//                hmAux_Trans.get("dialog_serial_search_ttl"),
-//                hmAux_Trans.get("dialog_serial_search_start")
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_IO_Outbound_Search.class);
-//        Bundle bundle = new Bundle();
-//        //
-//        bundle.putString(MD_SiteDao.SITE_CODE,"24");
-//        bundle.putString(IO_InboundDao.STATUS,"PROCESS");
-//        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE,"");
-//        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE,"");
-//        bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID,"");
-//        bundle.putString(IO_InboundDao.INVOICE_NUMBER,"");
-//        //
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
-
-        /**
-         *
-         *
-         * teste do WS_IO_Outbound_Download
-         *
-         * apagar após testes
-         *
-         */
-
         setWsProcess(WS_IO_Outbound_Download.class.getName());
         //
         showPD(
@@ -475,6 +317,12 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     @Override

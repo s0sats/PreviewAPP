@@ -156,6 +156,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
+
+    @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
