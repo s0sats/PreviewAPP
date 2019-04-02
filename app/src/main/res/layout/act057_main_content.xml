@@ -153,7 +153,6 @@
             app:layout_constraintBottom_toTopOf="@id/act057_btn_download"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
             app:layout_constraintTop_toBottomOf="@id/act057_mket_filter"
             tools:listitem="@layout/act057_io_inbound_cell" />
 

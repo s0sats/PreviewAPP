@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -196,6 +199,9 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         }
     }
 
+    /**
+     * Aplica profiles aos botões
+     */
     private void applyProfile() {
         //Seta todos btn como invisiveis
         mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
@@ -514,6 +520,77 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 0
         );
     }
+    // NFC Processing Data
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+
+        Log.d("NFC", value[0]);
+
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            ToolBox.alertMSG(
+                    context,
+                    "Erro:",
+                    value[0],
+                    null,
+                    0
+            );
+
+        } else {
+            String product_id = "";
+            //
+            switch (value[0]) {
+                case PRODUCT:
+                    product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
+                    //
+                    if (!product_id.equals("")) {
+                        mFrgSerialSearch.setProductIdText(product_id);
+                        mFrgSerialSearch.setSerialIdText("");
+                        mFrgSerialSearch.setTrackingText("");
+                        mPresenter.executeSerialProcessSearch(product_id, "", "");
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
+                        );
+                    }
+                    break;
+                case SERIAL:
+                    product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
+
+                    if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
+
+                        if (!product_id.equals("")) {
+                            mFrgSerialSearch.setProductIdText(product_id);
+                        }
+                        mFrgSerialSearch.setSerialIdText(value[3]);
+                        mFrgSerialSearch.setTrackingText("");
+                        //
+                        HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
+                        mPresenter.executeSerialProcessSearch(hmAux.get(PRODUCT_ID), value[3], "");
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
+                        );
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 
     @Override
     public void callAct052(Context context, Bundle bundle) {
@@ -558,5 +635,15 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

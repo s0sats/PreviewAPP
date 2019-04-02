@@ -1,0 +1,163 @@
+package com.namoadigital.prj001.ui.act061;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.WindowManager;
+
+import com.namoa_digital.namoa_library.view.BaseFragment;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Act061_Main extends Base_Activity_Frag {
+    public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
+    public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
+
+    private Bundle bundle;
+    private FragmentManager fm;
+    private Act061_Frag_Drawer act061_frag_drawer;
+    private Act061_Frag_Header act061_frag_header;
+    private Act061_Frag_Item act061_frag_item;
+    private DrawerLayout mDrawerLayout;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setContentView(R.layout.act061_main);
+        //
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //
+        iniSetup();
+
+        if(savedInstanceState != null){
+            restoreSavedIntance(savedInstanceState);
+        }
+        //
+        initVars();
+        //
+        iniUIFooter();
+        //
+        initActions();
+    }
+
+    private void iniSetup() {
+        fm = getSupportFragmentManager();
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT061
+        );
+        //
+        loadTranslation();
+        //
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<>();
+        //Trad Act061
+        transList.add("act061_title");
+        transList.add("alert_leave_so_creation_ttl");
+
+        //Trad Frag Favoritos
+//        transList.addAll(act050_favorite_fragment.getFragTranslationsVars());
+//        //Trad Frag Parameters
+//        transList.addAll(act050_frag_parameters.getFragTranslationsVars());
+//        //Trad Frag SO
+//        transList.addAll(act050_s0_creation_fragment.getFragTranslationsVars());
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+    }
+
+    private void restoreSavedIntance(Bundle savedInstanceState) {
+
+    }
+
+    private void initVars() {
+        //recoverGetIntents();
+        //
+        mDrawerLayout = (DrawerLayout)
+                findViewById(R.id.act027_drawer);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                Act061_Main.this,
+                mDrawerLayout,
+                R.string.act005_drawer_opened,
+                R.string.act005_drawer_closed
+        ){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                //act061_frag_drawer.loadDataToScreen();
+
+                ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+
+                ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
+
+            }
+
+        };
+        //
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        //
+        act061_frag_drawer = (Act061_Frag_Drawer) fm.findFragmentById(R.id.act061_opc);
+        //
+        initFragment();
+    }
+
+    private void initFragment() {
+        act061_frag_header = new Act061_Frag_Header();
+        //
+        act061_frag_item = new Act061_Frag_Item();
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        setFrag(act061_frag_header,INBOUND_FRAG_HEADER);
+    }
+
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act061_main_ll, type, sTag);
+            ft.addToBackStack(null);
+            ft.commit();
+        } else {
+            //type.loadDataToScreen();
+        }
+    }
+
+    private void iniUIFooter() {
+
+    }
+
+    private void initActions() {
+
+    }
+}

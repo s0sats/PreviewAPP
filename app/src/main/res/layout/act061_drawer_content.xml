@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/padrao_WHITE"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <ScrollView
+        android:id="@+id/act061_drawer_sv_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fillViewport="true"
+        >
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/act061_drawer_cl_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act061_drawer_gd_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act061_drawer_gd_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="20XX.XX - TRAD"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_pv_conf"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <az.plainpie.PieView
+                android:id="@+id/act057_io_inbound_cell_pv_conf"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_pv_put_away"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_id"
+                app:layout_constraintTop_toTopOf="parent"
+                app:percentage="50"
+                app:percentage_size="12" />
+
+            <az.plainpie.PieView
+                android:id="@+id/act057_io_inbound_cell_pv_put_away"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:percentage="50"
+                app:percentage_size="12" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Status - Trad"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_pv_conf" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_create_dt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Data - trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_status" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_create_dt_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="99/99/9999"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_create_dt"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_create_dt"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_create_dt" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_eta_dt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="ETA-Trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_create_dt_val" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_eta_dt_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="99/99/9999"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_eta_dt"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_eta_dt"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_eta_dt" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_invoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Invoince - trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_eta_dt_val" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_invoice_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="99999"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_invoice"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_invoice"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_invoice" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="From - trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_invoice_val" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_from_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Site - trad"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_from"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_from"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_from" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_modal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Modal -trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_from_val" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_modal_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Aereo -trad"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_modal"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_modal"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_modal" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Comentario - trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_modal_val" />
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_comment_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Coments - trad"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_comment"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_comment"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_comment"
+                android:maxLines="2"
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/act061_drawer_cl_position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/act061_drawer_tv_comment_val"
+                app:layout_constraintStart_toStartOf="@id/act061_drawer_gd_start"
+                app:layout_constraintEnd_toEndOf="@id/act061_drawer_gd_end"
+                >
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act061_drawer_ss_zone"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:hint="Zone Conf -trad"
+                    android:background="@drawable/border_back"
+                />
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act061_drawer_ss_local"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:hint="Local Conf -trad"
+                    android:background="@drawable/border_back"
+                    app:layout_constraintTop_toBottomOf="@id/act061_drawer_ss_zone"
+
+                    />
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/act061_drawer_rv_opt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act061_drawer_sv_main"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/act061_drawer_opt_cell"
+        />
+
+</android.support.constraint.ConstraintLayout>
+
