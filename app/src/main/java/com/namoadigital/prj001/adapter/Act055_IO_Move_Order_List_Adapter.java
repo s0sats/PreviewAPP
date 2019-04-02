@@ -71,16 +71,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         );
     }
 
-//    public Act055_IO_Move_Order_List_Adapter(Context context, List<IO_Move_Search_Record> mValues, Act055ListListener mListener, HMAux hmAux_Trans, boolean serial_jump) {
-//        this.context = context;
-//        this.mValues = mValues;
-//        this.mListener = mListener;
-//        this.hmAux_Trans = hmAux_Trans;
-//        this.serial_jump = serial_jump;
-//        this.mValues = mValues;
-//        this.mFilteredValues = (mValues);
-//    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -94,7 +84,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
 
         ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
-        final IO_Move_Search_Record record = mValues.get(position);
+        final IO_Move_Search_Record record = mFilteredValues.get(position);
         vh.bindData(record);
         vh.getItemView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +117,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mFilteredValues.size();
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
