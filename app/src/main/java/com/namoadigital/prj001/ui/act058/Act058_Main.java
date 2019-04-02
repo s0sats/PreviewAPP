@@ -54,6 +54,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         //movido para utilizar o objeto na criação da
         recoverIntentsInfo();
         fm = getSupportFragmentManager();
+        mPresenter = new Act058_Main_Presenter(context, this, hmAux_Trans);
         IO_Move moveInfo = mPresenter.getMoveInfo(movePrefix, moveCode);
         int viewMode = getViewMode(moveInfo);
         act058_frag_move = Act058_Frag_Move.newInstance(moveInfo, viewMode, true);

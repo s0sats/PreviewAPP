@@ -12,11 +12,14 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     IO_MoveDao moveDao;
     Context context;
+    Act058_Main act058_main;
 
     public Act058_Main_Presenter(Context context, Act058_Main act058_main, HMAux hmAux_trans) {
+        this.context = context;
         this.moveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
+        this.act058_main = act058_main;
     }
 
     @Override
