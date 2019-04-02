@@ -89,6 +89,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT_PRODUCT_SELECTION = "act_product_selection";
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
     public static final String FRG_SERIAL_EDIT = "frg_serial_edit";
+    public static final String FRG_MOVE_CREATE = "frg_serial_edit";
 
     public static final String FRG_FAVORITE_LIST = "act050_frag_favorite";
 

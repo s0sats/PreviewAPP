@@ -1,12 +1,12 @@
 package com.namoadigital.prj001.ui.act058;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -14,6 +14,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -22,14 +24,16 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contract.I_View, Act058_Frag_Move.OnFragmentInteractionListener {
+public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
 
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
-    private Act058_Frag_Move act058_frag_move;
+    private Frag_Move_Create frag_move_create;
     Act058_Main_Presenter mPresenter;
     private int moveCode;
     private int movePrefix;
+    private String mResource_Code_Frag;
+    private HMAux hmAux_Trans_Frag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +58,18 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         //movido para utilizar o objeto na criação da
         recoverIntentsInfo();
         fm = getSupportFragmentManager();
-        mPresenter = new Act058_Main_Presenter(context, this, hmAux_Trans);
-        IO_Move moveInfo = mPresenter.getMoveInfo(movePrefix, moveCode);
-        int viewMode = getViewMode(moveInfo);
-        act058_frag_move = Act058_Frag_Move.newInstance(moveInfo, viewMode, true);
-        setFrag(act058_frag_move, FRAGMENT_MOVE);
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT050
+                Constant.ACT058
         );
         //
+        mResource_Code_Frag= ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.FRG_MOVE_CREATE
+        );
 
         loadTranslation();
         //
@@ -93,12 +97,20 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         List<String> transList = new ArrayList<String>();
         transList.add("act058_title");
 
-        transList.addAll(act058_frag_move.getFragTranslationsVars());
+        transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+
+        hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code_Frag,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
@@ -109,9 +121,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     private void initVars() {
-
-        //
-
+        mPresenter = new Act058_Main_Presenter(context, this, hmAux_Trans);
+        IO_Move moveInfo = mPresenter.getMoveInfo(movePrefix, moveCode);
+        MD_Product_Serial serialInfo = mPresenter.getSerialInfo(moveInfo.getProduct_code(), moveInfo.getSerial_code());
+        int viewMode = getViewMode(moveInfo);
+        frag_move_create = Frag_Move_Create.newInstance(moveInfo, serialInfo, viewMode, true, hmAux_Trans_Frag);
+        setFrag(frag_move_create, FRAGMENT_MOVE);
     }
 
     private void recoverIntentsInfo() {
@@ -156,6 +171,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        callAct055();
+    }
+
+    @Override
     protected void footerCreateDialog() {
 //        super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
@@ -183,6 +204,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     @Override
     public void callAct055() {
-
+        Intent mIntent = new Intent(context, Act055_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 }

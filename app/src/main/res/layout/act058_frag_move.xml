@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.namoadigital.prj001.ui.act058.Act058_Frag_Move">
+    tools:context="com.namoadigital.prj001.ui.act058.Frag_Move_Create">
 
 
     <LinearLayout
@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <include layout="@layout/act058_product_serial_info"
+    <include
+        android:id="@+id/act058_serial_layout"
+        layout="@layout/act058_product_serial_info"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="8dp"
         android:layout_width="match_parent"
@@ -52,7 +54,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act058_chk_change_zone"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <TextView
                 android:id="@+id/act058_tv_inbound_lbl"
@@ -62,7 +64,6 @@
                 android:layout_marginTop="8dp"
                 android:text="Inbound:"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_tv_inbound_val"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
                 app:layout_constraintTop_toBottomOf="@+id/act058_tv_zone_position" />
 
@@ -73,9 +74,9 @@
                 android:layout_marginStart="8dp"
                 android:text="2019.111"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_tv_move_order_lbl"
+                app:layout_constraintBottom_toBottomOf="@+id/act058_tv_inbound_lbl"
                 app:layout_constraintStart_toEndOf="@+id/act058_tv_inbound_lbl"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_inbound_lbl" />
+                app:layout_constraintTop_toTopOf="@+id/act058_tv_inbound_lbl" />
 
             <TextView
                 android:id="@+id/act058_tv_move_order_lbl"
@@ -85,9 +86,8 @@
                 android:layout_marginTop="8dp"
                 android:text="MO:"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_tv_move_order_val"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_inbound_val" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_inbound_lbl" />
 
             <TextView
                 android:id="@+id/act058_tv_move_order_val"
@@ -96,9 +96,9 @@
                 android:layout_marginStart="8dp"
                 android:text="2019.111"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_tv_move_to_lbl"
+                app:layout_constraintBottom_toBottomOf="@+id/act058_tv_move_order_lbl"
                 app:layout_constraintStart_toEndOf="@+id/act058_tv_move_order_lbl"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_order_lbl" />
+                app:layout_constraintTop_toTopOf="@+id/act058_tv_move_order_lbl" />
 
 
             <TextView
@@ -109,9 +109,8 @@
                 android:layout_marginTop="8dp"
                 android:text="Move to:"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_tv_move_to_val"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_order_val" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_order_lbl" />
 
             <TextView
                 android:id="@+id/act058_tv_move_to_val"
@@ -120,9 +119,9 @@
                 android:layout_marginStart="8dp"
                 android:text="Zone | Position"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/act058_mkedit_zone"
+                app:layout_constraintBottom_toBottomOf="@+id/act058_tv_move_to_lbl"
                 app:layout_constraintStart_toEndOf="@+id/act058_tv_move_to_lbl"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl" />
+                app:layout_constraintTop_toTopOf="@+id/act058_tv_move_to_lbl" />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act058_mkedit_zone"
@@ -136,7 +135,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/gl_right"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_val" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl" />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act058_mkedit_position"
