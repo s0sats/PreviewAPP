@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_signal_wifi_off_black_24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/gl_right"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,10 +62,11 @@
 
     <ImageView
         android:id="@+id/iv_serial_history"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:tint="@color/font_normal"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/gl_right"
         app:layout_constraintStart_toStartOf="@+id/iv_offline_mode"
         app:layout_constraintTop_toBottomOf="@+id/iv_offline_mode"

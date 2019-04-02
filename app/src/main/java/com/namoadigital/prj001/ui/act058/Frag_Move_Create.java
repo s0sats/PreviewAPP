@@ -4,10 +4,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -20,6 +22,7 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,8 @@ public class Frag_Move_Create extends BaseFragment {
     private OnFragmentInteractionListener mListener;
     private TextView tv_product_cod_val;
     private TextView tv_serial_val;
+    private ImageView iv_offline_mode;
+    private ImageView iv_serial_history;
 
     public Frag_Move_Create() {
         // Required empty public constructor
@@ -117,6 +122,7 @@ public class Frag_Move_Create extends BaseFragment {
 
         tv_product_cod_val = serialLayout.findViewById(R.id.tv_product_cod_desc);
         tv_serial_val = serialLayout.findViewById(R.id.tv_serial_val);
+        iv_offline_mode = serialLayout.findViewById(R.id.iv_offline_mode);
 
         tv_zone_position = fragView.findViewById(R.id.act058_tv_zone_position);
         tv_inbound_val = fragView.findViewById(R.id.act058_tv_inbound_val);
@@ -143,14 +149,31 @@ public class Frag_Move_Create extends BaseFragment {
         super.onStart();
         bindLabelsAndHints();
         bindValues();
+
     }
 
     private void bindValues() {
         tv_product_cod_val.setText(mdProductSerial.getProduct_id() + " " + mdProductSerial.getProduct_desc());
         tv_serial_val.setText(mdProductSerial.getSerial_id());
+
+        tv_inbound_val.setText(formatPrefixAndCode(ioMove.getInbound_prefix(), ioMove.getInbound_code()));
+        tv_move_order_val.setText(formatPrefixAndCode(ioMove.getMove_prefix(), ioMove.getMove_code()));
+        tv_move_to_val.setText(ioMove.getPlanned_zone_code() + "|" + ioMove.getPlanned_local_code());
+    }
+
+    @NonNull
+    private String formatPrefixAndCode(int prefix, int code) {
+        return prefix + "." + code;
     }
 
     private void bindLabelsAndHints() {
+        if(mListener.isOnline()){
+            iv_serial_history.setVisibility(View.VISIBLE);
+            iv_offline_mode.setVisibility(View.GONE);
+        }else{
+            iv_serial_history.setVisibility(View.GONE);
+            iv_offline_mode.setVisibility(View.VISIBLE);
+        }
 
         tv_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
         tv_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
@@ -225,5 +248,7 @@ public class Frag_Move_Create extends BaseFragment {
         void showAlert(String title, String msg);
 
         void onBackPressed();
+
+        boolean isOnline();
     }
 }
