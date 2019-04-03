@@ -27,18 +27,20 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="240dp"
+        android:id="@+id/act061_opc"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
-        <fragment
-            android:id="@+id/act061_opc"
-            android:name="com.namoadigital.prj001.ui.act061.Act061_Frag_Drawer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/act061_drawer_content" />
+        <!--<fragment-->
+            <!--android:id="@+id/act061_opc"-->
+            <!--android:name="com.namoadigital.prj001.ui.act061.Act061_Frag_Drawer"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--tools:layout="@layout/act061_drawer_content" />-->
 
     </LinearLayout>
 

@@ -17,7 +17,7 @@ public class Act061_Frag_Header extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.act061_drawer_content, container, false);
+        View view = inflater.inflate(R.layout.act061_frag_header_content, container, false);
         return view;
     }
 }
