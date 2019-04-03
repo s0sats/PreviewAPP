@@ -3,6 +3,9 @@ package com.namoadigital.prj001.ui.act058;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,20 +17,24 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.ctls.TextViewCT;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -54,6 +61,7 @@ public class Frag_Move_Create extends BaseFragment {
     private MD_Product_Serial mdProductSerial;
 
     private View serialLayout;
+    private ScrollView sv_create_move;
     private LinearLayout ll_tracking_content;
 
     private TextView tv_zone_position;
@@ -70,8 +78,10 @@ public class Frag_Move_Create extends BaseFragment {
     private MKEditTextNM mkedit_coments;
 
     private MkDateTime mkdate_confirm;
+    private TextViewCT.ITextViewCT tvCtListner;
 
     private SearchableSpinner ss_reason;
+    private SearchableSpinner ss_class;
 
     private CheckBox chk_change_zone;
 
@@ -81,10 +91,12 @@ public class Frag_Move_Create extends BaseFragment {
     private ImageView iv_offline_mode;
     private ImageView iv_serial_history;
     private ImageView iv_add_tracking;
+    private ImageView iv_class_icon;
     private boolean useTracking;
     private ArrayList<MD_Product_Serial_Tracking> tracking_list;
     private boolean pausedByScan;
     private String searched_tracking = "";
+    private boolean trackingListChanged;
 
     public Frag_Move_Create() {
         // Required empty public constructor
@@ -145,14 +157,19 @@ public class Frag_Move_Create extends BaseFragment {
         tv_inbound_lbl = fragView.findViewById(R.id.act058_tv_inbound_lbl);
         tv_move_order_lbl = fragView.findViewById(R.id.act058_tv_move_order_lbl);
         tv_move_to_lbl = fragView.findViewById(R.id.act058_tv_move_to_lbl);
-
+        ll_tracking_content = fragView.findViewById(R.id.ll_tracking_content);
+        iv_add_tracking = fragView.findViewById(R.id.act058_iv_add_tracking);
+        iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
         mkedit_zone = fragView.findViewById(R.id.act058_mkedit_zone);
         mkedit_position = fragView.findViewById(R.id.act058_mkedit_position);
         mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
-
         mkdate_confirm = fragView.findViewById(R.id.act058_mkdate_confirm);
 
+        sv_create_move = fragView.findViewById(R.id.act058_sv_create_move);
+
         ss_reason = fragView.findViewById(R.id.act058_ss_reason);
+        ss_class = fragView.findViewById(R.id.act058_ss_class);
+
         chk_change_zone = fragView.findViewById(R.id.act058_chk_change_zone);
 
         initializeViews();
@@ -176,6 +193,20 @@ public class Frag_Move_Create extends BaseFragment {
                 }
             }
         });
+
+
+        ss_class.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                setClassIcon(hmAux);
+            }
+        });
+
     }
 
     private void showTrackingDialog() {
@@ -264,6 +295,65 @@ public class Frag_Move_Create extends BaseFragment {
         });
     }
 
+    public void processTrackingResult(HMAux auxResult) {
+        if (auxResult.containsKey(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY)) {
+            if (auxResult.get(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY).equals(WS_Serial_Tracking_Search.NOT_EXISTS)) {
+                //
+                mdProductSerial.getTracking_list().add(
+                        buildTrackingObj(searched_tracking)
+                );
+                //
+                appendTracking(searched_tracking);
+                //
+                setTrackingListChanged(true);
+                //
+                cleanSearched_tracking();
+                //
+                scrollToView(ll_tracking_content);
+            } else {
+                showAlertDialog(
+                        hmAux_Trans.get("alert_tracking_unavailable_ttl"),
+                        hmAux_Trans.get("alert_tracking_unavailable_msg"),
+                        null);
+            }
+        }
+    }
+
+    //region Scrolls
+    private void scrollToView(View view) {
+        int x = (int) view.getX();
+        int y = view.getTop() + ((View) view.getParent()).getTop();
+
+        sv_create_move.smoothScrollTo(x, y);
+    }
+
+    private void setTrackingListChanged(boolean trackingListChanged) {
+        this.trackingListChanged = trackingListChanged;
+    }
+
+    private MD_Product_Serial_Tracking buildTrackingObj(String searched_tracking) {
+        MD_Product_Serial_Tracking auxTracking = new MD_Product_Serial_Tracking();
+        //
+        auxTracking.setTracking(searched_tracking);
+        auxTracking.setPk(mdProductSerial);
+        //
+        return auxTracking;
+    }
+
+    public void appendTracking(String tracking) {
+        TextViewCT viewCT = new TextViewCT(getContext());
+        viewCT.setmValue(tracking);
+        viewCT.setOnRemoveViewsListener(tvCtListner);
+        //
+        ll_tracking_content.addView(viewCT);
+    }
+
+    public void cleanSearched_tracking() {
+        searched_tracking = "";
+    }
+
+
+
     public boolean isTrackingListed(String tracking) {
         for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
             if (mdProductSerial.getTracking_list().get(i).getTracking().equals(tracking)) {
@@ -321,6 +411,9 @@ public class Frag_Move_Create extends BaseFragment {
 
     private void initializeViews() {
 
+        if (tvCtListner == null) {
+            initializeTrackingRemovelistner();
+        }
         //Remove todas as views do layout antes de começar.
         ll_tracking_content.removeAllViews();
         tracking_list = new ArrayList<>();
@@ -334,6 +427,21 @@ public class Frag_Move_Create extends BaseFragment {
             iv_serial_history.setVisibility(View.GONE);
             iv_offline_mode.setVisibility(View.VISIBLE);
         }
+
+        ToolBox_Inf.setSSmValue(
+                ss_class,
+                String.valueOf(mdProductSerial.getClass_code()),
+                String.valueOf(mdProductSerial.getClass_code()),
+                mdProductSerial.getClass_id(),
+                true,
+                MD_ClassDao.CLASS_ID, mdProductSerial.getClass_id(),
+                MD_ClassDao.CLASS_TYPE, mdProductSerial.getClass_type(),
+                MD_ClassDao.CLASS_COLOR, mdProductSerial.getClass_color(),
+                MD_ClassDao.CLASS_AVAILABLE, String.valueOf(mdProductSerial.getClass_available())
+        );
+
+        ss_class.setmOption(mListener.getClassList());
+        setClassIcon(ss_class.getmValue());
 
         tv_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
         tv_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
@@ -349,6 +457,41 @@ public class Frag_Move_Create extends BaseFragment {
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
         chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
+    }
+
+    private void setClassIcon(HMAux item) {
+        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
+            iv_class_icon.setVisibility(View.VISIBLE);
+            if (item.get(MD_ClassDao.CLASS_AVAILABLE).equals("1")) {
+                Drawable drawable = getContext().getDrawable(R.drawable.ic_tag_black_24dp);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);
+            } else {
+                Drawable drawable = getContext().getDrawable(R.drawable.ic_ban_black_24dp);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);
+            }
+        } else {
+            iv_class_icon.setImageDrawable(null);
+            iv_class_icon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    private void initializeTrackingRemovelistner() {
+        //
+        tvCtListner = new TextViewCT.ITextViewCT() {
+            @Override
+            public void removeViews(TextViewCT textViewCT) {
+                int idx = ll_tracking_content.indexOfChild(textViewCT);
+                //
+                mdProductSerial.getTracking_list().remove(idx);
+                //
+                ll_tracking_content.removeView(textViewCT);
+                //
+                setTrackingListChanged(true);
+            }
+        };
     }
 
     private void setSSMoveReason() {
@@ -397,6 +540,9 @@ public class Frag_Move_Create extends BaseFragment {
         transList.add("btn_save");
         transList.add("site_reason_lbl");
         transList.add("searchable_spinner_lbl");
+        transList.add("dialog_tracking_ttl");
+        transList.add("alert_tracking_already_listed_ttl");
+        transList.add("alert_tracking_already_listed_msg");
 
         return transList;
     }
@@ -426,5 +572,7 @@ public class Frag_Move_Create extends BaseFragment {
         void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b);
 
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);
+
+        ArrayList<HMAux>  getClassList();
     }
 }

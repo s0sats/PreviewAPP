@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     IO_MoveDao moveDao;
     MD_Product_SerialDao productSerialDao;
+    MD_ClassDao classDao;
     Context context;
     Act058_Main mView;
     HMAux hmAux_trans;
@@ -35,6 +38,8 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         this.productSerialDao = new MD_Product_SerialDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
+
+        this.classDao = new MD_ClassDao(context);
         this.hmAux_trans = hmAux_trans;
         this.mView = mView;
     }
@@ -46,6 +51,15 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
                 movePrefix,
                 moveCode).toSqlQuery());
     }
+
+    @Override
+    public ArrayList<HMAux>  getClassList(){
+        return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+        ).toSqlQuery());
+    }
+
+
 
     @Override
     public void getSerialHistoric() {

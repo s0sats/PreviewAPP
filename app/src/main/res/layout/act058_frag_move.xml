@@ -1,4 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    android:id="@+id/act058_sv_create_move"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -127,56 +129,42 @@
                 android:id="@+id/act058_mkedit_zone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:hint="Zone"
                 app:layout_constraintBottom_toTopOf="@+id/act058_mkedit_position"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl"
+                tools:layout_editor_absoluteX="8dp" />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act058_mkedit_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:hint="Position"
-                app:layout_constraintBottom_toTopOf="@+id/act058_ss_reason"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_zone" />
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
+                app:layout_constraintBottom_toTopOf="@+id/act058_ss_reason"
+                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_zone"
+                tools:layout_editor_absoluteX="8dp" />
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                 android:id="@+id/act058_ss_reason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/act058_ll_serial_tracking"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_position" />
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
+                app:layout_constraintBottom_toTopOf="@+id/act058_ll_serial_tracking"
+                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_position"
+                tools:layout_editor_absoluteX="8dp" />
 
             <LinearLayout
                 android:id="@+id/act058_ll_serial_tracking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/act058_ll_tracking_container"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_ss_reason">
+                app:layout_constraintStart_toStartOf="@+id/gl_left"
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
+                app:layout_constraintBottom_toTopOf="@+id/ll_tracking_content"
+                app:layout_constraintTop_toBottomOf="@+id/act058_ss_reason"
+                tools:layout_editor_absoluteX="8dp">
 
                 <TextView
                     android:id="@+id/act058_tv_serial_tracking_ttl"
@@ -200,31 +188,26 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/act058_ll_tracking_container"
-                android:layout_width="match_parent"
+                android:id="@+id/ll_tracking_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@+id/gl_left"
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
                 app:layout_constraintBottom_toTopOf="@+id/act058_ll_class"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_ll_serial_tracking"></LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/act058_ll_serial_tracking"/>
 
             <LinearLayout
                 android:id="@+id/act058_ll_class"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:background="@color/namoa_color_gray"
                 android:orientation="vertical"
                 android:padding="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/act058_mkedit_coments"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_ll_tracking_container">
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
+                app:layout_constraintBottom_toTopOf="@+id/act058_mkedit_coments"
+                app:layout_constraintTop_toBottomOf="@+id/ll_tracking_content">
 
                 <TextView
                     android:id="@+id/act058_tv_class_ttl"
@@ -265,28 +248,22 @@
                 android:id="@+id/act058_mkedit_coments"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:hint="Coments - trad"
-                app:layout_constraintBottom_toTopOf="@+id/act058_mkdate_confirm"
-                app:layout_constraintEnd_toStartOf="@+id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_ll_class" />
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
+                app:layout_constraintBottom_toTopOf="@+id/act058_mkdate_confirm"
+                app:layout_constraintTop_toBottomOf="@+id/act058_ll_class"
+                tools:layout_editor_absoluteX="16dp" />
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act058_mkdate_confirm"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                app:layout_constraintStart_toStartOf="@+id/gl_left"
+                app:layout_constraintEnd_toEndOf="@+id/gl_right"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/gl_right"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_coments" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_coments"
+                tools:layout_editor_absoluteX="8dp" />
 
             <CheckBox
                 android:id="@+id/act058_chk_change_zone"
@@ -306,7 +283,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/btn_namoa_main_states"
                 android:focusable="true"
-                android:text="NEW"
+                android:text="Save - trad"
                 android:textColor="@color/padrao_WHITE"
                 app:layout_constraintEnd_toEndOf="@id/gl_right"
                 app:layout_constraintStart_toStartOf="@id/gl_left"

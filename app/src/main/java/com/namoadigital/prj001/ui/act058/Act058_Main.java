@@ -16,6 +16,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -173,6 +174,20 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+            frag_move_create.processTrackingResult(hmAux);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
 //        super.onBackPressed();
         callAct055();
@@ -196,6 +211,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     @Override
     public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
         mPresenter.executeTrackingSearch(product_code,serial_code,tracking,site_code);
+    }
+
+    @Override
+    public ArrayList<HMAux> getClassList() {
+        return mPresenter.getClassList();
     }
 
     @Override
