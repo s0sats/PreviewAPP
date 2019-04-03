@@ -30,6 +30,7 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
                                                                 Act061_Frag_Drawer.onFragDrawerInteraction {
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
+    public static final String NEW_IO_PROCESS_KEY = "NEW_IO_PROCESS_KEY";
 
     private Bundle bundle;
     private FragmentManager fm;
@@ -42,6 +43,7 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
     private String mIoProcess;
     private int mPrefix;
     private int mCode;
+    private boolean bNewProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,15 +85,10 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         List<String> transList = new ArrayList<>();
         //Trad Act061
         transList.add("act061_title");
-        transList.add("alert_leave_so_creation_ttl");
-        transList.addAll(act061_frag_drawer.getFragTranslationsVars());
-
-        //Trad Frag Favoritos
-//        transList.addAll(act050_favorite_fragment.getFragTranslationsVars());
-//        //Trad Frag Parameters
-//        transList.addAll(act050_frag_parameters.getFragTranslationsVars());
-//        //Trad Frag SO
-//        transList.addAll(act050_s0_creation_fragment.getFragTranslationsVars());
+        //Trad Frag Drawer
+        transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
+        //Trad Frag Header
+        transList.addAll(Act061_Frag_Header.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -165,16 +162,18 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
             mIoProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY, "");
             mPrefix = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1"));
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
+            bNewProcess = bundle.getBoolean(NEW_IO_PROCESS_KEY, false);
         } else {
             mIoProcess = "";
             mPrefix = -1;
             mCode = -1;
+            bNewProcess = false;
         }
     }
 
     private void initFragment() {
         act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans,mPrefix,mCode);
-        act061_frag_header = new Act061_Frag_Header();
+        act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans,mPrefix,mCode,bNewProcess);
         act061_frag_item = new Act061_Frag_Item();
         //
         setDrawer(act061_frag_drawer,"DRAWER");

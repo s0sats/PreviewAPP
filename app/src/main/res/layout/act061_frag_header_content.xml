@@ -31,7 +31,26 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
             app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+            android:id="@+id/act061_header_ss_from_site"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+            app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+            app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_type"
+            />
+
+        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+            android:id="@+id/act061_header_ss_from_outbound"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+            app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+            app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_site"
+            />
 
         <TextView
             android:id="@+id/act061_header_tv_inbound"
@@ -42,7 +61,8 @@
             android:textSize="@dimen/font_size_title"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-            app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_type" />
+            app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_outbound"
+            />
 
         <TextView
             android:id="@+id/act061_header_tv_inbound_code"
@@ -264,7 +284,7 @@
             app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_truck_num" />
 
         <EditText
-            android:id="@+id/editact061_header_et_driver"
+            android:id="@+id/act061_header_et_driver"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -287,10 +307,10 @@
             app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-            app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_driver" />
+            app:layout_constraintTop_toBottomOf="@+id/act061_header_et_driver" />
 
         <EditText
-            android:id="@+id/editact061_header_et_comments"
+            android:id="@+id/act061_header_et_comments"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -302,6 +322,7 @@
             app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_comments" />
 
         <Button
+            android:id="@+id/act061_header_btn_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -312,7 +333,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
             app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
-            app:layout_constraintTop_toBottomOf="@id/editact061_header_et_comments"
+            app:layout_constraintTop_toBottomOf="@id/act061_header_et_comments"
             app:layout_constraintVertical_bias="1.0" />
 
 

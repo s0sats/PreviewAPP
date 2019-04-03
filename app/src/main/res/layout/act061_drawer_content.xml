@@ -74,7 +74,7 @@
                 android:id="@+id/act061_drawer_pv_put_away"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/act061_drawer_gd_end"
                 app:layout_constraintTop_toTopOf="parent"
                 app:percentage="30"
                 app:percentage_size="12" />

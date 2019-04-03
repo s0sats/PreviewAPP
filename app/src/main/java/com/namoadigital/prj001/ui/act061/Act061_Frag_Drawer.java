@@ -38,8 +38,8 @@ public class Act061_Frag_Drawer extends BaseFragment {
     private PieView pvConf;
     private PieView pvPutAway;
     private TextView tvStatus;
-    private TextView tvCreateDtLbl;
-    private TextView tvCreateDtVal;
+    private TextView tvArrivalDtLbl;
+    private TextView tvArrivalDtVal;
     private TextView tvEtaDtLbl;
     private TextView tvEtaDtVal;
     private TextView tvInvoiceLbl;
@@ -150,8 +150,8 @@ public class Act061_Frag_Drawer extends BaseFragment {
         pvConf= view.findViewById(R.id.act061_drawer_pv_conf);
         pvPutAway= view.findViewById(R.id.act061_drawer_pv_put_away);
         tvStatus= view.findViewById(R.id.act061_drawer_tv_status);
-        tvCreateDtLbl= view.findViewById(R.id.act061_drawer_tv_create_dt);
-        tvCreateDtVal= view.findViewById(R.id.act061_drawer_tv_create_dt_val);
+        tvArrivalDtLbl = view.findViewById(R.id.act061_drawer_tv_create_dt);
+        tvArrivalDtVal = view.findViewById(R.id.act061_drawer_tv_create_dt_val);
         tvEtaDtLbl= view.findViewById(R.id.act061_drawer_tv_eta_dt);
         tvEtaDtVal= view.findViewById(R.id.act061_drawer_tv_eta_dt_val);
         tvInvoiceLbl = view.findViewById(R.id.act061_drawer_tv_invoice);
@@ -169,7 +169,7 @@ public class Act061_Frag_Drawer extends BaseFragment {
     }
 
     private void setViewsText() {
-        tvCreateDtLbl.setText(hmAux_Trans.get("create_dt_lbl"));
+        tvArrivalDtLbl.setText(hmAux_Trans.get("create_dt_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
         tvFromLbl.setText(hmAux_Trans.get("from_lbl"));
@@ -216,25 +216,71 @@ public class Act061_Frag_Drawer extends BaseFragment {
                 tvInboundId.setText(mInbound.getInbound_prefix()+"."+mInbound.getInbound_code());
                 tvStatus.setText(hmAux_Trans.get(mInbound.getStatus()));
                 tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mInbound.getStatus())));
-                tvCreateDtVal.setText(
-                        mInbound.getArrival_date() == null ? "":
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mInbound.getArrival_date()),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-                );
-
-                tvEtaDtVal.setText(
-                        mInbound.getEta_date() == null ? "" :
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mInbound.getEta_date()),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-                );
-                tvInvoiceVal.setText(mInbound.getInvoice_number());
-                tvFromVal.setText(mInbound.getFrom_type());
-                tvModalVal.setText(String.valueOf(mInbound.getModal_code()));
-                tvCommentsVal.setText(mInbound.getComments());
+                if(mInbound.getArrival_date() == null) {
+                    tvArrivalDtLbl.setVisibility(View.GONE);
+                    tvArrivalDtVal.setText("");
+                    tvArrivalDtVal.setVisibility(View.GONE);
+                }else{
+                    tvArrivalDtVal.setText(
+                            mInbound.getArrival_date() == null ? "":
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(mInbound.getArrival_date()),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                }
+                //
+                if(mInbound.getEta_date() == null){
+                    tvEtaDtLbl.setVisibility(View.GONE);
+                    tvEtaDtVal.setText("");
+                    tvEtaDtVal.setVisibility(View.GONE);
+                } else {
+                    tvEtaDtVal.setText(
+                            mInbound.getEta_date() == null ? "" :
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(mInbound.getEta_date()),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                }
+                //
+                if(mInbound.getInvoice_number() == null
+                   || mInbound.getInvoice_number().equalsIgnoreCase("")
+                ){
+                    tvInvoiceLbl.setVisibility(View.GONE);
+                    tvInvoiceVal.setText("");
+                    tvInvoiceVal.setVisibility(View.GONE);
+                }else {
+                    tvInvoiceVal.setText(mInbound.getInvoice_number());
+                }
+                //
+                if(mInbound.getFrom_type() == null
+                   || mInbound.getFrom_type().equalsIgnoreCase("")
+                ){
+                    tvFromLbl.setVisibility(View.GONE);
+                    tvFromVal.setText("");
+                    tvFromVal.setVisibility(View.GONE);
+                }else{
+                    tvFromVal.setText(mInbound.getFrom_type());
+                }
+                //
+                if(mInbound.getModal_code() == null){
+                    tvModalLbl.setVisibility(View.GONE);
+                    tvModalVal.setText("");
+                    tvModalVal.setVisibility(View.GONE);
+                }else{
+                    tvModalVal.setText(String.valueOf(mInbound.getModal_code()));
+                }
+                //
+                if( mInbound.getComments() == null
+                    || mInbound.getComments().equalsIgnoreCase("")
+                ){
+                    tvCommentsLbl.setVisibility(View.GONE);
+                    tvCommentsVal.setText("");
+                    tvCommentsVal.setVisibility(View.GONE);
+                } else{
+                    tvCommentsVal.setText(mInbound.getComments());
+                }
             }
         }
 
