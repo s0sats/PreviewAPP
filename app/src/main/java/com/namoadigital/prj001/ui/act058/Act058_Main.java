@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -34,6 +35,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private int movePrefix;
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
+    private String ws_process;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +184,21 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
+    public ArrayList<HMAux> getReasonOption() {
+        return mPresenter.getMoveReasonList();
+    }
+
+    @Override
+    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b) {
+
+    }
+
+    @Override
+    public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
+        mPresenter.executeTrackingSearch(product_code,serial_code,tracking,site_code);
+    }
+
+    @Override
     protected void footerCreateDialog() {
 //        super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
@@ -213,5 +230,10 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
     }
 }
