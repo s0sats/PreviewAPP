@@ -175,7 +175,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired);
+//        super.processCloseACT(mLink, mRequired);
         processCloseACT(mLink, mRequired, new HMAux());
     }
 
@@ -185,6 +185,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
         }
+        disableProgressDialog();
     }
 
     @Override
@@ -228,15 +229,14 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     public void onFragmentInteraction(Uri uri) {
 
     }
-
-    @Override
-    public void setWsProcess(String wsProcess) {
-
-    }
-
     @Override
     public void showPD(String ttl, String msg) {
-
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override

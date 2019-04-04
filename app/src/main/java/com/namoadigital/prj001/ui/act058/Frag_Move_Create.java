@@ -472,6 +472,10 @@ public class Frag_Move_Create extends BaseFragment {
             iv_offline_mode.setVisibility(View.VISIBLE);
         }
 
+        //Insere lista de tracking vindo do banco.
+        for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
+            appendTracking(mdProductSerial.getTracking_list().get(i).getTracking());
+        }
 
         ToolBox_Inf.setSSmValue(
                 ss_class,

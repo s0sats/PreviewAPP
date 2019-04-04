@@ -28,7 +28,6 @@ public interface Act058_Main_Contract {
     }
 
     interface I_View{
-        void setWsProcess(String wsProcess);
 
         void showPD(String ttl, String msg);
 
