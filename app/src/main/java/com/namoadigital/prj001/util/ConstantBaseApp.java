@@ -575,6 +575,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
     public static final String IO_INBOUND = "IO_INBOUND";
     public static final String IO_OUTBOUND = "IO_OUTBOUND";
+    public static final String IO_FROM_TYPE_SITE = "SITE";
+    public static final String IO_FROM_TYPE_PARTNER = "PARTNER";
+    public static final String IO_ACTION_KEY = "IO_ACTION_KEY";
+    public static final String IO_ACTION_NEW = "NEW";
+    public static final String IO_ACTION_EDIT = "EDIT";
+    public static final String IO_PROCESS_NEW_KEY = "IO_PROCESS_NEW_KEY";
 
     /*
      * Constantes CHAT

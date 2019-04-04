@@ -6,17 +6,25 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -26,11 +34,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Contract.I_View,
-                                                                Act061_Frag_Drawer.onFragDrawerInteraction {
+public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contract.I_View,
+    Act061_Frag_Drawer.onFragDrawerInteraction,
+    Act061_Frag_Header.onFragHeaderInteraction {
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
-    public static final String NEW_IO_PROCESS_KEY = "NEW_IO_PROCESS_KEY";
 
     private Bundle bundle;
     private FragmentManager fm;
@@ -44,6 +52,7 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
     private int mPrefix;
     private int mCode;
     private boolean bNewProcess;
+    private String wsProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,7 +65,7 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         //
         iniSetup();
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             restoreSavedIntance(savedInstanceState);
         }
         //
@@ -71,9 +80,9 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.ACT061
+            context,
+            mModule_Code,
+            Constant.ACT061
         );
         //
         loadTranslation();
@@ -85,17 +94,20 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         List<String> transList = new ArrayList<>();
         //Trad Act061
         transList.add("act061_title");
+
+        transList.add("dialog_io_master_data_ttl");
+        transList.add("dialog_io_master_data_start");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
         transList.addAll(Act061_Frag_Header.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+            context,
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(context),
+            transList
         );
     }
 
@@ -107,14 +119,14 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         recoverIntentsInfo();
         //
         mDrawerLayout = (DrawerLayout)
-                findViewById(R.id.act061_drawer);
+            findViewById(R.id.act061_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(
-                Act061_Main.this,
-                mDrawerLayout,
-                R.string.act005_drawer_opened,
-                R.string.act005_drawer_closed
-        ){
+            Act061_Main.this,
+            mDrawerLayout,
+            R.string.act005_drawer_opened,
+            R.string.act005_drawer_closed
+        ) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -135,15 +147,12 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
 
         };
         //
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+        setDrawerState();
         //
         mPresenter = new Act061_Main_Presenter(
-                context,
-                this,
-                hmAux_Trans
+            context,
+            this,
+            hmAux_Trans
         );
         //
         loadInbound();
@@ -151,8 +160,35 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
         initFragment();
     }
 
+    private void setDrawerState() {
+        if(bNewProcess){
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+
+            mDrawerToggle.syncState();
+
+        } else {
+
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerLayout.openDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+
+            mDrawerToggle.syncState();
+        }
+    }
+
     private void loadInbound() {
-        mInbound = mPresenter.getInbound(mPrefix,mCode);
+        mInbound = mPresenter.getInbound(mPrefix, mCode);
     }
 
     private void recoverIntentsInfo() {
@@ -162,7 +198,7 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
             mIoProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY, "");
             mPrefix = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1"));
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
-            bNewProcess = bundle.getBoolean(NEW_IO_PROCESS_KEY, false);
+            bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
         } else {
             mIoProcess = "";
             mPrefix = -1;
@@ -172,15 +208,15 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
     }
 
     private void initFragment() {
-        act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans,mPrefix,mCode);
-        act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans,mPrefix,mCode,bNewProcess);
+        act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans, mPrefix, mCode);
+        act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans, mPrefix, mCode, bNewProcess);
         act061_frag_item = new Act061_Frag_Item();
         //
-        setDrawer(act061_frag_drawer,"DRAWER");
-        setFrag(act061_frag_header,INBOUND_FRAG_HEADER);
+        setDrawer(act061_frag_drawer, "DRAWER");
+        setFrag(act061_frag_header, INBOUND_FRAG_HEADER);
     }
 
-    private void setDrawer(Act061_Frag_Drawer frag, String sTag){
+    private void setDrawer(Act061_Frag_Drawer frag, String sTag) {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.act061_opc, frag, sTag);
         ft.addToBackStack(null);
@@ -224,14 +260,124 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
     private void initActions() {
 
     }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        );
+    }
+
     //region DrawerFragment
     @Override
     public IO_Inbound getInboundFromAct(int prefix, int code) {
         //return mInbound;
-        return mPresenter.getInbound(mPrefix,mCode);
+        return mPresenter.getInbound(mPrefix, mCode);
+    }
+
+    @Override
+    public void fromTypeSelected(String from_type) {
+        mPresenter.executeWSMasterData(from_type, bNewProcess);
     }
     //endregion
 
+
+    @Override
+    public void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
+        if(act061_frag_header != null){
+            act061_frag_header.updateMDLists(sites,partners,modals);
+        }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        //super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if (wsProcess.equalsIgnoreCase(WS_IO_Master_Data.class.getName())) {
+            progressDialog.dismiss();
+            //
+            mPresenter.processIOMasterDataRet(mLink);
+        } else {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
 
     @Override
     public void callAct056() {
@@ -245,5 +391,15 @@ public class Act061_Main extends Base_Activity_Frag implements  Act061_Main_Cont
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

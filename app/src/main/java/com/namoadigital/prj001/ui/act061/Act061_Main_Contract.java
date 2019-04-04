@@ -1,19 +1,35 @@
 package com.namoadigital.prj001.ui.act061;
 
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+
+import java.util.ArrayList;
 
 public interface Act061_Main_Contract {
 
     interface I_View{
 
+        void setWsProcess(String wsProcess);
+
+        void showPD(String ttl, String msg);
+
+        void showAlert(String ttl, String msg);
+
         void callAct056();
+
+        void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
     }
 
     interface I_Presenter{
 
         IO_Inbound getInbound(int prefix,int code);
 
+        void executeWSMasterData(String type, boolean action);
+
         void onBackPressedClicked();
 
+        void processIOMasterDataRet(String wsReturn);
     }
 }
