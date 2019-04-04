@@ -34,7 +34,7 @@ public interface Act058_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
-        void callAct055();
+        void callAct054();
 
         void setWs_process(String name);
     }
