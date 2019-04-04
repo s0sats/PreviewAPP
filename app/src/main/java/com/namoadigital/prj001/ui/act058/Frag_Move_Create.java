@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act058;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -14,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,9 +37,12 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.ui.act007.Act007_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +59,7 @@ public class Frag_Move_Create extends BaseFragment {
     private static final String VIEW_PARAM = "view_param";
     public static final String ORIGIN_PARAM = "ORIGIN";
     public static final String HMAUX_TRANS = "hmaux_trans";
+    public static final String DATEFORMATMKDATE = "yyyy-MM-dd HH:mm:ss Z";
 
     private int view_param;
     private boolean fromMove;
@@ -87,6 +93,7 @@ public class Frag_Move_Create extends BaseFragment {
 
     private OnFragmentInteractionListener mListener;
     private TextView tv_product_cod_val;
+    private TextView tv_serial_lbl;
     private TextView tv_serial_val;
     private ImageView iv_offline_mode;
     private ImageView iv_serial_history;
@@ -97,6 +104,7 @@ public class Frag_Move_Create extends BaseFragment {
     private boolean pausedByScan;
     private String searched_tracking = "";
     private boolean trackingListChanged;
+    private Button btn_save;
 
     public Frag_Move_Create() {
         // Required empty public constructor
@@ -146,6 +154,7 @@ public class Frag_Move_Create extends BaseFragment {
         serialLayout = fragView.findViewById(R.id.act058_serial_layout);
 
         tv_product_cod_val = serialLayout.findViewById(R.id.tv_product_cod_desc);
+        tv_serial_lbl = serialLayout.findViewById(R.id.tv_serial_lbl);
         tv_serial_val = serialLayout.findViewById(R.id.tv_serial_val);
         iv_offline_mode = serialLayout.findViewById(R.id.iv_offline_mode);
         iv_serial_history = serialLayout.findViewById(R.id.iv_serial_history);
@@ -160,6 +169,9 @@ public class Frag_Move_Create extends BaseFragment {
         ll_tracking_content = fragView.findViewById(R.id.ll_tracking_content);
         iv_add_tracking = fragView.findViewById(R.id.act058_iv_add_tracking);
         iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
+
+        btn_save = fragView.findViewById(R.id.act058_btn_save);
+
         mkedit_zone = fragView.findViewById(R.id.act058_mkedit_zone);
         mkedit_position = fragView.findViewById(R.id.act058_mkedit_position);
         mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
@@ -195,6 +207,17 @@ public class Frag_Move_Create extends BaseFragment {
         });
 
 
+        iv_serial_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ToolBox_Con.isOnline(getContext())) {
+                    callLogAct();
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(getContext());
+                }
+            }
+        });
+
         ss_class.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -207,6 +230,23 @@ public class Frag_Move_Create extends BaseFragment {
             }
         });
 
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    private void callLogAct() {
+        Intent logIntent = new Intent(getContext(), Act007_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
+        logIntent.putExtras(bundle);
+        //
+        startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
     }
 
     private void showTrackingDialog() {
@@ -353,7 +393,6 @@ public class Frag_Move_Create extends BaseFragment {
     }
 
 
-
     public boolean isTrackingListed(String tracking) {
         for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
             if (mdProductSerial.getTracking_list().get(i).getTracking().equals(tracking)) {
@@ -387,21 +426,26 @@ public class Frag_Move_Create extends BaseFragment {
     private void bindValues() {
         tv_product_cod_val.setText(mdProductSerial.getProduct_id() + " " + mdProductSerial.getProduct_desc());
         tv_serial_val.setText(mdProductSerial.getSerial_id());
-
+        tv_zone_position.setText(MessageFormat.format("{0} | {1}", mdProductSerial.getZone_id(), mdProductSerial.getLocal_id()));
         try {
             tv_inbound_val.setText(formatPrefixAndCode(ioMove.getInbound_prefix(), ioMove.getInbound_code()));
         } catch (NullPointerException e) {
-            e.getLocalizedMessage();
-            tv_inbound_val.setText(" - ");
+            tv_inbound_lbl.setVisibility(View.GONE);
+            tv_inbound_val.setVisibility(View.GONE);
         }
         tv_move_order_val.setText(formatPrefixAndCode(ioMove.getMove_prefix(), ioMove.getMove_code()));
         String plannedZoneLocal = (ioMove.getPlanned_zone_code() == null) ? "" : String.valueOf(ioMove.getPlanned_zone_code());
 
         plannedZoneLocal.concat((ioMove.getPlanned_local_code() == null) ? "" : ioMove.getPlanned_local_code() + "|");
         if (plannedZoneLocal.isEmpty()) {
-            plannedZoneLocal = "-";
+            tv_move_to_val.setText(plannedZoneLocal);
+            tv_move_to_val.setVisibility(View.GONE);
+            tv_move_to_lbl.setVisibility(View.GONE);
+        } else {
+            tv_move_to_lbl.setVisibility(View.VISIBLE);
+            tv_move_to_val.setVisibility(View.VISIBLE);
+            tv_move_to_val.setText(plannedZoneLocal);
         }
-        tv_move_to_val.setText(plannedZoneLocal);
     }
 
     @NonNull
@@ -428,6 +472,7 @@ public class Frag_Move_Create extends BaseFragment {
             iv_offline_mode.setVisibility(View.VISIBLE);
         }
 
+
         ToolBox_Inf.setSSmValue(
                 ss_class,
                 String.valueOf(mdProductSerial.getClass_code()),
@@ -446,17 +491,27 @@ public class Frag_Move_Create extends BaseFragment {
         tv_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
         tv_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
         tv_move_to_lbl.setText(hmAux_Trans.get("move_to_lbl"));
+        tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
+
+        btn_save.setText(hmAux_Trans.get("save_lbl"));
 
         mkedit_zone.setHint(hmAux_Trans.get("zone_hint"));
         mkedit_position.setHint(hmAux_Trans.get("position_hint"));
         mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
 
-        mkdate_confirm.setmLabel(hmAux_Trans.get("confirm_date_lbl"));
-
+        setMkdate();
         setSSMoveReason();
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
         chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
+    }
+
+    private void setMkdate() {
+        String defaultDateTime = ToolBox.sDTFormat_Agora(DATEFORMATMKDATE);
+
+        mkdate_confirm.setmLabel(hmAux_Trans.get("confirm_date_lbl"));
+        mkdate_confirm.setmValue(defaultDateTime, true);
+
     }
 
     private void setClassIcon(HMAux item) {
@@ -496,7 +551,7 @@ public class Frag_Move_Create extends BaseFragment {
 
     private void setSSMoveReason() {
         ss_reason.setmLabel(hmAux_Trans.get("site_reason_lbl"));
-        ss_reason.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
+        ss_reason.setmTitle(hmAux_Trans.get("site_reason_ttl"));
         ss_reason.setmOption(mListener.getReasonOption());
     }
 
@@ -525,21 +580,20 @@ public class Frag_Move_Create extends BaseFragment {
 
     public static List<String> getFragTranslationsVars() {
         List<String> transList = new ArrayList<String>();
-        transList.add("serial_lbl");
+
+        transList.add("serial_lbl");//
         transList.add("inbound_lbl");
         transList.add("move_order_lbl");
         transList.add("move_to_lbl");
+        transList.add("class_lbl");
         transList.add("confirm_date_lbl");
         transList.add("change_to_zone_target_lbl");
         transList.add("zone_hint");
         transList.add("position_hint");
-        transList.add("reason_hint");
-        transList.add("tracking_hint");
-        transList.add("class_hint");
         transList.add("comments_hint");
-        transList.add("btn_save");
+        transList.add("save_lbl");
         transList.add("site_reason_lbl");
-        transList.add("searchable_spinner_lbl");
+        transList.add("site_reason_ttl");
         transList.add("dialog_tracking_ttl");
         transList.add("alert_tracking_already_listed_ttl");
         transList.add("alert_tracking_already_listed_msg");
@@ -573,6 +627,6 @@ public class Frag_Move_Create extends BaseFragment {
 
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);
 
-        ArrayList<HMAux>  getClassList();
+        ArrayList<HMAux> getClassList();
     }
 }
