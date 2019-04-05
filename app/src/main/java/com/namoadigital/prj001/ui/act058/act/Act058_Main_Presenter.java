@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act058;
+package com.namoadigital.prj001.ui.act058.act;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -111,5 +112,21 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+    @Override
+    public int getViewMode(IO_Move moveInfo) {
+
+        switch (moveInfo.getMove_type()) {
+            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                return 1;
+            case ConstantBaseApp.IO_PROCESS_IN_CONF:
+            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+            case ConstantBaseApp.IO_PROCESS_MOVE:
+            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+            default:
+                return 0;
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act058;
+package com.namoadigital.prj001.ui.act058.act;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,8 +18,8 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
+import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -80,21 +80,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     }
 
-    private int getViewMode(IO_Move moveInfo) {
 
-        switch (moveInfo.getMove_type()) {
-            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                return 1;
-            case ConstantBaseApp.IO_PROCESS_IN_CONF:
-            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-            case ConstantBaseApp.IO_PROCESS_MOVE:
-            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-            default:
-                return 0;
-        }
-
-    }
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
@@ -125,14 +111,23 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     private void initVars() {
         mPresenter = new Act058_Main_Presenter(context, this, hmAux_Trans);
+
         IO_Move moveInfo = mPresenter.getMoveInfo(movePrefix, moveCode);
+        int viewMode = mPresenter.getViewMode(moveInfo);
+
         MD_Product_Serial serialInfo = mPresenter.getSerialInfo(moveInfo.getProduct_code(), moveInfo.getSerial_code());
-        int viewMode = getViewMode(moveInfo);
-        frag_move_create = Frag_Move_Create.newInstance(moveInfo, serialInfo, viewMode, true, hmAux_Trans_Frag);
+
+        frag_move_create = Frag_Move_Create.newInstance(moveInfo,
+                                                        serialInfo,
+                                                        viewMode,
+                                                        true,
+                                                        hmAux_Trans_Frag);
+
         setFrag(frag_move_create, FRAGMENT_MOVE);
     }
 
     private void recoverIntentsInfo() {
+
         Bundle bundle = getIntent().getExtras();
 
         if (bundle != null) {

@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act058;
+package com.namoadigital.prj001.ui.act058.act;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Move;
@@ -25,6 +25,8 @@ public interface Act058_Main_Contract {
         ArrayList<HMAux> getMoveReasonList();
 
         void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
+
+        int getViewMode(IO_Move moveInfo);
     }
 
     interface I_View{

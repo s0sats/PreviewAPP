@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.namoadigital.prj001.ui.act058.Frag_Move_Create">
+    tools:context="com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create">
 
 
     <LinearLayout
@@ -125,24 +125,23 @@
                 app:layout_constraintStart_toEndOf="@+id/act058_tv_move_to_lbl"
                 app:layout_constraintTop_toTopOf="@+id/act058_tv_move_to_lbl" />
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act058_mkedit_zone"
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act058_ss_zone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Zone"
                 app:layout_constraintBottom_toTopOf="@+id/act058_mkedit_position"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl"
-                tools:layout_editor_absoluteX="8dp" />
+                app:layout_constraintEnd_toStartOf="@+id/gl_right"
+                app:layout_constraintStart_toStartOf="@+id/gl_left"
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_move_to_lbl" />
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act058_mkedit_position"
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act058_ss_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Position"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
                 app:layout_constraintEnd_toEndOf="@+id/gl_right"
                 app:layout_constraintBottom_toTopOf="@+id/act058_ss_reason"
-                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_zone"
+                app:layout_constraintTop_toBottomOf="@+id/act058_ss_zone"
                 tools:layout_editor_absoluteX="8dp" />
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -152,8 +151,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
                 app:layout_constraintEnd_toEndOf="@+id/gl_right"
                 app:layout_constraintBottom_toTopOf="@+id/act058_ll_serial_tracking"
-                app:layout_constraintTop_toBottomOf="@+id/act058_mkedit_position"
-                tools:layout_editor_absoluteX="8dp" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_ss_position" />
 
             <LinearLayout
                 android:id="@+id/act058_ll_serial_tracking"
