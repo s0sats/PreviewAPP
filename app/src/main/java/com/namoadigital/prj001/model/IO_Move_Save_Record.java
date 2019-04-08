@@ -2,7 +2,7 @@ package com.namoadigital.prj001.model;
 
 import java.util.List;
 
-class IO_Move_Save_Record {
+public class IO_Move_Save_Record {
 
     private String customer_code;
 
