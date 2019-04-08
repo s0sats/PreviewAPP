@@ -155,8 +155,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT050;
-        mAct_Title = Constant.ACT050 + "_" + "title";
+        mAct_Info = Constant.ACT058;
+        mAct_Title = Constant.ACT058 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);

@@ -231,9 +231,34 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             }
         });
 
-        ss_position.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+        ss_zone.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
             @Override
             public void onValueChanged(HMAux hmAux) {
+                processZoneValueChange(hmAux);
+            }
+        });
+
+        ss_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+              @Override
+              public void onItemPreSelected(HMAux hmAux) {
+
+              }
+
+              @Override
+              public void onItemPostSelected(HMAux hmAux) {
+                  processZoneValueChange(hmAux);
+              }
+          }
+        );
+
+        ss_position.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 processLocalValueChange(hmAux);
             }
         });
@@ -592,7 +617,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void processZoneValueChange(HMAux hmAux) {
-        mPresenter.loadLocalSS(ss_zone,ss_position,true);
+        mPresenter.loadLocalSS(ss_zone, ss_position, true);
         //
         if (hmAux != null && hmAux.size() > 0 && ss_position.getmOption().size() == 1) {
             ss_position.setmValue(ss_position.getmOption().get(0));
