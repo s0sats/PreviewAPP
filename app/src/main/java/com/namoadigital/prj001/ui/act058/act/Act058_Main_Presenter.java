@@ -60,12 +60,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         ).toSqlQuery());
     }
 
-
-
-    @Override
-    public void getSerialHistoric() {
-
-    }
     @Override
     public MD_Product_Serial getSerialInfo(long product_code, int serial_code){
         return productSerialDao.getByString(new MD_Product_Serial_Sql_009(

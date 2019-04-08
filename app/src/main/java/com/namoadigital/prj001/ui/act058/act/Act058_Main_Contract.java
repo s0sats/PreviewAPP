@@ -18,8 +18,6 @@ public interface Act058_Main_Contract {
 
         ArrayList<HMAux>  getClassList();
 
-        void getSerialHistoric();
-
         MD_Product_Serial getSerialInfo(long product_code, int serial_code);
 
         ArrayList<HMAux> getMoveReasonList();

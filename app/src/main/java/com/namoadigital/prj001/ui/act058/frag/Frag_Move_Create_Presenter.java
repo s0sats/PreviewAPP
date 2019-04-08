@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -16,7 +15,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_Presenter {
     Frag_Move_Create_Contract.I_View mView;

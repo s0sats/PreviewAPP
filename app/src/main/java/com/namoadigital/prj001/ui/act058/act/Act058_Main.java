@@ -215,6 +215,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
+    public void callLogAct(Intent logIntent) {
+        startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
+    }
+
+    @Override
     protected void footerCreateDialog() {
 //        super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);

@@ -325,7 +325,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         logIntent.putExtras(bundle);
         //
-        startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
+
+        mListener.callLogAct(logIntent);
+
     }
 
     private void showTrackingDialog() {
@@ -747,5 +749,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);
 
         ArrayList<HMAux> getClassList();
+
+        void callLogAct(Intent logIntent);
     }
 }
