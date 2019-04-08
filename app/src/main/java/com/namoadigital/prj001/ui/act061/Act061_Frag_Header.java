@@ -10,18 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -38,8 +37,10 @@ public class Act061_Frag_Header extends BaseFragment {
     private int inboundCode;
     private IO_Inbound mInbound;
     private boolean bNewProcess;
+    private boolean inEdit = false;
     private onFragHeaderInteraction mFragHeaderListener;
     //
+    private ImageView ivEdit;
     private SearchableSpinner ssFromType;
     private ConstraintLayout clOtherInfo;
     private TextView tvInboundLbl;
@@ -50,6 +51,7 @@ public class Act061_Frag_Header extends BaseFragment {
     private EditText etInboundDesc;
     private SearchableSpinner ssFromSite;
     private SearchableSpinner ssFromOutbound;
+    private ImageView ivFromOutbound;
     private TextView tvInvoiceLbl;
     private EditText etInvoice;
     private TextView tvInvoiceDtLbl;
@@ -85,6 +87,8 @@ public class Act061_Frag_Header extends BaseFragment {
         IO_Inbound getInboundFromAct(int prefix, int code);
 
         void fromTypeSelected(String from_type);
+
+        void searchFromOutboundList(String from_site);
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -137,11 +141,14 @@ public class Act061_Frag_Header extends BaseFragment {
             inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX,-1);
             inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE,-1);
             bNewProcess = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,false);
+            inEdit = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_IN_EDIT_KEY,false);
         }
     }
 
     private void iniVar(View view) {
         bindViews(view);
+        //
+        setIvStatus();
         //
         setViewsText();
         //
@@ -152,6 +159,10 @@ public class Act061_Frag_Header extends BaseFragment {
         loadInbound();
         //
         loadFromTypeSS(false);
+    }
+
+    private void setIvStatus() {
+       ivEdit.setImageDrawable( inEdit ? context.getDrawable(R.drawable.ic_pencil) : context.getDrawable(R.drawable.ic_pencil_lock));
     }
 
     private void initActions(){
@@ -174,13 +185,145 @@ public class Act061_Frag_Header extends BaseFragment {
                 }
             }
         });
+        //
+        ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inEdit = !inEdit;
+                setIvStatus();
+                applyEditMode(inEdit);
+            }
+        });
+        //
+        ssFromSite.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            HMAux oldSite = new HMAux();
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+                oldSite = hmAux;
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(hmAux != null && hmAux.size() > 0 && hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+                    ivFromOutbound.setEnabled(true);
+                    //
+                    if(!hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(oldSite.get(SearchableSpinner.CODE))) {
+                        resetSSFromOutbound();
+                    }
+                }else{
+                    ivFromOutbound.setEnabled(false);
+                    ssFromOutbound.setmEnabled(false);
+                    resetSSFromOutbound();
+                }
+            }
+        });
+        //
+        ivFromOutbound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ssFromOutbound != null && ssFromOutbound.getmOption() != null && ssFromOutbound.getmOption().size() == 0){
+                    if( mFragHeaderListener != null
+                        && ssFromSite.getmValue() != null
+                        && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                    ){
+                        mFragHeaderListener.searchFromOutboundList(ssFromSite.getmValue().get(SearchableSpinner.CODE));
+                    }
+                }
+            }
+        });
+        //
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(bNewProcess || hasHeaderChanged()){
+                    //Sem else aqui pois proprio metodo exibira msg de erro
+                    if(validateSave()){
+                        //IMPLEMENTAR O SAVA
+                    }
+                }else{
+                    //MENSAGEM DE NADA ALTERADO
+                }
+            }
+        });
+    }
+
+    private boolean hasHeaderChanged() {
+        //boolean headerChanged = false;
+        for(View view: properties){
+            if(view instanceof EditText){
+                String tag = (String) ((EditText) view).getTag() == null ? "" : (String) ((MKEditTextNM) view).getTag();
+                String text = ((EditText) view).getText().toString();
+
+                if (!text.equals(tag)) {
+                    // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
+                    //headerChanged = true;
+                    return true;
+                }
+            }else if(view instanceof SearchableSpinner){
+                if (((SearchableSpinner) view).hasChangedBD()) {
+                    //headerChanged = true;
+                    return true;
+                }
+            }else if(view instanceof MkDateTime){
+                if (((MkDateTime) view).hasChanged()) {
+                   // headerChanged = true;
+                    return true;
+                }
+            }
+
+        }
+        //
+        return false;
+    }
+
+    private boolean validateSave() {
+        boolean validate = true;
+        String msg = "";
+        //
+        if(
+            ssFromType == null
+            || ssFromOutbound.getmValue() != null
+            || !ssFromOutbound.getmValue().hasConsistentValue(SearchableSpinner.CODE))
+        {
+            msg += hmAux_Trans.get("alert_no_from_type_selected_msg");
+            validate = false;
+        }
+        if(ssFromOutbound.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
+            if (
+                ssFromSite == null
+                || ssFromSite.getmValue() != null
+                || ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))
+            {
+                msg += hmAux_Trans.get("alert_no_from_site_selected_msg");
+                validate = false;
+            }
+        }else{
+            if (
+                ssPartner == null
+                    || ssPartner.getmValue() != null
+                    || ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))
+            {
+                msg += hmAux_Trans.get("alert_no_from_partner_selected_msg");
+                validate = false;
+            }
+        }
+        //
+        return validate;
+    }
+
+    private void resetSSFromOutbound() {
+        ToolBox_Inf.setSSmValue(ssFromOutbound, null, null, null, false, false);
+        ssFromOutbound.setmOption(new ArrayList<HMAux>());
     }
 
     private void bindViews(View view) {
+        ivEdit = view.findViewById(R.id.act061_header_iv_edit);
         ssFromType = view.findViewById(R.id.act061_header_ss_from_type);
         clOtherInfo = view.findViewById(R.id.act061_header_cl_other_info);
         ssFromSite = view.findViewById(R.id.act061_header_ss_from_site);
         ssFromOutbound = view.findViewById(R.id.act061_header_ss_from_outbound);
+        ivFromOutbound = view.findViewById(R.id.act061_header_iv_from_outbound);
+        ivFromOutbound.setEnabled(false);
         tvInboundLbl = view.findViewById(R.id.act061_header_tv_inbound);
         tvInboundPrefixCode = view.findViewById(R.id.act061_header_tv_inbound_code);
         tvInboundIdLbl = view.findViewById(R.id.act061_header_tv_inbound_id);
@@ -245,9 +388,12 @@ public class Act061_Frag_Header extends BaseFragment {
         ssFromType.setmShowLabel(false);
         ssFromType.setmStyle(1);
         ssFromSite.setmStyle(1);
+        ssFromOutbound.setmShowLabel(false);
         ssFromOutbound.setmStyle(1);
+        ssFromOutbound.setmEnabled(false);
         ssModal.setmStyle(1);
         ssPartner.setmStyle(1);
+
     }
 
     private void loadFromTypeSS(boolean reset_val) {
@@ -292,7 +438,9 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private void applyEditMode(boolean inEdit){
         for(View view : properties){
-            if(view.getId() != ssFromType.getId()) {
+            if(view.getId() != ssFromType.getId()
+                || view.getId() != ssFromOutbound.getId()
+            ) {
                 if (view instanceof SearchableSpinner) {
                     ((SearchableSpinner) view).setmEnabled(inEdit);
                 } else if (view instanceof MkDateTime) {
@@ -313,17 +461,27 @@ public class Act061_Frag_Header extends BaseFragment {
         applyEditMode(true);
     }
 
-    private void loadFromSiteSS(ArrayList<HMAux> generateFromSiteSSOption) {
-        ssFromSite.setmOption(generateFromSiteSSOption);
+    public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound){
+        loadFromOutboundSS(generateFromOutboundSSOption(outbound));
     }
 
-    private void loadPartnerSS(ArrayList<HMAux> generatePartnerSSOption) {
-        ssPartner.setmOption(generatePartnerSSOption);
+    private void loadFromSiteSS(ArrayList<HMAux> rawFromSiteList) {
+        ssFromSite.setmOption(rawFromSiteList);
     }
 
-    private void loadModalSS(ArrayList<HMAux> generateModalSSOption) {
-        ssModal.setmOption(generateModalSSOption);
+    private void loadPartnerSS(ArrayList<HMAux> rawPartnerList) {
+        ssPartner.setmOption(rawPartnerList);
     }
+
+    private void loadModalSS(ArrayList<HMAux> rawModalList) {
+        ssModal.setmOption(rawModalList);
+    }
+
+    private void loadFromOutboundSS(ArrayList<HMAux> rawFromOutboundList) {
+        ssFromOutbound.setmOption(rawFromOutboundList);
+        ssFromOutbound.setmEnabled(rawFromOutboundList != null && rawFromOutboundList.size() > 0);
+    }
+
 
     private ArrayList<HMAux> generateFromSiteSSOption(ArrayList<MD_Site> sites) {
         ArrayList<HMAux> auxList = new ArrayList<>();
@@ -364,6 +522,22 @@ public class Act061_Frag_Header extends BaseFragment {
         return auxList;
     }
 
+    private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_Outbound_Search_Record> outbounds) {
+        ArrayList<HMAux> auxList = new ArrayList<>();
+        for(IO_Outbound_Search_Record outbound: outbounds){
+            String desc = outbound.getOutbound_desc() != null  && outbound.getOutbound_desc().trim().length() > 0
+                            ? " - " + outbound.getOutbound_desc()
+                            : "";
+            HMAux aux = new HMAux();
+            aux.put(SearchableSpinner.CODE, String.valueOf(outbound.getOutbound_code()));
+            aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
+            aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
+            auxList.add(aux);
+        }
+        //
+        return auxList;
+    }
+
     @Override
     public void loadDataToScreen() {
         if (bStatus) {
@@ -383,22 +557,29 @@ public class Act061_Frag_Header extends BaseFragment {
                     tvInboundPrefixCode.setVisibility(View.GONE);
                 }
                 etInboundId.setText(mInbound.getInbound_id());
+                etInboundId.setTag(mInbound.getInbound_id());
                 etInboundDesc.setText(mInbound.getInbound_desc());
+                etInboundDesc.setTag(mInbound.getInbound_desc());
                 etInvoice.setText(mInbound.getInvoice_number());
+                etInvoice.setTag(mInbound.getInvoice_number());
                 mkdtInvoinceDt.setmValue(mInbound.getInvoice_date(),true);
                 mkdtEtaDt.setmValue(mInbound.getEta_date(),true);
                 mkdtArrivalDt.setmValue(mInbound.getArrival_date(),true);
                 //ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
                 //ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
                 etTruckNum.setText(mInbound.getTruck_number());
+                etTruckNum.setTag(mInbound.getTruck_number());
                 etDriver.setText(mInbound.getDriver());
+                etDriver.setTag(mInbound.getDriver());
                 etComments.setText(mInbound.getComments());
+                etComments.setTag(mInbound.getComments());
             }
         }
     }
 
     private void setUIForCreation(boolean isMasterDataLoaded) {
         clOtherInfo.setVisibility(isMasterDataLoaded ? View.VISIBLE : View.GONE);
+        ivEdit.setVisibility(View.GONE);
     }
 
 

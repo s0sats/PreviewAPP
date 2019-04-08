@@ -582,6 +582,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_NEW = "NEW";
     public static final String IO_ACTION_EDIT = "EDIT";
     public static final String IO_PROCESS_NEW_KEY = "IO_PROCESS_NEW_KEY";
+    public static final String IO_PROCESS_IN_EDIT_KEY = "IO_PROCESS_IN_EDIT_KEY";
 
     /*
      * Constantes CHAT

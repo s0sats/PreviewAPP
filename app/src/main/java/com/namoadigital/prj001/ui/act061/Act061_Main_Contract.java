@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.ui.act061;
 
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
 
 import java.util.ArrayList;
 
@@ -20,6 +17,8 @@ public interface Act061_Main_Contract {
         void callAct056();
 
         void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
+
+        void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
     }
 
     interface I_Presenter{
@@ -31,5 +30,9 @@ public interface Act061_Main_Contract {
         void onBackPressedClicked();
 
         void processIOMasterDataRet(String wsReturn);
+
+        void executeWsSearchOutbound(String from_site);
+
+        void processFromOutboundRet(String wsReturn);
     }
 }

@@ -19,11 +19,9 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -97,6 +95,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
         transList.add("dialog_io_master_data_ttl");
         transList.add("dialog_io_master_data_start");
+        transList.add("dialog_from_outbound_ttl");
+        transList.add("dialog_from_outbound_start");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -298,6 +298,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void fromTypeSelected(String from_type) {
         mPresenter.executeWSMasterData(from_type, bNewProcess);
     }
+
+    @Override
+    public void searchFromOutboundList(String from_site) {
+        mPresenter.executeWsSearchOutbound(from_site);
+    }
+
     //endregion
 
 
@@ -305,6 +311,13 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
         if(act061_frag_header != null){
             act061_frag_header.updateMDLists(sites,partners,modals);
+        }
+    }
+
+    @Override
+    public void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
+        if(act061_frag_header != null){
+            act061_frag_header.updateFromOutboundList(outbound);
         }
     }
 
@@ -318,9 +331,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         if (wsProcess.equalsIgnoreCase(WS_IO_Master_Data.class.getName())) {
-            progressDialog.dismiss();
-            //
             mPresenter.processIOMasterDataRet(mLink);
+            progressDialog.dismiss();
+        } else if(wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())){
+            mPresenter.processFromOutboundRet(mLink);
+            progressDialog.dismiss();
         } else {
             progressDialog.dismiss();
         }

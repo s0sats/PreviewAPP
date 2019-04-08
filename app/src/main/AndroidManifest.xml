@@ -680,6 +680,10 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_IO_Master_Data" />
 
         <receiver android:name=".receiver.WBR_IO_Master_Data" />
+
+        <service android:name=".service.WS_IO_From_Site_Search" />
+
+        <receiver android:name=".receiver.WBR_IO_From_Site_Search" />
     </application>
 
 </manifest>

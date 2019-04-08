@@ -10,8 +10,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
 import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
+import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -88,6 +91,54 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     rec.getSite(),
                     rec.getPartner(),
                     rec.getModal()
+                );
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                //
+                mView.showAlert(
+                    hmAux_Trans.get("alert_io_master_data_error_ttl"),
+                    hmAux_Trans.get("alert_io_master_data_error_msg")
+                );
+            }
+        }
+    }
+
+    @Override
+    public void executeWsSearchOutbound(String from_site) {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_IO_From_Site_Search.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_from_outbound_ttl"),
+                hmAux_Trans.get("dialog_from_outbound_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_From_Site_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(IO_InboundDao.FROM_SITE_CODE, from_site);
+            bundle.putString(IO_InboundDao.TO_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processFromOutboundRet(String wsReturn) {
+        if(wsReturn != null && !wsReturn.trim().isEmpty()){
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            try{
+                T_IO_From_Site_Search_Rec rec = gson.fromJson(
+                    wsReturn,
+                    T_IO_From_Site_Search_Rec.class
+                );
+                //
+                mView.setFromOutboundList(
+                    rec.getOutbound()
                 );
             }catch (Exception e){
                 ToolBox_Inf.registerException(getClass().getName(),e);
