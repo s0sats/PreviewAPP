@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -32,6 +34,7 @@ import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -426,7 +429,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
 
     @Override
     public void callAct061(Bundle bundle) {
-        Intent mIntent = new Intent(context, Act051_Main.class);
+        Intent mIntent = new Intent(context, Act061_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -516,5 +519,15 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

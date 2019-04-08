@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+            android:id="@+id/act061_header_ss_from_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/act061_header_cl_other_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_type"
+            >
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act061_header_gd_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act061_header_gd_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act061_header_ss_from_site"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act061_header_ss_from_outbound"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_site" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_inbound"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Inbound -trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                android:gravity="start|center_vertical"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_outbound"
+                />
+
+            <TextView
+                android:id="@+id/act061_header_tv_inbound_code"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="right|center_vertical"
+                android:layout_marginTop="8dp"
+                android:text="20XX.XXX"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_header_tv_inbound"
+                app:layout_constraintEnd_toEndOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toEndOf="@+id/act061_header_tv_inbound"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_inbound" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_inbound_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="ID - Trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound" />
+
+            <EditText
+                android:id="@+id/act061_header_et_inbound_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Name"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound_id" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_inbound_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Desc - Trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_inbound_id" />
+
+            <EditText
+                android:id="@+id/act061_header_et_inbound_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:text="Name"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound_desc" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_invoice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Invoice - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_inbound_desc" />
+
+            <EditText
+                android:id="@+id/editact061_header_et_invoice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Name"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_invoice" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_invoice_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Invoince Dt"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_invoice" />
+
+            <com.namoa_digital.namoa_library.ctls.MkDateTime
+                android:id="@+id/act061_header_mkdt_invoice_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_invoice_dt"
+                app:mConfigType="DATE_HOUR"
+                app:mHighlightWhenInvalid="true"
+                app:mTextStyleBold="true" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_eta_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="ETA - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_mkdt_invoice_dt" />
+
+            <com.namoa_digital.namoa_library.ctls.MkDateTime
+                android:id="@+id/act061_header_mkdt_eta_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_eta_dt"
+                app:mConfigType="DATE_HOUR"
+                app:mHighlightWhenInvalid="true"
+                app:mTextStyleBold="true" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_arrival_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Arrival - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_mkdt_eta_dt" />
+
+            <com.namoa_digital.namoa_library.ctls.MkDateTime
+                android:id="@+id/act061_header_mkdt_arrival_dt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_arrival_dt"
+                app:mConfigType="DATE_HOUR"
+                app:mHighlightWhenInvalid="true"
+                app:mTextStyleBold="true" />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act061_header_ss_modal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_mkdt_arrival_dt" />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act061_header_ss_partner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_modal" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_truck_num"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Truck - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_ss_partner" />
+
+            <EditText
+                android:id="@+id/editact061_header_et_truck_num"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Truck -trad"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_truck_num" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_driver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Driver - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_truck_num" />
+
+            <EditText
+                android:id="@+id/act061_header_et_driver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Driver -trad"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_driver" />
+
+            <TextView
+                android:id="@+id/act061_header_tv_comments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Comments - trad"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_driver" />
+
+            <EditText
+                android:id="@+id/act061_header_et_comments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Comments -trad"
+                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_comments" />
+
+            <Button
+                android:id="@+id/act061_header_btn_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/btn_namoa_main_3_states"
+                android:text="Salvar - trad"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_et_comments"
+                app:layout_constraintVertical_bias="1.0" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

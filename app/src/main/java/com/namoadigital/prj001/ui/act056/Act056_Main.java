@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -19,6 +20,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -251,7 +253,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         btn_creation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                callAct061();
             }
         });
         btn_pendencies.setOnClickListener(new View.OnClickListener() {
@@ -343,6 +345,19 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         finish();
     }
 
+    private void callAct061() {
+        Intent mIntent = new Intent(context, Act061_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+        bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,true);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         processCloseACT(mLink, mRequired, new HMAux());
@@ -418,5 +433,15 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }
