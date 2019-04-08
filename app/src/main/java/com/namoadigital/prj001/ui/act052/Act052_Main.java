@@ -92,9 +92,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
         //
-        transList.add("alert_serial_out_site_title");
-        transList.add("alert_serial_out_site_msg");
-        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -213,6 +210,12 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private boolean hasMoveBlind() {

@@ -331,41 +331,41 @@ public class IO_Move_Search_Record implements Serializable {
 
 
     public String getAllFieldForFilter(){
-        return  customer_code +
-                move_prefix +
-                move_code +
-                product_code +
-                serial_code +
-                site_code +
-                planned_zone_code +
-                planned_local_code +
-                planned_class_code +
-                move_type +
-                inbound_prefix +
-                inbound_code +
-                inbound_item +
-                outbound_prefix +
-                outbound_code +
-                outbound_item +
-                planned_zone_id +
-                planned_zone_desc +
-                planned_local_id +
-                product_id +
-                product_desc +
-                serial_id +
-                zone_code +
-                zone_id +
-                zone_desc +
-                local_code +
-                local_id +
-                brand_code +
-                brand_id +
-                brand_desc +
-                model_code +
-                model_id +
-                model_desc +
-                color_code +
-                color_id +
-                color_desc;
+        return  (customer_code + "|" +
+                move_prefix + "|" +
+                move_code + "|" +
+                product_code + "|" +
+                serial_code + "|" +
+                site_code + "|" +
+                planned_zone_code + "|" +
+                planned_local_code + "|" +
+                planned_class_code + "|" +
+                move_type + "|" +
+                inbound_prefix + "|" +
+                inbound_code + "|" +
+                inbound_item + "|" +
+                outbound_prefix + "|" +
+                outbound_code + "|" +
+                outbound_item + "|" +
+                planned_zone_id + "|" +
+                planned_zone_desc + "|" +
+                planned_local_id + "|" +
+                product_id + "|" +
+                product_desc + "|" +
+                serial_id + "|" +
+                zone_code + "|" +
+                zone_id + "|" +
+                zone_desc + "|" +
+                local_code + "|" +
+                local_id + "|" +
+                brand_code + "|" +
+                brand_id + "|" +
+                brand_desc + "|" +
+                model_code + "|" +
+                model_id + "|" +
+                model_desc + "|" +
+                color_code + "|" +
+                color_id + "|" +
+                color_desc).replaceAll("null", "");
     }
 }

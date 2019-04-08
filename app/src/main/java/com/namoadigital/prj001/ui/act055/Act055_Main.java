@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -15,10 +16,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act055_IO_Move_Order_List_Adapter;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
-import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
-import com.namoadigital.prj001.ui.act058.Act058_Main;
+import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -225,5 +225,16 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }
