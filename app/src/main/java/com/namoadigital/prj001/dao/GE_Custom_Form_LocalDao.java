@@ -224,7 +224,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
-
+        //
         closeDB();
         //
         return daoObjReturn;
