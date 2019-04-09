@@ -27,6 +27,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     IO_MoveDao moveDao;
     MD_Product_SerialDao productSerialDao;
     MD_ClassDao classDao;
+    IO_MoveDao ioMoveDao;
     Context context;
     Act058_Main mView;
     HMAux hmAux_trans;
@@ -39,7 +40,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         this.productSerialDao = new MD_Product_SerialDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
-
+        this.ioMoveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
         this.classDao = new MD_ClassDao(context);
         this.hmAux_trans = hmAux_trans;
         this.mView = mView;
@@ -122,5 +125,10 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
                 return 0;
         }
 
+    }
+
+    @Override
+    public void executeMovePersistence(IO_Move io_move) {
+        ioMoveDao.addUpdate(io_move);
     }
 }

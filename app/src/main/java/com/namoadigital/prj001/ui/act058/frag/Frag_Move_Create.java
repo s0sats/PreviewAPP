@@ -226,7 +226,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
+                    mListener.persistIoMove(
+                            ToolBox_Con.getPreference_Customer_Code(getContext()),
+                            ioMove.getMove_prefix(),
+                            ioMove.getMove_code(),
 
+                    );
                 }
             }
         });
@@ -733,6 +738,16 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+        void persistIoMove(long customer_code,
+                           int move_prefix,
+                           int move_code,
+                           Integer to_zone_code,
+                           Integer to_local_code,
+                           Integer to_class_code,
+                           Integer reason_code,
+                           String done_date,
+                           ArrayList<MD_Product_Serial> serial);
+
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
 

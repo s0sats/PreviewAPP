@@ -8,9 +8,12 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -57,7 +60,15 @@ public class WS_IO_Move_Save extends IntentService {
     private void processWsIoMoveSave() {
         loadTranslation();
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
+        String token = ToolBox_Inf.getToken(getApplicationContext());
+        ArrayList<IO_Move> moveList;
+        moveList = (ArrayList<IO_Move>) moveDao.query(
+                new IO_Move_Order_Item_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ).toSqlQuery()
+        );
+
         //
         T_IO_Move_Save_Env env = new T_IO_Move_Save_Env();
         //
@@ -65,6 +76,7 @@ public class WS_IO_Move_Save extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        env.setToken(token);
     }
 
     private void loadTranslation() {

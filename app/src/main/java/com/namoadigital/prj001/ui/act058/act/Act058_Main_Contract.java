@@ -25,6 +25,8 @@ public interface Act058_Main_Contract {
         void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
 
         int getViewMode(IO_Move moveInfo);
+
+        void executeMovePersistence(IO_Move io_move);
     }
 
     interface I_View{

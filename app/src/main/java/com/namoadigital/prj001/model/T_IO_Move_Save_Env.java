@@ -4,7 +4,7 @@ import java.util.List;
 
 public class T_IO_Move_Save_Env extends Main_Header_Env {
     private String token;
-    private List<IO_Move_Save_Record>  move;
+    private List<IO_Move>  move;
 
     public String getToken() {
         return token;
@@ -14,11 +14,11 @@ public class T_IO_Move_Save_Env extends Main_Header_Env {
         this.token = token;
     }
 
-    public List<IO_Move_Save_Record> getMove() {
+    public List<IO_Move> getMove() {
         return move;
     }
 
-    public void setMove(List<IO_Move_Save_Record> move) {
+    public void setMove(List<IO_Move> move) {
         this.move = move;
     }
 }
