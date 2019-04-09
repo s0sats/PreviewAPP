@@ -43,6 +43,7 @@ public class IO_Outbound {
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private int update_required;
     private int sync_required;
+    private String token;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -354,5 +355,13 @@ public class IO_Outbound {
 
     public void setSync_required(int sync_required) {
         this.sync_required = sync_required;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -3,18 +3,20 @@ package com.namoadigital.prj001.ui.act061;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -148,6 +150,37 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_io_master_data_error_msg")
                 );
             }
+        }
+    }
+
+    @Override
+    public void saveInboundData(IO_Inbound mInbound) {
+       DaoObjReturn daoRet = inboundDao.addUpdate(mInbound);
+       //
+        if(!daoRet.hasError()){
+            executeWsSaveInboundHeader();
+        } else {
+            mView.showAlert(
+                hmAux_Trans.get("alert_inbound_save_error_ttl"),
+                hmAux_Trans.get("alert_inbound_save_error_msg")
+            );
+        }
+    }
+
+    private void executeWsSaveInboundHeader() {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_IO_Inbound_Header_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_from_outbound_ttl"),
+                hmAux_Trans.get("dialog_from_outbound_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Header_Save.class);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 

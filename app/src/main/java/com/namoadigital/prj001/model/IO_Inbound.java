@@ -1,48 +1,90 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 public class IO_Inbound {
 
+    @Expose
     private long customer_code;
+    @Expose
     private int inbound_prefix;
+    @Expose
     private int inbound_code;
+    @Expose
     private String inbound_id;
+    @Expose
     private String inbound_desc;
+    @Expose
     private int scn;
+    @Expose
     private String origin;
+    @Expose
     private String invoice_number;
+    @Expose
     private String invoice_date;
+    @Expose
     private String eta_date;
+    @Expose
     private String arrival_date;
+    @Expose
     private String from_type;
+    @Expose
     private Integer from_partner_code;
+    @Expose
     private String from_partner_id;
+    @Expose
     private String from_partner_desc;
+    @Expose
     private Integer from_site_code;
+    @Expose
     private String from_site_id;
+    @Expose
     private String from_site_desc;
+    @Expose
     private int to_site_code;
+    @Expose
     private Integer carrier_code;
+    @Expose
     private String carrier_id;
+    @Expose
     private String carrier_desc;
+    @Expose
     private String truck_number;
+    @Expose
     private String driver;
+    @Expose
     private String comments;
+    @Expose
     private String status;
+    @Expose
     private Double perc_done;
+    @Expose
     private int inbound_auto_seq;
+    @Expose
     private Integer modal_code;
+    @Expose
     private int allow_new_item;
+    @Expose
     private Integer zone_code_conf;
+    @Expose
     private Integer local_code_conf;
+    @Expose
     private int put_away_process;
+    @Expose
     private int done_automatic;
+    @Expose
     private ArrayList<IO_Inbound_Item> items = new ArrayList<>();
+    @Expose
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @Expose
     private int update_required;
+    @Expose
     private int sync_required;
+    @Expose
+    private String token;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -354,5 +396,13 @@ public class IO_Inbound {
 
     public void setSync_required(int sync_required) {
         this.sync_required = sync_required;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

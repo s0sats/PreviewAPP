@@ -22,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -277,7 +278,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void showAlert(String ttl, String msg) {
+    public void showFragAlert(String ttl, String msg) {
         ToolBox.alertMSG(
             context,
             ttl,
@@ -302,6 +303,24 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void searchFromOutboundList(String from_site) {
         mPresenter.executeWsSearchOutbound(from_site);
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void saveInboundHeader(IO_Inbound mInbound) {
+        this.mInbound = mInbound;
+        //
+        mPresenter.saveInboundData(mInbound);
     }
 
     //endregion
@@ -336,7 +355,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         } else if(wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())){
             mPresenter.processFromOutboundRet(mLink);
             progressDialog.dismiss();
-        } else {
+        } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())){
+            //mPresenter.processFromOutboundRet(mLink);
+            progressDialog.dismiss();
+        }else {
             progressDialog.dismiss();
         }
     }

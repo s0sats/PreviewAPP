@@ -34,5 +34,7 @@ public interface Act061_Main_Contract {
         void executeWsSearchOutbound(String from_site);
 
         void processFromOutboundRet(String wsReturn);
+
+        void saveInboundData(IO_Inbound mInbound);
     }
 }

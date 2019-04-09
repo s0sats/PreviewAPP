@@ -62,6 +62,7 @@ public class Act061_Frag_Header extends BaseFragment {
     private MkDateTime mkdtArrivalDt;
     private SearchableSpinner ssModal;
     private SearchableSpinner ssPartner;
+    private SearchableSpinner ssCarrier;
     private TextView tvTruckNumLbl;
     private EditText etTruckNum;
     private TextView tvDriverLbl;
@@ -89,6 +90,10 @@ public class Act061_Frag_Header extends BaseFragment {
         void fromTypeSelected(String from_type);
 
         void searchFromOutboundList(String from_site);
+
+        void showFragAlert(String ttl, String msg);
+
+        void saveInboundHeader(IO_Inbound mInbound);
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -221,12 +226,16 @@ public class Act061_Frag_Header extends BaseFragment {
         ivFromOutbound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ssFromOutbound != null && ssFromOutbound.getmOption() != null && ssFromOutbound.getmOption().size() == 0){
-                    if( mFragHeaderListener != null
-                        && ssFromSite.getmValue() != null
-                        && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
-                    ){
-                        mFragHeaderListener.searchFromOutboundList(ssFromSite.getmValue().get(SearchableSpinner.CODE));
+                if(ssFromOutbound != null && ssFromOutbound.getmOption() != null){
+                    if(ssFromOutbound.getmOption().size() == 0) {
+                        if (mFragHeaderListener != null
+                            && ssFromSite.getmValue() != null
+                            && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                        ) {
+                            mFragHeaderListener.searchFromOutboundList(ssFromSite.getmValue().get(SearchableSpinner.CODE));
+                        }
+                    }else{
+                        ssFromOutbound.performEtValueClick();
                     }
                 }
             }
@@ -238,39 +247,101 @@ public class Act061_Frag_Header extends BaseFragment {
                 if(bNewProcess || hasHeaderChanged()){
                     //Sem else aqui pois proprio metodo exibira msg de erro
                     if(validateSave()){
-                        //IMPLEMENTAR O SAVA
+                        setDataToInbound();
+                        //
+                        if(mFragHeaderListener != null){
+                            mFragHeaderListener.saveInboundHeader(mInbound);
+                        }
                     }
                 }else{
-                    //MENSAGEM DE NADA ALTERADO
+                    if(mFragHeaderListener != null){
+                        mFragHeaderListener.showFragAlert(
+                            hmAux_Trans.get("alert_no_data_changed_ttl"),
+                            hmAux_Trans.get("alert_no_data_changed_msg")
+                        );
+                    }
                 }
             }
         });
     }
 
+    private void setDataToInbound() {
+        if(mInbound != null){
+            mInbound.setInbound_id(etInboundId.getText().toString());
+            mInbound.setInbound_desc(etInboundDesc.getText().toString());
+            mInbound.setOrigin(ConstantBaseApp.SO_ORIGIN_CHANGE_APP);
+            mInbound.setInvoice_number(etInvoice.getText().toString());
+            mInbound.setInvoice_date(mkdtInvoinceDt.getmValue());
+            mInbound.setEta_date(mkdtEtaDt.getmValue());
+            mInbound.setArrival_date(mkdtArrivalDt.getmValue());
+            mInbound.setFrom_type(ssFromType.getmValue().get(SearchableSpinner.CODE));
+            //
+            if(ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mInbound.setFrom_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setFrom_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
+                mInbound.setFrom_partner_desc(ssPartner.getmValue().get(SearchableSpinner.DESCRIPTION));
+            }else{
+                mInbound.setFrom_partner_code(null);
+                mInbound.setFrom_partner_id(null);
+                mInbound.setFrom_partner_desc(null);
+            }
+            //
+            if(ssFromSite != null && ssFromSite.getmValue() != null && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mInbound.setFrom_site_code(Integer.valueOf(ssFromSite.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setFrom_site_id(ssFromSite.getmValue().get(SearchableSpinner.ID));
+                mInbound.setFrom_site_desc(ssFromSite.getmValue().get(SearchableSpinner.DESCRIPTION));
+            }else{
+                mInbound.setFrom_site_code(null);
+                mInbound.setFrom_site_id(null);
+                mInbound.setFrom_site_desc(null);
+            }
+            //
+            if(ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mInbound.setCarrier_code(Integer.valueOf(ssCarrier.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setCarrier_id(ssCarrier.getmValue().get(SearchableSpinner.ID));
+                mInbound.setCarrier_desc(ssCarrier.getmValue().get(SearchableSpinner.DESCRIPTION));
+            }else{
+                mInbound.setCarrier_code(null);
+                mInbound.setCarrier_id(null);
+                mInbound.setCarrier_desc(null);
+            }
+            mInbound.setTruck_number(etTruckNum.getText().toString());
+            mInbound.setDriver(etDriver.getText().toString());
+            mInbound.setComments(etComments.getText().toString());
+            mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus() );
+            mInbound.setUpdate_required(1);
+        }
+    }
+
     private boolean hasHeaderChanged() {
         //boolean headerChanged = false;
-        for(View view: properties){
-            if(view instanceof EditText){
-                String tag = (String) ((EditText) view).getTag() == null ? "" : (String) ((MKEditTextNM) view).getTag();
-                String text = ((EditText) view).getText().toString();
 
-                if (!text.equals(tag)) {
-                    // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
-                    //headerChanged = true;
-                    return true;
-                }
-            }else if(view instanceof SearchableSpinner){
-                if (((SearchableSpinner) view).hasChangedBD()) {
-                    //headerChanged = true;
-                    return true;
-                }
-            }else if(view instanceof MkDateTime){
-                if (((MkDateTime) view).hasChanged()) {
-                   // headerChanged = true;
-                    return true;
+        try {
+            for (View view : properties) {
+                if (view instanceof EditText) {
+                    String tag = (String) ((EditText) view).getTag() == null ? "" : (String) ((MKEditTextNM) view).getTag();
+                    String text = ((EditText) view).getText().toString();
+
+                    if (!text.equals(tag)) {
+                        // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
+                        //headerChanged = true;
+                        return true;
+                    }
+                } else if (view instanceof SearchableSpinner) {
+                    if (((SearchableSpinner) view).hasChangedBD()) {
+                        //headerChanged = true;
+                        return true;
+                    }
+                } else if (view instanceof MkDateTime) {
+                    if (((MkDateTime) view).hasChanged()) {
+                        // headerChanged = true;
+                        return true;
+                    }
                 }
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
         //
         return false;
@@ -282,8 +353,8 @@ public class Act061_Frag_Header extends BaseFragment {
         //
         if(
             ssFromType == null
-            || ssFromOutbound.getmValue() != null
-            || !ssFromOutbound.getmValue().hasConsistentValue(SearchableSpinner.CODE))
+            || ssFromType.getmValue() != null
+            || !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE))
         {
             msg += hmAux_Trans.get("alert_no_from_type_selected_msg");
             validate = false;
@@ -305,6 +376,15 @@ public class Act061_Frag_Header extends BaseFragment {
             {
                 msg += hmAux_Trans.get("alert_no_from_partner_selected_msg");
                 validate = false;
+            }
+        }
+        //
+        if(!validate){
+            if(mFragHeaderListener != null){
+                mFragHeaderListener.showFragAlert(
+                    hmAux_Trans.get("alert_no_from_partner_selected_msg"),
+                    msg
+                );
             }
         }
         //
@@ -480,6 +560,7 @@ public class Act061_Frag_Header extends BaseFragment {
     private void loadFromOutboundSS(ArrayList<HMAux> rawFromOutboundList) {
         ssFromOutbound.setmOption(rawFromOutboundList);
         ssFromOutbound.setmEnabled(rawFromOutboundList != null && rawFromOutboundList.size() > 0);
+        ssFromOutbound.performEtValueClick();
     }
 
 
@@ -624,6 +705,11 @@ public class Act061_Frag_Header extends BaseFragment {
         transListFrag.add("driver_lbl");
         transListFrag.add("comments_lbl");
         transListFrag.add("btn_save");
+        transListFrag.add("alert_no_from_type_selected_msg");
+        transListFrag.add("alert_no_from_site_selected_msg");
+        transListFrag.add("alert_no_from_partner_selected_msg");
+        transListFrag.add("alert_no_data_changed_ttl");
+        transListFrag.add("alert_no_data_changed_msg");
         //
         return transListFrag;
 

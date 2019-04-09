@@ -61,13 +61,14 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
     public static final String DONE_AUTOMATIC = "done_automatic";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String SYNC_REQUIRED = "sync_required";
+    public static final String TOKEN = "token";
 
     public static String[] columns = {
             CUSTOMER_CODE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_DESC, INBOUND_ID, SCN, ORIGIN, INVOICE_NUMBER, INVOICE_DATE,
             ETA_DATE, ARRIVAL_DATE, FROM_TYPE, FROM_PARTNER_CODE, FROM_PARTNER_ID, FROM_PARTNER_DESC, FROM_SITE_CODE,
             FROM_SITE_ID, FROM_SITE_DESC, TO_SITE_CODE, CARRIER_CODE, CARRIER_ID, CARRIER_DESC,
             TRUCK_NUMBER, DRIVER, COMMENTS, STATUS,PERC_DONE, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
-            PUT_AWAY_PROCESS, DONE_AUTOMATIC,UPDATE_REQUIRED,SYNC_REQUIRED
+            PUT_AWAY_PROCESS, DONE_AUTOMATIC,UPDATE_REQUIRED,SYNC_REQUIRED,TOKEN
     };
 
     public IO_InboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -544,6 +545,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             } else {
                 io_inbound.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             }
+            io_inbound.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             //
             return io_inbound;
         }
@@ -624,6 +626,10 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
 //            if (io_inbound.getSync_required() > -1) {
 //                contentValues.put(SYNC_REQUIRED, io_inbound.getSync_required());
 //            }
+            if (io_inbound.getToken() != null) {
+                contentValues.put(TOKEN, io_inbound.getToken());
+            }
+
             //
             return contentValues;
         }
