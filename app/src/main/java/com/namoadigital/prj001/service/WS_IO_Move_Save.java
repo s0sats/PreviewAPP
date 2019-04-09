@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.model.IO_Move_Save_Record;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.util.Constant;
@@ -25,6 +24,7 @@ public class WS_IO_Move_Save extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "ws_io_move_save";
     private Gson gson = new GsonBuilder().serializeNulls().create();
+    private IO_MoveDao moveDao;
 
     public WS_IO_Move_Save() {
         super("WS_IO_Move_Save");
@@ -37,6 +37,8 @@ public class WS_IO_Move_Save extends IntentService {
 
         try {
             //
+            gson = new GsonBuilder().serializeNulls().create();
+            moveDao = new IO_MoveDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             processWsIoMoveSave();
         } catch (Exception e) {
 
