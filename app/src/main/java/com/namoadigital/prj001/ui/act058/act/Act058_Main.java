@@ -33,7 +33,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
     private Frag_Move_Create frag_move_create;
-    Act058_Main_Presenter mPresenter;
+    private Act058_Main_Presenter mPresenter;
     private int moveCode;
     private int movePrefix;
     private String mResource_Code_Frag;

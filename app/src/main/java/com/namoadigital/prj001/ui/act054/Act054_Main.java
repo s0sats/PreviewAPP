@@ -32,16 +32,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
 
     public static final String ZERO_PENDENCY = "(0)";
-    CheckBox cbInbound;
-    CheckBox cbOutbound;
-    CheckBox cbPlannedMove;
-    CheckBox cbIoOrigins;
-    CheckBox cbIoDestiny;
-    LinearLayout llIoZone;
-    SearchableSpinner ssIoZone;
-    TextView tvIoOrientationLbl;
-    Button btnSearchMoveOrder;
-    Button btnMoveOrderPendency;
+    private CheckBox cbInbound;
+    private CheckBox cbOutbound;
+    private CheckBox cbPlannedMove;
+    private CheckBox cbIoOrigins;
+    private CheckBox cbIoDestiny;
+    private LinearLayout llIoZone;
+    private SearchableSpinner ssIoZone;
+    private TextView tvIoOrientationLbl;
+    private Button btnSearchMoveOrder;
+    private Button btnMoveOrderPendency;
 
     private Act054_Main_Presenter mPresenter;
     private String wsProcess;
