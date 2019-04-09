@@ -45,6 +45,7 @@ public class IO_Move implements Serializable {
     @Expose
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private int update_required;
+    private String token;
 
     public long getCustomer_code() {
         return customer_code;
@@ -276,5 +277,13 @@ public class IO_Move implements Serializable {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

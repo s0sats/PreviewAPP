@@ -65,6 +65,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private int view_param;
     private boolean fromMove;
     private IO_Move ioMove;
+
+
+
     private MD_Product_Serial mdProductSerial;
 
     private View serialLayout;
@@ -72,9 +75,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private LinearLayout ll_tracking_content;
     private TextView tv_zone_position;
     private TextView tv_inbound_lbl;
+    private TextView tv_outbound_lbl;
     private TextView tv_move_order_lbl;
     private TextView tv_move_to_lbl;
     private TextView tv_inbound_val;
+    private TextView tv_outbound_val;
     private TextView tv_move_order_val;
     private TextView tv_move_to_val;
     private MKEditTextNM mkedit_coments;
@@ -146,7 +151,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragView = inflater.inflate(R.layout.act058_frag_move, container, false);
-        mPresenter = new Frag_Move_Create_Presenter(this, getContext());
+        mPresenter = new Frag_Move_Create_Presenter(this, getContext(), ioMove.getMove_type(), ioMove.getPlanned_zone_code());
         bindViews(fragView);
         initializeViews();
         initAction();
@@ -156,9 +161,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private void bindViews(View fragView) {
         tv_zone_position = fragView.findViewById(R.id.act058_tv_zone_position);
         tv_inbound_val = fragView.findViewById(R.id.act058_tv_inbound_val);
+        tv_outbound_val = fragView.findViewById(R.id.act058_tv_outbound_val);
         tv_move_order_val = fragView.findViewById(R.id.act058_tv_move_order_val);
         tv_move_to_val = fragView.findViewById(R.id.act058_tv_move_to_val);
         tv_inbound_lbl = fragView.findViewById(R.id.act058_tv_inbound_lbl);
+        tv_outbound_lbl = fragView.findViewById(R.id.act058_tv_outbound_lbl);
         tv_move_order_lbl = fragView.findViewById(R.id.act058_tv_move_order_lbl);
         tv_move_to_lbl = fragView.findViewById(R.id.act058_tv_move_to_lbl);
         ll_tracking_content = fragView.findViewById(R.id.ll_tracking_content);
@@ -226,12 +233,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    mListener.persistIoMove(
-                            ToolBox_Con.getPreference_Customer_Code(getContext()),
-                            ioMove.getMove_prefix(),
-                            ioMove.getMove_code(),
-
-                    );
+//                    mListener.persistIoMove(
+//                            ToolBox_Con.getPreference_Customer_Code(getContext()),
+//                            ioMove.getMove_prefix(),
+//                            ioMove.getMove_code(),
+//
+//
+//                    );
                 }
             }
         });
@@ -513,12 +521,21 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_product_cod_val.setText(mdProductSerial.getProduct_id() + " " + mdProductSerial.getProduct_desc());
         tv_serial_val.setText(mdProductSerial.getSerial_id());
         tv_zone_position.setText(MessageFormat.format("{0} | {1}", mdProductSerial.getZone_id(), mdProductSerial.getLocal_id()));
+
         try {
             tv_inbound_val.setText(formatPrefixAndCode(ioMove.getInbound_prefix(), ioMove.getInbound_code()));
         } catch (NullPointerException e) {
             tv_inbound_lbl.setVisibility(View.GONE);
             tv_inbound_val.setVisibility(View.GONE);
         }
+
+        try {
+            tv_outbound_val.setText(formatPrefixAndCode(ioMove.getOutbound_prefix(), ioMove.getOutbound_code()));
+        } catch (NullPointerException e) {
+            tv_outbound_lbl.setVisibility(View.GONE);
+            tv_outbound_val.setVisibility(View.GONE);
+        }
+
         tv_move_order_val.setText(formatPrefixAndCode(ioMove.getMove_prefix(), ioMove.getMove_code()));
         String plannedZoneLocal = (ioMove.getPlanned_zone_code() == null) ? "" : String.valueOf(ioMove.getPlanned_zone_code());
 

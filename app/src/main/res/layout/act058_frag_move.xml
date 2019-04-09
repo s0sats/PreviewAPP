@@ -81,6 +81,28 @@
                 app:layout_constraintTop_toTopOf="@+id/act058_tv_inbound_lbl" />
 
             <TextView
+                android:id="@+id/act058_tv_outbound_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Outbound:"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/gl_left"
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_inbound_lbl" />
+
+            <TextView
+                android:id="@+id/act058_tv_outbound_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="2019.111"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/act058_tv_outbound_lbl"
+                app:layout_constraintStart_toEndOf="@+id/act058_tv_outbound_lbl"
+                app:layout_constraintTop_toTopOf="@+id/act058_tv_outbound_lbl" />
+
+            <TextView
                 android:id="@+id/act058_tv_move_order_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,7 +111,7 @@
                 android:text="MO:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/gl_left"
-                app:layout_constraintTop_toBottomOf="@+id/act058_tv_inbound_lbl" />
+                app:layout_constraintTop_toBottomOf="@+id/act058_tv_outbound_lbl" />
 
             <TextView
                 android:id="@+id/act058_tv_move_order_val"
