@@ -233,13 +233,25 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-//                    mListener.persistIoMove(
-//                            ToolBox_Con.getPreference_Customer_Code(getContext()),
-//                            ioMove.getMove_prefix(),
-//                            ioMove.getMove_code(),
-//
-//
-//                    );
+                    Integer classCode = null;
+                    Integer reasonCode = null;
+                    if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+                        classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+                    }
+                    if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+                        reasonCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+                    }
+                    mListener.persistIoMove(
+                            ToolBox_Con.getPreference_Customer_Code(getContext()),
+                            ioMove.getMove_prefix(),
+                            ioMove.getMove_code(),
+                            Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                            Integer.valueOf(ss_position.getmValue().get(SearchableSpinner.CODE)),
+                            classCode,
+                            reasonCode,
+                            mkdate_confirm.getmValue(),
+                            mdProductSerial
+                    );
                 }
             }
         });
@@ -763,7 +775,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                            Integer to_class_code,
                            Integer reason_code,
                            String done_date,
-                           ArrayList<MD_Product_Serial> serial);
+                           MD_Product_Serial serial);
 
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
