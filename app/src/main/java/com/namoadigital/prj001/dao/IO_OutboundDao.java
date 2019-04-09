@@ -59,6 +59,8 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String LOCAL_CODE_PICKING = "local_code_picking";
     public static final String PICKING_PROCESS = "picking_process";
     public static final String DONE_AUTOMATIC = "done_automatic";
+    public static final String UPDATE_REQUIRED = "update_required";
+    public static final String SYNC_REQUIRED = "sync_required";
 
 
     public IO_OutboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -504,6 +506,16 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }
             io_outbound.setPicking_process(cursor.getInt(cursor.getColumnIndex(PICKING_PROCESS)));
             io_outbound.setDone_automatic(cursor.getInt(cursor.getColumnIndex(DONE_AUTOMATIC)));
+            if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                io_outbound.setUpdate_required(0);
+            } else {
+                io_outbound.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SYNC_REQUIRED))) {
+                io_outbound.setSync_required(0);
+            } else {
+                io_outbound.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
+            }
             //
             return io_outbound;
         }
@@ -572,6 +584,16 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             if(io_outbound.getDone_automatic() > -1){
                 contentValues.put(DONE_AUTOMATIC ,io_outbound.getDone_automatic());
             }
+            if (io_outbound.getUpdate_required() > -1) {
+                contentValues.put(UPDATE_REQUIRED, io_outbound.getUpdate_required());
+            }
+            /**
+             * Atualizar somente via query update para evitar sobreposicao com o update da Outbound.
+             * Atualiza com 0 quando Outbound Full e para um através do recebimento do GCM
+             */
+//            if (io_outbound.getSync_required() > -1) {
+//                contentValues.put(SYNC_REQUIRED, io_outbound.getSync_required());
+//            }
             //
             return contentValues;
         }

@@ -59,13 +59,15 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
     public static final String LOCAL_CODE_CONF = "local_code_conf";
     public static final String PUT_AWAY_PROCESS = "put_away_process";
     public static final String DONE_AUTOMATIC = "done_automatic";
+    public static final String UPDATE_REQUIRED = "update_required";
+    public static final String SYNC_REQUIRED = "sync_required";
 
     public static String[] columns = {
             CUSTOMER_CODE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_DESC, INBOUND_ID, SCN, ORIGIN, INVOICE_NUMBER, INVOICE_DATE,
             ETA_DATE, ARRIVAL_DATE, FROM_TYPE, FROM_PARTNER_CODE, FROM_PARTNER_ID, FROM_PARTNER_DESC, FROM_SITE_CODE,
             FROM_SITE_ID, FROM_SITE_DESC, TO_SITE_CODE, CARRIER_CODE, CARRIER_ID, CARRIER_DESC,
             TRUCK_NUMBER, DRIVER, COMMENTS, STATUS,PERC_DONE, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
-            PUT_AWAY_PROCESS, DONE_AUTOMATIC
+            PUT_AWAY_PROCESS, DONE_AUTOMATIC,UPDATE_REQUIRED,SYNC_REQUIRED
     };
 
     public IO_InboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -532,6 +534,16 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             }
             io_inbound.setPut_away_process(cursor.getInt(cursor.getColumnIndex(PUT_AWAY_PROCESS)));
             io_inbound.setDone_automatic(cursor.getInt(cursor.getColumnIndex(DONE_AUTOMATIC)));
+            if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                io_inbound.setUpdate_required(0);
+            } else {
+                io_inbound.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SYNC_REQUIRED))) {
+                io_inbound.setSync_required(0);
+            } else {
+                io_inbound.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
+            }
             //
             return io_inbound;
         }
@@ -602,6 +614,16 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             if(io_inbound.getDone_automatic() > -1){
                 contentValues.put(DONE_AUTOMATIC,io_inbound.getDone_automatic());
             }
+            if (io_inbound.getUpdate_required() > -1) {
+                contentValues.put(UPDATE_REQUIRED, io_inbound.getUpdate_required());
+            }
+            /**
+             * Atualizar somente via query update para evitar sobreposicao com o update da Inbound.
+             * Atualiza com 0 quando inbound Full e para um através do recebimento do GCM
+             */
+//            if (io_inbound.getSync_required() > -1) {
+//                contentValues.put(SYNC_REQUIRED, io_inbound.getSync_required());
+//            }
             //
             return contentValues;
         }

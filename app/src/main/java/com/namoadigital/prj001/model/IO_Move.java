@@ -34,6 +34,7 @@ public class IO_Move implements Serializable {
     private String status;
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    private int update_required;
 
     public long getCustomer_code() {
         return customer_code;
@@ -257,5 +258,13 @@ public class IO_Move implements Serializable {
 
     public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 }

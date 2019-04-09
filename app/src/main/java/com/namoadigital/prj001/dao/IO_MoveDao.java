@@ -50,6 +50,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
     public static final String DONE_USER = "done_user";
     public static final String DONE_USER_NICK = "done_user_nick";
     public static final String STATUS = "status";
+    public static final String UPDATE_REQUIRED = "update_required";
 
     public IO_MoveDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -404,6 +405,11 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 io_move.setDone_user_nick(cursor.getString(cursor.getColumnIndex(DONE_USER_NICK)));
             }
             io_move.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                io_move.setUpdate_required(0);
+            } else {
+                io_move.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
             //
             return io_move;
         }
@@ -456,6 +462,9 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             contentValues.put(DONE_USER_NICK,io_move.getDone_user_nick());
             if(io_move.getStatus()!= null){
                 contentValues.put(STATUS,io_move.getStatus());
+            }
+            if (io_move.getUpdate_required() > -1) {
+                contentValues.put(UPDATE_REQUIRED, io_move.getUpdate_required());
             }
             //
             return contentValues;

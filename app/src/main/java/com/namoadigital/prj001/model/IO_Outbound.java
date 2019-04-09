@@ -41,6 +41,8 @@ public class IO_Outbound {
     private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    private int update_required;
+    private int sync_required;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -336,5 +338,21 @@ public class IO_Outbound {
 
     public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
     }
 }
