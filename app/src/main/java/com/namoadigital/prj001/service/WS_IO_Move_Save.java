@@ -33,6 +33,7 @@ public class WS_IO_Move_Save extends IntentService {
     private String mResource_Name = "ws_io_move_save";
     private Gson gson = new GsonBuilder().serializeNulls().create();
     private IO_MoveDao moveDao;
+    ArrayList<IO_Move> moveTokenList = new ArrayList<>();
 
     public WS_IO_Move_Save() {
         super("WS_IO_Move_Save");
@@ -121,12 +122,12 @@ public class WS_IO_Move_Save extends IntentService {
         }
 
     private void checkMoveTokens() {
-        ArrayList<IO_Move> moveTokenList;
         moveTokenList = (ArrayList<IO_Move>) moveDao.query(
                 new IO_Move_Order_Item_Sql_004(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                 ).toSqlQuery()
         );
+        moveTokenList.isEmpty();
     }
 
 
