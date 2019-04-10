@@ -319,8 +319,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void saveInboundHeader(IO_Inbound mInbound) {
         this.mInbound = mInbound;
-        //
-        mPresenter.saveInboundData(mInbound);
+        if(ToolBox_Con.isOnline(context)) {
+            mPresenter.saveInboundData(mInbound);
+        }else{
+            showAlert(
+                hmAux_Trans.get("alert_io_creation_ttl"),
+                hmAux_Trans.get("alert_creation_only_online_msg")
+            );
+        }
     }
 
     @Override

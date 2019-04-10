@@ -58,6 +58,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
+    private boolean isOnline = true;
     private String wsProcess;
     private String bundle_zone_code;
     private String bundle_local_code;
@@ -160,8 +161,10 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
             bundle_record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
             try {
                 records = (ArrayList<IO_Inbound_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
+                isOnline = true;
             }catch (Exception e){
                 records = new ArrayList<>();
+                isOnline = false;
             }
         } else {
             bundle_zone_code = "";
@@ -321,7 +324,9 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                 context,
                 records,
                 filter_pending,
-                filter_process
+                filter_process,
+                isOnline
+
         );
         //
         rv_inbound.setAdapter(mAdapter);

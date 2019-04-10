@@ -249,6 +249,7 @@ public class Act061_Frag_Header extends BaseFragment {
                     //Sem else aqui pois proprio metodo exibira msg de erro
                     if(validateSave()){
                         setDataToInbound();
+                        blockAll();
                         //
                         if(mFragHeaderListener != null){
                             mFragHeaderListener.saveInboundHeader(mInbound);
@@ -264,6 +265,18 @@ public class Act061_Frag_Header extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void blockAll() {
+        for(View view : properties){
+            if (view instanceof SearchableSpinner) {
+                ((SearchableSpinner) view).setmEnabled(false);
+            } else if (view instanceof MkDateTime) {
+                ((MkDateTime) view).setmEnabled(false);
+            } else {
+                view.setEnabled(false);
+            }
+        }
     }
 
     private void setDataToInbound() {
@@ -543,15 +556,15 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private void configMkDt() {
         mkdtInvoinceDt.setmLabel("");
-        mkdtInvoinceDt.setmHighlightWhenInvalid(true);
+        mkdtInvoinceDt.setmHighlightWhenInvalid(false);
         mkdtInvoinceDt.setmRequired(false);
         //
         mkdtEtaDt.setmLabel("");
-        mkdtEtaDt.setmHighlightWhenInvalid(true);
+        mkdtEtaDt.setmHighlightWhenInvalid(false);
         mkdtEtaDt.setmRequired(false);
         //
         mkdtArrivalDt.setmLabel("");
-        mkdtArrivalDt.setmHighlightWhenInvalid(true);
+        mkdtArrivalDt.setmHighlightWhenInvalid(false);
         mkdtArrivalDt.setmRequired(false);
     }
 
@@ -783,6 +796,7 @@ public class Act061_Frag_Header extends BaseFragment {
         transListFrag.add("alert_no_from_partner_selected_msg");
         transListFrag.add("alert_no_data_changed_ttl");
         transListFrag.add("alert_no_data_changed_msg");
+        transListFrag.add("alert_invalid_date_msg");
         //
         return transListFrag;
 
