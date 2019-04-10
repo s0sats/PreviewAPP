@@ -215,6 +215,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
 
+    public static String TOKEN_MOVE_PREFIX = "move_token_";
+
     public static String TOKEN_SO_PREFIX;
     public static String TOKEN_SERIAL_PREFIX;
 

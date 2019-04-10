@@ -4,10 +4,10 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 
-public class IO_Move_Order_Item_Sql_003 implements Specification {
+public class IO_Move_Order_Item_Sql_004 implements Specification {
     private long customer_code;
 
-    public IO_Move_Order_Item_Sql_003(long customer_code) {
+    public IO_Move_Order_Item_Sql_004(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -21,7 +21,7 @@ public class IO_Move_Order_Item_Sql_003 implements Specification {
                         IO_MoveDao.TABLE + " \n" +
                         " WHERE\n" +
                         "   customer_code = '" + customer_code+"'\n" +
-                        "   AND "+ IO_MoveDao.TOKEN+" == '' " +
+                        "   AND "+ IO_MoveDao.TOKEN+" != '' " +
                         "   and status = '"+ Constant.SYS_STATUS_WAITING_SYNC +'\'' )
                 .toString();
     }

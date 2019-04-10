@@ -139,7 +139,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         io_move.setReason_code(reason_code);
         io_move.setDone_date(done_date);
         io_move.getSerial().add(serial);
-        io_move.setUpdate_required(1);
+        io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         ioMoveDao.addUpdate(io_move);
     }
 

@@ -86,7 +86,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private MkDateTime mkdate_confirm;
     private TextViewCT.ITextViewCT tvCtListner;
     private SearchableSpinner ss_zone;
-    private SearchableSpinner ss_position;
+    private SearchableSpinner ss_local;
     private SearchableSpinner ss_reason;
     private SearchableSpinner ss_class;
     private CheckBox chk_change_zone;
@@ -173,7 +173,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
         btn_save = fragView.findViewById(R.id.act058_btn_save);
         ss_zone = fragView.findViewById(R.id.act058_ss_zone);
-        ss_position = fragView.findViewById(R.id.act058_ss_position);
+        ss_local = fragView.findViewById(R.id.act058_ss_local);
         mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
         mkdate_confirm = fragView.findViewById(R.id.act058_mkdate_confirm);
         sv_create_move = fragView.findViewById(R.id.act058_sv_create_move);
@@ -273,7 +273,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
           }
         );
 
-        ss_position.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+        ss_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -301,7 +301,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 ioMove.getMove_prefix(),
                 ioMove.getMove_code(),
                 Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                Integer.valueOf(ss_position.getmValue().get(SearchableSpinner.CODE)),
+                Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
                 classCode,
                 reasonCode,
                 mkdate_confirm.getmValue(),
@@ -321,7 +321,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     false
             );
             //
-            mPresenter.loadLocalSS(ss_zone, ss_position, false);
+            mPresenter.loadLocalSS(ss_zone, ss_local, false);
         }
     }
 
@@ -653,14 +653,14 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
         btn_save.setText(hmAux_Trans.get("save_lbl"));
         setSSZone();
-        setSSPosition();
+        setSSLocal();
         mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
         chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
     }
 
-    private void setSSPosition() {
-        ss_position.setmLabel(hmAux_Trans.get("position_lbl"));
-        mPresenter.loadLocalSS(ss_zone, ss_position, false);
+    private void setSSLocal() {
+        ss_local.setmLabel(hmAux_Trans.get("position_lbl"));
+        mPresenter.loadLocalSS(ss_zone, ss_local, false);
     }
 
     private void setSSZone() {
@@ -672,10 +672,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void processZoneValueChange(HMAux hmAux) {
-        mPresenter.loadLocalSS(ss_zone, ss_position, true);
+        mPresenter.loadLocalSS(ss_zone, ss_local, true);
         //
-        if (hmAux != null && hmAux.size() > 0 && ss_position.getmOption().size() == 1) {
-            ss_position.setmValue(ss_position.getmOption().get(0));
+        if (hmAux != null && hmAux.size() > 0 && ss_local.getmOption().size() == 1) {
+            ss_local.setmValue(ss_local.getmOption().get(0));
         }
     }
 
@@ -777,16 +777,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         return transList;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         void persistIoMove(long customer_code,
                            int move_prefix,
