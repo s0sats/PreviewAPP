@@ -72,7 +72,6 @@ public class Act061_Frag_Header extends BaseFragment {
     private Button btnSave;
     private ArrayList<View> properties = new ArrayList<>();
 
-
     /**
      * Interface principal do fragment
      * Deve ser implementado pela Act que for usá-lo
@@ -94,6 +93,8 @@ public class Act061_Frag_Header extends BaseFragment {
         void showFragAlert(String ttl, String msg);
 
         void saveInboundHeader(IO_Inbound mInbound);
+
+        String getNewSavedToken();
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -267,6 +268,8 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private void setDataToInbound() {
         if(mInbound != null){
+            mInbound.setCustomer_code(bNewProcess ? ToolBox_Con.getPreference_Customer_Code(context) : mInbound.getCustomer_code());
+            mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
             mInbound.setInbound_id(etInboundId.getText().toString());
             mInbound.setInbound_desc(etInboundDesc.getText().toString());
             mInbound.setOrigin(ConstantBaseApp.SO_ORIGIN_CHANGE_APP);
@@ -274,26 +277,39 @@ public class Act061_Frag_Header extends BaseFragment {
             mInbound.setInvoice_date(mkdtInvoinceDt.getmValue());
             mInbound.setEta_date(mkdtEtaDt.getmValue());
             mInbound.setArrival_date(mkdtArrivalDt.getmValue());
+            mInbound.setTo_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mInbound.setFrom_type(ssFromType.getmValue().get(SearchableSpinner.CODE));
-            //
-            if(ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                mInbound.setFrom_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
-                mInbound.setFrom_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
-                mInbound.setFrom_partner_desc(ssPartner.getmValue().get(SearchableSpinner.DESCRIPTION));
-            }else{
+            //Reseta campos do obj se novo obj
+            if(bNewProcess) {
                 mInbound.setFrom_partner_code(null);
                 mInbound.setFrom_partner_id(null);
                 mInbound.setFrom_partner_desc(null);
-            }
-            //
-            if(ssFromSite != null && ssFromSite.getmValue() != null && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                mInbound.setFrom_site_code(Integer.valueOf(ssFromSite.getmValue().get(SearchableSpinner.CODE)));
-                mInbound.setFrom_site_id(ssFromSite.getmValue().get(SearchableSpinner.ID));
-                mInbound.setFrom_site_desc(ssFromSite.getmValue().get(SearchableSpinner.DESCRIPTION));
-            }else{
                 mInbound.setFrom_site_code(null);
                 mInbound.setFrom_site_id(null);
                 mInbound.setFrom_site_desc(null);
+            }
+            //
+            if(ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+                if (ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    mInbound.setFrom_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
+                    mInbound.setFrom_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
+                    mInbound.setFrom_partner_desc(ssPartner.getmValue().get(SearchableSpinner.DESCRIPTION));
+                } else {
+                    mInbound.setFrom_partner_code(null);
+                    mInbound.setFrom_partner_id(null);
+                    mInbound.setFrom_partner_desc(null);
+                }
+            }else {
+                //
+                if (ssFromSite != null && ssFromSite.getmValue() != null && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    mInbound.setFrom_site_code(Integer.valueOf(ssFromSite.getmValue().get(SearchableSpinner.CODE)));
+                    mInbound.setFrom_site_id(ssFromSite.getmValue().get(SearchableSpinner.ID));
+                    mInbound.setFrom_site_desc(ssFromSite.getmValue().get(SearchableSpinner.DESCRIPTION));
+                } else {
+                    mInbound.setFrom_site_code(null);
+                    mInbound.setFrom_site_id(null);
+                    mInbound.setFrom_site_desc(null);
+                }
             }
             //
             if(ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -311,6 +327,14 @@ public class Act061_Frag_Header extends BaseFragment {
             mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus() );
             mInbound.setUpdate_required(1);
         }
+    }
+
+    private String getSaveNewToken() {
+        if(mFragHeaderListener != null){
+            return mFragHeaderListener.getNewSavedToken();
+        }
+        //
+        return null;
     }
 
     private boolean hasHeaderChanged() {
@@ -353,28 +377,45 @@ public class Act061_Frag_Header extends BaseFragment {
         //
         if(
             ssFromType == null
-            || ssFromType.getmValue() != null
-            || !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE))
+            || ssFromType.getmValue() == null
+            || (ssFromType.getmValue() != null && !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE)))
         {
             msg += hmAux_Trans.get("alert_no_from_type_selected_msg");
             validate = false;
+
         }
-        if(ssFromOutbound.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
-            if (
-                ssFromSite == null
-                || ssFromSite.getmValue() != null
-                || ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))
-            {
-                msg += hmAux_Trans.get("alert_no_from_site_selected_msg");
+        //Se passou no primeiro if, continua a analise dos proximos campos
+        //se não, pula e vai direto pra msg de erro.
+        if(validate) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
+                if (
+                    ssFromSite == null
+                        || ssFromSite.getmValue() == null
+                        || (ssFromSite.getmValue() != null && !ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
+                    msg += hmAux_Trans.get("alert_no_from_site_selected_msg");
+                    validate = false;
+                }
+            } else {
+                if (
+                    ssPartner == null
+                        || ssPartner.getmValue() == null
+                        || (ssPartner.getmValue() != null && !ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
+                    msg += hmAux_Trans.get("alert_no_from_partner_selected_msg");
+                    validate = false;
+                }
+            }
+            //
+            if(!mkdtInvoinceDt.isValid()){
+                msg += hmAux_Trans.get("alert_invalid_date_msg");
                 validate = false;
             }
-        }else{
-            if (
-                ssPartner == null
-                    || ssPartner.getmValue() != null
-                    || ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))
-            {
-                msg += hmAux_Trans.get("alert_no_from_partner_selected_msg");
+            //
+            if(!mkdtEtaDt.isValid()){
+                msg += hmAux_Trans.get("alert_invalid_date_msg");
+                validate = false;
+            }
+            if(!mkdtArrivalDt.isValid()){
+                msg += hmAux_Trans.get("alert_invalid_date_msg");
                 validate = false;
             }
         }
@@ -401,6 +442,7 @@ public class Act061_Frag_Header extends BaseFragment {
         ssFromType = view.findViewById(R.id.act061_header_ss_from_type);
         clOtherInfo = view.findViewById(R.id.act061_header_cl_other_info);
         ssFromSite = view.findViewById(R.id.act061_header_ss_from_site);
+        ssPartner = view.findViewById(R.id.act061_header_ss_partner);
         ssFromOutbound = view.findViewById(R.id.act061_header_ss_from_outbound);
         ivFromOutbound = view.findViewById(R.id.act061_header_iv_from_outbound);
         ivFromOutbound.setEnabled(false);
@@ -419,7 +461,7 @@ public class Act061_Frag_Header extends BaseFragment {
         tvArrivalDtLbl = view.findViewById(R.id.act061_header_tv_arrival_dt);
         mkdtArrivalDt = view.findViewById(R.id.act061_header_mkdt_arrival_dt);
         ssModal = view.findViewById(R.id.act061_header_ss_modal);
-        ssPartner = view.findViewById(R.id.act061_header_ss_partner);
+        ssCarrier = view.findViewById(R.id.act061_header_ss_carrier);
         tvTruckNumLbl = view.findViewById(R.id.act061_header_tv_truck_num);
         etTruckNum = view.findViewById(R.id.editact061_header_et_truck_num);
         tvDriverLbl = view.findViewById(R.id.act061_header_tv_driver);
@@ -448,6 +490,7 @@ public class Act061_Frag_Header extends BaseFragment {
     private void setViewsText() {
         ssFromType.setmLabel(hmAux_Trans.get("from_type_lbl"));
         ssFromSite.setmLabel(hmAux_Trans.get("from_site_lbl"));
+        ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
         ssFromOutbound.setmLabel(hmAux_Trans.get("from_outbound_lbl"));
         tvInboundLbl.setText(hmAux_Trans.get("inbound_code_lbl"));
         tvInboundIdLbl.setText(hmAux_Trans.get("inbound_id_lbl"));
@@ -457,7 +500,7 @@ public class Act061_Frag_Header extends BaseFragment {
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvArrivalDtLbl.setText(hmAux_Trans.get("arrival_dt_lbl"));
         ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
-        ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
+        ssCarrier.setmLabel(hmAux_Trans.get("carrier_lbl"));
         tvTruckNumLbl.setText(hmAux_Trans.get("truck_lbl"));
         tvDriverLbl.setText(hmAux_Trans.get("driver_lbl"));
         tvCommentsLbl.setText(hmAux_Trans.get("comments_lbl"));
@@ -468,11 +511,12 @@ public class Act061_Frag_Header extends BaseFragment {
         ssFromType.setmShowLabel(false);
         ssFromType.setmStyle(1);
         ssFromSite.setmStyle(1);
+        ssPartner.setmStyle(1);
         ssFromOutbound.setmShowLabel(false);
         ssFromOutbound.setmStyle(1);
         ssFromOutbound.setmEnabled(false);
         ssModal.setmStyle(1);
-        ssPartner.setmStyle(1);
+        ssCarrier.setmStyle(1);
 
     }
 
@@ -499,8 +543,16 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private void configMkDt() {
         mkdtInvoinceDt.setmLabel("");
+        mkdtInvoinceDt.setmHighlightWhenInvalid(true);
+        mkdtInvoinceDt.setmRequired(false);
+        //
         mkdtEtaDt.setmLabel("");
+        mkdtEtaDt.setmHighlightWhenInvalid(true);
+        mkdtEtaDt.setmRequired(false);
+        //
         mkdtArrivalDt.setmLabel("");
+        mkdtArrivalDt.setmHighlightWhenInvalid(true);
+        mkdtArrivalDt.setmRequired(false);
     }
 
     private void loadInbound() {
@@ -534,7 +586,9 @@ public class Act061_Frag_Header extends BaseFragment {
 
     public void updateMDLists(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals){
         loadFromSiteSS(generateFromSiteSSOption(sites));
+        //Partner e carrier mesma base de dados.
         loadPartnerSS(generatePartnerSSOption(partners));
+        loadCarrierrSS(generatePartnerSSOption(partners));
         loadModalSS(generateModalSSOption(modals));
         //
         setUIForCreation(true);
@@ -551,6 +605,10 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private void loadPartnerSS(ArrayList<HMAux> rawPartnerList) {
         ssPartner.setmOption(rawPartnerList);
+    }
+
+    private void loadCarrierrSS(ArrayList<HMAux> rawCarrierList) {
+        ssCarrier.setmOption(rawCarrierList);
     }
 
     private void loadModalSS(ArrayList<HMAux> rawModalList) {
@@ -661,6 +719,20 @@ public class Act061_Frag_Header extends BaseFragment {
     private void setUIForCreation(boolean isMasterDataLoaded) {
         clOtherInfo.setVisibility(isMasterDataLoaded ? View.VISIBLE : View.GONE);
         ivEdit.setVisibility(View.GONE);
+        //
+        if(isMasterDataLoaded) {
+            if(ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)){
+                ssPartner.setVisibility(View.VISIBLE);
+                ssFromSite.setVisibility(View.GONE);
+                ssFromOutbound.setVisibility(View.GONE);
+                ssFromOutbound.setmEnabled(false);
+            }else{
+                ssPartner.setVisibility(View.GONE);
+                ssFromSite.setVisibility(View.VISIBLE);
+                ssFromOutbound.setVisibility(View.VISIBLE);
+                ssFromOutbound.setmEnabled(false);
+            }
+        }
     }
 
 
@@ -701,6 +773,7 @@ public class Act061_Frag_Header extends BaseFragment {
         transListFrag.add("arrival_dt_lbl");
         transListFrag.add("modal_lbl");
         transListFrag.add("partner_lbl");
+        transListFrag.add("carrier_lbl");
         transListFrag.add("truck_lbl");
         transListFrag.add("driver_lbl");
         transListFrag.add("comments_lbl");

@@ -217,8 +217,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static String TOKEN_SO_PREFIX;
     public static String TOKEN_SERIAL_PREFIX;
-    public static String TOKEN_INBOUND_PREFIX;
-    public static String TOKEN_OUTBOUND_PREFIX;
+    public static String TOKEN_INBOUND_PREFIX = "inbound_token_";
+    public static String TOKEN_OUTBOUND_PREFIX = "outbound_token_";
 
     public static String TOKEN_SO_NAME_FULL;
     public static String TOKEN_SERIAL_NAME_FULL;

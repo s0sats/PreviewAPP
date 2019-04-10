@@ -19,6 +19,7 @@ import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -181,6 +182,21 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public String getNewSavedToken() {
+        IO_Inbound inbound = inboundDao.getByString(
+            new IO_Inbound_Sql_005(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        //
+        if(inbound != null && inbound.getCustomer_code() > 0 && inbound.getToken().trim().length() > 0){
+            return inbound.getToken().trim();
+        }else{
+            return ToolBox_Inf.getToken(context);
         }
     }
 

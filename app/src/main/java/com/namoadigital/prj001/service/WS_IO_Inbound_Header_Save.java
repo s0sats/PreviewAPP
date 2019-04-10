@@ -10,8 +10,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Search;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Inbound_Save_Return;
+import com.namoadigital.prj001.model.T_IO_Inbound_Header_Env;
+import com.namoadigital.prj001.model.T_IO_Inbound_Header_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_004;
 import com.namoadigital.prj001.util.Constant;
@@ -63,7 +66,7 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
 
         } finally {
 
-            WBR_IO_Inbound_Search.completeWakefulIntent(intent);
+            WBR_IO_Inbound_Header_Save.completeWakefulIntent(intent);
         }
     }
 

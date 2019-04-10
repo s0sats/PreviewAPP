@@ -36,5 +36,7 @@ public interface Act061_Main_Contract {
         void processFromOutboundRet(String wsReturn);
 
         void saveInboundData(IO_Inbound mInbound);
+
+        String getNewSavedToken();
     }
 }

@@ -323,6 +323,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mPresenter.saveInboundData(mInbound);
     }
 
+    @Override
+    public String getNewSavedToken() {
+        return mPresenter.getNewSavedToken();
+    }
+
     //endregion
 
 

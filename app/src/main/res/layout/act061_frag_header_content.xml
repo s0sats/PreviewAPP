@@ -65,12 +65,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act061_header_ss_partner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_site" />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                 android:id="@+id/act061_header_ss_from_outbound"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@id/act061_header_iv_from_outbound"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_site"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_partner"
             />
 
             <ImageView
@@ -266,12 +274,13 @@
                 app:layout_constraintTop_toBottomOf="@id/act061_header_mkdt_arrival_dt" />
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                android:id="@+id/act061_header_ss_partner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_modal" />
+                    android:id="@+id/act061_header_ss_carrier"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                    app:layout_constraintTop_toBottomOf="@id/act061_header_ss_modal"
+            />
 
             <TextView
                 android:id="@+id/act061_header_tv_truck_num"
@@ -285,7 +294,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_ss_partner" />
+                app:layout_constraintTop_toBottomOf="@+id/act061_header_ss_carrier" />
 
             <EditText
                 android:id="@+id/editact061_header_et_truck_num"

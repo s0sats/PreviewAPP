@@ -31,8 +31,8 @@ public class IO_Inbound_Sql_004 implements Specification {
                     "   update_required = '"+update_required+"'\n" +
                     " WHERE\n" +
                     "  customer_code = '"+customer_code+"'\n" +
-                    "  and so_prefix = '"+inbound_prefix+"'\n" +
-                    "  and so_code = '"+inbound_code+"'")
+                    "  and inbound_prefix = '"+inbound_prefix+"'\n" +
+                    "  and inbound_code = '"+inbound_code+"'")
             .toString();
     }
 }
