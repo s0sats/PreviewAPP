@@ -128,7 +128,19 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void executeMovePersistence(IO_Move io_move) {
+    public void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial) {
+        IO_Move io_move = new IO_Move();
+        io_move.setCustomer_code(customer_code);
+        io_move.setMove_prefix(move_prefix);
+        io_move.setMove_code(move_code);
+        io_move.setTo_zone_code(to_zone_code);
+        io_move.setTo_local_code(to_local_code);
+        io_move.setTo_class_code(to_class_code);
+        io_move.setReason_code(reason_code);
+        io_move.setDone_date(done_date);
+        io_move.getSerial().add(serial);
+        io_move.setUpdate_required(1);
         ioMoveDao.addUpdate(io_move);
     }
+
 }

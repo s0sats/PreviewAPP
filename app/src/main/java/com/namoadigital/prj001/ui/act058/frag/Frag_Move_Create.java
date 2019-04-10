@@ -233,25 +233,22 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    Integer classCode = null;
-                    Integer reasonCode = null;
-                    if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
-                        classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
-                    }
-                    if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
-                        reasonCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
-                    }
-                    mListener.persistIoMove(
-                            ToolBox_Con.getPreference_Customer_Code(getContext()),
-                            ioMove.getMove_prefix(),
-                            ioMove.getMove_code(),
-                            Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                            Integer.valueOf(ss_position.getmValue().get(SearchableSpinner.CODE)),
-                            classCode,
-                            reasonCode,
-                            mkdate_confirm.getmValue(),
-                            mdProductSerial
+
+                    ToolBox.alertMSG_YES_NO(
+                            getContext(),
+                            hmAux_Trans.get("alert_update_move_ttl"),
+                            hmAux_Trans.get("alert_update_move_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(view_param == 0) {
+                                        persistIoMoveChanges();
+                                    }
+                                }
+                            },
+                            1
                     );
+
                 }
             }
         });
@@ -288,6 +285,28 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             }
         });
 
+    }
+
+    private void persistIoMoveChanges() {
+        Integer classCode = null;
+        Integer reasonCode = null;
+        if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+        }
+        if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            reasonCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+        }
+        mListener.persistIoMove(
+                ToolBox_Con.getPreference_Customer_Code(getContext()),
+                ioMove.getMove_prefix(),
+                ioMove.getMove_code(),
+                Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                Integer.valueOf(ss_position.getmValue().get(SearchableSpinner.CODE)),
+                classCode,
+                reasonCode,
+                mkdate_confirm.getmValue(),
+                mdProductSerial
+        );
     }
 
     private void processLocalValueChange(HMAux hmAux) {
@@ -752,6 +771,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         transList.add("dialog_tracking_ttl");
         transList.add("alert_tracking_already_listed_ttl");
         transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_update_move_ttl");
+        transList.add("alert_update_move_confirm");
 
         return transList;
     }
