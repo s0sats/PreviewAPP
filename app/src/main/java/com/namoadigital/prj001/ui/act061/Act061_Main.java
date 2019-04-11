@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -288,6 +289,19 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         );
     }
 
+    @Override
+    public void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess) {
+        //Se era um processo novo
+        if(newProcess){
+            //Atualiza parametro recebido via bundle.
+            mPrefix = inbound_prefix;
+            mCode = inbound_code;
+            bNewProcess = false;
+        }
+        act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess);
+        //
+    }
+
     //region DrawerFragment
     @Override
     public IO_Inbound getInboundFromAct(int prefix, int code) {
@@ -320,7 +334,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void saveInboundHeader(IO_Inbound mInbound) {
         this.mInbound = mInbound;
         if(ToolBox_Con.isOnline(context)) {
-            mPresenter.saveInboundData(mInbound);
+            //mPresenter.saveInboundData(mInbound);
+            mPresenter.executeWsSaveInboundHeader(mInbound,bNewProcess);
         }else{
             showAlert(
                 hmAux_Trans.get("alert_io_creation_ttl"),
@@ -329,9 +344,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
+//    @Override
+//    public String getNewSavedToken() {
+//        return mPresenter.getNewSavedToken();
+//    }
+
     @Override
-    public String getNewSavedToken() {
-        return mPresenter.getNewSavedToken();
+    public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
+        this.controls_ss.addAll(controls_ss);
     }
 
     //endregion
@@ -367,7 +387,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPresenter.processFromOutboundRet(mLink);
             progressDialog.dismiss();
         } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())){
-            //mPresenter.processFromOutboundRet(mLink);
+            mPresenter.processHeaderSave(mPrefix,mCode,mLink);
             progressDialog.dismiss();
         }else {
             progressDialog.dismiss();

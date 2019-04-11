@@ -103,7 +103,7 @@
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
                 android:gravity="start|center_vertical"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
                 app:layout_constraintTop_toBottomOf="@id/act061_header_ss_from_outbound"
 
                 />
@@ -116,9 +116,9 @@
                 android:gravity="right|center_vertical"
                 android:layout_marginTop="8dp"
                 android:text="20XX.XXX"
-                app:layout_constraintBottom_toBottomOf="@+id/act061_header_tv_inbound"
-                app:layout_constraintEnd_toEndOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toEndOf="@+id/act061_header_tv_inbound"
+                app:layout_constraintBottom_toBottomOf="@id/act061_header_tv_inbound"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toEndOf="@id/act061_header_tv_inbound"
                 app:layout_constraintTop_toBottomOf="@id/act061_header_tv_inbound" />
 
             <TextView
@@ -130,10 +130,10 @@
                 android:text="ID - Trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toEndOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_inbound" />
 
             <EditText
                 android:id="@+id/act061_header_et_inbound_id"
@@ -143,10 +143,10 @@
                 android:ems="10"
                 android:inputType="text"
                 android:text="Name"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound_id" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_inbound_id" />
 
             <TextView
                 android:id="@+id/act061_header_tv_inbound_desc"
@@ -157,10 +157,10 @@
                 android:text="Desc - Trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_inbound_id" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_et_inbound_id" />
 
             <EditText
                 android:id="@+id/act061_header_et_inbound_desc"
@@ -169,9 +169,29 @@
                 android:layout_marginTop="8dp"
                 android:ems="10"
                 android:text="Name"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_inbound_desc" />
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_inbound_desc" />
+
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act061_header_ss_zone_conf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act061_header_et_inbound_desc"
+
+            />
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act061_header_ss_local_conf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act061_header_ss_zone_conf"
+            />
 
             <TextView
                 android:id="@+id/act061_header_tv_invoice"
@@ -182,10 +202,10 @@
                 android:text="Invoice - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_inbound_desc" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_local_conf" />
 
             <EditText
                 android:id="@+id/editact061_header_et_invoice"
@@ -195,9 +215,9 @@
                 android:ems="10"
                 android:inputType="text"
                 android:text="Name"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_invoice" />
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_invoice" />
 
             <TextView
                 android:id="@+id/act061_header_tv_invoice_dt"
@@ -207,10 +227,10 @@
                 android:text="Invoince Dt"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_invoice" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/editact061_header_et_invoice" />
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act061_header_mkdt_invoice_dt"
@@ -230,8 +250,8 @@
                 android:text="ETA - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_mkdt_invoice_dt" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_mkdt_invoice_dt" />
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act061_header_mkdt_eta_dt"
@@ -251,8 +271,8 @@
                 android:text="Arrival - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_mkdt_eta_dt" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_mkdt_eta_dt" />
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act061_header_mkdt_arrival_dt"
@@ -291,10 +311,10 @@
                 android:text="Truck - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_ss_carrier" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_ss_carrier" />
 
             <EditText
                 android:id="@+id/editact061_header_et_truck_num"
@@ -304,9 +324,9 @@
                 android:ems="10"
                 android:inputType="text"
                 android:text="Truck -trad"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_truck_num" />
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_truck_num" />
 
             <TextView
                 android:id="@+id/act061_header_tv_driver"
@@ -317,10 +337,10 @@
                 android:text="Driver - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/editact061_header_et_truck_num" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/editact061_header_et_truck_num" />
 
             <EditText
                 android:id="@+id/act061_header_et_driver"
@@ -330,9 +350,9 @@
                 android:ems="10"
                 android:inputType="text"
                 android:text="Driver -trad"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_driver" />
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_driver" />
 
             <TextView
                 android:id="@+id/act061_header_tv_comments"
@@ -343,10 +363,10 @@
                 android:text="Comments - trad"
                 android:textSize="@dimen/font_size_title"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_et_driver" />
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_et_driver" />
 
             <EditText
                 android:id="@+id/act061_header_et_comments"
@@ -356,9 +376,9 @@
                 android:ems="10"
                 android:inputType="text"
                 android:text="Comments -trad"
-                app:layout_constraintEnd_toStartOf="@+id/act061_header_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act061_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act061_header_tv_comments" />
+                app:layout_constraintEnd_toStartOf="@id/act061_header_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act061_header_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act061_header_tv_comments" />
 
             <Button
                 android:id="@+id/act061_header_btn_save"

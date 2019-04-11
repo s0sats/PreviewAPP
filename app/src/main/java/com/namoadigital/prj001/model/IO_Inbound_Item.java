@@ -1,6 +1,10 @@
 package com.namoadigital.prj001.model;
 
-public class IO_Inbound_Item {
+import java.io.Serializable;
+
+public class IO_Inbound_Item implements Serializable {
+    private static final long serialVersionUID = 6534975604003631255L;
+
     private  long customer_code;
     private  int inbound_prefix;
     private  int inbound_code;

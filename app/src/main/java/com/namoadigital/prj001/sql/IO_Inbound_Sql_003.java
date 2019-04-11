@@ -27,7 +27,8 @@ public class IO_Inbound_Sql_003 implements Specification {
                             IO_InboundDao.TABLE + " i \n" +
                         " WHERE\n" +
                         "   i.customer_code = '"+customer_code+"'\n" +
-                        "   and i.update_required = 1\n" +
+                        //"   and i.update_required = 1\n" +
+                        "   and i.token = ''\n" +
                         " ORDER BY" +
                         "   i.customer_code,"+
                         "   i.inbound_prefix,"+

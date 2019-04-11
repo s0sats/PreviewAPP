@@ -19,6 +19,8 @@ public interface Act061_Main_Contract {
         void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
 
         void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
+
+        void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess);
     }
 
     interface I_Presenter{
@@ -38,5 +40,9 @@ public interface Act061_Main_Contract {
         void saveInboundData(IO_Inbound mInbound);
 
         String getNewSavedToken();
+
+        void executeWsSaveInboundHeader(IO_Inbound mInbound, boolean newProcess);
+
+        void processHeaderSave(int mPrefix, int mCode, String actReturnJson);
     }
 }

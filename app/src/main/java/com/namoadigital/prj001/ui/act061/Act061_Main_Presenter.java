@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
@@ -156,19 +155,20 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     @Override
     public void saveInboundData(IO_Inbound mInbound) {
-       DaoObjReturn daoRet = inboundDao.addUpdate(mInbound);
-       //
-        if(!daoRet.hasError()){
-            executeWsSaveInboundHeader();
-        } else {
-            mView.showAlert(
-                hmAux_Trans.get("alert_inbound_save_error_ttl"),
-                hmAux_Trans.get("alert_inbound_save_error_msg")
-            );
-        }
+//       DaoObjReturn daoRet = inboundDao.addUpdate(mInbound);
+//       //
+//        if(!daoRet.hasError()){
+//            executeWsSaveInboundHeader(mInbound);
+//        } else {
+//            mView.showAlert(
+//                hmAux_Trans.get("alert_inbound_save_error_ttl"),
+//                hmAux_Trans.get("alert_inbound_save_error_msg")
+//            );
+//        }
     }
 
-    private void executeWsSaveInboundHeader() {
+    @Override
+    public void executeWsSaveInboundHeader(IO_Inbound mInbound, boolean newProcess) {
         if(ToolBox_Con.isOnline(context)){
             mView.setWsProcess(WS_IO_Inbound_Header_Save.class.getName());
             //
@@ -178,11 +178,58 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Inbound_Header_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(ConstantBaseApp.IO_OBJ_KEY, mInbound);
+            bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, newProcess);
+            mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    @Override
+    public void processHeaderSave(int mPrefix, int mCode, String actReturnJson) {
+        if(actReturnJson == null || actReturnJson.length() == 0){
+            mView.showAlert(
+                hmAux_Trans.get("alert_header_save_error_ttl"),
+                hmAux_Trans.get("alert_header_save_no_return_msg")
+            );
+        }else{
+            try{
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                  //
+                WS_IO_Inbound_Header_Save.InboundHeaderSaveActReturn retObj =
+                    gson.fromJson(
+                        actReturnJson,
+                        WS_IO_Inbound_Header_Save.InboundHeaderSaveActReturn.class
+                    );
+                //
+                if(retObj.isRetStatusOk()){
+                    mView.updateHeaderData(
+                        retObj.getInbound_prefix(),
+                        retObj.getInbound_code(),
+                        retObj.isNewProcess()
+                    );
+                }else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_header_save_error_ttl"),
+                        hmAux_Trans.get("alert_header_save_error_msg")
+                             + "\n" + retObj.getMsg()
+                    );
+                }
+
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                //
+                mView.showAlert(
+                    hmAux_Trans.get("alert_header_save_error_ttl"),
+                    hmAux_Trans.get("alert_header_save_process_error_msg")
+                );
+            }
+        }
+
     }
 
     @Override

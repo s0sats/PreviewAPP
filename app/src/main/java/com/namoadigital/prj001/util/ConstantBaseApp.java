@@ -432,6 +432,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
     public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
     public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
+    public static final String WS_EMPTY_SEND_LIST = "WS_EMPTY_SEND_LIST";
+    public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
+    public static final String WS_RETURN_LIST = "WS_RETURN_LIST";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
@@ -585,6 +588,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_EDIT = "EDIT";
     public static final String IO_PROCESS_NEW_KEY = "IO_PROCESS_NEW_KEY";
     public static final String IO_PROCESS_IN_EDIT_KEY = "IO_PROCESS_IN_EDIT_KEY";
+    public static final String IO_OBJ_KEY = "IO_OBJ_KEY";
 
     /*
      * Constantes CHAT

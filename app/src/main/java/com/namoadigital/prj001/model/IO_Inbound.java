@@ -2,9 +2,11 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Inbound {
+public class IO_Inbound implements Serializable {
+    private static final long serialVersionUID = 1063674396776438810L;
 
     @Expose
     private long customer_code;

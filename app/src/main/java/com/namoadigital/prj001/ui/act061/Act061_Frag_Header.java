@@ -29,16 +29,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Act061_Frag_Header extends BaseFragment {
+public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Header_Contract.I_View {
+
+    public static final String INTERATION_BLOCK_ALL = "INTERATION_BLOCK_ALL";
+    public static final String INTERATION_EDIT_ON_OFF = "INTERATION_EDIT_ON_OFF";
+    public static final String INTERATION_NEW_INBOUND = "INTERATION_NEW_INBOUND";
+    public static final String INTERATION_EXISTS_INBOUND = "INTERATION_EXISTS_INBOUND";
 
     private boolean bStatus = false;
     private Context context;
+    private Act061_Frag_Header_Presenter mPresenter;
     private int inboundPrefix;
     private int inboundCode;
     private IO_Inbound mInbound;
     private boolean bNewProcess;
     private boolean inEdit = false;
     private onFragHeaderInteraction mFragHeaderListener;
+    private String token ="";
     //
     private ImageView ivEdit;
     private SearchableSpinner ssFromType;
@@ -51,6 +58,8 @@ public class Act061_Frag_Header extends BaseFragment {
     private EditText etInboundDesc;
     private SearchableSpinner ssFromSite;
     private SearchableSpinner ssFromOutbound;
+    private SearchableSpinner ssConfZone;
+    private SearchableSpinner ssConfLocal;
     private ImageView ivFromOutbound;
     private TextView tvInvoiceLbl;
     private EditText etInvoice;
@@ -75,9 +84,8 @@ public class Act061_Frag_Header extends BaseFragment {
     /**
      * Interface principal do fragment
      * Deve ser implementado pela Act que for usá-lo
-     *
      */
-    public interface onFragHeaderInteraction{
+    public interface onFragHeaderInteraction {
         /**
          * Metodo chamado para carregar Inbound do banco de dados.
          *
@@ -94,7 +102,7 @@ public class Act061_Frag_Header extends BaseFragment {
 
         void saveInboundHeader(IO_Inbound mInbound);
 
-        String getNewSavedToken();
+        void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -105,14 +113,14 @@ public class Act061_Frag_Header extends BaseFragment {
         this.mFragHeaderListener = mFragHeaderListener;
     }
 
-    public static Act061_Frag_Header getInstance(HMAux hmAux_Trans,int inbound_prefix, int inbound_code, boolean bNewProcess){
+    public static Act061_Frag_Header getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code, boolean bNewProcess) {
         Act061_Frag_Header fragment = new Act061_Frag_Header();
         Bundle args = new Bundle();
         //
-        args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
-        args.putInt(IO_InboundDao.INBOUND_PREFIX,inbound_prefix);
-        args.putInt(IO_InboundDao.INBOUND_CODE,inbound_code);
-        args.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,bNewProcess);
+        args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
+        args.putInt(IO_InboundDao.INBOUND_PREFIX, inbound_prefix);
+        args.putInt(IO_InboundDao.INBOUND_CODE, inbound_code);
+        args.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, bNewProcess);
         //
         fragment.setArguments(args);
         return fragment;
@@ -132,6 +140,12 @@ public class Act061_Frag_Header extends BaseFragment {
         //
         recoverBundleInfo(getArguments());
         //
+        mPresenter = new Act061_Frag_Header_Presenter(
+            context,
+            this,
+            hmAux_Trans
+        );
+        //
         iniVar(view);
         //
         initActions();
@@ -142,12 +156,12 @@ public class Act061_Frag_Header extends BaseFragment {
     private void recoverBundleInfo(Bundle arguments) {
         this.context = getActivity();
         //
-        if(arguments != null){
-            hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
-            inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX,-1);
-            inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE,-1);
-            bNewProcess = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,false);
-            inEdit = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_IN_EDIT_KEY,false);
+        if (arguments != null) {
+            hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
+            inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX, -1);
+            inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE, -1);
+            bNewProcess = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
+            inEdit = arguments.getBoolean(ConstantBaseApp.IO_PROCESS_IN_EDIT_KEY, false);
         }
     }
 
@@ -168,10 +182,10 @@ public class Act061_Frag_Header extends BaseFragment {
     }
 
     private void setIvStatus() {
-       ivEdit.setImageDrawable( inEdit ? context.getDrawable(R.drawable.ic_pencil) : context.getDrawable(R.drawable.ic_pencil_lock));
+        ivEdit.setImageDrawable(inEdit ? context.getDrawable(R.drawable.ic_pencil) : context.getDrawable(R.drawable.ic_pencil_lock));
     }
 
-    private void initActions(){
+    private void initActions() {
         ssFromType.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -180,11 +194,11 @@ public class Act061_Frag_Header extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if(hmAux != null && hmAux.hasConsistentValue(SearchableSpinner.CODE)){
-                    if(mFragHeaderListener != null){
-                        if(ToolBox_Con.isOnline(context)){
+                if (hmAux != null && hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
+                    if (mFragHeaderListener != null) {
+                        if (ToolBox_Con.isOnline(context)) {
                             mFragHeaderListener.fromTypeSelected(hmAux.get(SearchableSpinner.CODE));
-                        }else{
+                        } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }
                     }
@@ -197,12 +211,13 @@ public class Act061_Frag_Header extends BaseFragment {
             public void onClick(View v) {
                 inEdit = !inEdit;
                 setIvStatus();
-                applyEditMode(inEdit);
+                applyViewsInteraction(INTERATION_EDIT_ON_OFF);
             }
         });
         //
         ssFromSite.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             HMAux oldSite = new HMAux();
+
             @Override
             public void onItemPreSelected(HMAux hmAux) {
                 oldSite = hmAux;
@@ -210,13 +225,13 @@ public class Act061_Frag_Header extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if(hmAux != null && hmAux.size() > 0 && hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+                if (hmAux != null && hmAux.size() > 0 && hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
                     ivFromOutbound.setEnabled(true);
                     //
-                    if(!hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(oldSite.get(SearchableSpinner.CODE))) {
+                    if (!hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(oldSite.get(SearchableSpinner.CODE))) {
                         resetSSFromOutbound();
                     }
-                }else{
+                } else {
                     ivFromOutbound.setEnabled(false);
                     ssFromOutbound.setmEnabled(false);
                     resetSSFromOutbound();
@@ -227,15 +242,15 @@ public class Act061_Frag_Header extends BaseFragment {
         ivFromOutbound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ssFromOutbound != null && ssFromOutbound.getmOption() != null){
-                    if(ssFromOutbound.getmOption().size() == 0) {
+                if (ssFromOutbound != null && ssFromOutbound.getmOption() != null) {
+                    if (ssFromOutbound.getmOption().size() == 0) {
                         if (mFragHeaderListener != null
                             && ssFromSite.getmValue() != null
                             && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
                         ) {
                             mFragHeaderListener.searchFromOutboundList(ssFromSite.getmValue().get(SearchableSpinner.CODE));
                         }
-                    }else{
+                    } else {
                         ssFromOutbound.performEtValueClick();
                     }
                 }
@@ -245,18 +260,19 @@ public class Act061_Frag_Header extends BaseFragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bNewProcess || hasHeaderChanged()){
+                if (bNewProcess || hasHeaderChanged()) {
                     //Sem else aqui pois proprio metodo exibira msg de erro
-                    if(validateSave()){
+                    if (validateSave()) {
                         setDataToInbound();
-                        blockAll();
+                        //blockAll();
+                        applyViewsInteraction(INTERATION_BLOCK_ALL);
                         //
-                        if(mFragHeaderListener != null){
+                        if (mFragHeaderListener != null) {
                             mFragHeaderListener.saveInboundHeader(mInbound);
                         }
                     }
-                }else{
-                    if(mFragHeaderListener != null){
+                } else {
+                    if (mFragHeaderListener != null) {
                         mFragHeaderListener.showFragAlert(
                             hmAux_Trans.get("alert_no_data_changed_ttl"),
                             hmAux_Trans.get("alert_no_data_changed_msg")
@@ -267,22 +283,51 @@ public class Act061_Frag_Header extends BaseFragment {
         });
     }
 
-    private void blockAll() {
-        for(View view : properties){
+    private void applyViewsInteraction(String mode) {
+        ArrayList<View> views = (ArrayList<View>) properties.clone();
+        //
+        switch (mode) {
+            case INTERATION_BLOCK_ALL:
+                applyEditMode(properties, false);
+                break;
+            case INTERATION_EDIT_ON_OFF:
+                views.remove(ssFromType);
+                views.remove(ssFromSite);
+                views.remove(ssFromOutbound);
+                views.remove(ssPartner);
+                //
+                applyEditMode(views, inEdit);
+                break;
+            case INTERATION_NEW_INBOUND:
+                views.remove(ssFromType);
+                views.remove(ssFromSite);
+                views.remove(ssFromOutbound);
+                //
+                applyEditMode(views, true);
+                break;
+        }
+    }
+
+
+    private void applyEditMode(ArrayList<View> views, boolean enable) {
+        for (View view : views) {
             if (view instanceof SearchableSpinner) {
-                ((SearchableSpinner) view).setmEnabled(false);
+                ((SearchableSpinner) view).setmEnabled(enable);
             } else if (view instanceof MkDateTime) {
-                ((MkDateTime) view).setmEnabled(false);
+                ((MkDateTime) view).setmEnabled(enable);
             } else {
-                view.setEnabled(false);
+                view.setEnabled(enable);
             }
         }
     }
 
+
     private void setDataToInbound() {
-        if(mInbound != null){
+        if (mInbound != null) {
+            token = token.isEmpty() ? ToolBox_Inf.getToken(context) :token;
             mInbound.setCustomer_code(bNewProcess ? ToolBox_Con.getPreference_Customer_Code(context) : mInbound.getCustomer_code());
-            mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
+            //mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
+            mInbound.setToken(token);
             mInbound.setInbound_id(etInboundId.getText().toString());
             mInbound.setInbound_desc(etInboundDesc.getText().toString());
             mInbound.setOrigin(ConstantBaseApp.SO_ORIGIN_CHANGE_APP);
@@ -293,7 +338,7 @@ public class Act061_Frag_Header extends BaseFragment {
             mInbound.setTo_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mInbound.setFrom_type(ssFromType.getmValue().get(SearchableSpinner.CODE));
             //Reseta campos do obj se novo obj
-            if(bNewProcess) {
+            if (bNewProcess) {
                 mInbound.setFrom_partner_code(null);
                 mInbound.setFrom_partner_id(null);
                 mInbound.setFrom_partner_desc(null);
@@ -302,7 +347,7 @@ public class Act061_Frag_Header extends BaseFragment {
                 mInbound.setFrom_site_desc(null);
             }
             //
-            if(ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
                 if (ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     mInbound.setFrom_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
                     mInbound.setFrom_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
@@ -312,7 +357,7 @@ public class Act061_Frag_Header extends BaseFragment {
                     mInbound.setFrom_partner_id(null);
                     mInbound.setFrom_partner_desc(null);
                 }
-            }else {
+            } else {
                 //
                 if (ssFromSite != null && ssFromSite.getmValue() != null && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     mInbound.setFrom_site_code(Integer.valueOf(ssFromSite.getmValue().get(SearchableSpinner.CODE)));
@@ -325,11 +370,11 @@ public class Act061_Frag_Header extends BaseFragment {
                 }
             }
             //
-            if(ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            if (ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                 mInbound.setCarrier_code(Integer.valueOf(ssCarrier.getmValue().get(SearchableSpinner.CODE)));
                 mInbound.setCarrier_id(ssCarrier.getmValue().get(SearchableSpinner.ID));
                 mInbound.setCarrier_desc(ssCarrier.getmValue().get(SearchableSpinner.DESCRIPTION));
-            }else{
+            } else {
                 mInbound.setCarrier_code(null);
                 mInbound.setCarrier_id(null);
                 mInbound.setCarrier_desc(null);
@@ -337,18 +382,18 @@ public class Act061_Frag_Header extends BaseFragment {
             mInbound.setTruck_number(etTruckNum.getText().toString());
             mInbound.setDriver(etDriver.getText().toString());
             mInbound.setComments(etComments.getText().toString());
-            mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus() );
+            mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus());
             mInbound.setUpdate_required(1);
         }
     }
 
-    private String getSaveNewToken() {
-        if(mFragHeaderListener != null){
-            return mFragHeaderListener.getNewSavedToken();
-        }
-        //
-        return null;
-    }
+//    private String getSaveNewToken() {
+//        if (mFragHeaderListener != null) {
+//            //return mFragHeaderListener.getNewSavedToken();
+//        }
+//        //
+//        return null;
+//    }
 
     private boolean hasHeaderChanged() {
         //boolean headerChanged = false;
@@ -376,7 +421,7 @@ public class Act061_Frag_Header extends BaseFragment {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -388,18 +433,17 @@ public class Act061_Frag_Header extends BaseFragment {
         boolean validate = true;
         String msg = "";
         //
-        if(
+        if (
             ssFromType == null
-            || ssFromType.getmValue() == null
-            || (ssFromType.getmValue() != null && !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE)))
-        {
+                || ssFromType.getmValue() == null
+                || (ssFromType.getmValue() != null && !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
             msg += hmAux_Trans.get("alert_no_from_type_selected_msg");
             validate = false;
 
         }
         //Se passou no primeiro if, continua a analise dos proximos campos
         //se não, pula e vai direto pra msg de erro.
-        if(validate) {
+        if (validate) {
             if (ssFromType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
                 if (
                     ssFromSite == null
@@ -418,23 +462,23 @@ public class Act061_Frag_Header extends BaseFragment {
                 }
             }
             //
-            if(!mkdtInvoinceDt.isValid()){
+            if (!mkdtInvoinceDt.isValid()) {
                 msg += hmAux_Trans.get("alert_invalid_date_msg");
                 validate = false;
             }
             //
-            if(!mkdtEtaDt.isValid()){
+            if (!mkdtEtaDt.isValid()) {
                 msg += hmAux_Trans.get("alert_invalid_date_msg");
                 validate = false;
             }
-            if(!mkdtArrivalDt.isValid()){
+            if (!mkdtArrivalDt.isValid()) {
                 msg += hmAux_Trans.get("alert_invalid_date_msg");
                 validate = false;
             }
         }
         //
-        if(!validate){
-            if(mFragHeaderListener != null){
+        if (!validate) {
+            if (mFragHeaderListener != null) {
                 mFragHeaderListener.showFragAlert(
                     hmAux_Trans.get("alert_no_from_partner_selected_msg"),
                     msg
@@ -465,6 +509,8 @@ public class Act061_Frag_Header extends BaseFragment {
         etInboundId = view.findViewById(R.id.act061_header_et_inbound_id);
         tvInboundDescLbl = view.findViewById(R.id.act061_header_tv_inbound_desc);
         etInboundDesc = view.findViewById(R.id.act061_header_et_inbound_desc);
+        ssConfZone = view.findViewById(R.id.act061_header_ss_zone_conf);
+        ssConfLocal = view.findViewById(R.id.act061_header_ss_local_conf);
         tvInvoiceLbl = view.findViewById(R.id.act061_header_tv_invoice);
         etInvoice = view.findViewById(R.id.editact061_header_et_invoice);
         tvInvoiceDtLbl = view.findViewById(R.id.act061_header_tv_invoice_dt);
@@ -487,17 +533,24 @@ public class Act061_Frag_Header extends BaseFragment {
         properties.add(etInboundId);
         properties.add(etInboundDesc);
         properties.add(ssFromSite);
+        properties.add(ssPartner);
         properties.add(ssFromOutbound);
         properties.add(etInvoice);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
         properties.add(mkdtArrivalDt);
         properties.add(ssModal);
-        properties.add(ssPartner);
+        properties.add(ssCarrier);
         properties.add(etTruckNum);
         properties.add(etDriver);
         properties.add(etComments);
-
+        //
+        controls_ss.add(ssConfZone);
+        controls_ss.add(ssConfLocal);
+        //
+        if (mFragHeaderListener != null) {
+            mFragHeaderListener.addFragHeaderControlsSS(controls_ss);
+        }
     }
 
     private void setViewsText() {
@@ -530,6 +583,9 @@ public class Act061_Frag_Header extends BaseFragment {
         ssFromOutbound.setmEnabled(false);
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
+        ssConfZone.setmStyle(1);
+        ssConfLocal.setmStyle(1);
+        ssConfLocal.setmShowLabel(false);
 
     }
 
@@ -540,18 +596,34 @@ public class Act061_Frag_Header extends BaseFragment {
         }
         //
         HMAux optSite = new HMAux();
-        optSite.put(SearchableSpinner.CODE,ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.ID,ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.DESCRIPTION,hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_SITE));
+        optSite.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_SITE);
+        optSite.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_SITE);
+        optSite.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_SITE));
         mOptions.add(optSite);
         //
-        HMAux optPartner= new HMAux();
-        optPartner.put(SearchableSpinner.CODE,ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.ID,ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.DESCRIPTION,hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_PARTNER));
+        HMAux optPartner = new HMAux();
+        optPartner.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_PARTNER));
         mOptions.add(optPartner);
         //
         ssFromType.setmOption(mOptions);
+    }
+
+    private void loadZoneSS(boolean reset_val) {
+        if (reset_val) {
+            ToolBox_Inf.setSSmValue(ssConfZone, null, null, null, false, false);
+        }
+        //
+        ssConfZone.setmOption(mPresenter.getZonesOptions());
+    }
+
+    private void loadLocalSS(boolean reset_val) {
+        if (reset_val) {
+            ToolBox_Inf.setSSmValue(ssConfLocal, null, null, null, false, false);
+        }
+        //
+        ssConfLocal.setmOption(mPresenter.getLocalsOptions(ssConfZone.getmValue().get(SearchableSpinner.CODE)));
     }
 
     private void configMkDt() {
@@ -569,35 +641,42 @@ public class Act061_Frag_Header extends BaseFragment {
     }
 
     private void loadInbound() {
-        if(mFragHeaderListener != null){
-            if(bNewProcess) {
+        if (mFragHeaderListener != null) {
+            if (bNewProcess) {
                 mInbound = new IO_Inbound();
             } else {
                 mInbound = mFragHeaderListener.getInboundFromAct(inboundPrefix, inboundCode);
             }
             loadDataToScreen();
-        }else{
+        } else {
             //Msg de erro
         }
     }
 
-    private void applyEditMode(boolean inEdit){
-        for(View view : properties){
-            if(view.getId() != ssFromType.getId()
-                || view.getId() != ssFromOutbound.getId()
-            ) {
-                if (view instanceof SearchableSpinner) {
-                    ((SearchableSpinner) view).setmEnabled(inEdit);
-                } else if (view instanceof MkDateTime) {
-                    ((MkDateTime) view).setmEnabled(inEdit);
-                } else {
-                    view.setEnabled(inEdit);
-                }
-            }
-        }
+    public void applyInboundCreated(HMAux hmAux_Trans, int inbound_prefix,int inbound_code,boolean newProcess){
+        updateArguments(hmAux_Trans,inbound_prefix,inbound_code,newProcess);
+        //
+        this.hmAux_Trans = hmAux_Trans;
+        this.inboundPrefix = inbound_prefix;
+        this.inboundCode = inbound_code;
+        this.bNewProcess = newProcess;
+        //
+        loadInbound();
+
     }
 
-    public void updateMDLists(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals){
+    private void updateArguments(HMAux hmAux_trans, int inbound_prefix, int inbound_code, boolean bNewProcess) {
+        Bundle args = getArguments();
+        if(args != null){
+            args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_trans);
+            args.putInt(IO_InboundDao.INBOUND_PREFIX, inbound_prefix);
+            args.putInt(IO_InboundDao.INBOUND_CODE, inbound_code);
+            args.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, bNewProcess);
+        }
+
+    }
+
+    public void updateMDLists(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
         loadFromSiteSS(generateFromSiteSSOption(sites));
         //Partner e carrier mesma base de dados.
         loadPartnerSS(generatePartnerSSOption(partners));
@@ -605,10 +684,10 @@ public class Act061_Frag_Header extends BaseFragment {
         loadModalSS(generateModalSSOption(modals));
         //
         setUIForCreation(true);
-        applyEditMode(true);
+        applyViewsInteraction(INTERATION_NEW_INBOUND);
     }
 
-    public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound){
+    public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
         loadFromOutboundSS(generateFromOutboundSSOption(outbound));
     }
 
@@ -637,11 +716,11 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private ArrayList<HMAux> generateFromSiteSSOption(ArrayList<MD_Site> sites) {
         ArrayList<HMAux> auxList = new ArrayList<>();
-        for(MD_Site site: sites){
+        for (MD_Site site : sites) {
             HMAux aux = new HMAux();
             aux.put(SearchableSpinner.CODE, site.getSite_code());
-            aux.put(SearchableSpinner.ID,site.getSite_id());
-            aux.put(SearchableSpinner.DESCRIPTION,site.getSite_desc());
+            aux.put(SearchableSpinner.ID, site.getSite_id());
+            aux.put(SearchableSpinner.DESCRIPTION, site.getSite_desc());
             auxList.add(aux);
         }
         //
@@ -650,7 +729,7 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private ArrayList<HMAux> generatePartnerSSOption(ArrayList<MD_Partner> partners) {
         ArrayList<HMAux> auxList = new ArrayList<>();
-        for(MD_Partner partner: partners){
+        for (MD_Partner partner : partners) {
             HMAux aux = new HMAux();
             aux.put(SearchableSpinner.CODE, String.valueOf(partner.getPartner_code()));
             aux.put(SearchableSpinner.ID, partner.getPartner_id());
@@ -663,7 +742,7 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private ArrayList<HMAux> generateModalSSOption(ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
         ArrayList<HMAux> auxList = new ArrayList<>();
-        for(T_IO_Master_Data_Rec.ModalObj modalObj: modals){
+        for (T_IO_Master_Data_Rec.ModalObj modalObj : modals) {
             HMAux aux = new HMAux();
             aux.put(SearchableSpinner.CODE, String.valueOf(modalObj.getModal_code()));
             aux.put(SearchableSpinner.ID, modalObj.getModal_id());
@@ -676,10 +755,10 @@ public class Act061_Frag_Header extends BaseFragment {
 
     private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_Outbound_Search_Record> outbounds) {
         ArrayList<HMAux> auxList = new ArrayList<>();
-        for(IO_Outbound_Search_Record outbound: outbounds){
-            String desc = outbound.getOutbound_desc() != null  && outbound.getOutbound_desc().trim().length() > 0
-                            ? " - " + outbound.getOutbound_desc()
-                            : "";
+        for (IO_Outbound_Search_Record outbound : outbounds) {
+            String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
+                ? " - " + outbound.getOutbound_desc()
+                : "";
             HMAux aux = new HMAux();
             aux.put(SearchableSpinner.CODE, String.valueOf(outbound.getOutbound_code()));
             aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
@@ -694,17 +773,18 @@ public class Act061_Frag_Header extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (mInbound != null) {
-                if(bNewProcess){
+                if (bNewProcess) {
                     setUIForCreation(false);
                     loadFromTypeSS(false);
-                }else {
-                    applyEditMode(false);
+                } else {
+                    applyViewsInteraction(INTERATION_EDIT_ON_OFF);
                 }
-                if(mInbound.getInbound_prefix() > 0 && mInbound.getInbound_code() > 0) {
+                //
+                if (mInbound.getInbound_prefix() > 0 && mInbound.getInbound_code() > 0) {
                     tvInboundLbl.setVisibility(View.VISIBLE);
                     tvInboundPrefixCode.setVisibility(View.VISIBLE);
                     tvInboundPrefixCode.setText(mInbound.getInbound_prefix() + "." + mInbound.getInbound_code());
-                }else{
+                } else {
                     tvInboundLbl.setVisibility(View.GONE);
                     tvInboundPrefixCode.setVisibility(View.GONE);
                 }
@@ -712,11 +792,24 @@ public class Act061_Frag_Header extends BaseFragment {
                 etInboundId.setTag(mInbound.getInbound_id());
                 etInboundDesc.setText(mInbound.getInbound_desc());
                 etInboundDesc.setTag(mInbound.getInbound_desc());
+                //
+                if (mInbound.getPut_away_process() == 1) {
+                    ssConfZone.setVisibility(View.VISIBLE);
+                    ssConfLocal.setVisibility(View.VISIBLE);
+                    //
+                    loadZoneSS(false);
+                    loadLocalSS(false);
+                    mPresenter.getZoneDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf());
+                    mPresenter.getLocalDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf(), mInbound.getLocal_code_conf());
+                } else {
+                    ssConfZone.setVisibility(View.GONE);
+                    ssConfLocal.setVisibility(View.GONE);
+                }
                 etInvoice.setText(mInbound.getInvoice_number());
                 etInvoice.setTag(mInbound.getInvoice_number());
-                mkdtInvoinceDt.setmValue(mInbound.getInvoice_date(),true);
-                mkdtEtaDt.setmValue(mInbound.getEta_date(),true);
-                mkdtArrivalDt.setmValue(mInbound.getArrival_date(),true);
+                mkdtInvoinceDt.setmValue(mInbound.getInvoice_date(), true);
+                mkdtEtaDt.setmValue(mInbound.getEta_date(), true);
+                mkdtArrivalDt.setmValue(mInbound.getArrival_date(), true);
                 //ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
                 //ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
                 etTruckNum.setText(mInbound.getTruck_number());
@@ -729,17 +822,18 @@ public class Act061_Frag_Header extends BaseFragment {
         }
     }
 
+
     private void setUIForCreation(boolean isMasterDataLoaded) {
         clOtherInfo.setVisibility(isMasterDataLoaded ? View.VISIBLE : View.GONE);
         ivEdit.setVisibility(View.GONE);
         //
-        if(isMasterDataLoaded) {
-            if(ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)){
+        if (isMasterDataLoaded) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
                 ssPartner.setVisibility(View.VISIBLE);
                 ssFromSite.setVisibility(View.GONE);
                 ssFromOutbound.setVisibility(View.GONE);
                 ssFromOutbound.setmEnabled(false);
-            }else{
+            } else {
                 ssPartner.setVisibility(View.GONE);
                 ssFromSite.setVisibility(View.VISIBLE);
                 ssFromOutbound.setVisibility(View.VISIBLE);
@@ -753,7 +847,7 @@ public class Act061_Frag_Header extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         //
-        if(context instanceof onFragHeaderInteraction){
+        if (context instanceof onFragHeaderInteraction) {
             mFragHeaderListener = (onFragHeaderInteraction) context;
         }
 
@@ -771,7 +865,7 @@ public class Act061_Frag_Header extends BaseFragment {
         bStatus = true;
     }
 
-    public static List<String> getFragTranslationsVars(){
+    public static List<String> getFragTranslationsVars() {
         List<String> transListFrag = new ArrayList<String>();
         //
         transListFrag.add("from_type_lbl");
@@ -799,8 +893,6 @@ public class Act061_Frag_Header extends BaseFragment {
         transListFrag.add("alert_invalid_date_msg");
         //
         return transListFrag;
-
-
     }
 
 }

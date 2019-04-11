@@ -6,7 +6,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * LUCHE - 09/04/2019
  *
- * Resgata nova inbound criada mas não transmitda
+ * Seleciona itens que token pendente de envio.
  *
  */
 public class IO_Inbound_Sql_005 implements Specification {
@@ -27,8 +27,11 @@ public class IO_Inbound_Sql_005 implements Specification {
                     IO_InboundDao.TABLE+" i\n" +
                     " WHERE\n" +
                     "  i.customer_code = '"+customer_code+"'\n" +
-                    "  and i.inbound_prefix = '0'\n" +
-                    "  and i.inbound_code = '0'\n")
+                    "  and i.token != ''" +
+                    " ORBER BY" +
+                    "   i.customer_code,\n"+
+                    "   i.inbound_prefix,\n" +
+                    "   i.inbound_code \n")
             .toString();
     }
 }
