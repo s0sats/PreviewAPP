@@ -9,12 +9,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Return;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
+import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -32,8 +35,9 @@ public class WS_IO_Move_Save extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "ws_io_move_save";
     private Gson gson = new GsonBuilder().serializeNulls().create();
+    boolean reRun = false;
     private IO_MoveDao moveDao;
-    ArrayList<IO_Move> moveTokenList = new ArrayList<>();
+    private String token;
 
     public WS_IO_Move_Save() {
         super("WS_IO_Move_Save");
@@ -46,7 +50,6 @@ public class WS_IO_Move_Save extends IntentService {
 
         try {
             //
-            gson = new GsonBuilder().serializeNulls().create();
             moveDao = new IO_MoveDao(getApplicationContext(),
                     ToolBox_Con.customDBPath(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
@@ -74,63 +77,130 @@ public class WS_IO_Move_Save extends IntentService {
 
     private void processWsIoMoveSave() throws Exception {
         loadTranslation();
+        HMAux hmAuxRet = new HMAux();
+        ToolBox.sendBCStatus(
+                getApplicationContext(),
+                "STATUS",
+                hmAux_Trans.get("msg_preparing_move_data"),
+                "",
+                "0"
+        );
+        //
+        ArrayList<IO_Move> moveList = new ArrayList<>();
+        token = "";
 
+        if (hasMoveToken(moveList, 0)) {
+            reRun = true;
+        } else {
+            token = ToolBox_Inf.getToken(getApplicationContext());
 
-            ToolBox.sendBCStatus(
-                    getApplicationContext(),
-                    "STATUS",
-                    hmAux_Trans.get("msg_preparing_move_data"),
-                    "",
-                    "0"
-            );
-            //
-
-            checkMoveTokens();
-            ArrayList<IO_Move> moveList;
-            String token = ToolBox_Inf.getToken(getApplicationContext());
             moveList = (ArrayList<IO_Move>) moveDao.query(
                     new IO_Move_Order_Item_Sql_003(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                            1
                     ).toSqlQuery()
             );
-            //
-            if(moveList!=null && moveList.isEmpty()){
-                HMAux hmAuxRet = new HMAux();
+
+            if (moveList != null && moveList.isEmpty()) {
                 hmAuxRet.put(MOVE_EMPTY_LIST, "1");
                 hmAuxRet.put(MOVE_RETURN_LIST, "");
                 //
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_move_to_send"), hmAuxRet, "", "0");
                 return;
             }
-
             for (IO_Move move : moveList) {
                 move.setToken(token);
             }
-            T_IO_Move_Save_Env env = new T_IO_Move_Save_Env();
-            //
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
-            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-            env.setToken(token);
-            env.setMove(moveList);
-            //
-            String json_token_content = gson.toJson(env);
+            reRun = false;
+        }
+        //
+        T_IO_Move_Save_Env env = new T_IO_Move_Save_Env();
+        //
+        env.setApp_code(Constant.PRJ001_CODE);
+        env.setApp_version(Constant.PRJ001_VERSION);
+        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        env.setToken(token);
+        env.setMove(moveList);
+        //
+        String resultado = ToolBox_Con.connWebService(
+                Constant.WS_IO_MOVE_DOWNLOAD,
+                gson.toJson(env)
+        );
+        T_IO_Move_Save_Rec rec = gson.fromJson(
+                resultado,
+                T_IO_Move_Save_Rec.class
+        );
+        //
+        if (!ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                1,
+                1
+        )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
+        ) {
+            return;
+        }
+        hmAuxRet.put(MOVE_EMPTY_LIST, "0");
+        hmAuxRet.put(MOVE_RETURN_LIST, "");
+        String move_list_ret = "";
 
+        for (IO_Move_Return move_ret : rec.getResult()) {
+            String move_pk = move_ret.getMove_prefix() + "." + move_ret.getMove_code();
             //
-
+            hmAuxRet.put(move_pk, "0");
+            //
+            move_list_ret += Constant.MAIN_CONCAT_STRING + move_pk
+                    + Constant.MAIN_CONCAT_STRING_2 + move_ret.getRet_status();
+            //
+            if (!move_ret.getRet_status().equalsIgnoreCase("OK")) {
+                move_list_ret += ":\n" + move_ret.getRet_msg();
+            }
+            //
+            if (move_ret.getMove() != null && move_ret.getMove().size() > 1) {
+                for (IO_Move move : move_ret.getMove()) {
+                    DaoObjReturn daoReturn = moveDao.addUpdate(move);
+                    if(daoReturn.hasError()){
+                        //Não sabe Moyses?
+                    }
+                }
+            }
+        }
+        //
+//        processResponse(rec.getMove());
+        if (reRun) {
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_data"), "", "0");
+            processWsIoMoveSave();
+        } else {
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
         }
 
-    private void checkMoveTokens() {
-        moveTokenList = (ArrayList<IO_Move>) moveDao.query(
-                new IO_Move_Order_Item_Sql_004(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ).toSqlQuery()
-        );
-        moveTokenList.isEmpty();
     }
 
+    private boolean hasMoveToken(ArrayList<IO_Move> moveList, int pending) {
+        moveList = (ArrayList<IO_Move>) moveDao.query(
+                new IO_Move_Order_Item_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        pending
+                ).toSqlQuery()
+        );
 
+        if (moveList.size() > 0) {
+            //Atualiza valor do token em todos os cabeçalhos
+            for (IO_Move io_move : moveList) {
+                token = io_move.getToken();
+            }
+            moveDao.addUpdate(moveList, false);
+        }
+        return moveList.size() > 0;
+    }
 
 
     private File saveTokenMoveAsFile(String token, String token_content) throws IOException {

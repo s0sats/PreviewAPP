@@ -5,11 +5,11 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 
-public class IO_Move_Order_Item_Sql_004 implements Specification {
+public class IO_Move_Order_Item_Sql_003 implements Specification {
     private long customer_code;
     private int s_pending;
 
-    public IO_Move_Order_Item_Sql_004(long customer_code, int s_pending) {
+    public IO_Move_Order_Item_Sql_003(long customer_code, int s_pending) {
         this.customer_code = customer_code;
         this.s_pending = s_pending;
     }

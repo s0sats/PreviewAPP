@@ -11,7 +11,9 @@ import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
@@ -141,6 +143,29 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         io_move.getSerial().add(serial);
         io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         ioMoveDao.addUpdate(io_move);
+
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Move_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+            Bundle bundle = new Bundle();
+            //
+
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_trans.get("alert_no_conection_ttl"),
+                    hmAux_trans.get("alert_no_conection_msg")
+            );
+        }
     }
 
 }

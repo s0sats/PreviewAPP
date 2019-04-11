@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,6 +19,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
@@ -87,6 +90,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act058_title");
+        transList.add("dialog_save_move_ttl");
+        transList.add("dialog_save_move_msg");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
@@ -181,8 +186,66 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         super.processCloseACT(mLink, mRequired, hmAux);
         if(ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
+        }else{
+            if(ws_process.equals(WS_IO_Move_Save.class.getName())){
+                Toast.makeText(this, "Deu bom", Toast.LENGTH_SHORT).show();
+            }
         }
         disableProgressDialog();
+    }
+
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
     }
 
     @Override

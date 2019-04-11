@@ -1,9 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.List;
 
 public class T_IO_Move_Save_Env extends Main_Header_Env {
+    @Expose
     private String token;
+    @Expose
     private List<IO_Move>  move;
 
     public String getToken() {

@@ -290,10 +290,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private void persistIoMoveChanges() {
         Integer classCode = null;
         Integer reasonCode = null;
-        if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+        if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
             classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
         }
-        if(ss_class.getmValue()!= null || ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+        if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
             reasonCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
         }
         mListener.persistIoMove(
@@ -357,6 +357,20 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             isSuccessfully = false;
         } else {
             ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+
+        if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isSuccessfully = false;
+        } else {
+            ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+
+        if (ss_local.getmValue() == null || !ss_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isSuccessfully = false;
+        } else {
+            ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         }
 
         return isSuccessfully;
