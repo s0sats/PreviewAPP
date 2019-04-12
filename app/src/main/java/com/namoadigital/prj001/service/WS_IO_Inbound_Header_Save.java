@@ -10,10 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Inbound_Save_Return;
-import com.namoadigital.prj001.model.T_IO_Inbound_Header_Env;
-import com.namoadigital.prj001.model.T_IO_Inbound_Header_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -146,7 +143,8 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
                 inboundRet.getInbound_code(),
                 inboundRet.getRet_status().equalsIgnoreCase("OK"),
                 inboundRet.getRet_status(),
-                newProcess
+                newProcess,
+                inboundRet.getInbound().size() > 0
 
             );
             //
@@ -154,9 +152,20 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
                 //Se ret OK, verifica se inbound existe e se sim, atualiza no banco
                 //e seta como "inbound full", passando o parametro 1 na chave da pk.
                 if(inboundRet.getInbound() != null && inboundRet.getInbound().size() > 0){
+                    //Seta pk no itens caso existam
+                    for(IO_Inbound_Item inboundItem : inboundRet.getInbound().get(0).getItems()){
+                        inboundItem.setPK(inboundRet.getInbound().get(0));
+                    }
+                    //
                     inboundDao.addUpdate(inboundRet.getInbound().get(0));
                 }else{
-                    //LANÇAR EXCPETION LISTA VAZIA??!?!?!?!?
+                    if(newProcess){
+                        //LANÇAR EXCPETION LISTA VAZIA??!?!?!?!?
+                    }else{
+                        ioInbound.setToken(null);
+                        ioInbound.setScn(inboundRet.getScn());
+                        inboundDao.addUpdate(ioInbound);
+                    }
                 }
             }
             //
@@ -200,14 +209,17 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
         private boolean retStatus;
         private String msg;
         private boolean newProcess;
+        private boolean inboundFull;
 
-        public InboundHeaderSaveActReturn(int customer_code, int inbound_prefix, int inbound_code, boolean retStatus, String msg, boolean newProcess) {
+
+        public InboundHeaderSaveActReturn(int customer_code, int inbound_prefix, int inbound_code, boolean retStatus, String msg, boolean newProcess, boolean inboundFull) {
             this.customer_code = customer_code;
             this.inbound_prefix = inbound_prefix;
             this.inbound_code = inbound_code;
             this.retStatus = retStatus;
             this.msg = msg;
             this.newProcess = newProcess;
+            this.inboundFull = inboundFull;
         }
 
         public int getCustomer_code() {
@@ -256,6 +268,14 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
 
         public void setNewProcess(boolean newProcess) {
             this.newProcess = newProcess;
+        }
+
+        public boolean isInboundFull() {
+            return inboundFull;
+        }
+
+        public void setInboundFull(boolean inboundFull) {
+            this.inboundFull = inboundFull;
         }
     }
 }

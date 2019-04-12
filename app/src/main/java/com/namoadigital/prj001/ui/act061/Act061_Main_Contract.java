@@ -37,10 +37,6 @@ public interface Act061_Main_Contract {
 
         void processFromOutboundRet(String wsReturn);
 
-        void saveInboundData(IO_Inbound mInbound);
-
-        String getNewSavedToken();
-
         void executeWsSaveInboundHeader(IO_Inbound mInbound, boolean newProcess);
 
         void processHeaderSave(int mPrefix, int mCode, String actReturnJson);

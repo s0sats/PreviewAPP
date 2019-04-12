@@ -12,13 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -45,7 +46,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private boolean bNewProcess;
     private boolean inEdit = false;
     private onFragHeaderInteraction mFragHeaderListener;
-    private String token ="";
+    private String token = "";
     //
     private ImageView ivEdit;
     private SearchableSpinner ssFromType;
@@ -121,6 +122,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         args.putInt(IO_InboundDao.INBOUND_PREFIX, inbound_prefix);
         args.putInt(IO_InboundDao.INBOUND_CODE, inbound_code);
         args.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, bNewProcess);
+        args.putBoolean(ConstantBaseApp.IO_PROCESS_IN_EDIT_KEY, bNewProcess);
         //
         fragment.setArguments(args);
         return fragment;
@@ -209,9 +211,28 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inEdit = !inEdit;
+                if(inEdit) {
+                    inEdit = !inEdit;
+                }else{
+                    if(
+                        ssModal.getmOption() != null
+                        && ssModal.getmOption().size() > 0
+                        && ssPartner.getmOption() != null
+                        && ssPartner.getmOption().size() > 0
+                    ) {
+                        inEdit = !inEdit;
+                    } else{
+                        if (ToolBox_Con.isOnline(context)) {
+                            inEdit = !inEdit;
+                            mFragHeaderListener.fromTypeSelected(mInbound.getFrom_type());
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    }
+                }
                 setIvStatus();
                 applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE );
             }
         });
         //
@@ -257,6 +278,43 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         });
         //
+        ssConfZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                processZoneValueChange(hmAux);
+            }
+        });
+        //
+        ssConfZone.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+            @Override
+            public void onValueChanged(HMAux hmAux) {
+                processZoneValueChange(hmAux);
+            }
+        });
+        ssConfLocal.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                processLocalValueChange(hmAux);
+            }
+        });
+        //
+        ssConfLocal.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+            @Override
+            public void onValueChanged(HMAux hmAux) {
+                processLocalValueChange(hmAux);
+            }
+        });
+        //
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,6 +326,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         applyViewsInteraction(INTERATION_BLOCK_ALL);
                         //
                         if (mFragHeaderListener != null) {
+                            toggleIvEditStates(false);
                             mFragHeaderListener.saveInboundHeader(mInbound);
                         }
                     }
@@ -283,6 +342,34 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         });
     }
 
+    /**
+     * Metodo chamado quando o valor do spinner de site é alterado, seja via leitura do barcode ou
+     * via mudança via spinner.
+     * @param hmAux
+     */
+    private void processZoneValueChange(HMAux hmAux) {
+        loadLocalSS(true);
+        //
+        if (hmAux != null && hmAux.size() > 0 && ssConfLocal.getmOption().size() == 1) {
+            ssConfLocal.setmValue(ssConfLocal.getmOption().get(0));
+        }
+    }
+
+    private void processLocalValueChange(HMAux hmAux) {
+        if(!ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            loadZoneSS(true);
+            //
+            ToolBox_Inf.setSSmValue(
+                ssConfZone,
+                hmAux.get(MD_Site_ZoneDao.ZONE_CODE),
+                hmAux.get(MD_Site_ZoneDao.ZONE_ID),
+                hmAux.get(MD_Site_ZoneDao.ZONE_DESC),
+                false
+            );
+            //
+            loadLocalSS(false);
+        }
+    }
     private void applyViewsInteraction(String mode) {
         ArrayList<View> views = (ArrayList<View>) properties.clone();
         //
@@ -324,7 +411,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
     private void setDataToInbound() {
         if (mInbound != null) {
-            token = token.isEmpty() ? ToolBox_Inf.getToken(context) :token;
+            token = token.isEmpty() ? ToolBox_Inf.getToken(context) : token;
             mInbound.setCustomer_code(bNewProcess ? ToolBox_Con.getPreference_Customer_Code(context) : mInbound.getCustomer_code());
             //mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
             mInbound.setToken(token);
@@ -368,6 +455,30 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     mInbound.setFrom_site_id(null);
                     mInbound.setFrom_site_desc(null);
                 }
+                //
+                if(ssFromOutbound != null && ssFromOutbound.getmValue() != null && ssFromOutbound.getmValue().hasConsistentValue(SearchableSpinner.CODE) ){
+                    mInbound.setOutbound_prefix(ToolBox_Inf.convertStringToInt(ssFromOutbound.getmValue().get(IO_OutboundDao.OUTBOUND_PREFIX)));
+                    mInbound.setOutbound_code(ToolBox_Inf.convertStringToInt(ssFromOutbound.getmValue().get(IO_OutboundDao.OUTBOUND_CODE)));
+                }else{
+                    mInbound.setOutbound_prefix(null);
+                    mInbound.setOutbound_code(null);
+                }
+            }
+            if (ssConfZone != null && ssConfZone.getmValue() != null && ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mInbound.setZone_code_conf(Integer.valueOf(ssConfZone.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setZone_id_conf(ssConfZone.getmValue().get(SearchableSpinner.ID));
+                mInbound.setZone_desc_conf(ssConfZone.getmValue().get(SearchableSpinner.DESCRIPTION));
+            }else{
+                mInbound.setZone_code_conf(null);
+                mInbound.setZone_id_conf(null);
+                mInbound.setZone_desc_conf(null);
+            }
+            if (ssConfLocal != null && ssConfLocal.getmValue() != null && ssConfLocal.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mInbound.setLocal_code_conf(Integer.valueOf(ssConfLocal.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setLocal_id_conf(ssConfLocal.getmValue().get(SearchableSpinner.ID));
+            }else{
+                mInbound.setLocal_code_conf(null);
+                mInbound.setLocal_id_conf(null);
             }
             //
             if (ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -387,21 +498,13 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         }
     }
 
-//    private String getSaveNewToken() {
-//        if (mFragHeaderListener != null) {
-//            //return mFragHeaderListener.getNewSavedToken();
-//        }
-//        //
-//        return null;
-//    }
 
     private boolean hasHeaderChanged() {
         //boolean headerChanged = false;
-
         try {
             for (View view : properties) {
                 if (view instanceof EditText) {
-                    String tag = (String) ((EditText) view).getTag() == null ? "" : (String) ((MKEditTextNM) view).getTag();
+                    String tag = (String) ((EditText) view).getTag() == null ? "" : (String) ((EditText) view).getTag();
                     String text = ((EditText) view).getText().toString();
 
                     if (!text.equals(tag)) {
@@ -533,6 +636,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         properties.add(etInboundId);
         properties.add(etInboundDesc);
         properties.add(ssFromSite);
+        properties.add(ssConfZone);
+        properties.add(ssConfLocal);
         properties.add(ssPartner);
         properties.add(ssFromOutbound);
         properties.add(etInvoice);
@@ -563,6 +668,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         tvInboundDescLbl.setText(hmAux_Trans.get("inbound_desc_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
         tvInvoiceDtLbl.setText(hmAux_Trans.get("invoice_dt_lbl"));
+        ssConfZone.setmLabel(hmAux_Trans.get("zone_conf_lbl"));
+        ssConfLocal.setmLabel(hmAux_Trans.get("local_conf_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvArrivalDtLbl.setText(hmAux_Trans.get("arrival_dt_lbl"));
         ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
@@ -584,8 +691,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssConfZone.setmStyle(1);
+        ssConfZone.setmShowBarcode(true);
         ssConfLocal.setmStyle(1);
         ssConfLocal.setmShowLabel(false);
+        ssConfLocal.setmShowBarcode(true);
 
     }
 
@@ -653,21 +762,24 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         }
     }
 
-    public void applyInboundCreated(HMAux hmAux_Trans, int inbound_prefix,int inbound_code,boolean newProcess){
-        updateArguments(hmAux_Trans,inbound_prefix,inbound_code,newProcess);
+    public void applyInboundCreated(HMAux hmAux_Trans, int inbound_prefix, int inbound_code, boolean newProcess, boolean inEdit) {
+        updateArguments(hmAux_Trans, inbound_prefix, inbound_code, newProcess);
         //
         this.hmAux_Trans = hmAux_Trans;
         this.inboundPrefix = inbound_prefix;
         this.inboundCode = inbound_code;
         this.bNewProcess = newProcess;
+        this.inEdit = inEdit;
         //
+        ivEdit.setVisibility(View.VISIBLE);
+        setIvStatus();
         loadInbound();
 
     }
 
     private void updateArguments(HMAux hmAux_trans, int inbound_prefix, int inbound_code, boolean bNewProcess) {
         Bundle args = getArguments();
-        if(args != null){
+        if (args != null) {
             args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_trans);
             args.putInt(IO_InboundDao.INBOUND_PREFIX, inbound_prefix);
             args.putInt(IO_InboundDao.INBOUND_CODE, inbound_code);
@@ -677,14 +789,15 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     public void updateMDLists(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
-        loadFromSiteSS(generateFromSiteSSOption(sites));
         //Partner e carrier mesma base de dados.
-        loadPartnerSS(generatePartnerSSOption(partners));
         loadCarrierrSS(generatePartnerSSOption(partners));
         loadModalSS(generateModalSSOption(modals));
-        //
-        setUIForCreation(true);
-        applyViewsInteraction(INTERATION_NEW_INBOUND);
+        if(bNewProcess){
+            loadFromSiteSS(generateFromSiteSSOption(sites));
+            loadPartnerSS(generatePartnerSSOption(partners));
+            setUIForCreation(true);
+            applyViewsInteraction(INTERATION_NEW_INBOUND);
+        }
     }
 
     public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
@@ -760,9 +873,11 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 ? " - " + outbound.getOutbound_desc()
                 : "";
             HMAux aux = new HMAux();
-            aux.put(SearchableSpinner.CODE, String.valueOf(outbound.getOutbound_code()));
+            aux.put(SearchableSpinner.CODE, String.valueOf(outbound.getOutbound_prefix()) + "." + String.valueOf(outbound.getOutbound_code()));
             aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
             aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
+            aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
+            aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
             auxList.add(aux);
         }
         //
@@ -777,7 +892,52 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     setUIForCreation(false);
                     loadFromTypeSS(false);
                 } else {
+                    setUIForEdition();
                     applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                }
+                //
+                if (mInbound.getFrom_type() != null && !mInbound.getFrom_type().isEmpty()) {
+                    ToolBox_Inf.setSSmValue(
+                        ssFromType,
+                        mInbound.getFrom_type(),
+                        mInbound.getFrom_type(),
+                        hmAux_Trans.get(mInbound.getFrom_type()),
+                        true,
+                        false
+                    );
+                }
+                //
+                if (mInbound.getFrom_partner_code() != null && mInbound.getFrom_partner_code() > 0) {
+                    ToolBox_Inf.setSSmValue(
+                        ssPartner,
+                        String.valueOf(mInbound.getFrom_partner_code()),
+                        mInbound.getFrom_partner_id(),
+                        mInbound.getFrom_partner_desc(),
+                        true,
+                        false
+                    );
+                }
+                //
+                if (mInbound.getFrom_site_code() != null && mInbound.getFrom_site_code() > 0) {
+                    ToolBox_Inf.setSSmValue(
+                        ssFromSite,
+                        String.valueOf(mInbound.getFrom_site_code()),
+                        mInbound.getFrom_site_id(),
+                        mInbound.getFrom_site_desc(),
+                        true,
+                        false
+                    );
+                }
+                //
+                if (mInbound.getFrom_site_code() != null && mInbound.getFrom_site_code() > 0) {
+                    ToolBox_Inf.setSSmValue(
+                        ssFromSite,
+                        String.valueOf(mInbound.getFrom_site_code()),
+                        mInbound.getFrom_site_id(),
+                        mInbound.getFrom_site_desc(),
+                        true,
+                        false
+                    );
                 }
                 //
                 if (mInbound.getInbound_prefix() > 0 && mInbound.getInbound_code() > 0) {
@@ -799,8 +959,14 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     //
                     loadZoneSS(false);
                     loadLocalSS(false);
-                    mPresenter.getZoneDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf());
-                    mPresenter.getLocalDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf(), mInbound.getLocal_code_conf());
+                    if(mInbound.getZone_code_conf() != null){
+                        mPresenter.getZoneDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf());
+                    }
+                    //
+                    if(mInbound.getLocal_code_conf() != null){
+                        mPresenter.getLocalDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf(), mInbound.getLocal_code_conf());
+                    }
+
                 } else {
                     ssConfZone.setVisibility(View.GONE);
                     ssConfLocal.setVisibility(View.GONE);
@@ -810,15 +976,59 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 mkdtInvoinceDt.setmValue(mInbound.getInvoice_date(), true);
                 mkdtEtaDt.setmValue(mInbound.getEta_date(), true);
                 mkdtArrivalDt.setmValue(mInbound.getArrival_date(), true);
-                //ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
-                //ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
+                if(mInbound.getModal_code() != null){
+                    ToolBox_Inf.setSSmValue(
+                        ssModal,
+                        String.valueOf(mInbound.getModal_code()),
+                        mInbound.getModal_id(),
+                        mInbound.getModal_desc(),
+                        true,
+                        false
+                    );
+                }
+                //
+                if(mInbound.getCarrier_code() != null){
+                    ToolBox_Inf.setSSmValue(
+                        ssCarrier,
+                        String.valueOf(mInbound.getCarrier_code()),
+                        mInbound.getCarrier_id(),
+                        mInbound.getCarrier_desc(),
+                        true,
+                        false
+                    );
+                }
                 etTruckNum.setText(mInbound.getTruck_number());
                 etTruckNum.setTag(mInbound.getTruck_number());
                 etDriver.setText(mInbound.getDriver());
                 etDriver.setTag(mInbound.getDriver());
                 etComments.setText(mInbound.getComments());
                 etComments.setTag(mInbound.getComments());
+                //
+                if(!bNewProcess) {
+                    btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE);
+                }
             }
+        }
+
+    }
+
+    private void setUIForEdition() {
+        clOtherInfo.setVisibility(View.VISIBLE);
+        ivEdit.setVisibility(View.VISIBLE);
+        ssFromType.setmEnabled(false);
+        ssFromSite.setmEnabled(false);
+        ssPartner.setmEnabled(false);
+        ssFromOutbound.setmEnabled(false);
+        ssFromOutbound.setVisibility(View.GONE);
+        ivFromOutbound.setEnabled(false);
+        ivFromOutbound.setVisibility(View.GONE);
+        //
+        if(mInbound.getFrom_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)){
+            ssPartner.setVisibility(View.VISIBLE);
+            ssFromSite.setVisibility(View.GONE);
+        }else{
+            ssPartner.setVisibility(View.GONE);
+            ssFromSite.setVisibility(View.VISIBLE);
         }
     }
 
@@ -833,13 +1043,19 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 ssFromSite.setVisibility(View.GONE);
                 ssFromOutbound.setVisibility(View.GONE);
                 ssFromOutbound.setmEnabled(false);
+                ivFromOutbound.setVisibility(View.GONE);
             } else {
                 ssPartner.setVisibility(View.GONE);
                 ssFromSite.setVisibility(View.VISIBLE);
                 ssFromOutbound.setVisibility(View.VISIBLE);
                 ssFromOutbound.setmEnabled(false);
+                ivFromOutbound.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public void toggleIvEditStates(boolean enabled){
+        ivEdit.setEnabled(enabled);
     }
 
 
@@ -880,7 +1096,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("arrival_dt_lbl");
         transListFrag.add("modal_lbl");
         transListFrag.add("partner_lbl");
-        transListFrag.add("carrier_lbl");
         transListFrag.add("truck_lbl");
         transListFrag.add("driver_lbl");
         transListFrag.add("comments_lbl");
@@ -891,6 +1106,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("alert_no_data_changed_ttl");
         transListFrag.add("alert_no_data_changed_msg");
         transListFrag.add("alert_invalid_date_msg");
+        transListFrag.add("carrier_lbl");
+        transListFrag.add("zone_conf_lbl");
+        transListFrag.add("local_conf_lbl");
         //
         return transListFrag;
     }

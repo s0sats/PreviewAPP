@@ -18,7 +18,6 @@ import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -154,27 +153,13 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveInboundData(IO_Inbound mInbound) {
-//       DaoObjReturn daoRet = inboundDao.addUpdate(mInbound);
-//       //
-//        if(!daoRet.hasError()){
-//            executeWsSaveInboundHeader(mInbound);
-//        } else {
-//            mView.showAlert(
-//                hmAux_Trans.get("alert_inbound_save_error_ttl"),
-//                hmAux_Trans.get("alert_inbound_save_error_msg")
-//            );
-//        }
-    }
-
-    @Override
     public void executeWsSaveInboundHeader(IO_Inbound mInbound, boolean newProcess) {
         if(ToolBox_Con.isOnline(context)){
             mView.setWsProcess(WS_IO_Inbound_Header_Save.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("dialog_from_outbound_ttl"),
-                hmAux_Trans.get("dialog_from_outbound_start")
+                hmAux_Trans.get("dialog_inbound_header_save_ttl"),
+                hmAux_Trans.get("dialog_inbound_header_save_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Inbound_Header_Save.class);
@@ -191,6 +176,9 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     @Override
     public void processHeaderSave(int mPrefix, int mCode, String actReturnJson) {
+        WS_IO_Inbound_Header_Save.InboundHeaderSaveActReturn retObj = null;
+
+        //
         if(actReturnJson == null || actReturnJson.length() == 0){
             mView.showAlert(
                 hmAux_Trans.get("alert_header_save_error_ttl"),
@@ -200,25 +188,11 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             try{
                 Gson gson = new GsonBuilder().serializeNulls().create();
                   //
-                WS_IO_Inbound_Header_Save.InboundHeaderSaveActReturn retObj =
+                retObj =
                     gson.fromJson(
                         actReturnJson,
                         WS_IO_Inbound_Header_Save.InboundHeaderSaveActReturn.class
                     );
-                //
-                if(retObj.isRetStatusOk()){
-                    mView.updateHeaderData(
-                        retObj.getInbound_prefix(),
-                        retObj.getInbound_code(),
-                        retObj.isNewProcess()
-                    );
-                }else{
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_header_save_error_ttl"),
-                        hmAux_Trans.get("alert_header_save_error_msg")
-                             + "\n" + retObj.getMsg()
-                    );
-                }
 
             }catch (Exception e){
                 ToolBox_Inf.registerException(getClass().getName(),e);
@@ -228,23 +202,25 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_header_save_process_error_msg")
                 );
             }
+            //
+            if(retObj != null) {
+                if (retObj.isRetStatusOk()) {
+                    mView.updateHeaderData(
+                        retObj.getInbound_prefix(),
+                        retObj.getInbound_code(),
+                        retObj.isNewProcess()
+                    );
+                } else {
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_header_save_error_ttl"),
+                        hmAux_Trans.get("alert_header_save_error_msg")
+                            + "\n" + retObj.getMsg()
+                    );
+                }
+            }
+
         }
 
-    }
-
-    @Override
-    public String getNewSavedToken() {
-        IO_Inbound inbound = inboundDao.getByString(
-            new IO_Inbound_Sql_005(
-                ToolBox_Con.getPreference_Customer_Code(context)
-            ).toSqlQuery()
-        );
-        //
-        if(inbound != null && inbound.getCustomer_code() > 0 && inbound.getToken().trim().length() > 0){
-            return inbound.getToken().trim();
-        }else{
-            return ToolBox_Inf.getToken(context);
-        }
     }
 
     @Override

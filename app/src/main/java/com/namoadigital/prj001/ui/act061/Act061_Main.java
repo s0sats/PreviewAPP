@@ -99,6 +99,13 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("dialog_io_master_data_start");
         transList.add("dialog_from_outbound_ttl");
         transList.add("dialog_from_outbound_start");
+        transList.add("dialog_inbound_header_save_ttl");
+        transList.add("dialog_inbound_header_save_start");
+        transList.add("alert_header_save_error_ttl");
+        transList.add("alert_header_save_no_return_msg ");
+        transList.add("alert_header_save_process_error_msg");
+        transList.add("alert_io_master_data_error_ttl");
+        transList.add("alert_io_master_data_error_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -176,6 +183,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mDrawerToggle.syncState();
 
         } else {
+            mDrawerToggle.syncState();
 
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -185,7 +193,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             getSupportActionBar().setHomeButtonEnabled(true);
             mDrawerToggle.setDrawerIndicatorEnabled(true);
 
-            mDrawerToggle.syncState();
+
         }
     }
 
@@ -298,8 +306,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mCode = inbound_code;
             bNewProcess = false;
         }
-        act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess);
-        //
+        act061_frag_header.toggleIvEditStates(true);
+        act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess, false);
+        //Chama atualização do Drawer
+        setDrawerState();
+
     }
 
     //region DrawerFragment
@@ -343,11 +354,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             );
         }
     }
-
-//    @Override
-//    public String getNewSavedToken() {
-//        return mPresenter.getNewSavedToken();
-//    }
 
     @Override
     public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
