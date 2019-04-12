@@ -137,7 +137,7 @@ public class WS_IO_Move_Download extends IntentService {
                 if (io_move.getSerial() != null && io_move.getSerial().size() > 0) {
                     DaoObjReturn daoReturn = ioMoveDao.addUpdate(io_move);
                     if (!daoReturn.hasError()) {
-                        serialDao.addUpdate(io_move.getSerial().get(0));
+                        serialDao.addUpdateTmp(io_move.getSerial().get(0));
                         //
                         hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(io_move.getMove_prefix()));
                         hmAuxRet.put(Constant.HMAUX_CODE_KEY, String.valueOf(io_move.getMove_code()));
