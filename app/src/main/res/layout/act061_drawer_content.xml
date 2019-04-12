@@ -227,38 +227,59 @@
                 />
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/act061_drawer_cl_position"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/act061_drawer_tv_comment_val"
-                app:layout_constraintStart_toStartOf="@id/act061_drawer_gd_start"
-                app:layout_constraintEnd_toEndOf="@id/act061_drawer_gd_end"
-                >
-
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/act061_drawer_ss_zone"
-                    android:layout_marginTop="8dp"
+                    android:id="@+id/act061_drawer_cl_position"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:hint="Zone Conf -trad"
-                    android:background="@drawable/border_back"
+                    android:layout_height="61dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/act061_drawer_tv_comment_val"
+                    app:layout_constraintStart_toStartOf="@id/act061_drawer_gd_start"
+                    app:layout_constraintEnd_toEndOf="@id/act061_drawer_gd_end"
+            >
+
+                <TextView
+                        android:id="@+id/act061_drawer_tv_position_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/act061_drawer_iv_edit"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:text="Posição - trad"
+                        android:textStyle="bold"
                 />
 
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/act061_drawer_ss_local"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:hint="Local Conf -trad"
-                    android:background="@drawable/border_back"
-                    app:layout_constraintTop_toBottomOf="@id/act061_drawer_ss_zone"
+                <ImageView
+                        android:id="@+id/act061_drawer_iv_edit"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_pencil"
+                        android:tint="@color/padrao_WHITE"
+                        android:background="@drawable/btn_namoa_main_3_states"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_margin="8dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/act061_drawer_tv_position_lbl"
+                        android:layout_marginTop="8dp"/>
 
-                    />
+
+                <TextView
+                        android:id="@+id/act061_drawer_tv_zone_local"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act061_drawer_iv_edit"
+                        android:text="Zona id - Zona DEsc | Local Id "
+                        android:visibility="visible"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="8dp"
+
+                />
 
             </android.support.constraint.ConstraintLayout>
 

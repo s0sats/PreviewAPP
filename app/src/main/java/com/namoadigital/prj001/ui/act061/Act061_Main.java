@@ -306,8 +306,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mCode = inbound_code;
             bNewProcess = false;
         }
+        //
         act061_frag_header.toggleIvEditStates(true);
         act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess, false);
+        //
+        act061_frag_drawer.loadDataToScreen();
         //Chama atualização do Drawer
         setDrawerState();
 
