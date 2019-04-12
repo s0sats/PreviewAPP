@@ -89,7 +89,7 @@ public class WS_IO_Move_Save extends IntentService {
         ArrayList<IO_Move> moveList = new ArrayList<>();
         token = "";
 
-        if (hasMoveToken(moveList, 0)) {
+        if (hasMoveToken(moveList, 1)) {
             reRun = true;
         } else {
             token = ToolBox_Inf.getToken(getApplicationContext());
@@ -97,7 +97,7 @@ public class WS_IO_Move_Save extends IntentService {
             moveList = (ArrayList<IO_Move>) moveDao.query(
                     new IO_Move_Order_Item_Sql_003(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                            1
+                            0
                     ).toSqlQuery()
             );
 
@@ -124,7 +124,7 @@ public class WS_IO_Move_Save extends IntentService {
         env.setMove(moveList);
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_IO_MOVE_DOWNLOAD,
+                Constant.WS_IO_MOVE_SAVE,
                 gson.toJson(env)
         );
         T_IO_Move_Save_Rec rec = gson.fromJson(
@@ -197,7 +197,6 @@ public class WS_IO_Move_Save extends IntentService {
             for (IO_Move io_move : moveList) {
                 token = io_move.getToken();
             }
-            moveDao.addUpdate(moveList, false);
         }
         return moveList.size() > 0;
     }

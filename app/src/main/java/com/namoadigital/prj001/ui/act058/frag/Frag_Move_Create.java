@@ -293,8 +293,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
             classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
         }
-        if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
-            reasonCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+        if(ss_reason.getmValue()!= null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            reasonCode = Integer.valueOf(ss_reason.getmValue().get(SearchableSpinner.CODE));
         }
         mListener.persistIoMove(
                 ToolBox_Con.getPreference_Customer_Code(getContext()),

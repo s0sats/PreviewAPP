@@ -119,7 +119,7 @@ public class WS_IO_Move_Download extends IntentService {
         if(io_moves != null && io_moves.size() > 0 ) {
             IO_Move io_move = io_moves.get(0);
             HMAux hmAuxRet = new HMAux();
-            hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, Constant.IO_PROCESS_MOVE_PLANNED);
+            hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, io_move.getMove_type());
             //
             IO_MoveDao ioMoveDao = new IO_MoveDao(
                     getApplicationContext(),
