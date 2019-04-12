@@ -188,7 +188,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             frag_move_create.processTrackingResult(hmAux);
         }else{
             if(ws_process.equals(WS_IO_Move_Save.class.getName())){
-                Toast.makeText(this, "Deu bom", Toast.LENGTH_SHORT).show();
+                onBackPressed();
             }
         }
         disableProgressDialog();
@@ -265,8 +265,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
-    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b) {
-
+    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean add) {
+        if (add) {
+            controls_sta.add(mket_tracking);
+        } else {
+            controls_sta.remove(mket_tracking);
+        }
     }
 
     @Override

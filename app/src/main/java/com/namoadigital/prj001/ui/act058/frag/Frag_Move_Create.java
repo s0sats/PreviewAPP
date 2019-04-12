@@ -243,6 +243,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                                 public void onClick(DialogInterface dialog, int which) {
                                     if(view_param == 0) {
                                         persistIoMoveChanges();
+
                                     }
                                 }
                             },
@@ -290,12 +291,23 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private void persistIoMoveChanges() {
         Integer classCode = null;
         Integer reasonCode = null;
+        Integer zoneCode = Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE));
+
         if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
             classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
         }
+
         if(ss_reason.getmValue()!= null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
             reasonCode = Integer.valueOf(ss_reason.getmValue().get(SearchableSpinner.CODE));
         }
+
+        if(chk_change_zone.isChecked()){
+            ToolBox_Con.setPreference_Zone_Code(
+                    getContext(),
+                    zoneCode
+            );
+        }
+
         mListener.persistIoMove(
                 ToolBox_Con.getPreference_Customer_Code(getContext()),
                 ioMove.getMove_prefix(),
@@ -640,6 +652,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_class.setmOption(mListener.getClassList());
         setClassIcon(ss_class.getmValue());
 
+        ss_class.setmEnabled(hasSerialPermission());
+        iv_add_tracking.setEnabled(hasSerialPermission());
+
         setLabelsAndHint();
         setMkdate();
         setSSMoveReason();
@@ -658,6 +673,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
+    }
+
+    private boolean hasSerialPermission() {
+        return true;
     }
 
     private void setLabelsAndHint() {
