@@ -78,7 +78,7 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
                     case ConstantBaseApp.IO_INBOUND:
                         Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
                         break;
-                    case ConstantBaseApp.IO_PROCESS_MOVE:
+                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                         mView.callAct058(bundle);
                         break;
                     case ConstantBaseApp.IO_OUTBOUND:
