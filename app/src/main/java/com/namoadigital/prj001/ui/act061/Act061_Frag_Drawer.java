@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import az.plainpie.PieView;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -52,7 +53,10 @@ public class Act061_Frag_Drawer extends BaseFragment {
     private TextView tvPosition;
     private ImageView ivPositionEdit;
     private TextView tvZoneLocal;
-    private RecyclerView rvOptions;
+    //private RecyclerView rvOptions;
+    private RadioGroup rgFrags;
+    private RadioButton rdoHeader;
+    private RadioButton rdoItem;
     private onFragDrawerInteraction mFragDrawerListener;
     //
 
@@ -144,6 +148,18 @@ public class Act061_Frag_Drawer extends BaseFragment {
 
             }
         });
+        //
+        rgFrags.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.act061_drawer_rdo_header:
+                        break;
+                    case R.id.act061_drawer_rdo_item:
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -168,7 +184,11 @@ public class Act061_Frag_Drawer extends BaseFragment {
         tvPosition = view.findViewById(R.id.act061_drawer_tv_position_lbl);
         ivPositionEdit = view.findViewById(R.id.act061_drawer_iv_edit);
         tvZoneLocal = view.findViewById(R.id.act061_drawer_tv_zone_local);
-        rvOptions = view.findViewById(R.id.act061_drawer_rv_opt);
+        //rvOptions = view.findViewById(R.id.act061_drawer_rv_opt);
+        rgFrags = view.findViewById(R.id.act061_drawer_rg_frags);
+        rdoHeader = view.findViewById(R.id.act061_drawer_rdo_header);
+        rdoHeader.setChecked(true);
+        rdoItem = view.findViewById(R.id.act061_drawer_rdo_item);
     }
 
     private void setViewsText() {

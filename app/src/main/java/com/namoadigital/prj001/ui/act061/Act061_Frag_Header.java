@@ -217,8 +217,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     if(
                         ssModal.getmOption() != null
                         && ssModal.getmOption().size() > 0
-                        && ssPartner.getmOption() != null
-                        && ssPartner.getmOption().size() > 0
+                        && ssCarrier.getmOption() != null
+                        && ssCarrier.getmOption().size() > 0
                     ) {
                         inEdit = !inEdit;
                     } else{
