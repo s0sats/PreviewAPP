@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act061;
+package com.namoadigital.prj001.ui.act061.frag_header;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -153,6 +153,13 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         initActions();
         //
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        loadDataToScreen();
     }
 
     private void recoverBundleInfo(Bundle arguments) {

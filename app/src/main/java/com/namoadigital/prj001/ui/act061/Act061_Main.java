@@ -26,6 +26,9 @@ import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
+import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header;
+import com.namoadigital.prj001.ui.act061.frg_item.Act061_Frag_Items;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -36,15 +39,17 @@ import java.util.List;
 
 public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contract.I_View,
     Act061_Frag_Drawer.onFragDrawerInteraction,
-    Act061_Frag_Header.onFragHeaderInteraction {
+    Act061_Frag_Header.onFragHeaderInteraction,
+    Act061_Frag_Items.onFragItemInteraction{
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
+    public static final String INBOUND_FRAG_DRAWER = "INBOUND_FRAG_DRAWER";
 
     private Bundle bundle;
     private FragmentManager fm;
     private Act061_Frag_Drawer act061_frag_drawer;
     private Act061_Frag_Header act061_frag_header;
-    private Act061_Frag_Item act061_frag_item;
+    private Act061_Frag_Items act061_frag_item;
     private DrawerLayout mDrawerLayout;
     private Act061_Main_Presenter mPresenter;
     private IO_Inbound mInbound;
@@ -110,6 +115,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
         transList.addAll(Act061_Frag_Header.getFragTranslationsVars());
+        //Trad Frag Item
+        transList.addAll(Act061_Frag_Items.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -220,9 +227,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private void initFragment() {
         act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans, mPrefix, mCode);
         act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans, mPrefix, mCode, bNewProcess);
-        act061_frag_item = new Act061_Frag_Item();
+        act061_frag_item = Act061_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode);
         //
-        setDrawer(act061_frag_drawer, "DRAWER");
+        setDrawer(act061_frag_drawer, INBOUND_FRAG_DRAWER);
         setFrag(act061_frag_header, INBOUND_FRAG_HEADER);
     }
 
@@ -237,7 +244,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act061_main_ll, type, sTag);
-            ft.addToBackStack(null);
             ft.commit();
         } else {
             //type.loadDataToScreen();
@@ -316,7 +322,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     }
 
-    //region DrawerFragment
+    //region FragInterface
+
     @Override
     public IO_Inbound getInboundFromAct(int prefix, int code) {
         //return mInbound;
@@ -362,7 +369,22 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
         this.controls_ss.addAll(controls_ss);
     }
+    //region DrawerFragment
 
+    @Override
+    public void setFragToContainer(String fragTag) {
+        switch (fragTag){
+            case INBOUND_FRAG_HEADER:
+                setFrag(act061_frag_header,INBOUND_FRAG_HEADER);
+                break;
+            case INBOUND_FRAG_ITEM:
+                setFrag(act061_frag_item,INBOUND_FRAG_ITEM);
+                break;
+        }
+    }
+
+
+    //endregion
     //endregion
 
 

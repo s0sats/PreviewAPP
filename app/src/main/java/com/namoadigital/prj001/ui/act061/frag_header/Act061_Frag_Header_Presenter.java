@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act061;
+package com.namoadigital.prj001.ui.act061.frag_header;
 
 import android.content.Context;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;

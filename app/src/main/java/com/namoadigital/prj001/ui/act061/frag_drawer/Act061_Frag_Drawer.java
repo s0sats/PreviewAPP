@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act061;
+package com.namoadigital.prj001.ui.act061.frag_drawer;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -73,6 +74,12 @@ public class Act061_Frag_Drawer extends BaseFragment {
          * @param code
          */
         IO_Inbound getInboundFromAct(int prefix, int code);
+
+        /**
+         * Metodo que informa act que qual dos frag de ver carregado.
+         *
+         */
+        void setFragToContainer(String fragTag);
     }
 
     public onFragDrawerInteraction getFragDrawerListener() {
@@ -152,11 +159,15 @@ public class Act061_Frag_Drawer extends BaseFragment {
         rgFrags.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
-                    case R.id.act061_drawer_rdo_header:
-                        break;
-                    case R.id.act061_drawer_rdo_item:
-                        break;
+                if(mFragDrawerListener != null) {
+                    switch (checkedId) {
+                        case R.id.act061_drawer_rdo_header:
+                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_HEADER);
+                            break;
+                        case R.id.act061_drawer_rdo_item:
+                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_ITEM);
+                            break;
+                    }
                 }
             }
         });

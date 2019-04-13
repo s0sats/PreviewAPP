@@ -37,7 +37,7 @@
 
         <!--<fragment-->
             <!--android:id="@+id/act061_opc"-->
-            <!--android:name="com.namoadigital.prj001.ui.act061.Act061_Frag_Drawer"-->
+            <!--android:name="com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="match_parent"-->
             <!--tools:layout="@layout/act061_drawer_content" />-->
