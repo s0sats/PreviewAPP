@@ -13,7 +13,7 @@ public class IO_Move_Order_Item_Sql_004 implements Specification {
         this.customer_code = customer_code;
         this.move_prefix = move_prefix;
         this.move_code = move_code;
-        this.status = status;
+        this.status = "\""+ status + "\"";
     }
 
     @Override

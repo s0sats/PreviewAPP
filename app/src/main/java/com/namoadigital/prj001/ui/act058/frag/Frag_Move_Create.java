@@ -83,6 +83,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private TextView tv_move_order_val;
     private TextView tv_move_to_val;
     private MKEditTextNM mkedit_coments;
+    private MKEditTextNM mket_serial;
     private MkDateTime mkdate_confirm;
     private TextViewCT.ITextViewCT tvCtListner;
     private SearchableSpinner ss_zone;
@@ -172,6 +173,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         iv_add_tracking = fragView.findViewById(R.id.act058_iv_add_tracking);
         iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
         btn_save = fragView.findViewById(R.id.act058_btn_save);
+        mket_serial = fragView.findViewById(R.id.act058_mket_serial);
         ss_zone = fragView.findViewById(R.id.act058_ss_zone);
         ss_local = fragView.findViewById(R.id.act058_ss_local);
         mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
@@ -233,7 +235,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-
                     ToolBox.alertMSG_YES_NO(
                             getContext(),
                             hmAux_Trans.get("alert_update_move_ttl"),
@@ -364,6 +365,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 }
                 break;
         }
+
         if (ss_reason.getmValue() == null || !ss_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
             ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isSuccessfully = false;
@@ -383,6 +385,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             isSuccessfully = false;
         } else {
             ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+        mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        if(mket_serial.getVisibility() == View.VISIBLE) {
+            if (!mdProductSerial.getSerial_id().equals(mket_serial.getText().toString().trim())) {
+                isSuccessfully = false;
+                mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            }
         }
 
         return isSuccessfully;
@@ -657,6 +666,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         setLabelsAndHint();
         setMkdate();
+        if(hasSerialPermission()) {
+            setSerialMKEditText();
+        }else{
+            mket_serial.setVisibility(View.GONE);
+        }
+
         setSSMoveReason();
 
         switch (view_param) {
@@ -675,8 +690,35 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
 
+    private void setSerialMKEditText() {
+
+        mket_serial.setVisibility(View.VISIBLE);
+
+        mket_serial.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        //
+        mket_serial.setmOCR(false);
+        if(ToolBox_Inf.isMicroBlinkImported()) {
+            mket_serial.setmOCRVin(
+                    ToolBox_Inf.profileExists(
+                            getActivity(),
+                            Constant.PROFILE_MENU_PROFILE,
+                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                    )
+            );
+        }else{
+            mket_serial.setmOCRVin(false);
+        }
+        controls_sta.add(mket_serial);
+    }
+
     private boolean hasSerialPermission() {
-        return true;
+        return false;
     }
 
     private void setLabelsAndHint() {
