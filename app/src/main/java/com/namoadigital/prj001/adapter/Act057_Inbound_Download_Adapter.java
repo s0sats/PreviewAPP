@@ -33,7 +33,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private boolean processFilter;
     private int downloadCounter;
     private boolean isOnline;
-   // private OnItemClickListner mOnItemClickListner;
+    private OnItemClickListner mOnItemClickListner;
     private OnItemCheckedChangeListener mOnItemCheckedChangeListener;
 
     public interface OnItemClickListner{
@@ -44,13 +44,13 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         void onItemCheckedChange(int downloadCounter);
     }
 
-//    public OnItemClickListner getOnItemClickListner() {
-//        return mOnItemClickListner;
-//    }
-//
-//    public void setOnItemClickListner(OnItemClickListner mOnItemClickListner) {
-//        this.mOnItemClickListner = mOnItemClickListner;
-//    }
+    public OnItemClickListner getOnItemClickListner() {
+        return mOnItemClickListner;
+    }
+
+    public void setOnItemClickListner(OnItemClickListner mOnItemClickListner) {
+        this.mOnItemClickListner = mOnItemClickListner;
+    }
 
     public OnItemCheckedChangeListener getmOnItemCheckedChangeListener() {
         return mOnItemCheckedChangeListener;
@@ -139,7 +139,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         return inboundToDownload.substring(1);
     }
 
-    public class InboundDownloadViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+    public class InboundDownloadViewHolder extends RecyclerView.ViewHolder{
         private CheckBox chkDownload;
         private ImageView iv_offline;
         private TextView tv_status;
@@ -165,10 +165,36 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         public InboundDownloadViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
-            //this.itemView.setOnClickListener(this);
             //
+            this.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemClickListner != null) {
+                        if (isOnline) {
+                            chkDownload.performClick();
+                        } else {
+                            mOnItemClickListner.onItemClick(mFilteredValues.get(getAdapterPosition()));
+                        }
+                    }
+                }
+            });
             chkDownload = itemView.findViewById(R.id.act057_io_inbound_cell_chk_download);
-            chkDownload.setOnCheckedChangeListener(this);
+            chkDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mFilteredValues.get(getAdapterPosition()).setToDownload(((CheckBox) v).isChecked());
+                    //
+                    if(((CheckBox) v).isChecked()){
+                        downloadCounter++;
+                    }else{
+                        downloadCounter--;
+                    }
+                    //
+                    if(mOnItemCheckedChangeListener != null){
+                        mOnItemCheckedChangeListener.onItemCheckedChange(downloadCounter);
+                    }
+                }
+            });
             iv_offline = itemView.findViewById(R.id.act057_io_inbound_cell_iv_offline);
             tv_status = itemView.findViewById(R.id.act057_io_inbound_cell_tv_status);
             pv_done = itemView.findViewById(R.id.act057_io_inbound_cell_pv_done);
@@ -205,34 +231,11 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             return itemView;
         }
 
-        @Override
-        public void onClick(View v) {
-//            if(mOnItemClickListner != null){
-//                mOnItemClickListner.onItemClick(mFilteredValues.get(getAdapterPosition()));
-//            }
-        }
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mFilteredValues.get(getAdapterPosition()).setToDownload(isChecked);
-            //
-            if(isChecked){
-                downloadCounter++;
-            }else{
-                downloadCounter--;
-            }
-            //
-            if(mOnItemCheckedChangeListener != null){
-                mOnItemCheckedChangeListener.onItemCheckedChange(downloadCounter);
-            }
-        }
-
         public void bindData(IO_Inbound_Search_Record data){
             //Esconde views
             resetVisibility();
             //
             chkDownload.setChecked(data.isToDownload());
-            iv_offline.setVisibility(isOnline ? View.GONE :View.VISIBLE);
             tv_status.setText(hmAux_Trans.get(data.getStatus()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(data.getStatus())));
             pv_done.setPercentage(data.getPerc_done() != null ?  data.getPerc_done() : 0.0f);
@@ -316,6 +319,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         }
 
         private void resetVisibility() {
+            chkDownload.setVisibility(isOnline ? View.VISIBLE : View.GONE);
+            iv_offline.setVisibility(isOnline ? View.GONE :View.VISIBLE);
             tv_modal.setVisibility(View.GONE);
             tv_modal_val.setVisibility(View.GONE);
             tv_comment.setVisibility(View.GONE);

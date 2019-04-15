@@ -33,6 +33,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     private IO_Inbound mInbound;
     private Act061_Frag_Items_Presenter mPresenter;
     private onFragItemInteraction mFragItemListener;
+    private boolean pausedByScan = false;
     //
     private MKEditTextNM mketFilter;
     private RecyclerView rvItems;
@@ -52,6 +53,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
          * @param code
          */
         IO_Inbound getInboundFromAct(int prefix, int code);
+
+        void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
     }
 
     public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code){
@@ -100,8 +103,14 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     @Override
     public void onResume() {
         super.onResume();
+        //Se chamada do reload foi por causa da leitura de barcode.
+        //pula recarga de dados.
+        if (!pausedByScan) {
+            loadDataToScreen();
+            //filterWithExistis();
+        }
         //
-        loadDataToScreen();
+        pausedByScan = false;
     }
 
     @Override
@@ -143,7 +152,13 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         mketFilter = view.findViewById(R.id.act061_item_frag_mket_filter);
         rvItems = view.findViewById(R.id.act061_item_frag_rv_items);
         //
+        mketFilter.setmBARCODE(true);
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
+        controls_sta.add(mketFilter);
+        //
+        if(mFragItemListener != null){
+            mFragItemListener.addFragItemsControlsMk(controls_sta);
+        }
     }
 
     private void loadInbound() {
@@ -153,20 +168,39 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     }
 
     private void iniAction() {
+        mketFilter.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
+                pausedByScan = true;
+            }
+        });
+        //
+        mketFilter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if(mAdapter != null){
+                    mAdapter.getFilter().filter(s);
+                }
+            }
+        });
     }
 
     @Override
     public void loadDataToScreen() {
         //super.loadDataToScreen();
         if(bStatus) {
+            //
             if (mInbound != null) {
                 loadAdapter(
                     mPresenter.getItemList(inboundPrefix, inboundCode)
                 );
             }
         }
-
-
     }
 
     private void loadAdapter(ArrayList<HMAux> itemList) {
@@ -191,6 +225,11 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 @Override
                 public void onPutAwayClick(HMAux item) {
                     Toast.makeText(context,"PutAway",Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onAddItemClick() {
+                    Toast.makeText(context,"AddItem",Toast.LENGTH_SHORT).show();
                 }
             });
             //

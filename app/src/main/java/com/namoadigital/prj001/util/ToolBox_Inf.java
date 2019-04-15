@@ -4551,7 +4551,10 @@ public class ToolBox_Inf {
                 return R.color.namoa_status_pending;
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_IN_PROCESSING:
+            case Constant.SYS_STATUS_PUT_AWAY:
+            case Constant.SYS_STATUS_PICKING:
                 return R.color.namoa_status_process;
+            case Constant.SYS_STATUS_PICKING_DONE:
             case Constant.SYS_STATUS_WAITING_APPROVAL:
                 return R.color.namoa_status_waiting_approval;
             case Constant.SYS_STATUS_WAITING_BUDGET:

@@ -34,7 +34,8 @@ public class IO_Inbound_Item_Sql_002 implements Specification {
                         "       s.brand_desc,\n" +
                         "       s.model_desc,\n" +
                         "       s.color_desc," +
-                        "       z.zone_id || \" - \" || z.zone_desc "+IO_Inbound_ItemDao.PLANNED_ZONE_DESC+",  \n" +
+                        //"       z.zone_id || \" - \" || z.zone_desc "+IO_Inbound_ItemDao.PLANNED_ZONE_ID+",  \n" +
+                        "       z.zone_id "+IO_Inbound_ItemDao.PLANNED_ZONE_ID +",  \n" +
                         "       l.local_id "+IO_Inbound_ItemDao.PLANNED_LOCAL_ID+"\n" +
                         "    FROM\n" +
                             IO_InboundDao.TABLE +" i,\n" +

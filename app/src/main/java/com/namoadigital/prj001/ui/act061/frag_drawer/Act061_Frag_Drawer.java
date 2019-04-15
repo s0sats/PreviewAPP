@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.sql.Sql_Act061_001;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -26,13 +27,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Act061_Frag_Drawer extends BaseFragment {
+public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Drawer_Contract.I_View {
 
     private boolean bStatus = false;
     private Context context;
     private int inboundPrefix;
     private int inboundCode;
     private IO_Inbound mInbound;
+    private Act061_Frag_Drawer_Presenter mPresenter;
 
     private TextView tvInboundId;
     private PieView pvConf;
@@ -80,6 +82,8 @@ public class Act061_Frag_Drawer extends BaseFragment {
          *
          */
         void setFragToContainer(String fragTag);
+
+        void updateDrawerState(boolean stateOpen);
     }
 
     public onFragDrawerInteraction getFragDrawerListener() {
@@ -136,6 +140,12 @@ public class Act061_Frag_Drawer extends BaseFragment {
     private void iniVar(View view) {
         bindViews(view);
         //
+        mPresenter = new Act061_Frag_Drawer_Presenter(
+            context,
+            this,
+            hmAux_Trans
+        );
+        //
         setViewsText();
         //
         configPieViews();
@@ -152,7 +162,11 @@ public class Act061_Frag_Drawer extends BaseFragment {
         ivPositionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(!rdoHeader.isChecked()) {
+                    rdoHeader.performClick();
+                }else{
+                    mFragDrawerListener.updateDrawerState(false);
+                }
             }
         });
         //
@@ -168,6 +182,9 @@ public class Act061_Frag_Drawer extends BaseFragment {
                             mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_ITEM);
                             break;
                     }
+                    //Após mudança no frag, recolhe o drawer
+                    mFragDrawerListener.updateDrawerState(false);
+
                 }
             }
         });
@@ -242,6 +259,9 @@ public class Act061_Frag_Drawer extends BaseFragment {
                 tvInboundId.setText(mInbound.getInbound_prefix()+"."+mInbound.getInbound_code());
                 tvStatus.setText(hmAux_Trans.get(mInbound.getStatus()));
                 tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mInbound.getStatus())));
+                //
+                setPieViewVals();
+                //
                 if(mInbound.getArrival_date() != null) {
                     tvArrivalDtVal.setText(
                             mInbound.getArrival_date() == null ? "":
@@ -279,7 +299,10 @@ public class Act061_Frag_Drawer extends BaseFragment {
                 if(mInbound.getFrom_type() != null
                    && !mInbound.getFrom_type().isEmpty()
                 ){
-                    tvFromVal.setText(mInbound.getFrom_type());
+                    //tvFromVal.setText(hmAux_Trans.get(mInbound.getFrom_type()));
+                    tvFromVal.setText(
+                        mInbound.getFrom_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER) ? mInbound.getFrom_partner_desc() :  mInbound.getFrom_site_desc()
+                    );
                     //
                     tvFromLbl.setVisibility(View.VISIBLE);
                     tvFromVal.setVisibility(View.VISIBLE);
@@ -305,7 +328,7 @@ public class Act061_Frag_Drawer extends BaseFragment {
                     String zoneLocal = "";
                     if(mInbound.getZone_code_conf() != null || mInbound.getLocal_code_conf() != null){
                         zoneLocal += mInbound.getZone_id_conf();
-                        zoneLocal += mInbound.getLocal_code_conf() != null ? "|"+mInbound.getLocal_id_conf() : "";
+                        zoneLocal += mInbound.getLocal_code_conf() != null ? (!zoneLocal.isEmpty() ?  " | " : "") + mInbound.getLocal_id_conf() : "";
                     }else{
                         zoneLocal = hmAux_Trans.get("empty_position_lbl");
                     }
@@ -315,6 +338,32 @@ public class Act061_Frag_Drawer extends BaseFragment {
             }
         }
 
+    }
+
+    private void setPieViewVals() {
+        HMAux percents = mPresenter.getPercents(inboundPrefix,inboundCode);
+        //
+        if(percents != null && percents.size() > 0){
+            try {
+                pvConf.setPercentage(
+                    percents.hasConsistentValue(Sql_Act061_001.CONF_PERC) ? Float.parseFloat(percents.get(Sql_Act061_001.CONF_PERC)) : 0
+                );
+                //
+                pvPutAway.setPercentage(
+                    percents.hasConsistentValue(Sql_Act061_001.PUT_AWAY_PERC) ? Float.parseFloat(percents.get(Sql_Act061_001.PUT_AWAY_PERC)) : 0
+                );
+                //
+                pvPutAway.setVisibility(mInbound.getPut_away_process() == 1 ? View.VISIBLE : View.GONE);
+            }catch (Exception e){
+                e.printStackTrace();
+                //
+                pvConf.setPercentage(0);
+                pvPutAway.setPercentage(0);
+            }
+        }else{
+            pvConf.setPercentage(0);
+            pvPutAway.setPercentage(0);
+        }
     }
 
     private void hideView() {

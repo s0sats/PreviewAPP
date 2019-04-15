@@ -13,11 +13,11 @@ public interface Act057_Main_Contract {
 
         void showAlert(String ttl,String msg);
 
-        void setRecordInfo();
+        void setRecordInfo(int record_size);
 
         void showQtyExceededMsg();
 
-        void loadInboundList();
+        void loadInboundList(ArrayList<IO_Inbound_Search_Record> records);
 
         void setWsProcess(String wsProcess);
 
@@ -28,6 +28,9 @@ public interface Act057_Main_Contract {
         void callAct061(Bundle bundle);
 
         void callAct062();
+
+        void setOnline(boolean online);
+
     }
 
     interface I_Presenter{
@@ -39,5 +42,7 @@ public interface Act057_Main_Contract {
         void onBackPressedClicked();
 
         void processDownloadReturn(HMAux hmAux);
+
+        void getPendenciesList();
     }
 }

@@ -45,7 +45,7 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String PLANNED_LOCAL_CODE = "planned_local_code";
     public static final String PLANNED_CLASS_CODE = "planned_class_code";
     //Constantes abaixo somente SÃO usada em queries
-    public static final String PLANNED_ZONE_DESC = "planned_zone_desc";
+    public static final String PLANNED_ZONE_ID = "planned_zone_id";
     public static final String PLANNED_LOCAL_ID = "planned_local_id";
 
 

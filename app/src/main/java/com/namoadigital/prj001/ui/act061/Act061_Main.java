@@ -10,10 +10,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -147,7 +145,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                //act061_frag_drawer.loadDataToScreen();
+                act061_frag_drawer.loadDataToScreen();
 
                 ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
 
@@ -156,14 +154,19 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
+                //
+                act061_frag_drawer.loadDataToScreen();
+                //
                 ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
 
             }
 
         };
-        //
-        setDrawerState();
+        //Usa o status de criação para definir de drawer aberto ou fechado no carregamento da tela.
+        //Se novo, fecha o drawer
+        setDrawerState(!bNewProcess);
+        //Se criação trava o drawer
+        setDrawerLocked(bNewProcess);
         //
         mPresenter = new Act061_Main_Presenter(
             context,
@@ -176,32 +179,38 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         initFragment();
     }
 
-    private void setDrawerState() {
-        if(bNewProcess){
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    private void setDrawerLocked(boolean lockState) {
+        if(lockState){
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            //mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeButtonEnabled(false);
 
             mDrawerToggle.setDrawerIndicatorEnabled(false);
-
-            mDrawerToggle.syncState();
-
         } else {
-            mDrawerToggle.syncState();
-
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            //mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
             mDrawerLayout.openDrawer(GravityCompat.START);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
             mDrawerToggle.setDrawerIndicatorEnabled(true);
-
-
         }
+        //
+        mDrawerToggle.syncState();
+    }
+
+
+    private void setDrawerState(boolean drawerState) {
+        if(drawerState){
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        } else {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        //
+        mDrawerToggle.syncState();
     }
 
     private void loadInbound() {
@@ -318,7 +327,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         //
         act061_frag_drawer.loadDataToScreen();
         //Chama atualização do Drawer
-        setDrawerState();
+        setDrawerLocked(bNewProcess);
 
     }
 
@@ -383,8 +392,22 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
+    @Override
+    public void updateDrawerState(boolean stateOpen) {
+        setDrawerState(stateOpen);
+    }
 
     //endregion
+
+    //region FragItems
+
+    @Override
+    public void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.addAll(controls_sta);
+    }
+
+    //endregion
+
     //endregion
 
 
@@ -400,6 +423,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if(act061_frag_header != null){
             act061_frag_header.updateFromOutboundList(outbound);
         }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        mDrawerToggle.syncState();
+        //
+        super.onPostCreate(savedInstanceState);
+
     }
 
     @Override

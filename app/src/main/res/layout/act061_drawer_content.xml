@@ -97,6 +97,29 @@
                     app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
                     app:layout_constraintTop_toBottomOf="@+id/act061_drawer_pv_conf"/>
 
+
+            <TextView
+                    android:id="@+id/act061_drawer_tv_from"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="From - trad"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_status"/>
+
+            <TextView
+                    android:id="@+id/act061_drawer_tv_from_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="right"
+                    android:text="Site - trad"
+                    app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_from"
+                    app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                    app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_from"
+                    app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_from"/>
+
             <TextView
                     android:id="@+id/act061_drawer_tv_create_dt"
                     android:layout_width="0dp"
@@ -105,7 +128,7 @@
                     android:text="Data - trad"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
-                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_status"/>
+                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_from_val"/>
 
             <TextView
                     android:id="@+id/act061_drawer_tv_create_dt_val"
@@ -164,28 +187,6 @@
                     app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_invoice"/>
 
             <TextView
-                    android:id="@+id/act061_drawer_tv_from"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="From - trad"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
-                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_invoice_val"/>
-
-            <TextView
-                    android:id="@+id/act061_drawer_tv_from_val"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:gravity="right"
-                    android:text="Site - trad"
-                    app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_from"
-                    app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
-                    app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_from"
-                    app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_from"/>
-
-            <TextView
                     android:id="@+id/act061_drawer_tv_modal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -194,7 +195,7 @@
                     android:text="Modal -trad"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_from_val"/>
+                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_invoice_val"/>
 
             <TextView
                     android:id="@+id/act061_drawer_tv_modal_val"
@@ -252,7 +253,10 @@
                         app:layout_constraintHorizontal_bias="0.5"
                         android:text="Posição - trad"
                         android:textStyle="bold"
-                />
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toTopOf="@+id/act061_drawer_tv_zone_local"/>
 
                 <ImageView
                         android:id="@+id/act061_drawer_iv_edit"

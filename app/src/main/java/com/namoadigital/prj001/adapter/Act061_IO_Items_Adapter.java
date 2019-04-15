@@ -7,11 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
@@ -24,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+    public static final int VIEW_TYPE_FOOTER = 1;
+    public static final int VIEW_TYPE_ITEM = 0;
 
     private Context context;
     private int resource;
@@ -42,6 +42,8 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         void onConfClick(HMAux item);
 
         void onPutAwayClick(HMAux item);
+
+        void onAddItemClick();
     }
 
     public OnIoItemClickListener getOnIoItemClickListener() {
@@ -74,6 +76,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         transList.add("suggestion_lbl");
         transList.add("realized_lbl");
         transList.add("conf_date_lbl");
+        transList.add("btn_add_item");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -87,22 +90,100 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-            .inflate(resource, viewGroup, false);
-        return new IOInboundViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        View view;
+        //
+        if(viewType == VIEW_TYPE_ITEM){
+            view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(resource, viewGroup, false);
+            return new IOInboundViewHolder(view);
+        }else{
+            view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.act061_frag_item_cell_footer, viewGroup, false);
+            return new FooterVH(view);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        IOInboundViewHolder holder = (IOInboundViewHolder) viewHolder;
-        holder.bindData(mFilteredValues.get(position));
+        try {
+            if (viewHolder instanceof IOInboundViewHolder) {
+                IOInboundViewHolder holder = (IOInboundViewHolder) viewHolder;
+                holder.bindData(mFilteredValues.get(position));
+            } else if(viewHolder instanceof FooterVH){
+                FooterVH holder = (FooterVH) viewHolder;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mFilteredValues.size();
+        if(mFilteredValues == null){
+            return 0;
+        }
+        //
+        if(mFilteredValues.size() == 0){
+            return 1;
+        }
+
+        return mFilteredValues.size() + 1;
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        //return super.getItemViewType(position);
+        if(mFilteredValues != null) {
+            if (position == mFilteredValues.size()) {
+                return VIEW_TYPE_FOOTER;
+            } else {
+                return VIEW_TYPE_ITEM;
+            }
+        }else{
+            return VIEW_TYPE_FOOTER;
+        }
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new IoItemFilter();
+        }
+        return valueFilter;
+    }
+
+    private class IoItemFilter extends Filter{
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+            ArrayList<HMAux> filteredList = new ArrayList<>();
+            //
+            for(HMAux aux: mValues){
+                String serialId =
+                    aux.hasConsistentValue(MD_Product_SerialDao.SERIAL_ID)
+                    ? ToolBox.AccentMapper(aux.get(MD_Product_SerialDao.SERIAL_ID)).toLowerCase()
+                    : "";
+                if(!serialId.isEmpty() && serialId.contains(charString)){
+                    filteredList.add(aux);
+                }
+            }
+            mFilteredValues = filteredList;
+            FilterResults filterResults = new FilterResults();
+            filterResults.count = mFilteredValues.size();
+            filterResults.values = mFilteredValues;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mFilteredValues = (ArrayList<HMAux>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
 
     public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView tv_row_id;
@@ -151,7 +232,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
             tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
             tv_sugestion_lbl.setText(hmAux_Trans.get("suggestion_lbl"));
-            tv_realized_lbl.setText(hmAux_Trans.get("suggestion_lbl"));
+            tv_realized_lbl.setText(hmAux_Trans.get("realized_lbl"));
             tv_conf_dt_lbl.setText(hmAux_Trans.get("conf_date_lbl"));
             //
             iv_serial.setOnClickListener(this);
@@ -182,19 +263,25 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             }
             //
             if(
-                (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_DESC) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_DESC).isEmpty())
-                || (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty())
+                (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty())
+                    || (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty())
             ){
-                String suggestedPosition = item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_DESC) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_DESC).isEmpty() ? item.get(IO_Inbound_ItemDao.PLANNED_ZONE_DESC) : "";
+                String suggestedPosition = item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty() ? item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID) : "";
                 suggestedPosition += item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "" ) + item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) : "";
                 tv_suggestion_val.setText(suggestedPosition);
+                tv_sugestion_lbl.setVisibility(View.VISIBLE);
+                tv_suggestion_val.setVisibility(View.VISIBLE);
+            }
+            //
+            if(item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_CODE) && !item.get(IO_Inbound_ItemDao.ZONE_CODE).isEmpty()){
+                String realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_ID) && !item.get(IO_Inbound_ItemDao.ZONE_ID).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_ID) : "";
+                realized += item.hasConsistentValue(IO_Inbound_ItemDao.LOCAL_ID) && !item.get(IO_Inbound_ItemDao.LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "" ) + item.get(IO_Inbound_ItemDao.LOCAL_ID) : "";
+                tv_realized_val.setText(realized);
+                tv_realized_lbl.setVisibility(View.VISIBLE);
+                tv_realized_val.setVisibility(View.VISIBLE);
             }
             //
             if(item.hasConsistentValue(IO_Inbound_ItemDao.CONF_DATE) && !item.get(IO_Inbound_ItemDao.CONF_DATE).isEmpty()){
-                tv_realized_val.setText(item.get(IO_Inbound_ItemDao.ZONE_ID) +" | "+ item.get(IO_Inbound_ItemDao.LOCAL_ID) );
-                tv_realized_lbl.setVisibility(View.VISIBLE);
-                tv_realized_val.setVisibility(View.VISIBLE);
-                //
                 tv_conf_dt_val.setText(
                     ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.get(IO_Inbound_ItemDao.CONF_DATE)),
@@ -206,16 +293,25 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 tv_conf_dt_val.setVisibility(View.VISIBLE);
             }
             //Define qual icone deve ser exibido.
-            if(item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS) && !item.get(IO_InboundDao.PUT_AWAY_PROCESS).isEmpty()){
-                if(item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("0")){
+            if(item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS) && !item.get(IO_InboundDao.PUT_AWAY_PROCESS).isEmpty()) {
+                if (item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("0")) {
                     iv_conf.setVisibility(View.VISIBLE);
                     iv_put_away.setVisibility(View.GONE);
-                }else{
-                    iv_conf.setVisibility(View.GONE);
-                    iv_put_away.setVisibility(View.VISIBLE);
+                } else {
+                    if(
+                        item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
+                        && ( item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                            || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                        )
+                    ) {
+                        iv_conf.setVisibility(View.GONE);
+                        iv_put_away.setVisibility(View.VISIBLE);
+                    } else {
+                        iv_conf.setVisibility(View.VISIBLE);
+                        iv_put_away.setVisibility(View.GONE);
+                    }
                 }
             }
-
         }
 
         private void resetVisibility() {
@@ -253,31 +349,37 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
         private String formatSerialBrandModelColor(HMAux data) {
             String
-            serialBrandModelColor = data.get(MD_Product_SerialDao.BRAND_DESC) == null || data.get(MD_Product_SerialDao.BRAND_DESC).isEmpty() ? "" : data.get(MD_Product_SerialDao.BRAND_DESC);
+                serialBrandModelColor = data.get(MD_Product_SerialDao.BRAND_DESC) == null || data.get(MD_Product_SerialDao.BRAND_DESC).isEmpty() ? "" : data.get(MD_Product_SerialDao.BRAND_DESC);
             serialBrandModelColor +=  (data.get(MD_Product_SerialDao.MODEL_DESC) == null || data.get(MD_Product_SerialDao.MODEL_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.MODEL_DESC));
             serialBrandModelColor +=  (data.get(MD_Product_SerialDao.COLOR_DESC) == null || data.get(MD_Product_SerialDao.COLOR_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.COLOR_DESC));
             return serialBrandModelColor;
         }
     }
 
-    @Override
-    public Filter getFilter() {
-        if (valueFilter == null) {
-            valueFilter = new IoItemFilter();
-        }
-        return valueFilter;
-    }
+    public class FooterVH extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private Button btnAddItem;
 
-    private class IoItemFilter extends Filter{
+        public FooterVH(@NonNull View itemView) {
+            super(itemView);
+            //
+            btnAddItem = itemView.findViewById(R.id.act061_frag_item_footer_btn_add);
+            btnAddItem.setText(hmAux_Trans.get("btn_add_item"));
+            btnAddItem.setOnClickListener(this);
+            //
+            if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)){
+                btnAddItem.setVisibility(View.VISIBLE);
+            }else{
+                btnAddItem.setVisibility(View.GONE);
+            }
+        }
 
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            return null;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
+        public void onClick(View v) {
+            if(mOnIoItemClickListener != null){
+                mOnIoItemClickListener.onAddItemClick();
+            }
         }
     }
+
+
 }

@@ -256,6 +256,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
                 callAct061();
             }
         });
+        //
         btn_pendencies.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,7 +266,12 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
                             hmAux_Trans.get("alert_no_pendencies_msg")
                     );
                 }else{
-                   //callAct057();
+                    Bundle bundle = new Bundle();
+                    //
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+                    bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
+                    //
+                   callAct057(bundle);
                 }
             }
         });

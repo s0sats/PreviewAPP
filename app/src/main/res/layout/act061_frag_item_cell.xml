@@ -87,26 +87,31 @@
             android:text="Prod 001 - trad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/act061_frag_item_cell_tv_product_val" android:layout_marginTop="5dp"
+            android:id="@+id/act061_frag_item_cell_tv_product_val"
+            android:layout_marginTop="2dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_product_lbl"
             app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
             app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
-            app:layout_constraintHorizontal_bias="0.0" android:layout_marginStart="8dp"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="8dp"/>
     <TextView
             android:text="Serial - Trad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/act061_frag_item_cell_tv_serial_lbl" android:layout_marginTop="5dp"
+            android:id="@+id/act061_frag_item_cell_tv_serial_lbl"
+            android:layout_marginTop="2dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_product_val"
             app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
-            app:layout_constraintHorizontal_bias="0.0" android:textStyle="bold"/>
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:textStyle="bold"/>
     <TextView
             android:text="SRL-001-trad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/act061_frag_item_cell_tv_serial_val"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_serial_lbl"
             app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
             android:layout_marginStart="8dp"
@@ -204,7 +209,7 @@
                 app:layout_constraintTop_toBottomOf="@id/act061_frag_item_cell_cl_suggestion"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
         >
 
             <TextView
@@ -249,7 +254,7 @@
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="@id/act061_frag_item_cell_gd_start"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="5dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_cl_positions"
             app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_tv_conf_dt_val"
@@ -266,7 +271,7 @@
             app:layout_constraintHorizontal_weight="2"
             android:id="@+id/act061_frag_item_cell_tv_conf_dt_val"
             app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_cl_positions"
             app:layout_constraintStart_toEndOf="@+id/act061_frag_item_cell_tv_conf_dt_lbl"
             app:layout_constraintHorizontal_bias="1.0"
