@@ -164,7 +164,6 @@ public class WS_IO_Move_Save extends IntentService {
 
         //
         hmAuxRet.put(MOVE_EMPTY_LIST, "0");
-        hmAuxRet.put(MOVE_RETURN_LIST, "");
         processResponse(rec.getResult(), hmAuxRet);
 
         if (reRun) {
@@ -210,8 +209,7 @@ public class WS_IO_Move_Save extends IntentService {
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                             move_ret.getMove_prefix(),
                             move_ret.getMove_code(),
-                            ConstantBaseApp.SYS_STATUS_DONE
-                    ).toSqlQuery()
+                            ConstantBaseApp.SYS_STATUS_DONE).toSqlQuery()
                     );
                     if (move_ret.getSerial() != null) {
                         productSerialDao.addUpdate(move_ret.getSerial().get(0));
@@ -219,6 +217,7 @@ public class WS_IO_Move_Save extends IntentService {
                 }
             }
         }
+        hmAuxRet.put(MOVE_RETURN_LIST, move_list_ret.length() > 0 ? move_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), move_list_ret.length()) : "");
     }
 
     private boolean hasMoveToken(ArrayList<IO_Move> moveList, int pending) {
