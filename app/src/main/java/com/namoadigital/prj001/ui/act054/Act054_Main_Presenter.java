@@ -12,12 +12,17 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -36,7 +41,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     private MD_ProductDao productDao;
     private MD_Product_SerialDao serialDao;
-
+    private IO_MoveDao moveDao;
     private HMAux hmAux_Trans;
     private MD_Product mdProduct;
 
@@ -44,13 +49,22 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private String mSerial_id;
     private String mTracking;
 
-
+    int pending_qty;
+    int waitingSyncPendency;
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        this.pending_qty = 0;
+        this.waitingSyncPendency = 0;
 
-        this.serialDao = new MD_Product_SerialDao(context);
+        this.serialDao = new MD_Product_SerialDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        this.moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
     }
 
 
@@ -140,17 +154,55 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        HMAux result = io_moveDao.getByStringHM((
+        HMAux resultPending = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         )
-
                 ).toSqlQuery()
         );
-        if (result != null && result.hasConsistentValue(IO_Move_Order_Item_Sql_002.PENDING_QTY)) {
-            return "(" + result.get(IO_Move_Order_Item_Sql_002.PENDING_QTY) + ")";
+        HMAux resultWaitingSync = io_moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+
+        pending_qty = 0;
+
+        pending_qty = getPendencyCounterFromHmaux(resultPending);
+        waitingSyncPendency = getPendencyCounterFromHmaux(resultWaitingSync);
+        pending_qty = pending_qty +waitingSyncPendency;
+        return "(" + pending_qty + ")";
+    }
+
+    private int getPendencyCounterFromHmaux(HMAux result) {
+        int pendencies =0;
+        if (result != null && result.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = Integer.valueOf(result.get(IO_MoveDao.PENDING_QTY));
+            }catch (Exception e){
+                pendencies = 0;
+                e.printStackTrace();
+            }
         }
-        return "(0)";
+        return pendencies;
+    }
+
+    @Override
+    public void syncMovements() {
+        mView.setWs_process(WS_IO_Move_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_save_move_ttl"),
+                hmAux_Trans.get("dialog_save_move_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
@@ -182,5 +234,21 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             field = field + "|";
         }
         return field;
+    }
+
+    public boolean hasPending_qty() {
+        return waitingSyncPendency>0;
+    }
+
+    public void setMovementFromSync(String prefix, String code, String status){
+
+        IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.valueOf(prefix),
+                Integer.valueOf(code)).toSqlQuery());
+
+        ioMove.setStatus(status);
+
+        moveDao.addUpdate(ioMove);
     }
 }

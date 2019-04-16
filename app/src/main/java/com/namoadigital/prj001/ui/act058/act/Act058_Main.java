@@ -479,7 +479,18 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg) {
-
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
     }
 
     @Override

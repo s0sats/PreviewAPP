@@ -19,6 +19,8 @@ public interface Act054_Main_Contract {
         List<HMAux> getZoneList();
 
         String getPendecies();
+
+        void syncMovements();
     }
 
     interface I_View{
@@ -32,5 +34,7 @@ public interface Act054_Main_Contract {
         void callAct055(Bundle bundle);
 
         void callAct051();
+
+        void setWs_process(String name);
     }
 }

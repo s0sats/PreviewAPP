@@ -155,15 +155,13 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
             Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
             Bundle bundle = new Bundle();
             //
-
-            //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
         } else {
             mView.showAlert(
-                    hmAux_trans.get("alert_no_conection_ttl"),
-                    hmAux_trans.get("alert_no_conection_msg")
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
             );
         }
     }

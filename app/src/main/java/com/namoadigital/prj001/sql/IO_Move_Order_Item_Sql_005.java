@@ -6,12 +6,10 @@ import com.namoadigital.prj001.util.Constant;
 
 import static com.namoadigital.prj001.dao.IO_MoveDao.PENDING_QTY;
 
-//Listar movimentacoes pendentes
-public class IO_Move_Order_Item_Sql_002 implements Specification {
+public class IO_Move_Order_Item_Sql_005 implements Specification {
     private long customer_code;
 
-
-    public IO_Move_Order_Item_Sql_002(long customer_code) {
+    public IO_Move_Order_Item_Sql_005(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -25,7 +23,7 @@ public class IO_Move_Order_Item_Sql_002 implements Specification {
                         IO_MoveDao.TABLE + " \n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
-                        "   and status = '"+ Constant.SYS_STATUS_PENDING +'\'' )
+                        "   and status = '"+ Constant.SYS_STATUS_WAITING_SYNC +'\'' )
                 .toString();
     }
 }

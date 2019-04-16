@@ -244,7 +244,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                                 public void onClick(DialogInterface dialog, int which) {
                                     if(view_param == 0) {
                                         persistIoMoveChanges();
-
                                     }
                                 }
                             },
