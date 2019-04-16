@@ -21,6 +21,8 @@ public interface Act054_Main_Contract {
         String getPendecies();
 
         void syncMovements();
+
+        void getPendenciesList();
     }
 
     interface I_View{

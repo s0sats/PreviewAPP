@@ -26,7 +26,7 @@ public interface Act058_Main_Contract {
 
         int getViewMode(IO_Move moveInfo);
 
-        void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial);
+        void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move);
     }
 
     interface I_View{

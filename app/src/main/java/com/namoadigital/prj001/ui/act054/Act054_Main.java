@@ -296,6 +296,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             null,
                             0
                     );
+                }else{
+                    mPresenter.getPendenciesList();
                 }
             }
         });
@@ -361,11 +363,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-
         if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
             mPresenter.processIOMoveSearch(mLink);
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
-
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
             showResults(moves);
         }
@@ -415,7 +415,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 String label = moveList.get(0).get("label").replace('.', '#');
                 String[] moveLabel = label.split("#");
 
-                mPresenter.setMovementFromSync(moveLabel[0],moveLabel[1], ConstantBase.SYS_STATUS_PENDING);
+                mPresenter.setMovementFromSync(moveLabel[0], moveLabel[1], ConstantBase.SYS_STATUS_PENDING);
 
                 ToolBox.alertMSG(
                         context,
@@ -430,7 +430,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                         0
                 );
             }
-        }else{
+        } else {
             showNewOptDialog(moveList);
         }
     }
@@ -474,24 +474,18 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                //
-
-                    //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_sync_ok_ttl"),
-                            hmAux_Trans.get("alert_move_sync_ok_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callMovementList();
-                                }
-                            },
-                            0
-                    );
-                    //refreshUI();
-
-
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_move_sync_ok_ttl"),
+                        hmAux_Trans.get("alert_move_sync_ok_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callMovementList();
+                            }
+                        },
+                        0
+                );
             }
         });
     }

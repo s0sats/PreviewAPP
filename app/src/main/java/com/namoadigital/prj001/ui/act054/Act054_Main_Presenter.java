@@ -51,6 +51,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     int pending_qty;
     int waitingSyncPendency;
+
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
@@ -124,10 +125,20 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_move_order_not_found_msg")
             );
         } else {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
-            mView.callAct055(bundle);
+            callMoveOrderList(record_list);
         }
+    }
+
+    private void callMoveOrderList(ArrayList<IO_Move_Search_Record> record_list) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
+        mView.callAct055(bundle);
+    }
+
+    @Override
+    public void getPendenciesList() {
+        ArrayList<IO_Move_Search_Record> searchRecords = new ArrayList<>();
+
     }
 
     @Override
@@ -171,16 +182,16 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
         pending_qty = getPendencyCounterFromHmaux(resultPending);
         waitingSyncPendency = getPendencyCounterFromHmaux(resultWaitingSync);
-        pending_qty = pending_qty +waitingSyncPendency;
+        pending_qty = pending_qty + waitingSyncPendency;
         return "(" + pending_qty + ")";
     }
 
     private int getPendencyCounterFromHmaux(HMAux result) {
-        int pendencies =0;
+        int pendencies = 0;
         if (result != null && result.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
             try {
                 pendencies = Integer.valueOf(result.get(IO_MoveDao.PENDING_QTY));
-            }catch (Exception e){
+            } catch (Exception e) {
                 pendencies = 0;
                 e.printStackTrace();
             }
@@ -204,6 +215,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         //
         context.sendBroadcast(mIntent);
     }
+
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
         if (inboundStatus) {
@@ -237,10 +249,10 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     public boolean hasPending_qty() {
-        return waitingSyncPendency>0;
+        return waitingSyncPendency > 0;
     }
 
-    public void setMovementFromSync(String prefix, String code, String status){
+    public void setMovementFromSync(String prefix, String code, String status) {
 
         IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),

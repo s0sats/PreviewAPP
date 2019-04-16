@@ -453,7 +453,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 to_class_code,
                 reason_code,
                 done_date,
-                serial);
+                serial,
+                moveInfo);
     }
 
     @Override
