@@ -302,6 +302,45 @@
                             android:gravity="center_vertical"
                             android:text="Site" />
 
+                        <LinearLayout
+                                android:id="@+id/frg_serial_edit_ll_suggested_location"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="15dp"
+                                android:background="@color/namoa_color_gray"
+                                android:orientation="horizontal"
+                                android:padding="5dp"
+                                android:visibility="gone"
+                        >
+
+                            <TextView
+                                    android:id="@+id/frg_serial_edit_tv_suggested_location_ttl"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:padding="5dp"
+                                    android:text="Suggested"
+                                    android:textSize="@dimen/font_size_item_md"
+                                    android:textStyle="bold"
+                                    android:visibility="gone"
+
+                            />
+
+                            <TextView
+                                    android:id="@+id/frg_serial_edit_tv_suggested_location"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2"
+                                    android:gravity="center"
+                                    android:padding="5dp"
+                                    android:text="Zona | Local"
+                                    android:textSize="@dimen/font_size_item_md"
+                                    android:textStyle="bold"
+                            />
+
+
+                        </LinearLayout>
+
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_site_zone"
                             android:layout_width="match_parent"

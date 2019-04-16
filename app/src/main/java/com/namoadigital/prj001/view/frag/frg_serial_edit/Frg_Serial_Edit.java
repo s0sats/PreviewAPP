@@ -190,6 +190,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean abortReported = false;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean forceLoggedSiteRestriction = false;
+    private LinearLayout ll_suggestion;
+    private TextView tv_suggested_location;
 
 
     //region Interfaces
@@ -586,6 +588,11 @@ public class Frg_Serial_Edit extends BaseFragment {
         tv_serial_location_ttl.setTag("serial_location_ttl");
         //
         ss_site = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site);
+        //
+        ll_suggestion = view.findViewById(R.id.frg_serial_edit_ll_suggested_location);
+        ll_suggestion.setVisibility(View.GONE);
+        //
+        tv_suggested_location = view.findViewById(R.id.frg_serial_edit_tv_suggested_location);
         //
         ss_site_zone = (SearchableSpinner) view.findViewById(R.id.frg_serial_edit_ss_site_zone);
         //
