@@ -19,6 +19,7 @@ public class IO_Inbound_Search_Record implements Serializable {
     private String modal;
     //Propriedade usada somente no adapter
     private boolean toDownload;
+    private boolean sameSiteAsLoggedOrFree;
 
     public int getCustomer_code() {
         return customer_code;
@@ -130,6 +131,14 @@ public class IO_Inbound_Search_Record implements Serializable {
 
     public void setToDownload(boolean toDownload) {
         this.toDownload = toDownload;
+    }
+
+    public boolean isSameSiteAsLoggedOrFree() {
+        return sameSiteAsLoggedOrFree;
+    }
+
+    public void setSameSiteAsLoggedOrFree(boolean sameSiteAsLoggedOrFree) {
+        this.sameSiteAsLoggedOrFree = sameSiteAsLoggedOrFree;
     }
 
     public String getAllFieldForFilter(){

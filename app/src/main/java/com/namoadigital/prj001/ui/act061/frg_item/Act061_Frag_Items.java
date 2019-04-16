@@ -55,6 +55,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         IO_Inbound getInboundFromAct(int prefix, int code);
 
         void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+
+        void callAddItemAct();
     }
 
     public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code){
@@ -208,7 +210,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             mAdapter = new Act061_IO_Items_Adapter(
                 context,
                 R.layout.act061_frag_item_cell,
-                itemList
+                itemList,
+                mInbound.getAllow_new_item() == 1
             );
             //
             mAdapter.setOnIoItemClickListener(new Act061_IO_Items_Adapter.OnIoItemClickListener() {
@@ -229,7 +232,9 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
 
                 @Override
                 public void onAddItemClick() {
-                    Toast.makeText(context,"AddItem",Toast.LENGTH_SHORT).show();
+                    if(mFragItemListener != null){
+                        mFragItemListener.callAddItemAct();
+                    }
                 }
             });
             //

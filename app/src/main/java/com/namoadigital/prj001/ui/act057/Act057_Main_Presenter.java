@@ -134,6 +134,14 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
                 record.setFrom(hmAux.get(IO_InboundDao.FROM_SITE_CODE));
             }
             record.setModal(hmAux.get(IO_InboundDao.MODAL_DESC));
+            //
+            if( hmAux.hasConsistentValue(IO_InboundDao.TO_SITE_CODE)
+                && hmAux.get(IO_InboundDao.TO_SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context)))
+            {
+                record.setSameSiteAsLoggedOrFree(true);
+            }else{
+                record.setSameSiteAsLoggedOrFree(false);
+            }
         } catch (Exception e){
             e.printStackTrace();
         }

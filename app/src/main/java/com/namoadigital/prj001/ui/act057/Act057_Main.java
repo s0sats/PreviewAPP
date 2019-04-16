@@ -118,6 +118,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         transList.add("alert_qty_records_founded");
         transList.add("alert_download_return_ttl");
         transList.add("alert_download_return_error_msg");
+        transList.add("alert_inbound_different_to_site_ttl");
+        transList.add("alert_inbound_different_to_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -256,12 +258,22 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
             mAdapter.setOnItemClickListner(new Act057_Inbound_Download_Adapter.OnItemClickListner() {
                 @Override
                 public void onItemClick(IO_Inbound_Search_Record item) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,Constant.IO_INBOUND);
-                    bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getInbound_prefix()));
-                    bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,String.valueOf(item.getInbound_code()));
-                    //
-                    callAct061(bundle);
+                    if(item.isSameSiteAsLoggedOrFree()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+                        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getInbound_prefix()));
+                        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(item.getInbound_code()));
+                        //
+                        callAct061(bundle);
+                    }else{
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_inbound_different_to_site_ttl"),
+                            hmAux_Trans.get("alert_inbound_different_to_site_msg"),
+                            null,
+                            0
+                        );
+                    }
                 }
             });
             //

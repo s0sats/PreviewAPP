@@ -34,6 +34,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     private HMAux hmAux_Trans;
     private String mResource_Name = "act061_io_items_adapter";
     private OnIoItemClickListener mOnIoItemClickListener;
+    private boolean inboundAllowNewItem;
 
     public interface OnIoItemClickListener{
 
@@ -54,11 +55,12 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         this.mOnIoItemClickListener = mOnIoItemClickListener;
     }
 
-    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues) {
+    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues,boolean inboundAllowNewItem) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
         this.mFilteredValues = mValues;
+        this.inboundAllowNewItem = inboundAllowNewItem;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -364,12 +366,13 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             //
             btnAddItem = itemView.findViewById(R.id.act061_frag_item_footer_btn_add);
             btnAddItem.setText(hmAux_Trans.get("btn_add_item"));
-            btnAddItem.setOnClickListener(this);
             //
-            if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)){
+            if(inboundAllowNewItem){
                 btnAddItem.setVisibility(View.VISIBLE);
+                btnAddItem.setOnClickListener(this);
             }else{
                 btnAddItem.setVisibility(View.GONE);
+                btnAddItem.setOnClickListener(null);
             }
         }
 

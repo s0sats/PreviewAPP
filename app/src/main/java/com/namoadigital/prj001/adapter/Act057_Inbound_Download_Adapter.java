@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,6 +141,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     }
 
     public class InboundDownloadViewHolder extends RecyclerView.ViewHolder{
+        private ConstraintLayout cl_main_bg;
         private CheckBox chkDownload;
         private ImageView iv_offline;
         private TextView tv_status;
@@ -178,6 +180,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
                     }
                 }
             });
+            //
+            cl_main_bg = itemView.findViewById(R.id.act057_main_cl_background);
             chkDownload = itemView.findViewById(R.id.act057_io_inbound_cell_chk_download);
             chkDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -235,6 +239,9 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             //Esconde views
             resetVisibility();
             //
+            if(!isOnline && !data.isSameSiteAsLoggedOrFree()){
+                cl_main_bg.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+            }
             chkDownload.setChecked(data.isToDownload());
             tv_status.setText(hmAux_Trans.get(data.getStatus()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(data.getStatus())));
@@ -319,6 +326,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         }
 
         private void resetVisibility() {
+            cl_main_bg.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
             chkDownload.setVisibility(isOnline ? View.VISIBLE : View.GONE);
             iv_offline.setVisibility(isOnline ? View.GONE :View.VISIBLE);
             tv_modal.setVisibility(View.GONE);

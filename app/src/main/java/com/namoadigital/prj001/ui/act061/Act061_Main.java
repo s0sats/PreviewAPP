@@ -10,7 +10,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -27,6 +30,7 @@ import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
 import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header;
 import com.namoadigital.prj001.ui.act061.frg_item.Act061_Frag_Items;
+import com.namoadigital.prj001.ui.act062.Act062_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -406,6 +410,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         this.controls_sta.addAll(controls_sta);
     }
 
+    @Override
+    public void callAddItemAct() {
+        callAct062();
+    }
     //endregion
 
     //endregion
@@ -424,6 +432,22 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             act061_frag_header.updateFromOutboundList(outbound);
         }
     }
+
+    private void callAct062() {
+        Intent mIntent = new Intent(context, Act062_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
