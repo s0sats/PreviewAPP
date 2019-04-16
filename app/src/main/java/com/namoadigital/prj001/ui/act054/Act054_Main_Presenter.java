@@ -24,6 +24,7 @@ import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.Sql_Act058_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -138,7 +139,57 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     @Override
     public void getPendenciesList() {
         ArrayList<IO_Move_Search_Record> searchRecords = new ArrayList<>();
+        ArrayList<HMAux> moveOrders = (ArrayList<HMAux>) moveDao.query_HM(
+                new Sql_Act058_001(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+        );
+        for(HMAux move: moveOrders){
+            IO_Move_Search_Record aux = getHmAuxToMoveSearchRecord(move);
+            if(aux != null){
+                searchRecords.add(aux);
+            }
+        }
+        callMoveOrderList(searchRecords);
+    }
 
+    private IO_Move_Search_Record getHmAuxToMoveSearchRecord(HMAux move) {
+        IO_Move_Search_Record record = new IO_Move_Search_Record();
+        try{
+            record.setCustomer_code(Integer.parseInt(move.get(IO_MoveDao.CUSTOMER_CODE)));
+            record.setMove_prefix(Integer.parseInt(move.get(IO_MoveDao.MOVE_PREFIX)));
+            record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
+            record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
+
+            record.setPlanned_local_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_LOCAL_CODE)));
+            record.setPlanned_class_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_CLASS_CODE)));
+            record.setPlanned_zone_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_ZONE_CODE)));
+            record.setZone_code(Integer.valueOf(move.get(MD_Product_SerialDao.ZONE_CODE)));
+            record.setZone_desc(move.get(MD_Product_SerialDao.ZONE_DESC));
+            record.setZone_id(move.get(MD_Product_SerialDao.ZONE_ID));
+            record.setLocal_code(Integer.valueOf(move.get(MD_Product_SerialDao.LOCAL_CODE)));
+            record.setLocal_id(move.get(MD_Product_SerialDao.LOCAL_ID));
+
+//            record.setPlanned_local_id(move.get(IO_MoveDao.PLANNED_LOCAL_CODE));
+//            record.setPlanned_zone_desc(move.get(IO_MoveDao.MOVE_TYPE));
+//            record.setPlanned_zone_id(move.get(IO_MoveDao.MOVE_TYPE));
+
+            record.setProduct_desc(move.get(MD_Product_SerialDao.PRODUCT_DESC));
+            record.setProduct_id(move.get(MD_Product_SerialDao.PRODUCT_ID));
+            record.setProduct_code(Integer.parseInt(move.get(MD_Product_SerialDao.PRODUCT_CODE)));
+
+            record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
+            record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
+
+            record.setInbound_code(Integer.valueOf(move.get(IO_MoveDao.INBOUND_CODE)));
+            record.setInbound_item(Integer.valueOf(move.get(IO_MoveDao.INBOUND_ITEM)));
+            record.setInbound_prefix(Integer.valueOf(move.get(IO_MoveDao.INBOUND_PREFIX)));
+            record.setOutbound_code(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_CODE)));
+            record.setOutbound_item(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_ITEM)));
+            record.setOutbound_prefix(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_PREFIX)));
+
+        }catch (Exception e){
+
+        }
+        return null;
     }
 
     @Override
