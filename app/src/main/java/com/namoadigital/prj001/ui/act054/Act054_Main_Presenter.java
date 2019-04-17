@@ -142,9 +142,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         ArrayList<HMAux> moveOrders = (ArrayList<HMAux>) moveDao.query_HM(
                 new Sql_Act058_001(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
         );
-        for(HMAux move: moveOrders){
+        for (HMAux move : moveOrders) {
             IO_Move_Search_Record aux = getHmAuxToMoveSearchRecord(move);
-            if(aux != null){
+            if (aux != null) {
                 searchRecords.add(aux);
             }
         }
@@ -153,43 +153,117 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     private IO_Move_Search_Record getHmAuxToMoveSearchRecord(HMAux move) {
         IO_Move_Search_Record record = new IO_Move_Search_Record();
-        try{
-            record.setCustomer_code(Integer.parseInt(move.get(IO_MoveDao.CUSTOMER_CODE)));
-            record.setMove_prefix(Integer.parseInt(move.get(IO_MoveDao.MOVE_PREFIX)));
-            record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
-            record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
 
-            record.setPlanned_local_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_LOCAL_CODE)));
-            record.setPlanned_class_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_CLASS_CODE)));
-            record.setPlanned_zone_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_ZONE_CODE)));
-            record.setZone_code(Integer.valueOf(move.get(MD_Product_SerialDao.ZONE_CODE)));
-            record.setZone_desc(move.get(MD_Product_SerialDao.ZONE_DESC));
-            record.setZone_id(move.get(MD_Product_SerialDao.ZONE_ID));
-            record.setLocal_code(Integer.valueOf(move.get(MD_Product_SerialDao.LOCAL_CODE)));
-            record.setLocal_id(move.get(MD_Product_SerialDao.LOCAL_ID));
+        try {
 
-//            record.setPlanned_local_id(move.get(IO_MoveDao.PLANNED_LOCAL_CODE));
-//            record.setPlanned_zone_desc(move.get(IO_MoveDao.MOVE_TYPE));
-//            record.setPlanned_zone_id(move.get(IO_MoveDao.MOVE_TYPE));
+            if (move.hasConsistentValue(IO_MoveDao.CUSTOMER_CODE)) {
+                record.setCustomer_code(Integer.parseInt(move.get(IO_MoveDao.CUSTOMER_CODE)));
+            }
 
-            record.setProduct_desc(move.get(MD_Product_SerialDao.PRODUCT_DESC));
-            record.setProduct_id(move.get(MD_Product_SerialDao.PRODUCT_ID));
-            record.setProduct_code(Integer.parseInt(move.get(MD_Product_SerialDao.PRODUCT_CODE)));
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_PREFIX)) {
+                record.setMove_prefix(Integer.parseInt(move.get(IO_MoveDao.MOVE_PREFIX)));
+            }
 
-            record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
-            record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_CODE)) {
+                record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
+            }
 
-            record.setInbound_code(Integer.valueOf(move.get(IO_MoveDao.INBOUND_CODE)));
-            record.setInbound_item(Integer.valueOf(move.get(IO_MoveDao.INBOUND_ITEM)));
-            record.setInbound_prefix(Integer.valueOf(move.get(IO_MoveDao.INBOUND_PREFIX)));
-            record.setOutbound_code(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_CODE)));
-            record.setOutbound_item(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_ITEM)));
-            record.setOutbound_prefix(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_PREFIX)));
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
+                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
+            }
 
-        }catch (Exception e){
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
+                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
+            }
 
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_CODE)) {
+                record.setPlanned_local_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_LOCAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_ID)) {
+                record.setPlanned_local_id(move.get(IO_MoveDao.PLANNED_LOCAL_ID));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_CLASS_CODE)) {
+                record.setPlanned_class_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_CLASS_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_CODE)) {
+                record.setPlanned_zone_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_ZONE_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_ID)) {
+                record.setPlanned_zone_id(move.get(IO_MoveDao.PLANNED_ZONE_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_CODE)) {
+                record.setZone_code(Integer.valueOf(move.get(MD_Product_SerialDao.ZONE_CODE)));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_DESC)) {
+                record.setZone_desc(move.get(MD_Product_SerialDao.ZONE_DESC));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_ID)) {
+                record.setZone_id(move.get(MD_Product_SerialDao.ZONE_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_CODE)) {
+                record.setLocal_code(Integer.valueOf(move.get(MD_Product_SerialDao.LOCAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_ID)) {
+                record.setLocal_id(move.get(MD_Product_SerialDao.LOCAL_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_DESC)) {
+                record.setProduct_desc(move.get(MD_Product_SerialDao.PRODUCT_DESC));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_ID)) {
+                record.setProduct_id(move.get(MD_Product_SerialDao.PRODUCT_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)) {
+                record.setProduct_code(Integer.parseInt(move.get(MD_Product_SerialDao.PRODUCT_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.SERIAL_CODE)) {
+                record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.SITE_CODE)) {
+                record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_CODE)) {
+                record.setInbound_code(Integer.valueOf(move.get(IO_MoveDao.INBOUND_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_ITEM)) {
+                record.setInbound_item(Integer.valueOf(move.get(IO_MoveDao.INBOUND_ITEM)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_PREFIX)) {
+                record.setInbound_prefix(Integer.valueOf(move.get(IO_MoveDao.INBOUND_PREFIX)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_CODE)) {
+                record.setOutbound_code(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_ITEM)) {
+                record.setOutbound_item(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_ITEM)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_PREFIX)) {
+                record.setOutbound_prefix(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_PREFIX)));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return null;
+        return record;
     }
 
     @Override

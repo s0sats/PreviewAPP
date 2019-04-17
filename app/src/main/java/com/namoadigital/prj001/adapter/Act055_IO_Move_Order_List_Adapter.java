@@ -178,6 +178,9 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_serial_ext_code_lbl.setText(hmAux_Trans.get("serial_code_lbl"));
             tv_io_serial_ext_code_val.setText(String.valueOf(data.getSerial_code()));
             tv_io_serial_desc.setText(formatSerialBrandModelColor(data));
+            if(formatSerialBrandModelColor(data).isEmpty()){
+                tv_io_serial_desc.setVisibility(View.GONE);
+            }
             tv_io_move_order_list_position.setText(String.valueOf(getAdapterPosition() + 1));
             tv_io_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
             tv_io_move_order_val.setText(formatPrefixSufix(data.getMove_prefix(),data.getMove_code()));
