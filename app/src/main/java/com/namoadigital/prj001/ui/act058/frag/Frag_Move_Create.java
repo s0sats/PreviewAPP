@@ -191,12 +191,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void initAction() {
-        iv_serial_history.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // show history
-            }
-        });
 
         iv_add_tracking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -683,6 +677,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
         }
 
+        mListener.onAddOrRemoveControlSS(ss_zone,true);
+        mListener.onAddOrRemoveControlSS(ss_local,true);
+
+
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
 
@@ -731,11 +729,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private void setSSLocal() {
         ss_local.setmLabel(hmAux_Trans.get("position_lbl"));
+        ss_local.setmShowBarcode(true);
+        ss_local.setmShowLabel(false);
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
     }
 
     private void setSSZone() {
-        ss_zone.setmShowBarcode(true);
         ss_zone.setmShowBarcode(true);
         ss_zone.setmLabel(hmAux_Trans.get("zone_lbl"));
         ss_zone.setmTitle(hmAux_Trans.get("zone_ttl"));
@@ -848,6 +847,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         return transList;
     }
 
+    public void restoreUIFields() {
+        initializeViews();
+    }
+
 
     public interface OnFragmentInteractionListener {
         void persistIoMove(long customer_code,
@@ -872,6 +875,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ArrayList<HMAux> getReasonOption();
 
         void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b);
+        void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean b);
 
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);
 

@@ -17,18 +17,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -161,7 +159,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             movePrefix = 0;
             moveCode = 0;
         }
-
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
@@ -259,7 +256,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-//                                    refreshUI();
+                                    frag_move_create.restoreUIFields();
                                 }
                             },
                             0
@@ -411,6 +408,16 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             controls_sta.add(mket_tracking);
         } else {
             controls_sta.remove(mket_tracking);
+        }
+    }
+
+    @Override
+    public void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean add){
+
+        if (add) {
+            controls_ss.add(searchableSpinner);
+        } else {
+            controls_ss.remove(searchableSpinner);
         }
     }
 

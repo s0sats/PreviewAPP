@@ -72,7 +72,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/iv_offline_mode"
         app:layout_constraintTop_toBottomOf="@+id/iv_offline_mode"
-        app:srcCompat="@android:drawable/ic_menu_recent_history" />
+        android:src="@drawable/ic_clock_chat" />
 
     <TextView
         android:id="@+id/tv_serial_val"
