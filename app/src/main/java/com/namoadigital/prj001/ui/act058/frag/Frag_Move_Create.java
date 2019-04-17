@@ -660,9 +660,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_class.setmOption(mListener.getClassList());
         setClassIcon(ss_class.getmValue());
 
-        ss_class.setmEnabled(hasSerialPermission());
-        iv_add_tracking.setEnabled(hasSerialPermission());
-
         setLabelsAndHint();
         setMkdate();
         if(hasSerialPermission()) {
