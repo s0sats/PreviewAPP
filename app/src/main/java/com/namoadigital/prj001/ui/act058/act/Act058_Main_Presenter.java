@@ -11,7 +11,9 @@ import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
@@ -27,6 +29,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     IO_MoveDao moveDao;
     MD_Product_SerialDao productSerialDao;
     MD_ClassDao classDao;
+    IO_MoveDao ioMoveDao;
     Context context;
     Act058_Main mView;
     HMAux hmAux_trans;
@@ -39,7 +42,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         this.productSerialDao = new MD_Product_SerialDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
-
+        this.ioMoveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
         this.classDao = new MD_ClassDao(context);
         this.hmAux_trans = hmAux_trans;
         this.mView = mView;
@@ -123,4 +128,48 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         }
 
     }
+
+    @Override
+    public void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move ) {
+        io_move.setCustomer_code(customer_code);
+        io_move.setMove_prefix(move_prefix);
+        io_move.setMove_code(move_code);
+        io_move.setTo_zone_code(to_zone_code);
+        io_move.setTo_local_code(to_local_code);
+        io_move.setTo_class_code(to_class_code);
+        io_move.setReason_code(reason_code);
+        io_move.setDone_date(done_date);
+        io_move.setProduct_code(serial.getProduct_code());
+        io_move.setSerial_code((int) serial.getSerial_code());
+        io_move.setDone_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        io_move.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        io_move.getSerial().add(serial);
+        io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
+        io_move.setCustomer_code(customer_code);
+        io_move.setMove_prefix(move_prefix);
+        io_move.setMove_code(move_code);
+        ioMoveDao.addUpdate(io_move);
+
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Move_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
+            );
+        }
+    }
+
 }

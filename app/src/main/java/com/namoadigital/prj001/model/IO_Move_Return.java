@@ -2,14 +2,15 @@ package com.namoadigital.prj001.model;
 
 import java.util.ArrayList;
 
-class IO_Move_Return {
+public class IO_Move_Return {
 
     private long customer_code;
     private int move_prefix;
     private int move_code;
     private String ret_status;
     private String ret_msg;
-    private ArrayList<MD_Product_Serial> record;
+    private ArrayList<MD_Product_Serial> serial;
+    private ArrayList<IO_Move> move;
 
     public long getCustomer_code() {
         return customer_code;
@@ -51,11 +52,19 @@ class IO_Move_Return {
         this.ret_msg = ret_msg;
     }
 
-    public ArrayList<MD_Product_Serial> getRecord() {
-        return record;
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
     }
 
-    public void setRecord(ArrayList<MD_Product_Serial> record) {
-        this.record = record;
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
     }
 }

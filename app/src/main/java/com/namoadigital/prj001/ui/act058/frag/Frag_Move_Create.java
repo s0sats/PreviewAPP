@@ -65,6 +65,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private int view_param;
     private boolean fromMove;
     private IO_Move ioMove;
+
+
+
     private MD_Product_Serial mdProductSerial;
 
     private View serialLayout;
@@ -72,16 +75,19 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private LinearLayout ll_tracking_content;
     private TextView tv_zone_position;
     private TextView tv_inbound_lbl;
+    private TextView tv_outbound_lbl;
     private TextView tv_move_order_lbl;
     private TextView tv_move_to_lbl;
     private TextView tv_inbound_val;
+    private TextView tv_outbound_val;
     private TextView tv_move_order_val;
     private TextView tv_move_to_val;
     private MKEditTextNM mkedit_coments;
+    private MKEditTextNM mket_serial;
     private MkDateTime mkdate_confirm;
     private TextViewCT.ITextViewCT tvCtListner;
     private SearchableSpinner ss_zone;
-    private SearchableSpinner ss_position;
+    private SearchableSpinner ss_local;
     private SearchableSpinner ss_reason;
     private SearchableSpinner ss_class;
     private CheckBox chk_change_zone;
@@ -146,7 +152,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragView = inflater.inflate(R.layout.act058_frag_move, container, false);
-        mPresenter = new Frag_Move_Create_Presenter(this, getContext());
+        mPresenter = new Frag_Move_Create_Presenter(this, getContext(), ioMove.getMove_type(), ioMove.getPlanned_zone_code());
         bindViews(fragView);
         initializeViews();
         initAction();
@@ -156,17 +162,20 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private void bindViews(View fragView) {
         tv_zone_position = fragView.findViewById(R.id.act058_tv_zone_position);
         tv_inbound_val = fragView.findViewById(R.id.act058_tv_inbound_val);
+        tv_outbound_val = fragView.findViewById(R.id.act058_tv_outbound_val);
         tv_move_order_val = fragView.findViewById(R.id.act058_tv_move_order_val);
         tv_move_to_val = fragView.findViewById(R.id.act058_tv_move_to_val);
         tv_inbound_lbl = fragView.findViewById(R.id.act058_tv_inbound_lbl);
+        tv_outbound_lbl = fragView.findViewById(R.id.act058_tv_outbound_lbl);
         tv_move_order_lbl = fragView.findViewById(R.id.act058_tv_move_order_lbl);
         tv_move_to_lbl = fragView.findViewById(R.id.act058_tv_move_to_lbl);
         ll_tracking_content = fragView.findViewById(R.id.ll_tracking_content);
         iv_add_tracking = fragView.findViewById(R.id.act058_iv_add_tracking);
         iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
         btn_save = fragView.findViewById(R.id.act058_btn_save);
+        mket_serial = fragView.findViewById(R.id.act058_mket_serial);
         ss_zone = fragView.findViewById(R.id.act058_ss_zone);
-        ss_position = fragView.findViewById(R.id.act058_ss_position);
+        ss_local = fragView.findViewById(R.id.act058_ss_local);
         mkedit_coments = fragView.findViewById(R.id.act058_mkedit_coments);
         mkdate_confirm = fragView.findViewById(R.id.act058_mkdate_confirm);
         sv_create_move = fragView.findViewById(R.id.act058_sv_create_move);
@@ -226,6 +235,20 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
+                    ToolBox.alertMSG_YES_NO(
+                            getContext(),
+                            hmAux_Trans.get("alert_update_move_ttl"),
+                            hmAux_Trans.get("alert_update_move_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(view_param == 0) {
+                                        persistIoMoveChanges();
+                                    }
+                                }
+                            },
+                            1
+                    );
 
                 }
             }
@@ -251,7 +274,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
           }
         );
 
-        ss_position.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+        ss_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -263,6 +286,39 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             }
         });
 
+    }
+
+    private void persistIoMoveChanges() {
+        Integer classCode = null;
+        Integer reasonCode = null;
+        Integer zoneCode = Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE));
+
+        if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+        }
+
+        if(ss_reason.getmValue()!= null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+            reasonCode = Integer.valueOf(ss_reason.getmValue().get(SearchableSpinner.CODE));
+        }
+
+        if(chk_change_zone.isChecked()){
+            ToolBox_Con.setPreference_Zone_Code(
+                    getContext(),
+                    zoneCode
+            );
+        }
+
+        mListener.persistIoMove(
+                ToolBox_Con.getPreference_Customer_Code(getContext()),
+                ioMove.getMove_prefix(),
+                ioMove.getMove_code(),
+                Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                classCode,
+                reasonCode,
+                mkdate_confirm.getmValue(),
+                mdProductSerial
+        );
     }
 
     private void processLocalValueChange(HMAux hmAux) {
@@ -277,7 +333,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     false
             );
             //
-            mPresenter.loadLocalSS(ss_zone, ss_position, false);
+            mPresenter.loadLocalSS(ss_zone, ss_local, false);
         }
     }
 
@@ -308,11 +364,33 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 }
                 break;
         }
+
         if (ss_reason.getmValue() == null || !ss_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
             ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             isSuccessfully = false;
         } else {
             ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+
+        if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isSuccessfully = false;
+        } else {
+            ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+
+        if (ss_local.getmValue() == null || !ss_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            isSuccessfully = false;
+        } else {
+            ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        }
+        mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        if(mket_serial.getVisibility() == View.VISIBLE) {
+            if (!mdProductSerial.getSerial_id().equals(mket_serial.getText().toString().trim())) {
+                isSuccessfully = false;
+                mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            }
         }
 
         return isSuccessfully;
@@ -508,12 +586,21 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_product_cod_val.setText(mdProductSerial.getProduct_id() + " " + mdProductSerial.getProduct_desc());
         tv_serial_val.setText(mdProductSerial.getSerial_id());
         tv_zone_position.setText(MessageFormat.format("{0} | {1}", mdProductSerial.getZone_id(), mdProductSerial.getLocal_id()));
+
         try {
             tv_inbound_val.setText(formatPrefixAndCode(ioMove.getInbound_prefix(), ioMove.getInbound_code()));
         } catch (NullPointerException e) {
             tv_inbound_lbl.setVisibility(View.GONE);
             tv_inbound_val.setVisibility(View.GONE);
         }
+
+        try {
+            tv_outbound_val.setText(formatPrefixAndCode(ioMove.getOutbound_prefix(), ioMove.getOutbound_code()));
+        } catch (NullPointerException e) {
+            tv_outbound_lbl.setVisibility(View.GONE);
+            tv_outbound_val.setVisibility(View.GONE);
+        }
+
         tv_move_order_val.setText(formatPrefixAndCode(ioMove.getMove_prefix(), ioMove.getMove_code()));
         String plannedZoneLocal = (ioMove.getPlanned_zone_code() == null) ? "" : String.valueOf(ioMove.getPlanned_zone_code());
 
@@ -575,6 +662,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         setLabelsAndHint();
         setMkdate();
+        if(hasSerialPermission()) {
+            setSerialMKEditText();
+        }else{
+            mket_serial.setVisibility(View.GONE);
+        }
+
         setSSMoveReason();
 
         switch (view_param) {
@@ -593,6 +686,37 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
 
+    private void setSerialMKEditText() {
+
+        mket_serial.setVisibility(View.VISIBLE);
+
+        mket_serial.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        //
+        mket_serial.setmOCR(false);
+        if(ToolBox_Inf.isMicroBlinkImported()) {
+            mket_serial.setmOCRVin(
+                    ToolBox_Inf.profileExists(
+                            getActivity(),
+                            Constant.PROFILE_MENU_PROFILE,
+                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                    )
+            );
+        }else{
+            mket_serial.setmOCRVin(false);
+        }
+        controls_sta.add(mket_serial);
+    }
+
+    private boolean hasSerialPermission() {
+        return false;
+    }
+
     private void setLabelsAndHint() {
         tv_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
         tv_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
@@ -600,14 +724,14 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
         btn_save.setText(hmAux_Trans.get("save_lbl"));
         setSSZone();
-        setSSPosition();
+        setSSLocal();
         mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
         chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
     }
 
-    private void setSSPosition() {
-        ss_position.setmLabel(hmAux_Trans.get("position_lbl"));
-        mPresenter.loadLocalSS(ss_zone, ss_position, false);
+    private void setSSLocal() {
+        ss_local.setmLabel(hmAux_Trans.get("position_lbl"));
+        mPresenter.loadLocalSS(ss_zone, ss_local, false);
     }
 
     private void setSSZone() {
@@ -619,10 +743,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void processZoneValueChange(HMAux hmAux) {
-        mPresenter.loadLocalSS(ss_zone, ss_position, true);
+        mPresenter.loadLocalSS(ss_zone, ss_local, true);
         //
-        if (hmAux != null && hmAux.size() > 0 && ss_position.getmOption().size() == 1) {
-            ss_position.setmValue(ss_position.getmOption().get(0));
+        if (hmAux != null && hmAux.size() > 0 && ss_local.getmOption().size() == 1) {
+            ss_local.setmValue(ss_local.getmOption().get(0));
         }
     }
 
@@ -718,21 +842,24 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         transList.add("dialog_tracking_ttl");
         transList.add("alert_tracking_already_listed_ttl");
         transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_update_move_ttl");
+        transList.add("alert_update_move_confirm");
 
         return transList;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
+        void persistIoMove(long customer_code,
+                           int move_prefix,
+                           int move_code,
+                           Integer to_zone_code,
+                           Integer to_local_code,
+                           Integer to_class_code,
+                           Integer reason_code,
+                           String done_date,
+                           MD_Product_Serial serial);
+
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
 

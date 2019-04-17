@@ -218,6 +218,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
 
+    public static String TOKEN_MOVE_PREFIX = "move_token_";
+
     public static String TOKEN_SO_PREFIX;
     public static String TOKEN_SERIAL_PREFIX;
     public static String TOKEN_INBOUND_PREFIX = "inbound_token_";
@@ -582,8 +584,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_PROCESS_MOVE = "MOVE";
     public static final String IO_PROCESS_OUT_PICKING = "OUT_PICKING";
     public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
-    public static final String IO_INBOUND = "IO_INBOUND";
-    public static final String IO_OUTBOUND = "IO_OUTBOUND";
+    public static final String IO_INBOUND = "INBOUND";
+    public static final String IO_OUTBOUND = "OUTBOUND";
     public static final String IO_FROM_TYPE_SITE = "SITE";
     public static final String IO_FROM_TYPE_PARTNER = "PARTNER";
     public static final String IO_ACTION_KEY = "IO_ACTION_KEY";

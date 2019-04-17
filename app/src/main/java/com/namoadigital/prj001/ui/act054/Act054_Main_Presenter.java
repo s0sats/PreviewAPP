@@ -12,13 +12,19 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.Sql_Act058_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -36,7 +42,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     private MD_ProductDao productDao;
     private MD_Product_SerialDao serialDao;
-
+    private IO_MoveDao moveDao;
     private HMAux hmAux_Trans;
     private MD_Product mdProduct;
 
@@ -44,13 +50,23 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private String mSerial_id;
     private String mTracking;
 
+    int pending_qty;
+    int waitingSyncPendency;
 
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        this.pending_qty = 0;
+        this.waitingSyncPendency = 0;
 
-        this.serialDao = new MD_Product_SerialDao(context);
+        this.serialDao = new MD_Product_SerialDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        this.moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
     }
 
 
@@ -110,10 +126,141 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_move_order_not_found_msg")
             );
         } else {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
-            mView.callAct055(bundle);
+            callMoveOrderList(record_list);
         }
+    }
+
+    private void callMoveOrderList(ArrayList<IO_Move_Search_Record> record_list) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
+        bundle.putSerializable(Constant.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT054);
+        mView.callAct055(bundle);
+    }
+
+    @Override
+    public void getPendenciesList() {
+        ArrayList<IO_Move_Search_Record> searchRecords = new ArrayList<>();
+        ArrayList<HMAux> moveOrders = (ArrayList<HMAux>) moveDao.query_HM(
+                new Sql_Act058_001(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+        );
+        for (HMAux move : moveOrders) {
+            IO_Move_Search_Record aux = getHmAuxToMoveSearchRecord(move);
+            if (aux != null) {
+                searchRecords.add(aux);
+            }
+        }
+        callMoveOrderList(searchRecords);
+    }
+
+    private IO_Move_Search_Record getHmAuxToMoveSearchRecord(HMAux move) {
+        IO_Move_Search_Record record = new IO_Move_Search_Record();
+
+        try {
+
+            if (move.hasConsistentValue(IO_MoveDao.CUSTOMER_CODE) && !move.get(IO_MoveDao.CUSTOMER_CODE).isEmpty()) {
+                record.setCustomer_code(Integer.parseInt(move.get(IO_MoveDao.CUSTOMER_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_PREFIX) && !move.get(IO_MoveDao.MOVE_PREFIX).isEmpty()) {
+                record.setMove_prefix(Integer.parseInt(move.get(IO_MoveDao.MOVE_PREFIX)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_CODE) && !move.get(IO_MoveDao.MOVE_CODE).isEmpty()) {
+                record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE) && !move.get(IO_MoveDao.MOVE_TYPE).isEmpty()) {
+                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_CODE) && !move.get(IO_MoveDao.PLANNED_LOCAL_CODE).isEmpty()) {
+                record.setPlanned_local_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_LOCAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_ID)) {
+                record.setPlanned_local_id(move.get(IO_MoveDao.PLANNED_LOCAL_ID));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_CLASS_CODE) && !move.get(IO_MoveDao.PLANNED_CLASS_CODE).isEmpty()) {
+                record.setPlanned_class_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_CLASS_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_CODE) && !move.get(IO_MoveDao.PLANNED_ZONE_CODE).isEmpty()) {
+                record.setPlanned_zone_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_ZONE_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_ID)) {
+                record.setPlanned_zone_id(move.get(IO_MoveDao.PLANNED_ZONE_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_CODE) && !move.get(MD_Product_SerialDao.ZONE_CODE).isEmpty()) {
+                record.setZone_code(Integer.valueOf(move.get(MD_Product_SerialDao.ZONE_CODE)));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_DESC)) {
+                record.setZone_desc(move.get(MD_Product_SerialDao.ZONE_DESC));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_ID)) {
+                record.setZone_id(move.get(MD_Product_SerialDao.ZONE_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_CODE) && !move.get(MD_Product_SerialDao.LOCAL_CODE).isEmpty()) {
+                record.setLocal_code(Integer.valueOf(move.get(MD_Product_SerialDao.LOCAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_ID)) {
+                record.setLocal_id(move.get(MD_Product_SerialDao.LOCAL_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_DESC)) {
+                record.setProduct_desc(move.get(MD_Product_SerialDao.PRODUCT_DESC));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_ID)) {
+                record.setProduct_id(move.get(MD_Product_SerialDao.PRODUCT_ID));
+            }
+
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE) && !move.get(IO_MoveDao.PRODUCT_CODE).isEmpty()) {
+                record.setProduct_code(Integer.parseInt(move.get(MD_Product_SerialDao.PRODUCT_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.SERIAL_CODE) && !move.get(IO_MoveDao.SERIAL_CODE).isEmpty()) {
+                record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.SITE_CODE)) {
+                record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_CODE) && !move.get(IO_MoveDao.INBOUND_CODE).isEmpty()) {
+                record.setInbound_code(Integer.valueOf(move.get(IO_MoveDao.INBOUND_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_ITEM) && !move.get(IO_MoveDao.INBOUND_ITEM).isEmpty()) {
+                record.setInbound_item(Integer.valueOf(move.get(IO_MoveDao.INBOUND_ITEM)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_PREFIX) && !move.get(IO_MoveDao.INBOUND_PREFIX).isEmpty()) {
+                record.setInbound_prefix(Integer.valueOf(move.get(IO_MoveDao.INBOUND_PREFIX)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_CODE) && !move.get(IO_MoveDao.OUTBOUND_CODE).isEmpty()) {
+                record.setOutbound_code(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_ITEM) && !move.get(IO_MoveDao.OUTBOUND_ITEM).isEmpty()) {
+                record.setOutbound_item(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_ITEM)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_PREFIX) && !move.get(IO_MoveDao.OUTBOUND_PREFIX).isEmpty()) {
+                record.setOutbound_prefix(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_PREFIX)));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return record;
     }
 
     @Override
@@ -140,18 +287,57 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        HMAux result = io_moveDao.getByStringHM((
+        HMAux resultPending = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         )
-
                 ).toSqlQuery()
         );
-        if (result != null && result.hasConsistentValue(IO_Move_Order_Item_Sql_002.PENDING_QTY)) {
-            return "(" + result.get(IO_Move_Order_Item_Sql_002.PENDING_QTY) + ")";
-        }
-        return "(0)";
+        HMAux resultWaitingSync = io_moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+
+        pending_qty = 0;
+
+        pending_qty = getPendencyCounterFromHmaux(resultPending);
+        waitingSyncPendency = getPendencyCounterFromHmaux(resultWaitingSync);
+        pending_qty = pending_qty + waitingSyncPendency;
+        return "(" + pending_qty + ")";
     }
+
+    private int getPendencyCounterFromHmaux(HMAux result) {
+        int pendencies = 0;
+        if (result != null && result.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = Integer.valueOf(result.get(IO_MoveDao.PENDING_QTY));
+            } catch (Exception e) {
+                pendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        return pendencies;
+    }
+
+    @Override
+    public void syncMovements() {
+        mView.setWs_process(WS_IO_Move_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_save_move_ttl"),
+                hmAux_Trans.get("dialog_save_move_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
 
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
         if (inboundStatus) {
@@ -182,5 +368,21 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             field = field + "|";
         }
         return field;
+    }
+
+    public boolean hasPending_qty() {
+        return waitingSyncPendency > 0;
+    }
+
+    public void setMovementFromSync(String prefix, String code, String status) {
+
+        IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.valueOf(prefix),
+                Integer.valueOf(code)).toSqlQuery());
+
+        ioMove.setStatus(status);
+
+        moveDao.addUpdate(ioMove);
     }
 }

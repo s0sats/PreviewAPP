@@ -330,8 +330,8 @@ public class IO_Move_Search_Record implements Serializable {
     }
 
 
-    public String getAllFieldForFilter(){
-        return  (customer_code + "|" +
+    public String getAllFieldForFilter() {
+        return (customer_code + "|" +
                 move_prefix + "|" +
                 move_code + "|" +
                 product_code + "|" +

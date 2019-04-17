@@ -6,11 +6,13 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -21,12 +23,16 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     private MD_Site_ZoneDao siteZoneDao;
     private MD_Site_Zone_LocalDao siteZoneLocalDao;
     private Context context;
+    String ioType;
+    Integer zoneCodeDefault;
 
-    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context) {
+    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context, String ioType, Integer zoneCodeDefault) {
         this.mView = mView;
         this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.context = context;
+        this.ioType = ioType;
+        this.zoneCodeDefault =zoneCodeDefault;
     }
 
     @Override
@@ -69,13 +75,21 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     @Override
     public void setDefaultZone(SearchableSpinner ss_zone) {
+        Integer planned_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
+        ss_zone.setmEnabled(true);
+        if(ioType.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)){
+            planned_zone_code = zoneCodeDefault;
+            ss_zone.setmEnabled(false);
+        }
+
         MD_Site_Zone zone = siteZoneDao.getByString(
                 new MD_Site_Zone_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_Site_Code(context)),
-                        ToolBox_Con.getPreference_Zone_Code(context)
+                        planned_zone_code
                 ).toSqlQuery()
         );
+
         //
         if (zone != null) {
             ToolBox_Inf.setSSmValue(

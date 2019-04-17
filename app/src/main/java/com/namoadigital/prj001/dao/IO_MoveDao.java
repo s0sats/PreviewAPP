@@ -51,6 +51,11 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
     public static final String DONE_USER_NICK = "done_user_nick";
     public static final String STATUS = "status";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String TOKEN = "token";
+    //COnstantes que não sao da tabela, mas utilizadas em suas queries
+    public static final String PENDING_QTY = "PENDING_QTY";
+    public static final String PLANNED_ZONE_ID = "planned_zone_id";
+    public static final String PLANNED_LOCAL_ID = "planned_local_id";
 
     public IO_MoveDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -411,6 +416,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 io_move.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
             //
+            io_move.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             return io_move;
         }
     }
@@ -465,6 +471,9 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             }
             if (io_move.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, io_move.getUpdate_required());
+            }
+            if (io_move.getToken() != null) {
+                contentValues.put(TOKEN, io_move.getToken());
             }
             //
             return contentValues;

@@ -1,8 +1,12 @@
 package com.namoadigital.prj001.ui.act054;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,14 +14,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
@@ -46,6 +54,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private Act054_Main_Presenter mPresenter;
     private String wsProcess;
     private String pendeciesCount;
+    String zoneDesc;
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +115,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("alert_move_order_not_found_ttl");
         transList.add("alert_move_order_not_found_msg");
         //
+        transList.add("dialog_move_order_search_ttl");
+        transList.add("dialog_move_order_search_start");
+        //
+        transList.add("dialog_save_move_ttl");
+        transList.add("dialog_save_move_msg");
+        //
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -234,23 +251,20 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         btnSearchMoveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String zoneDesc;
+
                 if (!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
                     zoneDesc = "";
                 } else {
                     zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.ID);
                 }
                 if (validateOrderCategory()) {
-                    if(validateOrientation(zoneDesc))
-                        mPresenter.getMovements(
-                                cbInbound.isChecked(),
-                                cbOutbound.isChecked(),
-                                cbPlannedMove.isChecked(),
-                                zoneDesc,
-                                cbIoOrigins.isChecked(),
-                                cbIoDestiny.isChecked()
-                        );
-                    else{
+                    if (validateOrientation(zoneDesc))
+                        if (mPresenter.hasPending_qty()) {
+                            mPresenter.syncMovements();
+                        } else {
+                            callMovementList();
+                        }
+                    else {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_must_fill_orientation_ttl"),
@@ -274,7 +288,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         btnMoveOrderPendency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pendeciesCount.equals(ZERO_PENDENCY)){
+                if (pendeciesCount.equals(ZERO_PENDENCY)) {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_pendencies_title"),
@@ -282,9 +296,22 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             null,
                             0
                     );
+                }else{
+                    mPresenter.getPendenciesList();
                 }
             }
         });
+    }
+
+    private void callMovementList() {
+        mPresenter.getMovements(
+                cbInbound.isChecked(),
+                cbOutbound.isChecked(),
+                cbPlannedMove.isChecked(),
+                zoneDesc,
+                cbIoOrigins.isChecked(),
+                cbIoDestiny.isChecked()
+        );
     }
 
     private boolean validateOrientation(String zoneDesc) {
@@ -310,6 +337,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         finish();
     }
 
+    @Override
+    public void setWs_process(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
     /**
      * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
      * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
@@ -333,14 +365,129 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         //
         if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
             mPresenter.processIOMoveSearch(mLink);
+        } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
+            String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            showResults(moves);
         }
-        //
         progressDialog.dismiss();
+        //
     }
-
 
     private boolean validateOrderCategory() {
         return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked());
+    }
+
+    private void showResults(String[] moveArray) {
+        ArrayList<HMAux> moveList = new ArrayList<>();
+        for (int i = 0; i < moveArray.length; i++) {
+            String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            //
+            moveList.add(mHmAux);
+            //
+            wsResults.add(mHmAux);
+        }
+
+        if (wsResults.size() == 1) {
+            if (moveList.get(0).get("status").equalsIgnoreCase("Ok")) {
+                progressDialog.dismiss();
+                //
+                showNewOptDialog(wsResults);
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_move_ttl"),
+                        hmAux_Trans.get("msg_move_save_ok"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        },
+                        0
+                );
+            } else {
+                progressDialog.dismiss();
+                //
+                String label = moveList.get(0).get("label").replace('.', '#');
+                String[] moveLabel = label.split("#");
+
+                mPresenter.setMovementFromSync(moveLabel[0], moveLabel[1], ConstantBase.SYS_STATUS_PENDING);
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_move_list_title"),
+                        moveList.get(0).get("status"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callMovementList();
+                            }
+                        },
+                        0
+                );
+            }
+        } else {
+            showNewOptDialog(moveList);
+        }
+    }
+
+    private void showNewOptDialog(ArrayList<HMAux> moveList) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        moveList,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_move_sync_ok_ttl"),
+                        hmAux_Trans.get("alert_move_sync_ok_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callMovementList();
+                            }
+                        },
+                        0
+                );
+            }
+        });
     }
 
     @Override
@@ -418,7 +565,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         finish();
     }
-
 
 
     @Override

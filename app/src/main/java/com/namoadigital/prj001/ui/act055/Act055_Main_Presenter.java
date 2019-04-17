@@ -3,6 +3,8 @@ package com.namoadigital.prj001.ui.act055;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,6 +37,11 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
     public void onBackPressedClicked(String requesting_act) {
         switch (requesting_act){
             case ConstantBaseApp.ACT054:
+                mView.callAct054();
+                break;
+            case ConstantBaseApp.ACT012:
+                mView.callAct012();
+                break;
             default:
                 mView.callAct054();
                 break;
@@ -65,12 +72,28 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
 
         try {
             if(searchRet.hasConsistentValue(Constant.HMAUX_PREFIX_KEY)
-              && searchRet.hasConsistentValue(Constant.HMAUX_CODE_KEY)  ){
+              && searchRet.hasConsistentValue(Constant.HMAUX_CODE_KEY)
+            && searchRet.hasConsistentValue(Constant.HMAUX_PROCESS_KEY)){
                 Bundle bundle = new Bundle();
                 bundle.putString(IO_MoveDao.MOVE_PREFIX, searchRet.get(Constant.HMAUX_PREFIX_KEY));
                 bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
                 //
-                mView.callAct058(bundle);
+
+                switch (searchRet.get(Constant.HMAUX_PROCESS_KEY)){
+                    case ConstantBaseApp.IO_INBOUND:
+                        Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
+                        break;
+                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                        mView.callAct058(bundle);
+                        break;
+                    case ConstantBaseApp.IO_OUTBOUND:
+                        Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
+                        break;
+                    default:
+                        Log.d("Move_type", "type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY));
+                        break;
+                }
+
             }else{
                 mView.showAlert(
                         hmAux_Trans.get("alert_no_move_found_ttl"),
@@ -86,5 +109,10 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
             //Gerar Exception ?!
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
+    }
+
+    @Override
+    public void getOfflineMove(String moveKey) {
+
     }
 }

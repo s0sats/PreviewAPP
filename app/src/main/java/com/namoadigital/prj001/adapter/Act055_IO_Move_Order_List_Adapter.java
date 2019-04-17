@@ -136,11 +136,9 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         protected final TextView tv_io_inbound_lbl;
         protected final TextView tv_io_inbound_val;
         protected final TextView tv_io_current_position_lbl;
-        protected final TextView tv_io_current_position_zone_val;
-        protected final TextView tv_io_current_position_local_val;
+        protected final TextView tv_io_current_position_zone_local_val;
         protected final TextView tv_io_suggested_position_lbl;
-        protected final TextView tv_io_suggested_position_zone_val;
-        protected final TextView tv_io_suggested_position_local_val;
+        protected final TextView tv_io_suggested_position_zone_local_val;
         private final View itemVIew;
 
 
@@ -161,11 +159,9 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_inbound_lbl = itemView.findViewById(R.id.act055_tv_io_inbound_lbl);
             tv_io_inbound_val = itemView.findViewById(R.id.act055_tv_io_inbound_val);
             tv_io_current_position_lbl = itemView.findViewById(R.id.act055_tv_io_current_position_lbl);
-            tv_io_current_position_zone_val = itemView.findViewById(R.id.act055_tv_io_current_position_zone_val);
-            tv_io_current_position_local_val = itemView.findViewById(R.id.act055_tv_io_current_position_local_val);
+            tv_io_current_position_zone_local_val = itemView.findViewById(R.id.act055_tv_io_current_position_zone_local_val);
             tv_io_suggested_position_lbl = itemView.findViewById(R.id.act055_tv_io_suggested_position_lbl);
-            tv_io_suggested_position_zone_val = itemView.findViewById(R.id.act055_tv_io_suggested_position_zone_val);
-            tv_io_suggested_position_local_val = itemView.findViewById(R.id.act055_tv_io_suggested_position_local_val);
+            tv_io_suggested_position_zone_local_val = itemView.findViewById(R.id.act055_tv_io_suggested_position_zone_local_val);
         }
 
         public View getItemView() {
@@ -182,23 +178,50 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_serial_ext_code_lbl.setText(hmAux_Trans.get("serial_code_lbl"));
             tv_io_serial_ext_code_val.setText(String.valueOf(data.getSerial_code()));
             tv_io_serial_desc.setText(formatSerialBrandModelColor(data));
+            if(formatSerialBrandModelColor(data).isEmpty()){
+                tv_io_serial_desc.setVisibility(View.GONE);
+            }
             tv_io_move_order_list_position.setText(String.valueOf(getAdapterPosition() + 1));
             tv_io_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
             tv_io_move_order_val.setText(formatPrefixSufix(data.getMove_prefix(),data.getMove_code()));
-            tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
+
             if(data.getInbound_prefix() == null || data.getInbound_code() == null) {
                 tv_io_inbound_val.setVisibility(View.GONE);
+                tv_io_inbound_lbl.setVisibility(View.GONE);
             }else{
                 tv_io_inbound_val.setVisibility(View.VISIBLE);
+                tv_io_inbound_lbl.setVisibility(View.VISIBLE);
                 tv_io_inbound_val.setText(formatPrefixSufix(data.getInbound_prefix(), data.getInbound_code()));
+                tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
             }
-            tv_io_current_position_lbl.setText(hmAux_Trans.get("current_position_lbl"));
-            tv_io_current_position_zone_val.setText(data.getZone_id());
-            tv_io_current_position_local_val.setText(data.getLocal_id());
-            tv_io_suggested_position_lbl.setText(hmAux_Trans.get("suggested_position_lbl"));
-            tv_io_suggested_position_zone_val.setText(data.getPlanned_zone_id());
-            tv_io_suggested_position_local_val.setText(data.getPlanned_local_id());
 
+            if(data.getZone_id() == null || data.getZone_id().isEmpty()){
+                tv_io_current_position_lbl.setVisibility(View.GONE);
+                tv_io_current_position_zone_local_val.setVisibility(View.GONE);
+            }else{
+                tv_io_current_position_lbl.setVisibility(View.VISIBLE);
+                tv_io_current_position_zone_local_val.setVisibility(View.VISIBLE);
+                formatZoneLocal(data.getZone_id(), data.getLocal_id(),tv_io_current_position_zone_local_val );
+                tv_io_current_position_lbl.setText(hmAux_Trans.get("current_position_lbl"));
+            }
+
+            if(data.getPlanned_zone_id() == null ||data.getPlanned_zone_id().isEmpty()){
+                tv_io_suggested_position_lbl.setVisibility(View.GONE);
+                tv_io_suggested_position_zone_local_val.setVisibility(View.GONE);
+            }else{
+                tv_io_current_position_lbl.setVisibility(View.VISIBLE);
+                tv_io_current_position_zone_local_val.setVisibility(View.VISIBLE);
+                formatZoneLocal(data.getPlanned_zone_id(), data.getPlanned_local_id(),tv_io_suggested_position_zone_local_val );
+                tv_io_suggested_position_lbl.setText(hmAux_Trans.get("suggested_position_lbl"));
+            }
+        }
+
+        private void formatZoneLocal(String zone, String local, TextView tv_zone_local) {
+            String zoneLocal = zone;
+            if(local!=null && !local.isEmpty()){
+                zoneLocal = zoneLocal.concat(" | " + local);
+            }
+            tv_zone_local.setText(zoneLocal);
         }
 
         @NonNull
