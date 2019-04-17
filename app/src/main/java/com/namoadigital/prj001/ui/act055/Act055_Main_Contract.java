@@ -31,5 +31,7 @@ public interface Act055_Main_Contract {
         void showAlert(String title, String msg);
 
         void callAct058(Bundle bundle);
+
+        void callAct012();
     }
 }

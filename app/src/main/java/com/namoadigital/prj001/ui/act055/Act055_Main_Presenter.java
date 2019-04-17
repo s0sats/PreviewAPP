@@ -37,6 +37,11 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
     public void onBackPressedClicked(String requesting_act) {
         switch (requesting_act){
             case ConstantBaseApp.ACT054:
+                mView.callAct054();
+                break;
+            case ConstantBaseApp.ACT012:
+                mView.callAct012();
+                break;
             default:
                 mView.callAct054();
                 break;

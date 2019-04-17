@@ -17,6 +17,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act055_IO_Move_Order_List_Adapter;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -36,6 +38,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     //    private boolean serial_jump;
     private List<IO_Move_Search_Record> mMoveSearchList;
     private String wsProcess;
+    private String requestAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +117,9 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
+            requestAct = bundle.getString(Constant.MAIN_REQUESTING_ACT);
         } else {
+            requestAct = Constant.ACT005;
             mMoveSearchList = new ArrayList<>();
         }
     }
@@ -169,7 +174,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(Constant.ACT054);
+        mPresenter.onBackPressedClicked(requestAct);
     }
 
     @Override
@@ -185,7 +190,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
             HMAux hmMove = new HMAux();
             hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
             hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
-            hmMove.put(Constant.HMAUX_PROCESS_KEY, ConstantBaseApp.IO_PROCESS_MOVE_PLANNED);
+            hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
             mPresenter.processSearchReturn(hmMove);
         }
     }
@@ -209,6 +214,14 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     @Override
     public void callAct054() {
         Intent mIntent = new Intent(context, Act054_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct012() {
+        Intent mIntent = new Intent(context, Act012_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

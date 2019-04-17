@@ -133,6 +133,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private void callMoveOrderList(ArrayList<IO_Move_Search_Record> record_list) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, record_list);
+        bundle.putSerializable(Constant.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT054);
         mView.callAct055(bundle);
     }
 
@@ -166,6 +167,10 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
             if (move.hasConsistentValue(IO_MoveDao.MOVE_CODE) && !move.get(IO_MoveDao.MOVE_CODE).isEmpty()) {
                 record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
+            }
+
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE) && !move.get(IO_MoveDao.MOVE_TYPE).isEmpty()) {
+                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
             }
 
             if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_CODE) && !move.get(IO_MoveDao.PLANNED_LOCAL_CODE).isEmpty()) {
