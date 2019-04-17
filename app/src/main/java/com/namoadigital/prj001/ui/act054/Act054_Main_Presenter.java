@@ -156,27 +156,19 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
         try {
 
-            if (move.hasConsistentValue(IO_MoveDao.CUSTOMER_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.CUSTOMER_CODE) && !move.get(IO_MoveDao.CUSTOMER_CODE).isEmpty()) {
                 record.setCustomer_code(Integer.parseInt(move.get(IO_MoveDao.CUSTOMER_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.MOVE_PREFIX)) {
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_PREFIX) && !move.get(IO_MoveDao.MOVE_PREFIX).isEmpty()) {
                 record.setMove_prefix(Integer.parseInt(move.get(IO_MoveDao.MOVE_PREFIX)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.MOVE_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.MOVE_CODE) && !move.get(IO_MoveDao.MOVE_CODE).isEmpty()) {
                 record.setMove_code(Integer.parseInt(move.get(IO_MoveDao.MOVE_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
-                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
-            }
-
-            if (move.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
-                record.setMove_type(move.get(IO_MoveDao.MOVE_TYPE));
-            }
-
-            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_LOCAL_CODE) && !move.get(IO_MoveDao.PLANNED_LOCAL_CODE).isEmpty()) {
                 record.setPlanned_local_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_LOCAL_CODE)));
             }
 
@@ -184,11 +176,11 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setPlanned_local_id(move.get(IO_MoveDao.PLANNED_LOCAL_ID));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.PLANNED_CLASS_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_CLASS_CODE) && !move.get(IO_MoveDao.PLANNED_CLASS_CODE).isEmpty()) {
                 record.setPlanned_class_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_CLASS_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.PLANNED_ZONE_CODE) && !move.get(IO_MoveDao.PLANNED_ZONE_CODE).isEmpty()) {
                 record.setPlanned_zone_code(Integer.valueOf(move.get(IO_MoveDao.PLANNED_ZONE_CODE)));
             }
 
@@ -196,7 +188,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setPlanned_zone_id(move.get(IO_MoveDao.PLANNED_ZONE_ID));
             }
 
-            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_CODE)) {
+            if (move.hasConsistentValue(MD_Product_SerialDao.ZONE_CODE) && !move.get(MD_Product_SerialDao.ZONE_CODE).isEmpty()) {
                 record.setZone_code(Integer.valueOf(move.get(MD_Product_SerialDao.ZONE_CODE)));
             }
 
@@ -208,7 +200,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setZone_id(move.get(MD_Product_SerialDao.ZONE_ID));
             }
 
-            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_CODE)) {
+            if (move.hasConsistentValue(MD_Product_SerialDao.LOCAL_CODE) && !move.get(MD_Product_SerialDao.LOCAL_CODE).isEmpty()) {
                 record.setLocal_code(Integer.valueOf(move.get(MD_Product_SerialDao.LOCAL_CODE)));
             }
 
@@ -224,11 +216,11 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setProduct_id(move.get(MD_Product_SerialDao.PRODUCT_ID));
             }
 
-            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)) {
+            if (move.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE) && !move.get(IO_MoveDao.PRODUCT_CODE).isEmpty()) {
                 record.setProduct_code(Integer.parseInt(move.get(MD_Product_SerialDao.PRODUCT_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.SERIAL_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.SERIAL_CODE) && !move.get(IO_MoveDao.SERIAL_CODE).isEmpty()) {
                 record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
             }
 
@@ -236,27 +228,27 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.INBOUND_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_CODE) && !move.get(IO_MoveDao.INBOUND_CODE).isEmpty()) {
                 record.setInbound_code(Integer.valueOf(move.get(IO_MoveDao.INBOUND_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.INBOUND_ITEM)) {
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_ITEM) && !move.get(IO_MoveDao.INBOUND_ITEM).isEmpty()) {
                 record.setInbound_item(Integer.valueOf(move.get(IO_MoveDao.INBOUND_ITEM)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.INBOUND_PREFIX)) {
+            if (move.hasConsistentValue(IO_MoveDao.INBOUND_PREFIX) && !move.get(IO_MoveDao.INBOUND_PREFIX).isEmpty()) {
                 record.setInbound_prefix(Integer.valueOf(move.get(IO_MoveDao.INBOUND_PREFIX)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_CODE)) {
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_CODE) && !move.get(IO_MoveDao.OUTBOUND_CODE).isEmpty()) {
                 record.setOutbound_code(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_CODE)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_ITEM)) {
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_ITEM) && !move.get(IO_MoveDao.OUTBOUND_ITEM).isEmpty()) {
                 record.setOutbound_item(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_ITEM)));
             }
 
-            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_PREFIX)) {
+            if (move.hasConsistentValue(IO_MoveDao.OUTBOUND_PREFIX) && !move.get(IO_MoveDao.OUTBOUND_PREFIX).isEmpty()) {
                 record.setOutbound_prefix(Integer.valueOf(move.get(IO_MoveDao.OUTBOUND_PREFIX)));
             }
 
