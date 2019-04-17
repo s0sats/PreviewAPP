@@ -376,13 +376,6 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     public void setMovementFromSync(String prefix, String code, String status) {
 
-        IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                Integer.valueOf(prefix),
-                Integer.valueOf(code)).toSqlQuery());
 
-        ioMove.setStatus(status);
-
-        moveDao.addUpdate(ioMove);
     }
 }

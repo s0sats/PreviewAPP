@@ -54,7 +54,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String ws_process;
-    private ArrayList<HMAux> wsResults = new ArrayList<>();
     private IO_Move moveInfo;
 
     @Override
@@ -109,7 +108,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("sys_alert_btn_ok");
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
-
+        transList.add("msg_move_save_ok");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
@@ -202,7 +201,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
+
         disableProgressDialog();
+
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
         } else {
@@ -214,25 +215,26 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     private void showResults(String[] moveArray) {
-        ArrayList<HMAux> moveList = new ArrayList<>();
+
+        ArrayList<HMAux> resultList = new ArrayList<>();
+
         for (int i = 0; i < moveArray.length; i++) {
-            String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
-            //
-            HMAux mHmAux = new HMAux();
-            mHmAux.put("label", fields[0]);
-            mHmAux.put("status", fields[1]);
-            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-            //
-            moveList.add(mHmAux);
-            //
-            wsResults.add(mHmAux);
+            try {
+                String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
+                //
+                HMAux mHmAux = new HMAux();
+                mHmAux.put("label", fields[0]);
+                mHmAux.put("status", fields[1]);
+                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                resultList.add(mHmAux);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-        //if (sos.size() == 1) {
-        if (wsResults.size() == 1) {
-
-            if (moveList.get(0).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
-                if (moveList.get(0).get("status").equalsIgnoreCase("Ok")) {
+        if (resultList.size() == 1) {
+            if (resultList.get(0).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
+                if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     //
                     ToolBox.alertMSG(
@@ -247,14 +249,13 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             },
                             0
                     );
-                    //refreshUI();
                 } else {
                     progressDialog.dismiss();
                     //
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_move_list_title"),
-                            moveList.get(0).get("status"),
+                            resultList.get(0).get("status"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -264,16 +265,13 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             0
                     );
                 }
-            } else {
-                showNewOptDialog(moveList);
             }
-
         } else {
-            showNewOptDialog(wsResults);
+            showNewOptDialog(resultList);
         }
     }
 
-    private void showNewOptDialog(ArrayList<HMAux> moveList) {
+    private void showNewOptDialog(ArrayList<HMAux> resultList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -283,15 +281,23 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
 
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         final HMAux auxMove = new HMAux();
-        for (int i = 0; i < moveList.size(); i++) {
-            if (moveList.get(i).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
-                auxMove.putAll(moveList.get(i));
+        List<HMAux> moveList = new ArrayList<>();
+
+        for (int i = 0; i < resultList.size(); i++) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            moveList.add(hmAux);
+            if (resultList.get(i).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
+                auxMove.putAll(resultList.get(i));
                 break;
             }
+
         }
         //
         lv_results.setAdapter(
@@ -322,19 +328,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 //
                 if (auxMove.get("status").equalsIgnoreCase("Ok")) {
                     //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_sync_ok_ttl"),
-                            hmAux_Trans.get("alert_move_sync_ok_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    onBackPressed();
-                                }
-                            },
-                            0
-                    );
-                    //refreshUI();
+                    onBackPressed();
+                    //atualizar a tela com os dados do move
                 }
 
             }

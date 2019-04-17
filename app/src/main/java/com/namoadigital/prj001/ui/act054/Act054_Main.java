@@ -120,6 +120,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         //
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
+        transList.add("alert_move_results_ttl");
+        transList.add("alert_offline_search_title");
+        transList.add("alert_offline_search_msg");
         //
 
 
@@ -304,14 +307,24 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void callMovementList() {
-        mPresenter.getMovements(
-                cbInbound.isChecked(),
-                cbOutbound.isChecked(),
-                cbPlannedMove.isChecked(),
-                zoneDesc,
-                cbIoOrigins.isChecked(),
-                cbIoDestiny.isChecked()
-        );
+        if(ToolBox_Con.isOnline(context)) {
+            mPresenter.getMovements(
+                    cbInbound.isChecked(),
+                    cbOutbound.isChecked(),
+                    cbPlannedMove.isChecked(),
+                    zoneDesc,
+                    cbIoOrigins.isChecked(),
+                    cbIoDestiny.isChecked()
+            );
+        }else{
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_offline_search_title"),
+                    hmAux_Trans.get("alert_offline_search_msg"),
+                    null,
+                    0
+            );
+        }
     }
 
     private boolean validateOrientation(String zoneDesc) {
@@ -389,53 +402,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             //
             moveList.add(mHmAux);
             //
-            wsResults.add(mHmAux);
         }
 
-        if (wsResults.size() == 1) {
-            if (moveList.get(0).get("status").equalsIgnoreCase("Ok")) {
-                progressDialog.dismiss();
-                //
-                showNewOptDialog(wsResults);
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_move_ttl"),
-                        hmAux_Trans.get("msg_move_save_ok"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        },
-                        0
-                );
-            } else {
-                progressDialog.dismiss();
-                //
-                String label = moveList.get(0).get("label").replace('.', '#');
-                String[] moveLabel = label.split("#");
-
-                mPresenter.setMovementFromSync(moveLabel[0], moveLabel[1], ConstantBase.SYS_STATUS_PENDING);
-
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_move_list_title"),
-                        moveList.get(0).get("status"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                callMovementList();
-                            }
-                        },
-                        0
-                );
-            }
-        } else {
+        if (moveList.size() > 0) {
             showNewOptDialog(moveList);
+        } else {
+            callMovementList();
         }
     }
 
-    private void showNewOptDialog(ArrayList<HMAux> moveList) {
+    private void showNewOptDialog(ArrayList<HMAux> resultList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -445,10 +421,19 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
 
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        List<HMAux> moveList = new ArrayList<>();
 
-
+        for (int i = 0; i < resultList.size(); i++) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            moveList.add(hmAux);
+        }
+        //
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
                         context,
@@ -474,21 +459,12 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_move_sync_ok_ttl"),
-                        hmAux_Trans.get("alert_move_sync_ok_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                callMovementList();
-                            }
-                        },
-                        0
-                );
+                //
+                callMovementList();
             }
         });
     }
+
 
     @Override
     public void showPD(String title, String msg) {
