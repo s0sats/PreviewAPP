@@ -85,7 +85,6 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
                         Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
                         break;
                     default:
-                        Toast.makeText(context,"Não sabe moyses?", Toast.LENGTH_SHORT ).show();
                         Log.d("Move_type", "type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY));
                         break;
                 }
@@ -105,5 +104,10 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
             //Gerar Exception ?!
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
+    }
+
+    @Override
+    public void getOfflineMove(String moveKey) {
+
     }
 }

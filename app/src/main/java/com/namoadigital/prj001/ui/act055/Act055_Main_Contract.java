@@ -16,6 +16,8 @@ public interface Act055_Main_Contract {
         void getDownloadedMove(String moveCode);
 
         void processSearchReturn(HMAux searchRet);
+
+        void getOfflineMove(String moveKey);
     }
 
     interface I_View{

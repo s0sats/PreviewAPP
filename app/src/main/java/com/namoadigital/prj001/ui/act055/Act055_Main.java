@@ -20,6 +20,7 @@ import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -178,7 +179,15 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-        mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
+        if(ToolBox_Con.isOnline(context)) {
+            mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
+        }else{
+            HMAux hmMove = new HMAux();
+            hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
+            hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
+            hmMove.put(Constant.HMAUX_PROCESS_KEY, ConstantBaseApp.IO_PROCESS_MOVE_PLANNED);
+            mPresenter.processSearchReturn(hmMove);
+        }
     }
 
 
