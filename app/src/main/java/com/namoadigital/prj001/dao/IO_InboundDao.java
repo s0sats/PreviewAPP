@@ -54,21 +54,19 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
     public static final String PERC_DONE = "perc_done";
     public static final String INBOUND_AUTO_SEQ = "inbound_auto_seq";
     public static final String MODAL_CODE = "modal_code";
+    public static final String MODAL_ID = "modal_id";
+    public static final String MODAL_DESC = "modal_desc";
     public static final String ALLOW_NEW_ITEM = "allow_new_item";
     public static final String ZONE_CODE_CONF = "zone_code_conf";
+    public static final String ZONE_ID_CONF = "zone_id_conf";
+    public static final String ZONE_DESC_CONF = "zone_desc_conf";
     public static final String LOCAL_CODE_CONF = "local_code_conf";
+    public static final String LOCAL_ID_CONF = "local_id_conf";
     public static final String PUT_AWAY_PROCESS = "put_away_process";
     public static final String DONE_AUTOMATIC = "done_automatic";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String SYNC_REQUIRED = "sync_required";
-
-    public static String[] columns = {
-            CUSTOMER_CODE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_DESC, INBOUND_ID, SCN, ORIGIN, INVOICE_NUMBER, INVOICE_DATE,
-            ETA_DATE, ARRIVAL_DATE, FROM_TYPE, FROM_PARTNER_CODE, FROM_PARTNER_ID, FROM_PARTNER_DESC, FROM_SITE_CODE,
-            FROM_SITE_ID, FROM_SITE_DESC, TO_SITE_CODE, CARRIER_CODE, CARRIER_ID, CARRIER_DESC,
-            TRUCK_NUMBER, DRIVER, COMMENTS, STATUS,PERC_DONE, INBOUND_AUTO_SEQ, MODAL_CODE, ALLOW_NEW_ITEM, ZONE_CODE_CONF, LOCAL_CODE_CONF,
-            PUT_AWAY_PROCESS, DONE_AUTOMATIC,UPDATE_REQUIRED,SYNC_REQUIRED
-    };
+    public static final String TOKEN = "token";
 
     public IO_InboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -521,16 +519,41 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             }else {
                 io_inbound.setModal_code(cursor.getInt(cursor.getColumnIndex(MODAL_CODE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(MODAL_ID))){
+                io_inbound.setModal_id(null);
+            }else {
+                io_inbound.setModal_id(cursor.getString(cursor.getColumnIndex(MODAL_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MODAL_DESC))){
+                io_inbound.setModal_desc(null);
+            }else {
+                io_inbound.setModal_desc(cursor.getString(cursor.getColumnIndex(MODAL_DESC)));
+            }
             io_inbound.setAllow_new_item(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_ITEM)));
             if(cursor.isNull(cursor.getColumnIndex(ZONE_CODE_CONF))){
                 io_inbound.setZone_code_conf(null);
             }else {
                 io_inbound.setZone_code_conf(cursor.getInt(cursor.getColumnIndex(ZONE_CODE_CONF)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_ID_CONF))){
+                io_inbound.setZone_id_conf(null);
+            }else {
+                io_inbound.setZone_id_conf(cursor.getString(cursor.getColumnIndex(ZONE_ID_CONF)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_DESC_CONF))){
+                io_inbound.setZone_desc_conf(null);
+            }else {
+                io_inbound.setZone_desc_conf(cursor.getString(cursor.getColumnIndex(ZONE_DESC_CONF)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(LOCAL_CODE_CONF))){
                 io_inbound.setLocal_code_conf(null);
             }else {
                 io_inbound.setLocal_code_conf(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE_CONF)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LOCAL_ID_CONF))){
+                io_inbound.setLocal_id_conf(null);
+            }else {
+                io_inbound.setLocal_id_conf(cursor.getString(cursor.getColumnIndex(LOCAL_ID_CONF)));
             }
             io_inbound.setPut_away_process(cursor.getInt(cursor.getColumnIndex(PUT_AWAY_PROCESS)));
             io_inbound.setDone_automatic(cursor.getInt(cursor.getColumnIndex(DONE_AUTOMATIC)));
@@ -544,6 +567,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             } else {
                 io_inbound.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             }
+            io_inbound.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             //
             return io_inbound;
         }
@@ -603,11 +627,16 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 contentValues.put(INBOUND_AUTO_SEQ,io_inbound.getInbound_auto_seq());
             }
             contentValues.put(MODAL_CODE,io_inbound.getModal_code());
+            contentValues.put(MODAL_ID,io_inbound.getModal_id());
+            contentValues.put(MODAL_DESC,io_inbound.getModal_desc());
             if(io_inbound.getAllow_new_item() > -1){
                 contentValues.put(ALLOW_NEW_ITEM,io_inbound.getAllow_new_item());
             }
             contentValues.put(ZONE_CODE_CONF,io_inbound.getZone_code_conf());
+            contentValues.put(ZONE_ID_CONF,io_inbound.getZone_id_conf());
+            contentValues.put(ZONE_DESC_CONF,io_inbound.getZone_desc_conf());
             contentValues.put(LOCAL_CODE_CONF,io_inbound.getLocal_code_conf());
+            contentValues.put(LOCAL_ID_CONF,io_inbound.getLocal_id_conf());
             if(io_inbound.getPut_away_process() > -1){
                 contentValues.put(PUT_AWAY_PROCESS,io_inbound.getPut_away_process());
             }
@@ -624,6 +653,10 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
 //            if (io_inbound.getSync_required() > -1) {
 //                contentValues.put(SYNC_REQUIRED, io_inbound.getSync_required());
 //            }
+            if (io_inbound.getToken() != null) {
+                contentValues.put(TOKEN, io_inbound.getToken());
+            }
+
             //
             return contentValues;
         }

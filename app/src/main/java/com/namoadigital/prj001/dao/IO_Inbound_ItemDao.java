@@ -34,10 +34,19 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String SERIAL_ID = "serial_id";
     public static final String SITE_CODE = "site_code";
     public static final String ZONE_CODE = "zone_code";
+    public static final String ZONE_ID = "zone_id";
+    public static final String ZONE_DESC =	"zone_desc";
     public static final String LOCAL_CODE = "local_code";
+    public static final String LOCAL_ID	= "local_id";
     public static final String CONF_DATE = "conf_date";
     public static final String STATUS = "status";
     public static final String COMMENTS = "comments";
+    public static final String PLANNED_ZONE_CODE = "planned_zone_code";
+    public static final String PLANNED_LOCAL_CODE = "planned_local_code";
+    public static final String PLANNED_CLASS_CODE = "planned_class_code";
+    //Constantes abaixo somente SÃO usada em queries
+    public static final String PLANNED_ZONE_ID = "planned_zone_id";
+    public static final String PLANNED_LOCAL_ID = "planned_local_id";
 
 
     public IO_Inbound_ItemDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -430,10 +439,25 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             }else{
                 io_inbound_item.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_ID))) {
+                io_inbound_item.setZone_id(null);
+            }else{
+                io_inbound_item.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_DESC))) {
+                io_inbound_item.setZone_desc(null);
+            }else{
+                io_inbound_item.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(LOCAL_CODE))) {
                 io_inbound_item.setLocal_code(null);
             }else{
                 io_inbound_item.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LOCAL_ID))) {
+                io_inbound_item.setLocal_id(null);
+            }else{
+                io_inbound_item.setLocal_id(cursor.getString(cursor.getColumnIndex(LOCAL_ID)));
             }
             if(cursor.isNull(cursor.getColumnIndex(CONF_DATE))) {
                 io_inbound_item.setConf_date(null);
@@ -445,6 +469,21 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
                 io_inbound_item.setComments(null);
             }else{
                 io_inbound_item.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PLANNED_ZONE_CODE))) {
+                io_inbound_item.setPlanned_zone_code(null);
+            }else{
+                io_inbound_item.setPlanned_zone_code(cursor.getInt(cursor.getColumnIndex(PLANNED_ZONE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PLANNED_LOCAL_CODE))) {
+                io_inbound_item.setPlanned_local_code(null);
+            }else{
+                io_inbound_item.setPlanned_local_code(cursor.getInt(cursor.getColumnIndex(PLANNED_LOCAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PLANNED_CLASS_CODE))) {
+                io_inbound_item.setPlanned_class_code(null);
+            }else{
+                io_inbound_item.setPlanned_class_code(cursor.getInt(cursor.getColumnIndex(PLANNED_CLASS_CODE)));
             }
             //
             return io_inbound_item;
@@ -476,12 +515,18 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             }
             contentValues.put(SITE_CODE,io_inbound_item.getSite_code());
             contentValues.put(ZONE_CODE,io_inbound_item.getZone_code());
+            contentValues.put(ZONE_ID,io_inbound_item.getZone_id());
+            contentValues.put(ZONE_DESC,io_inbound_item.getZone_desc());
             contentValues.put(LOCAL_CODE,io_inbound_item.getLocal_code());
+            contentValues.put(LOCAL_ID,io_inbound_item.getLocal_id());
             contentValues.put(CONF_DATE,io_inbound_item.getConf_date());
             if(io_inbound_item.getStatus() != null){
                 contentValues.put(STATUS,io_inbound_item.getStatus());
             }
             contentValues.put(COMMENTS,io_inbound_item.getComments());
+            contentValues.put(PLANNED_ZONE_CODE,io_inbound_item.getPlanned_zone_code());
+            contentValues.put(PLANNED_LOCAL_CODE,io_inbound_item.getPlanned_local_code());
+            contentValues.put(PLANNED_CLASS_CODE,io_inbound_item.getPlanned_class_code());
             //
             return contentValues;
         }

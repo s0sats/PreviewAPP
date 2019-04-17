@@ -1,18 +1,28 @@
 package com.namoadigital.prj001.model;
 
-public class IO_Inbound_Item {
-    private  long customer_code;
-    private  int inbound_prefix;
-    private  int inbound_code;
-    private  int inbound_item;
-    private  long product_code;
-    private  long serial_code;
-    private  Integer site_code;
-    private  Integer zone_code;
-    private  Integer local_code;
-    private  String conf_date;
-    private  String status;
-    private  String comments;
+import java.io.Serializable;
+
+public class IO_Inbound_Item implements Serializable {
+    private static final long serialVersionUID = 6534975604003631255L;
+
+    private long customer_code;
+    private int inbound_prefix;
+    private int inbound_code;
+    private int inbound_item;
+    private long product_code;
+    private long serial_code;
+    private Integer site_code;
+    private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
+    private Integer local_code;
+    private String local_id;
+    private String conf_date;
+    private String status;
+    private String comments;
+    private Integer planned_zone_code;
+    private Integer planned_local_code;
+    private Integer planned_class_code;
 
     public IO_Inbound_Item() {
         this.customer_code = -1;
@@ -91,12 +101,36 @@ public class IO_Inbound_Item {
         this.zone_code = zone_code;
     }
 
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
+    }
+
     public Integer getLocal_code() {
         return local_code;
     }
 
     public void setLocal_code(Integer local_code) {
         this.local_code = local_code;
+    }
+
+    public String getLocal_id() {
+        return local_id;
+    }
+
+    public void setLocal_id(String local_id) {
+        this.local_id = local_id;
     }
 
     public String getConf_date() {
@@ -121,5 +155,29 @@ public class IO_Inbound_Item {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Integer getPlanned_zone_code() {
+        return planned_zone_code;
+    }
+
+    public void setPlanned_zone_code(Integer planned_zone_code) {
+        this.planned_zone_code = planned_zone_code;
+    }
+
+    public Integer getPlanned_local_code() {
+        return planned_local_code;
+    }
+
+    public void setPlanned_local_code(Integer planned_local_code) {
+        this.planned_local_code = planned_local_code;
+    }
+
+    public Integer getPlanned_class_code() {
+        return planned_class_code;
+    }
+
+    public void setPlanned_class_code(Integer planned_class_code) {
+        this.planned_class_code = planned_class_code;
     }
 }

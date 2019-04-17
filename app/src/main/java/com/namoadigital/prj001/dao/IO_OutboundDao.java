@@ -61,6 +61,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String DONE_AUTOMATIC = "done_automatic";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String SYNC_REQUIRED = "sync_required";
+    public static final String TOKEN = "token";
 
 
     public IO_OutboundDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -516,6 +517,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             } else {
                 io_outbound.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             }
+            io_outbound.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             //
             return io_outbound;
         }
@@ -594,6 +596,10 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
 //            if (io_outbound.getSync_required() > -1) {
 //                contentValues.put(SYNC_REQUIRED, io_outbound.getSync_required());
 //            }
+
+            if (io_outbound.getToken() != null) {
+                contentValues.put(TOKEN, io_outbound.getToken());
+            }
             //
             return contentValues;
         }

@@ -140,7 +140,7 @@ public class WS_IO_Inbound_Download extends IntentService {
                 serialHashList.addAll(io_inbound.getSerial());
             }
             //Inserte/Atualiza seriais
-            serialDao.addUpdate(serialHashList,false);
+            serialDao.addUpdateTmp(serialHashList,false);
             //Insere / Atualiza lista de inbound
             DaoObjReturn daoReturn = inboundDao.addUpdate(inbounds_list,false);
             //Caso sucesso ao inserir inbound, envia retorno com a pk do item selecionado

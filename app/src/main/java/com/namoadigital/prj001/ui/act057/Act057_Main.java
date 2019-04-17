@@ -10,16 +10,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.view.*;
+import android.widget.*;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -36,6 +28,7 @@ import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -43,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I_View {
+    public static final String LIST_PENDENCIES_KEY = "LIST_PENDENCIES_KEY";
 
     private Act057_Main_Presenter mPresenter;
     private ConstraintLayout cl_no_result;
@@ -58,6 +52,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
+    private boolean isOnline = true;
     private String wsProcess;
     private String bundle_zone_code;
     private String bundle_local_code;
@@ -67,6 +62,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     private long bundle_record_page;
     private ArrayList<IO_Inbound_Search_Record> records = new ArrayList<>();
     private Act057_Inbound_Download_Adapter mAdapter;
+    private String requestingAct;
+    private boolean listPendencies;
 
 
     @Override
@@ -121,6 +118,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         transList.add("alert_qty_records_founded");
         transList.add("alert_download_return_ttl");
         transList.add("alert_download_return_error_msg");
+        transList.add("alert_inbound_different_to_site_ttl");
+        transList.add("alert_inbound_different_to_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -143,7 +142,11 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         bindViews();
         setupViews();
         //
-        mPresenter.processListInfo(bundle_record_count,bundle_record_page,records);
+        if(listPendencies) {
+            mPresenter.getPendenciesList();
+        }else{
+            mPresenter.processListInfo(bundle_record_count, bundle_record_page, records);
+        }
         //
         updateIvFilterState();
     }
@@ -160,9 +163,14 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
             bundle_record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
             try {
                 records = (ArrayList<IO_Inbound_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
+                //Se lista vazia, veio pelos pendentes.
+                isOnline = records.size() > 0;
             }catch (Exception e){
                 records = new ArrayList<>();
+                isOnline = false;
             }
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+            listPendencies = bundle.getBoolean(LIST_PENDENCIES_KEY,false);
         } else {
             bundle_zone_code = "";
             bundle_local_code = "";
@@ -171,6 +179,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
             bundle_record_count = 0;
             bundle_record_page = 0;
             records = new ArrayList<>();
+            requestingAct = ConstantBaseApp.ACT056;
+            listPendencies = false;
         }
     }
 
@@ -194,6 +204,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         btn_download.setText(hmAux_Trans.get("download_lbl"));
         btn_download.setEnabled(false);
+        btn_download.setVisibility(isOnline ? View.VISIBLE : View.GONE );
         controls_sta.add(mket_filter);
     }
 
@@ -244,13 +255,27 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         });
         //
         if(mAdapter != null){
-//            mAdapter.setOnItemClickListner(new Act057_Inbound_Download_Adapter.OnItemClickListner() {
-//                @Override
-//                public void onItemClick(IO_Inbound_Search_Record item) {
-//                    String s = item.getAllFieldForFilter();
-//                    Toast.makeText(context, s,Toast.LENGTH_LONG).show();
-//                }
-//            });
+            mAdapter.setOnItemClickListner(new Act057_Inbound_Download_Adapter.OnItemClickListner() {
+                @Override
+                public void onItemClick(IO_Inbound_Search_Record item) {
+                    if(item.isSameSiteAsLoggedOrFree()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+                        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getInbound_prefix()));
+                        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(item.getInbound_code()));
+                        //
+                        callAct061(bundle);
+                    }else{
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_inbound_different_to_site_ttl"),
+                            hmAux_Trans.get("alert_inbound_different_to_site_msg"),
+                            null,
+                            0
+                        );
+                    }
+                }
+            });
             //
             mAdapter.setOnItemCheckedChangeListener(new Act057_Inbound_Download_Adapter.OnItemCheckedChangeListener() {
                 @Override
@@ -284,12 +309,17 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     @Override
-    public void setRecordInfo() {
-        if (records.size() > 0) {
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    @Override
+    public void setRecordInfo(int record_size) {
+        if (record_size > 0) {
             cl_no_result.setVisibility(View.GONE);
             cl_limit_exceeded.setVisibility(View.GONE);
             cl_result.setVisibility(View.VISIBLE);
-            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + records.size() + " " + hmAux_Trans.get("records_lbl"));
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
             //
             if (bundle_record_count > bundle_record_page) {
                 showQtyExceededMsg();
@@ -316,12 +346,13 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     @Override
-    public void loadInboundList() {
+    public void loadInboundList(ArrayList<IO_Inbound_Search_Record> records) {
         mAdapter = new Act057_Inbound_Download_Adapter(
                 context,
                 records,
                 filter_pending,
-                filter_process
+                filter_process,
+                isOnline
         );
         //
         rv_inbound.setAdapter(mAdapter);

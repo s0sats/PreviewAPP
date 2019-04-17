@@ -1,48 +1,100 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Inbound {
+public class IO_Inbound implements Serializable {
+    private static final long serialVersionUID = 1063674396776438810L;
 
+    @Expose
     private long customer_code;
+    @Expose
     private int inbound_prefix;
+    @Expose
     private int inbound_code;
+    @Expose
     private String inbound_id;
+    @Expose
     private String inbound_desc;
+    @Expose
     private int scn;
+    @Expose
     private String origin;
+    @Expose
     private String invoice_number;
+    @Expose
     private String invoice_date;
+    @Expose
     private String eta_date;
+    @Expose
     private String arrival_date;
+    @Expose
     private String from_type;
+    @Expose
     private Integer from_partner_code;
+    @Expose
     private String from_partner_id;
+    @Expose
     private String from_partner_desc;
+    @Expose
     private Integer from_site_code;
+    @Expose
     private String from_site_id;
+    @Expose
     private String from_site_desc;
+    @Expose
     private int to_site_code;
+    @Expose
     private Integer carrier_code;
     private String carrier_id;
     private String carrier_desc;
+    @Expose
     private String truck_number;
+    @Expose
     private String driver;
+    @Expose
     private String comments;
+    @Expose
     private String status;
+    @Expose
     private Double perc_done;
+    @Expose
     private int inbound_auto_seq;
+    @Expose
     private Integer modal_code;
+    private String modal_id;
+    private String modal_desc;
+    @Expose
     private int allow_new_item;
+    @Expose
     private Integer zone_code_conf;
+    private String zone_id_conf;
+    private String zone_desc_conf;
+    @Expose
     private Integer local_code_conf;
+    private String local_id_conf;
+    @Expose
     private int put_away_process;
+    @Expose
     private int done_automatic;
+    @Expose
     private ArrayList<IO_Inbound_Item> items = new ArrayList<>();
+    @Expose
+    private int update_required;
+    @Expose
+    private int sync_required;
+    @Expose
+    private String token;
+    @Expose
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
-    private int update_required;
-    private int sync_required;
+    //Campos exclusivos para envio na criação da Inbound
+    @Expose
+    private Integer outbound_prefix;
+    @Expose
+    private Integer outbound_code;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -76,20 +128,20 @@ public class IO_Inbound {
         this.inbound_code = inbound_code;
     }
 
-    public String getInbound_desc() {
-        return inbound_desc;
-    }
-
-    public void setInbound_desc(String inbound_desc) {
-        this.inbound_desc = inbound_desc;
-    }
-
     public String getInbound_id() {
         return inbound_id;
     }
 
     public void setInbound_id(String inbound_id) {
         this.inbound_id = inbound_id;
+    }
+
+    public String getInbound_desc() {
+        return inbound_desc;
+    }
+
+    public void setInbound_desc(String inbound_desc) {
+        this.inbound_desc = inbound_desc;
     }
 
     public int getScn() {
@@ -284,6 +336,22 @@ public class IO_Inbound {
         this.modal_code = modal_code;
     }
 
+    public String getModal_id() {
+        return modal_id;
+    }
+
+    public void setModal_id(String modal_id) {
+        this.modal_id = modal_id;
+    }
+
+    public String getModal_desc() {
+        return modal_desc;
+    }
+
+    public void setModal_desc(String modal_desc) {
+        this.modal_desc = modal_desc;
+    }
+
     public int getAllow_new_item() {
         return allow_new_item;
     }
@@ -300,12 +368,36 @@ public class IO_Inbound {
         this.zone_code_conf = zone_code_conf;
     }
 
+    public String getZone_id_conf() {
+        return zone_id_conf;
+    }
+
+    public void setZone_id_conf(String zone_id_conf) {
+        this.zone_id_conf = zone_id_conf;
+    }
+
+    public String getZone_desc_conf() {
+        return zone_desc_conf;
+    }
+
+    public void setZone_desc_conf(String zone_desc_conf) {
+        this.zone_desc_conf = zone_desc_conf;
+    }
+
     public Integer getLocal_code_conf() {
         return local_code_conf;
     }
 
     public void setLocal_code_conf(Integer local_code_conf) {
         this.local_code_conf = local_code_conf;
+    }
+
+    public String getLocal_id_conf() {
+        return local_id_conf;
+    }
+
+    public void setLocal_id_conf(String local_id_conf) {
+        this.local_id_conf = local_id_conf;
     }
 
     public int getPut_away_process() {
@@ -332,14 +424,6 @@ public class IO_Inbound {
         this.items = items;
     }
 
-    public ArrayList<MD_Product_Serial> getSerial() {
-        return serial;
-    }
-
-    public void setSerial(ArrayList<MD_Product_Serial> serial) {
-        this.serial = serial;
-    }
-
     public int getUpdate_required() {
         return update_required;
     }
@@ -354,5 +438,37 @@ public class IO_Inbound {
 
     public void setSync_required(int sync_required) {
         this.sync_required = sync_required;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
+    }
+
+    public Integer getOutbound_prefix() {
+        return outbound_prefix;
+    }
+
+    public void setOutbound_prefix(Integer outbound_prefix) {
+        this.outbound_prefix = outbound_prefix;
+    }
+
+    public Integer getOutbound_code() {
+        return outbound_code;
+    }
+
+    public void setOutbound_code(Integer outbound_code) {
+        this.outbound_code = outbound_code;
     }
 }

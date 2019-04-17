@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/namoa_cell_8">
+
+    <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_gd_start"
+            app:layout_constraintGuide_begin="8dp"
+            android:orientation="vertical"
+    />
+    <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_gd_end"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp"/>
+
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/act061_frag_item_cell_cl_top"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/act061_frag_item_cell_gd_end"
+    >
+
+        <TextView
+                android:text="1*"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/act061_frag_item_cell_tv_row_id"
+                android:textColor="@color/namoa_color_gray_4"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/act061_frag_item_cell_tv_status"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_frag_item_cell_tv_status"
+                android:padding="5dp"
+
+        />
+        <TextView
+                android:text="PENDIND- TRD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/act061_frag_item_cell_tv_status"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_iv_serial"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toEndOf="@+id/act061_frag_item_cell_tv_row_id"
+                android:layout_marginStart="8dp"
+                android:textStyle="bold"/>
+        <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/ic_pontos_ns_states"
+                android:id="@+id/act061_frag_item_cell_iv_serial"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/act061_frag_item_cell_tv_status"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_frag_item_cell_tv_status"
+                android:layout_marginTop="8dp"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+            android:id="@+id/act061_frag_item_cell_tv_product_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Product - trad"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/act061_frag_item_cell_gd_start"
+            app:layout_constraintTop_toBottomOf="@id/act061_frag_item_cell_cl_top"
+            app:layout_constraintEnd_toEndOf="@id/act061_frag_item_cell_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+
+    />
+    <TextView
+            android:text="Prod 001 - trad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_tv_product_val"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_product_lbl"
+            app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="Serial - Trad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_tv_serial_lbl"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_product_val"
+            app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:textStyle="bold"/>
+    <TextView
+            android:text="SRL-001-trad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_tv_serial_val"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_serial_lbl"
+            app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"/>
+    <TextView
+            android:text="BMW - X5 - BRANCO - TRAD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/act061_frag_item_cell_tv_brand_model_color"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_serial_val"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"/>
+    <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/ic_play_ns_states"
+            android:id="@+id/act061_frag_item_cell_iv_put_away"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_brand_model_color"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/act061_frag_item_cell_cl_positions"/>
+    <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/ic_ok_ns_states"
+            android:id="@+id/act061_frag_item_cell_iv_conf"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_iv_put_away"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_brand_model_color"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/act061_frag_item_cell_cl_positions"/>
+
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/act061_frag_item_cell_cl_positions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="@id/act061_frag_item_cell_gd_start"
+            app:layout_constraintEnd_toStartOf="@id/act061_frag_item_cell_iv_conf"
+            app:layout_constraintTop_toBottomOf="@id/act061_frag_item_cell_tv_brand_model_color">
+
+        <android.support.constraint.ConstraintLayout
+                android:id="@+id/act061_frag_item_cell_cl_suggestion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                    android:text="Sugestão - trad"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/act061_frag_item_cell_tv_sugestion_lbl"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_tv_suggestion_val"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintVertical_bias="0.5"
+            />
+            <TextView
+                    android:text="22.2 | 22.2.156"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/act061_frag_item_cell_tv_suggestion_val"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@+id/act061_frag_item_cell_tv_sugestion_lbl"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintVertical_bias="0.5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+                android:id="@+id/act061_frag_item_cell_cl_realized"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/act061_frag_item_cell_cl_suggestion"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="2dp"
+        >
+
+            <TextView
+                    android:text="Realizado - trad "
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/act061_frag_item_cell_tv_realized_lbl"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_tv_realized_val"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0.5"
+            />
+            <TextView
+                    android:text="22.2 | 22.2.156"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/act061_frag_item_cell_tv_realized_val"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@+id/act061_frag_item_cell_tv_realized_lbl"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0.5"
+
+            />
+
+        </android.support.constraint.ConstraintLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+            android:text="Confirmação: -trad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="@id/act061_frag_item_cell_gd_start"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_cl_positions"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_tv_conf_dt_val"
+            android:textStyle="bold"
+            android:id="@+id/act061_frag_item_cell_tv_conf_dt_lbl"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintBottom_toBottomOf="parent"
+    />
+    <TextView
+            android:text="DD/MM/YYYY"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="2"
+            android:id="@+id/act061_frag_item_cell_tv_conf_dt_val"
+            app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_cl_positions"
+            app:layout_constraintStart_toEndOf="@+id/act061_frag_item_cell_tv_conf_dt_lbl"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+    />
+
+</android.support.constraint.ConstraintLayout>

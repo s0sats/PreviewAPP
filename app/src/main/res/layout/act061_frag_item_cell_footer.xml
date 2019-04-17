@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:layout_margin="8dp">
+
+    <Button
+            android:id="@+id/act061_frag_item_footer_btn_add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/btn_namoa_main_3_states"
+            android:gravity="center"
+            android:text="AddItem - trad"
+            android:textColor="@color/padrao_WHITE"
+    />
+
+
+
+</android.support.constraint.ConstraintLayout>

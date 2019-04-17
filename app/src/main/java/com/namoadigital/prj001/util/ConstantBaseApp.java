@@ -83,6 +83,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT059 = "act059";
     public static final String ACT060 = "act060";
     public static final String ACT061 = "act061";
+    public static final String ACT062 = "act062";
+    public static final String ACT063 = "act063";
+    public static final String ACT064 = "act064";
 
     public static final String title_lbl = "_title";
 
@@ -217,6 +220,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static String TOKEN_SO_PREFIX;
     public static String TOKEN_SERIAL_PREFIX;
+    public static String TOKEN_INBOUND_PREFIX = "inbound_token_";
+    public static String TOKEN_OUTBOUND_PREFIX = "outbound_token_";
 
     public static String TOKEN_SO_NAME_FULL;
     public static String TOKEN_SERIAL_NAME_FULL;
@@ -430,6 +435,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
     public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
     public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
+    public static final String WS_EMPTY_SEND_LIST = "WS_EMPTY_SEND_LIST";
+    public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
+    public static final String WS_RETURN_LIST = "WS_RETURN_LIST";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
@@ -583,6 +591,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_EDIT = "EDIT";
     public static final String IO_PROCESS_NEW_KEY = "IO_PROCESS_NEW_KEY";
     public static final String IO_PROCESS_IN_EDIT_KEY = "IO_PROCESS_IN_EDIT_KEY";
+    public static final String IO_OBJ_KEY = "IO_OBJ_KEY";
 
     /*
      * Constantes CHAT

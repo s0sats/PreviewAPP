@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -22,8 +24,13 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
+import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header;
+import com.namoadigital.prj001.ui.act061.frg_item.Act061_Frag_Items;
+import com.namoadigital.prj001.ui.act062.Act062_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -34,15 +41,17 @@ import java.util.List;
 
 public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contract.I_View,
     Act061_Frag_Drawer.onFragDrawerInteraction,
-    Act061_Frag_Header.onFragHeaderInteraction {
+    Act061_Frag_Header.onFragHeaderInteraction,
+    Act061_Frag_Items.onFragItemInteraction{
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
+    public static final String INBOUND_FRAG_DRAWER = "INBOUND_FRAG_DRAWER";
 
     private Bundle bundle;
     private FragmentManager fm;
     private Act061_Frag_Drawer act061_frag_drawer;
     private Act061_Frag_Header act061_frag_header;
-    private Act061_Frag_Item act061_frag_item;
+    private Act061_Frag_Items act061_frag_item;
     private DrawerLayout mDrawerLayout;
     private Act061_Main_Presenter mPresenter;
     private IO_Inbound mInbound;
@@ -97,10 +106,19 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("dialog_io_master_data_start");
         transList.add("dialog_from_outbound_ttl");
         transList.add("dialog_from_outbound_start");
+        transList.add("dialog_inbound_header_save_ttl");
+        transList.add("dialog_inbound_header_save_start");
+        transList.add("alert_header_save_error_ttl");
+        transList.add("alert_header_save_no_return_msg ");
+        transList.add("alert_header_save_process_error_msg");
+        transList.add("alert_io_master_data_error_ttl");
+        transList.add("alert_io_master_data_error_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
         transList.addAll(Act061_Frag_Header.getFragTranslationsVars());
+        //Trad Frag Item
+        transList.addAll(Act061_Frag_Items.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -131,7 +149,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                //act061_frag_drawer.loadDataToScreen();
+                act061_frag_drawer.loadDataToScreen();
 
                 ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
 
@@ -140,14 +158,19 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
+                //
+                act061_frag_drawer.loadDataToScreen();
+                //
                 ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
 
             }
 
         };
-        //
-        setDrawerState();
+        //Usa o status de criação para definir de drawer aberto ou fechado no carregamento da tela.
+        //Se novo, fecha o drawer
+        setDrawerState(!bNewProcess);
+        //Se criação trava o drawer
+        setDrawerLocked(bNewProcess);
         //
         mPresenter = new Act061_Main_Presenter(
             context,
@@ -160,31 +183,38 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         initFragment();
     }
 
-    private void setDrawerState() {
-        if(bNewProcess){
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    private void setDrawerLocked(boolean lockState) {
+        if(lockState){
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            //mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeButtonEnabled(false);
 
             mDrawerToggle.setDrawerIndicatorEnabled(false);
-
-            mDrawerToggle.syncState();
-
         } else {
-
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            //mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
             mDrawerLayout.openDrawer(GravityCompat.START);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
             mDrawerToggle.setDrawerIndicatorEnabled(true);
-
-            mDrawerToggle.syncState();
         }
+        //
+        mDrawerToggle.syncState();
+    }
+
+
+    private void setDrawerState(boolean drawerState) {
+        if(drawerState){
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        } else {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        //
+        mDrawerToggle.syncState();
     }
 
     private void loadInbound() {
@@ -210,9 +240,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private void initFragment() {
         act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans, mPrefix, mCode);
         act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans, mPrefix, mCode, bNewProcess);
-        act061_frag_item = new Act061_Frag_Item();
+        act061_frag_item = Act061_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode);
         //
-        setDrawer(act061_frag_drawer, "DRAWER");
+        setDrawer(act061_frag_drawer, INBOUND_FRAG_DRAWER);
         setFrag(act061_frag_header, INBOUND_FRAG_HEADER);
     }
 
@@ -227,7 +257,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act061_main_ll, type, sTag);
-            ft.addToBackStack(null);
             ft.commit();
         } else {
             //type.loadDataToScreen();
@@ -277,7 +306,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void showAlert(String ttl, String msg) {
+    public void showFragAlert(String ttl, String msg) {
         ToolBox.alertMSG(
             context,
             ttl,
@@ -287,7 +316,27 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         );
     }
 
-    //region DrawerFragment
+    @Override
+    public void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess) {
+        //Se era um processo novo
+        if(newProcess){
+            //Atualiza parametro recebido via bundle.
+            mPrefix = inbound_prefix;
+            mCode = inbound_code;
+            bNewProcess = false;
+        }
+        //
+        act061_frag_header.toggleIvEditStates(true);
+        act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess, false);
+        //
+        act061_frag_drawer.loadDataToScreen();
+        //Chama atualização do Drawer
+        setDrawerLocked(bNewProcess);
+
+    }
+
+    //region FragInterface
+
     @Override
     public IO_Inbound getInboundFromAct(int prefix, int code) {
         //return mInbound;
@@ -303,6 +352,69 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void searchFromOutboundList(String from_site) {
         mPresenter.executeWsSearchOutbound(from_site);
     }
+
+    @Override
+    public void showAlert(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void saveInboundHeader(IO_Inbound mInbound) {
+        this.mInbound = mInbound;
+        if(ToolBox_Con.isOnline(context)) {
+            //mPresenter.saveInboundData(mInbound);
+            mPresenter.executeWsSaveInboundHeader(mInbound,bNewProcess);
+        }else{
+            showAlert(
+                hmAux_Trans.get("alert_io_creation_ttl"),
+                hmAux_Trans.get("alert_creation_only_online_msg")
+            );
+        }
+    }
+
+    @Override
+    public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
+        this.controls_ss.addAll(controls_ss);
+    }
+    //region DrawerFragment
+
+    @Override
+    public void setFragToContainer(String fragTag) {
+        switch (fragTag){
+            case INBOUND_FRAG_HEADER:
+                setFrag(act061_frag_header,INBOUND_FRAG_HEADER);
+                break;
+            case INBOUND_FRAG_ITEM:
+                setFrag(act061_frag_item,INBOUND_FRAG_ITEM);
+                break;
+        }
+    }
+
+    @Override
+    public void updateDrawerState(boolean stateOpen) {
+        setDrawerState(stateOpen);
+    }
+
+    //endregion
+
+    //region FragItems
+
+    @Override
+    public void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.addAll(controls_sta);
+    }
+
+    @Override
+    public void callAddItemAct() {
+        callAct062();
+    }
+    //endregion
 
     //endregion
 
@@ -321,6 +433,30 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
+    private void callAct062() {
+        Intent mIntent = new Intent(context, Act062_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        mDrawerToggle.syncState();
+        //
+        super.onPostCreate(savedInstanceState);
+
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         //super.processCloseACT(mLink, mRequired);
@@ -336,7 +472,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         } else if(wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())){
             mPresenter.processFromOutboundRet(mLink);
             progressDialog.dismiss();
-        } else {
+        } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())){
+            mPresenter.processHeaderSave(mPrefix,mCode,mLink);
+            progressDialog.dismiss();
+        }else {
             progressDialog.dismiss();
         }
     }
