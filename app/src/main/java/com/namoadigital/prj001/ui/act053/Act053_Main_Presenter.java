@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act053;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -14,9 +13,12 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Address_Suggestion;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_IO_Address_Suggestion;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
@@ -302,6 +304,55 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             //FUDEU 2
         }
 
+    }
+
+    @Override
+    public void executeAddressSuggestion(String site_code, long product_code) {
+        mView.setWsProcess(WS_IO_Address_Suggestion.class.getName());
+        //
+        mView.showPD(
+            hmAux_Trans.get("progress_serial_search_ttl"),
+            hmAux_Trans.get("progress_serial_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Address_Suggestion.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(MD_Product_SerialDao.SITE_CODE,site_code);
+        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void processAddresSuggestionResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        T_IO_Address_Suggestion_Rec rec = null;
+        try {
+            rec = gson.fromJson(
+                result,
+                T_IO_Address_Suggestion_Rec.class
+            );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //
+        if(rec != null){
+            mView.reportAddressSuggestion(
+                rec.getZone_code(),
+                rec.getZone_id(),
+                rec.getZone_desc(),
+                rec.getLocal_code(),
+                rec.getLocal_id()
+            );
+        }else{
+            mView.showAlertDialog(
+                hmAux_Trans.get("alert_address_suggestion_fails_ttl"),
+                hmAux_Trans.get("alert_address_suggestion_fails_msg")
+            );
+        }
     }
 
     @Override

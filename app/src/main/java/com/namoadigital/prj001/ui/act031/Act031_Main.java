@@ -258,6 +258,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                     controls_sta.remove(mket_control);
                 }
             }
+
+            @Override
+            public void onAddressSuggestionRequired(String site_code, long product_code) {
+                
+            }
         });
 
     }

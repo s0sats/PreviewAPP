@@ -49,4 +49,14 @@ public interface Frg_Serial_Edit_View {
      * @param mdProductSerial
      */
     void setMdProductSerial(MD_Product_Serial mdProductSerial);
+
+    /**
+     * Metodo que informa dados do endereço sugerido após processamento do ws de suggestão.
+     * @param zone_code
+     * @param zone_id
+     * @param zone_desc
+     * @param local_code
+     * @param local_id
+     */
+    void reportAddressSuggestion(Integer zone_code, String zone_id, String zone_desc, Integer local_code, String local_id);
 }

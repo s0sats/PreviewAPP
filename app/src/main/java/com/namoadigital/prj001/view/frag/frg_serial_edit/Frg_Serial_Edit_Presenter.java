@@ -67,4 +67,17 @@ public interface Frg_Serial_Edit_Presenter {
      * @param serial_id
      */
     void searchLocalSerial(long product_code, String serial_id);
+
+    /**
+     * Metodo que realizará a chamada de WS solicitando sugestão de endereço
+     *
+     * @param site_code
+     * @param product_code
+     */
+    void executeAddressSuggestion(String site_code, long product_code);
+
+    /**
+     * Metodo que processará o retorno do WS de sugestão
+     */
+    void processAddresSuggestionResult(String result);
 }

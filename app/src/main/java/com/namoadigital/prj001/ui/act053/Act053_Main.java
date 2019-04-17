@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -25,6 +24,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Address_Suggestion;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
@@ -110,6 +110,9 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             transList.add("dialog_result_msg_lbl");
             transList.add("dialog_results_ttl");
             transList.add("btn_create");
+            //
+            transList.add("alert_address_suggestion_fails_ttl");
+            transList.add("alert_address_suggestion_fails_msg");
             //
             hmAux_Trans = ToolBox_Inf.setLanguage(
                     context,
@@ -241,6 +244,11 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 }else{
                     controls_sta.remove(mket_control);
                 }
+            }
+
+            @Override
+            public void onAddressSuggestionRequired(String site_code, long product_code) {
+                mPresenter.executeAddressSuggestion(site_code,product_code);
             }
         });
     }
@@ -421,6 +429,19 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public void reportAddressSuggestion(Integer zone_code, String zone_id, String zone_desc, Integer local_code, String local_id) {
+        if (frgSerialEdit != null) {
+            frgSerialEdit.updateAddressSuggestion(
+                zone_code,
+                zone_id,
+                zone_desc,
+                local_code,
+                local_id
+            );
+        }
+    }
+
+    @Override
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -452,7 +473,6 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             frgSerialEdit.processTrackingResult(hmAux);
         } else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
             mPresenter.extractSearchResult(mLink);
-
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
@@ -464,6 +484,8 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                         hmAux_Trans.get("alert_no_serial_return_msg")
                 );
             }
+        }else if(wsProcess.equals(WS_IO_Address_Suggestion.class.getName())){
+            mPresenter.processAddresSuggestionResult(mLink);
         }
         //
         progressDialog.dismiss();

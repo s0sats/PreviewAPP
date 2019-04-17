@@ -10,7 +10,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Env;
 import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Address_Suggestion;
@@ -40,7 +39,7 @@ public class WS_IO_Address_Suggestion extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            String site_code = bundle.getString(MD_Site_Zone_LocalDao.SITE_CODE,"-1");
+            String site_code = bundle.getString(MD_Product_SerialDao.SITE_CODE,"-1");
             String product_code = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE,"-1");
             //
             processWsAddressSuggestion(site_code,product_code);

@@ -274,6 +274,11 @@ public class Teste2 extends Base_Activity {
                     controls_sta.remove(mket_control);
                 }
             }
+
+            @Override
+            public void onAddressSuggestionRequired(String site_code, long product_code) {
+
+            }
         });
         //
         iv_serial_log = (ImageView) findViewById(R.id.act_test2_iv_tst);

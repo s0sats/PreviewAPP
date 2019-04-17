@@ -6,10 +6,12 @@ public class T_IO_Address_Suggestion_Rec{
     private String validation;
     private String link_url;
     private String error_msg;
-
     private Integer site_code;
     private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
     private Integer local_code;
+    private String local_id;
 
     public String getApp() {
         return app;
@@ -59,11 +61,35 @@ public class T_IO_Address_Suggestion_Rec{
         this.zone_code = zone_code;
     }
 
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
+    }
+
     public Integer getLocal_code() {
         return local_code;
     }
 
     public void setLocal_code(Integer local_code) {
         this.local_code = local_code;
+    }
+
+    public String getLocal_id() {
+        return local_id;
+    }
+
+    public void setLocal_id(String local_id) {
+        this.local_id = local_id;
     }
 }

@@ -258,7 +258,12 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                         controls_sta.remove(mket_control);
                     }
                 }
-            }
+
+                  @Override
+                  public void onAddressSuggestionRequired(String site_code, long product_code) {
+
+                  }
+              }
         );
     }
 

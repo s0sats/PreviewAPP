@@ -788,6 +788,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     controls_sta.remove(mket_control);
                 }
             }
+
+            @Override
+            public void onAddressSuggestionRequired(String site_code, long product_code) {
+
+            }
         });
     }
 
