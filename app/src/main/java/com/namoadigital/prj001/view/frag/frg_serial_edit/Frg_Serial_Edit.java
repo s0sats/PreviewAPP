@@ -190,8 +190,11 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean abortReported = false;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean forceLoggedSiteRestriction = false;
+    //Atributos implementados com o IO
     private LinearLayout ll_suggestion;
     private TextView tv_suggested_location;
+    private boolean usesLocation = true;//Se deve exibir campos de posição
+    private boolean usesSuggestionLocation = false;//Se deve considerar chamar Ws deSugestão.
 
 
     //region Interfaces
@@ -426,7 +429,24 @@ public class Frg_Serial_Edit extends BaseFragment {
         );
 
     }
-//
+
+    public boolean isUsesLocation() {
+        return usesLocation;
+    }
+
+    public void setUsesLocation(boolean usesLocation) {
+        this.usesLocation = usesLocation;
+    }
+
+    public boolean isUsesSuggestionLocation() {
+        return usesSuggestionLocation;
+    }
+
+    public void setUsesSuggestionLocation(boolean usesSuggestionLocation) {
+        this.usesSuggestionLocation = usesSuggestionLocation;
+    }
+
+    //
 //    public void setSql_ss_site(String sql_ss_site) {
 //        this.sql_ss_site = sql_ss_site;
 //    }
@@ -2205,7 +2225,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 mket_info3.setEnabled(true);
             }
         }
-        if (mdProduct.getLocal_control() == 0) {
+        if (mdProduct.getLocal_control() == 0 || !usesLocation ) {
             ll_serial_location.setVisibility(View.GONE);
             fabMenu_anchor.removeFabMenuItens(fabLocation);
         }
@@ -2251,7 +2271,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 tv_brand_model_color.setVisibility(brand_model_color_lbl.length() > 0 ? View.VISIBLE : View.GONE);
                 iv_serial_dialog_info.setVisibility(View.GONE);
                 //ll_serial_class.setVisibility(View.VISIBLE);
-                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
+                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 && usesLocation ? View.VISIBLE : View.GONE);
                 ll_serial_properties.setVisibility(View.VISIBLE);
                 ll_serial_add_info.setVisibility(View.VISIBLE);
                 setIoVisibility();
@@ -2263,7 +2283,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 tv_brand_model_color.setVisibility(View.VISIBLE);
                 iv_serial_dialog_info.setVisibility(View.VISIBLE);
                 //ll_serial_class.setVisibility(View.VISIBLE);
-                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1 ? View.VISIBLE : View.GONE);
+                ll_serial_location.setVisibility(mdProduct.getLocal_control() == 1  && usesLocation ? View.VISIBLE : View.GONE);
                 ll_serial_properties.setVisibility(View.GONE);
                 ll_serial_add_info.setVisibility(View.GONE);
                 ll_io_info.setVisibility(View.GONE);

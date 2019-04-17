@@ -11,8 +11,8 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
-import com.namoadigital.prj001.model.T_IO_Inbound_Search_Env;
-import com.namoadigital.prj001.model.T_IO_Inbound_Search_Rec;
+import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Env;
+import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Address_Suggestion;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -65,13 +65,14 @@ public class WS_IO_Address_Suggestion extends IntentService {
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
-        T_IO_Inbound_Search_Env env = new T_IO_Inbound_Search_Env();
+        T_IO_Address_Suggestion_Env env = new T_IO_Address_Suggestion_Env();
         //
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setSite_code(site_code);
+        env.setProduct_code(product_code);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
 
@@ -80,9 +81,9 @@ public class WS_IO_Address_Suggestion extends IntentService {
                 gson.toJson(env)
         );
         //
-        T_IO_Inbound_Search_Rec rec = gson.fromJson(
+        T_IO_Address_Suggestion_Rec rec = gson.fromJson(
                 resultado,
-                T_IO_Inbound_Search_Rec.class
+            T_IO_Address_Suggestion_Rec.class
         );
         //
         if (!ToolBox_Inf.processWSCheckValidation(
@@ -110,7 +111,6 @@ public class WS_IO_Address_Suggestion extends IntentService {
 
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
