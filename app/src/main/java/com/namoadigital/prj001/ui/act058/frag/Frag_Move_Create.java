@@ -693,18 +693,20 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private void setClassSS() {
         MD_Class md_class = mPresenter.getClassFromMove(ioMove.getTo_class_code());
+        String class_code;
         String class_id;
-
         String class_type;
         String class_color;
         int class_available;
 
         if(md_class != null) {
+            class_code = String.valueOf(md_class.getClass_code());
             class_id = md_class.getClass_id();
             class_type = md_class.getClass_type();
             class_color = md_class.getClass_color();
             class_available = md_class.getClass_available();
         }else{
+            class_code = String.valueOf(mdProductSerial.getClass_code());
             class_id = mdProductSerial.getClass_id();
             class_type = mdProductSerial.getClass_type();
             class_color = mdProductSerial.getClass_color();
@@ -713,9 +715,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         ToolBox_Inf.setSSmValue(
                 ss_class,
-                String.valueOf(ioMove.getTo_class_code()),
-                String.valueOf(ioMove.getTo_class_code()),
-                mdProductSerial.getClass_id(),
+                String.valueOf(class_code),
+                String.valueOf(class_code),
+                class_id,
                 true,
                 MD_ClassDao.CLASS_ID, class_id,
                 MD_ClassDao.CLASS_TYPE, class_type,

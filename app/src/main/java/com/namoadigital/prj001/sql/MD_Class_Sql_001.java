@@ -22,7 +22,7 @@ public class MD_Class_Sql_001 implements Specification {
                         "FROM\n" + MD_ClassDao.TABLE +" c " +
                         "WHERE\n" +
                         " c.customer_code = "+customer_code+"\n" +
-                        " and c.class_code ="+class_code)
+                        " and c.class_code = "+class_code)
                 .toString();
 
 

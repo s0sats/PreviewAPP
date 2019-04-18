@@ -16,9 +16,9 @@ public class IO_Move_Reason_Sql_001 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
         return sb
-                .append(" SELECT\n" +
-                        "   t.*\n" +
-                        " FROM\n" +
+                .append(" SELECT \n" +
+                        "   t.* \n" +
+                        " FROM \n" +
                         IO_Move_ReasonDao.TABLE + " t \n" +
                         " WHERE\n" +
                         "   t.customer_code = '"+customer_code+"'\n" +

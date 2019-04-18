@@ -40,6 +40,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
 
     public static final String ZERO_PENDENCY = "(0)";
+    public static final String IS_LOCAL_PROCESS = "isLocalProcess";
     private CheckBox cbInbound;
     private CheckBox cbOutbound;
     private CheckBox cbPlannedMove;
@@ -50,7 +51,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private TextView tvIoOrientationLbl;
     private Button btnSearchMoveOrder;
     private Button btnMoveOrderPendency;
-
+    boolean isLocalProcess;
     private Act054_Main_Presenter mPresenter;
     private String wsProcess;
     private String pendeciesCount;
@@ -254,7 +255,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         btnSearchMoveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                isLocalProcess = false;
                 if (!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
                     zoneDesc = "";
                 } else {
@@ -291,6 +292,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         btnMoveOrderPendency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isLocalProcess = true;
                 if (pendeciesCount.equals(ZERO_PENDENCY)) {
                     ToolBox.alertMSG(
                             context,
@@ -335,6 +337,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     public void callAct055(Bundle bundle) {
         Intent mIntent = new Intent(context, Act055_Main.class);
         if (bundle != null) {
+            bundle.putBoolean(IS_LOCAL_PROCESS, isLocalProcess);
             mIntent.putExtras(bundle);
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
