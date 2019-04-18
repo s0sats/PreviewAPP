@@ -30,6 +30,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
@@ -52,6 +53,10 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private Frg_Serial_Edit frgSerialEdit;
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
+    private String ioProcess;
+    boolean isIoProcess= false;
+    private String ioPrefix;
+    private String ioCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,9 +166,18 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             } else {
                 mdProductSerial = new MD_Product_Serial();
             }
-
+            //DADOS INBOUND / OUTBOUND ITEM
+            ioProcess = bundle.getString(Constant.HMAUX_PROCESS_KEY, "");
+            isIoProcess = ioProcess.equals(ConstantBaseApp.IO_INBOUND) || ioProcess.equals(ConstantBaseApp.IO_OUTBOUND);
+            //
+            ioPrefix = bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY,"-1");
+            ioCode = bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY,"-1");
         } else {
             bundle_product_code = 0L;
+            ioProcess = "";
+            isIoProcess = false;
+            ioPrefix ="-1";
+            ioCode = "-1";
         }
     }
 
@@ -179,6 +193,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.setIOProcess(isIoProcess);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -248,7 +263,10 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
 
             @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
-                mPresenter.executeAddressSuggestion(site_code,product_code);
+                if(ToolBox_Con.isOnline(context)) {
+                    mPresenter.executeAddressSuggestion(site_code, product_code);
+                }
+
             }
         });
     }
@@ -442,11 +460,33 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public String getIoProcess() {
+        return ioProcess;
+    }
+
+    @Override
+    public void callAct061(Bundle bundle) {
+//        Intent mIntent = new Intent(context, Act061_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        if(bundle != null) {
+//            mIntent.putExtras(bundle);
+//        }
+//        startActivity(mIntent);
+//        finish();
+    }
+
+    @Override
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked(requesting_act);
     }
 
     /**

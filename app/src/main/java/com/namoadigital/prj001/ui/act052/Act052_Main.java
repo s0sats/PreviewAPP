@@ -82,7 +82,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act052_title");
-        transList.add("btn_create_serial");
         transList.add("btn_blind_serial_move");
         transList.add("no_record_found_lbl");
         transList.add("records_lbl");
@@ -136,6 +135,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             && !serial_jump
             && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
             && mPresenter.isSiteInboundAutoCreation()
+            && ToolBox_Con.isOnline(context)
         ) {
             btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
             btn_create_serial.setVisibility(View.VISIBLE);

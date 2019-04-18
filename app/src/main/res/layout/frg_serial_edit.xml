@@ -279,7 +279,6 @@
                         android:id="@+id/frg_serial_edit_ll_serial_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
                         android:background="@color/namoa_color_gray"
                         android:orientation="vertical"
                         android:padding="5dp">
@@ -363,48 +362,55 @@
                             android:visibility="gone"
                             android:text="Motivo - trad" />
 
-                        <LinearLayout
+                    </LinearLayout>
+
+                    <LinearLayout
                             android:id="@+id/frg_serial_edit_ll_serial_tracking"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="15dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/frg_serial_edit_tv_serial_tracking_ttl"
-                                android:layout_width="0dp"
+                            android:orientation="vertical"
+                            android:background="@color/namoa_color_gray"
+                            android:paddingBottom="8dp">
+                        <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:padding="5dp"
-                                android:text="Tracking"
-                                android:textSize="@dimen/font_size_item_md" />
+                                android:orientation="horizontal">
+                            <TextView
+                                    android:id="@+id/frg_serial_edit_tv_serial_tracking_ttl"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:padding="5dp"
+                                    android:text="Tracking"
+                                    android:textSize="@dimen/font_size_item_md" />
 
                             <ImageView
-                                android:id="@+id/frg_serial_edit_iv_add_tracking"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="12dp"
-                                android:paddingBottom="4dp"
-                                android:paddingLeft="15dp"
-                                android:paddingRight="15dp"
-                                android:paddingTop="4dp"
-                                android:src="@drawable/ic_adicionar_tracking_number_states" />
+                                    android:id="@+id/frg_serial_edit_iv_add_tracking"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:paddingBottom="4dp"
+                                    android:paddingLeft="15dp"
+                                    android:paddingRight="15dp"
+                                    android:paddingTop="4dp"
+                                    android:src="@drawable/ic_adicionar_tracking_number_states" />
+
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/frg_serial_edit_ll_tracking_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                                android:id="@+id/frg_serial_edit_ll_tracking_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
                         </LinearLayout>
-
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/frg_serial_edit_ll_serial_properties"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
                         android:layout_marginBottom="15dp"
                         android:background="@color/namoa_color_gray"
                         android:orientation="vertical"

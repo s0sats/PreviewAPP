@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act053;
 
+import android.os.Bundle;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit_Presenter;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit_View;
@@ -27,5 +28,8 @@ public interface Act053_Main_Contract {
 
         void showPD(String title, String msg);
 
+        String getIoProcess();
+
+        void callAct061(Bundle bundle);
     }
 }

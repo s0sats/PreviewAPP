@@ -308,22 +308,24 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
 
     @Override
     public void executeAddressSuggestion(String site_code, long product_code) {
-        mView.setWsProcess(WS_IO_Address_Suggestion.class.getName());
-        //
-        mView.showPD(
-            hmAux_Trans.get("progress_serial_search_ttl"),
-            hmAux_Trans.get("progress_serial_search_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Address_Suggestion.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(MD_Product_SerialDao.SITE_CODE,site_code);
-        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Address_Suggestion.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Address_Suggestion.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(MD_Product_SerialDao.SITE_CODE, site_code);
+            bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
     }
 
     @Override
@@ -363,10 +365,22 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     @Override
     public void onBackPressedClicked(String requesting_act) {
         switch (requesting_act){
+            case ConstantBaseApp.ACT063:
+                String ioProcess = mView.getIoProcess();
+                if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
+                    mView.callAct061(prepareAct061Bundle());
+                }
+
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
                 break;
         }
+    }
+
+    private Bundle prepareAct061Bundle() {
+        Bundle bundle = new Bundle();
+        //
+        return bundle;
     }
 }

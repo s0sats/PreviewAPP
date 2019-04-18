@@ -872,6 +872,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     spinnersInitializer();
                     //
                     applyViewMode();
+                    //
+                    checkNeedSuggestion();
                 } else {
                     //
                     showAlertDialog(
@@ -888,6 +890,17 @@ public class Frg_Serial_Edit extends BaseFragment {
                         productOrSerialNullListner
                 );
             }
+        }
+    }
+
+    private void checkNeedSuggestion() {
+        HMAux hmAux = ss_site != null ? ss_site.getmValue() : new HMAux();
+        //
+        if(requiresSuggetion(hmAux)){
+            callSuggestionDelegate(
+                hmAux.get(SearchableSpinner.CODE),
+                mdProductSerial.getProduct_code()
+            );
         }
     }
 
@@ -1194,12 +1207,15 @@ public class Frg_Serial_Edit extends BaseFragment {
         if(zone_code != null || local_code != null){
             ll_suggestion.setVisibility(View.VISIBLE);
             tv_suggested_location.setText(formatSuggestion(zone_id,zone_desc,local_id));
+        }else{
+            ll_suggestion.setVisibility(View.GONE);
+            tv_suggested_location.setText("");
         }
 
     }
 
     private String formatSuggestion(String zone_id, String zone_desc, String local_id) {
-        String ret = zone_id != null && zone_id.isEmpty() ? zone_id : "";
+        String ret = zone_id != null && !zone_id.isEmpty() ? zone_id : "";
         ret += !ret.isEmpty() && local_id != null && !local_id.isEmpty() ? " | " : "";
         ret += local_id;
         return  ret;
@@ -1469,14 +1485,16 @@ public class Frg_Serial_Edit extends BaseFragment {
                         loadLocalSS(true);
                     }
                     //
-                    if(requiresSuggetion(oldSite,hmAux)){
-                        if(delegate != null){
-                            delegate.onAddressSuggestionRequired(
-                                hmAux.get(SearchableSpinner.CODE),
-                                mdProductSerial.getProduct_code()
-                            );
-                        }
+                    if(requiresSuggetion(hmAux)){
+                        callSuggestionDelegate(
+                            hmAux.get(SearchableSpinner.CODE),
+                            mdProductSerial.getProduct_code()
+                        );
                     }else{
+                        //Se trocou de site não caiu na regra de sugestão , esconde sugestão
+                        ll_suggestion.setVisibility(View.GONE);
+                        tv_suggested_location.setText("");
+                        //
                         if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
                             ToolBox.alertMSG(
                                 context,
@@ -1730,23 +1748,61 @@ public class Frg_Serial_Edit extends BaseFragment {
                 showSerialInfoDialog();
             }
         });
-        //
 
     }
 
-    private boolean requiresSuggetion(HMAux oldSite, HMAux hmAux) {
-        return oldSite.size() == 0
-            && hmAux.size() > 0
-            && hmAux.hasConsistentValue(SearchableSpinner.CODE)
-            && hmAux.hasConsistentValue(MD_Product_SerialDao.SITE_IO_CONTROL)
-            && hmAux.hasConsistentValue(MD_Product_SerialDao.INBOUND_AUTO_CREATE)
-            && new_serial
-            && mdProductSerial.getProduct_io_control() != null
-            && hmAux.get(MD_Product_SerialDao.SITE_IO_CONTROL) != null
-            && hmAux.get(MD_Product_SerialDao.INBOUND_AUTO_CREATE) != null
-            && mdProductSerial.getProduct_io_control() == 1
-            && hmAux.get(MD_Product_SerialDao.SITE_IO_CONTROL).equals("1")
-            && hmAux.get(MD_Product_SerialDao.INBOUND_AUTO_CREATE).equals("1")
+    private void callSuggestionDelegate(String site_code, long product_code) {
+        if(delegate != null){
+            delegate.onAddressSuggestionRequired(
+                site_code,
+                product_code
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 18/04/2019
+     * Valida se deve chamar sugestão de endereço
+     * REGRA:
+     *  - Serial novo
+     *  e Produto do serial controla io
+     *  e Site selecionado controla io
+     *  e Site selecionado inbound auto creation
+     *
+     * @param hmAux - Valor do ss_site
+     * @return
+     */
+    private boolean requiresSuggetion(HMAux hmAux) {
+        //PARA DEBUG
+//        boolean ret = false;
+//            //ret =  oldSite.size() == 0 || !oldSite.hasConsistentValue(SearchableSpinner.CODE) ;
+//            ret = hmAux.size() > 0;
+//            if(ret) {
+//                ret = hmAux.hasConsistentValue(SearchableSpinner.CODE);
+//                ret = hmAux.hasConsistentValue(MD_SiteDao.IO_CONTROL);
+//                ret = hmAux.hasConsistentValue(MD_SiteDao.INBOUND_AUTO_CREATE);
+//                ret = new_serial;
+//                ret = mdProductSerial.getProduct_io_control() != null;
+//                ret = hmAux.get(MD_SiteDao.IO_CONTROL) != null;
+//                ret = hmAux.get(MD_SiteDao.INBOUND_AUTO_CREATE) != null;
+//                ret = mdProductSerial.getProduct_io_control() == 1;
+//                ret = hmAux.get(MD_SiteDao.IO_CONTROL).equals("1");
+//                ret = hmAux.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1");
+//            }
+//
+//            return ret;
+        return  hmAux.size() > 0
+                && hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                && hmAux.hasConsistentValue(MD_SiteDao.IO_CONTROL)
+                && hmAux.hasConsistentValue(MD_SiteDao.INBOUND_AUTO_CREATE)
+                && new_serial
+                && mdProductSerial.getProduct_io_control() != null
+                && hmAux.get(MD_SiteDao.IO_CONTROL) != null
+                && hmAux.get(MD_SiteDao.INBOUND_AUTO_CREATE) != null
+                && mdProductSerial.getProduct_io_control() == 1
+                && hmAux.get(MD_SiteDao.IO_CONTROL).equals("1")
+                && hmAux.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1")
+                && !isIOProcess
             ;
     }
 
@@ -2959,7 +3015,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
                 }
             } else {
-                if (new_serial) {
+                if (new_serial && !isIOProcess) {
                     ss_site.setmValue(loggedSite);
                 }
             }

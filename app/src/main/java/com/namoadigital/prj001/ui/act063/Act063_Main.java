@@ -318,9 +318,15 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
     public void callAct053(Bundle bundle) {
         Intent mIntent = new Intent(context, Act053_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (bundle != null) {
-            mIntent.putExtras(bundle);
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+        //
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);
+
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
