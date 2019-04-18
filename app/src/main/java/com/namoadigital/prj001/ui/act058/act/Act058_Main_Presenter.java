@@ -7,9 +7,11 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
+import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
@@ -24,12 +26,14 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     IO_MoveDao moveDao;
     MD_Product_SerialDao productSerialDao;
     MD_ClassDao classDao;
     IO_MoveDao ioMoveDao;
+    IO_Move_TrackingDao ioMoveTrackingDao;
     Context context;
     Act058_Main mView;
     HMAux hmAux_trans;
@@ -43,6 +47,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
         this.ioMoveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
         this.classDao = new MD_ClassDao(context);
@@ -130,7 +137,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move ) {
+    public void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove) {
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
@@ -149,6 +156,10 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
         ioMoveDao.addUpdate(io_move);
+
+        for (IO_Move_Tracking tracking: trackingFromMove) {
+            ioMoveTrackingDao.addUpdate(tracking);
+        }
 
         if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(WS_IO_Move_Save.class.getName());

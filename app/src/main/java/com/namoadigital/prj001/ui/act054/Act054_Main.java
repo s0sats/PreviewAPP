@@ -358,6 +358,12 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         this.wsProcess = wsProcess;
     }
 
+    @Override
+    public void refreshPendencyCount() {
+        pendeciesCount = mPresenter.getPendecies();
+        btnMoveOrderPendency.setText(hmAux_Trans.get("pendencies_lbl") + pendeciesCount);
+    }
+
     /**
      * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
      * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,

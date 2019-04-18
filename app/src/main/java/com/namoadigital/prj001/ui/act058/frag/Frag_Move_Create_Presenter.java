@@ -5,15 +5,19 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
+import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Reason;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.MD_Class_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
@@ -25,6 +29,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.microblink.MicroblinkSDK.getApplicationContext;
 
@@ -33,6 +38,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     private MD_Site_ZoneDao siteZoneDao;
     private MD_Site_Zone_LocalDao siteZoneLocalDao;
     IO_Move_ReasonDao ioMoveReasonDao;
+    IO_Move_TrackingDao ioMoveTrackingDao;
     private Context context;
     private IO_Move mMove;
 
@@ -41,6 +47,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.ioMoveReasonDao = new IO_Move_ReasonDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.context = context;
         this.mMove = mMove;
     }
@@ -108,8 +115,10 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
-    public MD_Class getClassFromMove(int classCode){
-
+    public MD_Class getClassFromMove(Integer classCode){
+        if(classCode == null){
+            classCode = 0;
+        }
         MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
         MD_Class md_class = classDao.getByString(
                 new MD_Class_Sql_001(
@@ -118,6 +127,20 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
                 ).toSqlQuery()
         );
         return md_class;
+    }
+
+    @Override
+    public List<IO_Move_Tracking> getTrackingFromMove(){
+
+        ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        List<IO_Move_Tracking> move_tracking = ioMoveTrackingDao.query(
+                new IO_Move_Tracking_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mMove.getMove_prefix(),
+                        mMove.getMove_code()
+                ).toSqlQuery()
+        );
+        return move_tracking;
     }
 
 
@@ -175,6 +198,14 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
             //MSG DE ERRO ?
 
         }
+
+    }
+
+    @Override
+    public boolean removeTrackingFromMove(IO_Move_Tracking io_move_tracking) {
+
+        DaoObjReturn daoObjReturn = ioMoveTrackingDao.delete(io_move_tracking);
+        return !daoObjReturn.hasError();
 
     }
 }

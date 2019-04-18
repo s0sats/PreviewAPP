@@ -35,6 +35,7 @@ import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -107,6 +108,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private String searched_tracking = "";
     private boolean trackingListChanged;
     private Button btn_save;
+    private List<IO_Move_Tracking> trackingFromMove =new ArrayList<>();
 
     public Frag_Move_Create() {
         // Required empty public constructor
@@ -236,7 +238,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if(view_param == 0) {
+                                    if (view_param == 0) {
                                         persistIoMoveChanges();
                                     }
                                 }
@@ -287,15 +289,15 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         Integer reasonCode = null;
         Integer zoneCode = Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE));
 
-        if(ss_class.getmValue()!= null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+        if (ss_class.getmValue() != null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
         }
 
-        if(ss_reason.getmValue()!= null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+        if (ss_reason.getmValue() != null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             reasonCode = Integer.valueOf(ss_reason.getmValue().get(SearchableSpinner.CODE));
         }
 
-        if(chk_change_zone.isChecked()){
+        if (chk_change_zone.isChecked()) {
             ToolBox_Con.setPreference_Zone_Code(
                     getContext(),
                     zoneCode
@@ -311,7 +313,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 classCode,
                 reasonCode,
                 mkdate_confirm.getmValue(),
-                mdProductSerial
+                mdProductSerial,
+                trackingFromMove
         );
     }
 
@@ -380,7 +383,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         }
         mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        if(mket_serial.getVisibility() == View.VISIBLE) {
+        if (mket_serial.getVisibility() == View.VISIBLE) {
             if (!mdProductSerial.getSerial_id().equals(mket_serial.getText().toString().trim())) {
                 isSuccessfully = false;
                 mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
@@ -494,6 +497,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 mdProductSerial.getTracking_list().add(
                         buildTrackingObj(searched_tracking)
                 );
+                IO_Move_Tracking io_move_tracking = new IO_Move_Tracking();
+                //
+                io_move_tracking.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getContext()));
+                io_move_tracking.setMove_prefix(ioMove.getMove_prefix());
+                io_move_tracking.setMove_code(ioMove.getMove_code());
+                io_move_tracking.setTracking(searched_tracking);
+                trackingFromMove.add(io_move_tracking);
                 //
                 appendTracking(searched_tracking);
                 //
@@ -635,17 +645,31 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         //Insere lista de tracking vindo do banco.
-        for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
-            appendTracking(mdProductSerial.getTracking_list().get(i).getTracking());
+        if (ioMove.getTo_class_code() != null && ioMove.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
+            trackingFromMove.clear();
+            trackingFromMove = mPresenter.getTrackingFromMove();
+            for (int i = 0; i < trackingFromMove.size(); i++) {
+                appendTracking(trackingFromMove.get(i).getTracking());
+            }
+        } else {
+            for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
+                appendTracking(mdProductSerial.getTracking_list().get(i).getTracking());
+                IO_Move_Tracking io_move_tracking = new IO_Move_Tracking();
+                //
+                io_move_tracking.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getContext()));
+                io_move_tracking.setMove_prefix(ioMove.getMove_prefix());
+                io_move_tracking.setMove_code(ioMove.getMove_code());
+                io_move_tracking.setTracking(mdProductSerial.getTracking_list().get(i).getTracking());
+                trackingFromMove.add(io_move_tracking);
+            }
         }
-
         setClassSS();
         setLabelsAndHint();
         setMkdate();
 
-        if(hasSerialPermission()) {
+        if (hasSerialPermission()) {
             setSerialMKEditText();
-        }else{
+        } else {
             mket_serial.setVisibility(View.GONE);
         }
 
@@ -664,15 +688,15 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
         }
 
-        mListener.onAddOrRemoveControlSS(ss_zone,true);
-        mListener.onAddOrRemoveControlSS(ss_local,true);
+        mListener.onAddOrRemoveControlSS(ss_zone, true);
+        mListener.onAddOrRemoveControlSS(ss_local, true);
         setViewEnable();
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
 
     private void setViewEnable() {
-        if(ioMove.getStatus()!= null && ioMove.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)){
+        if (ioMove.getStatus() != null && ioMove.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             mket_serial.setEnabled(false);
             ss_zone.setmEnabled(false);
             ss_reason.setmEnabled(false);
@@ -680,7 +704,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             ss_class.setmEnabled(false);
             iv_add_tracking.setEnabled(false);
             chk_change_zone.setEnabled(false);
-        }else{
+            btn_save.setVisibility(View.GONE);
+        } else {
             mket_serial.setEnabled(true);
             ss_zone.setmEnabled(true);
             ss_reason.setmEnabled(true);
@@ -688,6 +713,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             ss_class.setmEnabled(true);
             iv_add_tracking.setEnabled(true);
             chk_change_zone.setEnabled(true);
+            btn_save.setVisibility(View.VISIBLE);
         }
     }
 
@@ -697,15 +723,15 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         String class_id;
         String class_type;
         String class_color;
-        int class_available;
+        Integer class_available;
 
-        if(md_class != null) {
+        if (md_class != null) {
             class_code = String.valueOf(md_class.getClass_code());
             class_id = md_class.getClass_id();
             class_type = md_class.getClass_type();
             class_color = md_class.getClass_color();
             class_available = md_class.getClass_available();
-        }else{
+        } else {
             class_code = String.valueOf(mdProductSerial.getClass_code());
             class_id = mdProductSerial.getClass_id();
             class_type = mdProductSerial.getClass_type();
@@ -743,7 +769,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         );
         //
         mket_serial.setmOCR(false);
-        if(ToolBox_Inf.isMicroBlinkImported()) {
+        if (ToolBox_Inf.isMicroBlinkImported()) {
             mket_serial.setmOCRVin(
                     ToolBox_Inf.profileExists(
                             getActivity(),
@@ -751,7 +777,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                             Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
                     )
             );
-        }else{
+        } else {
             mket_serial.setmOCRVin(false);
         }
         controls_sta.add(mket_serial);
@@ -834,7 +860,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             public void removeViews(TextViewCT textViewCT) {
                 int idx = ll_tracking_content.indexOfChild(textViewCT);
                 //
-                mdProductSerial.getTracking_list().remove(idx);
+
+//                mdProductSerial.getTracking_list().remove(idx);
+                if(mPresenter.removeTrackingFromMove(trackingFromMove.get(idx))) {
+                    trackingFromMove.remove(idx);
+                }
                 //
                 ll_tracking_content.removeView(textViewCT);
                 //
@@ -913,7 +943,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                            Integer to_class_code,
                            Integer reason_code,
                            String done_date,
-                           MD_Product_Serial serial);
+                           MD_Product_Serial serial,
+                           List<IO_Move_Tracking> trackingFromMove);
 
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -927,6 +958,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ArrayList<HMAux> getReasonOption();
 
         void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b);
+
         void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean b);
 
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);

@@ -125,6 +125,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_move_order_not_found_ttl"),
                     hmAux_Trans.get("alert_move_order_not_found_msg")
             );
+            mView.refreshPendencyCount();
         } else {
             callMoveOrderList(record_list);
         }
