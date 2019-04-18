@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -110,6 +111,7 @@ public class WS_IO_Move_Search extends IntentService {
         }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"), resultado, "0");
+        Log.i("WS_IO_Move_Search", "resultado: " + resultado);
     }
 
     private void loadTranslation() {

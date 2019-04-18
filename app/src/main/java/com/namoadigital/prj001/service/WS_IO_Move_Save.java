@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.model.IO_Move_Return;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_004;
 import com.namoadigital.prj001.util.Constant;
@@ -188,10 +190,7 @@ public class WS_IO_Move_Save extends IntentService {
             move_list_ret += Constant.MAIN_CONCAT_STRING + move_pk
                     + Constant.MAIN_CONCAT_STRING_2 + move_ret.getRet_status();
             //
-            if (!move_ret.getRet_status().equalsIgnoreCase("OK")) {
-                move_list_ret += ":\n" + move_ret.getRet_msg();
-            }
-            //
+
             if(move_ret.getRet_status().equalsIgnoreCase("OK")) {
                 if (move_ret.getMove() != null && move_ret.getMove().size() > 0) {
                     for (IO_Move move : move_ret.getMove()) {
@@ -215,6 +214,39 @@ public class WS_IO_Move_Save extends IntentService {
                         productSerialDao.addUpdate(move_ret.getSerial().get(0));
                     }
                 }
+            }else{
+                move_list_ret += ":\n" + move_ret.getRet_msg();
+
+                IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        move_ret.getMove_prefix(),
+                        move_ret.getMove_code()).toSqlQuery());
+
+                if(move_ret.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DENIED)) {
+
+                    ioMove.setStatus(ConstantBase.SYS_STATUS_PENDING);
+                    ioMove.setTo_zone_code(null);
+                    ioMove.setTo_local_code(null);
+                    ioMove.setReason_code(null);
+                    ioMove.setTo_class_code(null);
+                    ioMove.setDone_date(null);
+                    ioMove.setDone_user(null);
+                    ioMove.setDone_user_nick(null);
+                    ioMove.setToken(null);
+                    DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
+
+                    if (daoObjReturn.hasError()){
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
+                }else if(move_ret.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_ERROR)) {
+
+                    ioMove.setToken(null);
+                    DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
+                    if (daoObjReturn.hasError()){
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
+
+                }
             }
         }
         hmAuxRet.put(MOVE_RETURN_LIST, move_list_ret.length() > 0 ? move_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), move_list_ret.length()) : "");
@@ -228,10 +260,13 @@ public class WS_IO_Move_Save extends IntentService {
                 ).toSqlQuery()
         );
 
-        if (moveList.size() > 0) {
+        if (moveList!= null && moveList.size() > 0) {
             //Atualiza valor do token em todos os cabeçalhos
-            for (IO_Move io_move : moveList) {
-                token = io_move.getToken();
+            try {
+                token = moveList.get(0).getToken();
+            }catch (Exception e ){
+                e.printStackTrace();
+                token="";
             }
         }
         return moveList.size() > 0;
