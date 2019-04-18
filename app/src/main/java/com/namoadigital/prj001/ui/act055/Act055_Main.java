@@ -29,6 +29,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act054.Act054_Main.IS_LOCAL_PROCESS;
+
 public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I_View, Act055_IO_Move_Order_List_Adapter.Act055ListListener {
 
     private Act055_Main_Presenter mPresenter;
@@ -39,6 +41,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private List<IO_Move_Search_Record> mMoveSearchList;
     private String wsProcess;
     private String requestAct;
+    private boolean isLocalProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
+            isLocalProcess = bundle.getBoolean(IS_LOCAL_PROCESS, false);
             requestAct = bundle.getString(Constant.MAIN_REQUESTING_ACT);
         } else {
             requestAct = Constant.ACT005;
@@ -184,7 +188,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-        if(ToolBox_Con.isOnline(context)) {
+        if(ToolBox_Con.isOnline(context) && !isLocalProcess) {
             mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
         }else{
             HMAux hmMove = new HMAux();

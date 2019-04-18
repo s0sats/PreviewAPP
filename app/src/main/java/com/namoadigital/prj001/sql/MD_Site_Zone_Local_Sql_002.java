@@ -27,9 +27,9 @@ public class MD_Site_Zone_Local_Sql_002 implements Specification {
                                 " FROM " +
                                 MD_Site_Zone_LocalDao.TABLE +
                                 " WHERE " +
-                                MD_Site_Zone_LocalDao.CUSTOMER_CODE +" = '"+ customer_code +"' " +
-                                " and " + MD_Site_Zone_LocalDao.SITE_CODE +" = '"+ site_code +"' "+
-                                " and " + MD_Site_Zone_LocalDao.ZONE_CODE +" = '"+ zone_code +"'" +
-                                " and " + MD_Site_Zone_LocalDao.LOCAL_CODE +" = '"+ local_code + "'").toString();
+                                MD_Site_Zone_LocalDao.CUSTOMER_CODE +" = "+ customer_code +" " +
+                                " and " + MD_Site_Zone_LocalDao.SITE_CODE +" = "+ site_code +" "+
+                                " and " + MD_Site_Zone_LocalDao.ZONE_CODE +" = "+ zone_code +" " +
+                                " and " + MD_Site_Zone_LocalDao.LOCAL_CODE +" = "+ local_code ).toString();
     }
 }

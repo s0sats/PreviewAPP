@@ -28,6 +28,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
@@ -104,9 +105,15 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("dialog_save_move_msg");
         transList.add("alert_results_ttl");
         transList.add("sys_alert_btn_ok");
+        transList.add("alert_move_results_ttl");
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
         transList.add("msg_move_save_ok");
+
+        transList.add("alert_offline_save_msg");
+        transList.add("alert_offline_save_ttl");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
@@ -445,7 +452,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                               Integer to_class_code,
                               Integer reason_code,
                               String done_date,
-                              MD_Product_Serial serial) {
+                              MD_Product_Serial serial,
+                              List<IO_Move_Tracking> trackingFromMove) {
 
         mPresenter.executeMovePersistence(customer_code,
                 move_prefix,
@@ -456,7 +464,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 reason_code,
                 done_date,
                 serial,
-                moveInfo);
+                moveInfo,
+                trackingFromMove);
     }
 
     @Override

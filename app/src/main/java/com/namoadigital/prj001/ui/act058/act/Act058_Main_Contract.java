@@ -2,9 +2,11 @@ package com.namoadigital.prj001.ui.act058.act;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Act058_Main_Contract {
 
@@ -26,7 +28,7 @@ public interface Act058_Main_Contract {
 
         int getViewMode(IO_Move moveInfo);
 
-        void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move);
+        void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove);
     }
 
     interface I_View{

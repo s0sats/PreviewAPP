@@ -38,5 +38,7 @@ public interface Act054_Main_Contract {
         void callAct051();
 
         void setWs_process(String name);
+
+        void refreshPendencyCount();
     }
 }
