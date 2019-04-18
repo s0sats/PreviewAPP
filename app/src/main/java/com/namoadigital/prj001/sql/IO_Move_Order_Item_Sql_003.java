@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
@@ -36,7 +35,8 @@ public class IO_Move_Order_Item_Sql_003 implements Specification {
                         " WHERE\n" +
                         "   customer_code = '" + customer_code+"'\n" +
                         tokenFilter +
-                        "   and status = '"+ Constant.SYS_STATUS_WAITING_SYNC +'\'' )
+                        "   and status = '"+ Constant.SYS_STATUS_WAITING_SYNC +"'"
+                )
                 .toString();
     }
 }

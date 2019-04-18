@@ -35,7 +35,10 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
     public static final String REASON_CODE = "reason_code";
     public static final String CLASS_CODE = "class_code";
     public static final String FLAG_BLIND = "flag_blind";
+    public static final String STATUS = "status";
     public static final String SAVE_DATE = "save_date";
+    public static final String TOKEN = "token";
+    public static final String ERROR_MSG = "error_msg";
 
 
     public IO_Blind_MoveDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -341,7 +344,19 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
                 io_blind_move.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
             }
             io_blind_move.setFlag_blind(cursor.getInt(cursor.getColumnIndex(FLAG_BLIND)));
+            io_blind_move.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
             io_blind_move.setSave_date(cursor.getString(cursor.getColumnIndex(SAVE_DATE)));
+            if(cursor.isNull(cursor.getColumnIndex(TOKEN))){
+                io_blind_move.setToken(null);
+            }else{
+                io_blind_move.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
+            }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ERROR_MSG))){
+                io_blind_move.setError_msg(null);
+            }else{
+                io_blind_move.setError_msg(cursor.getString(cursor.getColumnIndex(ERROR_MSG)));
+            }
             //
             return io_blind_move;
         }
@@ -384,10 +399,16 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
             if(io_blind_move.getFlag_blind() > -1){
                 contentValues.put(FLAG_BLIND,io_blind_move.getFlag_blind());
             }
+            if(io_blind_move.getStatus() != null){
+                contentValues.put(STATUS,io_blind_move.getStatus());
+            }
             if(io_blind_move.getSave_date() != null){
                 contentValues.put(SAVE_DATE,io_blind_move.getSave_date());
             }
-
+            //
+            contentValues.put(TOKEN,io_blind_move.getToken());
+            contentValues.put(ERROR_MSG,io_blind_move.getError_msg());
+            //
             return contentValues;
         }
     }

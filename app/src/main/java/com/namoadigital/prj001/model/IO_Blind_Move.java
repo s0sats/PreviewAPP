@@ -15,7 +15,10 @@ public class IO_Blind_Move {
     private int reason_code;
     private Integer class_code;
     private int flag_blind;
+    private String status;
     private String save_date;
+    private String token;
+    private String error_msg;
     private ArrayList<IO_Blind_Move_Tracking> tracking = new ArrayList<>();
 
     public void setPk(){
@@ -112,12 +115,36 @@ public class IO_Blind_Move {
         this.flag_blind = flag_blind;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getSave_date() {
         return save_date;
     }
 
     public void setSave_date(String save_date) {
         this.save_date = save_date;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getError_msg() {
+        return error_msg;
+    }
+
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 
     public ArrayList<IO_Blind_Move_Tracking> getTracking() {

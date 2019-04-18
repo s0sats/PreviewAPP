@@ -130,6 +130,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         md_product = mPresenter.getMd_product(mProduct_id);
         //
         if (md_product != null
+            && md_product.getLocal_control() == 1
+            && md_product.getIo_control() == 1
             && mSerial_id != null
             && !mSerial_id.isEmpty()
             && !serial_jump

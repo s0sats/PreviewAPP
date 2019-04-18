@@ -2357,6 +2357,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         if (mdProduct.getLocal_control() == 0 || isIOProcess) {
             ll_serial_location.setVisibility(View.GONE);
             fabMenu_anchor.removeFabMenuItens(fabLocation);
+            //
+            if(isIOProcess){
+                ll_tracking.setVisibility(View.VISIBLE);
+            }else{
+                ll_tracking.setVisibility(View.GONE);
+            }
         }
         //Por fim aplica "profile do customer" se deve ou não exibir os dados de tracking
         if (!useTracking) {
