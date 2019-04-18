@@ -157,7 +157,9 @@ public class IO_Move_TrackingDao extends BaseDao implements DaoWithReturn<IO_Mov
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            db.endTransaction();
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);

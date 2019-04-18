@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class IO_Blind_Move {
 
-    private int customer_code;
+    private long customer_code;
     private int blind_tmp;
     private int product_code;
     private int serial_code;
@@ -14,12 +16,19 @@ public class IO_Blind_Move {
     private Integer class_code;
     private int flag_blind;
     private String save_date;
+    private ArrayList<IO_Blind_Move_Tracking> tracking = new ArrayList<>();
 
-    public int getCustomer_code() {
+    public void setPk(){
+        for (int i = 0; i < tracking.size(); i++) {
+            tracking.get(i).setPk(this);
+        }
+    }
+
+    public long getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(int customer_code) {
+    public void setCustomer_code(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -109,5 +118,13 @@ public class IO_Blind_Move {
 
     public void setSave_date(String save_date) {
         this.save_date = save_date;
+    }
+
+    public ArrayList<IO_Blind_Move_Tracking> getTracking() {
+        return tracking;
+    }
+
+    public void setTracking(ArrayList<IO_Blind_Move_Tracking> tracking) {
+        this.tracking = tracking;
     }
 }
