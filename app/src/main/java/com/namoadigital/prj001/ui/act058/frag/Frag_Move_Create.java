@@ -767,8 +767,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         btn_save.setText(hmAux_Trans.get("save_lbl"));
         setSSZone();
         setSSLocal();
+        setSSReason();
         mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
         chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
+    }
+
+    private void setSSReason() {
+        mPresenter.setDefaultReason(ss_reason);
     }
 
     private void setSSLocal() {

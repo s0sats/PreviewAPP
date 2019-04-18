@@ -4,13 +4,16 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
+import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_001;
 import com.namoadigital.prj001.sql.MD_Class_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
@@ -29,6 +32,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     Frag_Move_Create_Contract.I_View mView;
     private MD_Site_ZoneDao siteZoneDao;
     private MD_Site_Zone_LocalDao siteZoneLocalDao;
+    IO_Move_ReasonDao ioMoveReasonDao;
     private Context context;
     private IO_Move mMove;
 
@@ -36,6 +40,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         this.mView = mView;
         this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.ioMoveReasonDao = new IO_Move_ReasonDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.context = context;
         this.mMove = mMove;
     }
@@ -113,6 +118,29 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
                 ).toSqlQuery()
         );
         return md_class;
+    }
+
+
+    public void setDefaultReason(SearchableSpinner ss_reason){
+        IO_Move_Reason moveReason;
+        //
+        if (mMove.getReason_code() != null) {
+            moveReason = ioMoveReasonDao.getByString(
+                    new IO_Move_Reason_Sql_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            mMove.getReason_code()
+                    ).toSqlQuery());
+            if(moveReason != null){
+                ToolBox_Inf.setSSmValue(
+                        ss_reason,
+                        String.valueOf(moveReason.getReason_code()),
+                        moveReason.getReason_id(),
+                        moveReason.getReason_desc(),
+                        true
+                );
+            }
+        }
+
     }
 
     @Override
