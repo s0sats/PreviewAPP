@@ -776,6 +776,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_local.setmShowBarcode(true);
         ss_local.setmShowLabel(false);
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
+        mPresenter.setLocalValue(ss_local);
     }
 
     private void setSSZone() {

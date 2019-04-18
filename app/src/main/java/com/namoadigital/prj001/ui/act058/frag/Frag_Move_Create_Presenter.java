@@ -10,7 +10,9 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.sql.MD_Class_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
@@ -76,6 +78,30 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         ss_local.setmOption(localList);
 
     }
+
+    @Override
+    public void setLocalValue(SearchableSpinner ss_local) {
+
+        if(mMove.getTo_local_code() !=null) {
+            MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
+                    new MD_Site_Zone_Local_Sql_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            mMove.getTo_zone_code(),
+                            mMove.getTo_local_code()
+                            ).toSqlQuery()
+            );
+
+            ToolBox_Inf.setSSmValue(
+                    ss_local,
+                    String.valueOf(mdSiteZoneLocal.getLocal_code()),
+                    mdSiteZoneLocal.getLocal_id(),
+                    mdSiteZoneLocal.getLocal_id(),
+                    true
+            );
+        }
+    }
+
     @Override
     public MD_Class getClassFromMove(int classCode){
 
