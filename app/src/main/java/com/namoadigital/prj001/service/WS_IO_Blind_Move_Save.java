@@ -18,9 +18,7 @@ import com.namoadigital.prj001.model.T_IO_Blind_Move_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Blind_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_001;
-import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_003;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_005;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -42,7 +40,7 @@ public class WS_IO_Blind_Move_Save extends IntentService {
     private IO_Blind_MoveDao blindMoveDao;
     private MD_Product_SerialDao productSerialDao;
     private String token;
-    private String move_list_ret = "";
+    private String blind_list_ret = "";
 
     public WS_IO_Blind_Move_Save() {
         super("WS_IO_Blind_Move_Save");
@@ -64,11 +62,11 @@ public class WS_IO_Blind_Move_Save extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(), e);
 
             ToolBox_Inf.sendBCStatus(
-                    getApplicationContext(),
-                    "ERROR_1",
-                    sb.toString(),
-                    "",
-                    "0"
+                getApplicationContext(),
+                "ERROR_1",
+                sb.toString(),
+                "",
+                "0"
             );
         } finally {
 
@@ -78,11 +76,11 @@ public class WS_IO_Blind_Move_Save extends IntentService {
 
     private void setDaos() {
         moveDao = new IO_MoveDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ),
-                Constant.DB_VERSION_CUSTOM);
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+            ),
+            Constant.DB_VERSION_CUSTOM);
         //
         blindMoveDao = new IO_Blind_MoveDao(
             getApplicationContext(),
@@ -92,9 +90,9 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         );
         //
         productSerialDao = new MD_Product_SerialDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
         );
     }
 
@@ -102,11 +100,11 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         loadTranslation();
         HMAux hmAuxRet = new HMAux();
         ToolBox.sendBCStatus(
-                getApplicationContext(),
-                "STATUS",
-                hmAux_Trans.get("msg_preparing_move_data"),
-                "",
-                "0"
+            getApplicationContext(),
+            "STATUS",
+            hmAux_Trans.get("msg_preparing_move_data"),
+            "",
+            "0"
         );
         //
         ArrayList<IO_Blind_Move> blindList = new ArrayList<>();
@@ -120,10 +118,10 @@ public class WS_IO_Blind_Move_Save extends IntentService {
             token = ToolBox_Inf.getToken(getApplicationContext());
             //
             blindList = (ArrayList<IO_Blind_Move>) blindMoveDao.query(
-                    new IO_Blind_Move_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                            0
-                    ).toSqlQuery()
+                new IO_Blind_Move_Sql_001(
+                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                    0
+                ).toSqlQuery()
             );
             //
             if (blindList != null && blindList.isEmpty()) {
@@ -140,7 +138,7 @@ public class WS_IO_Blind_Move_Save extends IntentService {
             //Atualiza Token no registros
             DaoObjReturn daoObjReturn = blindMoveDao.addUpdate(blindList, false);
             //Verifica se houve erro e se sim, gera exception e para processo.
-            if(daoObjReturn.hasError()){
+            if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getErrorMsg());
             }
 
@@ -156,28 +154,28 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         env.setBlind(blindList);
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_IO_MOVE_SAVE,
-                gson.toJson(env)
+            Constant.WS_IO_BLIND_SAVE,
+            gson.toJson(env)
         );
         //
         T_IO_Blind_Move_Save_Rec rec = gson.fromJson(
-                resultado,
+            resultado,
             T_IO_Blind_Move_Save_Rec.class
         );
         //
         if (!ToolBox_Inf.processWSCheckValidation(
-                getApplicationContext(),
-                rec.getValidation(),
-                rec.getError_msg(),
-                rec.getLink_url(),
-                1,
-                1
+            getApplicationContext(),
+            rec.getValidation(),
+            rec.getError_msg(),
+            rec.getLink_url(),
+            1,
+            1
         )
-                ||
-                !ToolBox_Inf.processoOthersError(
-                        getApplicationContext(),
-                        getResources().getString(R.string.generic_error_lbl),
-                        rec.getError_msg())
+            ||
+            !ToolBox_Inf.processoOthersError(
+                getApplicationContext(),
+                getResources().getString(R.string.generic_error_lbl),
+                rec.getError_msg())
         ) {
             return;
         }
@@ -198,127 +196,93 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         DaoObjReturn daoReturn = new DaoObjReturn();
         //
         for (T_IO_Blind_Move_Save_Rec.IO_Blind_Move_Return blind_move_return : result) {
-            String move_pk = blind_move_return.getMove_prefix() + "." + blind_move_return.getMove_code();
+            String blind_pk = String.valueOf(blind_move_return.getBlind_tmp());
             IO_Blind_Move blindMoveDb = blindMoveDao.getByString(
-                    new IO_Blind_Move_Sql_005(
-                        blind_move_return.getCustomer_code(),
-                        blind_move_return.getBlind_tmp()
-                    ).toSqlQuery()
+                new IO_Blind_Move_Sql_005(
+                    blind_move_return.getCustomer_code(),
+                    blind_move_return.getBlind_tmp()
+                ).toSqlQuery()
             );
-
             /**
-             *
-             *
-             * ADD TRATAIVA PARA CASO O blindMoveDb FOR NULL
-             *
-             * ISSO NUNCA DEVERIA ACONTECE , MAS ACONTECE NO N-FORM
-             *
-             *
-             *
-             *
+             * ESSA VAR NUNCA DEVERIA RETORNAR NULL MAS.....
              */
-            //
-            hmAuxRet.put(move_pk, "0");
-            //
-            move_list_ret += Constant.MAIN_CONCAT_STRING + move_pk
+            if (blindMoveDb != null) {
+                //Add informações no obj Blind
+                blindMoveDb.setBlind_prefix(blind_move_return.getBlind_prefix());
+                blindMoveDb.setBlind_code(blind_move_return.getBlind_code());
+                //Var usada no close act
+                hmAuxRet.put(blind_pk, "0");
+                blind_list_ret += Constant.MAIN_CONCAT_STRING + blind_pk
                     + Constant.MAIN_CONCAT_STRING_2 + blind_move_return.getRet_status();
-            //
-            if(blind_move_return.getRet_status().equalsIgnoreCase("OK")) {
-                blindMoveDao.addUpdate(
-                    new IO_Blind_Move_Sql_003(
-                        blind_move_return.getCustomer_code(),
-                        blind_move_return.getBlind_tmp(),
-                        ConstantBaseApp.SYS_STATUS_DONE,
-                        blind_move_return.getRet_msg()
-                    ).toSqlQuery()
-                );
-                //Se tem Movimentação, insere
-                if (blind_move_return.getMove() != null && blind_move_return.getMove().size() > 0) {
-                    daoReturn = moveDao.addUpdate(blind_move_return.getMove(),false);
+                //
+                if (blind_move_return.getRet_status().equalsIgnoreCase("OK")) {
+                    //Se tem Movimentação, primeiro insere a movimentação e somente depois do OK do save
+                    //salva as alterações na blind
+                    if (blind_move_return.getMove() != null && blind_move_return.getMove().size() > 0) {
+                        daoReturn = moveDao.addUpdate(blind_move_return.getMove(), false);
+                        if (daoReturn.hasError()) {
+                            throw new Exception(daoReturn.getErrorMsg());
+                        } else {
+                            //Muda status da Blind e atualiza no db
+                            blindMoveDb.setStatus(ConstantBaseApp.SYS_STATUS_DONE);
+                            daoReturn = blindMoveDao.addUpdate(blindMoveDb);
+                            //
+                            if (daoReturn.hasError()) {
+                                throw new Exception(daoReturn.getErrorMsg());
+                            }
+                        }
+                    } else {
+                        blindMoveDb.setStatus(ConstantBaseApp.SYS_STATUS_DONE);
+                        daoReturn = blindMoveDao.addUpdate(blindMoveDb);
+                        if (daoReturn.hasError()) {
+                            throw new Exception(daoReturn.getErrorMsg());
+                        }
+                    }
+                } else {
+                    blind_list_ret += ":\n" + blind_move_return.getRet_msg();
+                    //Se blind é blind mesmo  (o.O) , ou seja não é uma movimentação.
+                    if(blindMoveDb.getFlag_blind() == 1){
+                        blindMoveDb.setStatus(blind_move_return.getRet_status());
+                        blindMoveDb.setError_msg(blind_move_return.getRet_msg());
+                    }else{
+                        //Se é uma movimentação, volta o status para waiting sync ? deixar assim ou settar como erro
+                        //blindMoveDb.setStatus(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                        blindMoveDb.setStatus(blind_move_return.getRet_status());
+                        blindMoveDb.setError_msg(blind_move_return.getRet_msg());
+                    }
+                    //Zera token para se enviado em um proximo pacote de envio(Deve ser feito assim ou manter o token)
+                    blindMoveDb.setToken(null);
+                    //
+                    daoReturn = blindMoveDao.addUpdate(blindMoveDb);
                     if (daoReturn.hasError()) {
                         throw new Exception(daoReturn.getErrorMsg());
                     }
-                }
-                //Se tem serial insere
-                if(blind_move_return.getSerial() != null && blind_move_return.getSerial().size() > 0){
-                   productSerialDao.addUpdateTmp(blind_move_return.getSerial(),false);
-                }
 
-            }else{
-                move_list_ret += ":\n" + blind_move_return.getRet_msg();
-                //
-
-                /**
-                 *
-                 *
-                 *
-                 *
-                 *
-                 *
-                 * continuar implementação dos status de retorno ERROR E DENIED
-                 *
-                 *
-                 *
-                 *
-                 *
-                 *
-                 *
-                 */
-//                 if(blind_move_return.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DENIED)){
-//
-//                 }
-//
-//
-//                IO_Move ioMove = moveDao.getByString(new IO_Move_Order_Item_Sql_001(
-//                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-//                        blind_move_return.getMove_prefix(),
-//                        blind_move_return.getMove_code()).toSqlQuery());
-//
-//                if(blind_move_return.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DENIED)) {
-//
-//                    ioMove.setStatus(ConstantBase.SYS_STATUS_PENDING);
-//                    ioMove.setTo_zone_code(null);
-//                    ioMove.setTo_local_code(null);
-//                    ioMove.setReason_code(null);
-//                    ioMove.setTo_class_code(null);
-//                    ioMove.setDone_date(null);
-//                    ioMove.setDone_user(null);
-//                    ioMove.setDone_user_nick(null);
-//                    ioMove.setToken(null);
-//                    DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
-//
-//                    if (daoObjReturn.hasError()){
-//                        throw new Exception(daoObjReturn.getErrorMsg());
-//                    }
-//                }else if(blind_move_return.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_ERROR)) {
-//
-//                    ioMove.setToken(null);
-//                    DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
-//                    if (daoObjReturn.hasError()){
-//                        throw new Exception(daoObjReturn.getErrorMsg());
-//                    }
-//
-//                }
+                }
+                //INDEPENDENTEMENTE DO STATUS tenta atualiza serial caso tenha sido retornad pelo server.
+                if (blind_move_return.getSerial() != null && blind_move_return.getSerial().size() > 0) {
+                    productSerialDao.addUpdateTmp(blind_move_return.getSerial(), false);
+                }
             }
         }
-        hmAuxRet.put(MOVE_RETURN_LIST, move_list_ret.length() > 0 ? move_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), move_list_ret.length()) : "");
+        hmAuxRet.put(MOVE_RETURN_LIST, blind_list_ret.length() > 0 ? blind_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), blind_list_ret.length()) : "");
     }
 
     private boolean hasBlindMoveToken(ArrayList<IO_Blind_Move> blindList, int pending) {
         blindList = (ArrayList<IO_Blind_Move>) blindMoveDao.query(
-                new IO_Move_Order_Item_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                        pending
-                ).toSqlQuery()
+            new IO_Blind_Move_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                pending
+            ).toSqlQuery()
         );
 
-        if (blindList!= null && blindList.size() > 0) {
+        if (blindList != null && blindList.size() > 0) {
             //Atualiza valor do token em todos os cabeçalhos
             try {
                 token = blindList.get(0).getToken();
-            }catch (Exception e ){
+            } catch (Exception e) {
                 e.printStackTrace();
-                token="";
+                token = "";
             }
         }
         return blindList.size() > 0;
@@ -333,17 +297,17 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         translist.add("msg_no_serial_found");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Name
+            getApplicationContext(),
+            mModule_Code,
+            mResource_Name
         );
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
-                translist);
+            getApplicationContext(),
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+            translist);
 
     }
 }

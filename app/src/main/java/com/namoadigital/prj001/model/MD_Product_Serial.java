@@ -79,12 +79,14 @@ public class MD_Product_Serial implements Serializable {
     private String class_type;
     private String class_color;
     private Integer class_available;
+    private Integer inbound_prefix;
     private Integer inbound_code;
     private String inbound_id;
     private String inbound_conf_date;
     private Integer move_prefix;
     private Integer move_code;
     private Integer move_group_code;
+    private Integer outbound_prefix;
     private Integer outbound_code;
     private String outbound_id;
     private Integer product_io_control;
@@ -475,6 +477,14 @@ public class MD_Product_Serial implements Serializable {
         this.class_available = class_available;
     }
 
+    public Integer getInbound_prefix() {
+        return inbound_prefix;
+    }
+
+    public void setInbound_prefix(Integer inbound_prefix) {
+        this.inbound_prefix = inbound_prefix;
+    }
+
     public Integer getInbound_code() {
         return inbound_code;
     }
@@ -521,6 +531,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setMove_group_code(Integer move_group_code) {
         this.move_group_code = move_group_code;
+    }
+
+    public Integer getOutbound_prefix() {
+        return outbound_prefix;
+    }
+
+    public void setOutbound_prefix(Integer outbound_prefix) {
+        this.outbound_prefix = outbound_prefix;
     }
 
     public Integer getOutbound_code() {

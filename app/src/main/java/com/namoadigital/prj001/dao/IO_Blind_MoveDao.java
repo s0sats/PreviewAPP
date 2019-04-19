@@ -26,6 +26,8 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
     public static final String TABLE = "io_blind_move";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String BLIND_TMP = "blind_tmp";
+    public static final String BLIND_PREFIX = "blind_prefix";
+    public static final String BLIND_CODE = "blind_code";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_CODE = "serial_code";
     public static final String SERIAL_ID = "serial_id";
@@ -285,6 +287,28 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
 
             while (cursor.moveToNext()) {
                 IO_Blind_Move uAux = toIO_Blind_MoveMapper.map(cursor);
+                //
+                //
+                if(uAux != null){
+                    //Se operação de insert ou update executada com sucesso
+                    //Segue para inserção dos itens.
+                    IO_Blind_Move_TrackingDao blindMoveTrackingDao  = new IO_Blind_Move_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    uAux.setTracking(
+                        (ArrayList<IO_Blind_Move_Tracking>) blindMoveTrackingDao.query(
+                            new IO_Blind_Move_Tracking_Sql_001(
+                                uAux.getCustomer_code(),
+                                uAux.getBlind_tmp()
+                            ).toSqlQuery()
+
+                        )
+                    );
+                }
+                //
                 io_blind_moves.add(uAux);
             }
 
@@ -331,6 +355,16 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
             //
             io_blind_move.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             io_blind_move.setBlind_tmp(cursor.getInt(cursor.getColumnIndex(BLIND_TMP)));
+            if(cursor.isNull(cursor.getColumnIndex(BLIND_PREFIX))){
+                io_blind_move.setBlind_prefix(null);
+            }else{
+                io_blind_move.setBlind_prefix(cursor.getInt(cursor.getColumnIndex(BLIND_PREFIX)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(BLIND_CODE))){
+                io_blind_move.setBlind_code(null);
+            }else{
+                io_blind_move.setBlind_code(cursor.getInt(cursor.getColumnIndex(BLIND_CODE)));
+            }
             io_blind_move.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
             io_blind_move.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
             io_blind_move.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
@@ -374,6 +408,10 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
             if(io_blind_move.getBlind_tmp() > -1){
                 contentValues.put(BLIND_TMP,io_blind_move.getBlind_tmp());
             }
+            //
+            contentValues.put(BLIND_PREFIX,io_blind_move.getBlind_prefix());
+            contentValues.put(BLIND_CODE,io_blind_move.getBlind_code());
+            //
             if(io_blind_move.getProduct_code() > -1){
                 contentValues.put(PRODUCT_CODE,io_blind_move.getProduct_code());
             }

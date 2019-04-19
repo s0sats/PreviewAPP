@@ -83,12 +83,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String CLASS_TYPE = "class_type";
     public static final String CLASS_COLOR = "class_color";
     public static final String CLASS_AVAILABLE = "class_available";
+    public static final String INBOUND_PREFIX = "inbound_prefix";
     public static final String INBOUND_CODE = "inbound_code";
     public static final String INBOUND_ID = "inbound_id";
     public static final String INBOUND_CONF_DATE = "inbound_conf_date";
     public static final String MOVE_PREFIX = "move_prefix";
     public static final String MOVE_CODE = "move_code";
     public static final String MOVE_GROUP_CODE = "move_group_code";
+    public static final String OUTBOUND_PREFIX = "outbound_prefix";
     public static final String OUTBOUND_CODE = "outbound_code";
     public static final String OUTBOUND_ID = "outbound_id";
     public static final String PRODUCT_IO_CONTROL = "product_io_control";
@@ -108,8 +110,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,
             SYNC_PROCESS, SITE_ID, SITE_DESC,SITE_REASON_CODE, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
-            CLASS_COLOR, CLASS_AVAILABLE, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
-            OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
+            CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
+            OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
             EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE
     };
 
@@ -976,6 +978,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             } else {
                 md_product_serial.setClass_available(cursor.getInt(cursor.getColumnIndex(CLASS_AVAILABLE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(INBOUND_PREFIX))) {
+                md_product_serial.setInbound_prefix(null);
+            } else {
+                md_product_serial.setInbound_prefix(cursor.getInt(cursor.getColumnIndex(INBOUND_PREFIX)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(INBOUND_CODE))) {
                 md_product_serial.setInbound_code(null);
             } else {
@@ -1005,6 +1012,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 md_product_serial.setMove_group_code(null);
             } else {
                 md_product_serial.setMove_group_code(cursor.getInt(cursor.getColumnIndex(MOVE_GROUP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(OUTBOUND_PREFIX))) {
+                md_product_serial.setOutbound_prefix(null);
+            } else {
+                md_product_serial.setOutbound_prefix(cursor.getInt(cursor.getColumnIndex(OUTBOUND_PREFIX)));
             }
             if (cursor.isNull(cursor.getColumnIndex(OUTBOUND_CODE))) {
                 md_product_serial.setOutbound_code(null);
@@ -1136,12 +1148,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(CLASS_TYPE, md_product_serial.getClass_type());
             contentValues.put(CLASS_COLOR, md_product_serial.getClass_color());
             contentValues.put(CLASS_AVAILABLE, md_product_serial.getClass_available());
+            contentValues.put(INBOUND_PREFIX, md_product_serial.getInbound_prefix());
             contentValues.put(INBOUND_CODE, md_product_serial.getInbound_code());
             contentValues.put(INBOUND_ID, md_product_serial.getInbound_id());
             contentValues.put(INBOUND_CONF_DATE, md_product_serial.getInbound_conf_date());
             contentValues.put(MOVE_PREFIX, md_product_serial.getMove_prefix());
             contentValues.put(MOVE_CODE, md_product_serial.getMove_code());
             contentValues.put(MOVE_GROUP_CODE, md_product_serial.getMove_group_code());
+            contentValues.put(OUTBOUND_PREFIX, md_product_serial.getOutbound_prefix());
             contentValues.put(OUTBOUND_CODE, md_product_serial.getOutbound_code());
             contentValues.put(OUTBOUND_ID, md_product_serial.getOutbound_id());
             contentValues.put(PRODUCT_IO_CONTROL, md_product_serial.getProduct_io_control());

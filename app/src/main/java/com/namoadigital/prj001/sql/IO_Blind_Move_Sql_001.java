@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 
@@ -30,10 +29,18 @@ public class IO_Blind_Move_Sql_001 implements Specification {
         // ou token pendente
         if(s_pending == 1){
             tokenFilter =
-                "       AND b."+ IO_MoveDao.TOKEN+" != ''";
+                "       AND b."+ IO_Blind_MoveDao.TOKEN+" != ''" +
+                "       AND (b.status = '"+ Constant.SYS_STATUS_WAITING_SYNC +"'\n" +
+                "            OR b."+ IO_Blind_MoveDao.FLAG_BLIND+" = '0' AND b."+IO_Blind_MoveDao.STATUS + " = '"+Constant.SYS_STATUS_ERROR+"'\n" +
+                "           )\n";
         }else{
+            //SE NÃO ESTA BUSCANDO POR blind COM TOKEN,
+            //busca qql blind sem token e wating sync ou movimentação, flag_blind = 0 e com status de erro.
             tokenFilter =
-                "       AND b."+IO_MoveDao.TOKEN+" = ''";
+                    "       AND b."+IO_Blind_MoveDao.TOKEN+" is null" +
+                    "       AND (b.status = '"+ Constant.SYS_STATUS_WAITING_SYNC +"'\n" +
+                                 " OR b."+ IO_Blind_MoveDao.FLAG_BLIND+" = '0' AND b."+IO_Blind_MoveDao.STATUS + " = '"+Constant.SYS_STATUS_ERROR+"'\n" +
+                                ")\n";
         }
 
         return sb
@@ -43,8 +50,8 @@ public class IO_Blind_Move_Sql_001 implements Specification {
                     IO_Blind_MoveDao.TABLE + " b \n" +
                     " WHERE\n" +
                     "   b.customer_code = '" + customer_code+"'\n" +
-                    tokenFilter +
-                    "   and b.status = '"+ Constant.SYS_STATUS_WAITING_SYNC +"'\n"
+                    tokenFilter
+
             )
             .toString();
     }

@@ -6,6 +6,8 @@ public class IO_Blind_Move {
 
     private long customer_code;
     private int blind_tmp;
+    private Integer blind_prefix;
+    private Integer blind_code;
     private int product_code;
     private int serial_code;
     private String serial_id;
@@ -41,6 +43,22 @@ public class IO_Blind_Move {
 
     public void setBlind_tmp(int blind_tmp) {
         this.blind_tmp = blind_tmp;
+    }
+
+    public Integer getBlind_prefix() {
+        return blind_prefix;
+    }
+
+    public void setBlind_prefix(Integer blind_prefix) {
+        this.blind_prefix = blind_prefix;
+    }
+
+    public Integer getBlind_code() {
+        return blind_code;
+    }
+
+    public void setBlind_code(Integer blind_code) {
+        this.blind_code = blind_code;
     }
 
     public int getProduct_code() {
