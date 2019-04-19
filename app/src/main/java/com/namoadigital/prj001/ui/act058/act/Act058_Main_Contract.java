@@ -29,6 +29,8 @@ public interface Act058_Main_Contract {
         int getViewMode(IO_Move moveInfo);
 
         void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove);
+
+        void onBackPressed(String actRequest);
     }
 
     interface I_View{
@@ -40,5 +42,7 @@ public interface Act058_Main_Contract {
         void callAct054();
 
         void setWs_process(String name);
+
+        void callAct051();
     }
 }

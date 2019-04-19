@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -45,6 +46,8 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         if(hmAuxRet.hasConsistentValue(Constant.HMAUX_PROCESS_KEY)) {
             String processType = hmAuxRet.get(Constant.HMAUX_PROCESS_KEY);
             //
+            Bundle bundle = new Bundle();
+
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     Toast.makeText(context, "IN_CONF", Toast.LENGTH_SHORT).show();
@@ -54,11 +57,16 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                    Toast.makeText(context, "MOVE_PLANNED", Toast.LENGTH_SHORT).show();
-                    //callact058
+                    bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
+                    bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                    mView.callAct058(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
-                    Toast.makeText(context, "MOVE", Toast.LENGTH_SHORT).show();
+                    bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
+                    bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                    mView.callAct058(bundle);
                     //callact058
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
@@ -84,6 +92,7 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             //
             Intent mIntent = new Intent(context, WBR_IO_Serial_Process_Download.class);
             Bundle bundle = new Bundle();
+
             bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(data.getProduct_code()));
             bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(data.getSerial_code()));
             //

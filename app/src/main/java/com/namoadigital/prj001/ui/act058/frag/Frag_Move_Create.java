@@ -67,10 +67,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private int view_param;
     private boolean fromMove;
-    private IO_Move ioMove;
-
+    IO_Move I_o_move;
     private MD_Product_Serial mdProductSerial;
-
+//region UI Elements
     private View serialLayout;
     private ScrollView sv_create_move;
     private LinearLayout ll_tracking_content;
@@ -99,6 +98,24 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private ImageView iv_serial_history;
     private ImageView iv_add_tracking;
     private ImageView iv_class_icon;
+//endregion
+
+//region data
+    private Integer to_local_code;
+    private Integer to_zone_code;
+    private int move_prefix;
+    private int move_code;
+    private Integer reason_code;
+    private String move_type;
+    private Integer planned_zone_code;
+    private Integer outbound_prefix;
+    private Integer inbound_prefix;
+    private Integer outbound_code;
+    private Integer inbound_code;
+    private Integer planned_local_code;
+    private String status;
+    private Integer to_class_code;
+//endregion
 
     private Frag_Move_Create_Presenter mPresenter;
     private OnFragmentInteractionListener mListener;
@@ -110,6 +127,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private Button btn_save;
     private List<IO_Move_Tracking> trackingFromMove =new ArrayList<>();
 
+
     public Frag_Move_Create() {
         // Required empty public constructor
     }
@@ -118,7 +136,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1           Informacao da Movimentacao.
+     *
      * @param serialInfo
      * @param viewParam        Controle de visualizacao de elementos, 0 = oculta Comentario e data
      *                         1 = oculta Reason.
@@ -126,14 +144,28 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
      * @param hmAux_Trans_Frag
      * @return A new instance of fragment Frag_Move_Create.
      */
-    public static Frag_Move_Create newInstance(IO_Move param1, MD_Product_Serial serialInfo, int viewParam, boolean originParam, HMAux hmAux_Trans_Frag) {
+    public static Frag_Move_Create newInstance(MD_Product_Serial serialInfo, int viewParam, boolean originParam, HMAux hmAux_Trans_Frag, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code,Integer outbound_prefix, Integer inbound_prefix, Integer outbound_code, Integer inbound_code, Integer planned_local_code, String status, Integer to_class_code) {
         Frag_Move_Create fragment = new Frag_Move_Create();
         Bundle args = new Bundle();
-        args.putSerializable(IO_MoveDao.TABLE, param1);
         args.putSerializable(MD_Product_SerialDao.TABLE, serialInfo);
         args.putSerializable(HMAUX_TRANS, hmAux_Trans_Frag);
         args.putInt(VIEW_PARAM, viewParam);
         args.putBoolean(ORIGIN_PARAM, originParam);
+        args.putSerializable(IO_MoveDao.TO_LOCAL_CODE,to_local_code);
+        args.putSerializable(IO_MoveDao.TO_ZONE_CODE,to_zone_code);
+        args.putInt(IO_MoveDao.MOVE_PREFIX,move_prefix);
+        args.putInt(IO_MoveDao.MOVE_CODE,move_code);
+        args.putSerializable(IO_MoveDao.REASON_CODE,reason_code);
+        args.putString(IO_MoveDao.MOVE_TYPE,move_type);
+        args.putSerializable(IO_MoveDao.PLANNED_ZONE_CODE,planned_zone_code);
+        args.putSerializable(IO_MoveDao.OUTBOUND_PREFIX,outbound_prefix);
+        args.putSerializable(IO_MoveDao.INBOUND_PREFIX,inbound_prefix);
+        args.putSerializable(IO_MoveDao.OUTBOUND_CODE,outbound_code);
+        args.putSerializable(IO_MoveDao.INBOUND_CODE,inbound_code);
+        args.putSerializable(IO_MoveDao.PLANNED_LOCAL_CODE,planned_local_code);
+        args.putString(IO_MoveDao.STATUS,status);
+        args.putSerializable(IO_MoveDao.TO_CLASS_CODE,to_class_code);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -144,9 +176,22 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         if (getArguments() != null) {
             fromMove = getArguments().getBoolean(ORIGIN_PARAM);
             view_param = getArguments().getInt(VIEW_PARAM);
-            ioMove = (IO_Move) getArguments().getSerializable(IO_MoveDao.TABLE);
             mdProductSerial = (MD_Product_Serial) getArguments().getSerializable(MD_Product_SerialDao.TABLE);
             this.hmAux_Trans = (HMAux) getArguments().getSerializable(HMAUX_TRANS);
+            to_local_code = (Integer) getArguments().getSerializable(IO_MoveDao.TO_LOCAL_CODE);
+            to_zone_code = (Integer) getArguments().getSerializable(IO_MoveDao.TO_ZONE_CODE);
+            move_prefix = getArguments().getInt(IO_MoveDao.MOVE_PREFIX);
+            move_code = getArguments().getInt(IO_MoveDao.MOVE_CODE);
+            reason_code = (Integer) getArguments().getSerializable(IO_MoveDao.REASON_CODE);
+            move_type = getArguments().getString(IO_MoveDao.MOVE_TYPE);
+            planned_zone_code = (Integer) getArguments().getSerializable(IO_MoveDao.PLANNED_ZONE_CODE);
+            outbound_prefix = (Integer) getArguments().getSerializable(IO_MoveDao.OUTBOUND_PREFIX);
+            inbound_prefix = (Integer) getArguments().getSerializable(IO_MoveDao.INBOUND_PREFIX);
+            outbound_code = (Integer) getArguments().getSerializable(IO_MoveDao.OUTBOUND_CODE);
+            inbound_code = (Integer) getArguments().getSerializable(IO_MoveDao.INBOUND_CODE);
+            planned_local_code = (Integer) getArguments().getSerializable(IO_MoveDao.PLANNED_LOCAL_CODE);
+            status = getArguments().getString(IO_MoveDao.STATUS);
+            to_class_code = (Integer) getArguments().getSerializable(IO_MoveDao.TO_CLASS_CODE);
         }
     }
 
@@ -154,7 +199,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragView = inflater.inflate(R.layout.act058_frag_move, container, false);
-        mPresenter = new Frag_Move_Create_Presenter(this, getContext(), ioMove);
+        mPresenter = new Frag_Move_Create_Presenter(this, getContext(), to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code);
         bindViews(fragView);
         initializeViews();
         initAction();
@@ -306,8 +351,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         mListener.persistIoMove(
                 ToolBox_Con.getPreference_Customer_Code(getContext()),
-                ioMove.getMove_prefix(),
-                ioMove.getMove_code(),
+                move_prefix,
+                move_code,
                 Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
                 Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
                 classCode,
@@ -500,8 +545,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 IO_Move_Tracking io_move_tracking = new IO_Move_Tracking();
                 //
                 io_move_tracking.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getContext()));
-                io_move_tracking.setMove_prefix(ioMove.getMove_prefix());
-                io_move_tracking.setMove_code(ioMove.getMove_code());
+                io_move_tracking.setMove_prefix(move_prefix);
+                io_move_tracking.setMove_code(move_code);
                 io_move_tracking.setTracking(searched_tracking);
                 trackingFromMove.add(io_move_tracking);
                 //
@@ -592,23 +637,23 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_zone_position.setText(MessageFormat.format("{0} | {1}", mdProductSerial.getZone_id(), mdProductSerial.getLocal_id()));
 
         try {
-            tv_inbound_val.setText(formatPrefixAndCode(ioMove.getInbound_prefix(), ioMove.getInbound_code()));
+            tv_inbound_val.setText(formatPrefixAndCode(inbound_prefix, inbound_code));
         } catch (NullPointerException e) {
             tv_inbound_lbl.setVisibility(View.GONE);
             tv_inbound_val.setVisibility(View.GONE);
         }
 
         try {
-            tv_outbound_val.setText(formatPrefixAndCode(ioMove.getOutbound_prefix(), ioMove.getOutbound_code()));
+            tv_outbound_val.setText(formatPrefixAndCode(outbound_prefix, outbound_code));
         } catch (NullPointerException e) {
             tv_outbound_lbl.setVisibility(View.GONE);
             tv_outbound_val.setVisibility(View.GONE);
         }
 
-        tv_move_order_val.setText(formatPrefixAndCode(ioMove.getMove_prefix(), ioMove.getMove_code()));
-        String plannedZoneLocal = (ioMove.getPlanned_zone_code() == null) ? "" : String.valueOf(ioMove.getPlanned_zone_code());
+        tv_move_order_val.setText(formatPrefixAndCode(move_prefix, move_code));
+        String plannedZoneLocal = (planned_zone_code == null) ? "" : String.valueOf(planned_zone_code);
 
-        plannedZoneLocal.concat((ioMove.getPlanned_local_code() == null) ? "" : ioMove.getPlanned_local_code() + "|");
+        plannedZoneLocal.concat((planned_local_code == null) ? "" : planned_local_code + "|");
         if (plannedZoneLocal.isEmpty()) {
             tv_move_to_lbl.setVisibility(View.GONE);
             tv_move_to_val.setVisibility(View.GONE);
@@ -645,7 +690,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         //Insere lista de tracking vindo do banco.
-        if (ioMove.getTo_class_code() != null && ioMove.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
+        if (to_class_code != null && status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             trackingFromMove.clear();
             trackingFromMove = mPresenter.getTrackingFromMove();
             for (int i = 0; i < trackingFromMove.size(); i++) {
@@ -657,8 +702,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 IO_Move_Tracking io_move_tracking = new IO_Move_Tracking();
                 //
                 io_move_tracking.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getContext()));
-                io_move_tracking.setMove_prefix(ioMove.getMove_prefix());
-                io_move_tracking.setMove_code(ioMove.getMove_code());
+                io_move_tracking.setMove_prefix(move_prefix);
+                io_move_tracking.setMove_code(move_code);
                 io_move_tracking.setTracking(mdProductSerial.getTracking_list().get(i).getTracking());
                 trackingFromMove.add(io_move_tracking);
             }
@@ -696,7 +741,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setViewEnable() {
-        if (ioMove.getStatus() != null && ioMove.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
+        if (status != null && status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             mket_serial.setEnabled(false);
             ss_zone.setmEnabled(false);
             ss_reason.setmEnabled(false);
@@ -718,7 +763,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setClassSS() {
-        MD_Class md_class = mPresenter.getClassFromMove(ioMove.getTo_class_code());
+        MD_Class md_class = mPresenter.getClassFromMove(to_class_code);
         String class_code;
         String class_id;
         String class_type;

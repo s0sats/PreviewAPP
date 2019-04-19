@@ -28,7 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import java.util.ArrayList;
 import java.util.List;
 
-class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
+class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     IO_MoveDao moveDao;
     MD_Product_SerialDao productSerialDao;
     MD_ClassDao classDao;
@@ -49,7 +49,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         this.ioMoveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
-         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context,
+        this.ioMoveTrackingDao = new IO_Move_TrackingDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
         this.classDao = new MD_ClassDao(context);
@@ -59,21 +59,21 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
 
     @Override
     public IO_Move getMoveInfo(int movePrefix, int moveCode) {
-        return  moveDao.getByString(new IO_Move_Order_Item_Sql_001(
+        return moveDao.getByString(new IO_Move_Order_Item_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 movePrefix,
                 moveCode).toSqlQuery());
     }
 
     @Override
-    public ArrayList<HMAux>  getClassList(){
+    public ArrayList<HMAux> getClassList() {
         return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
         ).toSqlQuery());
     }
 
     @Override
-    public MD_Product_Serial getSerialInfo(long product_code, int serial_code){
+    public MD_Product_Serial getSerialInfo(long product_code, int serial_code) {
         return productSerialDao.getByString(new MD_Product_Serial_Sql_009(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 product_code,
@@ -119,6 +119,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         //
         context.sendBroadcast(mIntent);
     }
+
     @Override
     public int getViewMode(IO_Move moveInfo) {
 
@@ -157,7 +158,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
         io_move.setMove_code(move_code);
         ioMoveDao.addUpdate(io_move);
 
-        for (IO_Move_Tracking tracking: trackingFromMove) {
+        for (IO_Move_Tracking tracking : trackingFromMove) {
             ioMoveTrackingDao.addUpdate(tracking);
         }
 
@@ -180,6 +181,19 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter{
                     hmAux_trans.get("alert_offline_save_ttl"),
                     hmAux_trans.get("alert_offline_save_msg")
             );
+        }
+    }
+
+    @Override
+    public void onBackPressed(String actRequest) {
+        switch (actRequest) {
+            case ConstantBaseApp.ACT054:
+            case ConstantBaseApp.ACT055:
+                mView.callAct054();
+            case ConstantBaseApp.ACT052:
+            case ConstantBaseApp.ACT051:
+            default:
+                mView.callAct051();
         }
     }
 

@@ -319,7 +319,6 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 hmAuxRet,
                 "",
                 "0");
-
     }
 
     private void loadTranslation() {

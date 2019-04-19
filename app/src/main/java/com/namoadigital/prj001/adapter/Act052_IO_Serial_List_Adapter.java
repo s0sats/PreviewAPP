@@ -93,6 +93,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     }
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
+
         if (record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
@@ -110,6 +111,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         protected final ConstraintLayout clBackground;
         protected final TextView tvIoProductLbl;
         protected final TextView tvIoSerialLbl;
+        protected final TextView tvIoSerialExtCodeLbl;
         protected final TextView tvStatusDesc;
         protected final TextView tvProductExtCodeVal;
         protected final TextView tvProductDescVal;
@@ -129,6 +131,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             clBackground = itemView.findViewById(R.id.act052_main_cl_background);
             tvIoProductLbl = itemView.findViewById(R.id.act052_tv_io_product_lbl);
             tvIoSerialLbl = itemView.findViewById(R.id.act052_tv_io_serial_lbl);
+            tvIoSerialExtCodeLbl = itemView.findViewById(R.id.act052_tv_io_serial_ext_code_lbl);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
             ivStatusIcon = itemView.findViewById(R.id.act052_tv_io_status_icon);
             tvProductExtCodeVal = itemView.findViewById(R.id.act052_tv_io_product_ext_code_val);
@@ -151,6 +154,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
             tvIoProductLbl.setText(hmAux_Trans.get("product_lbl"));
             tvIoSerialLbl.setText(hmAux_Trans.get("serial_lbl"));
+            tvIoSerialExtCodeLbl.setText(hmAux_Trans.get("serial_code_lbl"));
 
             tvProductExtCodeVal.setText(data.getProduct_id());
             tvProductDescVal.setText(data.getProduct_desc());
@@ -166,7 +170,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             } else {
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
-            if (data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+            if (data.getSite_code() != null && data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
                 clBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
             } else {
                 clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));

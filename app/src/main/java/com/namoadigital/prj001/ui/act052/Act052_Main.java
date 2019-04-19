@@ -22,6 +22,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
+import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -287,11 +288,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     @Override
-    public void onClickListButton() {
-        Toast.makeText(context, "Indo para a movimentação cega", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked();
     }
@@ -307,6 +303,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     @Override
     public void callAct053(Bundle bundle) {
         Intent mIntent = new Intent(context, Act053_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct058(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act058_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

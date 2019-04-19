@@ -40,16 +40,28 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     IO_Move_ReasonDao ioMoveReasonDao;
     IO_Move_TrackingDao ioMoveTrackingDao;
     private Context context;
-    private IO_Move mMove;
+    private Integer to_local_code;
+    private Integer to_zone_code;
+    private int move_prefix;
+    private int move_code;
+    private Integer reason_code;
+    private String move_type;
+    private Integer planned_zone_code;
 
-    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context, IO_Move mMove) {
+    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code) {
         this.mView = mView;
         this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.ioMoveReasonDao = new IO_Move_ReasonDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.context = context;
-        this.mMove = mMove;
+        this.to_local_code = to_local_code;
+        this.to_zone_code = to_zone_code;
+        this.move_prefix = move_prefix;
+        this.move_code = move_code;
+        this.reason_code = reason_code;
+        this.move_type = move_type;
+        this.planned_zone_code = planned_zone_code;
     }
 
     @Override
@@ -94,14 +106,14 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     @Override
     public void setLocalValue(SearchableSpinner ss_local) {
 
-        if(mMove.getTo_local_code() !=null) {
+        if (to_local_code != null) {
             MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
                     new MD_Site_Zone_Local_Sql_002(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             ToolBox_Con.getPreference_Site_Code(context),
-                            mMove.getTo_zone_code(),
-                            mMove.getTo_local_code()
-                            ).toSqlQuery()
+                            to_zone_code,
+                            to_local_code
+                    ).toSqlQuery()
             );
 
             ToolBox_Inf.setSSmValue(
@@ -115,8 +127,8 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
-    public MD_Class getClassFromMove(Integer classCode){
-        if(classCode == null){
+    public MD_Class getClassFromMove(Integer classCode) {
+        if (classCode == null) {
             classCode = 0;
         }
         MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
@@ -130,30 +142,30 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
-    public List<IO_Move_Tracking> getTrackingFromMove(){
+    public List<IO_Move_Tracking> getTrackingFromMove() {
 
         ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         List<IO_Move_Tracking> move_tracking = ioMoveTrackingDao.query(
                 new IO_Move_Tracking_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        mMove.getMove_prefix(),
-                        mMove.getMove_code()
+                        move_prefix,
+                        move_code
                 ).toSqlQuery()
         );
         return move_tracking;
     }
 
 
-    public void setDefaultReason(SearchableSpinner ss_reason){
+    public void setDefaultReason(SearchableSpinner ss_reason) {
         IO_Move_Reason moveReason;
         //
-        if (mMove.getReason_code() != null) {
+        if (reason_code != null) {
             moveReason = ioMoveReasonDao.getByString(
                     new IO_Move_Reason_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
-                            mMove.getReason_code()
+                            reason_code
                     ).toSqlQuery());
-            if(moveReason != null){
+            if (moveReason != null) {
                 ToolBox_Inf.setSSmValue(
                         ss_reason,
                         String.valueOf(moveReason.getReason_code()),
@@ -170,11 +182,11 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public void setDefaultZone(SearchableSpinner ss_zone) {
         Integer selected_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
 
-        if(mMove.getMove_type()!= null && mMove.getMove_type().equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)){
-            selected_zone_code = mMove.getPlanned_zone_code();
+        if (move_type!= null && move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)) {
+            selected_zone_code = planned_zone_code;
             ss_zone.setmEnabled(false);
-        }else if(mMove.getTo_zone_code() != null){
-            selected_zone_code = mMove.getTo_zone_code();
+        } else if (to_zone_code != null) {
+            selected_zone_code = to_zone_code;
         }
 
         MD_Site_Zone zone = siteZoneDao.getByString(

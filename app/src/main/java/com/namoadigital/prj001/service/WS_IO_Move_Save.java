@@ -197,7 +197,7 @@ public class WS_IO_Move_Save extends IntentService {
                         DaoObjReturn daoReturn = moveDao.addUpdate(move);
                         if (!daoReturn.hasError()) {
                             if (!move_ret.getSerial().isEmpty()) {
-                                productSerialDao.addUpdate(move.getSerial().get(0));
+                                productSerialDao.addUpdateTmp(move.getSerial().get(0));
                             }
                         }else{
                             throw new Exception(daoReturn.getErrorMsg());
@@ -211,7 +211,7 @@ public class WS_IO_Move_Save extends IntentService {
                             ConstantBaseApp.SYS_STATUS_DONE).toSqlQuery()
                     );
                     if (move_ret.getSerial() != null) {
-                        productSerialDao.addUpdate(move_ret.getSerial().get(0));
+                        productSerialDao.addUpdateTmp(move_ret.getSerial().get(0));
                     }
                 }
             }else{

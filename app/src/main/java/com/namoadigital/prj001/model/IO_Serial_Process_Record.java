@@ -12,21 +12,21 @@ public class IO_Serial_Process_Record implements Serializable {
     private String product_desc;
     private int serial_code;
     private String serial_id;
-    private int site_code;
+    private Integer site_code;
     private String site_id;
     private String site_desc;
-    private int zone_code;
+    private Integer zone_code;
     private String zone_id;
     private String zone_desc;
-    private int local_code;
+    private Integer local_code;
     private String local_id;
-    private int brand_code;
+    private Integer brand_code;
     private String brand_id;
     private String brand_desc;
-    private int model_code;
+    private Integer model_code;
     private String model_id;
     private String model_desc;
-    private int color_code;
+    private Integer color_code;
     private String color_id;
     private String color_desc;
     private String process_type;
@@ -80,11 +80,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.serial_id = serial_id;
     }
 
-    public int getSite_code() {
+    public Integer getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(int site_code) {
+    public void setSite_code(Integer site_code) {
         this.site_code = site_code;
     }
 
@@ -104,11 +104,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.site_desc = site_desc;
     }
 
-    public int getZone_code() {
+    public Integer getZone_code() {
         return zone_code;
     }
 
-    public void setZone_code(int zone_code) {
+    public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
     }
 
@@ -128,11 +128,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.zone_desc = zone_desc;
     }
 
-    public int getLocal_code() {
+    public Integer getLocal_code() {
         return local_code;
     }
 
-    public void setLocal_code(int local_code) {
+    public void setLocal_code(Integer local_code) {
         this.local_code = local_code;
     }
 
@@ -144,11 +144,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.local_id = local_id;
     }
 
-    public int getBrand_code() {
+    public Integer getBrand_code() {
         return brand_code;
     }
 
-    public void setBrand_code(int brand_code) {
+    public void setBrand_code(Integer brand_code) {
         this.brand_code = brand_code;
     }
 
@@ -168,11 +168,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.brand_desc = brand_desc;
     }
 
-    public int getModel_code() {
+    public Integer getModel_code() {
         return model_code;
     }
 
-    public void setModel_code(int model_code) {
+    public void setModel_code(Integer model_code) {
         this.model_code = model_code;
     }
 
@@ -192,11 +192,11 @@ public class IO_Serial_Process_Record implements Serializable {
         this.model_desc = model_desc;
     }
 
-    public int getColor_code() {
+    public Integer getColor_code() {
         return color_code;
     }
 
-    public void setColor_code(int color_code) {
+    public void setColor_code(Integer color_code) {
         this.color_code = color_code;
     }
 
