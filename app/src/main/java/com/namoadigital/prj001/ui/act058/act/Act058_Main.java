@@ -33,9 +33,11 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -54,6 +56,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private HMAux hmAux_Trans_Frag;
     private String ws_process;
     private IO_Move moveInfo;
+    private String actRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,11 +149,26 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         MD_Product_Serial serialInfo = mPresenter.getSerialInfo(moveInfo.getProduct_code(), moveInfo.getSerial_code());
 
-        frag_move_create = Frag_Move_Create.newInstance(moveInfo,
+        frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
                 true,
-                hmAux_Trans_Frag);
+                hmAux_Trans_Frag,
+                moveInfo.getTo_local_code(),
+                moveInfo.getTo_zone_code(),
+                moveInfo.getMove_prefix(),
+                moveInfo.getMove_code(),
+                moveInfo.getReason_code(),
+                moveInfo.getMove_type(),
+                moveInfo.getPlanned_zone_code(),
+                moveInfo.getOutbound_prefix(),
+                moveInfo.getInbound_prefix(),
+                moveInfo.getOutbound_code(),
+                moveInfo.getInbound_code(),
+                moveInfo.getPlanned_local_code(),
+                moveInfo.getStatus(),
+                moveInfo.getTo_class_code()
+        );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
     }
@@ -162,9 +180,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (bundle != null) {
             movePrefix = Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX));
             moveCode = Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE));
+            actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT005);
         } else {
             movePrefix = 0;
             moveCode = 0;
+            actRequest = Constant.ACT005;
         }
     }
 
@@ -396,7 +416,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        callAct054();
+        mPresenter.onBackPressed(actRequest);
     }
 
     @Override
@@ -516,6 +536,14 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     @Override
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
