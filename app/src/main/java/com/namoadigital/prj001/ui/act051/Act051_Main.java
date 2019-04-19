@@ -491,6 +491,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         }else{
             progressDialog.dismiss();
         }
+        //ronaldo
     }
 
     @Override
