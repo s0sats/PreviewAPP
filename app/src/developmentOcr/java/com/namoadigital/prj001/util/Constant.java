@@ -58,6 +58,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_IO_INBOUND_HEADER_SAVE = "https://dev.namoadigital.com/ws/prj001/io/server_inbound_save.ws";
     public static final String WS_IO_ADDRESS_SUGGESTION = "https://dev.namoadigital.com/ws/prj001/io/server_address_suggestion.ws";
     public static final String WS_IO_BLIND_SAVE = "https://dev.namoadigital.com/ws/prj001/io/server_blind_save.ws";
+    public static final String WS_IO_INBOUND_ITEM_SAVE = "https://dev.namoadigital.com/ws/prj001/io/server_inbound_item_save.ws";
 
     public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";

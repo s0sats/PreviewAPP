@@ -1,28 +1,56 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class IO_Inbound_Item implements Serializable {
     private static final long serialVersionUID = 6534975604003631255L;
 
+    @Expose
     private long customer_code;
+    @Expose
     private int inbound_prefix;
+    @Expose
     private int inbound_code;
+    @Expose
     private int inbound_item;
+    @Expose
     private long product_code;
+    @Expose
     private long serial_code;
+    @Expose
     private Integer site_code;
+    @Expose
     private Integer zone_code;
+    @Expose
     private String zone_id;
+    @Expose
     private String zone_desc;
+    @Expose
     private Integer local_code;
+    @Expose
     private String local_id;
+    @Expose
     private String conf_date;
+    @Expose
     private String status;
+    @Expose
     private String comments;
+    @Expose
     private Integer planned_zone_code;
+    @Expose
     private Integer planned_local_code;
+    @Expose
     private Integer planned_class_code;
+    @Expose
+    private String save_date;
+    private int update_required;
+    //SOMENTE PARA RETORNO DO WS
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    private ArrayList<IO_Move> move = new ArrayList<>();
+
 
     public IO_Inbound_Item() {
         this.customer_code = -1;
@@ -179,5 +207,37 @@ public class IO_Inbound_Item implements Serializable {
 
     public void setPlanned_class_code(Integer planned_class_code) {
         this.planned_class_code = planned_class_code;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
+    }
+
+    public String getSave_date() {
+        return save_date;
+    }
+
+    public void setSave_date(String save_date) {
+        this.save_date = save_date;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 }

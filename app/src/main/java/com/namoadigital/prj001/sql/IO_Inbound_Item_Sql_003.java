@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -9,11 +9,11 @@ import com.namoadigital.prj001.database.Specification;
  * Query que retorna toda as Inbound pendente de envio
  *
  */
-public class IO_Inbound_Sql_003 implements Specification {
+public class IO_Inbound_Item_Sql_003 implements Specification {
 
     private long customer_code;
 
-    public IO_Inbound_Sql_003(long customer_code) {
+    public IO_Inbound_Item_Sql_003(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -24,11 +24,10 @@ public class IO_Inbound_Sql_003 implements Specification {
                 .append(" SELECT\n" +
                         "   i.*\n" +
                         " FROM\n" +
-                            IO_InboundDao.TABLE + " i \n" +
+                            IO_Inbound_ItemDao.TABLE + " i \n" +
                         " WHERE\n" +
                         "   i.customer_code = '"+customer_code+"'\n" +
                         "   and i.update_required = 1\n" +
-                        "   and i.token = ''\n" +
                         " ORDER BY" +
                         "   i.customer_code,"+
                         "   i.inbound_prefix,"+

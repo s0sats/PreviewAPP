@@ -714,6 +714,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_IO_Blind_Move_Save" />
 
         <receiver android:name=".receiver.WBR_IO_Blind_Move_Save" />
+
+        <service android:name=".service.WS_IO_Inbound_Item_Save" />
+
+        <receiver android:name=".receiver.WBR_IO_Inbound_Item_Save" />
+
+
     </application>
 
 </manifest>

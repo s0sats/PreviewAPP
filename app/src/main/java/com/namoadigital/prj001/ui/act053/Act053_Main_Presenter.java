@@ -5,23 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.TSerial_Search_Rec;
-import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Rec;
-import com.namoadigital.prj001.receiver.WBR_IO_Address_Suggestion;
-import com.namoadigital.prj001.receiver.WBR_Serial_Save;
-import com.namoadigital.prj001.receiver.WBR_Serial_Search;
-import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
-import com.namoadigital.prj001.service.WS_IO_Address_Suggestion;
-import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.service.WS_Serial_Search;
-import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -42,6 +34,8 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     private MD_ProductDao mdProductDao;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
+    private IO_InboundDao inboundDao;
+    private IO_Inbound_ItemDao inboundItemDao;
 
 
     public Act053_Main_Presenter(Context context, Act053_Main_Contract.I_View mView,HMAux hmAux_Trans, long product_code) {
@@ -70,6 +64,18 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+        );
+        //
+        inboundDao = new IO_InboundDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        inboundItemDao= new IO_Inbound_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
         );
     }
 
@@ -363,14 +369,178 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     }
 
     @Override
+    public void defineWsRetFlow(String ioProcess, String requesting_act) {
+        if (ioProcess != null || !ioProcess.isEmpty()){
+            switch (ioProcess){
+                case ConstantBaseApp.IO_INBOUND:
+                    generateIoInboundItem();
+                    break;
+                case ConstantBaseApp.IO_OUTBOUND:
+                case ConstantBaseApp.IO_SERIAL_EDIT:
+                    defineFlow(requesting_act);
+                    break;
+            }
+        }
+
+    }
+
+    private void generateIoInboundItem() {
+        MD_Product_Serial mdProductSerial = mView.getProductSerial();
+        //
+        if(mdProductSerial != null){
+            IO_Inbound_Item inboundItem = new IO_Inbound_Item();
+            //
+            inboundItem.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+            inboundItem.setInbound_prefix(Integer.parseInt(mView.getIoPrefix()));
+            inboundItem.setInbound_code(Integer.parseInt(mView.getIoCode()));
+            inboundItem.setInbound_item(0);
+            inboundItem.setProduct_code(mdProductSerial.getProduct_code());
+            inboundItem.setSerial_code(mdProductSerial.getSerial_code());
+            inboundItem.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
+            inboundItem.setSave_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            inboundItem.setUpdate_required(1);
+            //Atualiza cabeçalho da inbound para seta como update required
+            inboundDao.addUpdate(
+                new IO_Inbound_Sql_004(
+                    inboundItem.getCustomer_code(),
+                    inboundItem.getInbound_prefix(),
+                    inboundItem.getInbound_code(),
+                    1
+                ).toSqlQuery()
+            );
+            //
+            DaoObjReturn daoObjReturn = inboundItemDao.addUpdate(inboundItem);
+            if(!daoObjReturn.hasError()){
+                executeWSInbounItem();
+            }else{
+                inboundDao.addUpdate(
+                    new IO_Inbound_Sql_004(
+                        inboundItem.getCustomer_code(),
+                        inboundItem.getInbound_prefix(),
+                        inboundItem.getInbound_code(),
+                        0
+                    ).toSqlQuery()
+                );
+                //
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_error_item_save_ttl"),
+                    hmAux_Trans.get("alert_error_item_save_msg")
+                );
+            }
+        }
+    }
+
+    private void executeWSInbounItem() {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processInboundItemAdd(String wsJsonReturn) {
+        if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
+            ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> saveActReturns = null;
+            int mPrefix =ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
+            int mCode =ToolBox_Inf.convertStringToInt(mView.getIoCode());
+            //
+            try {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                saveActReturns = gson.fromJson(
+                    wsJsonReturn,
+                    new
+                        TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                        }.getType()
+                    );
+                //
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_add_item_error_on_return_ttl"),
+                    hmAux_Trans.get("alert_add_item_error_on_return_msg")
+
+                );
+            }
+            //
+            if(saveActReturns != null && saveActReturns.size() > 0){
+                boolean finalResult = false;
+                ArrayList<HMAux> resultList = new ArrayList<>();
+                MD_Product_Serial serial =  mView.getProductSerial();
+                //
+                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn :saveActReturns){
+                    HMAux hmAux = new HMAux();
+                    if(actReturn.isRetStatus()
+                        &&   actReturn.getInbound_prefix() == mPrefix
+                        &&   actReturn.getInbound_code() == mCode
+                    ){
+                        finalResult = true;
+                    }
+                    //Monta HmAux
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("item_lbl"));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("serial_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,formatProductSerialDes(serial));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("inbound_lbl") );
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, formatInboundInfo(actReturn));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("message_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, actReturn.isRetStatus() ? "OK": actReturn.getMsg());
+                    //
+                    resultList.add(hmAux);
+                }
+                //
+                mView.showResultDialog(resultList,finalResult);
+
+            }else{
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                    hmAux_Trans.get("alert_add_item_empty_return_msg")
+
+                );
+            }
+        }else{
+            mView.showAlertDialog(
+                hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                hmAux_Trans.get("alert_add_item_empty_return_msg")
+
+            );
+        }
+    }
+
+    private String formatInboundInfo(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn) {
+        return actReturn.getInbound_prefix()
+            +"."+actReturn.getInbound_code()
+            +"."+(actReturn.getInbound_item() != null ? actReturn.getInbound_item() : "0");
+    }
+
+    private String formatProductSerialDes(MD_Product_Serial serial) {
+        return
+            serial.getProduct_id() +" - "+ serial.getProduct_desc() + " - " +serial.getSerial_id();
+
+    }
+
+    @Override
     public void onBackPressedClicked(String requesting_act) {
         switch (requesting_act){
+            case ConstantBaseApp.ACT061:
             case ConstantBaseApp.ACT063:
                 String ioProcess = mView.getIoProcess();
                 if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
                     mView.callAct061(prepareAct061Bundle());
                 }
-
+                break;
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();

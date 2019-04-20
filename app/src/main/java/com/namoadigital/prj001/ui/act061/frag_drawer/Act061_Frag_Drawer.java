@@ -247,6 +247,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
     }
 
+
     @Override
     public void loadDataToScreen() {
         //super.loadDataToScreen();

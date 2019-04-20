@@ -46,6 +46,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
     public static final String INBOUND_FRAG_DRAWER = "INBOUND_FRAG_DRAWER";
+    public static final String FIRST_FRAG_TO_LOAD = "FIRST_FRAG_TO_LOAD";
 
     private Bundle bundle;
     private FragmentManager fm;
@@ -60,6 +61,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private int mCode;
     private boolean bNewProcess;
     private String wsProcess;
+    private String fragToLoad = INBOUND_FRAG_HEADER;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,6 +183,17 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         loadInbound();
         //
         initFragment();
+        //
+        loadForcedFrag();
+    }
+
+    private void loadForcedFrag() {
+
+        //O COMANDO ABAIXO RODA ANTES DA VIEW DO FRAG CARREGAR ENTÃO NÃO RODA.
+        //PENSAR EM OUTRA MANEIRA
+        if(act061_frag_drawer != null && fragToLoad != null && !fragToLoad.isEmpty()){
+           // act061_frag_drawer.forceFragSelection(fragToLoad);
+        }
     }
 
     private void setDrawerLocked(boolean lockState) {
@@ -229,11 +242,13 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPrefix = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1"));
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
+            fragToLoad = bundle.getString(Act061_Main.FIRST_FRAG_TO_LOAD,INBOUND_FRAG_HEADER);
         } else {
             mIoProcess = "";
             mPrefix = -1;
             mCode = -1;
             bNewProcess = false;
+            fragToLoad = INBOUND_FRAG_HEADER;
         }
     }
 
@@ -243,6 +258,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         act061_frag_item = Act061_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode);
         //
         setDrawer(act061_frag_drawer, INBOUND_FRAG_DRAWER);
+        //
         setFrag(act061_frag_header, INBOUND_FRAG_HEADER);
     }
 

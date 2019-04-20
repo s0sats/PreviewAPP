@@ -44,6 +44,9 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String PLANNED_ZONE_CODE = "planned_zone_code";
     public static final String PLANNED_LOCAL_CODE = "planned_local_code";
     public static final String PLANNED_CLASS_CODE = "planned_class_code";
+    public static final String SAVE_DATE = "save_date";
+    public static final String UPDATE_REQUIRED = "update_required";
+
     //Constantes abaixo somente SÃO usada em queries
     public static final String PLANNED_ZONE_ID = "planned_zone_id";
     public static final String PLANNED_LOCAL_ID = "planned_local_id";
@@ -418,6 +421,62 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
         return io_inbound_items;
     }
 
+    /**
+     * Deleta o inbound item baseado na pk
+     * @param io_inbound_item
+     * @param dbInstance
+     * @return
+     */
+    public DaoObjReturn delete(IO_Inbound_Item io_inbound_item,@Nullable SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long sqlRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_inbound_item.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_PREFIX).append(" = '").append(String.valueOf(io_inbound_item.getInbound_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_inbound_item.getInbound_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_ITEM).append(" = '").append(String.valueOf(io_inbound_item.getInbound_item())).append("'");
+            //
+            sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterados.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(sqlRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
     private class CursorIO_Inbound_ItemMapper implements Mapper<Cursor, IO_Inbound_Item> {
         @Override
         public IO_Inbound_Item map(Cursor cursor) {
@@ -485,6 +544,16 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             }else{
                 io_inbound_item.setPlanned_class_code(cursor.getInt(cursor.getColumnIndex(PLANNED_CLASS_CODE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(SAVE_DATE))) {
+                io_inbound_item.setSave_date(null);
+            }else{
+                io_inbound_item.setSave_date(cursor.getString(cursor.getColumnIndex(SAVE_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                io_inbound_item.setUpdate_required(0);
+            }else{
+                io_inbound_item.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
             //
             return io_inbound_item;
         }
@@ -527,6 +596,10 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             contentValues.put(PLANNED_ZONE_CODE,io_inbound_item.getPlanned_zone_code());
             contentValues.put(PLANNED_LOCAL_CODE,io_inbound_item.getPlanned_local_code());
             contentValues.put(PLANNED_CLASS_CODE,io_inbound_item.getPlanned_class_code());
+            contentValues.put(SAVE_DATE,io_inbound_item.getSave_date());
+            if(io_inbound_item.getUpdate_required() > -1){
+                contentValues.put(UPDATE_REQUIRED,io_inbound_item.getUpdate_required());
+            }
             //
             return contentValues;
         }

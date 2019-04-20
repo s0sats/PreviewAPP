@@ -220,6 +220,7 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         if(bundle == null) {
             bundle = new Bundle();
         }
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);

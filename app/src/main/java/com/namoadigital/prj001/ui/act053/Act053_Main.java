@@ -24,11 +24,9 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_Address_Suggestion;
-import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.service.WS_Serial_Search;
-import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -118,6 +116,15 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             //
             transList.add("alert_address_suggestion_fails_ttl");
             transList.add("alert_address_suggestion_fails_msg");
+            transList.add("item_lbl");
+            transList.add("serial_lbl");
+            transList.add("inbound_lbl");
+            transList.add("message_lbl");
+            transList.add("alert_add_item_empty_return_ttl");
+            transList.add("alert_add_item_empty_return_msg");
+            transList.add("alert_add_item_error_on_return_ttl");
+            transList.add("alert_add_item_error_on_return_msg");
+            transList.add("alert_add_item_results_ttl");
             //
             hmAux_Trans = ToolBox_Inf.setLanguage(
                     context,
@@ -168,7 +175,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             }
             //DADOS INBOUND / OUTBOUND ITEM
             ioProcess = bundle.getString(Constant.HMAUX_PROCESS_KEY, "");
-            isIoProcess = ioProcess.equals(ConstantBaseApp.IO_INBOUND) || ioProcess.equals(ConstantBaseApp.IO_OUTBOUND);
+            isIoProcess = ioProcess.equals(ConstantBaseApp.IO_INBOUND) || ioProcess.equals(ConstantBaseApp.IO_OUTBOUND) ||ioProcess.equals(ConstantBaseApp.IO_SERIAL_EDIT) ;
             //
             ioPrefix = bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY,"-1");
             ioCode = bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY,"-1");
@@ -216,7 +223,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 //Salva os dados do serial no banco local.
                 mPresenter.updateSerialData(mdProductSerial);
                 //
-                mPresenter.checkFlow();
+                checkFlow();
             }
 
             @Override
@@ -330,6 +337,21 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public MD_Product_Serial getProductSerial() {
+        return mdProductSerial;
+    }
+
+    @Override
+    public String getIoPrefix() {
+        return ioPrefix;
+    }
+
+    @Override
+    public String getIoCode() {
+        return ioCode;
+    }
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg) {
         ToolBox.alertMSG(
                 context,
@@ -338,7 +360,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.defineFlow(requesting_act);
+                        checkFlow();
                         //
                         dialog.dismiss();
                     }
@@ -347,6 +369,15 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         );
     }
 
+    private void checkFlow(){
+        if( isIoProcess
+            && (ioProcess.equals(ConstantBaseApp.IO_INBOUND) || ioProcess.equals(ConstantBaseApp.IO_OUTBOUND))
+        ) {
+            mPresenter.defineWsRetFlow(ioProcess,requesting_act);
+        }else {
+            mPresenter.defineFlow(requesting_act);
+        }
+    }
     @Override
     public void showSerialResults(ArrayList<HMAux> returnList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -404,7 +435,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 show.dismiss();
                 //
                 if(finalHasSerialReturnedOk) {
-                    mPresenter.defineFlow(requesting_act);
+                    checkFlow();
                 }else{
                     //Se retorno do serial for false, não prosseguir.
                     //Também não é necessario exibir alert, pois o usr já foi avisado no dialog.
@@ -465,14 +496,68 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public void showResultDialog(ArrayList<HMAux> resultList, final boolean itemAdd) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_add_item_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                resultList,
+                Generic_Results_Adapter.CONFIG_3_ITENS_NEW,
+                hmAux_Trans
+            )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+                if (itemAdd) {
+                    onBackPressed();
+                }
+
+            }
+        });
+    }
+
+    @Override
     public void callAct061(Bundle bundle) {
-//        Intent mIntent = new Intent(context, Act061_Main.class);
-//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        if(bundle != null) {
-//            mIntent.putExtras(bundle);
-//        }
-//        startActivity(mIntent);
-//        finish();
+        Intent mIntent = new Intent(context, Act061_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requesting_act);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,ioPrefix);
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,ioCode);
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -526,6 +611,9 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             }
         }else if(wsProcess.equals(WS_IO_Address_Suggestion.class.getName())){
             mPresenter.processAddresSuggestionResult(mLink);
+        }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())){
+            mPresenter.processInboundItemAdd(mLink);
+            //onBackPressed();
         }
         //
         progressDialog.dismiss();

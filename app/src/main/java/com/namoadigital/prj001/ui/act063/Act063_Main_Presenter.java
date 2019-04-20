@@ -58,7 +58,6 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
     public void defineFlow(MD_Product_Serial mdProductSerial, boolean serialCreation) {
         Bundle bundle = new Bundle();
         //
-        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
         bundle.putString(MD_ProductDao.PRODUCT_CODE, mdProductSerial != null ? String.valueOf(mdProductSerial.getProduct_code()) : null);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(mdProductSerial.getSerial_id()));
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
