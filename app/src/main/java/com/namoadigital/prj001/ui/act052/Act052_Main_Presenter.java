@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -63,8 +65,9 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     mView.callAct058(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
-                    bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
-                    bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
+                    bundle.putString(IO_Blind_MoveDao.BLIND_TMP, hmAuxRet.get(Constant.HMAUX_BLIND_TMP_KEY));
+                    bundle.putString(IO_Blind_MoveDao.PRODUCT_CODE, hmAuxRet.get(Constant.GS_PRODUCT_CODE));
+                    bundle.putString(IO_Blind_MoveDao.SERIAL_ID, hmAuxRet.get(Constant.GS_SERIAL_ID));
                     bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
                     mView.callAct058(bundle);
                     //callact058
@@ -135,7 +138,7 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
 
     /**
      * Verifica se site logado permite Inbound_auto_create
-     * @return
+     * @return Inbound_auto_create
      */
     @Override
     public boolean isSiteInboundAutoCreation() {

@@ -271,7 +271,6 @@ public class T_IO_Serial_Process_Download_Move {
             io_move.setCustomer_code(downloadMove.getCustomer_code());
             io_move.setMove_prefix(downloadMove.getMove_prefix());
             io_move.setMove_code(downloadMove.getMove_code());
-            io_move.setMove_code(downloadMove.getMove_code());
             io_move.setProduct_code(downloadMove.getProduct_code());
             io_move.setSerial_code(downloadMove.getSerial_code());
             io_move.setSite_code(downloadMove.getSite_code());
@@ -301,5 +300,23 @@ public class T_IO_Serial_Process_Download_Move {
         }
         //
         return io_move;
+    }
+    public static IO_Blind_Move getIO_Blind_MoveObj(T_IO_Serial_Process_Download_Move downloadMove){
+        IO_Blind_Move io_blind_move = new IO_Blind_Move();
+
+        io_blind_move.setCustomer_code(downloadMove.getCustomer_code());
+        io_blind_move.setBlind_prefix(downloadMove.getMove_prefix());
+        io_blind_move.setBlind_code(downloadMove.getMove_code());
+        io_blind_move.setProduct_code(downloadMove.getProduct_code());
+        io_blind_move.setSerial_code(downloadMove.getSerial_code());
+
+        io_blind_move.setSite_code(downloadMove.getSite_code());
+        io_blind_move.setReason_code(downloadMove.getReason_code());
+        io_blind_move.setStatus(downloadMove.getStatus());
+        io_blind_move.setLocal_code(downloadMove.getPlanned_local_code());
+        io_blind_move.setZone_code(downloadMove.getPlanned_zone_code());
+        io_blind_move.setClass_code(downloadMove.getPlanned_class_code());
+
+        return io_blind_move;
     }
 }

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act058.act;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -26,11 +27,13 @@ public interface Act058_Main_Contract {
 
         void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
 
-        int getViewMode(IO_Move moveInfo);
+        int getViewMode(String move_type);
 
         void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove);
 
         void onBackPressed(String actRequest);
+
+        IO_Blind_Move getMoveInfo(int blind_tmp, long product_code, String serial_id);
     }
 
     interface I_View{

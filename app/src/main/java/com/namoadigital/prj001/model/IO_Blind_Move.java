@@ -8,7 +8,7 @@ public class IO_Blind_Move {
     private int blind_tmp;
     private Integer blind_prefix;
     private Integer blind_code;
-    private int product_code;
+    private long product_code;
     private int serial_code;
     private String serial_id;
     private int site_code;
@@ -61,11 +61,11 @@ public class IO_Blind_Move {
         this.blind_code = blind_code;
     }
 
-    public int getProduct_code() {
+    public long getProduct_code() {
         return product_code;
     }
 
-    public void setProduct_code(int product_code) {
+    public void setProduct_code(long product_code) {
         this.product_code = product_code;
     }
 

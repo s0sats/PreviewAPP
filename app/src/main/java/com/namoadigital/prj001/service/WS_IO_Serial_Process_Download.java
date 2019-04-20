@@ -10,11 +10,13 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
@@ -22,6 +24,7 @@ import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,10 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WS_IO_Serial_Process_Download extends IntentService {
-
-    public static final String HMAUX_PLANNED_ZONE_CODE_KEY = "HMAUX_PLANNED_ZONE_CODE_KEY";
-    public static final String HMAUX_PLANNED_LOCAL_CODE_KEY = "HMAUX_PLANNED_LOCAL_CODE_KEY";
-    public static final String HMAUX_PLANNED_CLASS_CODE_KEY = "HMAUX_PLANNED_CLASS_CODE_KEY";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -292,19 +291,40 @@ public class WS_IO_Serial_Process_Download extends IntentService {
      */
     private void processMoveResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
         HMAux hmAuxRet = new HMAux();
-        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, process_type);
+
+        IO_Blind_MoveDao io_blind_moveDao = new IO_Blind_MoveDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         //
         if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
+
+            IO_Blind_Move io_blind_move = T_IO_Serial_Process_Download_Move.getIO_Blind_MoveObj(move.get(0));
+
+            io_blind_move.setBlind_tmp(getBlindTmp(io_blind_moveDao));
+            io_blind_move.setSerial_id(move.get(0).getSerial().get(0).getSerial_id());
+
             serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
             //
-            hmAuxRet.put(HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_zone_code()));
-            hmAuxRet.put(HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_local_code()));
-            hmAuxRet.put(HMAUX_PLANNED_CLASS_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+            hmAuxRet.put(Constant.HMAUX_BLIND_TMP_KEY, String.valueOf(io_blind_move.getBlind_tmp()));
+            hmAuxRet.put(Constant.GS_PRODUCT_CODE, String.valueOf(io_blind_move.getProduct_code()));
+            hmAuxRet.put(ConstantBaseApp.GS_SERIAL_ID, String.valueOf(io_blind_move.getSerial_id()));
             //
             sendCloseAct(hmAuxRet);
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move"), "", "0");
         }
+    }
+
+    private int getBlindTmp(IO_Blind_MoveDao io_blind_moveDao) {
+        IO_Blind_Move blind_move = io_blind_moveDao.getByString(new IO_Blind_Move_Sql_002().toSqlQuery());
+        if(blind_move == null){
+            return 1;
+        }
+        return blind_move.getBlind_tmp() +1;
     }
 
     /**

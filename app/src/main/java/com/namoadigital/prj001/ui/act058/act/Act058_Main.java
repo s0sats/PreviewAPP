@@ -26,7 +26,9 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -55,9 +57,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String ws_process;
-    private IO_Move moveInfo;
     private String actRequest;
-
+    private int blind_tmp;
+    private long product_code;
+    private String serial_code;
+    private IO_Move movePlanned;
+    private IO_Blind_Move blind_move;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,32 +147,83 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     private void initVars() {
+        Integer to_local_code;
+        Integer to_zone_code;
+        int move_prefix;
+        int move_code;
+        Integer reason_code;
+        String move_type;
+        Integer planned_zone_code;
+        Integer outbound_prefix;
+        Integer inbound_prefix;
+        Integer outbound_code;
+        Integer inbound_code;
+        Integer planned_local_code;
+        String status;
+        Integer to_class_code;
+        MD_Product_Serial serialInfo;
+        int viewMode;
         mPresenter = new Act058_Main_Presenter(context, this, hmAux_Trans);
 
-        moveInfo = mPresenter.getMoveInfo(movePrefix, moveCode);
-        int viewMode = mPresenter.getViewMode(moveInfo);
+        if (movePrefix > 0) {
+            movePlanned = mPresenter.getMoveInfo(movePrefix, moveCode);
+            viewMode = mPresenter.getViewMode(movePlanned.getMove_type());
+            serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
+            to_local_code = movePlanned.getTo_local_code();
+            to_zone_code = movePlanned.getTo_zone_code();
+            move_prefix = movePlanned.getMove_prefix();
+            move_code = movePlanned.getMove_code();
+            reason_code = movePlanned.getReason_code();
+            move_type = movePlanned.getMove_type();
+            planned_zone_code = movePlanned.getPlanned_zone_code();
+            outbound_prefix = movePlanned.getOutbound_prefix();
+            inbound_prefix = movePlanned.getInbound_prefix();
+            outbound_code = movePlanned.getOutbound_code();
+            inbound_code = movePlanned.getInbound_code();
+            planned_local_code = movePlanned.getPlanned_local_code();
+            status = movePlanned.getStatus();
+            to_class_code = movePlanned.getTo_class_code();
+        } else {
+            blind_move = mPresenter.getMoveInfo(blind_tmp, product_code, serial_code);
+            to_local_code = blind_move.getLocal_code();
+            to_zone_code = blind_move.getZone_code();
+            move_prefix = blind_move.getBlind_prefix();
+            move_code = blind_move.getBlind_code();
+            reason_code = blind_move.getReason_code();
+            move_type = ConstantBaseApp.IO_PROCESS_MOVE;
+            planned_zone_code = blind_move.getZone_code();
+            outbound_prefix = null;
+            inbound_prefix = null;
+            outbound_code = null;
+            inbound_code = null;
+            planned_local_code = blind_move.getLocal_code();
+            status = blind_move.getStatus();
+            to_class_code = blind_move.getClass_code();
+            viewMode = mPresenter.getViewMode(move_type);
+            serialInfo = mPresenter.getSerialInfo(blind_move.getProduct_code(), blind_move.getSerial_code());
+        }
 
-        MD_Product_Serial serialInfo = mPresenter.getSerialInfo(moveInfo.getProduct_code(), moveInfo.getSerial_code());
+
 
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
                 true,
                 hmAux_Trans_Frag,
-                moveInfo.getTo_local_code(),
-                moveInfo.getTo_zone_code(),
-                moveInfo.getMove_prefix(),
-                moveInfo.getMove_code(),
-                moveInfo.getReason_code(),
-                moveInfo.getMove_type(),
-                moveInfo.getPlanned_zone_code(),
-                moveInfo.getOutbound_prefix(),
-                moveInfo.getInbound_prefix(),
-                moveInfo.getOutbound_code(),
-                moveInfo.getInbound_code(),
-                moveInfo.getPlanned_local_code(),
-                moveInfo.getStatus(),
-                moveInfo.getTo_class_code()
+                to_local_code,
+                to_zone_code,
+                move_prefix,
+                move_code,
+                reason_code,
+                move_type,
+                planned_zone_code,
+                outbound_prefix,
+                inbound_prefix,
+                outbound_code,
+                inbound_code,
+                planned_local_code,
+                status,
+                to_class_code
         );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
@@ -178,12 +234,20 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         Bundle bundle = getIntent().getExtras();
 
         if (bundle != null) {
-            movePrefix = Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX));
-            moveCode = Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE));
-            actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT005);
+            movePrefix = bundle.getString(IO_MoveDao.MOVE_PREFIX) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX)) : -1;
+            moveCode = bundle.getString(IO_MoveDao.MOVE_CODE) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE)) : -1;
+
+            blind_tmp = bundle.getString(IO_Blind_MoveDao.BLIND_TMP) != null ? Integer.valueOf(bundle.getString(IO_Blind_MoveDao.BLIND_TMP)) : -1;
+            product_code = bundle.getString(IO_Blind_MoveDao.PRODUCT_CODE) != null ? Long.valueOf(bundle.getString(IO_Blind_MoveDao.PRODUCT_CODE)) : -1;
+            serial_code = bundle.getString(IO_Blind_MoveDao.SERIAL_ID) != null ? bundle.getString(IO_Blind_MoveDao.SERIAL_ID) : "";
+
+            actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
         } else {
-            movePrefix = 0;
-            moveCode = 0;
+            movePrefix = -1;
+            moveCode = -1;
+            blind_tmp = -1;
+            product_code = -1;
+            serial_code = "";
             actRequest = Constant.ACT005;
         }
     }
@@ -242,9 +306,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         ArrayList<HMAux> resultList = new ArrayList<>();
 
-        for (int i = 0; i < moveArray.length; i++) {
+        for (String aMoveArray : moveArray) {
             try {
-                String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
+                String fields[] = aMoveArray.split(Constant.MAIN_CONCAT_STRING_2);
                 //
                 HMAux mHmAux = new HMAux();
                 mHmAux.put("label", fields[0]);
@@ -257,7 +321,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         }
 
         if (resultList.size() == 1) {
-            if (resultList.get(0).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
+            if (resultList.get(0).get("label").equals(movePrefix + "." + moveCode)) {
                 if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     //
@@ -301,9 +365,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         //trad
         tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
@@ -317,7 +381,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             moveList.add(hmAux);
-            if (resultList.get(i).get("label").equals(moveInfo.getMove_prefix() + "." + moveInfo.getMove_code())) {
+            if (resultList.get(i).get("label").equals(movePrefix + "." + moveCode)) {
                 auxMove.putAll(resultList.get(i));
                 break;
             }
@@ -338,9 +402,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         final AlertDialog show = builder.show();
 
-        /**
-         * Ini Action
-         */
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -439,7 +500,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
-    public void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean add){
+    public void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean add) {
 
         if (add) {
             controls_ss.add(searchableSpinner);
@@ -484,7 +545,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 reason_code,
                 done_date,
                 serial,
-                moveInfo,
+                movePlanned,
                 trackingFromMove);
     }
 

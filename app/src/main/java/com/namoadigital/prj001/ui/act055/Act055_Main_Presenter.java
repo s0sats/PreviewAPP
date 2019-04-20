@@ -84,7 +84,7 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
                         Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
                         break;
                     case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                        bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
+                        bundle.putString(IO_MoveDao.MOVE_PREFIX, searchRet.get(Constant.HMAUX_PREFIX_KEY));
                         bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
                         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT055);
                         mView.callAct058(bundle);
