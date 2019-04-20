@@ -106,7 +106,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     @Override
     public void setLocalValue(SearchableSpinner ss_local) {
 
-        if (to_local_code != null) {
+        if (to_local_code != null && to_local_code >0) {
             MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
                     new MD_Site_Zone_Local_Sql_002(
                             ToolBox_Con.getPreference_Customer_Code(context),
@@ -159,7 +159,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public void setDefaultReason(SearchableSpinner ss_reason) {
         IO_Move_Reason moveReason;
         //
-        if (reason_code != null) {
+        if (reason_code != null && reason_code >0) {
             moveReason = ioMoveReasonDao.getByString(
                     new IO_Move_Reason_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),

@@ -65,9 +65,27 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     mView.callAct058(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
-                    bundle.putString(IO_Blind_MoveDao.BLIND_TMP, hmAuxRet.get(Constant.HMAUX_BLIND_TMP_KEY));
-                    bundle.putString(IO_Blind_MoveDao.PRODUCT_CODE, hmAuxRet.get(Constant.GS_PRODUCT_CODE));
-                    bundle.putString(IO_Blind_MoveDao.SERIAL_ID, hmAuxRet.get(Constant.GS_SERIAL_ID));
+
+                    bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, Integer.parseInt(hmAuxRet.get(MD_Product_SerialDao.PRODUCT_CODE)));
+                    bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, Integer.parseInt(hmAuxRet.get(MD_Product_SerialDao.SERIAL_CODE)));
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_ZONE_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.ZONE_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.ZONE_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_ZONE_CODE_KEY)));
+                    }
+
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_LOCAL_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_LOCAL_CODE_KEY)));
+                    }
+
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_CLASS_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.CLASS_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.CLASS_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_CLASS_CODE_KEY)));
+                    }
+
                     bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
                     mView.callAct058(bundle);
                     //callact058

@@ -438,6 +438,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
     public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
     public static final String HMAUX_BLIND_TMP_KEY = "HMAUX_BLIND_TMP_KEY";
+
+    public static final String HMAUX_PLANNED_ZONE_CODE_KEY = "HMAUX_PLANNED_ZONE_CODE_KEY";
+    public static final String HMAUX_PLANNED_LOCAL_CODE_KEY = "HMAUX_PLANNED_LOCAL_CODE_KEY";
+    public static final String HMAUX_PLANNED_CLASS_CODE_KEY = "HMAUX_PLANNED_CLASS_CODE_KEY";
+
     public static final String WS_EMPTY_SEND_LIST = "WS_EMPTY_SEND_LIST";
     public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
     public static final String WS_RETURN_LIST = "WS_RETURN_LIST";

@@ -94,7 +94,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
 
-        if (record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+        if (record.getSite_code() != null && record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
             mListener.onClickListItem(record);
@@ -196,6 +196,9 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         }
 
         private void setProcessStatus(String processType) {
+            if(processType == null){
+                processType = "";
+            }
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));

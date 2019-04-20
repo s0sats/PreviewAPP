@@ -170,6 +170,12 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
             }
+        }else{
+            if(rec.getMove() != null && rec.getMove().size() > 0){
+                processMoveResponse(ConstantBaseApp.IO_PROCESS_MOVE,rec.getMove());
+            }else{
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+            }
         }
     }
 
@@ -293,25 +299,43 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         HMAux hmAuxRet = new HMAux();
         hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, process_type);
 
-        IO_Blind_MoveDao io_blind_moveDao = new IO_Blind_MoveDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
-        );
+//        IO_Blind_MoveDao io_blind_moveDao = new IO_Blind_MoveDao(
+//                getApplicationContext(),
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+//                Constant.DB_VERSION_CUSTOM
+//        );
 
         //
         if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
-
-            IO_Blind_Move io_blind_move = T_IO_Serial_Process_Download_Move.getIO_Blind_MoveObj(move.get(0));
-
-            io_blind_move.setBlind_tmp(getBlindTmp(io_blind_moveDao));
-            io_blind_move.setSerial_id(move.get(0).getSerial().get(0).getSerial_id());
+//
+//            IO_Blind_Move io_blind_move = T_IO_Serial_Process_Download_Move.getIO_Blind_MoveObj(move.get(0));
+//
+//            io_blind_move.setBlind_tmp(getBlindTmp(io_blind_moveDao));
+//            io_blind_move.setSerial_id(move.get(0).getSerial().get(0).getSerial_id());
 
             serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
             //
-            hmAuxRet.put(Constant.HMAUX_BLIND_TMP_KEY, String.valueOf(io_blind_move.getBlind_tmp()));
-            hmAuxRet.put(Constant.GS_PRODUCT_CODE, String.valueOf(io_blind_move.getProduct_code()));
-            hmAuxRet.put(ConstantBaseApp.GS_SERIAL_ID, String.valueOf(io_blind_move.getSerial_id()));
+//            hmAuxRet.put(Constant.HMAUX_BLIND_TMP_KEY, String.valueOf(io_blind_move.getBlind_tmp()));
+            hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(move.get(0).getSerial().get(0).getProduct_code()));
+            hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(move.get(0).getSerial().get(0).getSerial_code()));
+
+            if(move.get(0).getPlanned_class_code() != null) {
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+            }else{
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, "");
+            }
+
+            if(move.get(0).getPlanned_class_code() != null) {
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+            }else{
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, "");
+            }
+
+            if(move.get(0).getPlanned_class_code() != null) {
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_CLASS_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+            }else{
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_CLASS_CODE_KEY, "");
+            }
             //
             sendCloseAct(hmAuxRet);
         }else{

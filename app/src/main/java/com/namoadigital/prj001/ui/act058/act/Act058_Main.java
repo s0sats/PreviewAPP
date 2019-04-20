@@ -28,6 +28,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
@@ -58,11 +59,15 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private HMAux hmAux_Trans_Frag;
     private String ws_process;
     private String actRequest;
-    private int blind_tmp;
-    private long product_code;
-    private String serial_code;
+    private int zone_code;
+    private int local_code;
+    private Integer class_code;
+
     private IO_Move movePlanned;
     private IO_Blind_Move blind_move;
+    private int product_code;
+    private int serial_code;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,23 +189,23 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             status = movePlanned.getStatus();
             to_class_code = movePlanned.getTo_class_code();
         } else {
-            blind_move = mPresenter.getMoveInfo(blind_tmp, product_code, serial_code);
-            to_local_code = blind_move.getLocal_code();
-            to_zone_code = blind_move.getZone_code();
-            move_prefix = blind_move.getBlind_prefix();
-            move_code = blind_move.getBlind_code();
-            reason_code = blind_move.getReason_code();
-            move_type = ConstantBaseApp.IO_PROCESS_MOVE;
-            planned_zone_code = blind_move.getZone_code();
+//            blind_move = mPresenter.getMoveInfo(blind_tmp, product_code, serial_code);
+            to_local_code = local_code;
+            to_zone_code = zone_code;
+            move_prefix = -1;
+            move_code =-1;
+            reason_code = null;
             outbound_prefix = null;
             inbound_prefix = null;
             outbound_code = null;
             inbound_code = null;
-            planned_local_code = blind_move.getLocal_code();
-            status = blind_move.getStatus();
-            to_class_code = blind_move.getClass_code();
+            status =ConstantBaseApp.SYS_STATUS_PENDING;
+            planned_zone_code = zone_code;
+            planned_local_code = local_code;
+            to_class_code = class_code;
+            move_type = ConstantBaseApp.IO_PROCESS_MOVE;
             viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(blind_move.getProduct_code(), blind_move.getSerial_code());
+            serialInfo = mPresenter.getSerialInfo(product_code,serial_code);
         }
 
 
@@ -237,17 +242,24 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             movePrefix = bundle.getString(IO_MoveDao.MOVE_PREFIX) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX)) : -1;
             moveCode = bundle.getString(IO_MoveDao.MOVE_CODE) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE)) : -1;
 
-            blind_tmp = bundle.getString(IO_Blind_MoveDao.BLIND_TMP) != null ? Integer.valueOf(bundle.getString(IO_Blind_MoveDao.BLIND_TMP)) : -1;
-            product_code = bundle.getString(IO_Blind_MoveDao.PRODUCT_CODE) != null ? Long.valueOf(bundle.getString(IO_Blind_MoveDao.PRODUCT_CODE)) : -1;
-            serial_code = bundle.getString(IO_Blind_MoveDao.SERIAL_ID) != null ? bundle.getString(IO_Blind_MoveDao.SERIAL_ID) : "";
+            zone_code = bundle.getInt(IO_Blind_MoveDao.ZONE_CODE);
+            local_code = bundle.getInt(IO_Blind_MoveDao.LOCAL_CODE);
+            class_code = bundle.getInt(IO_Blind_MoveDao.CLASS_CODE);
+
+            product_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
+            serial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
+
+
 
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
         } else {
             movePrefix = -1;
             moveCode = -1;
-            blind_tmp = -1;
+            zone_code = -1;
+            local_code = -1;
+            class_code = -1;
             product_code = -1;
-            serial_code = "";
+            serial_code = -1;
             actRequest = Constant.ACT005;
         }
     }
