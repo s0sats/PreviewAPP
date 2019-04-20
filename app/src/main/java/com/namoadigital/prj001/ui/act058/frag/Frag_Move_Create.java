@@ -634,10 +634,25 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         tv_product_cod_val.setText(mdProductSerial.getProduct_id() + " " + mdProductSerial.getProduct_desc());
         tv_serial_val.setText(mdProductSerial.getSerial_id());
-        tv_zone_position.setText(MessageFormat.format("{0} | {1}", mdProductSerial.getZone_id(), mdProductSerial.getLocal_id()));
+        String zone_position = "";
+
+        if(mdProductSerial.getZone_id() != null ) {
+            zone_position = mdProductSerial.getZone_id();
+            if(mdProductSerial.getLocal_id() != null){
+                zone_position = MessageFormat.format("{0} | {1}", zone_position, mdProductSerial.getLocal_id());
+            }
+        }
+        if(zone_position.isEmpty()){
+            tv_zone_position.setVisibility(View.GONE);
+        }else{
+            tv_zone_position.setVisibility(View.VISIBLE);
+            tv_zone_position.setText(zone_position);
+        }
 
         try {
             tv_inbound_val.setText(formatPrefixAndCode(inbound_prefix, inbound_code));
+            tv_inbound_lbl.setVisibility(View.VISIBLE);
+            tv_inbound_val.setVisibility(View.VISIBLE);
         } catch (NullPointerException e) {
             tv_inbound_lbl.setVisibility(View.GONE);
             tv_inbound_val.setVisibility(View.GONE);
@@ -645,12 +660,20 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         try {
             tv_outbound_val.setText(formatPrefixAndCode(outbound_prefix, outbound_code));
+            tv_outbound_lbl.setVisibility(View.VISIBLE);
+            tv_outbound_val.setVisibility(View.VISIBLE);
         } catch (NullPointerException e) {
             tv_outbound_lbl.setVisibility(View.GONE);
             tv_outbound_val.setVisibility(View.GONE);
         }
-
-        tv_move_order_val.setText(formatPrefixAndCode(move_prefix, move_code));
+        if(move_prefix>0 && move_code >0) {
+            tv_move_order_val.setText(formatPrefixAndCode(move_prefix, move_code));
+            tv_move_order_val.setVisibility(View.VISIBLE);
+            tv_move_order_lbl.setVisibility(View.VISIBLE);
+        }else{
+            tv_move_order_lbl.setVisibility(View.GONE);
+            tv_move_order_val.setVisibility(View.GONE);
+        }
         String plannedZoneLocal = (planned_zone_code == null) ? "" : String.valueOf(planned_zone_code);
 
         plannedZoneLocal.concat((planned_local_code == null) ? "" : planned_local_code + "|");
