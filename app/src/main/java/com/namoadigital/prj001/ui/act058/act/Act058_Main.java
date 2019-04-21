@@ -34,6 +34,7 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
@@ -62,7 +63,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private int zone_code;
     private int local_code;
     private Integer class_code;
-
+    String move_type;
     private IO_Move movePlanned;
     private IO_Blind_Move blind_move;
     private int product_code;
@@ -157,7 +158,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         int move_prefix;
         int move_code;
         Integer reason_code;
-        String move_type;
         Integer planned_zone_code;
         Integer outbound_prefix;
         Integer inbound_prefix;
@@ -172,14 +172,14 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         if (movePrefix > 0) {
             movePlanned = mPresenter.getMoveInfo(movePrefix, moveCode);
-            viewMode = mPresenter.getViewMode(movePlanned.getMove_type());
+            move_type = movePlanned.getMove_type();
+            viewMode = mPresenter.getViewMode(move_type );
             serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
             to_local_code = movePlanned.getTo_local_code();
             to_zone_code = movePlanned.getTo_zone_code();
             move_prefix = movePlanned.getMove_prefix();
             move_code = movePlanned.getMove_code();
             reason_code = movePlanned.getReason_code();
-            move_type = movePlanned.getMove_type();
             planned_zone_code = movePlanned.getPlanned_zone_code();
             outbound_prefix = movePlanned.getOutbound_prefix();
             inbound_prefix = movePlanned.getInbound_prefix();
@@ -307,7 +307,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
         } else {
-            if (ws_process.equals(WS_IO_Move_Save.class.getName())) {
+            if (ws_process.equals(WS_IO_Move_Save.class.getName())
+            || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
                 showResults(moves);
             }
@@ -498,11 +499,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
-    public ArrayList<HMAux> getReasonOption() {
-        return mPresenter.getMoveReasonList();
-    }
-
-    @Override
     public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean add) {
         if (add) {
             controls_sta.add(mket_tracking);
@@ -527,38 +523,46 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
-    public ArrayList<HMAux> getClassList() {
-        return mPresenter.getClassList();
-    }
-
-    @Override
     public void callLogAct(Intent logIntent) {
         startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
     }
 
-    @Override
-    public void persistIoMove(long customer_code,
-                              int move_prefix,
-                              int move_code,
-                              Integer to_zone_code,
-                              Integer to_local_code,
-                              Integer to_class_code,
-                              Integer reason_code,
-                              String done_date,
-                              MD_Product_Serial serial,
-                              List<IO_Move_Tracking> trackingFromMove) {
 
-        mPresenter.executeMovePersistence(customer_code,
-                move_prefix,
-                move_code,
-                to_zone_code,
-                to_local_code,
-                to_class_code,
-                reason_code,
-                done_date,
-                serial,
-                movePlanned,
-                trackingFromMove);
+    @Override
+    public void persistIoMovePlanned(long customer_code,
+                                     int move_prefix,
+                                     int move_code,
+                                     Integer to_zone_code,
+                                     Integer to_local_code,
+                                     Integer to_class_code,
+                                     Integer reason_code,
+                                     String done_date,
+                                     MD_Product_Serial serial,
+                                     List<IO_Move_Tracking> trackingFromMove) {
+
+        if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)) {
+            mPresenter.executeMovePlannedPersistence(customer_code,
+                    move_prefix,
+                    move_code,
+                    to_zone_code,
+                    to_local_code,
+                    to_class_code,
+                    reason_code,
+                    done_date,
+                    serial,
+                    movePlanned,
+                    trackingFromMove);
+        }else{
+            mPresenter.executeMovePersistence(customer_code,
+                    to_zone_code,
+                    to_local_code,
+                    to_class_code,
+                    reason_code,
+                    done_date,
+                    serial,
+                    movePlanned,
+                    trackingFromMove);
+        }
     }
 
     @Override

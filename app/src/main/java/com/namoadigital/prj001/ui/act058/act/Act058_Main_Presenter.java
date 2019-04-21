@@ -6,35 +6,35 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Blind_Move;
+import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_004;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
-import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
-import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     private IO_Blind_MoveDao blindMoveDao;
     private MD_Product_SerialDao productSerialDao;
-    private MD_ClassDao classDao;
     private IO_MoveDao ioMoveDao;
     private IO_Move_TrackingDao ioMoveTrackingDao;
     private Context context;
@@ -55,7 +55,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
-        this.classDao = new MD_ClassDao(context);
         this.hmAux_trans = hmAux_trans;
         this.mView = mView;
     }
@@ -68,12 +67,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                 moveCode).toSqlQuery());
     }
 
-    @Override
-    public ArrayList<HMAux> getClassList() {
-        return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-        ).toSqlQuery());
-    }
 
     @Override
     public MD_Product_Serial getSerialInfo(long product_code, int serial_code) {
@@ -83,23 +76,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                 serial_code).toSqlQuery());
     }
 
-    public ArrayList<HMAux> getMoveReasonList() {
-        ArrayList<HMAux> moveReasonList = new ArrayList<>();
 
-        IO_Move_ReasonDao ioMoveReasonDao =
-                new IO_Move_ReasonDao(context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-        //
-        moveReasonList = (ArrayList<HMAux>) ioMoveReasonDao.query_HM(
-                new IO_Move_Reason_Sql_SS(ToolBox_Con.getPreference_Customer_Code(context))
-                        .toSqlQuery());
-        //
-
-        //
-        return moveReasonList;
-    }
 
     @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
@@ -141,7 +118,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeMovePersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove) {
+    public void executeMovePlannedPersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove) {
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
@@ -209,6 +186,65 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                         serial_id
                 ).toSqlQuery()
         );
+    }
+
+    @Override
+    public void executeMovePersistence(long customer_code, Integer zone_code, Integer local_code, Integer classCode, Integer reasonCode, String date_confirm, MD_Product_Serial serial, IO_Move movePlanned, List<IO_Move_Tracking> trackingFromMove) {
+        IO_Blind_Move io_blind_move = new IO_Blind_Move();
+        io_blind_move.setCustomer_code(customer_code);
+        io_blind_move.setZone_code(zone_code);
+        io_blind_move.setLocal_code(local_code);
+        io_blind_move.setClass_code(classCode);
+        io_blind_move.setReason_code(reasonCode);
+        io_blind_move.setSave_date(date_confirm);
+        io_blind_move.setProduct_code(serial.getProduct_code());
+        io_blind_move.setSerial_code((int) serial.getSerial_code());
+        io_blind_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
+        io_blind_move.setBlind_tmp(getBlindTmp());
+
+        blindMoveDao.addUpdate(io_blind_move);
+
+        IO_Blind_Move_TrackingDao ioBlindTrackingDao= new IO_Blind_Move_TrackingDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        IO_Blind_Move_Tracking blindMoveTracking = new IO_Blind_Move_Tracking();
+
+        for (IO_Move_Tracking tracking : trackingFromMove) {
+            blindMoveTracking.setCustomer_code(tracking.getCustomer_code());
+            blindMoveTracking.setBlind_tmp(io_blind_move.getBlind_tmp());
+            blindMoveTracking.setTracking(tracking.getTracking());
+            ioBlindTrackingDao.addUpdate(blindMoveTracking);
+        }
+
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Blind_Move_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Blind_Move_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
+            );
+        }
+    }
+
+    private int getBlindTmp() {
+        IO_Blind_Move blind_move = blindMoveDao.getByString(new IO_Blind_Move_Sql_002().toSqlQuery());
+        if(blind_move == null){
+            return 1;
+        }
+        return blind_move.getBlind_tmp() +1;
     }
 
 }

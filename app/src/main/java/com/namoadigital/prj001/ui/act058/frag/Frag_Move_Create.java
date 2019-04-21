@@ -348,19 +348,33 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     zoneCode
             );
         }
-
-        mListener.persistIoMove(
-                ToolBox_Con.getPreference_Customer_Code(getContext()),
-                move_prefix,
-                move_code,
-                Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
-                classCode,
-                reasonCode,
-                mkdate_confirm.getmValue(),
-                mdProductSerial,
-                trackingFromMove
-        );
+        if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
+            mListener.persistIoMovePlanned(
+                    ToolBox_Con.getPreference_Customer_Code(getContext()),
+                    move_prefix,
+                    move_code,
+                    Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                    Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                    classCode,
+                    reasonCode,
+                    mkdate_confirm.getmValue(),
+                    mdProductSerial,
+                    trackingFromMove
+            );
+        } else if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)) {
+            mListener.persistIoMovePlanned(
+                    ToolBox_Con.getPreference_Customer_Code(getContext()),
+                    -1,
+                    -1,
+                    Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                    Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                    classCode,
+                    reasonCode,
+                    mkdate_confirm.getmValue(),
+                    mdProductSerial,
+                    trackingFromMove
+            );
+        }
     }
 
     private void processLocalValueChange(HMAux hmAux) {
@@ -674,10 +688,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_lbl.setVisibility(View.GONE);
             tv_move_order_val.setVisibility(View.GONE);
         }
+
         String plannedZoneLocal = (planned_zone_code == null) ? "" : String.valueOf(planned_zone_code);
 
         plannedZoneLocal.concat((planned_local_code == null) ? "" : planned_local_code + "|");
-        if (plannedZoneLocal.isEmpty()) {
+        if (plannedZoneLocal.isEmpty() || plannedZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
             tv_move_to_val.setVisibility(View.GONE);
             tv_move_to_val.setText(plannedZoneLocal);
@@ -820,7 +835,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         );
 
         ss_class.setmShowLabel(false);
-        ss_class.setmOption(mListener.getClassList());
+        ss_class.setmOption(mPresenter.getClassList());
         setClassIcon(ss_class.getmValue());
     }
 
@@ -944,7 +959,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private void setSSMoveReason() {
         ss_reason.setmLabel(hmAux_Trans.get("site_reason_lbl"));
         ss_reason.setmTitle(hmAux_Trans.get("site_reason_ttl"));
-        ss_reason.setmOption(mListener.getReasonOption());
+        ss_reason.setmOption(mPresenter.getMoveReasonList());
     }
 
     public void onButtonPressed(Uri uri) {
@@ -1003,16 +1018,16 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
 
     public interface OnFragmentInteractionListener {
-        void persistIoMove(long customer_code,
-                           int move_prefix,
-                           int move_code,
-                           Integer to_zone_code,
-                           Integer to_local_code,
-                           Integer to_class_code,
-                           Integer reason_code,
-                           String done_date,
-                           MD_Product_Serial serial,
-                           List<IO_Move_Tracking> trackingFromMove);
+        void persistIoMovePlanned(long customer_code,
+                                  int move_prefix,
+                                  int move_code,
+                                  Integer to_zone_code,
+                                  Integer to_local_code,
+                                  Integer to_class_code,
+                                  Integer reason_code,
+                                  String done_date,
+                                  MD_Product_Serial serial,
+                                  List<IO_Move_Tracking> trackingFromMove);
 
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -1023,15 +1038,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         boolean isOnline();
 
-        ArrayList<HMAux> getReasonOption();
-
         void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b);
 
         void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean b);
 
         void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code);
-
-        ArrayList<HMAux> getClassList();
 
         void callLogAct(Intent logIntent);
     }
