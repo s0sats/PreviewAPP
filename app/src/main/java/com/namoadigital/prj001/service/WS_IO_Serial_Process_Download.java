@@ -176,12 +176,6 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
             }
-        }else{
-            if(rec.getMove() != null && rec.getMove().size() > 0){
-                processMoveResponse(ConstantBaseApp.IO_PROCESS_MOVE,rec.getMove());
-            }else{
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
-            }
         }
     }
 

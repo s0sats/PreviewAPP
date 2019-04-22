@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act052;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -278,7 +279,12 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 context,
                 title,
                 msg,
-                null,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       onBackPressed();
+                    }
+                },
                 0
         );
     }

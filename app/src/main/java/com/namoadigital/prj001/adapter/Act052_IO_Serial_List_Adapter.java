@@ -54,6 +54,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         List<String> transList = new ArrayList<>();
         transList.add("product_lbl");
         transList.add("serial_lbl");
+        transList.add("alert_serial_out_site_title");
+        transList.add("alert_serial_out_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -94,7 +96,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
 
-        if (record.getSite_code() != null && record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+        if (record.getSite_code() == null || record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
             mListener.onClickListItem(record);
