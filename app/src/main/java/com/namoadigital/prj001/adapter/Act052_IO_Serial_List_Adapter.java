@@ -208,8 +208,13 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
                     break;
-                default:
+                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
+                    break;
+                default:
+                    ivStatusIcon.setVisibility(View.GONE);
             }
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }

@@ -375,4 +375,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act058_Main_Contr
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        mPresenter.onBackPressed(actRequest);
+    }
 }
