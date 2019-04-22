@@ -21,11 +21,11 @@ public class IO_Blind_Move {
     private String save_date;
     private String token;
     private String error_msg;
-    private ArrayList<IO_Blind_Move_Tracking> tracking = new ArrayList<>();
+    private ArrayList<IO_Blind_Move_Tracking> tracking_list = new ArrayList<>();
 
     public void setPk(){
-        for (int i = 0; i < tracking.size(); i++) {
-            tracking.get(i).setPk(this);
+        for (int i = 0; i < tracking_list.size(); i++) {
+            tracking_list.get(i).setPk(this);
         }
     }
 
@@ -165,11 +165,11 @@ public class IO_Blind_Move {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<IO_Blind_Move_Tracking> getTracking() {
-        return tracking;
+    public ArrayList<IO_Blind_Move_Tracking> getTracking_list() {
+        return tracking_list;
     }
 
-    public void setTracking(ArrayList<IO_Blind_Move_Tracking> tracking) {
-        this.tracking = tracking;
+    public void setTracking_list(ArrayList<IO_Blind_Move_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

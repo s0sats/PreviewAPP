@@ -339,19 +339,8 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         HMAux hmAuxRet = new HMAux();
         hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, process_type);
 
-//        IO_Blind_MoveDao io_blind_moveDao = new IO_Blind_MoveDao(
-//                getApplicationContext(),
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-//                Constant.DB_VERSION_CUSTOM
-//        );
 
-        //
         if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0){
-//
-//            IO_Blind_Move io_blind_move = T_IO_Serial_Process_Download_Move.getIO_Blind_MoveObj(move.get(0));
-//
-//            io_blind_move.setBlind_tmp(getBlindTmp(io_blind_moveDao));
-//            io_blind_move.setSerial_id(move.get(0).getSerial().get(0).getSerial_id());
 
             serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
             //
@@ -360,13 +349,13 @@ public class WS_IO_Serial_Process_Download extends IntentService {
             hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(move.get(0).getSerial().get(0).getSerial_code()));
 
             if(move.get(0).getPlanned_class_code() != null) {
-                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_zone_code()));
             }else{
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, "");
             }
 
             if(move.get(0).getPlanned_class_code() != null) {
-                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_class_code()));
+                hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_local_code()));
             }else{
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, "");
             }

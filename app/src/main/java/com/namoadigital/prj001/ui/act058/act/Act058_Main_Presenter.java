@@ -198,6 +198,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_blind_move.setClass_code(classCode);
         io_blind_move.setReason_code(reasonCode);
         io_blind_move.setSave_date(date_confirm);
+        io_blind_move.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
         io_blind_move.setProduct_code(serial.getProduct_code());
         io_blind_move.setSerial_id(serial.getSerial_id());
         io_blind_move.setSerial_code((int) serial.getSerial_code());

@@ -86,7 +86,7 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
                 Constant.DB_VERSION_CUSTOM
             );
             //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
-            DaoObjReturn inboundItemRet = blindMoveTrackingDao.addUpdate(io_blind_move.getTracking(),false,db);
+            DaoObjReturn inboundItemRet = blindMoveTrackingDao.addUpdate(io_blind_move.getTracking_list(),false,db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if(inboundItemRet.hasError()){
                 throw new Exception(inboundItemRet.getErrorMsg());
@@ -232,7 +232,7 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
                     Constant.DB_VERSION_CUSTOM
                 );
                 //
-                io_blind_move.setTracking(
+                io_blind_move.setTracking_list(
                     (ArrayList<IO_Blind_Move_Tracking>) blindMoveTrackingDao.query(
                        new IO_Blind_Move_Tracking_Sql_001(
                            io_blind_move.getCustomer_code(),
@@ -298,7 +298,7 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
                         Constant.DB_VERSION_CUSTOM
                     );
                     //
-                    uAux.setTracking(
+                    uAux.setTracking_list(
                         (ArrayList<IO_Blind_Move_Tracking>) blindMoveTrackingDao.query(
                             new IO_Blind_Move_Tracking_Sql_001(
                                 uAux.getCustomer_code(),
