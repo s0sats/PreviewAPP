@@ -530,20 +530,19 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     @Override
     public void persistIoMovePlanned(long customer_code,
-                                     int move_prefix,
-                                     int move_code,
                                      Integer to_zone_code,
                                      Integer to_local_code,
                                      Integer to_class_code,
                                      Integer reason_code,
+                                     String comments,
                                      String done_date,
                                      MD_Product_Serial serial,
                                      List<IO_Move_Tracking> trackingFromMove) {
 
-        if (move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
-            mPresenter.executeMovePlannedPersistence(customer_code,
-                    move_prefix,
-                    move_code,
+        if (move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)) {
+            blind_tmp = mPresenter.getBlindTmp();
+            mPresenter.executeMovePersistence(customer_code,
+                    blind_tmp,
                     to_zone_code,
                     to_local_code,
                     to_class_code,
@@ -553,13 +552,14 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     movePlanned,
                     trackingFromMove);
         } else {
-            blind_tmp = mPresenter.getBlindTmp();
-            mPresenter.executeMovePersistence(customer_code,
-                    blind_tmp,
+            mPresenter.executeMovePlannedPersistence(customer_code,
+                    movePrefix,
+                    moveCode,
                     to_zone_code,
                     to_local_code,
                     to_class_code,
                     reason_code,
+                    comments,
                     done_date,
                     serial,
                     movePlanned,

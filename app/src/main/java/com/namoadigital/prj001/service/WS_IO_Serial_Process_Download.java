@@ -10,14 +10,12 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move;
@@ -26,7 +24,6 @@ import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
-import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -145,7 +142,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
 
                     if(rec.getMove() != null && rec.getMove().size() > 0) {
-                        processInPutAwayResponse(rec.getProcess_type(), rec.getMove());
+                        processMovePlannedResponse(rec.getProcess_type(), rec.getMove());
                     }else{
                         ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
                     }
@@ -154,7 +151,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     if(rec.getMove() != null && rec.getMove().size() > 0){
                         processMovePlannedResponse(rec.getProcess_type(), rec.getMove());
                     }else{
-
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
@@ -165,7 +162,11 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
+                    if(rec.getMove() != null && rec.getMove().size() > 0) {
+                        processMovePlannedResponse(rec.getProcess_type(), rec.getMove());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
                     sendCloseAct(hmAuxRet);
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:

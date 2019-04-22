@@ -25,15 +25,15 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
     }
 
     @Override
-    public IO_Inbound_Item getInboudItem(Integer inbound_prefix, Integer inbound_code, Integer inbound_item) {
+    public IO_Inbound_Item getInboudItem(Integer move_prefix, Integer move_code, Integer inbound_item) {
         IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
 
         return io_inbound_itemDao.getByString(new IO_Inbound_Item_Sql_003(
                 ToolBox_Con.getPreference_Customer_Code(context),
-                inbound_prefix,
-                inbound_code,
+                move_prefix,
+                move_code,
                 inbound_item
         ).toSqlQuery());
     }

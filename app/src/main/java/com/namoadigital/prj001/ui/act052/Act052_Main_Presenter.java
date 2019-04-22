@@ -55,14 +55,16 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     Toast.makeText(context, "IN_CONF", Toast.LENGTH_SHORT).show();
                     break;
+//                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+//
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_PREFIX));
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_CODE));
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_ITEM));
+//                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+//                    mView.callAct059(bundle);
+//                    break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-
-                    bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_PREFIX));
-                    bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_CODE));
-                    bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_ITEM));
-                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
-                    mView.callAct059(bundle);
-                    break;
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
                     bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
@@ -95,10 +97,10 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     mView.callAct058(bundle);
                     //callact058
                     break;
-                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                    Toast.makeText(context, "OUT_PICKING", Toast.LENGTH_SHORT).show();
-                    //callact058
-                    break;
+//                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+//                    Toast.makeText(context, "OUT_PICKING", Toast.LENGTH_SHORT).show();
+//                    //callact058
+//                    break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     Toast.makeText(context, "OUT_CONF", Toast.LENGTH_SHORT).show();
                     break;

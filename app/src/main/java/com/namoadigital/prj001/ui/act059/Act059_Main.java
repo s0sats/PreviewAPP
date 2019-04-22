@@ -19,7 +19,6 @@ import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.ui.act058.act.Act058_Main_Contract;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -29,7 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act059_Main extends Base_Activity_Frag implements Act058_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
+public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
     private String mResource_Code_Frag;
@@ -267,8 +266,9 @@ public class Act059_Main extends Base_Activity_Frag implements Act058_Main_Contr
         );
     }
 
+
     @Override
-    public void persistIoMovePlanned(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
+    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
 
     }
 

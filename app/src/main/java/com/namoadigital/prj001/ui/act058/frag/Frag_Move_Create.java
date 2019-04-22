@@ -283,9 +283,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (view_param == 0) {
-                                        persistIoMoveChanges();
-                                    }
+                                    persistIoMoveChanges();
                                 }
                             },
                             1
@@ -348,32 +346,27 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     zoneCode
             );
         }
-        if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
-            mListener.persistIoMovePlanned(
-                    ToolBox_Con.getPreference_Customer_Code(getContext()),
-                    move_prefix,
-                    move_code,
-                    Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                    Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
-                    classCode,
-                    reasonCode,
-                    mkdate_confirm.getmValue(),
-                    mdProductSerial,
-                    trackingFromMove
-            );
-        } else if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)) {
-            mListener.persistIoMovePlanned(
-                    ToolBox_Con.getPreference_Customer_Code(getContext()),
-                    -1,
-                    -1,
-                    Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                    Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
-                    classCode,
-                    reasonCode,
-                    mkdate_confirm.getmValue(),
-                    mdProductSerial,
-                    trackingFromMove
-            );
+        switch (move_type){
+            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+            case ConstantBaseApp.IO_PROCESS_MOVE:
+            case ConstantBaseApp.IO_INBOUND:
+            case ConstantBaseApp.IO_OUTBOUND:
+                mListener.persistIoMovePlanned(
+                        ToolBox_Con.getPreference_Customer_Code(getContext()),
+                        Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                        Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                        classCode,
+                        reasonCode,
+                        mkedit_coments.getText().toString().trim(),
+                        mkdate_confirm.getmValue(),
+                        mdProductSerial,
+                        trackingFromMove
+                );
+                break;
+            case ConstantBaseApp.IO_PROCESS_IN_CONF:
+            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+
+                break;
         }
     }
 
@@ -411,21 +404,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     mkdate_confirm.setmHighlightWhenInvalid(true);
                     isSuccessfully = false;
                 }
-
-                ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-
-                if (ss_zone.getmValue() == null || ss_zone.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
-                    ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-                    isSuccessfully = false;
-                }
                 break;
-        }
-
-        if (ss_reason.getmValue() == null || !ss_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
-            ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-            isSuccessfully = false;
-        } else {
-            ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         }
 
         if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -441,7 +420,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         } else {
             ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         }
+
         mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+
         if (mket_serial.getVisibility() == View.VISIBLE) {
             if (!mdProductSerial.getSerial_id().equals(mket_serial.getText().toString().trim())) {
                 isSuccessfully = false;
@@ -766,9 +747,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
             case 1:
                 ss_reason.setVisibility(View.GONE);
+                mkedit_coments.setVisibility(View.GONE);
+                mkdate_confirm.setVisibility(View.GONE);
+                break;
+            case 2:
+                ss_reason.setVisibility(View.GONE);
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
-                break;
         }
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
@@ -1019,17 +1004,16 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     public interface OnFragmentInteractionListener {
         void persistIoMovePlanned(long customer_code,
-                                  int move_prefix,
-                                  int move_code,
                                   Integer to_zone_code,
                                   Integer to_local_code,
                                   Integer to_class_code,
                                   Integer reason_code,
+                                  String comments,
                                   String done_date,
                                   MD_Product_Serial serial,
                                   List<IO_Move_Tracking> trackingFromMove);
 
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
 
         void showAlert(String title, String msg);

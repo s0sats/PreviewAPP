@@ -105,11 +105,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     public int getViewMode(String move_type) {
 
         switch (move_type) {
-            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+            case ConstantBaseApp.IO_INBOUND:
+            case ConstantBaseApp.IO_OUTBOUND:
                 return 1;
-            case ConstantBaseApp.IO_PROCESS_IN_CONF:
-            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
             case ConstantBaseApp.IO_PROCESS_MOVE:
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
             default:
@@ -119,7 +117,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeMovePlannedPersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove) {
+    public void executeMovePlannedPersistence(long customer_code, int move_prefix, int move_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Move io_move, List<IO_Move_Tracking> trackingFromMove) {
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
