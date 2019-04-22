@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act053;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.gson.Gson;
@@ -13,10 +14,7 @@ import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.*;
 import com.namoadigital.prj001.service.*;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_004;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -199,15 +197,15 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     returnOk = true;
                 }
                 //
-                mView.showSingleResultMsg(ttl, msg);
+                mView.showSingleResultMsg(ttl, msg, returnOk);
             } else {
                 mView.showSerialResults(returnList);
             }
         } else {
             mView.showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_no_serial_return_msg")
-                    //, false
+                    hmAux_Trans.get("alert_no_serial_return_msg"),
+                    false
             );
         }
 
@@ -432,14 +430,14 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
 
     private void executeWSInbounItem() {
         if(ToolBox_Con.isOnline(context)) {
-            mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
+            mView.setWsProcess(WS_IO_Inbound_Item_Add.class.getName());
             //
             mView.showPD(
                 hmAux_Trans.get("progress_serial_search_ttl"),
                 hmAux_Trans.get("progress_serial_search_msg")
             );
             //
-            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Add.class);
             Bundle bundle = new Bundle();
             //
             mIntent.putExtras(bundle);
@@ -538,7 +536,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT063:
                 String ioProcess = mView.getIoProcess();
                 if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
-                    mView.callAct061(prepareAct061Bundle());
+                    proceedCallAct0061();
                 }
                 break;
             case ConstantBaseApp.ACT051:
@@ -546,6 +544,48 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 mView.callAct051();
                 break;
         }
+    }
+
+    private void proceedCallAct0061() {
+        if(mView.isItemSavedOk()){
+            mView.callAct061(prepareAct061Bundle());
+        } else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_leave_add_item_ttl"),
+                hmAux_Trans.get("alert_not_save_item_will_be_lost_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteItem();
+                        mView.callAct061(prepareAct061Bundle());
+                    }
+                },
+                1
+            );
+        }
+
+    }
+
+    private void deleteItem() {
+        //tudo via query sem verificação......
+        inboundDao.addUpdate(
+            new IO_Inbound_Sql_008(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Inf.convertStringToInt(mView.getIoPrefix()),
+                ToolBox_Inf.convertStringToInt(mView.getIoCode())
+            ).toSqlQuery()
+
+        );
+        //
+        inboundItemDao.remove(
+            new IO_Inbound_Item_Sql_007(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Inf.convertStringToInt(mView.getIoPrefix()),
+                ToolBox_Inf.convertStringToInt(mView.getIoCode()),
+                0
+            ).toSqlQuery()
+        );
     }
 
     private Bundle prepareAct061Bundle() {

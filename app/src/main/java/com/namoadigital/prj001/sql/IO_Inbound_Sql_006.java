@@ -6,7 +6,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * LUCHE - 20/04/2019
  *
- * Atualiza SCN  da inbound informada
+ * Atualiza SCN , seta update_required e pode resetar token
  *
  */
 public class IO_Inbound_Sql_006 implements Specification {
@@ -28,10 +28,12 @@ public class IO_Inbound_Sql_006 implements Specification {
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
+        String resetToken = update_required == 0 ?  " , token = '' \n" : "";
         return sb
             .append(" UPDATE "+ IO_InboundDao.TABLE+" set\n" +
                     "   update_required = '"+update_required+"'\n," +
                     "   scn = '"+scn+"'\n" +
+                    resetToken +
                     " WHERE\n" +
                     "  customer_code = '"+customer_code+"'\n" +
                     "  and inbound_prefix = '"+inbound_prefix+"'\n" +

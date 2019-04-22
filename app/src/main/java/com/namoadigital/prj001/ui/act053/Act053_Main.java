@@ -52,9 +52,11 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String ioProcess;
-    boolean isIoProcess= false;
+    private boolean isIoProcess= false;
     private String ioPrefix;
     private String ioCode;
+    private boolean itemSavedOk = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +127,8 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             transList.add("alert_add_item_error_on_return_ttl");
             transList.add("alert_add_item_error_on_return_msg");
             transList.add("alert_add_item_results_ttl");
+            transList.add("alert_leave_add_item_ttl");
+            transList.add("alert_not_save_item_will_be_lost_msg");
             //
             hmAux_Trans = ToolBox_Inf.setLanguage(
                     context,
@@ -350,9 +354,13 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     public String getIoCode() {
         return ioCode;
     }
+    @Override
+    public boolean isItemSavedOk() {
+        return itemSavedOk;
+    }
 
     @Override
-    public void showSingleResultMsg(String ttl, String msg) {
+    public void showSingleResultMsg(String ttl, String msg, final boolean saveOk) {
         ToolBox.alertMSG(
                 context,
                 ttl,
@@ -360,9 +368,15 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        checkFlow();
-                        //
-                        dialog.dismiss();
+                        if(saveOk) {
+                            itemSavedOk = true;
+                            checkFlow();
+                            //
+                            dialog.dismiss();
+                        }else{
+
+                        }
+
                     }
                 },
                 0
@@ -550,7 +564,8 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         if(bundle == null) {
             bundle = new Bundle();
         }
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requesting_act);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ioProcess);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,ioPrefix);
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,ioCode);
         bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
@@ -606,12 +621,12 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             } else {
                 showSingleResultMsg(
                         hmAux_Trans.get("alert_save_serial_return_ttl"),
-                        hmAux_Trans.get("alert_no_serial_return_msg")
-                );
+                        hmAux_Trans.get("alert_no_serial_return_msg"),
+                    false);
             }
         }else if(wsProcess.equals(WS_IO_Address_Suggestion.class.getName())){
             mPresenter.processAddresSuggestionResult(mLink);
-        }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())){
+        }else if(wsProcess.equals(WS_IO_Inbound_Item_Add.class.getName())){
             mPresenter.processInboundItemAdd(mLink);
             //onBackPressed();
         }

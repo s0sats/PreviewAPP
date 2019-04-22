@@ -190,7 +190,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ConstantBaseApp.PROFILE_PRJ001_OI,
                         "lbl_io_assets",
                         "lbl_io_assets",
-                        R.drawable.previous_icon
+                        R.drawable.ic_n_assets
                 )
         );
         //
@@ -309,9 +309,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                     case Act005_Main.MENU_ID_IO_ASSETS:
                          if(!isSiteLoggedIoControl()){
-                             menu.setIcon(R.drawable.ic_block_helper_grey600_48dp);
+                             menu.setIcon(R.drawable.ic_n_assets_inactive2);
                          }else{
-                             menu.setIcon(R.drawable.previous_icon);
+                             menu.setIcon(R.drawable.ic_n_assets);
                          }
                         //tratar badges de pendentes.
                         break;

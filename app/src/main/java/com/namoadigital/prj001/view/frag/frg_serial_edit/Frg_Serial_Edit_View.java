@@ -11,8 +11,9 @@ public interface Frg_Serial_Edit_View {
      * Metodo para exibição de apenas um serial
      * @param ttl
      * @param msg
+     * @param saveOk
      */
-    void showSingleResultMsg(String ttl, String msg);
+    void showSingleResultMsg(String ttl, String msg, boolean saveOk);
 
     /**
      * Metodo para exibição de lista de seriais retornados

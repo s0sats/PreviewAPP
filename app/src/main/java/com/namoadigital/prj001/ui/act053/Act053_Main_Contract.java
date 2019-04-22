@@ -47,5 +47,7 @@ public interface Act053_Main_Contract {
         String getIoCode();
 
         void showResultDialog(ArrayList<HMAux> resultList, boolean itemAdd);
+
+        public boolean isItemSavedOk();
     }
 }

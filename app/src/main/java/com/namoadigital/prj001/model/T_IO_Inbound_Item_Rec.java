@@ -7,7 +7,9 @@ public class T_IO_Inbound_Item_Rec {
     private String validation;
     private String link_url;
     private String error_msg;
+    private String save;
     private ArrayList<IO_Inbound_Item_Save_Return> result = new ArrayList<>();
+    private ArrayList<IO_Inbound> inbound = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -41,12 +43,28 @@ public class T_IO_Inbound_Item_Rec {
         this.error_msg = error_msg;
     }
 
+    public String getSave() {
+        return save;
+    }
+
+    public void setSave(String save) {
+        this.save = save;
+    }
+
     public ArrayList<IO_Inbound_Item_Save_Return> getResult() {
         return result;
     }
 
     public void setResult(ArrayList<IO_Inbound_Item_Save_Return> result) {
         this.result = result;
+    }
+
+    public ArrayList<IO_Inbound> getInbound() {
+        return inbound;
+    }
+
+    public void setInbound(ArrayList<IO_Inbound> inbound) {
+        this.inbound = inbound;
     }
 
     public class  IO_Inbound_Item_Save_Return{
@@ -56,7 +74,6 @@ public class T_IO_Inbound_Item_Rec {
         private int scn;
         private String ret_status;
         private String ret_msg;
-        private ArrayList<IO_Inbound> inbound = new ArrayList<>();
         private ArrayList<IO_Inbound_Item_Save_Return_Item> items = new ArrayList<>();
 
         public long getCustomer_code() {
@@ -105,14 +122,6 @@ public class T_IO_Inbound_Item_Rec {
 
         public void setRet_msg(String ret_msg) {
             this.ret_msg = ret_msg;
-        }
-
-        public ArrayList<IO_Inbound> getInbound() {
-            return inbound;
-        }
-
-        public void setInbound(ArrayList<IO_Inbound> inbound) {
-            this.inbound = inbound;
         }
 
         public ArrayList<IO_Inbound_Item_Save_Return_Item> getItems() {

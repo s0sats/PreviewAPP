@@ -6,11 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.Nullable;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -293,6 +293,61 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
                     new Exception(
                             e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
                     )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterados.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(sqlRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
+    /**
+     * Remove todos itens baseado na PK do cabeçalho
+     *
+     * @param io_inbound
+     * @param dbInstance
+     * @return
+     */
+    public DaoObjReturn remove(IO_Inbound io_inbound, @Nullable SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long sqlRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_inbound.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_PREFIX).append(" = '").append(String.valueOf(io_inbound.getInbound_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_inbound.getInbound_code())).append("'");
+            //
+            sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
             );
 
         } catch (Exception e) {
