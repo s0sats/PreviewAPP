@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -55,8 +56,12 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     Toast.makeText(context, "IN_CONF", Toast.LENGTH_SHORT).show();
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                    Toast.makeText(context, "IN_PUT_AWAY", Toast.LENGTH_SHORT).show();
-                    //callact058
+
+                    bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_PREFIX));
+                    bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_CODE));
+                    bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_ITEM));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                    mView.callAct059(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));

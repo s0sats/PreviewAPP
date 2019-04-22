@@ -12,12 +12,14 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
@@ -141,14 +143,18 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                    hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,rec.getProcess_type());
-                    sendCloseAct(hmAuxRet);
+
+                    if(rec.getMove() != null && rec.getMove().size() > 0) {
+                        processInPutAwayResponse(rec.getProcess_type(), rec.getMove());
+                    }else{
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+                    }
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     if(rec.getMove() != null && rec.getMove().size() > 0){
                         processMovePlannedResponse(rec.getProcess_type(), rec.getMove());
                     }else{
-                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+
                     }
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
@@ -250,6 +256,40 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         }
 
     }
+
+    private void processInPutAwayResponse(String process_type, ArrayList<T_IO_Serial_Process_Download_Move> move) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,process_type);
+        //
+        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        IO_Inbound_Item inbound_item = T_IO_Serial_Process_Download_Move.getIO_Inbound_ItemObj(move.get(0));
+        //
+        if(inbound_item != null){
+            if(move.get(0).getSerial() != null && move.get(0).getSerial().size() > 0) {
+                DaoObjReturn daoReturn = io_inbound_itemDao.addUpdate(inbound_item);
+                if (!daoReturn.hasError()) {
+                    serialDao.addUpdateTmp(move.get(0).getSerial().get(0));
+                    //
+                    hmAuxRet.put(IO_Inbound_ItemDao.INBOUND_PREFIX, String.valueOf(inbound_item.getInbound_prefix()));
+                    hmAuxRet.put(IO_Inbound_ItemDao.INBOUND_CODE, String.valueOf(inbound_item.getInbound_code()));
+                    hmAuxRet.put(IO_Inbound_ItemDao.INBOUND_ITEM,String.valueOf(move.get(0).getInbound_item()));
+                    //
+                    sendCloseAct(hmAuxRet);
+                } else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+                }
+            }
+        }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+        }
+    }
+
+
 
     /**
      * Processa response tipo MOVE_PLANNED

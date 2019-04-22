@@ -19,7 +19,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.act059.Act059_Main"></activity>
+
         <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
@@ -384,6 +384,11 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.act059.Act059_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ui.act061.Act061_Main"
             android:label="@string/app_name"

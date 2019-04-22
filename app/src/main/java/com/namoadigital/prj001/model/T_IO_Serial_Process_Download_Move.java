@@ -319,4 +319,22 @@ public class T_IO_Serial_Process_Download_Move {
 
         return io_blind_move;
     }
+
+    public static IO_Inbound_Item getIO_Inbound_ItemObj(T_IO_Serial_Process_Download_Move downloadMove){
+        IO_Inbound_Item item = new IO_Inbound_Item();
+        item.setCustomer_code(downloadMove.getCustomer_code());
+        item.setInbound_prefix(downloadMove.getInbound_prefix());
+        item.setInbound_code(downloadMove.getInbound_code());
+        item.setProduct_code(downloadMove.getProduct_code());
+        item.setSerial_code(downloadMove.getSerial_code());
+        item.setSite_code(downloadMove.getSite_code());
+        item.setPlanned_zone_code(downloadMove.getPlanned_zone_code());
+        item.setPlanned_local_code(downloadMove.getPlanned_local_code());
+        item.setPlanned_class_code(downloadMove.getPlanned_class_code());
+        item.setInbound_prefix(downloadMove.getInbound_prefix());
+        item.setInbound_code(downloadMove.getInbound_code());
+        item.setInbound_item(downloadMove.getInbound_item());
+        item.setStatus(downloadMove.getStatus());
+        return item;
+    }
 }

@@ -9,7 +9,6 @@ import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
-import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
