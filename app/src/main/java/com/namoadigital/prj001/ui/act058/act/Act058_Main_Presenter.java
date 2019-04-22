@@ -7,14 +7,18 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move;
 
 import com.namoadigital.prj001.model.IO_Move_Tracking;
+import com.namoadigital.prj001.model.IO_Outbound_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
@@ -135,6 +139,8 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
+
+        //todo trata DaoObjectReturn
         ioMoveDao.addUpdate(io_move);
 
         for (IO_Move_Tracking tracking : trackingFromMove) {
@@ -142,25 +148,106 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         }
 
         if (ToolBox_Con.isOnline(context)) {
-            mView.setWs_process(WS_IO_Move_Save.class.getName());
-            //
-            mView.showPD(
-                    hmAux_trans.get("dialog_save_move_ttl"),
-                    hmAux_trans.get("dialog_save_move_msg")
-            );
-            //
-            Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
-            Bundle bundle = new Bundle();
-            //
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
+            switch (io_move.getMove_type()){
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                    callWS_IO_Move_Save();
+                    break;
+                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                    callWS_IO_Inbound_Item(io_move);
+                    break;
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                    callWS_IO_Outbound_Item(io_move);
+                    break;
+            }
         } else {
             mView.showAlert(
                     hmAux_trans.get("alert_offline_save_ttl"),
                     hmAux_trans.get("alert_offline_save_msg")
             );
         }
+    }
+
+    private void callWS_IO_Move_Save() {
+        mView.setWs_process(WS_IO_Move_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_trans.get("dialog_save_move_ttl"),
+                hmAux_trans.get("dialog_save_move_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void callWS_IO_Inbound_Item(IO_Move io_move) {
+        //TBD FAzer select de item, se tiver atualiza, caso contrario nao adicionar ou atualizar
+//        IO_Inbound_Item item = new IO_Inbound_Item();
+//        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM);
+//        item.setCustomer_code(io_move.getCustomer_code());
+//        item.setInbound_prefix(io_move.getInbound_prefix());
+//        item.setInbound_code(io_move.getInbound_code());
+//        item.setInbound_item(io_move.getInbound_item());
+//        item.setProduct_code(io_move.getProduct_code());
+//        item.setSerial_code(io_move.getSerial_code());
+//        item.setSite_code(io_move.getSite_code());
+//        item.setZone_code(io_move.getTo_zone_code());
+//        item.setLocal_code(io_move.getTo_local_code());
+//        item.setStatus(io_move.getStatus());
+//        item.setPlanned_zone_code(io_move.getPlanned_zone_code());
+//        item.setPlanned_local_code(io_move.getPlanned_local_code());
+//        item.setPlanned_class_code(io_move.getPlanned_class_code());
+//
+//        io_inbound_itemDao.addUpdate(item);
+        //todo mudar para serviço de inbound_item
+        mView.setWs_process(WS_IO_Move_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_trans.get("dialog_save_move_ttl"),
+                hmAux_trans.get("dialog_save_move_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void callWS_IO_Outbound_Item(IO_Move io_move) {
+        //TBD FAzer select de item, se tiver atualiza, caso contrario nao adicionar ou atualizar
+//        IO_Outbound_Item item = new IO_Outbound_Item();
+//        IO_Outbound_ItemDao io_outbound_itemDao = new IO_Outbound_ItemDao(context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM);
+//        item.setCustomer_code(io_move.getCustomer_code());
+//        item.setInbound_prefix(io_move.getInbound_prefix());
+//        item.setInbound_code(io_move.getInbound_code());
+//        item.setInbound_item(io_move.getInbound_item());
+//        item.setProduct_code(io_move.getProduct_code());
+//        item.setSerial_code(io_move.getSerial_code());
+//        item.setStatus(io_move.getStatus());
+//        io_outbound_itemDao.addUpdate(item);
+        //todo mudar para serviço de outbound_item
+        mView.setWs_process(WS_IO_Move_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_trans.get("dialog_save_move_ttl"),
+                hmAux_trans.get("dialog_save_move_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override
@@ -246,7 +333,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         if(blind_move == null || !blind_move.get(0).hasConsistentValue(NEXT_TMP)){
             return 1;
         }
-
         return Integer.valueOf(blind_move.get(0).get(NEXT_TMP));
     }
 
