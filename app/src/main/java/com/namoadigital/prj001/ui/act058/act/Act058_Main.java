@@ -68,6 +68,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private IO_Blind_Move blind_move;
     private int product_code;
     private int serial_code;
+    private int blind_tmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +174,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (movePrefix > 0) {
             movePlanned = mPresenter.getMoveInfo(movePrefix, moveCode);
             move_type = movePlanned.getMove_type();
-            viewMode = mPresenter.getViewMode(move_type );
+            viewMode = mPresenter.getViewMode(move_type);
             serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
             to_local_code = movePlanned.getTo_local_code();
             to_zone_code = movePlanned.getTo_zone_code();
@@ -193,21 +194,20 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             to_local_code = local_code;
             to_zone_code = zone_code;
             move_prefix = -1;
-            move_code =-1;
+            move_code = -1;
             reason_code = null;
             outbound_prefix = null;
             inbound_prefix = null;
             outbound_code = null;
             inbound_code = null;
-            status =ConstantBaseApp.SYS_STATUS_PENDING;
+            status = ConstantBaseApp.SYS_STATUS_PENDING;
             planned_zone_code = zone_code;
             planned_local_code = local_code;
             to_class_code = class_code;
             move_type = ConstantBaseApp.IO_PROCESS_MOVE;
             viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(product_code,serial_code);
+            serialInfo = mPresenter.getSerialInfo(product_code, serial_code);
         }
-
 
 
         frag_move_create = Frag_Move_Create.newInstance(
@@ -248,7 +248,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
             product_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
             serial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
-
 
 
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
@@ -308,7 +307,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             frag_move_create.processTrackingResult(hmAux);
         } else {
             if (ws_process.equals(WS_IO_Move_Save.class.getName())
-            || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
+                    || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
                 showResults(moves);
             }
@@ -334,7 +333,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         }
 
         if (resultList.size() == 1) {
-            if (resultList.get(0).get("label").equals(movePrefix + "." + moveCode)) {
+            if (resultList.get(0).get("label").equals(movePrefix + "." + moveCode)
+            ||  resultList.get(0).get("label").equals(String.valueOf(blind_tmp)) ) {
                 if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     //
@@ -540,7 +540,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                                      MD_Product_Serial serial,
                                      List<IO_Move_Tracking> trackingFromMove) {
 
-        if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)) {
+        if (move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
             mPresenter.executeMovePlannedPersistence(customer_code,
                     move_prefix,
                     move_code,
@@ -552,8 +552,10 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     serial,
                     movePlanned,
                     trackingFromMove);
-        }else{
+        } else {
+            blind_tmp = mPresenter.getBlindTmp();
             mPresenter.executeMovePersistence(customer_code,
+                    blind_tmp,
                     to_zone_code,
                     to_local_code,
                     to_class_code,

@@ -11,11 +11,12 @@ public class IO_Blind_Move_Sql_002 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(
-                        " SELECT * FROM " + IO_Blind_MoveDao.TABLE +
-                                " WHERE " + IO_Blind_MoveDao.BLIND_TMP + " = " +
-                                " SELECT max(" + IO_Blind_MoveDao.BLIND_TMP + ") FROM " + IO_Blind_MoveDao.TABLE +
-                                "order by " + IO_Blind_MoveDao.BLIND_TMP + " DESC " +
-                                " LIMIT 1"
+                        " SELECT\n" +
+                                "  ifnull(max(b.blind_tmp),0) + 1 next_tmp\n" +
+                                " FROM\n" +
+                                "  io_blind_move b \n" +
+                                " WHERE\n" +
+                                "   b.customer_code "
                 )
                 .toString();
     }

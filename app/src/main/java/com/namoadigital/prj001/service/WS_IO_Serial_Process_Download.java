@@ -383,14 +383,6 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         }
     }
 
-    private int getBlindTmp(IO_Blind_MoveDao io_blind_moveDao) {
-        IO_Blind_Move blind_move = io_blind_moveDao.getByString(new IO_Blind_Move_Sql_002().toSqlQuery());
-        if(blind_move == null){
-            return 1;
-        }
-        return blind_move.getBlind_tmp() +1;
-    }
-
     /**
      * Envia close act com HmAux.
      * @param hmAuxRet

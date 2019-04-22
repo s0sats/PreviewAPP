@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Move;
+
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
@@ -32,6 +33,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import java.util.List;
 
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
+    public static final String NEXT_TMP = "next_tmp";
     private IO_Blind_MoveDao blindMoveDao;
     private MD_Product_SerialDao productSerialDao;
     private IO_MoveDao ioMoveDao;
@@ -188,7 +190,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeMovePersistence(long customer_code, Integer zone_code, Integer local_code, Integer classCode, Integer reasonCode, String date_confirm, MD_Product_Serial serial, IO_Move movePlanned, List<IO_Move_Tracking> trackingFromMove) {
+    public void executeMovePersistence(long customer_code, int blind_tmp, Integer zone_code, Integer local_code, Integer classCode, Integer reasonCode, String date_confirm, MD_Product_Serial serial, IO_Move movePlanned, List<IO_Move_Tracking> trackingFromMove) {
         IO_Blind_Move io_blind_move = new IO_Blind_Move();
         io_blind_move.setCustomer_code(customer_code);
         io_blind_move.setZone_code(zone_code);
@@ -197,9 +199,10 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_blind_move.setReason_code(reasonCode);
         io_blind_move.setSave_date(date_confirm);
         io_blind_move.setProduct_code(serial.getProduct_code());
+        io_blind_move.setSerial_id(serial.getSerial_id());
         io_blind_move.setSerial_code((int) serial.getSerial_code());
         io_blind_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
-        io_blind_move.setBlind_tmp(getBlindTmp());
+        io_blind_move.setBlind_tmp(blind_tmp);
 
         blindMoveDao.addUpdate(io_blind_move);
 
@@ -237,13 +240,15 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             );
         }
     }
+    @Override
+    public int getBlindTmp() {
+        List<HMAux> blind_move = blindMoveDao.query_HM(new IO_Blind_Move_Sql_002().toSqlQuery());
 
-    private int getBlindTmp() {
-        IO_Blind_Move blind_move = blindMoveDao.getByString(new IO_Blind_Move_Sql_002().toSqlQuery());
-        if(blind_move == null){
+        if(blind_move == null || !blind_move.get(0).hasConsistentValue(NEXT_TMP)){
             return 1;
         }
-        return blind_move.getBlind_tmp() +1;
+
+        return Integer.valueOf(blind_move.get(0).get(NEXT_TMP));
     }
 
 }

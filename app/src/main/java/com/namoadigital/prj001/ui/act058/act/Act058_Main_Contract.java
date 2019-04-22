@@ -31,7 +31,9 @@ public interface Act058_Main_Contract {
 
         IO_Blind_Move getMoveInfo(int blind_tmp, long product_code, String serial_id);
 
-        void executeMovePersistence(long customer_code, Integer zone_code, Integer local_code, Integer classCode, Integer reasonCode, String date_confirm, MD_Product_Serial serial, IO_Move movePlanned, List<IO_Move_Tracking> trackingFromMove);
+        void executeMovePersistence(long customer_code, int blind_tmp, Integer zone_code, Integer local_code, Integer classCode, Integer reasonCode, String date_confirm, MD_Product_Serial serial, IO_Move movePlanned, List<IO_Move_Tracking> trackingFromMove);
+
+        int getBlindTmp();
     }
 
     interface I_View{
