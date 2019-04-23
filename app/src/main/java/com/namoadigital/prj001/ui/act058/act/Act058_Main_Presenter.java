@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act058.act;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
@@ -12,6 +13,7 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
@@ -136,34 +138,55 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
         io_move.getSerial().add(serial);
         io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
+        io_move.setUpdate_required(1);
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
 
         //todo trata DaoObjectReturn
-        ioMoveDao.addUpdate(io_move);
+        DaoObjReturn daoObjReturnIoMove = ioMoveDao.addUpdate(io_move);
 
-        for (IO_Move_Tracking tracking : trackingFromMove) {
-            ioMoveTrackingDao.addUpdate(tracking);
-        }
-
-        if (ToolBox_Con.isOnline(context)) {
-            switch (io_move.getMove_type()){
-                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                    callWS_IO_Move_Save();
-                    break;
-                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                    callWS_IO_Inbound_Item(io_move);
-                    break;
-                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                    callWS_IO_Outbound_Item(io_move);
-                    break;
-            }
-        } else {
+        if (daoObjReturnIoMove.hasError()) {
             mView.showAlert(
-                    hmAux_trans.get("alert_offline_save_ttl"),
-                    hmAux_trans.get("alert_offline_save_msg")
+                    hmAux_trans.get("alert_offline_save_error_ttl"),
+                    hmAux_trans.get("alert_offline_save_error_msg")
             );
+        }else {
+            boolean hasError =false;
+            for (IO_Move_Tracking tracking : trackingFromMove) {
+                DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
+                if (daoObjReturnIoMoveTracking.hasError()) {
+                    hasError =true;
+                }
+            }
+//            if (hasError) {
+//                mView.showAlert(
+//                        hmAux_trans.get("alert_offline_save_tracking_error_ttl"),
+//                        hmAux_trans.get("alert_offline_save_tracking_error_msg")
+//                );
+//            }
+            if (ToolBox_Con.isOnline(context)) {
+                switch (io_move.getMove_type()) {
+                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                        callWS_IO_Move_Save();
+                        break;
+                    case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                        Toast.makeText(context, ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY, Toast.LENGTH_SHORT).show();
+                        callWS_IO_Move_Save();
+//                        callWS_IO_Inbound_Item(io_move);
+                        break;
+                    case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                        Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
+                        callWS_IO_Move_Save();
+//                        callWS_IO_Outbound_Item(io_move);
+                        break;
+                }
+            } else {
+                mView.showAlert(
+                        hmAux_trans.get("alert_offline_save_ttl"),
+                        hmAux_trans.get("alert_offline_save_msg")
+                );
+            }
         }
     }
 

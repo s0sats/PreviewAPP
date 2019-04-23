@@ -129,6 +129,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_offline_save_ttl");
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
+        transList.add("alert_offline_save_error_ttl");
+        transList.add("alert_offline_save_error_msg");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
