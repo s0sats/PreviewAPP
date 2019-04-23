@@ -16,6 +16,8 @@ public interface Act063_Main_Contract {
 
         void showQtyExceededMsg(long record_count, long record_page);
 
+        void setBtnCreateVisibility(boolean visible);
+
         void callAct053(Bundle bundle);
 
         void callAct062();
@@ -30,5 +32,7 @@ public interface Act063_Main_Contract {
         void defineFlow(MD_Product_Serial mdProductSerial, boolean serialCreation);
 
         void onBackPressedClicked();
+
+        void processItemClick(MD_Product_Serial productSerial);
     }
 }
