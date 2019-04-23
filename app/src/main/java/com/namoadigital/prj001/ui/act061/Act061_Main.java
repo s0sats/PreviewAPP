@@ -417,6 +417,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         setDrawerState(stateOpen);
     }
 
+    @Override
+    public String getFirstFragToLoad() {
+        return fragToLoad != null ? fragToLoad : INBOUND_FRAG_HEADER ;
+    }
+
     //endregion
 
     //region FragItems

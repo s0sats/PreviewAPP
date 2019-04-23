@@ -84,6 +84,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         void setFragToContainer(String fragTag);
 
         void updateDrawerState(boolean stateOpen);
+
+        String getFirstFragToLoad();
     }
 
     public onFragDrawerInteraction getFragDrawerListener() {
@@ -367,6 +369,19 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         }
     }
 
+    private void forceFragSelection(String fragToload){
+        switch (fragToload){
+            case Act061_Main.INBOUND_FRAG_ITEM:
+                rdoItem.performClick();
+                break;
+            case Act061_Main.INBOUND_FRAG_HEADER:
+            default:
+                rdoHeader.performClick();
+                break;
+        }
+
+    }
+
     private void hideView() {
         tvArrivalDtLbl.setVisibility(View.GONE);
         tvArrivalDtVal.setText("");
@@ -396,6 +411,15 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         //
         if (context instanceof Act061_Frag_Drawer.onFragDrawerInteraction) {
             mFragDrawerListener = (onFragDrawerInteraction) context;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //
+        if(mFragDrawerListener != null){
+            forceFragSelection(mFragDrawerListener.getFirstFragToLoad());
         }
     }
 
