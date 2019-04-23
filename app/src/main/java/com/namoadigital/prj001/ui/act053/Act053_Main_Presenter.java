@@ -409,6 +409,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             //
             DaoObjReturn daoObjReturn = inboundItemDao.addUpdate(inboundItem);
             if(!daoObjReturn.hasError()){
+                //Var que indica q foi salvo no banco, teve retorno OK.
+                mView.setItemSavedOk(false);
+                //
                 executeWSInbounItem();
             }else{
                 inboundDao.addUpdate(

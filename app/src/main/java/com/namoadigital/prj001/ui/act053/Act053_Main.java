@@ -55,7 +55,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private boolean isIoProcess= false;
     private String ioPrefix;
     private String ioCode;
-    private boolean itemSavedOk = false;
+    private boolean itemSavedOk = true;
 
 
     @Override
@@ -205,6 +205,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         frgSerialEdit.setIOProcess(isIoProcess);
+        frgSerialEdit.setForceSaveAgain(true);
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -360,6 +361,11 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public void setItemSavedOk(boolean itemSavedOk) {
+        this.itemSavedOk = itemSavedOk;
+    }
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg, final boolean saveOk) {
         ToolBox.alertMSG(
                 context,
@@ -369,7 +375,9 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(saveOk) {
-                            itemSavedOk = true;
+                            if(frgSerialEdit != null){
+                                frgSerialEdit.setForceSaveAgain(false);
+                            }
                             checkFlow();
                             //
                             dialog.dismiss();
@@ -449,6 +457,11 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 show.dismiss();
                 //
                 if(finalHasSerialReturnedOk) {
+                    //
+                    if(frgSerialEdit != null){
+                        frgSerialEdit.setForceSaveAgain(false);
+                    }
+                    //
                     checkFlow();
                 }else{
                     //Se retorno do serial for false, não prosseguir.
@@ -550,6 +563,8 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 }
                 //
                 if (itemAdd) {
+                    itemSavedOk = true;
+                    //
                     onBackPressed();
                 }
 

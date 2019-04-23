@@ -195,6 +195,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_suggested_location;
     private boolean isIOProcess = false;//Se deve exibir campos de posição
     private boolean usesSuggestionLocation = false;//Se deve considerar chamar Ws deSugestão.
+    //Será usado quando erro ao criar ou alterar dados e fluxo não pode seguir
+    private boolean forceSaveAgain = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -450,6 +452,14 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     public void setUsesSuggestionLocation(boolean usesSuggestionLocation) {
         this.usesSuggestionLocation = usesSuggestionLocation;
+    }
+
+    public boolean isForceSaveAgain() {
+        return forceSaveAgain;
+    }
+
+    public void setForceSaveAgain(boolean forceSaveAgain) {
+        this.forceSaveAgain = forceSaveAgain;
     }
 
     //
@@ -1348,7 +1358,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (validadeSerialLocation()) {
                     if(validateMoveReasonSS()) {
                         if (validateSiteRestriction()) {
-                            if (new_serial || checkSerialChanges()) {
+                            if (new_serial || checkSerialChanges() || forceSaveAgain) {
                                 //
                                 setUIDataToSerialObj();
                                 //

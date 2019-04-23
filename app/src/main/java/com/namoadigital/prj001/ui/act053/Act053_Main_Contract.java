@@ -48,6 +48,8 @@ public interface Act053_Main_Contract {
 
         void showResultDialog(ArrayList<HMAux> resultList, boolean itemAdd);
 
-        public boolean isItemSavedOk();
+        boolean isItemSavedOk();
+
+        void setItemSavedOk(boolean itemSavedOk);
     }
 }

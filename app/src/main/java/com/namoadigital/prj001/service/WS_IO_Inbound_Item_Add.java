@@ -296,10 +296,10 @@ public class WS_IO_Inbound_Item_Add extends IntentService {
 
                         } else {
                             //Se erro O QUE FAZER?
-                            daoObjReturn = inboundItemDao.delete(inboundItem, null);
-                            if (daoObjReturn.hasError()) {
-                                throw new Exception(daoObjReturn.getErrorMsg());
-                            }
+//                            daoObjReturn = inboundItemDao.delete(inboundItem, null);
+//                            if (daoObjReturn.hasError()) {
+//                                throw new Exception(daoObjReturn.getErrorMsg());
+//                            }
                         }
                     }
                 }
