@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -117,17 +118,23 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
         return daoObjReturn;
     }
 
-    @Override
-    public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status) {
 
+    public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status , SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        openDB();
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
-            db.beginTransaction();
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
 
             if (status) {
                 db.delete(TABLE, null, null);
@@ -151,17 +158,20 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 }
             }
 
-            db.setTransactionSuccessful();
+            //Se db não foi passado, finaliza transaction com sucesso
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //
             ToolBox_Inf.registerException(
-                    getClass().getName(),
-                    new Exception(
-                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                    )
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
             );
 
         } catch (Exception e) {
@@ -169,17 +179,25 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            db.endTransaction();
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
 
-        closeDB();
+        if(dbInstance == null){
+            closeDB();
+        }
 
         return daoObjReturn;
+    }
 
+    @Override
+    public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status) {
+        return addUpdate(io_moves,status,null);
     }
 
     @Override
