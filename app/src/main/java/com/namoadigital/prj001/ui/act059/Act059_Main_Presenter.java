@@ -1,13 +1,10 @@
 package com.namoadigital.prj001.ui.act059;
 
 import android.content.Context;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -26,16 +23,27 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
 
     @Override
     public IO_Inbound_Item getInboudItem(Integer move_prefix, Integer move_code, Integer inbound_item) {
-        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM);
-
-        return io_inbound_itemDao.getByString(new IO_Inbound_Item_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                move_prefix,
-                move_code,
-                inbound_item
-        ).toSqlQuery());
+        /**
+         *
+         *
+         *
+         * COMENTADO NO MRGE DO DIA 23/04/2019
+         *
+         *
+         *
+         *
+         */
+//        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM);
+//
+//        return io_inbound_itemDao.getByString(new IO_Inbound_Item_Sql_003(
+//                ToolBox_Con.getPreference_Customer_Code(context),
+//                move_prefix,
+//                move_code,
+//                inbound_item
+//        ).toSqlQuery());
+        return null;
     }
 
     @Override
