@@ -21,12 +21,15 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act059.Act059_Main;
 import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
 import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header;
 import com.namoadigital.prj001.ui.act061.frg_item.Act061_Frag_Items;
@@ -434,6 +437,31 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void callAddItemAct() {
         callAct062();
+    }
+
+    @Override
+    public void callInConfCreateItemAct(HMAux item) {
+        callAct059(item);
+    }
+
+    private void callAct059(HMAux item) {
+        Intent mIntent = new Intent(context, Act059_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT059);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
+        bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, String.valueOf(mPrefix));
+        bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, String.valueOf(mCode));
+        bundle.putInt(IO_InboundDao.ZONE_CODE_CONF, mInbound.getZone_code_conf());
+        bundle.putInt(IO_InboundDao.LOCAL_CODE_CONF, mInbound.getLocal_code_conf());
+
+        bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, String.valueOf(item.get(IO_Inbound_ItemDao.INBOUND_ITEM)));
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+
     }
     //endregion
 

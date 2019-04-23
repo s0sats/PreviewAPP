@@ -21,6 +21,7 @@ import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -53,16 +54,15 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
 
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
-                    Toast.makeText(context, "IN_CONF", Toast.LENGTH_SHORT).show();
+                    bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
+                    bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
+                    bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
+                    bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, hmAuxRet.get(MD_Product_SerialDao.PRODUCT_CODE));
+                    bundle.putString(MD_Product_SerialDao.SERIAL_CODE, hmAuxRet.get(MD_Product_SerialDao.SERIAL_CODE));
+                    bundle.putString(MD_Product_SerialDao.SERIAL_ID, hmAuxRet.get(MD_Product_SerialDao.SERIAL_ID));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT061);
+                    mView.callAct061(bundle);
                     break;
-//                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-//
-//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_PREFIX));
-//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_CODE));
-//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_ITEM));
-//                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
-//                    mView.callAct059(bundle);
-//                    break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:

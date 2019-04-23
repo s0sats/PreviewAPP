@@ -36,6 +36,6 @@ public interface Act052_Main_Contract {
 
         void callAct058(Bundle bundle);
 
-        void callAct059(Bundle bundle);
+        void callAct061(Bundle bundle);
     }
 }

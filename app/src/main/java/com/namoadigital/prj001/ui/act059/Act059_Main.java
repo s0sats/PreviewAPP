@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
@@ -42,6 +43,9 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     private IO_Inbound_Item io_inbound_item;
     private String move_type;
     private Frag_Move_Create frag_move_create;
+    private int has_put_away;
+    private Integer zone_code_conf;
+    private Integer local_code_conf;
 
 
     @Override
@@ -128,6 +132,9 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         if(bundle != null){
             io_prefix = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_PREFIX));
             io_code = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_CODE));
+            has_put_away = bundle.getInt(IO_InboundDao.PUT_AWAY_PROCESS);
+            zone_code_conf = bundle.getInt(IO_InboundDao.ZONE_CODE_CONF, -1);
+            local_code_conf = bundle.getInt(IO_InboundDao.LOCAL_CODE_CONF, -1);
             try {
                 io_item = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_ITEM));
             }catch (Exception e ){
@@ -166,44 +173,30 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         int viewMode;
         mPresenter = new Act059_Main_Presenter(context, this, hmAux_Trans);
 
-        if(io_item == null){
-            //handle IN_CONF?
-            io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-            to_local_code = null;
-            to_zone_code = null;
-            move_prefix = -1;
-            move_code =-1;
-            reason_code = null;
-            outbound_prefix = null;
-            inbound_prefix = io_inbound_item.getInbound_prefix();
-            outbound_code = null;
-            inbound_code = io_inbound_item.getInbound_code();
-            status =ConstantBaseApp.SYS_STATUS_PENDING;
+        io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
+        to_local_code = io_inbound_item.getLocal_code();
+        to_zone_code = io_inbound_item.getZone_code();
+        move_prefix = -1;
+        move_code =-1;
+        reason_code = null;
+        outbound_prefix = null;
+        inbound_prefix = io_inbound_item.getInbound_prefix();
+        outbound_code = null;
+        inbound_code = io_inbound_item.getInbound_code();
+        status =ConstantBaseApp.SYS_STATUS_PENDING;
+        //has_put_away == 1 trava spinners
+        if(has_put_away == 0) {
             planned_zone_code = io_inbound_item.getPlanned_zone_code();
             planned_local_code = io_inbound_item.getPlanned_local_code();
-            to_class_code = null;
-            move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
-            viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
         }else{
-            io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-            to_local_code = io_inbound_item.getLocal_code();
-            to_zone_code = io_inbound_item.getZone_code();
-            move_prefix = -1;
-            move_code =-1;
-            reason_code = null;
-            outbound_prefix = null;
-            inbound_prefix = io_inbound_item.getInbound_prefix();
-            outbound_code = null;
-            inbound_code = io_inbound_item.getInbound_code();
-            status =ConstantBaseApp.SYS_STATUS_PENDING;
-            planned_zone_code = io_inbound_item.getPlanned_zone_code();
-            planned_local_code = io_inbound_item.getPlanned_local_code();
-            to_class_code = null;
-            move_type = ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY;
-            viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
+            planned_zone_code = zone_code_conf;
+            planned_local_code = local_code_conf;
         }
+        to_class_code = null;
+        move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
+        viewMode = mPresenter.getViewMode(move_type);
+        serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
+
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
@@ -243,8 +236,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT058;
-        mAct_Title = Constant.ACT058 + "_" + "title";
+        mAct_Info = Constant.ACT059;
+        mAct_Title = Constant.ACT059 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
