@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -61,6 +63,9 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         transList.add("inbound_not_found");
         transList.add("current_position_lbl");
         transList.add("suggested_position_lbl");
+        transList.add(ConstantBaseApp.IO_INBOUND);
+        transList.add(ConstantBaseApp.IO_OUTBOUND);
+        transList.add(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED);
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -123,6 +128,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
 
         protected final ConstraintLayout main_cl_background;
+        protected final TextView tv_io_process_type;
+        protected final ImageView iv_io_process_type;
         protected final TextView tv_io_product_lbl;
         protected final TextView tv_io_product_ext_code_val;
         protected final TextView tv_io_product_desc_val;
@@ -147,6 +154,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             this.itemVIew = itemView;
             main_cl_background = itemView.findViewById(R.id.act055_main_cl_background);
             tv_io_product_lbl = itemView.findViewById(R.id.act055_tv_io_product_lbl);
+            tv_io_process_type = itemView.findViewById(R.id.act055_tv_io_process_type);
+            iv_io_process_type = itemView.findViewById(R.id.act055_iv_io_process_type);
             tv_io_product_ext_code_val = itemView.findViewById(R.id.act055_tv_io_product_ext_code_val);
             tv_io_product_desc_val = itemView.findViewById(R.id.act055_tv_io_product_desc_val);
             tv_io_serial_lbl = itemView.findViewById(R.id.act055_tv_io_serial_lbl);
@@ -176,7 +185,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
 
             tv_io_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
             tv_io_serial_ext_code_lbl.setText(hmAux_Trans.get("serial_code_lbl"));
-            tv_io_serial_ext_code_val.setText(String.valueOf(data.getSerial_code()));
+            tv_io_serial_ext_code_val.setText(data.getSerial_id());
             tv_io_serial_desc.setText(formatSerialBrandModelColor(data));
             if(formatSerialBrandModelColor(data).isEmpty()){
                 tv_io_serial_desc.setVisibility(View.GONE);
@@ -184,6 +193,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_move_order_list_position.setText(String.valueOf(getAdapterPosition() + 1));
             tv_io_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
             tv_io_move_order_val.setText(formatPrefixSufix(data.getMove_prefix(),data.getMove_code()));
+
+            setProcessStatus(data.getMove_type());
 
             if(data.getInbound_prefix() == null || data.getInbound_code() == null) {
                 tv_io_inbound_val.setVisibility(View.GONE);
@@ -235,6 +246,27 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "" : " | " + data.getColor_desc());
             return serialBrandModelColor;
         }
+        private void setProcessStatus(String processType) {
+            if(processType == null){
+                processType = "";
+            }
+
+            switch (processType) {
+                case ConstantBaseApp.IO_INBOUND:
+                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
+                    break;
+                case ConstantBaseApp.IO_OUTBOUND:
+                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
+                    break;
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
+                    break;
+                default:
+                    iv_io_process_type.setVisibility(View.GONE);
+            }
+            tv_io_process_type.setText(hmAux_Trans.get(processType));
+        }
+
     }
     public interface Act055ListListener {
 

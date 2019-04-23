@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -52,10 +55,16 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     Toast.makeText(context, "IN_CONF", Toast.LENGTH_SHORT).show();
                     break;
+//                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+//
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_PREFIX));
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_CODE));
+//                    bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, hmAuxRet.get(IO_Inbound_ItemDao.INBOUND_ITEM));
+//                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+//                    mView.callAct059(bundle);
+//                    break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                    Toast.makeText(context, "IN_PUT_AWAY", Toast.LENGTH_SHORT).show();
-                    //callact058
-                    break;
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
                     bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
@@ -63,16 +72,35 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     mView.callAct058(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_MOVE:
-                    bundle.putString(IO_MoveDao.MOVE_PREFIX, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
-                    bundle.putString(IO_MoveDao.MOVE_CODE, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
+
+                    bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, Integer.parseInt(hmAuxRet.get(MD_Product_SerialDao.PRODUCT_CODE)));
+                    bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, Integer.parseInt(hmAuxRet.get(MD_Product_SerialDao.SERIAL_CODE)));
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_ZONE_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.ZONE_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.ZONE_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_ZONE_CODE_KEY)));
+                    }
+
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_LOCAL_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_LOCAL_CODE_KEY)));
+                    }
+
+                    if(hmAuxRet.get(Constant.HMAUX_PLANNED_CLASS_CODE_KEY).isEmpty()) {
+                        bundle.putInt(IO_Blind_MoveDao.CLASS_CODE,-1 );
+                    }else{
+                        bundle.putInt(IO_Blind_MoveDao.CLASS_CODE, Integer.parseInt(hmAuxRet.get(Constant.HMAUX_PLANNED_CLASS_CODE_KEY)));
+                    }
+
                     bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
                     mView.callAct058(bundle);
                     //callact058
                     break;
-                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
-                    Toast.makeText(context, "OUT_PICKING", Toast.LENGTH_SHORT).show();
-                    //callact058
-                    break;
+//                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+//                    Toast.makeText(context, "OUT_PICKING", Toast.LENGTH_SHORT).show();
+//                    //callact058
+//                    break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     Toast.makeText(context, "OUT_CONF", Toast.LENGTH_SHORT).show();
                     break;
@@ -135,7 +163,7 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
 
     /**
      * Verifica se site logado permite Inbound_auto_create
-     * @return
+     * @return Inbound_auto_create
      */
     @Override
     public boolean isSiteInboundAutoCreation() {

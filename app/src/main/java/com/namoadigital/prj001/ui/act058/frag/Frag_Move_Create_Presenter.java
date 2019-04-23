@@ -10,15 +10,16 @@ import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.IO_Move_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.MD_Class_Sql_001;
+import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
@@ -106,7 +107,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     @Override
     public void setLocalValue(SearchableSpinner ss_local) {
 
-        if (to_local_code != null) {
+        if (to_local_code != null && to_local_code >0) {
             MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
                     new MD_Site_Zone_Local_Sql_002(
                             ToolBox_Con.getPreference_Customer_Code(context),
@@ -159,7 +160,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public void setDefaultReason(SearchableSpinner ss_reason) {
         IO_Move_Reason moveReason;
         //
-        if (reason_code != null) {
+        if (reason_code != null && reason_code >0) {
             moveReason = ioMoveReasonDao.getByString(
                     new IO_Move_Reason_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
@@ -219,5 +220,33 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         DaoObjReturn daoObjReturn = ioMoveTrackingDao.delete(io_move_tracking);
         return !daoObjReturn.hasError();
 
+    }
+
+    @Override
+    public ArrayList<HMAux> getMoveReasonList() {
+        ArrayList<HMAux> moveReasonList = new ArrayList<>();
+
+        IO_Move_ReasonDao ioMoveReasonDao =
+                new IO_Move_ReasonDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        moveReasonList = (ArrayList<HMAux>) ioMoveReasonDao.query_HM(
+                new IO_Move_Reason_Sql_SS(ToolBox_Con.getPreference_Customer_Code(context))
+                        .toSqlQuery());
+        //
+
+        //
+        return moveReasonList;
+    }
+
+    @Override
+    public ArrayList<HMAux> getClassList() {
+        MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
+
+        return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+        ).toSqlQuery());
     }
 }

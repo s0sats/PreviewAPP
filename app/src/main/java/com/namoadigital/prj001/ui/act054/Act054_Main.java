@@ -256,10 +256,10 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             @Override
             public void onClick(View v) {
                 isLocalProcess = false;
-                if (!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
+                if (!ssIoZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     zoneDesc = "";
                 } else {
-                    zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.ID);
+                    zoneDesc = ssIoZone.getmValue().get(SearchableSpinner.CODE);
                 }
                 if (validateOrderCategory()) {
                     if (validateOrientation(zoneDesc))

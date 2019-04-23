@@ -271,7 +271,6 @@ public class T_IO_Serial_Process_Download_Move {
             io_move.setCustomer_code(downloadMove.getCustomer_code());
             io_move.setMove_prefix(downloadMove.getMove_prefix());
             io_move.setMove_code(downloadMove.getMove_code());
-            io_move.setMove_code(downloadMove.getMove_code());
             io_move.setProduct_code(downloadMove.getProduct_code());
             io_move.setSerial_code(downloadMove.getSerial_code());
             io_move.setSite_code(downloadMove.getSite_code());
@@ -301,5 +300,41 @@ public class T_IO_Serial_Process_Download_Move {
         }
         //
         return io_move;
+    }
+    public static IO_Blind_Move getIO_Blind_MoveObj(T_IO_Serial_Process_Download_Move downloadMove){
+        IO_Blind_Move io_blind_move = new IO_Blind_Move();
+
+        io_blind_move.setCustomer_code(downloadMove.getCustomer_code());
+        io_blind_move.setBlind_prefix(downloadMove.getMove_prefix());
+        io_blind_move.setBlind_code(downloadMove.getMove_code());
+        io_blind_move.setProduct_code(downloadMove.getProduct_code());
+        io_blind_move.setSerial_code(downloadMove.getSerial_code());
+
+        io_blind_move.setSite_code(downloadMove.getSite_code());
+        io_blind_move.setReason_code(downloadMove.getReason_code());
+        io_blind_move.setStatus(downloadMove.getStatus());
+        io_blind_move.setLocal_code(downloadMove.getPlanned_local_code());
+        io_blind_move.setZone_code(downloadMove.getPlanned_zone_code());
+        io_blind_move.setClass_code(downloadMove.getPlanned_class_code());
+
+        return io_blind_move;
+    }
+
+    public static IO_Inbound_Item getIO_Inbound_ItemObj(T_IO_Serial_Process_Download_Move downloadMove){
+        IO_Inbound_Item item = new IO_Inbound_Item();
+        item.setCustomer_code(downloadMove.getCustomer_code());
+        item.setInbound_prefix(downloadMove.getInbound_prefix());
+        item.setInbound_code(downloadMove.getInbound_code());
+        item.setProduct_code(downloadMove.getProduct_code());
+        item.setSerial_code(downloadMove.getSerial_code());
+        item.setSite_code(downloadMove.getSite_code());
+        item.setPlanned_zone_code(downloadMove.getPlanned_zone_code());
+        item.setPlanned_local_code(downloadMove.getPlanned_local_code());
+        item.setPlanned_class_code(downloadMove.getPlanned_class_code());
+        item.setInbound_prefix(downloadMove.getInbound_prefix());
+        item.setInbound_code(downloadMove.getInbound_code());
+        item.setInbound_item(downloadMove.getInbound_item());
+        item.setStatus(downloadMove.getStatus());
+        return item;
     }
 }

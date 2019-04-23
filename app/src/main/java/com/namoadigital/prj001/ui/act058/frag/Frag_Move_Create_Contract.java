@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act058.frag;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Frag_Move_Create_Contract {
@@ -17,6 +19,10 @@ public interface Frag_Move_Create_Contract {
         void setLocalValue(SearchableSpinner ss_local);
 
         MD_Class getClassFromMove(Integer classCode);
+
+        ArrayList<HMAux> getClassList();
+
+        ArrayList<HMAux> getMoveReasonList();
 
         List<IO_Move_Tracking> getTrackingFromMove();
 

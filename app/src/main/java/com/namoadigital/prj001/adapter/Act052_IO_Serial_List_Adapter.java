@@ -54,6 +54,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         List<String> transList = new ArrayList<>();
         transList.add("product_lbl");
         transList.add("serial_lbl");
+        transList.add("alert_serial_out_site_title");
+        transList.add("alert_serial_out_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -94,7 +96,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
 
-        if (record.getSite_code() != 0 && record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+        if (record.getSite_code() == null || record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
             mListener.onClickListItem(record);
@@ -196,6 +198,9 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         }
 
         private void setProcessStatus(String processType) {
+            if(processType == null){
+                processType = "";
+            }
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
@@ -203,8 +208,13 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
                     break;
-                default:
+                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
+                    break;
+                default:
+                    ivStatusIcon.setVisibility(View.GONE);
             }
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }

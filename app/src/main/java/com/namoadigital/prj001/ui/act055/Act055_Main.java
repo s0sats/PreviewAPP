@@ -17,12 +17,11 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act055_IO_Move_Order_List_Adapter;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
+import com.namoadigital.prj001.ui.act059.Act059_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 

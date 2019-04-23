@@ -3,21 +3,14 @@ package com.namoadigital.prj001.ui.act055;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.T_IO_Move_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Download;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
@@ -74,36 +67,19 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
             if(searchRet.hasConsistentValue(Constant.HMAUX_PREFIX_KEY)
               && searchRet.hasConsistentValue(Constant.HMAUX_CODE_KEY)
             && searchRet.hasConsistentValue(Constant.HMAUX_PROCESS_KEY)){
+
                 Bundle bundle = new Bundle();
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT055);
                 bundle.putString(IO_MoveDao.MOVE_PREFIX, searchRet.get(Constant.HMAUX_PREFIX_KEY));
                 bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
-                //
 
-                switch (searchRet.get(Constant.HMAUX_PROCESS_KEY)){
-                    case ConstantBaseApp.IO_INBOUND:
-                        Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
-                        break;
-                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                        bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
-                        bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
-                        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT055);
-                        mView.callAct058(bundle);
-                        break;
-                    case ConstantBaseApp.IO_OUTBOUND:
-                        Toast.makeText(context,"type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY), Toast.LENGTH_SHORT ).show();
-                        break;
-                    default:
-                        Log.d("Move_type", "type: "+searchRet.get(Constant.HMAUX_PROCESS_KEY));
-                        break;
-                }
-
+                mView.callAct058(bundle);
             }else{
                 mView.showAlert(
                         hmAux_Trans.get("alert_no_move_found_ttl"),
                         hmAux_Trans.get("alert_no_move_found_msg")
                 );
             }
-
         }catch (Exception e){
             mView.showAlert(
                     hmAux_Trans.get("alert_error_on_processing_return_ttl"),
