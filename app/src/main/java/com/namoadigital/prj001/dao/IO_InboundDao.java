@@ -214,6 +214,17 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 throw new Exception(inboundItemRet.getErrorMsg());
             }
             //
+            IO_MoveDao moveDao = new IO_MoveDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            daoObjReturn = moveDao.addUpdate(io_inbound.getMove(),false,db);
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getErrorMsg());
+            }
+            //
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -300,6 +311,19 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 if(inboundItemRet.hasError()){
                     throw new Exception(inboundItemRet.getErrorMsg());
                 }
+                //Se operação de insert ou update executada com sucesso
+                //Segue para inserção dos itens.
+                IO_MoveDao moveDao = new IO_MoveDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                daoObjReturn = moveDao.addUpdate(io_inbound.getMove(),false,db);
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {

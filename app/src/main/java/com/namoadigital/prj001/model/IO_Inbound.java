@@ -90,6 +90,9 @@ public class IO_Inbound implements Serializable {
     @Expose
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @Expose
+    //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    private ArrayList<IO_Move> move = new ArrayList<>();
     //Campos exclusivos para envio na criação da Inbound
     @Expose
     private Integer outbound_prefix;
@@ -454,6 +457,14 @@ public class IO_Inbound implements Serializable {
 
     public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
     }
 
     public Integer getOutbound_prefix() {

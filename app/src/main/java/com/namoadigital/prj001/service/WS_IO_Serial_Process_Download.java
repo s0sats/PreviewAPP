@@ -199,7 +199,8 @@ public class WS_IO_Serial_Process_Download extends IntentService {
             DaoObjReturn daoReturn = inboundDao.addUpdate(inbound.get(0));
             if (!daoReturn.hasError()) {
                 if(inbound.get(0).getSerial() != null && inbound.get(0).getSerial().size() > 0) {
-                    serialDao.addUpdateTmp(inbound.get(0).getSerial().get(0));
+                    //serialDao.addUpdateTmp(inbound.get(0).getSerial().get(0));
+                    serialDao.addUpdateTmp(inbound.get(0).getSerial(),false);
                     hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getProduct_code()));
                     hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_code()));
                     hmAuxRet.put(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_id()));

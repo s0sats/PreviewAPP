@@ -229,10 +229,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             tv_no_result.setVisibility(View.VISIBLE);
             ll_records.setVisibility(View.GONE);
         }
-
-        if (record_count > record_page) {
-            showQtyExceededMsg(record_count, record_page);
-        }
+        // presenter é o responsavel por exibir a msg.
+//        if (record_count > record_page) {
+//            showQtyExceededMsg(record_count, record_page);
+//        }
     }
 
     @Override
@@ -281,17 +281,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-                if(serialStoredInSite(productSerial)) {
-                    mPresenter.defineFlow(productSerial, false);
-                }else{
-                    ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_serial_in_another_site_ttl"),
-                        hmAux_Trans.get("alert_serial_in_another_site_msg"),
-                        null,
-                        0
-                    );
-                }
+                mPresenter.processItemClick(productSerial);
             }
         });
         //
@@ -304,14 +294,9 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
 
     }
 
-    private boolean serialStoredInSite(MD_Product_Serial productSerial) {
-        return
-            (productSerial != null
-            && (productSerial.getSite_code() == null
-                || (productSerial.getSite_code() != null && ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(productSerial.getSite_code())))
-                )
-            );
-
+    public void setBtnCreateVisibility(boolean visible){
+        btn_create_serial.setVisibility(visible ? View.VISIBLE : View.GONE );
+        btn_create_serial.setEnabled(visible);
     }
 
     @Override

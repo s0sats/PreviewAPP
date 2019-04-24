@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act063;
 import android.content.Context;
 import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -46,7 +47,11 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
         mView.loadProductSerialList(serial_list);
         //Se qtd 1, chama proxima define flow
         if (serial_list.size() == 1) {
-            defineFlow(serial_list.get(0),false);
+            //Se 1 item, esconde o btn de criação.
+            mView.setBtnCreateVisibility(false);
+            //
+            processItemClick(serial_list.get(0));
+            //defineFlow(serial_list.get(0),false);
         } else if (record_count > record_page) {
             //Se qtd de registro maior que o total retornado,
             //exibe msg para refinar a busca.
@@ -66,6 +71,51 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
         mView.callAct053(bundle);
     }
 
+    @Override
+    public void processItemClick(MD_Product_Serial productSerial) {
+        if(checkSerialAvailableToAdd(productSerial)) {
+            defineFlow(productSerial, false);
+        }else{
+            //
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_serial_in_another_site_ttl"),
+                hmAux_Trans.get("alert_serial_in_another_site_msg"),
+                null,
+                0
+            );
+        }
+    }
+
+    /**
+     * Metodo que verifica se serial esta disponivel para ser adicionado a uma inbound.
+     *
+     * Regras:
+     *  - Serial pode NÃO estar armazenado OU armazenado em outro site.
+     *  - Serial NÃO PODE estar vinculado a um inbound.
+     *
+     * @param productSerial
+     * @return
+     */
+    private boolean checkSerialAvailableToAdd(MD_Product_Serial productSerial) {
+        return
+            (productSerial != null
+                //Verifica se não esta aloca ou se site diferente do atual.
+                && (productSerial.getSite_code() == null
+                    ||  (productSerial.getSite_code() != null && !ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(productSerial.getSite_code())))
+                )
+                //Verifica se Serial esta vinculado a uma inbound
+                && (
+                    productSerial.getInbound_prefix() == null
+                    || productSerial.getInbound_prefix() == 0
+                    || productSerial.getInbound_code() == null
+                    || productSerial.getInbound_code() == 0
+                    )
+            )
+
+            ;
+
+    }
 
     @Override
     public void onBackPressedClicked() {
