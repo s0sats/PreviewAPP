@@ -1010,6 +1010,14 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         initializeViews();
     }
 
+    public HMAux getZoneInfo() {
+        return ss_zone.getmValue();
+    }
+
+    public HMAux getLocalInfo() {
+        return ss_local.getmValue();
+    }
+
 
     public interface OnFragmentInteractionListener {
         void persistIoMovePlanned(long customer_code,
