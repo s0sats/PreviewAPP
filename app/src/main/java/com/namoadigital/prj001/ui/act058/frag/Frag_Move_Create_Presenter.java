@@ -108,14 +108,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public void setLocalValue(SearchableSpinner ss_local) {
 
         if (to_local_code != null && to_local_code >0) {
-            MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
-                    new MD_Site_Zone_Local_Sql_002(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            ToolBox_Con.getPreference_Site_Code(context),
-                            to_zone_code,
-                            to_local_code
-                    ).toSqlQuery()
-            );
+            MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(to_zone_code, to_local_code);
 
             ToolBox_Inf.setSSmValue(
                     ss_local,
@@ -127,18 +120,22 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         }
     }
 
+    private MD_Site_Zone_Local getMd_site_zone_local(Integer to_zone_code, Integer to_local_code) {
+        return siteZoneLocalDao.getByString(
+                new MD_Site_Zone_Local_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        to_zone_code,
+                        to_local_code
+                ).toSqlQuery()
+        );
+    }
+
     @Override
     public void setLocalValue(SearchableSpinner ss_local, Integer zone_code, Integer local_code) {
 
         if (local_code != null && local_code >0) {
-            MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
-                    new MD_Site_Zone_Local_Sql_002(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            ToolBox_Con.getPreference_Site_Code(context),
-                            zone_code,
-                            local_code
-                    ).toSqlQuery()
-            );
+            MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(zone_code, local_code);
 
             ToolBox_Inf.setSSmValue(
                     ss_local,
@@ -215,13 +212,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
             selected_zone_code = to_zone_code;
         }
 
-        MD_Site_Zone zone = siteZoneDao.getByString(
-                new MD_Site_Zone_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_Site_Code(context)),
-                        selected_zone_code
-                ).toSqlQuery()
-        );
+        MD_Site_Zone zone = getMd_site_zone(selected_zone_code);
 
         //
         if (zone != null) {
@@ -239,12 +230,41 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     }
 
+    private MD_Site_Zone getMd_site_zone(Integer selected_zone_code) {
+        return siteZoneDao.getByString(
+                    new MD_Site_Zone_Sql_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_Site_Code(context)),
+                            selected_zone_code
+                    ).toSqlQuery()
+            );
+    }
+
     @Override
     public boolean removeTrackingFromMove(IO_Move_Tracking io_move_tracking) {
 
         DaoObjReturn daoObjReturn = ioMoveTrackingDao.delete(io_move_tracking);
         return !daoObjReturn.hasError();
 
+    }
+
+    @Override
+    public String getZoneId(int zone_code) {
+
+        MD_Site_Zone md_site_zone = getMd_site_zone(zone_code);
+        if(md_site_zone.getZone_id().isEmpty()){
+            return "";
+        }
+        return md_site_zone.getZone_id();
+    }
+
+    @Override
+    public String getLocalId(Integer local_code, Integer zone_code) {
+        MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(to_zone_code, to_local_code);
+        if(mdSiteZoneLocal.getLocal_id().isEmpty()){
+            return "";
+        }
+        return mdSiteZoneLocal.getLocal_id();
     }
 
     @Override

@@ -672,9 +672,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_val.setVisibility(View.GONE);
         }
 
-        String plannedZoneLocal = (planned_zone_code == null) ? "" : String.valueOf(planned_zone_code);
+        String plannedZoneLocal = (planned_zone_code == null) ? "" : mPresenter.getZoneId(planned_zone_code);
+        plannedZoneLocal = (planned_local_code == null) ? plannedZoneLocal+"" : plannedZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
 
-        plannedZoneLocal.concat((planned_local_code == null) ? "" : planned_local_code + "|");
         if (plannedZoneLocal.isEmpty() || plannedZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
             tv_move_to_val.setVisibility(View.GONE);
@@ -740,6 +740,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         setSSMoveReason();
+        setViewEnable();
 
         switch (view_param) {
             case 0:
@@ -758,7 +759,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 mkdate_confirm.setVisibility(View.VISIBLE);
             case 3:
                 ss_reason.setVisibility(View.GONE);
-                mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
                 ss_zone.setmEnabled(false);
                 ss_local.setmEnabled(false);
                 mkedit_coments.setVisibility(View.VISIBLE);
@@ -767,7 +767,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
         mListener.onAddOrRemoveControlSS(ss_local, true);
-        setViewEnable();
+
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }

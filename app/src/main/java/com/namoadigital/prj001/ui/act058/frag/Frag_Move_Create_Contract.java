@@ -31,6 +31,10 @@ public interface Frag_Move_Create_Contract {
         void setDefaultZone(SearchableSpinner ss_zone);
 
         boolean removeTrackingFromMove(IO_Move_Tracking io_move_tracking);
+
+        String getZoneId(int zone_code);
+
+        String getLocalId(Integer local_code,Integer zone_code);
     }
 
     interface I_View{

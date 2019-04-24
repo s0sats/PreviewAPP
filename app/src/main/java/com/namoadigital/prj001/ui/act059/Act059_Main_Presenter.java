@@ -1,11 +1,16 @@
 package com.namoadigital.prj001.ui.act059;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
@@ -80,12 +85,33 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
                 mView.callAct054();
                 break;
             case ConstantBaseApp.ACT061:
-                mView.callAct054();
+                mView.callAct061();
                 break;
             case ConstantBaseApp.ACT052:
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
         }
+    }
+
+    @Override
+    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
+        mView.setWs_process(WS_Serial_Tracking_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_trans.get("progress_tracking_search_ttl"),
+                hmAux_trans.get("progress_tracking_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Tracking_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }

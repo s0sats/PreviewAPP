@@ -16,6 +16,8 @@ public interface Act059_Main_Contract {
         void setWs_process(String name);
 
         void callAct051();
+
+        void callAct061();
     }
 
     interface I_Presenter{
@@ -26,5 +28,7 @@ public interface Act059_Main_Contract {
         int getViewMode(String move_type, int has_put_away);
 
         void onBackPressed(String actRequest);
+
+        void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
     }
 }

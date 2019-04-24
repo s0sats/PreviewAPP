@@ -449,7 +449,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT059);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
         bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, String.valueOf(mPrefix));
         bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, String.valueOf(mCode));

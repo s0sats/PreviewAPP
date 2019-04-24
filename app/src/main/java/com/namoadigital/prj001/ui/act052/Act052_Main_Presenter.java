@@ -60,7 +60,7 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, hmAuxRet.get(MD_Product_SerialDao.PRODUCT_CODE));
                     bundle.putString(MD_Product_SerialDao.SERIAL_CODE, hmAuxRet.get(MD_Product_SerialDao.SERIAL_CODE));
                     bundle.putString(MD_Product_SerialDao.SERIAL_ID, hmAuxRet.get(MD_Product_SerialDao.SERIAL_ID));
-                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT061);
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
                     mView.callAct061(bundle);
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
