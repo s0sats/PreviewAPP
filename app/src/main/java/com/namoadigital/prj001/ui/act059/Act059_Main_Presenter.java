@@ -51,16 +51,23 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
     }
 
     @Override
-    public int getViewMode(String move_type) {
+    public int getViewMode(String move_type, int has_put_away) {
 
         switch (move_type) {
-            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+            case ConstantBaseApp.IO_PROCESS_MOVE:
+            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                return 0;
+            case ConstantBaseApp.IO_INBOUND:
+            case ConstantBaseApp.IO_OUTBOUND:
                 return 1;
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
-            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+                if(has_put_away == 0) {
+                    return 2;
+                }else{
+                    return 3;
+                }
             default:
-                return 2;
+                return -1;
         }
 
     }
@@ -71,6 +78,10 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
             case ConstantBaseApp.ACT054:
             case ConstantBaseApp.ACT055:
                 mView.callAct054();
+                break;
+            case ConstantBaseApp.ACT061:
+                mView.callAct054();
+                break;
             case ConstantBaseApp.ACT052:
             case ConstantBaseApp.ACT051:
             default:

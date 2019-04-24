@@ -138,7 +138,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
         io_move.getSerial().add(serial);
         io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
-//        io_move.setUpdate_required(1);
+        io_move.setUpdate_required(1);
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);

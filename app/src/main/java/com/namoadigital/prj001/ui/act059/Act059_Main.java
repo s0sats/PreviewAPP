@@ -194,7 +194,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         }
         to_class_code = null;
         move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
-        viewMode = mPresenter.getViewMode(move_type);
+        viewMode = mPresenter.getViewMode(move_type, has_put_away);
         serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
 
         frag_move_create = Frag_Move_Create.newInstance(

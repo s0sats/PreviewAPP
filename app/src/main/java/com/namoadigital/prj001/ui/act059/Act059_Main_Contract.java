@@ -23,7 +23,7 @@ public interface Act059_Main_Contract {
 
         MD_Product_Serial getSerialInfo(long product_code, int serial_code);
 
-        public int getViewMode(String move_type);
+        int getViewMode(String move_type, int has_put_away);
 
         void onBackPressed(String actRequest);
     }

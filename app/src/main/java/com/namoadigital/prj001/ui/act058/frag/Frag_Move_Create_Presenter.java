@@ -128,6 +128,29 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
+    public void setLocalValue(SearchableSpinner ss_local, Integer zone_code, Integer local_code) {
+
+        if (local_code != null && local_code >0) {
+            MD_Site_Zone_Local mdSiteZoneLocal = siteZoneLocalDao.getByString(
+                    new MD_Site_Zone_Local_Sql_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            zone_code,
+                            local_code
+                    ).toSqlQuery()
+            );
+
+            ToolBox_Inf.setSSmValue(
+                    ss_local,
+                    String.valueOf(mdSiteZoneLocal.getLocal_code()),
+                    mdSiteZoneLocal.getLocal_id(),
+                    mdSiteZoneLocal.getLocal_id(),
+                    true
+            );
+        }
+    }
+
+    @Override
     public MD_Class getClassFromMove(Integer classCode) {
         if (classCode == null) {
             classCode = 0;
@@ -183,7 +206,9 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public void setDefaultZone(SearchableSpinner ss_zone) {
         Integer selected_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
 
-        if (move_type!= null && move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)) {
+        if (move_type!= null
+                && move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
+                && move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
             selected_zone_code = planned_zone_code;
             ss_zone.setmEnabled(false);
         } else if (to_zone_code != null) {

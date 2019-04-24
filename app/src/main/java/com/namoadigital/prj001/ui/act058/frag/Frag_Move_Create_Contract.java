@@ -18,6 +18,8 @@ public interface Frag_Move_Create_Contract {
 
         void setLocalValue(SearchableSpinner ss_local);
 
+        void setLocalValue(SearchableSpinner ss_local, Integer zone_code, Integer local_code);
+
         MD_Class getClassFromMove(Integer classCode);
 
         ArrayList<HMAux> getClassList();

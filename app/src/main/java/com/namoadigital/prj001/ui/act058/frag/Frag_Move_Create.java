@@ -398,6 +398,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 }
                 break;
             case 1:
+            case 2:
+            case 3:
                 mkdate_confirm.setmHighlightWhenInvalid(true);
 
                 if (!mkdate_confirm.isValid()) {
@@ -752,6 +754,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
             case 2:
                 ss_reason.setVisibility(View.GONE);
+                mkedit_coments.setVisibility(View.VISIBLE);
+                mkdate_confirm.setVisibility(View.VISIBLE);
+            case 3:
+                ss_reason.setVisibility(View.GONE);
+                mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
+                ss_zone.setmEnabled(false);
+                ss_local.setmEnabled(false);
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
         }
