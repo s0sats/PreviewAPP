@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
@@ -33,16 +34,15 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     private IO_InboundDao inboundDao;
     private IO_Inbound_ItemDao inboundItemDao;
     private MD_Product_SerialDao serialDao;
+    private IO_MoveDao moveDao;
     private Gson gsonEnv;
     private Gson gsonRec;
     private String token;
     private String file_to_del = "";
     private boolean reSend = false;
     private boolean menuSendProcess;
-    private String ItemListRet = "";
-    private ArrayList<InboundItemSaveActReturn> ItemObjRet = new ArrayList<>();
-    private ArrayList<IO_Inbound> inbounds = new ArrayList<>();
-    private String saveAction = "";
+    private ArrayList<InboundItemSaveActReturn> actReturnList = new ArrayList<>();
+    private ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> headerList = new ArrayList<>();
 
     public WS_IO_Inbound_Item_Save() {
         super("ws_io_inbound_item_save");
@@ -55,10 +55,10 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            saveAction = bundle.getString(ConstantBaseApp.IO_ACTION_KEY, ConstantBaseApp.IO_ACTION_ADD_ITEM);
             inboundDao = new IO_InboundDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             inboundItemDao = new IO_Inbound_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            moveDao = new IO_MoveDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
             //
@@ -79,10 +79,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     }
 
     private void processWsInboundItemSave() throws Exception {
-        ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> inboundHeaders = new ArrayList<>();
-
-        token = ToolBox_Inf.getToken(getApplicationContext());
-
         //
         loadTranslation();
         //
@@ -107,9 +103,9 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
             env.setReprocess(1);
-            //inboundHeaders = env.getInbound();
+            headerList = env.getInbound();
             //
-            callWsInboundItemSave(env, menuSendProcess);
+            callWsInboundItemSave(env);
 
         } else {
             reSend = false;
@@ -117,14 +113,11 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
             //Gera token
             String token = ToolBox_Inf.getToken(getApplicationContext());
-            if (saveAction.equals(ConstantBaseApp.IO_ACTION_ADD_ITEM)) {
-                inboundHeaders = processAddItem();
-            } else {
 
+            headerList = getItemToSave();
 
-            }
             //Se lista vazia, dispara msg de erro.
-            if (inboundHeaders == null || inboundHeaders.size() == 0) {
+            if (headerList == null || headerList.size() == 0) {
                 if (menuSendProcess) {
                     HMAux auxApReturned = new HMAux();
                     ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "", "0");
@@ -141,7 +134,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
-            env.setInbound(inboundHeaders);
+            env.setInbound(headerList);
             env.setReprocess(0);
             //
             String json_token_content = gsonEnv.toJson(env);
@@ -155,93 +148,98 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 return;
             }
             //Com arquivo token criado, seta update required para 0
-            for (int i = 0; i < inboundHeaders.size(); i++) {
+            for (int i = 0; i < headerList.size(); i++) {
                 //Atualiza header da Inbound para update required 0
-                inboundItemDao.addUpdate(
+                inboundDao.addUpdate(
                     new IO_Inbound_Sql_004(
-                        inboundHeaders.get(i).getCustomer_code(),
-                        inboundHeaders.get(i).getInbound_prefix(),
-                        inboundHeaders.get(i).getInbound_code(),
+                        headerList.get(i).getCustomer_code(),
+                        headerList.get(i).getInbound_prefix(),
+                        headerList.get(i).getInbound_code(),
                         0
                     ).toSqlQuery()
 
                 );
                 //Atualiza todos os itens da Inbound para update required 0
                 inboundItemDao.addUpdate(new IO_Inbound_Item_Sql_005(
-                        inboundHeaders.get(i).getCustomer_code(),
-                        inboundHeaders.get(i).getInbound_prefix(),
-                        inboundHeaders.get(i).getInbound_code(),
+                    headerList.get(i).getCustomer_code(),
+                    headerList.get(i).getInbound_prefix(),
+                    headerList.get(i).getInbound_code(),
                         0
                     ).toSqlQuery()
                 );
+                //Atualiza update required das moves
+                if(headerList.get(i).getMove() != null && headerList.get(i).getMove().size() > 0 ) {
+                    for(IO_Move io_move : headerList.get(i).getMove()){
+                        io_move.setUpdate_required(0);
+                    }
+                    //Atualiza header da Inbound para update required 0
+                    moveDao.addUpdate(headerList.get(i).getMove(),false);
+                }
             }
             //
-            callWsInboundItemSave(env, menuSendProcess);
+            callWsInboundItemSave(env);
         }
     }
 
-    private ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> processAddItem() throws Exception {
-        ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> headers = new ArrayList<>();
+    private ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> getItemToSave() throws Exception {
+        ArrayList<HMAux> inboundAux = new ArrayList<>();
+
         //Selecnio Inbound update_required
-        inbounds = (ArrayList<IO_Inbound>) inboundDao.query(
-            new IO_Inbound_Sql_003(
+        inboundAux = (ArrayList<HMAux>) inboundDao.query_HM(
+            new IO_Inbound_Sql_009(
                 ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
             ).toSqlQuery()
         );
-        //
-        for (IO_Inbound ioInbound : inbounds) {
-            T_IO_Inbound_Item_Env.IO_Inbound_Header inboundHeader = new T_IO_Inbound_Item_Env.IO_Inbound_Header();
-            //Seta dados do cabeçalho
-            inboundHeader.setCustomer_code(ioInbound.getCustomer_code());
-            inboundHeader.setInbound_prefix(ioInbound.getInbound_prefix());
-            inboundHeader.setInbound_code(ioInbound.getInbound_code());
-            inboundHeader.setScn(ioInbound.getScn());
-            //Pega apenas os itens com update required
-            inboundHeader.getItems().addAll(inboundItemDao.query(
-                new IO_Inbound_Item_Sql_004(
-                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                    ioInbound.getInbound_prefix(),
-                    ioInbound.getInbound_code()
-                ).toSqlQuery()
-                )
-            );
-            //
-            headers.add(inboundHeader);
-        }
-        return headers;
-    }
-
-    private ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> getInboundItensHeader(ArrayList<IO_Inbound_Item> ioInboundItems) throws Exception {
-        ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> headers = new ArrayList<>();
-        for (IO_Inbound_Item inboundItem : ioInboundItems) {
-            T_IO_Inbound_Item_Env.IO_Inbound_Header header = new T_IO_Inbound_Item_Env.IO_Inbound_Header();
-
-            //
-            IO_Inbound ioInbound = inboundDao.getByString(
-                new IO_Inbound_Sql_002(
-                    inboundItem.getCustomer_code(),
-                    inboundItem.getInbound_prefix(),
-                    inboundItem.getInbound_code()
-                ).toSqlQuery()
-            );
-            //
-            if (ioInbound == null) {
-                throw new Exception("Origin inbound not found");
+        //Se tem inbonds, faz loop para selecionar dados.
+        if(inboundAux != null && inboundAux.size() > 0){
+            for(HMAux hmAux : inboundAux){
+                if( hmAux == null
+                    || hmAux.size() == 0
+                    || !hmAux.hasConsistentValue(IO_InboundDao.CUSTOMER_CODE)
+                    || !hmAux.hasConsistentValue(IO_InboundDao.INBOUND_PREFIX)
+                    || !hmAux.hasConsistentValue(IO_InboundDao.INBOUND_CODE)
+                    || !hmAux.hasConsistentValue(IO_InboundDao.SCN)
+                ){
+                    //Gravar um exception ?!
+                    //throw new Exception("Origin inbound not found");
+                    break;
+                }else {
+                    T_IO_Inbound_Item_Env.IO_Inbound_Header header = new T_IO_Inbound_Item_Env.IO_Inbound_Header();
+                    //
+                    header.setCustomer_code(Long.parseLong(hmAux.get(IO_InboundDao.CUSTOMER_CODE)));
+                    header.setInbound_prefix(Integer.parseInt(hmAux.get(IO_InboundDao.INBOUND_PREFIX)));
+                    header.setInbound_code(Integer.parseInt(hmAux.get(IO_InboundDao.INBOUND_CODE)));
+                    header.setScn(Integer.parseInt(hmAux.get(IO_InboundDao.SCN)));
+                    //
+                    header.getItems().addAll(
+                        inboundItemDao.query(
+                            new IO_Inbound_Item_Sql_008(
+                                header.getCustomer_code(),
+                                header.getInbound_prefix(),
+                                header.getInbound_code()
+                            ).toSqlQuery()
+                        )
+                    );
+                    //
+                    header.getMove().addAll(
+                        moveDao.query(
+                            new IO_Move_Order_Item_Sql_007(
+                                header.getCustomer_code(),
+                                header.getInbound_prefix(),
+                                header.getInbound_code()
+                            ).toSqlQuery()
+                        )
+                    );
+                    //
+                    headerList.add(header);
+                }
             }
-            //
-            header.setCustomer_code(inboundItem.getCustomer_code());
-            header.setInbound_prefix(inboundItem.getInbound_prefix());
-            header.setInbound_code(inboundItem.getInbound_code());
-            header.setScn(ioInbound.getScn());
-            header.getItems().add(inboundItem);
-            //
-            headers.add(header);
         }
-
-        return headers;
+        //
+        return headerList;
     }
 
-    private void callWsInboundItemSave(T_IO_Inbound_Item_Env env, boolean menuSendProcess) throws Exception {
+    private void callWsInboundItemSave(T_IO_Inbound_Item_Env env) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
@@ -280,89 +278,102 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     }
 
     private void processInboundSaveRet(T_IO_Inbound_Item_Rec rec) throws Exception {
-        ArrayList<InboundItemSaveActReturn> actReturnList = new ArrayList<>();
+        //Executa for no nivel de retorno da inbound.
         for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return saveReturn : rec.getResult()) {
             InboundItemSaveActReturn actReturn = new InboundItemSaveActReturn();
             DaoObjReturn daoObjReturn;
-            //Atualiza obj que contera o retorno.
+            //Atualiza obj que conterÁ o retorno.
             actReturn.setCustomer_code((int) saveReturn.getCustomer_code());
             actReturn.setInbound_prefix(saveReturn.getInbound_prefix());
             actReturn.setInbound_code(saveReturn.getInbound_code());
             actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
             actReturn.setMsg(saveReturn.getRet_msg());
-            //Atualiza SCN e seta update required para 0
-            inboundDao.addUpdate(
-                new
-                    IO_Inbound_Sql_006(
-                    saveReturn.getCustomer_code(),
-                    saveReturn.getInbound_prefix(),
-                    saveReturn.getInbound_code(),
-                    0,
-                    saveReturn.getScn()
-                ).toSqlQuery()
-            );
-            //
+            //Se o retorno do processamento geral foi OK
+            //Essa propriedade Status se refere ao processamento de toda a inbound.
             if (saveReturn.getRet_status().equals("OK")) {
                 for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
-                    IO_Inbound_Item inboundItem = inboundItemDao.getByString(
-                        new IO_Inbound_Item_Sql_006(
-                            saveReturn.getCustomer_code(),
-                            saveReturn.getInbound_prefix(),
-                            saveReturn.getInbound_code(),
-                            0
-                        ).toSqlQuery()
-                    );
                     //
                     if (saveReturnItem.getRet_status().equals("OK")) {
                         actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
                         actReturn.setMsg(saveReturn.getRet_msg());
                         actReturn.setInbound_item(saveReturnItem.getInbound_item());
-                        //
-                        if (saveAction.equals(ConstantBaseApp.IO_ACTION_ADD_ITEM)) {
-                            if (inboundItem != null) {
-                                inboundItem.setInbound_item(saveReturnItem.getInbound_item());
-                                inboundItem.setSave_date(null);
-                                inboundItem.setUpdate_required(0);
-                                //
-                                daoObjReturn = inboundItemDao.addUpdate(inboundItem);
-                                if (!daoObjReturn.hasError()) {
-                                    //Apaga registro com item code 0
-                                    inboundItem.setInbound_item(0);
-                                    daoObjReturn = inboundItemDao.delete(inboundItem, null);
-                                    if (!daoObjReturn.hasError()) {
-                                        if (saveReturnItem.getSerial() != null && saveReturnItem.getSerial().size() > 0) {
-                                            serialDao.addUpdateTmp(saveReturnItem.getSerial().get(0));
-                                        }
-                                    }else{
-                                        throw new Exception(daoObjReturn.getErrorMsg());
-                                    }
-                                }else{
+                        actReturn.setMove_prefix(saveReturnItem.getMove_prefix());
+                        actReturn.setMove_code(saveReturnItem.getMove_code());
+                        actReturnList.add(actReturn);
+                    }
+                }
+            } else {
+                if(saveReturn.getRet_status().equals(ConstantBaseApp.SYS_STATUS_ERROR)) {
+                    actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
+                    actReturn.setMsg(saveReturn.getRet_msg());
+                    //Se erro ao processar inbound, pega os itens e retorna ao status anterior.
+                    //busca cabeçalho para atualiza os itens
+                    for (T_IO_Inbound_Item_Env.IO_Inbound_Header headerItem : headerList) {
+                        //Se encontrou atualiza.
+                        if (
+                            headerItem.getCustomer_code() == saveReturn.getCustomer_code()
+                                && headerItem.getInbound_prefix() == saveReturn.getInbound_prefix()
+                                && headerItem.getInbound_code() == saveReturn.getInbound_code()
+                        ) {
+                            if (headerItem.getItems() != null && headerItem.getItems().size() > 0) {
+                                daoObjReturn = inboundItemDao.addUpdate(headerItem.getItems(), false);
+                                if (daoObjReturn.hasError()) {
                                     throw new Exception(daoObjReturn.getErrorMsg());
                                 }
-                            } else {
-                                throw new Exception("Inbound Item not found");
                             }
-
-                        }
-                    } else {
-                        //Se erro O QUE FAZER?
-                        daoObjReturn = inboundItemDao.delete(inboundItem, null);
-                        if (daoObjReturn.hasError()) {
-                            throw new Exception(daoObjReturn.getErrorMsg());
+                            //
+                            if (headerItem.getItems() != null && headerItem.getMove().size() > 0) {
+                                daoObjReturn = moveDao.addUpdate(headerItem.getMove(), false);
+                                if (daoObjReturn.hasError()) {
+                                    throw new Exception(daoObjReturn.getErrorMsg());
+                                }
+                            }
+                            //Após processar
+                            break;
                         }
                     }
                 }
+                actReturnList.add(actReturn);
             }
             //
-            actReturnList.add(actReturn);
+        }
+        //Processa as inbounds Full
+        if(rec.getInbound() != null && rec.getInbound().size() > 0){
+            inboundDao.processFull(rec.getInbound());
         }
         //
-        deleteFile(Constant.TOKEN_PATH, file_to_del);
+        if(rec.getMove() != null && rec.getMove().size() > 0){
+            ArrayList<MD_Product_Serial> moveSerialList = new ArrayList<>();
+            //
+            for(IO_Move ioMove: rec.getMove()){
+                if(ioMove.getSerial() != null && ioMove.getSerial().size() > 0){
+                    moveSerialList.add(ioMove.getSerial().get(0));
+                }
+            }
+            //
+            DaoObjReturn daoObjReturn = moveDao.addUpdate(rec.getMove(), false);
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getErrorMsg());
+            }
+            serialDao.addUpdateTmp(moveSerialList,false);
+            //
+        }
         //
-        String jsonActReturn = gsonRec.toJson(actReturnList);
-        //
-        callFinishProcessing(jsonActReturn);
-
+        if(deleteFile(Constant.TOKEN_PATH, file_to_del)){
+            if(reSend){
+                ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
+                //Reseta var de re transmissão.
+                reSend = false;
+                //
+                processWsInboundItemSave();
+            }else{
+                String jsonActReturn = gsonRec.toJson(actReturnList);
+                //
+                callFinishProcessing(jsonActReturn);
+            }
+        }else{
+            //VERIFICAR O QUYE FAZER NESSE CASO.
+        }
     }
 
     private void callFinishProcessing(String actReturn) {

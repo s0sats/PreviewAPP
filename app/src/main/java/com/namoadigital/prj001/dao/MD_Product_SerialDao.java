@@ -5,23 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_007;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -448,6 +438,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         }
 
         closeDB();
+    }
+
+    /**
+     * Metodo criado para ser usado pelo insert da inbound
+     *
+     * @param md_product_serials
+     * @param dbInstance
+     */
+    public void addUpdateTmpByInbound(Iterable<MD_Product_Serial> md_product_serials, SQLiteDatabase dbInstance){
+        for(MD_Product_Serial serial : md_product_serials ){
+            addUpdateTmp(serial,dbInstance);
+        }
     }
 
     @Override

@@ -208,10 +208,10 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 Constant.DB_VERSION_CUSTOM
             );
             //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
-            DaoObjReturn inboundItemRet = inboundItemDao.addUpdate(io_inbound.getItems(),false,db);
+            daoObjReturn = inboundItemDao.addUpdate(io_inbound.getItems(),false,db);
             //Se erro durante insert, dispara exception abortando o processamento.
-            if(inboundItemRet.hasError()){
-                throw new Exception(inboundItemRet.getErrorMsg());
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getRawMessage());
             }
             //
             IO_MoveDao moveDao = new IO_MoveDao(
@@ -222,7 +222,16 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             //
             daoObjReturn = moveDao.addUpdate(io_inbound.getMove(),false,db);
             if(daoObjReturn.hasError()){
-                throw new Exception(daoObjReturn.getErrorMsg());
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //Tenta insert dos Seriais NÃO POSSUI RETURN....
+            if(io_inbound.getSerial() != null && io_inbound.getSerial().size() > 0){
+                serialDao.addUpdateTmpByInbound(io_inbound.getSerial(),db);
             }
             //
             //Se db não foi passado, finaliza transaction com sucesso
@@ -267,6 +276,23 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
+        IO_Inbound_ItemDao inboundItemDao = new IO_Inbound_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        IO_MoveDao moveDao = new IO_MoveDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+
+        //
         if(dbInstance == null) {
             openDB();
         }else{
@@ -299,29 +325,19 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_inbound));
                 }
-                //Se operação de insert ou update executada com sucesso
-                //Segue para inserção dos itens.
-                IO_Inbound_ItemDao inboundItemDao = new IO_Inbound_ItemDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //
-                DaoObjReturn inboundItemRet = inboundItemDao.addUpdate(io_inbound.getItems(),false,db);
-                if(inboundItemRet.hasError()){
-                    throw new Exception(inboundItemRet.getErrorMsg());
+                //Tenta insert dos itens e avalia return
+                daoObjReturn = inboundItemDao.addUpdate(io_inbound.getItems(),false,db);
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getRawMessage());
                 }
-                //Se operação de insert ou update executada com sucesso
-                //Segue para inserção dos itens.
-                IO_MoveDao moveDao = new IO_MoveDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //
+                //Tenta insert das moves e avalia return
                 daoObjReturn = moveDao.addUpdate(io_inbound.getMove(),false,db);
                 if(daoObjReturn.hasError()){
-                    throw new Exception(daoObjReturn.getErrorMsg());
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                //Tenta insert dos Seriais NÃO POSSUI RETURN....
+                if(io_inbound.getSerial() != null && io_inbound.getSerial().size() > 0){
+                    serialDao.addUpdateTmpByInbound(io_inbound.getSerial(),db);
                 }
 
             }
@@ -399,7 +415,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
      * LUCHE - 22/04/2019
      *
      * Metodo criado para executar a INBOUND FULL, agrupando tudo dentro da transaction
-     *  as tarefas de , deletar itens, deletar cabeçalho e finalmente reinserção de
+     *  as tarefas de , deletar itens, movimentação put_away deletar cabeçalho e finalmente reinserção de
      *  cabeçalho e item
      * @param io_inbounds
      * @return
@@ -413,6 +429,11 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        IO_MoveDao moveDao = new IO_MoveDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
         //
         openDB();
 
@@ -422,6 +443,16 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 //Onde a magica acontece
                 //Tenta o delete do items da inbound
                 daoObjReturn = itemDao.remove(io_inbound, db);
+                //verifica se erro ao remover itens
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                //verifica se erro ao remover moves
+                daoObjReturn = moveDao.removeInboundMoves(io_inbound, db);
+                //
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
                 //Se sucesso ao deleta itens
                 if (!daoObjReturn.hasError()) {
                     curAction = DaoObjReturn.DELETE;

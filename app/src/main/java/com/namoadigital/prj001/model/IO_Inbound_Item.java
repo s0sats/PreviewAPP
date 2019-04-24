@@ -46,6 +46,7 @@ public class IO_Inbound_Item implements Serializable {
     private Integer planned_class_code;
     @Expose
     private String save_date;
+    @Expose
     private int update_required;
     //SOMENTE PARA RETORNO DO WS
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();

@@ -48,6 +48,8 @@ public class T_IO_Inbound_Item_Env extends Main_Header_Env {
         private int scn;
         @Expose
         private ArrayList<IO_Inbound_Item> items = new ArrayList<>();
+        @Expose
+        private ArrayList<IO_Move> move = new ArrayList<>();
         //
         public long getCustomer_code() {
             return customer_code;
@@ -87,6 +89,14 @@ public class T_IO_Inbound_Item_Env extends Main_Header_Env {
 
         public void setItems(ArrayList<IO_Inbound_Item> items) {
             this.items = items;
+        }
+
+        public ArrayList<IO_Move> getMove() {
+            return move;
+        }
+
+        public void setMove(ArrayList<IO_Move> move) {
+            this.move = move;
         }
     }
 }

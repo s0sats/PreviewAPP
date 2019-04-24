@@ -12,7 +12,9 @@ public class IO_Move implements Serializable {
     private int move_prefix;
     @Expose
     private int move_code;
+    @Expose
     private long product_code;
+    @Expose
     private int serial_code;
     private int site_code;
     private Integer from_zone_code;
@@ -44,6 +46,7 @@ public class IO_Move implements Serializable {
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     @Expose
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @Expose
     private int update_required;
     private String token;
 

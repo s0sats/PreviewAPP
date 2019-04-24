@@ -10,6 +10,7 @@ public class T_IO_Inbound_Item_Rec {
     private String save;
     private ArrayList<IO_Inbound_Item_Save_Return> result = new ArrayList<>();
     private ArrayList<IO_Inbound> inbound = new ArrayList<>();
+    private ArrayList<IO_Move> move = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -65,6 +66,14 @@ public class T_IO_Inbound_Item_Rec {
 
     public void setInbound(ArrayList<IO_Inbound> inbound) {
         this.inbound = inbound;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
     }
 
     public class  IO_Inbound_Item_Save_Return{
