@@ -454,7 +454,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     @Override
     public void processInboundItemAdd(String wsJsonReturn) {
         if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
-            ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> saveActReturns = null;
+            ArrayList<WS_IO_Inbound_Item_Add.InboundItemSaveActReturn> saveActReturns = null;
             int mPrefix =ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
             int mCode =ToolBox_Inf.convertStringToInt(mView.getIoCode());
             //
@@ -464,7 +464,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 saveActReturns = gson.fromJson(
                     wsJsonReturn,
                     new
-                        TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                        TypeToken<ArrayList<WS_IO_Inbound_Item_Add.InboundItemSaveActReturn>>() {
                         }.getType()
                     );
                 //
@@ -482,7 +482,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 ArrayList<HMAux> resultList = new ArrayList<>();
                 MD_Product_Serial serial =  mView.getProductSerial();
                 //
-                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn :saveActReturns){
+                for(WS_IO_Inbound_Item_Add.InboundItemSaveActReturn actReturn :saveActReturns){
                     HMAux hmAux = new HMAux();
                     if(actReturn.isRetStatus()
                         &&   actReturn.getInbound_prefix() == mPrefix
@@ -520,7 +520,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         }
     }
 
-    private String formatInboundInfo(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn) {
+    private String formatInboundInfo(WS_IO_Inbound_Item_Add.InboundItemSaveActReturn actReturn) {
         return actReturn.getInbound_prefix()
             +"."+actReturn.getInbound_code()
             +"."+(actReturn.getInbound_item() != null ? actReturn.getInbound_item() : "0");

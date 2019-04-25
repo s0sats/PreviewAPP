@@ -40,8 +40,10 @@ public class IO_Move implements Serializable {
     private Integer outbound_item;
     @Expose
     private String done_date;
+    @Expose
     private Integer done_user;
     private String done_user_nick;
+    @Expose
     private String status;
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     @Expose

@@ -137,7 +137,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             env.setInbound(headerList);
             env.setReprocess(0);
             //
-            String json_token_content = gsonEnv.toJson(env);
+            String json_token_content = gsonRec.toJson(env);
             File jsonToken = saveTokenAsFile(token, json_token_content);
             //
             file_to_del = jsonToken.getName();
@@ -278,35 +278,45 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     }
 
     private void processInboundSaveRet(T_IO_Inbound_Item_Rec rec) throws Exception {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
         //Executa for no nivel de retorno da inbound.
         for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return saveReturn : rec.getResult()) {
             InboundItemSaveActReturn actReturn = new InboundItemSaveActReturn();
-            DaoObjReturn daoObjReturn;
-            //Atualiza obj que conterÁ o retorno.
+            //Atualiza obj com dados do retorno master da inbound.
             actReturn.setCustomer_code((int) saveReturn.getCustomer_code());
             actReturn.setInbound_prefix(saveReturn.getInbound_prefix());
             actReturn.setInbound_code(saveReturn.getInbound_code());
             actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
             actReturn.setMsg(saveReturn.getRet_msg());
-            //Se o retorno do processamento geral foi OK
-            //Essa propriedade Status se refere ao processamento de toda a inbound.
-            if (saveReturn.getRet_status().equals("OK")) {
-                for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
+            //Busca por filhos com status diferente de OK e se houver adiciona como item.
+            for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
+                //
+                if (!saveReturnItem.getRet_status().equals("OK")) {
+                    InboundItemSaveActReturn.InboundItemSaveInfo itemInfos = new InboundItemSaveActReturn.InboundItemSaveInfo();
+                    itemInfos.setInbound_item(saveReturnItem.getInbound_item());
+                    itemInfos.setMove_prefix(saveReturnItem.getMove_prefix());
+                    itemInfos.setMove_code(saveReturnItem.getMove_code());
+                    itemInfos.setMsg(saveReturnItem.getRet_msg());
                     //
-                    if (saveReturnItem.getRet_status().equals("OK")) {
-                        actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
-                        actReturn.setMsg(saveReturn.getRet_msg());
-                        actReturn.setInbound_item(saveReturnItem.getInbound_item());
-                        actReturn.setMove_prefix(saveReturnItem.getMove_prefix());
-                        actReturn.setMove_code(saveReturnItem.getMove_code());
-                        actReturnList.add(actReturn);
-                    }
+                    actReturn.getItems().add(itemInfos);
                 }
+            }
+            //Nada será executado aqui, ja que somente rodará o inboundFull
+            if (saveReturn.getRet_status().equals("OK")) {
+//                for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
+//                    //
+//                    if (saveReturnItem.getRet_status().equals("OK")) {
+//                        actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
+//                        actReturn.setMsg(saveReturn.getRet_msg());
+//                        actReturn.setInbound_item(saveReturnItem.getInbound_item());
+//                        actReturn.setMove_prefix(saveReturnItem.getMove_prefix());
+//                        actReturn.setMove_code(saveReturnItem.getMove_code());
+//                        actReturnList.add(actReturn);
+//                    }
+//                }
             } else {
+                //Se erro ao processar inbound, pega os itens e retorna ao update_required para 1.
                 if(saveReturn.getRet_status().equals(ConstantBaseApp.SYS_STATUS_ERROR)) {
-                    actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
-                    actReturn.setMsg(saveReturn.getRet_msg());
-                    //Se erro ao processar inbound, pega os itens e retorna ao status anterior.
                     //busca cabeçalho para atualiza os itens
                     for (T_IO_Inbound_Item_Env.IO_Inbound_Header headerItem : headerList) {
                         //Se encontrou atualiza.
@@ -316,30 +326,92 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                                 && headerItem.getInbound_code() == saveReturn.getInbound_code()
                         ) {
                             if (headerItem.getItems() != null && headerItem.getItems().size() > 0) {
-                                daoObjReturn = inboundItemDao.addUpdate(headerItem.getItems(), false);
-                                if (daoObjReturn.hasError()) {
-                                    throw new Exception(daoObjReturn.getErrorMsg());
+//                                daoObjReturn = inboundItemDao.addUpdate(headerItem.getItems(), false);
+//                                if (daoObjReturn.hasError()) {
+//                                    throw new Exception(daoObjReturn.getErrorMsg());
+//                                }
+                                for(IO_Inbound_Item inboundItem : headerItem.getItems()){
+                                    inboundItemDao.addUpdate(
+                                            new IO_Inbound_Item_Sql_009(
+                                                inboundItem.getCustomer_code(),
+                                                inboundItem.getInbound_prefix(),
+                                                inboundItem.getInbound_code(),
+                                                inboundItem.getInbound_item(),
+                                                1
+                                            ).toSqlQuery()
+                                    );
                                 }
                             }
                             //
-                            if (headerItem.getItems() != null && headerItem.getMove().size() > 0) {
-                                daoObjReturn = moveDao.addUpdate(headerItem.getMove(), false);
-                                if (daoObjReturn.hasError()) {
-                                    throw new Exception(daoObjReturn.getErrorMsg());
+                            if (headerItem.getMove() != null && headerItem.getMove().size() > 0) {
+//                                daoObjReturn = moveDao.addUpdate(headerItem.getMove(), false);
+//                                if (daoObjReturn.hasError()) {
+//                                    throw new Exception(daoObjReturn.getErrorMsg());
+//                                }
+                                for(IO_Move io_move : headerItem.getMove()){
+                                    moveDao.addUpdate(
+                                        new IO_Move_Order_Item_Sql_008(
+                                            io_move.getCustomer_code(),
+                                            io_move.getMove_prefix(),
+                                            io_move.getMove_code(),
+                                            1
+                                        ).toSqlQuery()
+                                    );
                                 }
                             }
-                            //Após processar
+                            //Após processarsai do loop
                             break;
                         }
                     }
                 }
-                actReturnList.add(actReturn);
+
             }
             //
+            actReturnList.add(actReturn);
+            //
         }
+        //Reseta daoObject
+        daoObjReturn.clearError();
         //Processa as inbounds Full
         if(rec.getInbound() != null && rec.getInbound().size() > 0){
-            inboundDao.processFull(rec.getInbound());
+            //Se envio do token, só pode executar inboundFull se não existir mais dados para serem enviados.
+            if(reSend){
+                //Lista que sera passa para ser processada.
+                ArrayList<IO_Inbound> inboundToProcess = new ArrayList<>();
+                for(IO_Inbound inbound : rec.getInbound()){
+                    //Busca inbound no banco e somente se update_required = 0
+                    //add na lista de processFull
+                    IO_Inbound auxIo =
+                        inboundDao.getByString(
+                            new IO_Inbound_Sql_002(
+                                inbound.getCustomer_code(),
+                                inbound.getInbound_prefix(),
+                                inbound.getInbound_code()
+                            ).toSqlQuery()
+                        );
+                    //Verifica se inbound existe e se esta como update required
+                    if(auxIo != null && auxIo.getCustomer_code() > 0){
+                        if( auxIo.getUpdate_required() == 0){
+                            inboundToProcess.add(auxIo);
+                        }
+                    }else{
+                        //iSSO NÃO DEVERIA ACONTECER... MAS O QUE FAZER?
+                    }
+
+                }
+                daoObjReturn = inboundDao.processFull(inboundToProcess);
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+
+            }else{
+                daoObjReturn = inboundDao.processFull(rec.getInbound());
+                //
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+            }
+
         }
         //
         if(rec.getMove() != null && rec.getMove().size() > 0){
@@ -351,7 +423,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 }
             }
             //
-            DaoObjReturn daoObjReturn = moveDao.addUpdate(rec.getMove(), false);
+            daoObjReturn = moveDao.addUpdate(rec.getMove(), false);
             if(daoObjReturn.hasError()){
                 throw new Exception(daoObjReturn.getErrorMsg());
             }
@@ -434,32 +506,16 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
 
     }
 
-    public class InboundItemSaveActReturn {
-        private int customer_code;
-        private int inbound_prefix;
-        private int inbound_code;
-        private Integer inbound_item;
-        private boolean retStatus;
-        private String msg;
-        private boolean hasMove;
-        private boolean inboundFull;
-        private Integer move_prefix;
-        private Integer move_code;
+    public static class InboundItemSaveActReturn {
+        private int customer_code = -1;
+        private int inbound_prefix = -1;
+        private int inbound_code = -1;
+        private boolean retStatus = false;
+        private String msg ="";
+        private boolean fromTokenProcess = false;
+        private ArrayList<InboundItemSaveInfo> items = new ArrayList<>();
 
         public InboundItemSaveActReturn() {
-        }
-
-        public InboundItemSaveActReturn(int customer_code, int inbound_prefix, int inbound_code, Integer inbound_item, boolean retStatus, String msg, boolean hasMove, boolean inboundFull, Integer move_prefix, Integer move_code) {
-            this.customer_code = customer_code;
-            this.inbound_prefix = inbound_prefix;
-            this.inbound_code = inbound_code;
-            this.inbound_item = inbound_item;
-            this.retStatus = retStatus;
-            this.msg = msg;
-            this.hasMove = hasMove;
-            this.inboundFull = inboundFull;
-            this.move_prefix = move_prefix;
-            this.move_code = move_code;
         }
 
         public int getCustomer_code() {
@@ -486,14 +542,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             this.inbound_code = inbound_code;
         }
 
-        public Integer getInbound_item() {
-            return inbound_item;
-        }
-
-        public void setInbound_item(Integer inbound_item) {
-            this.inbound_item = inbound_item;
-        }
-
         public boolean isRetStatus() {
             return retStatus;
         }
@@ -510,36 +558,59 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             this.msg = msg;
         }
 
-        public boolean isHasMove() {
-            return hasMove;
+        public ArrayList<InboundItemSaveInfo> getItems() {
+            return items;
         }
 
-        public void setHasMove(boolean hasMove) {
-            this.hasMove = hasMove;
+        public void setItems(ArrayList<InboundItemSaveInfo> items) {
+            this.items = items;
         }
 
-        public boolean isInboundFull() {
-            return inboundFull;
+        public boolean isFromTokenProcess() {
+            return fromTokenProcess;
         }
 
-        public void setInboundFull(boolean inboundFull) {
-            this.inboundFull = inboundFull;
+        public void setFromTokenProcess(boolean fromTokenProcess) {
+            this.fromTokenProcess = fromTokenProcess;
         }
 
-        public Integer getMove_prefix() {
-            return move_prefix;
-        }
+        public static class InboundItemSaveInfo{
+            private Integer inbound_item;
+            private Integer move_prefix;
+            private Integer move_code;
+            private String msg;
 
-        public void setMove_prefix(Integer move_prefix) {
-            this.move_prefix = move_prefix;
-        }
+            public Integer getMove_prefix() {
+                return move_prefix;
+            }
 
-        public Integer getMove_code() {
-            return move_code;
-        }
+            public void setMove_prefix(Integer move_prefix) {
+                this.move_prefix = move_prefix;
+            }
 
-        public void setMove_code(Integer move_code) {
-            this.move_code = move_code;
+            public Integer getMove_code() {
+                return move_code;
+            }
+
+            public void setMove_code(Integer move_code) {
+                this.move_code = move_code;
+            }
+
+            public Integer getInbound_item() {
+                return inbound_item;
+            }
+
+            public void setInbound_item(Integer inbound_item) {
+                this.inbound_item = inbound_item;
+            }
+
+            public String getMsg() {
+                return msg;
+            }
+
+            public void setMsg(String msg) {
+                this.msg = msg;
+            }
         }
     }
 }
