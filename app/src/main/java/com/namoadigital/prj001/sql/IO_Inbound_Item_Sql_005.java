@@ -26,7 +26,7 @@ public class IO_Inbound_Item_Sql_005 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
         return sb
-                .append(" UPDATE "+ IO_Inbound_ItemDao.TABLE + "SET\n" +
+                .append(" UPDATE "+ IO_Inbound_ItemDao.TABLE + "  SET\n" +
                         "   update_required = '"+update_required+"'\n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +

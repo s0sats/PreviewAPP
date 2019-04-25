@@ -4,25 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
-import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
-import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Blind_Move;
-import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
-import com.namoadigital.prj001.model.IO_Inbound_Item;
-import com.namoadigital.prj001.model.IO_Move;
-
-import com.namoadigital.prj001.model.IO_Move_Tracking;
-import com.namoadigital.prj001.model.IO_Outbound_Item;
-import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
@@ -219,7 +205,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                 hmAux_trans.get("dialog_save_move_msg")
         );
         //
-        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
         Bundle bundle = new Bundle();
         //
         mIntent.putExtras(bundle);
