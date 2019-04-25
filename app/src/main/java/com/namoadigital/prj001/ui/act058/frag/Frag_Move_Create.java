@@ -784,25 +784,24 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setViewEnable() {
-        if (status != null && status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
-            mket_serial.setEnabled(false);
-            ss_zone.setmEnabled(false);
-            ss_reason.setmEnabled(false);
-            ss_local.setmEnabled(false);
-            ss_class.setmEnabled(false);
-            iv_add_tracking.setEnabled(false);
-            chk_change_zone.setEnabled(false);
-            btn_save.setVisibility(View.GONE);
+        if (status != null
+                && (status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY))) {
+            enableForm(true, View.VISIBLE);
         } else {
-            mket_serial.setEnabled(true);
-            ss_zone.setmEnabled(true);
-            ss_reason.setmEnabled(true);
-            ss_local.setmEnabled(true);
-            ss_class.setmEnabled(true);
-            iv_add_tracking.setEnabled(true);
-            chk_change_zone.setEnabled(true);
-            btn_save.setVisibility(View.VISIBLE);
+            enableForm(false, View.GONE);
         }
+    }
+
+    private void enableForm(boolean b, int gone) {
+        mket_serial.setEnabled(b);
+        ss_zone.setmEnabled(b);
+        ss_reason.setmEnabled(b);
+        ss_local.setmEnabled(b);
+        ss_class.setmEnabled(b);
+        iv_add_tracking.setEnabled(b);
+        chk_change_zone.setEnabled(b);
+        btn_save.setVisibility(gone);
     }
 
     private void setClassSS() {
