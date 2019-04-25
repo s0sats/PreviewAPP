@@ -1,14 +1,24 @@
 package com.namoadigital.prj001.ui.act059;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -16,6 +26,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -23,6 +34,7 @@ import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
@@ -268,10 +280,98 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
+        }else if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+            Gson gsonParser = new GsonBuilder().serializeNulls().create();
+            ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>  actReturnList
+                    = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+            }.getType() );
+            showResults(actReturnList);
         }
         disableProgressDialog();
     }
 
+    private void showResults(ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList) {
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList){
+            HMAux aux = new HMAux();
+            aux.put("title", result.getInbound_code() + "." + result.getInbound_code() );
+            aux.put("status",result.getMsg());
+            if(result.isRetStatus()){
+                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn.InboundItemSaveInfo info:
+                        result.getItems()){
+                    aux.put("status",info.getInbound_item() +" - "+ info.getMsg() + "\n");
+                    aux.put("item",""+ result.getInbound_code() + result.getInbound_code() + info.getInbound_item());
+                }
+            }
+            resultList.add(aux);
+            showNewOptDialog(resultList);
+        }
+    }
+
+    private void showNewOptDialog(ArrayList<HMAux> resultList) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        List<HMAux> formattedList = new ArrayList<>();
+        HMAux auxMove = new HMAux();
+        for (int i = 0; i < resultList.size(); i++) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            formattedList.add(hmAux);
+            if(resultList.get(i).get("label").equals(
+                            ""+ io_inbound_item.getInbound_code()
+                            + io_inbound_item.getInbound_code()
+                            + io_inbound_item.getInbound_item())){
+                auxMove = hmAux;
+            }
+        }
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        formattedList,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        final HMAux finalAuxMove = auxMove;
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+
+                if (finalAuxMove.get("status").equalsIgnoreCase("Ok")) {
+                    //
+                    onBackPressed();
+                    //atualizar a tela com os dados do move
+                }
+
+            }
+        });
+    }
     @Override
     public void showPD(String ttl, String msg) {
         enableProgressDialog(
@@ -385,8 +485,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     }
 
     @Override
-    public void setWs_process(String name) {
-
+    public void setWs_process(String ws_process) {
+        this.ws_process =ws_process;
     }
 
     @Override
