@@ -365,7 +365,17 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
             case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-
+                mListener.persistIoMovePlanned(
+                        ToolBox_Con.getPreference_Customer_Code(getContext()),
+                        Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                        Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                        classCode,
+                        reasonCode,
+                        mkedit_coments.getText().toString().trim(),
+                        mkdate_confirm.getmValue(),
+                        mdProductSerial,
+                        trackingFromMove
+                );
                 break;
         }
     }
@@ -398,6 +408,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 }
                 break;
             case 1:
+            case 2:
+            case 3:
                 mkdate_confirm.setmHighlightWhenInvalid(true);
 
                 if (!mkdate_confirm.isValid()) {
@@ -670,9 +682,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_val.setVisibility(View.GONE);
         }
 
-        String plannedZoneLocal = (planned_zone_code == null) ? "" : String.valueOf(planned_zone_code);
+        String plannedZoneLocal = (planned_zone_code == null) ? "" : mPresenter.getZoneId(planned_zone_code);
+        plannedZoneLocal = (planned_local_code == null) ? plannedZoneLocal+"" : plannedZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
 
-        plannedZoneLocal.concat((planned_local_code == null) ? "" : planned_local_code + "|");
         if (plannedZoneLocal.isEmpty() || plannedZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
             tv_move_to_val.setVisibility(View.GONE);
@@ -738,6 +750,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         setSSMoveReason();
+        setViewEnable();
 
         switch (view_param) {
             case 0:
@@ -754,11 +767,17 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 ss_reason.setVisibility(View.GONE);
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
+            case 3:
+                ss_reason.setVisibility(View.GONE);
+                ss_zone.setmEnabled(false);
+                ss_local.setmEnabled(false);
+                mkedit_coments.setVisibility(View.VISIBLE);
+                mkdate_confirm.setVisibility(View.VISIBLE);
         }
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
         mListener.onAddOrRemoveControlSS(ss_local, true);
-        setViewEnable();
+
 
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
@@ -999,6 +1018,14 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     public void restoreUIFields() {
         initializeViews();
+    }
+
+    public HMAux getZoneInfo() {
+        return ss_zone.getmValue();
+    }
+
+    public HMAux getLocalInfo() {
+        return ss_local.getmValue();
     }
 
 

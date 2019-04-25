@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -35,6 +36,7 @@ import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
@@ -243,15 +245,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (bundle != null) {
             movePrefix = bundle.getString(IO_MoveDao.MOVE_PREFIX) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX)) : -1;
             moveCode = bundle.getString(IO_MoveDao.MOVE_CODE) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE)) : -1;
-
             zone_code = bundle.getInt(IO_Blind_MoveDao.ZONE_CODE);
             local_code = bundle.getInt(IO_Blind_MoveDao.LOCAL_CODE);
             class_code = bundle.getInt(IO_Blind_MoveDao.CLASS_CODE);
-
             product_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
             serial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
-
-
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
         } else {
             movePrefix = -1;
@@ -312,6 +310,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
                 showResults(moves);
+            }
+            if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())){
+                Toast.makeText(context, "Não consegue Moysés?", Toast.LENGTH_SHORT).show();
             }
         }
     }

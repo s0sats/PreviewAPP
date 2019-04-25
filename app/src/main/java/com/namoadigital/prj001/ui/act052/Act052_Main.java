@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,7 +23,7 @@ import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
-import com.namoadigital.prj001.ui.act059.Act059_Main;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -282,7 +281,9 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       onBackPressed();
+                       if(serial_jump) {
+                           onBackPressed();
+                       }
                     }
                 },
                 0
@@ -319,8 +320,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     @Override
-    public void callAct058(Bundle bundle) {
-        Intent mIntent = new Intent(context, Act058_Main.class);
+    public void callAct061(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act061_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -328,8 +329,8 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     @Override
-    public void callAct059(Bundle bundle) {
-        Intent mIntent = new Intent(context, Act059_Main.class);
+    public void callAct058(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act058_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

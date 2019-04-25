@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act059;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,15 +12,22 @@ import android.view.WindowManager;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
+import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -42,7 +50,10 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     private IO_Inbound_Item io_inbound_item;
     private String move_type;
     private Frag_Move_Create frag_move_create;
-
+    private int has_put_away;
+    private Integer zone_code_conf;
+    private Integer local_code_conf;
+    private MD_Product_Serial serialInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,17 +136,20 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
+        if (bundle != null) {
             io_prefix = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_PREFIX));
             io_code = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_CODE));
+            has_put_away = bundle.getInt(IO_InboundDao.PUT_AWAY_PROCESS);
+            zone_code_conf = bundle.getInt(IO_InboundDao.ZONE_CODE_CONF, -1);
+            local_code_conf = bundle.getInt(IO_InboundDao.LOCAL_CODE_CONF, -1);
             try {
                 io_item = Integer.valueOf(bundle.getString(IO_Inbound_ItemDao.INBOUND_ITEM));
-            }catch (Exception e ){
+            } catch (Exception e) {
                 e.printStackTrace();
                 io_item = null;
             }
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
-        }else{
+        } else {
             io_prefix = null;
             io_code = null;
             io_item = null;
@@ -162,48 +176,34 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         Integer planned_local_code;
         String status;
         Integer to_class_code;
-        MD_Product_Serial serialInfo;
+
         int viewMode;
         mPresenter = new Act059_Main_Presenter(context, this, hmAux_Trans);
 
-        if(io_item == null){
-            //handle IN_CONF?
-            io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-            to_local_code = null;
-            to_zone_code = null;
-            move_prefix = -1;
-            move_code =-1;
-            reason_code = null;
-            outbound_prefix = null;
-            inbound_prefix = io_inbound_item.getInbound_prefix();
-            outbound_code = null;
-            inbound_code = io_inbound_item.getInbound_code();
-            status =ConstantBaseApp.SYS_STATUS_PENDING;
+        io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
+        to_local_code = io_inbound_item.getLocal_code();
+        to_zone_code = io_inbound_item.getZone_code();
+        move_prefix = -1;
+        move_code = -1;
+        reason_code = null;
+        outbound_prefix = null;
+        inbound_prefix = io_inbound_item.getInbound_prefix();
+        outbound_code = null;
+        inbound_code = io_inbound_item.getInbound_code();
+        status = ConstantBaseApp.SYS_STATUS_PENDING;
+        //has_put_away == 1 trava spinners
+        if (has_put_away == 0) {
             planned_zone_code = io_inbound_item.getPlanned_zone_code();
             planned_local_code = io_inbound_item.getPlanned_local_code();
-            to_class_code = null;
-            move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
-            viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
-        }else{
-            io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-            to_local_code = io_inbound_item.getLocal_code();
-            to_zone_code = io_inbound_item.getZone_code();
-            move_prefix = -1;
-            move_code =-1;
-            reason_code = null;
-            outbound_prefix = null;
-            inbound_prefix = io_inbound_item.getInbound_prefix();
-            outbound_code = null;
-            inbound_code = io_inbound_item.getInbound_code();
-            status =ConstantBaseApp.SYS_STATUS_PENDING;
-            planned_zone_code = io_inbound_item.getPlanned_zone_code();
-            planned_local_code = io_inbound_item.getPlanned_local_code();
-            to_class_code = null;
-            move_type = ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY;
-            viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(),(int) io_inbound_item.getSerial_code());
+        } else {
+            planned_zone_code = zone_code_conf;
+            planned_local_code = local_code_conf;
         }
+        to_class_code = null;
+        move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
+        viewMode = mPresenter.getViewMode(move_type, has_put_away);
+        serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(), (int) io_inbound_item.getSerial_code());
+
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
@@ -243,8 +243,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT058;
-        mAct_Title = Constant.ACT058 + "_" + "title";
+        mAct_Info = Constant.ACT059;
+        mAct_Title = Constant.ACT059 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -254,6 +254,22 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+//        super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+            frag_move_create.processTrackingResult(hmAux);
+        }
+        disableProgressDialog();
     }
 
     @Override
@@ -269,7 +285,41 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     @Override
     public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
+        HMAux zoneInfo = frag_move_create.getZoneInfo();
+        HMAux localInfo = frag_move_create.getLocalInfo();
 
+        if (!zoneInfo.hasConsistentValue(SearchableSpinner.ID)) {
+            zoneInfo.put(SearchableSpinner.ID, "");
+        }
+
+        if (!zoneInfo.hasConsistentValue(SearchableSpinner.DESCRIPTION)) {
+            zoneInfo.put(SearchableSpinner.DESCRIPTION, "");
+        }
+
+        if (!localInfo.hasConsistentValue(SearchableSpinner.ID)) {
+            localInfo.put(SearchableSpinner.ID, "");
+        }
+
+        if (!localInfo.hasConsistentValue(SearchableSpinner.DESCRIPTION)) {
+            localInfo.put(SearchableSpinner.DESCRIPTION, "");
+        }
+
+        mPresenter.executeInConfPersistence(customer_code,
+                io_prefix,
+                io_code,
+                to_zone_code,
+                zoneInfo.get(SearchableSpinner.ID),
+                zoneInfo.get(SearchableSpinner.DESCRIPTION),
+                to_local_code,
+                localInfo.get(SearchableSpinner.ID),
+                localInfo.get(SearchableSpinner.DESCRIPTION),
+                to_class_code,
+                reason_code,
+                comments,
+                done_date,
+                serial,
+                io_inbound_item,
+                trackingFromMove);
     }
 
     @Override
@@ -279,7 +329,18 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg) {
-
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
     }
 
     @Override
@@ -288,18 +349,26 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     }
 
     @Override
-    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean b) {
-
+    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean add) {
+        if (add) {
+            controls_sta.add(mket_tracking);
+        } else {
+            controls_sta.remove(mket_tracking);
+        }
     }
 
     @Override
-    public void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean b) {
-
+    public void onAddOrRemoveControlSS(SearchableSpinner searchableSpinner, boolean add) {
+        if (add) {
+            controls_ss.add(searchableSpinner);
+        } else {
+            controls_ss.remove(searchableSpinner);
+        }
     }
 
     @Override
-    public void onTrackingSearchClick(long product_code, long serial_code, String mket_text, String preference_site_code) {
-
+    public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
+        mPresenter.executeTrackingSearch(product_code, serial_code, tracking, site_code);
     }
 
     @Override
@@ -309,7 +378,10 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     @Override
     public void callAct054() {
-
+        Intent mIntent = new Intent(context, Act054_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -319,7 +391,27 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     @Override
     public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
+    @Override
+    public void callAct061() {
+        Intent mIntent = new Intent(context, Act061_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act061_Main.INBOUND_FRAG_ITEM);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
+        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT059);
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

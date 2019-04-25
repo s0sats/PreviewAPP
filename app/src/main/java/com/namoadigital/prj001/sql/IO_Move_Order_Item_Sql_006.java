@@ -5,14 +5,14 @@ import com.namoadigital.prj001.database.Specification;
 
 public class IO_Move_Order_Item_Sql_006 implements Specification {
     private long customer_code;
-    private int move_prefix;
-    private int move_code;
-    private int inbound_item;
+    private String inbound_prefix;
+    private String inbound_code;
+    private String inbound_item;
 
-    public IO_Move_Order_Item_Sql_006(long customer_code, int move_prefix, int move_code, int inbound_item) {
+    public IO_Move_Order_Item_Sql_006(long customer_code, String inbound_prefix, String inbound_code, String inbound_item) {
         this.customer_code = customer_code;
-        this.move_prefix = move_prefix;
-        this.move_code = move_code;
+        this.inbound_prefix = inbound_prefix;
+        this.inbound_code = inbound_code;
         this.inbound_item = inbound_item;
     }
 
@@ -26,13 +26,13 @@ public class IO_Move_Order_Item_Sql_006 implements Specification {
                         IO_MoveDao.TABLE + " t \n" +
                         " WHERE\n" +
                         "   t.customer_code = '"+customer_code+"'\n" +
-                        "   and t.move_prefix = '"+move_prefix+"'\n" +
-                        "   and t.move_code = '"+move_code+"'\n" +
+                        "   and t.inbound_prefix = '"+inbound_prefix+"'\n" +
+                        "   and t.inbound_code = '"+inbound_code+"'\n" +
                         "   and t.inbound_item = '"+inbound_item+"'\n" +
                         " ORDER BY\n" +
                         "    t.customer_code,\n" +
-                        "    t.move_prefix,\n" +
-                        "    t.move_code")
+                        "    t.inbound_prefix,\n" +
+                        "    t.inbound_code")
                 .toString();
     }
 }

@@ -30,7 +30,11 @@ public class Sql_Act058_001 implements Specification {
                 "  and m.customer_code = p.customer_code \n" +
                 "  and m.product_code = p.product_code\n" +
                 "  and m.serial_code = p.serial_code\n" +
-                "  and m.move_type = \"" + ConstantBaseApp.IO_PROCESS_MOVE_PLANNED + "\"")
+                "  and m.move_type in ('"
+                + ConstantBaseApp.IO_PROCESS_MOVE_PLANNED+"', '"
+                + ConstantBaseApp.IO_PROCESS_MOVE+"', '"
+                + ConstantBaseApp.IO_INBOUND+"', '"
+                + ConstantBaseApp.IO_OUTBOUND+"')" )
                 .toString();
     }
 }
