@@ -47,5 +47,7 @@ public interface Act058_Main_Contract {
         void setWs_process(String name);
 
         void callAct051();
+
+        void callAct061();
     }
 }

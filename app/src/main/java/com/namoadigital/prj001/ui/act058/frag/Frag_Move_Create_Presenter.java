@@ -120,13 +120,13 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         }
     }
 
-    private MD_Site_Zone_Local getMd_site_zone_local(Integer to_zone_code, Integer to_local_code) {
+    private MD_Site_Zone_Local getMd_site_zone_local(Integer zone_code, Integer local_code) {
         return siteZoneLocalDao.getByString(
                 new MD_Site_Zone_Local_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context),
-                        to_zone_code,
-                        to_local_code
+                        zone_code,
+                        local_code
                 ).toSqlQuery()
         );
     }
@@ -134,7 +134,8 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     @Override
     public void setLocalValue(SearchableSpinner ss_local, Integer zone_code, Integer local_code) {
 
-        if (local_code != null && local_code >0) {
+        if (zone_code != null && zone_code >0
+             &&   local_code != null && local_code >0) {
             MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(zone_code, local_code);
 
             ToolBox_Inf.setSSmValue(
@@ -260,7 +261,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     @Override
     public String getLocalId(Integer local_code, Integer zone_code) {
-        MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(to_zone_code, to_local_code);
+        MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(zone_code, local_code);
         if(mdSiteZoneLocal== null || mdSiteZoneLocal.getLocal_id() == ""){
             return "";
         }

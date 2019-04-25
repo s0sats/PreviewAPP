@@ -246,6 +246,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     @Override
     public void onBackPressed(String actRequest) {
         switch (actRequest) {
+            case ConstantBaseApp.ACT061:
+                mView.callAct061();
+                break;
             case ConstantBaseApp.ACT054:
             case ConstantBaseApp.ACT055:
                 mView.callAct054();
