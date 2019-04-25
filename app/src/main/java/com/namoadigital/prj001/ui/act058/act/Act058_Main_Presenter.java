@@ -138,11 +138,14 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
         io_move.getSerial().add(serial);
         io_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
-        io_move.setUpdate_required(1);
         io_move.setCustomer_code(customer_code);
         io_move.setMove_prefix(move_prefix);
         io_move.setMove_code(move_code);
-
+        if (!io_move.getMove_type().equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
+            io_move.setUpdate_required(1);
+        }else{
+            io_move.setUpdate_required(0);
+        }
 
         DaoObjReturn daoObjReturnIoMove = ioMoveDao.addUpdate(io_move);
 
@@ -170,12 +173,12 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                         callWS_IO_Move_Save();
                         break;
-                    case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                    case ConstantBaseApp.IO_INBOUND:
                         Toast.makeText(context, ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY, Toast.LENGTH_SHORT).show();
                         callWS_IO_Move_Save();
 //                        callWS_IO_Inbound_Item(io_move);
                         break;
-                    case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                    case ConstantBaseApp.IO_OUTBOUND:
                         Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
                         callWS_IO_Move_Save();
 //                        callWS_IO_Outbound_Item(io_move);

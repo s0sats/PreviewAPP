@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act061;
 
+import android.os.Bundle;
+
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.*;
 
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ public interface Act061_Main_Contract {
         void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
 
         void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess);
+
+        void callAct058(Bundle bundle);
     }
 
     interface I_Presenter{
@@ -40,5 +45,7 @@ public interface Act061_Main_Contract {
         void executeWsSaveInboundHeader(IO_Inbound mInbound, boolean newProcess);
 
         void processHeaderSave(int mPrefix, int mCode, String actReturnJson);
+
+        void processPutAwayMove(HMAux item);
     }
 }

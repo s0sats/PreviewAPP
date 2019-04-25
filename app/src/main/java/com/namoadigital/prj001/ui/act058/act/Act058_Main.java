@@ -243,15 +243,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (bundle != null) {
             movePrefix = bundle.getString(IO_MoveDao.MOVE_PREFIX) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_PREFIX)) : -1;
             moveCode = bundle.getString(IO_MoveDao.MOVE_CODE) != null ? Integer.valueOf(bundle.getString(IO_MoveDao.MOVE_CODE)) : -1;
-
             zone_code = bundle.getInt(IO_Blind_MoveDao.ZONE_CODE);
             local_code = bundle.getInt(IO_Blind_MoveDao.LOCAL_CODE);
             class_code = bundle.getInt(IO_Blind_MoveDao.CLASS_CODE);
-
             product_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
             serial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
-
-
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
         } else {
             movePrefix = -1;

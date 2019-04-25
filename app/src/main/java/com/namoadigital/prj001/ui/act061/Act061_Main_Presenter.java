@@ -7,8 +7,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
@@ -18,6 +22,7 @@ import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -221,6 +226,38 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
         }
 
+    }
+
+    @Override
+    public void processPutAwayMove(HMAux item) {
+        Bundle bundle = new Bundle();
+        IO_MoveDao ioMoveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        IO_Move io_move;
+        try{
+            io_move = ioMoveDao.getByString(
+                new IO_Move_Order_Item_Sql_006(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        item.get(IO_Inbound_ItemDao.INBOUND_PREFIX),
+                        item.get(IO_Inbound_ItemDao.INBOUND_CODE),
+                        item.get(IO_Inbound_ItemDao.INBOUND_ITEM)
+                ).toSqlQuery()
+        );
+        }catch (NullPointerException e ){
+            e.printStackTrace();
+            io_move = null;
+        }
+
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
+        bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
+        bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+        bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) io_move.getProduct_code());
+        bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
+
+        mView.callAct058(bundle);
     }
 
     @Override

@@ -59,6 +59,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         void callAddItemAct();
 
         void callInConfCreateItemAct(HMAux item);
+
+        void callPutAwayCreateItemAct(HMAux item);
     }
 
     public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code){
@@ -229,7 +231,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
 
                 @Override
                 public void onPutAwayClick(HMAux item) {
-                    Toast.makeText(context,"PutAway",Toast.LENGTH_SHORT).show();
+                    mFragItemListener.callPutAwayCreateItemAct(item);
                 }
 
                 @Override

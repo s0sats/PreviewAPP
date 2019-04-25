@@ -365,7 +365,17 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 break;
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
             case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-
+                mListener.persistIoMovePlanned(
+                        ToolBox_Con.getPreference_Customer_Code(getContext()),
+                        Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
+                        Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
+                        classCode,
+                        reasonCode,
+                        mkedit_coments.getText().toString().trim(),
+                        mkdate_confirm.getmValue(),
+                        mdProductSerial,
+                        trackingFromMove
+                );
                 break;
         }
     }

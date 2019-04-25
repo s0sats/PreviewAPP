@@ -252,7 +252,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public String getZoneId(int zone_code) {
 
         MD_Site_Zone md_site_zone = getMd_site_zone(zone_code);
-        if(md_site_zone.getZone_id().isEmpty()){
+        if(md_site_zone== null || md_site_zone.getZone_id() == ""){
             return "";
         }
         return md_site_zone.getZone_id();
@@ -261,7 +261,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     @Override
     public String getLocalId(Integer local_code, Integer zone_code) {
         MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(to_zone_code, to_local_code);
-        if(mdSiteZoneLocal.getLocal_id().isEmpty()){
+        if(mdSiteZoneLocal== null || mdSiteZoneLocal.getLocal_id() == ""){
             return "";
         }
         return mdSiteZoneLocal.getLocal_id();
