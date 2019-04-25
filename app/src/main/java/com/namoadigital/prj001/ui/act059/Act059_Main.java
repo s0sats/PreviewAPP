@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -385,8 +384,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     }
 
     @Override
-    public void setWs_process(String name) {
-
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
     }
 
     @Override

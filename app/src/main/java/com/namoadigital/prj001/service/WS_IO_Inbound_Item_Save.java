@@ -170,7 +170,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 //Atualiza update required das moves
                 if (headerList.get(i).getMove() != null && headerList.get(i).getMove().size() > 0) {
                     for (IO_Move io_move : headerList.get(i).getMove()) {
-                        io_move.setUpdate_required(0);
                         //Atualiza header da Inbound para update required 0
                         moveDao.addUpdate(
                             new IO_Move_Order_Item_Sql_008(
@@ -291,12 +290,18 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             InboundItemSaveActReturn actReturn = new InboundItemSaveActReturn();
             //Atualiza obj com dados do retorno master da inbound.
             actReturn.setCustomer_code((int) saveReturn.getCustomer_code());
-            actReturn.setInbound_prefix(saveReturn.getInbound_prefix());
-            actReturn.setInbound_code(saveReturn.getInbound_code());
+            actReturn.setPrefix(saveReturn.getInbound_prefix());
+            actReturn.setCode(saveReturn.getInbound_code());
             actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
             actReturn.setMsg(saveReturn.getRet_msg());
             //Busca por filhos com status diferente de OK e se houver adiciona como item.
             for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
+                //Se uma movimentação, seta o prefx e code da move e seta isMove como true.
+                if(saveReturnItem.getMove_prefix() != null &&  saveReturnItem.getMove_code() != null){
+                    actReturn.setPrefix(saveReturnItem.getMove_prefix());
+                    actReturn.setCode(saveReturnItem.getMove_code());
+                    actReturn.setMove(true);
+                }
                 //
                 if (!saveReturnItem.getRet_status().equals("OK")) {
                     InboundItemSaveActReturn.InboundItemSaveInfo itemInfos = new InboundItemSaveActReturn.InboundItemSaveInfo();
@@ -388,23 +393,22 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 for (IO_Inbound inbound : rec.getInbound()) {
                     //Busca inbound no banco e somente se update_required = 0
                     //add na lista de processFull
-                    IO_Inbound auxIo =
-                        inboundDao.getByString(
-                            new IO_Inbound_Sql_002(
+                   HMAux auxIo =
+                        inboundDao.getByStringHM(
+                            new IO_Inbound_Sql_010(
                                 inbound.getCustomer_code(),
                                 inbound.getInbound_prefix(),
                                 inbound.getInbound_code()
                             ).toSqlQuery()
                         );
                     //Verifica se inbound existe e se esta como update required
-                    if (auxIo != null && auxIo.getCustomer_code() > 0) {
-                        if (auxIo.getUpdate_required() == 0) {
-                            inboundToProcess.add(auxIo);
-                        }
-                    } else {
-                        //iSSO NÃO DEVERIA ACONTECER... MAS O QUE FAZER?
+                    if (
+                        auxIo != null
+                        && auxIo.hasConsistentValue(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO)
+                        && auxIo.get(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO).equalsIgnoreCase("0")
+                    ) {
+                        inboundToProcess.add(inbound);
                     }
-
                 }
                 daoObjReturn = inboundDao.processFull(inboundToProcess);
                 if (daoObjReturn.hasError()) {
@@ -515,11 +519,12 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
 
     public static class InboundItemSaveActReturn {
         private int customer_code = -1;
-        private int inbound_prefix = -1;
-        private int inbound_code = -1;
+        private int prefix = -1;
+        private int code = -1;
         private boolean retStatus = false;
         private String msg = "";
         private boolean fromTokenProcess = false;
+        private boolean isMove = false;
         private ArrayList<InboundItemSaveInfo> items = new ArrayList<>();
 
         public InboundItemSaveActReturn() {
@@ -533,20 +538,20 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             this.customer_code = customer_code;
         }
 
-        public int getInbound_prefix() {
-            return inbound_prefix;
+        public int getPrefix() {
+            return prefix;
         }
 
-        public void setInbound_prefix(int inbound_prefix) {
-            this.inbound_prefix = inbound_prefix;
+        public void setPrefix(int prefix) {
+            this.prefix = prefix;
         }
 
-        public int getInbound_code() {
-            return inbound_code;
+        public int getCode() {
+            return code;
         }
 
-        public void setInbound_code(int inbound_code) {
-            this.inbound_code = inbound_code;
+        public void setCode(int code) {
+            this.code = code;
         }
 
         public boolean isRetStatus() {
@@ -563,6 +568,14 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
 
         public void setMsg(String msg) {
             this.msg = msg;
+        }
+
+        public boolean isMove() {
+            return isMove;
+        }
+
+        public void setMove(boolean move) {
+            isMove = move;
         }
 
         public ArrayList<InboundItemSaveInfo> getItems() {
