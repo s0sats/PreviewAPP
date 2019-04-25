@@ -82,6 +82,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private TextView tv_outbound_val;
     private TextView tv_move_order_val;
     private TextView tv_move_to_val;
+    private TextView tv_class_lbl;
     private MKEditTextNM mkedit_coments;
     private MKEditTextNM mket_serial;
     private MkDateTime mkdate_confirm;
@@ -216,6 +217,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_outbound_lbl = fragView.findViewById(R.id.act058_tv_outbound_lbl);
         tv_move_order_lbl = fragView.findViewById(R.id.act058_tv_move_order_lbl);
         tv_move_to_lbl = fragView.findViewById(R.id.act058_tv_move_to_lbl);
+        tv_class_lbl = fragView.findViewById(R.id.act058_tv_class_ttl);
         ll_tracking_content = fragView.findViewById(R.id.ll_tracking_content);
         iv_add_tracking = fragView.findViewById(R.id.act058_iv_add_tracking);
         iv_class_icon = fragView.findViewById(R.id.act058_iv_class_icon);
@@ -682,17 +684,16 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_val.setVisibility(View.GONE);
         }
 
-        String plannedZoneLocal = (planned_zone_code == null) ? "" : mPresenter.getZoneId(planned_zone_code);
-        plannedZoneLocal = (planned_local_code == null) ? plannedZoneLocal+"" : plannedZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
+        String toZoneLocal = (to_zone_code == null) ? "" : mPresenter.getZoneId(to_zone_code);
+        toZoneLocal = (to_local_code == null) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(to_local_code, to_zone_code);
 
-        if (plannedZoneLocal.isEmpty() || plannedZoneLocal.equals("-1")) {
+        if (toZoneLocal.isEmpty() || toZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
             tv_move_to_val.setVisibility(View.GONE);
-            tv_move_to_val.setText(plannedZoneLocal);
         } else {
             tv_move_to_lbl.setVisibility(View.VISIBLE);
             tv_move_to_val.setVisibility(View.VISIBLE);
-            tv_move_to_val.setText(plannedZoneLocal);
+            tv_move_to_val.setText(toZoneLocal);
         }
     }
 
@@ -879,6 +880,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_move_order_lbl.setText(hmAux_Trans.get("move_order_lbl"));
         tv_move_to_lbl.setText(hmAux_Trans.get("move_to_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
+        tv_class_lbl.setText(hmAux_Trans.get("class_lbl"));
         btn_save.setText(hmAux_Trans.get("save_lbl"));
         setSSZone();
         setSSLocal();
@@ -896,7 +898,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_local.setmShowBarcode(true);
         ss_local.setmShowLabel(false);
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
-        mPresenter.setLocalValue(ss_local);
+        mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
     }
 
     private void setSSZone() {
