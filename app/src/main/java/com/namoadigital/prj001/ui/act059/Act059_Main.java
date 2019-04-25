@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -486,7 +485,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     @Override
     public void setWs_process(String ws_process) {
-        this.ws_process =ws_process;
+        this.ws_process = ws_process;
     }
 
     @Override
