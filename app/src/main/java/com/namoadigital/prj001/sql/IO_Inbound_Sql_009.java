@@ -31,7 +31,7 @@ public class IO_Inbound_Sql_009 implements Specification {
                         "  t.inbound_code,\n" +
                         "  --t.inbound_item,\n" +
                         "  max(t.scn) " + IO_InboundDao.SCN + "\n" +
-                        " FROM ( " +
+                        " FROM (\n " +
                         "        SELECT\n" +
                         "             it.customer_code, \n" +
                         "             it.inbound_prefix, \n" +
@@ -54,9 +54,13 @@ public class IO_Inbound_Sql_009 implements Specification {
                         "             m.customer_code, \n" +
                         "             m.inbound_prefix, \n" +
                         "             m.inbound_code,\n" +
-                        "             0 scn\n" +
+                        "             ifnull(i.scn,0) scn\n" +
                         "         FROM\n" +
-                                   IO_MoveDao.TABLE +" m  \n" +
+                                    IO_MoveDao.TABLE +" m  \n" +
+                        "         LEFT JOIN \n" +
+                                    IO_InboundDao.TABLE + " i on m.customer_code = i.customer_code  \n" +
+                        "                                  and m.inbound_prefix = i.inbound_prefix\n" +
+                        "                                  and m.inbound_code = i.inbound_code \n" +
                         "         WHERE\n" +
                         "             m.customer_code = '"+customer_code+"'  \n" +
                         "             --define put_away\n" +
