@@ -26,6 +26,7 @@ import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
@@ -175,8 +176,8 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                         break;
                     case ConstantBaseApp.IO_INBOUND:
                         Toast.makeText(context, ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY, Toast.LENGTH_SHORT).show();
-                        callWS_IO_Move_Save();
-//                        callWS_IO_Inbound_Item(io_move);
+//                        callWS_IO_Move_Save();
+                        callWS_IO_Inbound_Item();
                         break;
                     case ConstantBaseApp.IO_OUTBOUND:
                         Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
@@ -209,29 +210,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         context.sendBroadcast(mIntent);
     }
 
-    private void callWS_IO_Inbound_Item(IO_Move io_move) {
-        //TBD FAzer select de item, se tiver atualiza, caso contrario nao adicionar ou atualizar
-//        IO_Inbound_Item item = new IO_Inbound_Item();
-//        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM);
-//        item.setCustomer_code(io_move.getCustomer_code());
-//        item.setInbound_prefix(io_move.getInbound_prefix());
-//        item.setInbound_code(io_move.getInbound_code());
-//        item.setInbound_item(io_move.getInbound_item());
-//        item.setProduct_code(io_move.getProduct_code());
-//        item.setSerial_code(io_move.getSerial_code());
-//        item.setSite_code(io_move.getSite_code());
-//        item.setZone_code(io_move.getTo_zone_code());
-//        item.setLocal_code(io_move.getTo_local_code());
-//        item.setStatus(io_move.getStatus());
-//        item.setPlanned_zone_code(io_move.getPlanned_zone_code());
-//        item.setPlanned_local_code(io_move.getPlanned_local_code());
-//        item.setPlanned_class_code(io_move.getPlanned_class_code());
-//
-//        io_inbound_itemDao.addUpdate(item);
-        //todo mudar para serviço de inbound_item
-        mView.setWs_process(WS_IO_Move_Save.class.getName());
+    private void callWS_IO_Inbound_Item() {
+
+        mView.setWs_process(WS_IO_Inbound_Item_Save.class.getName());
         //
         mView.showPD(
                 hmAux_trans.get("dialog_save_move_ttl"),
