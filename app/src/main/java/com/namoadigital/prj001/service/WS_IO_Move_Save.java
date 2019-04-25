@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
@@ -19,6 +20,7 @@ import com.namoadigital.prj001.model.IO_Move_Return;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_010;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_004;
@@ -44,6 +46,7 @@ public class WS_IO_Move_Save extends IntentService {
     private IO_MoveDao moveDao;
     private MD_Product_SerialDao productSerialDao;
     private String token;
+    private IO_Inbound_ItemDao io_inbound_itemDao;
 
     public WS_IO_Move_Save() {
         super("WS_IO_Move_Save");
@@ -78,6 +81,11 @@ public class WS_IO_Move_Save extends IntentService {
 
     private void setDaos() {
         moveDao = new IO_MoveDao(getApplicationContext(),
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ),
+                Constant.DB_VERSION_CUSTOM);
+        io_inbound_itemDao = new IO_Inbound_ItemDao(getApplicationContext(),
                 ToolBox_Con.customDBPath(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                 ),
@@ -199,6 +207,13 @@ public class WS_IO_Move_Save extends IntentService {
                             if (!move_ret.getSerial().isEmpty()) {
                                 productSerialDao.addUpdateTmp(move.getSerial().get(0));
                             }
+                            io_inbound_itemDao.addUpdate( new IO_Inbound_Item_Sql_010(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    move.getInbound_prefix(),
+                                    move.getInbound_code(),
+                                    move.getInbound_item(),
+                                    ConstantBaseApp.SYS_STATUS_DONE).toSqlQuery()
+                            );
                         }else{
                             throw new Exception(daoReturn.getErrorMsg());
                         }

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act059;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -276,7 +277,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-
+        disableProgressDialog();
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
         }else if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
@@ -286,20 +287,19 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
             }.getType() );
             showResults(actReturnList);
         }
-        disableProgressDialog();
     }
 
     private void showResults(ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList) {
         ArrayList<HMAux> resultList = new ArrayList<>();
         for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList){
             HMAux aux = new HMAux();
-            aux.put("title", result.getInbound_code() + "." + result.getInbound_code() );
+            aux.put("title", result.getPrefix() + "." + result.getCode() );
             aux.put("status",result.getMsg());
             if(result.isRetStatus()){
                 for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn.InboundItemSaveInfo info:
                         result.getItems()){
                     aux.put("status",info.getInbound_item() +" - "+ info.getMsg() + "\n");
-                    aux.put("item",""+ result.getInbound_code() + result.getInbound_code() + info.getInbound_item());
+                    aux.put("item",""+ result.getPrefix() + result.getCode() + info.getInbound_item());
                 }
             }
             resultList.add(aux);
@@ -329,7 +329,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             formattedList.add(hmAux);
-            if(resultList.get(i).get("label").equals(
+            if(resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
                             ""+ io_inbound_item.getInbound_code()
                             + io_inbound_item.getInbound_code()
                             + io_inbound_item.getInbound_item())){
