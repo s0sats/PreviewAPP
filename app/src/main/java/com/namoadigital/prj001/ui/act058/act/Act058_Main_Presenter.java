@@ -4,20 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
-import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Blind_Move;
-import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.IO_Move_Tracking;
-import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
@@ -26,10 +15,7 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
-import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_004;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -176,6 +162,15 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                                     ToolBox_Con.getPreference_Customer_Code(context)
                             ),
                             Constant.DB_VERSION_CUSTOM);
+                    //
+                    //No futuro verificar de atualiza alem do status, os dados de posição.
+                    io_inbound_itemDao.addUpdate(new IO_Inbound_Item_Sql_010(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        io_move.getInbound_prefix(),
+                        io_move.getInbound_code(),
+                        io_move.getInbound_item(),
+                        ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
+                    );
                     callWS_IO_Inbound_Item();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:

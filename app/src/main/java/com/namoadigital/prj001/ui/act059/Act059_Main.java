@@ -295,13 +295,13 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
             HMAux aux = new HMAux();
             aux.put("title", result.getPrefix() + "." + result.getCode() );
             aux.put("status",result.getMsg());
-            if(result.isRetStatus()){
-                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn.InboundItemSaveInfo info:
-                        result.getItems()){
-                    aux.put("status",info.getInbound_item() +" - "+ info.getMsg() + "\n");
-                    aux.put("item",""+ result.getPrefix() + result.getCode() + info.getInbound_item());
-                }
-            }
+//            if(result.isRetStatus()){
+//                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn.InboundItemSaveInfo info:
+//                        result.getItems()){
+//                    aux.put("status",info.getInbound_item() +" - "+ info.getMsg() + "\n");
+//                    aux.put("item",""+ result.getPrefix() + result.getCode() + info.getInbound_item());
+//                }
+//            }
             resultList.add(aux);
             showNewOptDialog(resultList);
         }
