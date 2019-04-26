@@ -339,13 +339,16 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
             hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
 
-            formattedList.add(hmAux);
+
 
             if(resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
                             io_inbound_item.getInbound_prefix() +"."
                             + io_inbound_item.getInbound_code() +"."
                             + io_inbound_item.getInbound_item())){
                 auxMove = hmAux;
+                formattedList.add(0,auxMove);
+            }else{
+                formattedList.add(hmAux);
             }
         }
         //
