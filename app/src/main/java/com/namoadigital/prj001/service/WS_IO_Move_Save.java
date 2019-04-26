@@ -46,7 +46,6 @@ public class WS_IO_Move_Save extends IntentService {
     private IO_MoveDao moveDao;
     private MD_Product_SerialDao productSerialDao;
     private String token;
-    private IO_Inbound_ItemDao io_inbound_itemDao;
 
     public WS_IO_Move_Save() {
         super("WS_IO_Move_Save");
@@ -81,11 +80,6 @@ public class WS_IO_Move_Save extends IntentService {
 
     private void setDaos() {
         moveDao = new IO_MoveDao(getApplicationContext(),
-                ToolBox_Con.customDBPath(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ),
-                Constant.DB_VERSION_CUSTOM);
-        io_inbound_itemDao = new IO_Inbound_ItemDao(getApplicationContext(),
                 ToolBox_Con.customDBPath(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                 ),
@@ -207,13 +201,6 @@ public class WS_IO_Move_Save extends IntentService {
                             if (!move_ret.getSerial().isEmpty()) {
                                 productSerialDao.addUpdateTmp(move.getSerial().get(0));
                             }
-                            io_inbound_itemDao.addUpdate( new IO_Inbound_Item_Sql_010(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                    move.getInbound_prefix(),
-                                    move.getInbound_code(),
-                                    move.getInbound_item(),
-                                    ConstantBaseApp.SYS_STATUS_DONE).toSqlQuery()
-                            );
                         }else{
                             throw new Exception(daoReturn.getErrorMsg());
                         }

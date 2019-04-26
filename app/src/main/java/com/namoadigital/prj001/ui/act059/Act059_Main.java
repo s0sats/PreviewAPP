@@ -325,9 +325,14 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         HMAux auxMove = new HMAux();
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
-            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("item"));
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
-            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            if(resultList.get(i).hasConsistentValue("status")) {
+                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            }else{
+                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, "OK");
+            }
+
             formattedList.add(hmAux);
             if(resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
                             ""+ io_inbound_item.getInbound_code()
@@ -362,11 +367,11 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 }
                 //
 
-                if (finalAuxMove.get("status").equalsIgnoreCase("Ok")) {
+//                if (finalAuxMove.get("status").equalsIgnoreCase("Ok")) {
                     //
                     onBackPressed();
                     //atualizar a tela com os dados do move
-                }
+//                }
 
             }
         });
