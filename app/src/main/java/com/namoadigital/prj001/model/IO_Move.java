@@ -45,6 +45,7 @@ public class IO_Move implements Serializable {
     private String done_date;
     @Expose
     private Integer done_user;
+    @Expose
     private String done_user_nick;
     @Expose
     private String status;

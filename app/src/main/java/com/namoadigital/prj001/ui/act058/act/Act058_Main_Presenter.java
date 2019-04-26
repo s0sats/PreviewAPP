@@ -4,9 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Blind_Move;
+import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
@@ -71,7 +82,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     }
 
 
-
     @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
 
@@ -130,7 +140,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setMove_code(move_code);
         if (!io_move.getMove_type().equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)) {
             io_move.setUpdate_required(1);
-        }else{
+        } else {
             io_move.setUpdate_required(0);
         }
 
@@ -141,12 +151,12 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     hmAux_trans.get("alert_offline_save_error_ttl"),
                     hmAux_trans.get("alert_offline_save_error_msg")
             );
-        }else {
-            boolean hasError =false;
+        } else {
+            boolean hasError = false;
             for (IO_Move_Tracking tracking : trackingFromMove) {
                 DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
                 if (daoObjReturnIoMoveTracking.hasError()) {
-                    hasError =true;
+                    hasError = true;
                 }
             }
 //            if (hasError) {
@@ -155,62 +165,72 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 //                        hmAux_trans.get("alert_offline_save_tracking_error_msg")
 //                );
 //            }
-            if (ToolBox_Con.isOnline(context)) {
-                switch (io_move.getMove_type()) {
-                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                        callWS_IO_Move_Save();
-                        break;
-                    case ConstantBaseApp.IO_INBOUND:
-                        Toast.makeText(context, ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY, Toast.LENGTH_SHORT).show();
-//                        callWS_IO_Move_Save();
-                        callWS_IO_Inbound_Item();
-                        break;
-                    case ConstantBaseApp.IO_OUTBOUND:
-                        Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
-                        callWS_IO_Move_Save();
+
+            switch (io_move.getMove_type()) {
+                case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                    callWS_IO_Move_Save();
+                    break;
+                case ConstantBaseApp.IO_INBOUND:
+                    IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
+                            ToolBox_Con.customDBPath(
+                                    ToolBox_Con.getPreference_Customer_Code(context)
+                            ),
+                            Constant.DB_VERSION_CUSTOM);
+                    callWS_IO_Inbound_Item();
+                    break;
+                case ConstantBaseApp.IO_OUTBOUND:
+                    Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
+                    callWS_IO_Move_Save();
 //                        callWS_IO_Outbound_Item(io_move);
-                        break;
-                }
-            } else {
-                mView.showAlert(
-                        hmAux_trans.get("alert_offline_save_ttl"),
-                        hmAux_trans.get("alert_offline_save_msg")
-                );
+                    break;
             }
         }
     }
 
     private void callWS_IO_Move_Save() {
-        mView.setWs_process(WS_IO_Move_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_trans.get("dialog_save_move_ttl"),
-                hmAux_trans.get("dialog_save_move_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
-        Bundle bundle = new Bundle();
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Move_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
+            );
+        }
     }
 
     private void callWS_IO_Inbound_Item() {
-
-        mView.setWs_process(WS_IO_Inbound_Item_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_trans.get("dialog_save_move_ttl"),
-                hmAux_trans.get("dialog_save_move_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
-        Bundle bundle = new Bundle();
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Inbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
+            );
+        }
     }
 
     private void callWS_IO_Outbound_Item(IO_Move io_move) {
@@ -288,7 +308,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 
         blindMoveDao.addUpdate(io_blind_move);
 
-        IO_Blind_Move_TrackingDao ioBlindTrackingDao= new IO_Blind_Move_TrackingDao(context,
+        IO_Blind_Move_TrackingDao ioBlindTrackingDao = new IO_Blind_Move_TrackingDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
 
@@ -326,7 +346,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     public int getBlindTmp() {
         List<HMAux> blind_move = blindMoveDao.query_HM(new IO_Blind_Move_Sql_002().toSqlQuery());
 
-        if(blind_move == null || !blind_move.get(0).hasConsistentValue(NEXT_TMP)){
+        if (blind_move == null || !blind_move.get(0).hasConsistentValue(NEXT_TMP)) {
             return 1;
         }
         return Integer.valueOf(blind_move.get(0).get(NEXT_TMP));

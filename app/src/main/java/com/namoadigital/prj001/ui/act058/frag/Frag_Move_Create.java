@@ -768,18 +768,18 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 ss_reason.setVisibility(View.GONE);
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
+                break;
             case 3:
                 ss_reason.setVisibility(View.GONE);
                 ss_zone.setmEnabled(false);
                 ss_local.setmEnabled(false);
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
+                break;
         }
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
         mListener.onAddOrRemoveControlSS(ss_local, true);
-
-
 //        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
     }
 

@@ -477,8 +477,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
         bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, String.valueOf(mPrefix));
         bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, String.valueOf(mCode));
-        bundle.putInt(IO_InboundDao.ZONE_CODE_CONF, mInbound.getZone_code_conf());
-        bundle.putInt(IO_InboundDao.LOCAL_CODE_CONF, mInbound.getLocal_code_conf());
+        if(mInbound.getZone_code_conf() != null) {
+            bundle.putInt(IO_InboundDao.ZONE_CODE_CONF, mInbound.getZone_code_conf());
+        }
+        if(mInbound.getLocal_code_conf() != null) {
+            bundle.putInt(IO_InboundDao.LOCAL_CODE_CONF, mInbound.getLocal_code_conf());
+        }
         bundle.putInt(IO_InboundDao.PUT_AWAY_PROCESS, mInbound.getPut_away_process());
         bundle.putString(IO_Inbound_ItemDao.INBOUND_ITEM, String.valueOf(item.get(IO_Inbound_ItemDao.INBOUND_ITEM)));
         mIntent.putExtras(bundle);
