@@ -53,6 +53,8 @@ public class IO_Move implements Serializable {
     @Expose
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     @Expose
+    private ArrayList<IO_Move_Tracking> tracking_list = new ArrayList<>();
+    @Expose
     private int update_required;
     private String token;
 
@@ -294,5 +296,13 @@ public class IO_Move implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public ArrayList<IO_Move_Tracking> getTracking_list() {
+        return tracking_list;
+    }
+
+    public void setTracking_list(ArrayList<IO_Move_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

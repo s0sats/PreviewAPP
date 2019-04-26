@@ -12,6 +12,8 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
+import com.namoadigital.prj001.sql.IO_Move_Tracking_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -22,7 +24,7 @@ import java.util.List;
 public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
     private final Mapper<IO_Move, ContentValues> toContentValuesMapper;
-    private final Mapper<Cursor,IO_Move> toIO_MoveMapper;
+    private final Mapper<Cursor, IO_Move> toIO_MoveMapper;
 
     public static final String TABLE = "io_move";
     public static final String CUSTOMER_CODE = "customer_code";
@@ -75,7 +77,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
         //
         openDB();
 
-        try{
+        try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = new StringBuilder();
@@ -87,27 +89,27 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_move), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
-            if(addUpdateRet == 0){
+            if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_move));
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
-                    getClass().getName(),
-                    new Exception(
-                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                    )
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
             );
 
-        }catch (Exception e){
+        } catch (Exception e) {
             //Seta obj de retorno com flag de erro e gera arquivo de exception
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
-        }finally {
+        } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);
@@ -120,20 +122,20 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
     }
 
 
-    public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status , SQLiteDatabase dbInstance) {
+    public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
         try {
             //Se db não foi passado, inicializa transaction
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.beginTransaction();
             }
 
@@ -141,7 +143,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 db.delete(TABLE, null, null);
             }
 
-            for(IO_Move io_move :io_moves){
+            for (IO_Move io_move : io_moves) {
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
                 StringBuilder sbWhere = new StringBuilder();
@@ -153,17 +155,17 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_move), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
-                if(addUpdateRet == 0){
+                if (addUpdateRet == 0) {
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_move));
                 }
             }
 
             //Se db não foi passado, finaliza transaction com sucesso
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -180,7 +182,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction();
             }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
@@ -189,7 +191,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             daoObjReturn.setActionReturn(addUpdateRet);
         }
 
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
 
@@ -198,7 +200,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
     @Override
     public DaoObjReturn addUpdate(List<IO_Move> io_moves, boolean status) {
-        return addUpdate(io_moves,status,null);
+        return addUpdate(io_moves, status, null);
     }
 
     @Override
@@ -237,13 +239,13 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_inbound.getCustomer_code())).append("'");
             sbWhere.append(" and ");
@@ -251,8 +253,8 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             sbWhere.append(" and ");
             sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_inbound.getInbound_code())).append("'");
             //
-            sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-        }catch (SQLiteException e){
+            sqlRet = db.delete(TABLE, sbWhere.toString(), null);
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -274,7 +276,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             daoObjReturn.setActionReturn(sqlRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         return daoObjReturn;
@@ -290,11 +292,30 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
             while (cursor.moveToNext()) {
                 io_move = toIO_MoveMapper.map(cursor);
+                //
+            }
+            //
+            if (io_move != null) {
+                IO_Move_TrackingDao moveTrackingDao = new IO_Move_TrackingDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                io_move.setTracking_list(
+                    (ArrayList<IO_Move_Tracking>) moveTrackingDao.query(
+                        new IO_Move_Tracking_Sql_001(
+                            io_move.getCustomer_code(),
+                            io_move.getMove_prefix(),
+                            io_move.getMove_code()
+                        ).toSqlQuery()
+                    )
+                );
             }
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -318,7 +339,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -338,12 +359,31 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
             while (cursor.moveToNext()) {
                 IO_Move uAux = toIO_MoveMapper.map(cursor);
+                //
+                if (uAux != null) {
+                    IO_Move_TrackingDao moveTrackingDao = new IO_Move_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    uAux.setTracking_list(
+                        (ArrayList<IO_Move_Tracking>) moveTrackingDao.query(
+                            new IO_Move_Tracking_Sql_001(
+                                uAux.getCustomer_code(),
+                                uAux.getMove_prefix(),
+                                uAux.getMove_code()
+                            ).toSqlQuery()
+                        )
+                    );
+                }
+                //
                 io_moves.add(uAux);
             }
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -367,7 +407,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -387,100 +427,100 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             io_move.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             io_move.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
             io_move.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
-            if(cursor.isNull(cursor.getColumnIndex(FROM_ZONE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(FROM_ZONE_CODE))) {
                 io_move.setFrom_zone_code(null);
-            }else{
+            } else {
                 io_move.setFrom_zone_code(cursor.getInt(cursor.getColumnIndex(FROM_ZONE_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(FROM_LOCAL_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(FROM_LOCAL_CODE))) {
                 io_move.setFrom_local_code(null);
-            }else{
+            } else {
                 io_move.setFrom_local_code(cursor.getInt(cursor.getColumnIndex(FROM_LOCAL_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(FROM_CLASS_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(FROM_CLASS_CODE))) {
                 io_move.setFrom_class_code(null);
-            }else{
+            } else {
                 io_move.setFrom_class_code(cursor.getInt(cursor.getColumnIndex(FROM_CLASS_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PLANNED_ZONE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(PLANNED_ZONE_CODE))) {
                 io_move.setPlanned_zone_code(null);
-            }else{
+            } else {
                 io_move.setPlanned_zone_code(cursor.getInt(cursor.getColumnIndex(PLANNED_ZONE_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PLANNED_LOCAL_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(PLANNED_LOCAL_CODE))) {
                 io_move.setPlanned_local_code(null);
-            }else{
+            } else {
                 io_move.setPlanned_local_code(cursor.getInt(cursor.getColumnIndex(PLANNED_LOCAL_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PLANNED_CLASS_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(PLANNED_CLASS_CODE))) {
                 io_move.setPlanned_class_code(null);
-            }else{
+            } else {
                 io_move.setPlanned_class_code(cursor.getInt(cursor.getColumnIndex(PLANNED_CLASS_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(TO_ZONE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(TO_ZONE_CODE))) {
                 io_move.setTo_zone_code(null);
-            }else{
+            } else {
                 io_move.setTo_zone_code(cursor.getInt(cursor.getColumnIndex(TO_ZONE_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(TO_LOCAL_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(TO_LOCAL_CODE))) {
                 io_move.setTo_local_code(null);
-            }else{
+            } else {
                 io_move.setTo_local_code(cursor.getInt(cursor.getColumnIndex(TO_LOCAL_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(TO_CLASS_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(TO_CLASS_CODE))) {
                 io_move.setTo_class_code(null);
-            }else{
+            } else {
                 io_move.setTo_class_code(cursor.getInt(cursor.getColumnIndex(TO_CLASS_CODE)));
             }
             io_move.setMove_type(cursor.getString(cursor.getColumnIndex(MOVE_TYPE)));
-            if(cursor.isNull(cursor.getColumnIndex(REASON_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(REASON_CODE))) {
                 io_move.setReason_code(null);
-            }else{
+            } else {
                 io_move.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(INBOUND_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(INBOUND_PREFIX))) {
                 io_move.setInbound_prefix(null);
-            }else{
+            } else {
                 io_move.setInbound_prefix(cursor.getInt(cursor.getColumnIndex(INBOUND_PREFIX)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(INBOUND_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(INBOUND_CODE))) {
                 io_move.setInbound_code(null);
-            }else{
+            } else {
                 io_move.setInbound_code(cursor.getInt(cursor.getColumnIndex(INBOUND_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(INBOUND_ITEM))){
+            if (cursor.isNull(cursor.getColumnIndex(INBOUND_ITEM))) {
                 io_move.setInbound_item(null);
-            }else{
+            } else {
                 io_move.setInbound_item(cursor.getInt(cursor.getColumnIndex(INBOUND_ITEM)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(OUTBOUND_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(OUTBOUND_PREFIX))) {
                 io_move.setOutbound_prefix(null);
-            }else{
+            } else {
                 io_move.setOutbound_prefix(cursor.getInt(cursor.getColumnIndex(OUTBOUND_PREFIX)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(OUTBOUND_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(OUTBOUND_CODE))) {
                 io_move.setOutbound_code(null);
-            }else{
+            } else {
                 io_move.setOutbound_code(cursor.getInt(cursor.getColumnIndex(OUTBOUND_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(OUTBOUND_ITEM))){
+            if (cursor.isNull(cursor.getColumnIndex(OUTBOUND_ITEM))) {
                 io_move.setOutbound_item(null);
-            }else{
+            } else {
                 io_move.setOutbound_item(cursor.getInt(cursor.getColumnIndex(OUTBOUND_ITEM)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DONE_DATE))){
+            if (cursor.isNull(cursor.getColumnIndex(DONE_DATE))) {
                 io_move.setDone_date(null);
-            }else{
+            } else {
                 io_move.setDone_date(cursor.getString(cursor.getColumnIndex(DONE_DATE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DONE_USER))){
+            if (cursor.isNull(cursor.getColumnIndex(DONE_USER))) {
                 io_move.setDone_user(null);
-            }else{
+            } else {
                 io_move.setDone_user(cursor.getInt(cursor.getColumnIndex(DONE_USER)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DONE_USER_NICK))){
+            if (cursor.isNull(cursor.getColumnIndex(DONE_USER_NICK))) {
                 io_move.setDone_user_nick(null);
-            }else{
+            } else {
                 io_move.setDone_user_nick(cursor.getString(cursor.getColumnIndex(DONE_USER_NICK)));
             }
             io_move.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
@@ -500,48 +540,48 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
         public ContentValues map(IO_Move io_move) {
             ContentValues contentValues = new ContentValues();
             //
-            if(io_move.getCustomer_code() > -1){
-                contentValues.put(CUSTOMER_CODE,io_move.getCustomer_code());
+            if (io_move.getCustomer_code() > -1) {
+                contentValues.put(CUSTOMER_CODE, io_move.getCustomer_code());
             }
-            if(io_move.getMove_prefix() > -1){
-                contentValues.put(MOVE_PREFIX,io_move.getMove_prefix());
+            if (io_move.getMove_prefix() > -1) {
+                contentValues.put(MOVE_PREFIX, io_move.getMove_prefix());
             }
-            if(io_move.getMove_code() > -1){
-                contentValues.put(MOVE_CODE,io_move.getMove_code());
+            if (io_move.getMove_code() > -1) {
+                contentValues.put(MOVE_CODE, io_move.getMove_code());
             }
-            if(io_move.getProduct_code() > -1){
-                contentValues.put(PRODUCT_CODE,io_move.getProduct_code());
+            if (io_move.getProduct_code() > -1) {
+                contentValues.put(PRODUCT_CODE, io_move.getProduct_code());
             }
-            if(io_move.getSerial_code() > -1){
-                contentValues.put(SERIAL_CODE,io_move.getSerial_code());
+            if (io_move.getSerial_code() > -1) {
+                contentValues.put(SERIAL_CODE, io_move.getSerial_code());
             }
-            if(io_move.getSite_code() > -1){
-                contentValues.put(SITE_CODE,io_move.getSite_code());
+            if (io_move.getSite_code() > -1) {
+                contentValues.put(SITE_CODE, io_move.getSite_code());
             }
-            contentValues.put(FROM_ZONE_CODE,io_move.getFrom_zone_code());
-            contentValues.put(FROM_LOCAL_CODE,io_move.getFrom_local_code());
-            contentValues.put(FROM_CLASS_CODE,io_move.getFrom_class_code());
-            contentValues.put(PLANNED_ZONE_CODE,io_move.getPlanned_zone_code());
-            contentValues.put(PLANNED_LOCAL_CODE,io_move.getPlanned_local_code());
-            contentValues.put(PLANNED_CLASS_CODE,io_move.getPlanned_class_code());
-            contentValues.put(TO_ZONE_CODE,io_move.getTo_zone_code());
-            contentValues.put(TO_LOCAL_CODE,io_move.getTo_local_code());
-            contentValues.put(TO_CLASS_CODE,io_move.getTo_class_code());
-            if(io_move.getMove_type()!= null){
-                contentValues.put(MOVE_TYPE,io_move.getMove_type());
+            contentValues.put(FROM_ZONE_CODE, io_move.getFrom_zone_code());
+            contentValues.put(FROM_LOCAL_CODE, io_move.getFrom_local_code());
+            contentValues.put(FROM_CLASS_CODE, io_move.getFrom_class_code());
+            contentValues.put(PLANNED_ZONE_CODE, io_move.getPlanned_zone_code());
+            contentValues.put(PLANNED_LOCAL_CODE, io_move.getPlanned_local_code());
+            contentValues.put(PLANNED_CLASS_CODE, io_move.getPlanned_class_code());
+            contentValues.put(TO_ZONE_CODE, io_move.getTo_zone_code());
+            contentValues.put(TO_LOCAL_CODE, io_move.getTo_local_code());
+            contentValues.put(TO_CLASS_CODE, io_move.getTo_class_code());
+            if (io_move.getMove_type() != null) {
+                contentValues.put(MOVE_TYPE, io_move.getMove_type());
             }
-            contentValues.put(REASON_CODE,io_move.getReason_code());
-            contentValues.put(INBOUND_PREFIX,io_move.getInbound_prefix());
-            contentValues.put(INBOUND_CODE,io_move.getInbound_code());
-            contentValues.put(INBOUND_ITEM,io_move.getInbound_item());
-            contentValues.put(OUTBOUND_PREFIX,io_move.getOutbound_prefix());
-            contentValues.put(OUTBOUND_CODE,io_move.getOutbound_code());
-            contentValues.put(OUTBOUND_ITEM,io_move.getOutbound_item());
-            contentValues.put(DONE_DATE,io_move.getDone_date());
-            contentValues.put(DONE_USER,io_move.getDone_user());
-            contentValues.put(DONE_USER_NICK,io_move.getDone_user_nick());
-            if(io_move.getStatus()!= null){
-                contentValues.put(STATUS,io_move.getStatus());
+            contentValues.put(REASON_CODE, io_move.getReason_code());
+            contentValues.put(INBOUND_PREFIX, io_move.getInbound_prefix());
+            contentValues.put(INBOUND_CODE, io_move.getInbound_code());
+            contentValues.put(INBOUND_ITEM, io_move.getInbound_item());
+            contentValues.put(OUTBOUND_PREFIX, io_move.getOutbound_prefix());
+            contentValues.put(OUTBOUND_CODE, io_move.getOutbound_code());
+            contentValues.put(OUTBOUND_ITEM, io_move.getOutbound_item());
+            contentValues.put(DONE_DATE, io_move.getDone_date());
+            contentValues.put(DONE_USER, io_move.getDone_user());
+            contentValues.put(DONE_USER_NICK, io_move.getDone_user_nick());
+            if (io_move.getStatus() != null) {
+                contentValues.put(STATUS, io_move.getStatus());
             }
             if (io_move.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, io_move.getUpdate_required());
