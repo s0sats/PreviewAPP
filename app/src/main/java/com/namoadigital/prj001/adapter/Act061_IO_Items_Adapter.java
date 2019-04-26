@@ -299,7 +299,6 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 if (item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("0")) {
                     iv_conf.setVisibility(View.VISIBLE);
                     iv_put_away.setVisibility(View.GONE);
-                    defineButtonsLayout(item);
                 } else {
                     if(
                         item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
@@ -315,31 +314,50 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                     }
                 }
             }
+            //Define layout dos botões
+            defineButtonsLayout(item);
         }
 
         private void defineButtonsLayout(HMAux item) {
-            if( item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-                && item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)
-            ){
-                iv_conf.setImageDrawable(
-                    context.getDrawable(R.drawable.ic_ok_orange_ns_states)
-                );
+            if(item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+
+                if (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                    iv_conf.setImageDrawable(
+                        context.getDrawable(R.drawable.ic_ok_orange_ns_states)
+                    );
+                } else {
+                    iv_conf.setImageDrawable(
+                        context.getDrawable(R.drawable.ic_ok_ns_states)
+                    );
+                }
+                //
+                if (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)) {
+                    iv_put_away.setImageDrawable(
+                        context.getDrawable(R.drawable.io_bg_orange_states)
+                    );
+                } else {
+                    iv_put_away.setImageDrawable(
+                        context.getDrawable(R.drawable.io_bg_green_states)
+                    );
+                }
+                //Cancela ação do btn caso o status não permita uma ação.
+                if (
+                    item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
+                ) {
+                    iv_conf.setEnabled(false);
+                    iv_put_away.setEnabled(false);
+                }else{
+                    iv_conf.setEnabled(true);
+                    iv_put_away.setEnabled(true);
+                }
             }else{
-                iv_conf.setImageDrawable(
-                    context.getDrawable(R.drawable.ic_ok_ns_states)
-                );
-            }
-            //
-            if(item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-                && item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
-            ){
-                iv_put_away.setImageDrawable(
-                    context.getDrawable(R.drawable.ic_play_stop_laranja_ns_states)
-                );
-            }else{
-                iv_put_away.setImageDrawable(
-                    context.getDrawable(R.drawable.ic_play_ns_states)
-                );
+                iv_conf.setEnabled(false);
+                iv_conf.setVisibility(View.GONE);
+                iv_put_away.setEnabled(false);
+                iv_put_away.setVisibility(View.GONE);
             }
         }
 

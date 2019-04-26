@@ -146,8 +146,8 @@ public class T_IO_Inbound_Item_Rec {
         private Integer inbound_item;
         private Integer move_prefix;
         private Integer move_code;
-        private String ret_status;
-        private String ret_msg;
+        private String ret_status = "";
+        private String ret_msg = "";
         private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
         //
         public Integer getInbound_item() {

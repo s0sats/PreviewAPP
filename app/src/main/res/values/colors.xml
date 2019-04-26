@@ -97,6 +97,14 @@
     <color name="namoa_color_blue_balloon_chat">#C0DBE2</color>
     <color name="namoa_color_green_chat">#28A745</color>
 
+    <!--CORES DOS BOTÕES IO E S.O -->
+    <color name="namoa_color_pending_action">#f8b400</color>
+    <color name="namoa_color_pending_action_pressed">#f87900</color>
+    <color name="namoa_color_done_action">#6ab330</color>
+    <color name="namoa_color_done_action_pressed">#508826</color>
+    <color name="namoa_color_start_action">#6ab330</color>
+    <color name="namoa_color_start_action_pressed">#508826</color>
+
 
     <!--&lt;!&ndash;REVISÃO CORES STATUS&ndash;&gt;-->
     <!--<color name="namoa_status_edit" >#FF1493</color>-->

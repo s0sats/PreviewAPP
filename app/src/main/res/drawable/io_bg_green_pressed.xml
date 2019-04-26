@@ -4,8 +4,8 @@
     <item>
         <shape
             android:shape="rectangle">
-            <solid android:color="@color/namoa_color_pending_action"/>
-            <stroke android:color="@color/namoa_color_pending_action"/>
+            <solid android:color="@color/namoa_color_done_action_pressed"/>
+            <stroke android:color="@color/namoa_color_done_action_pressed"/>
         </shape>
     </item>
 

@@ -287,31 +287,30 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         //Executa for no nivel de retorno da inbound.
         for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return saveReturn : rec.getResult()) {
-            InboundItemSaveActReturn actReturn = new InboundItemSaveActReturn();
-            //Atualiza obj com dados do retorno master da inbound.
-            actReturn.setCustomer_code((int) saveReturn.getCustomer_code());
-            actReturn.setPrefix(saveReturn.getInbound_prefix());
-            actReturn.setCode(saveReturn.getInbound_code());
-            actReturn.setRetStatus(saveReturn.getRet_status().equals("OK"));
-            actReturn.setMsg(saveReturn.getRet_msg());
             //Busca por filhos com status diferente de OK e se houver adiciona como item.
             for (T_IO_Inbound_Item_Rec.IO_Inbound_Item_Save_Return_Item saveReturnItem : saveReturn.getItems()) {
+                InboundItemSaveActReturn actReturn = new InboundItemSaveActReturn();
+                //Atualiza obj com dados do retorno master da inbound.
+                //Por padrão seta o prefix e code comoo da inbound.Ficará assim se for in_conf
+                actReturn.setCustomer_code((int) saveReturn.getCustomer_code());
+                actReturn.setPrefix(saveReturn.getInbound_prefix());
+                actReturn.setCode(saveReturn.getInbound_code());
+                actReturn.setItem(saveReturnItem.getInbound_item());
+                actReturn.setFromTokenProcess(reSend);
+                //RetStatus nunca deveria ser null, mas se fora, considerar como OK
+                actReturn.setRetStatus(saveReturnItem.getRet_status() == null ? "OK" : saveReturnItem.getRet_status());
+                //Se  status diferente de OK, coloca msg, se não branco.
+                actReturn.setMsg(
+                    !actReturn.getRetStatus().equals("OK") ? saveReturnItem.getRet_msg() : null
+                );
                 //Se uma movimentação, seta o prefx e code da move e seta isMove como true.
                 if(saveReturnItem.getMove_prefix() != null &&  saveReturnItem.getMove_code() != null){
                     actReturn.setPrefix(saveReturnItem.getMove_prefix());
                     actReturn.setCode(saveReturnItem.getMove_code());
                     actReturn.setMove(true);
                 }
-                //
-                if (!saveReturnItem.getRet_status().equals("OK")) {
-                    InboundItemSaveActReturn.InboundItemSaveInfo itemInfos = new InboundItemSaveActReturn.InboundItemSaveInfo();
-                    itemInfos.setInbound_item(saveReturnItem.getInbound_item());
-                    itemInfos.setMove_prefix(saveReturnItem.getMove_prefix());
-                    itemInfos.setMove_code(saveReturnItem.getMove_code());
-                    itemInfos.setMsg(saveReturnItem.getRet_msg());
-                    //
-                    actReturn.getItems().add(itemInfos);
-                }
+                //add o item na lista.
+                actReturnList.add(actReturn);
             }
             //Nada será executado aqui, ja que somente rodará o inboundFull
             if (saveReturn.getRet_status().equals("OK")) {
@@ -378,9 +377,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 }
 
             }
-            //
-            actReturnList.add(actReturn);
-            //
         }
         //Reseta daoObject
         daoObjReturn.clearError();
@@ -521,11 +517,11 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         private int customer_code = -1;
         private int prefix = -1;
         private int code = -1;
-        private boolean retStatus = false;
-        private String msg = "";
+        private Integer item = -1;
+        private String retStatus ="";
         private boolean fromTokenProcess = false;
         private boolean isMove = false;
-        private ArrayList<InboundItemSaveInfo> items = new ArrayList<>();
+        private String msg = "";
 
         public InboundItemSaveActReturn() {
         }
@@ -554,11 +550,19 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             this.code = code;
         }
 
-        public boolean isRetStatus() {
+        public Integer getItem() {
+            return item;
+        }
+
+        public void setItem(Integer item) {
+            this.item = item;
+        }
+
+        public String getRetStatus() {
             return retStatus;
         }
 
-        public void setRetStatus(boolean retStatus) {
+        public void setRetStatus(String retStatus) {
             this.retStatus = retStatus;
         }
 
@@ -578,14 +582,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             isMove = move;
         }
 
-        public ArrayList<InboundItemSaveInfo> getItems() {
-            return items;
-        }
-
-        public void setItems(ArrayList<InboundItemSaveInfo> items) {
-            this.items = items;
-        }
-
         public boolean isFromTokenProcess() {
             return fromTokenProcess;
         }
@@ -594,43 +590,5 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             this.fromTokenProcess = fromTokenProcess;
         }
 
-        public static class InboundItemSaveInfo {
-            private Integer inbound_item;
-            private Integer move_prefix;
-            private Integer move_code;
-            private String msg;
-
-            public Integer getMove_prefix() {
-                return move_prefix;
-            }
-
-            public void setMove_prefix(Integer move_prefix) {
-                this.move_prefix = move_prefix;
-            }
-
-            public Integer getMove_code() {
-                return move_code;
-            }
-
-            public void setMove_code(Integer move_code) {
-                this.move_code = move_code;
-            }
-
-            public Integer getInbound_item() {
-                return inbound_item;
-            }
-
-            public void setInbound_item(Integer inbound_item) {
-                this.inbound_item = inbound_item;
-            }
-
-            public String getMsg() {
-                return msg;
-            }
-
-            public void setMsg(String msg) {
-                this.msg = msg;
-            }
-        }
     }
 }

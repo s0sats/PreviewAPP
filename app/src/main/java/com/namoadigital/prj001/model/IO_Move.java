@@ -32,8 +32,11 @@ public class IO_Move implements Serializable {
     private String move_type;
     @Expose
     private Integer reason_code;
+    @Expose
     private Integer inbound_prefix;
+    @Expose
     private Integer inbound_code;
+    @Expose
     private Integer inbound_item;
     private Integer outbound_prefix;
     private Integer outbound_code;
