@@ -55,6 +55,7 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
                     bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
+                    bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
                     bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, hmAuxRet.get(Constant.HMAUX_PREFIX_KEY));
                     bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, hmAuxRet.get(Constant.HMAUX_CODE_KEY));
                     bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, hmAuxRet.get(MD_Product_SerialDao.PRODUCT_CODE));

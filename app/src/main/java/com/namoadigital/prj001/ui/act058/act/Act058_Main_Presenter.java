@@ -175,8 +175,8 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
                     Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
-                    callWS_IO_Move_Save();
-//                        callWS_IO_Outbound_Item(io_move);
+//                    callWS_IO_Move_Save();
+//                    callWS_IO_Outbound_Item(io_move);
                     break;
             }
         }
