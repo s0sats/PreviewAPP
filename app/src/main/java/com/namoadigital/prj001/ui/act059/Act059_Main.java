@@ -376,6 +376,19 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 }
                 if (finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
+                }else {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_move_list_title"),
+                            finalAuxMove.get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    frag_move_create.restoreUIFields();
+                                }
+                            },
+                            0
+                    );
                 }
             }
         });

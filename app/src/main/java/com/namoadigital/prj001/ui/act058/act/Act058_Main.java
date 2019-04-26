@@ -19,6 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -315,9 +318,34 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 showResults(moves);
             }
             if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())){
-                Toast.makeText(context, "Não consegue Moysés?", Toast.LENGTH_SHORT).show();
+                Gson gsonParser = new GsonBuilder().serializeNulls().create();
+                ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>  actReturnList
+                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                }.getType() );
+                showResults(actReturnList);
             }
         }
+    }
+
+    private void showResults(ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList) {
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList){
+            HMAux aux = new HMAux();
+            String itemPk;
+
+            if(result.isMove()) {
+                itemPk= result.getPrefix() + "." + result.getCode();
+                aux.put("title", hmAux_Trans.get("alert_result_movement"));
+            }else{
+                aux.put("title", hmAux_Trans.get("alert_result_in_conf"));
+                itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
+            }
+            aux.put("item", itemPk);
+            aux.put("status",result.getMsg());
+
+            resultList.add(aux);
+        }
+        showNewOptDialog(resultList);
     }
 
     private void showResults(String[] moveArray) {
@@ -329,8 +357,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 String fields[] = aMoveArray.split(Constant.MAIN_CONCAT_STRING_2);
                 //
                 HMAux mHmAux = new HMAux();
-                mHmAux.put("label", fields[0]);
-                mHmAux.put("status", fields[1]);
+                mHmAux.put("item", fields[0]); // item
+                mHmAux.put("status", fields[1]);// status
                 mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                 resultList.add(mHmAux);
             } catch (Exception e) {
@@ -339,10 +367,10 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         }
 
         if (resultList.size() == 1) {
-            if (resultList.get(0).get("label").equals(movePrefix + "." + moveCode)
-            ||  resultList.get(0).get("label").equals(String.valueOf(blind_tmp)) ) {
+            if (resultList.get(0).get("item").equals(movePrefix + "." + moveCode)
+            ||  resultList.get(0).get("item").equals(String.valueOf(blind_tmp)) ) {
                 if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
-                    progressDialog.dismiss();
+
                     //
                     ToolBox.alertMSG(
                             context,
@@ -357,8 +385,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             0
                     );
                 } else {
-                    progressDialog.dismiss();
-                    //
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_move_list_title"),
@@ -372,6 +398,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             0
                     );
                 }
+                progressDialog.dismiss();
             }
         } else {
             showNewOptDialog(resultList);
@@ -397,10 +424,10 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("item"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             moveList.add(hmAux);
-            if (resultList.get(i).get("label").equals(movePrefix + "." + moveCode)) {
+            if (resultList.get(i).get("item").equals(movePrefix + "." + moveCode)) {
                 auxMove.putAll(resultList.get(i));
                 break;
             }
