@@ -295,4 +295,13 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
         ).toSqlQuery());
     }
+
+    @Override
+    public boolean hasSerialPermission() {
+        return ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_IO,
+                Constant.PROFILE_MENU_IO_PARAM_CONFIRM_SERIAL
+        );
+    }
 }

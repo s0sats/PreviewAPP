@@ -500,6 +500,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_IO_PARAM_MOVE_REQUEST = "MOVE_REQUEST";
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND = "OUTBOUND";
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND_NEW = "OUTBOUND_NEW";
+    public static final String PROFILE_MENU_IO_PARAM_CONFIRM_SERIAL = "CONFIRM_SERIAL";
 
 
     //Modulos
