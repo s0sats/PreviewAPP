@@ -159,7 +159,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     break;
                 case ConstantBaseApp.IO_INBOUND:
                     setInboundItemStatus(io_move);
-//                    setInboundItemTracking(trackingFromMove);
                     callWS_IO_Inbound_Item();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
@@ -171,19 +170,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         }
     }
 
-    private void setInboundItemTracking(List<IO_Move_Tracking> trackingFromMove) {
-        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
-                ToolBox_Con.customDBPath(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ),
-                Constant.DB_VERSION_CUSTOM);
-        //
-        //No futuro verificar de atualiza alem do status, os dados de posição.
-        for (IO_Move_Tracking tracking : trackingFromMove) {
-            DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
-
-        }
-    }
 
     private void setInboundItemStatus(IO_Move io_move) {
         IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
@@ -287,6 +273,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT054:
             case ConstantBaseApp.ACT055:
                 mView.callAct054();
+                break;
             case ConstantBaseApp.ACT052:
             case ConstantBaseApp.ACT051:
             default:

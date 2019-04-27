@@ -3,14 +3,14 @@ package com.namoadigital.prj001.ui.act059;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.IO_Conf_TrackingDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -18,7 +18,6 @@ import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
@@ -157,17 +156,21 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
                     hmAux_trans.get("alert_offline_save_error_msg")
             );
         }else {
-            boolean hasError =false;
-            IO_Move_TrackingDao ioMoveTrackingDao = new IO_Move_TrackingDao(context,
+            IO_Conf_TrackingDao io_conf_trackingdao = new IO_Conf_TrackingDao(context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM);
 
             for (IO_Move_Tracking tracking : trackingFromMove) {
-                DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
-                if (daoObjReturnIoMoveTracking.hasError()) {
-                    hasError =true;
-                }
+                IO_Conf_Tracking item_tracking = new IO_Conf_Tracking();
+                item_tracking.setCustomer_code(tracking.getCustomer_code());
+                item_tracking.setPrefix(item.getInbound_prefix());
+                item_tracking.setCode(item.getInbound_code());
+                item_tracking.setItem(item.getInbound_item());
+                item_tracking.setType(ConstantBaseApp.IO_PROCESS_IN_CONF);
+                item_tracking.setTracking(tracking.getTracking());
+                io_conf_trackingdao.addUpdate(item_tracking);
             }
+
             if (ToolBox_Con.isOnline(context)) {
                 mView.setWs_process(WS_IO_Inbound_Item_Save.class.getName());
                 //
