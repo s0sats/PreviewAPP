@@ -139,12 +139,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             );
         } else {
             boolean hasError = false;
-            for (IO_Move_Tracking tracking : trackingFromMove) {
-                DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
-                if (daoObjReturnIoMoveTracking.hasError()) {
-                    hasError = true;
-                }
-            }
+
 //            if (hasError) {
 //                mView.showAlert(
 //                        hmAux_trans.get("alert_offline_save_tracking_error_ttl"),
@@ -154,23 +149,17 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 
             switch (io_move.getMove_type()) {
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                    for (IO_Move_Tracking tracking : trackingFromMove) {
+                        DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
+                        if (daoObjReturnIoMoveTracking.hasError()) {
+                            hasError = true;
+                        }
+                    }
                     callWS_IO_Move_Save();
                     break;
                 case ConstantBaseApp.IO_INBOUND:
-                    IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
-                            ToolBox_Con.customDBPath(
-                                    ToolBox_Con.getPreference_Customer_Code(context)
-                            ),
-                            Constant.DB_VERSION_CUSTOM);
-                    //
-                    //No futuro verificar de atualiza alem do status, os dados de posição.
-                    io_inbound_itemDao.addUpdate(new IO_Inbound_Item_Sql_010(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        io_move.getInbound_prefix(),
-                        io_move.getInbound_code(),
-                        io_move.getInbound_item(),
-                        ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
-                    );
+                    setInboundItemStatus(io_move);
+//                    setInboundItemTracking(trackingFromMove);
                     callWS_IO_Inbound_Item();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
@@ -180,6 +169,37 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     break;
             }
         }
+    }
+
+    private void setInboundItemTracking(List<IO_Move_Tracking> trackingFromMove) {
+        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ),
+                Constant.DB_VERSION_CUSTOM);
+        //
+        //No futuro verificar de atualiza alem do status, os dados de posição.
+        for (IO_Move_Tracking tracking : trackingFromMove) {
+            DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
+
+        }
+    }
+
+    private void setInboundItemStatus(IO_Move io_move) {
+        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ),
+                Constant.DB_VERSION_CUSTOM);
+        //
+        //No futuro verificar de atualiza alem do status, os dados de posição.
+        io_inbound_itemDao.addUpdate(new IO_Inbound_Item_Sql_010(
+            ToolBox_Con.getPreference_Customer_Code(context),
+            io_move.getInbound_prefix(),
+            io_move.getInbound_code(),
+            io_move.getInbound_item(),
+            ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
+        );
     }
 
     private void callWS_IO_Move_Save() {
