@@ -205,8 +205,8 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         Integer selected_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
 
         if (move_type!= null
-                && move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
-                && move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
+                && (move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
+                || move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF))) {
             selected_zone_code = planned_zone_code;
             ss_zone.setmEnabled(false);
         } else if (to_zone_code != null) {

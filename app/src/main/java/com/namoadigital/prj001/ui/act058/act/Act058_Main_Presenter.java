@@ -139,7 +139,12 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             );
         } else {
             boolean hasError = false;
-
+            for (IO_Move_Tracking tracking : trackingFromMove) {
+                DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
+                if (daoObjReturnIoMoveTracking.hasError()) {
+                    hasError = true;
+                }
+            }
 //            if (hasError) {
 //                mView.showAlert(
 //                        hmAux_trans.get("alert_offline_save_tracking_error_ttl"),
@@ -149,12 +154,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 
             switch (io_move.getMove_type()) {
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
-                    for (IO_Move_Tracking tracking : trackingFromMove) {
-                        DaoObjReturn daoObjReturnIoMoveTracking = ioMoveTrackingDao.addUpdate(tracking);
-                        if (daoObjReturnIoMoveTracking.hasError()) {
-                            hasError = true;
-                        }
-                    }
                     callWS_IO_Move_Save();
                     break;
                 case ConstantBaseApp.IO_INBOUND:

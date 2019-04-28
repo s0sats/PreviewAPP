@@ -438,7 +438,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
 
         if (mket_serial.getVisibility() == View.VISIBLE) {
-            if (!mdProductSerial.getSerial_id().equals(mket_serial.getText().toString().trim())) {
+            if (!mdProductSerial.getSerial_id().equalsIgnoreCase(mket_serial.getText().toString().trim())) {
                 isSuccessfully = false;
                 mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             }

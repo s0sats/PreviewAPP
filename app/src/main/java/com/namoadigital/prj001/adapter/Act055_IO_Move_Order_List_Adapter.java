@@ -134,7 +134,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         protected final TextView tv_io_product_ext_code_val;
         protected final TextView tv_io_product_desc_val;
         protected final TextView tv_io_serial_lbl;
-        protected final TextView tv_io_serial_ext_code_lbl;
         protected final TextView tv_io_serial_ext_code_val;
         protected final TextView tv_io_serial_desc;
         protected final TextView tv_io_move_order_list_position;
@@ -159,7 +158,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_product_ext_code_val = itemView.findViewById(R.id.act055_tv_io_product_ext_code_val);
             tv_io_product_desc_val = itemView.findViewById(R.id.act055_tv_io_product_desc_val);
             tv_io_serial_lbl = itemView.findViewById(R.id.act055_tv_io_serial_lbl);
-            tv_io_serial_ext_code_lbl = itemView.findViewById(R.id.act055_tv_io_serial_ext_code_lbl);
             tv_io_serial_ext_code_val = itemView.findViewById(R.id.act055_tv_io_serial_ext_code_val);
             tv_io_serial_desc = itemView.findViewById(R.id.act055_tv_io_serial_desc);
             tv_io_move_order_list_position = itemView.findViewById(R.id.act055_tv_io_move_order_list_position);
@@ -184,7 +182,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_product_desc_val.setText(data.getProduct_desc());
 
             tv_io_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
-            tv_io_serial_ext_code_lbl.setText(hmAux_Trans.get("serial_code_lbl"));
             tv_io_serial_ext_code_val.setText(data.getSerial_id());
             tv_io_serial_desc.setText(formatSerialBrandModelColor(data));
             if(formatSerialBrandModelColor(data).isEmpty()){
