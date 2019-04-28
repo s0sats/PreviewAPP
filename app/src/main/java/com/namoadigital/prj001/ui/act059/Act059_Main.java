@@ -305,7 +305,13 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
             }
             aux.put("item", itemPk);
-            aux.put("status",result.getMsg());
+
+            if(result.getMsg() == null){
+                aux.put("status","Ok");
+            }else{
+                aux.put("status",result.getMsg());
+            }
+
 
             resultList.add(aux);
         }

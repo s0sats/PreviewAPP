@@ -341,7 +341,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
             }
             aux.put("item", itemPk);
-            aux.put("status",result.getMsg());
+
+            if(result.getMsg() == null){
+                aux.put("status","Ok");
+            }else{
+                aux.put("status",result.getMsg());
+            }
 
             resultList.add(aux);
         }
@@ -359,7 +364,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 HMAux mHmAux = new HMAux();
                 mHmAux.put("item", fields[0]); // item
                 mHmAux.put("status", fields[1]);// status
-                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                mHmAux.put("title", hmAux_Trans.get("alert_result_movement"));
                 resultList.add(mHmAux);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -424,6 +429,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("item"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             moveList.add(hmAux);
@@ -457,7 +463,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     progressDialog.dismiss();
                 }
                 //
-                if (auxMove.get("status").equalsIgnoreCase("Ok")) {
+
+                if (auxMove.hasConsistentValue("status")
+                ||auxMove.get("status").equalsIgnoreCase("Ok")) {
                     //
                     onBackPressed();
                     //atualizar a tela com os dados do move
