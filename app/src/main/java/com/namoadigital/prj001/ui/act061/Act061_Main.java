@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act061;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,10 +12,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -21,11 +23,15 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -120,6 +126,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_io_master_data_error_msg");
         transList.add("progress_save_inbound_item_ttl");
         transList.add("progress_save_inbound_item_msg");
+        transList.add("inbound_lbl");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -338,6 +345,44 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
+    public void showResult(ArrayList<HMAux> resultList, boolean inboundResult) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                resultList,
+                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                hmAux_Trans
+            )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
+
+    }
+
+    @Override
     public void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess) {
         //Se era um processo novo
         if (newProcess) {
@@ -439,7 +484,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void callAddItemAct() {
         mPresenter.checkForUpdateRequired(mPrefix,mCode);
-        callAct062();
     }
 
     @Override
@@ -578,7 +622,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPresenter.processHeaderSave(mPrefix, mCode, mLink);
             progressDialog.dismiss();
         } else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
-
+            mPresenter.processItemSaveReturn(mPrefix, mCode, mLink);
+            progressDialog.dismiss();
         } else {
             progressDialog.dismiss();
         }

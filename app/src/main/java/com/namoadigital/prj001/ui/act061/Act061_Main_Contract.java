@@ -30,6 +30,8 @@ public interface Act061_Main_Contract {
         void callAct053(Bundle bundle);
 
         void callAct062();
+
+        void showResult(ArrayList<HMAux> resultList, boolean inboundResult);
     }
 
     interface I_Presenter{
@@ -57,5 +59,7 @@ public interface Act061_Main_Contract {
         void checkForUpdateRequired(int mPrefix, int mCode);
 
         void executeWsSaveItem();
+
+        void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
     }
 }

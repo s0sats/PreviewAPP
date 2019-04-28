@@ -5,16 +5,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.*;
-import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
+import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
@@ -23,6 +34,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     private HMAux hmAux_Trans;
     private IO_InboundDao inboundDao;
     private MD_Product_SerialDao serialDao;
+    private IO_MoveDao moveDao;
 
     public Act061_Main_Presenter(Context context, Act061_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -31,6 +43,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         //
         this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.moveDao = new IO_MoveDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
     }
 
 
@@ -296,13 +309,15 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                 ).toSqlQuery()
             );
             //
-            if (auxUpdate != null
-                && auxUpdate.hasConsistentValue(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO)
-                && auxUpdate.get(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO).equals("0")
-            ) {
+            if (auxUpdate != null && auxUpdate.hasConsistentValue(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO)) {
+                if (auxUpdate.get(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO).equals("0")
+                ) {
+                    mView.callAct062();
+                } else {
+                    executeWsSaveItem();
+                }
+            }else{
                 mView.callAct062();
-            } else {
-                executeWsSaveItem();
             }
         }else {
             ToolBox_Inf.showNoConnectionDialog(context);
@@ -328,6 +343,80 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    @Override
+    public void processItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        try{
+            actReturnList  = gson.fromJson(
+                jsonRet,
+                new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>(){
+                }.getType() );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(actReturnList != null && actReturnList.size() > 0){
+            boolean inboundResult = true;
+            int inboundNextIdx = 0;
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound
+            for (WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn : actReturnList) {
+                String inboundCode = "";
+                //
+                if(actReturn.isMove()){
+                    IO_Move ioMove =
+                        moveDao.getByString(
+                            new IO_Move_Order_Item_Sql_001(
+                                actReturn.getCustomer_code(),
+                                actReturn.getPrefix(),
+                                actReturn.getCode()
+                            ).toSqlQuery()
+                        );
+                    if(ioMove != null){
+                        inboundCode = ioMove.getInbound_prefix()+"."+ioMove.getInbound_code();
+                    }
+                }else{
+                    inboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                }
+                if(!auxResult.containsKey(inboundCode)
+                   ||(auxResult.containsKey(inboundCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                    )
+                ) {
+                    auxResult.put(inboundCode, actReturn.getRetStatus());
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for(Map.Entry<String, String> item : auxResult.entrySet()){
+                String inboundPk = mPrefix+"."+mCode;
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("inbound_lbl") );
+                hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
+                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
+                //
+                if(item.getKey().equals(inboundPk)){
+                    inboundResult = item.getValue().equals("OK");
+                    resultList.add(inboundNextIdx,hmAux);
+                    inboundNextIdx++;
+                }else{
+                    resultList.add(hmAux);
+                }
+
+            }
+            //
+            mView.showResult(resultList,inboundResult);
+        }
+    }
+
+    private String formatInboundInfo(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn){
+        return actReturn.getPrefix() +"."+ actReturn.getCode()
+            +( !actReturn.isMove() ?"."+actReturn.getItem(): "");
     }
 
     @Override

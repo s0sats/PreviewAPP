@@ -179,7 +179,6 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         mketFilter.setmBARCODE(true);
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         //
-        swActionFilter.setChecked(true);
         controls_sta.add(mketFilter);
         //
         if(mFragItemListener != null){
@@ -210,7 +209,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             @Override
             public void reportTextChange(String s, boolean b) {
                 if(mAdapter != null){
-                    mAdapter.getFilter().filter(s);
+                    reapplyFilters();
                 }
             }
         });
@@ -220,9 +219,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(mAdapter != null){
                     filterActionPendencies = isChecked;
-                    mAdapter.updateFilterActionPendenciesStatus(filterActionPendencies);
-                    //
-                    mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+                    reapplyFilters();
                 }
             }
         });
@@ -235,6 +232,11 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         if(bStatus) {
             //
             if (mInbound != null) {
+                //
+                swActionFilter.setChecked(
+                    !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                );
+                //
                 loadAdapter(
                     mPresenter.getItemList(inboundPrefix, inboundCode)
                 );
@@ -248,7 +250,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 context,
                 R.layout.act061_frag_item_cell,
                 itemList,
-                mInbound.getAllow_new_item() == 1,
+                allowNewItem(),
                 swActionFilter.isChecked()
             );
             //
@@ -298,9 +300,20 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                     }
                 }
             });
-            //Força o primeiro filtro para atualizar pelo switch
+
+        }
+    }
+
+    private void reapplyFilters(){
+        if(mAdapter != null) {
+            mAdapter.updateFilterActionPendenciesStatus(filterActionPendencies);
+            //
             mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
         }
+    }
+
+    private boolean allowNewItem() {
+        return mInbound.getAllow_new_item() == 1 && !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
     }
 
     public static List<String> getFragTranslationsVars() {
