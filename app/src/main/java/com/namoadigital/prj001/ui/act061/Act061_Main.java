@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -24,15 +23,12 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act059.Act059_Main;
@@ -51,7 +47,7 @@ import java.util.List;
 public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contract.I_View,
     Act061_Frag_Drawer.onFragDrawerInteraction,
     Act061_Frag_Header.onFragHeaderInteraction,
-    Act061_Frag_Items.onFragItemInteraction{
+    Act061_Frag_Items.onFragItemInteraction {
     public static final String INBOUND_FRAG_HEADER = "INBOUND_FRAG_HEADER";
     public static final String INBOUND_FRAG_ITEM = "INBOUND_FRAG_ITEM";
     public static final String INBOUND_FRAG_DRAWER = "INBOUND_FRAG_DRAWER";
@@ -200,13 +196,13 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
         //O COMANDO ABAIXO RODA ANTES DA VIEW DO FRAG CARREGAR ENTÃO NÃO RODA.
         //PENSAR EM OUTRA MANEIRA
-        if(act061_frag_drawer != null && fragToLoad != null && !fragToLoad.isEmpty()){
-           // act061_frag_drawer.forceFragSelection(fragToLoad);
+        if (act061_frag_drawer != null && fragToLoad != null && !fragToLoad.isEmpty()) {
+            // act061_frag_drawer.forceFragSelection(fragToLoad);
         }
     }
 
     private void setDrawerLocked(boolean lockState) {
-        if(lockState){
+        if (lockState) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             //mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -230,7 +226,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
 
     private void setDrawerState(boolean drawerState) {
-        if(drawerState){
+        if (drawerState) {
             mDrawerLayout.openDrawer(GravityCompat.START);
         } else {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -247,11 +243,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            mIoProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY, "");
+            mIoProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY, ConstantBaseApp.IO_INBOUND);
             mPrefix = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1"));
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
-            fragToLoad = bundle.getString(Act061_Main.FIRST_FRAG_TO_LOAD,INBOUND_FRAG_HEADER);
+            fragToLoad = bundle.getString(Act061_Main.FIRST_FRAG_TO_LOAD, INBOUND_FRAG_HEADER);
         } else {
             mIoProcess = "";
             mPrefix = -1;
@@ -344,7 +340,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess) {
         //Se era um processo novo
-        if(newProcess){
+        if (newProcess) {
             //Atualiza parametro recebido via bundle.
             mPrefix = inbound_prefix;
             mCode = inbound_code;
@@ -352,7 +348,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
         //
         act061_frag_header.toggleIvEditStates(true);
-        act061_frag_header.applyInboundCreated(hmAux_Trans,mPrefix,mCode,bNewProcess, false);
+        act061_frag_header.applyInboundCreated(hmAux_Trans, mPrefix, mCode, bNewProcess, false);
         //
         act061_frag_drawer.loadDataToScreen();
         //Chama atualização do Drawer
@@ -381,21 +377,21 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void showAlert(String ttl, String msg) {
         ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                null,
-                0
+            context,
+            ttl,
+            msg,
+            null,
+            0
         );
     }
 
     @Override
     public void saveInboundHeader(IO_Inbound mInbound) {
         this.mInbound = mInbound;
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             //mPresenter.saveInboundData(mInbound);
-            mPresenter.executeWsSaveInboundHeader(mInbound,bNewProcess);
-        }else{
+            mPresenter.executeWsSaveInboundHeader(mInbound, bNewProcess);
+        } else {
             showAlert(
                 hmAux_Trans.get("alert_io_creation_ttl"),
                 hmAux_Trans.get("alert_creation_only_online_msg")
@@ -411,12 +407,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     @Override
     public void setFragToContainer(String fragTag) {
-        switch (fragTag){
+        switch (fragTag) {
             case INBOUND_FRAG_HEADER:
-                setFrag(act061_frag_header,INBOUND_FRAG_HEADER);
+                setFrag(act061_frag_header, INBOUND_FRAG_HEADER);
                 break;
             case INBOUND_FRAG_ITEM:
-                setFrag(act061_frag_item,INBOUND_FRAG_ITEM);
+                setFrag(act061_frag_item, INBOUND_FRAG_ITEM);
                 break;
         }
     }
@@ -428,7 +424,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     @Override
     public String getFirstFragToLoad() {
-        return fragToLoad != null ? fragToLoad : INBOUND_FRAG_HEADER ;
+        return fragToLoad != null ? fragToLoad : INBOUND_FRAG_HEADER;
     }
 
     //endregion
@@ -456,6 +452,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
+    public void callSerialEdition(HMAux item) {
+        mPresenter.processSerialEdition(item);
+    }
+
+    @Override
     public void callAct058(Bundle bundle) {
         Intent mIntent = new Intent(context, Act058_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -477,10 +478,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
         bundle.putString(IO_Inbound_ItemDao.INBOUND_PREFIX, String.valueOf(mPrefix));
         bundle.putString(IO_Inbound_ItemDao.INBOUND_CODE, String.valueOf(mCode));
-        if(mInbound.getZone_code_conf() != null) {
+        if (mInbound.getZone_code_conf() != null) {
             bundle.putInt(IO_InboundDao.ZONE_CODE_CONF, mInbound.getZone_code_conf());
         }
-        if(mInbound.getLocal_code_conf() != null) {
+        if (mInbound.getLocal_code_conf() != null) {
             bundle.putInt(IO_InboundDao.LOCAL_CODE_CONF, mInbound.getLocal_code_conf());
         }
         bundle.putInt(IO_InboundDao.PUT_AWAY_PROCESS, mInbound.getPut_away_process());
@@ -491,6 +492,28 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         finish();
 
     }
+
+    @Override
+    public void callAct053(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act053_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        if (bundle != null) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+            bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
+            bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
+
+            mIntent.putExtras(bundle);
+            //
+            startActivity(mIntent);
+            finish();
+        }else{
+            //não deveria acontecer
+            //COLOCAR MSG DE DADOS FALTANDO....
+        }
+
+    }
+
     //endregion
 
     //endregion
@@ -498,14 +521,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     @Override
     public void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals) {
-        if(act061_frag_header != null){
-            act061_frag_header.updateMDLists(sites,partners,modals);
+        if (act061_frag_header != null) {
+            act061_frag_header.updateMDLists(sites, partners, modals);
         }
     }
 
     @Override
     public void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
-        if(act061_frag_header != null){
+        if (act061_frag_header != null) {
             act061_frag_header.updateFromOutboundList(outbound);
         }
     }
@@ -546,13 +569,13 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if (wsProcess.equalsIgnoreCase(WS_IO_Master_Data.class.getName())) {
             mPresenter.processIOMasterDataRet(mLink);
             progressDialog.dismiss();
-        } else if(wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())) {
             mPresenter.processFromOutboundRet(mLink);
             progressDialog.dismiss();
-        } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())){
-            mPresenter.processHeaderSave(mPrefix,mCode,mLink);
+        } else if (wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())) {
+            mPresenter.processHeaderSave(mPrefix, mCode, mLink);
             progressDialog.dismiss();
-        }else {
+        } else {
             progressDialog.dismiss();
         }
     }

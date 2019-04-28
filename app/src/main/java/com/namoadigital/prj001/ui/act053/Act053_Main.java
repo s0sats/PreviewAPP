@@ -205,7 +205,10 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         frgSerialEdit.setIOProcess(isIoProcess);
-        frgSerialEdit.setForceSaveAgain(true);
+        if(isIoProcess && !ioProcess.equals(ConstantBaseApp.IO_SERIAL_EDIT)){
+            frgSerialEdit.setForceSaveAgain(true);
+        }
+
         //
         frgSerialEdit.setDelegate(new Frg_Serial_Edit.I_Frg_Serial_Edit() {
 
@@ -580,9 +583,6 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             bundle = new Bundle();
         }
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ioProcess);
-        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,ioPrefix);
-        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,ioCode);
         bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
         //
         mIntent.putExtras(bundle);

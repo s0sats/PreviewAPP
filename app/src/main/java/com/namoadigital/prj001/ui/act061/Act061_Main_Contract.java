@@ -26,6 +26,8 @@ public interface Act061_Main_Contract {
         void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess);
 
         void callAct058(Bundle bundle);
+
+        void callAct053(Bundle bundle);
     }
 
     interface I_Presenter{
@@ -47,5 +49,7 @@ public interface Act061_Main_Contract {
         void processHeaderSave(int mPrefix, int mCode, String actReturnJson);
 
         void processPutAwayMove(HMAux item);
+
+        void processSerialEdition(HMAux item);
     }
 }

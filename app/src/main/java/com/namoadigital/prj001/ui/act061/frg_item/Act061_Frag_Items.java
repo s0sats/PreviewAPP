@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -61,6 +60,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         void callInConfCreateItemAct(HMAux item);
 
         void callPutAwayCreateItemAct(HMAux item);
+
+        void callSerialEdition(HMAux item);
     }
 
     public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code){
@@ -221,17 +222,23 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             mAdapter.setOnIoItemClickListener(new Act061_IO_Items_Adapter.OnIoItemClickListener() {
                 @Override
                 public void onSerialClick(HMAux item) {
-                    Toast.makeText(context,"Serial",Toast.LENGTH_SHORT).show();
+                    if(mFragItemListener != null) {
+                        mFragItemListener.callSerialEdition(item);
+                    }
                 }
 
                 @Override
                 public void onConfClick(HMAux item) {
-                    mFragItemListener.callInConfCreateItemAct(item);
+                    if(mFragItemListener != null) {
+                        mFragItemListener.callInConfCreateItemAct(item);
+                    }
                 }
 
                 @Override
                 public void onPutAwayClick(HMAux item) {
-                    mFragItemListener.callPutAwayCreateItemAct(item);
+                    if(mFragItemListener != null) {
+                        mFragItemListener.callPutAwayCreateItemAct(item);
+                    }
                 }
 
                 @Override

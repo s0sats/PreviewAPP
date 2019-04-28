@@ -6,15 +6,8 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
@@ -23,6 +16,7 @@ import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_006;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -34,6 +28,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     private Act061_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private IO_InboundDao inboundDao;
+    private MD_Product_SerialDao serialDao;
 
     public Act061_Main_Presenter(Context context, Act061_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -41,6 +36,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         //
         this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
     }
 
 
@@ -258,6 +254,41 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
 
         mView.callAct058(bundle);
+    }
+
+    @Override
+    public void processSerialEdition(HMAux item) {
+        MD_Product_Serial serial = getSerial(item);
+        //
+        if(serial != null) {
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, item.get(IO_Inbound_ItemDao.PRODUCT_CODE));
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(MD_Product_SerialDao.SERIAL_ID));
+            bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
+            bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, ConstantBaseApp.IO_SERIAL_EDIT);
+            //
+            mView.callAct053(bundle);
+        }
+
+    }
+
+    private MD_Product_Serial getSerial(HMAux item) {
+        MD_Product_Serial serial = null;
+        try {
+            serial = serialDao.getByString(
+                new MD_Product_Serial_Sql_009(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Long.parseLong(item.get(IO_Inbound_ItemDao.PRODUCT_CODE)),
+                    Integer.parseInt(item.get(IO_Inbound_ItemDao.SERIAL_CODE))
+                ).toSqlQuery()
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        return serial;
     }
 
     @Override

@@ -80,6 +80,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     @Override
     public void defineFlow(String requesting_act) {
         switch (requesting_act){
+            case ConstantBaseApp.ACT061:
+                mView.callAct061(prepareAct061Bundle());
+                break;
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
@@ -593,7 +596,10 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
 
     private Bundle prepareAct061Bundle() {
         Bundle bundle = new Bundle();
-        //
+        //COMO ACT061 É SÓ INBOUND, PASSA O PROCESSO COMO INBOUND.
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ConstantBaseApp.IO_INBOUND);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,mView.getIoPrefix());
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());
         return bundle;
     }
 }
