@@ -138,6 +138,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("progress_tracking_search_msg");
         transList.add("alert_offline_save_error_ttl");
         transList.add("alert_offline_save_error_msg");
+        transList.add("alert_result_movement");
+
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
@@ -567,7 +569,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     public void callLogAct(Intent logIntent) {
         startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
     }
-
 
     @Override
     public void persistIoMovePlanned(long customer_code,

@@ -14,7 +14,7 @@ public class Sql_Act058_001 implements Specification {
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
-        return sb.append("select m.*, p.zone_id , p.local_id , p.product_desc, p.product_id, z.zone_id "+ IO_MoveDao.PLANNED_ZONE_ID + ", l.local_id "+ IO_MoveDao.PLANNED_LOCAL_ID+    "\n" +
+        return sb.append("select m.*, p.zone_id , p.serial_id, p.local_id , p.product_desc, p.product_id, z.zone_id "+ IO_MoveDao.PLANNED_ZONE_ID + ", l.local_id "+ IO_MoveDao.PLANNED_LOCAL_ID+    "\n" +
                 " from io_move m, md_product_serials p\n" +
                 " left join md_site_zones z \n" +
                 "            on z.customer_code = m.customer_code\n" +

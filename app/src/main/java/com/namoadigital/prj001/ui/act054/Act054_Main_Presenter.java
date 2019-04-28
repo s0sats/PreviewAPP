@@ -230,6 +230,10 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 record.setSerial_code(Integer.parseInt(move.get(IO_MoveDao.SERIAL_CODE)));
             }
 
+            if (move.hasConsistentValue(MD_Product_SerialDao.SERIAL_ID) && !move.get(MD_Product_SerialDao.SERIAL_ID).isEmpty()) {
+                record.setSerial_id(move.get(MD_Product_SerialDao.SERIAL_ID));
+            }
+
             if (move.hasConsistentValue(IO_MoveDao.SITE_CODE)) {
                 record.setSite_code(move.get(IO_MoveDao.SITE_CODE));
             }
