@@ -47,9 +47,10 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     private int move_code;
     private Integer reason_code;
     private String move_type;
+    private String status;
     private Integer planned_zone_code;
 
-    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code) {
+    public Frag_Move_Create_Presenter(Frag_Move_Create_Contract.I_View mView, Context context, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code, String status) {
         this.mView = mView;
         this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -63,6 +64,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         this.reason_code = reason_code;
         this.move_type = move_type;
         this.planned_zone_code = planned_zone_code;
+        this.status = status;
     }
 
     @Override
@@ -205,6 +207,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         Integer selected_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
 
         if (move_type!= null
+                && !status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 && (move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
                 || move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF))) {
             if(planned_zone_code !=null) {

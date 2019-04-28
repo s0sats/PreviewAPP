@@ -389,7 +389,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             mPresenter.processIOMoveSearch(mLink);
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-            showResults(moves);
+            if(moves.length >0) {
+                showResults(moves);
+            }
         }
         progressDialog.dismiss();
         //
