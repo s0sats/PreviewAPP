@@ -51,6 +51,9 @@ public class IO_Inbound_Item implements Serializable {
     //SOMENTE PARA RETORNO DO WS
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private ArrayList<IO_Move> move = new ArrayList<>();
+    //Somente para envio dos tracking quando in_conf\/
+    @Expose
+    private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
 
 
     public IO_Inbound_Item() {
@@ -240,5 +243,13 @@ public class IO_Inbound_Item implements Serializable {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public ArrayList<IO_Conf_Tracking> getTracking_list() {
+        return tracking_list;
+    }
+
+    public void setTracking_list(ArrayList<IO_Conf_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

@@ -10,9 +10,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
+import com.namoadigital.prj001.sql.IO_Conf_Tracking_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -391,6 +394,26 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             while (cursor.moveToNext()) {
                 io_inbound_item = toIO_Inbound_ItemMapper.map(cursor);
             }
+            //Seleciona tracking dos in_confs
+            if(io_inbound_item != null){
+                IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                io_inbound_item.setTracking_list(
+                    (ArrayList<IO_Conf_Tracking>) confTrackingDao.query(
+                        new IO_Conf_Tracking_Sql_001(
+                            io_inbound_item.getCustomer_code(),
+                            io_inbound_item.getInbound_prefix(),
+                            io_inbound_item.getInbound_code(),
+                            io_inbound_item.getInbound_item(),
+                            ConstantBaseApp.IO_INBOUND
+                        ).toSqlQuery()
+                    )
+                );
+            }
 
             cursor.close();
         } catch (Exception e) {
@@ -438,6 +461,28 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
 
             while (cursor.moveToNext()) {
                 IO_Inbound_Item uAux = toIO_Inbound_ItemMapper.map(cursor);
+                //
+                //Seleciona tracking dos in_confs
+                if(uAux != null){
+                    IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    uAux.setTracking_list(
+                        (ArrayList<IO_Conf_Tracking>) confTrackingDao.query(
+                            new IO_Conf_Tracking_Sql_001(
+                                uAux.getCustomer_code(),
+                                uAux.getInbound_prefix(),
+                                uAux.getInbound_code(),
+                                uAux.getInbound_item(),
+                                ConstantBaseApp.IO_INBOUND
+                            ).toSqlQuery()
+                        )
+                    );
+                }
+                //
                 io_inbound_items.add(uAux);
             }
 
