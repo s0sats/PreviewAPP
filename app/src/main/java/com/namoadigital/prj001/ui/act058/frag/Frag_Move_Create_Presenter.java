@@ -207,8 +207,9 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         if (move_type!= null
                 && (move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
                 || move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF))) {
-            selected_zone_code = planned_zone_code;
-            ss_zone.setmEnabled(false);
+            if(planned_zone_code !=null) {
+                selected_zone_code = planned_zone_code;
+            }
         } else if (to_zone_code != null) {
             selected_zone_code = to_zone_code;
         }
