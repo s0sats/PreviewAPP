@@ -28,6 +28,8 @@ public interface Act061_Main_Contract {
         void callAct058(Bundle bundle);
 
         void callAct053(Bundle bundle);
+
+        void callAct062();
     }
 
     interface I_Presenter{
@@ -51,5 +53,9 @@ public interface Act061_Main_Contract {
         void processPutAwayMove(HMAux item);
 
         void processSerialEdition(HMAux item);
+
+        void checkForUpdateRequired(int mPrefix, int mCode);
+
+        void executeWsSaveItem();
     }
 }

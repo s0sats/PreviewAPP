@@ -25,9 +25,7 @@ import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -120,6 +118,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_header_save_process_error_msg");
         transList.add("alert_io_master_data_error_ttl");
         transList.add("alert_io_master_data_error_msg");
+        transList.add("progress_save_inbound_item_ttl");
+        transList.add("progress_save_inbound_item_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -438,6 +438,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     @Override
     public void callAddItemAct() {
+        mPresenter.checkForUpdateRequired(mPrefix,mCode);
         callAct062();
     }
 
@@ -533,7 +534,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
-    private void callAct062() {
+    @Override
+    public void callAct062() {
         Intent mIntent = new Intent(context, Act062_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
@@ -575,6 +577,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())) {
             mPresenter.processHeaderSave(mPrefix, mCode, mLink);
             progressDialog.dismiss();
+        } else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+
         } else {
             progressDialog.dismiss();
         }
