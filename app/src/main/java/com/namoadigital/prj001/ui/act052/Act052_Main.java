@@ -227,7 +227,10 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 context,
                 Constant.PROFILE_MENU_IO,
                 Constant.PROFILE_MENU_IO_PARAM_BLIND_MOVE
-        ) && !ToolBox_Con.isOnline(context);
+        ) && !ToolBox_Con.isOnline(context)
+                && !mSerial_id.isEmpty()
+                && !mProduct_id.isEmpty()
+                && serialListData.size() == 1;
     }
 
     private void initAction() {

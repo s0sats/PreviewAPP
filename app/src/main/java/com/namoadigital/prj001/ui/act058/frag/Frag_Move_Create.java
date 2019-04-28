@@ -744,7 +744,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         setLabelsAndHint();
         setMkdate();
 
-        if (hasSerialPermission()) {
+        if (mPresenter.hasSerialPermission()) {
             setSerialMKEditText();
         } else {
             mket_serial.setVisibility(View.GONE);
@@ -870,9 +870,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         controls_sta.add(mket_serial);
     }
 
-    private boolean hasSerialPermission() {
-        return false;
-    }
+
 
     private void setLabelsAndHint() {
         tv_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));

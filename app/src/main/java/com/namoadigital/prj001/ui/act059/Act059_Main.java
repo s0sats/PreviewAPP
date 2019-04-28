@@ -126,6 +126,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         transList.add("alert_offline_save_ttl");
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
+        transList.add("alert_result_in_conf");
+        transList.add("alert_result_movement");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 
@@ -293,18 +295,27 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         ArrayList<HMAux> resultList = new ArrayList<>();
         for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList){
             HMAux aux = new HMAux();
-            aux.put("title", result.getPrefix() + "." + result.getCode() );
-            aux.put("status",result.getMsg());
-//            if(result.isRetStatus()){
-//                for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn.InboundItemSaveInfo info:
-//                        result.getItems()){
-//                    aux.put("status",info.getInbound_item() +" - "+ info.getMsg() + "\n");
-//                    aux.put("item",""+ result.getPrefix() + result.getCode() + info.getInbound_item());
-//                }
-//            }
+            String itemPk;
+
+            if(result.isMove()) {
+                itemPk= result.getPrefix() + "." + result.getCode();
+                aux.put("title", hmAux_Trans.get("alert_result_movement"));
+            }else{
+                aux.put("title", hmAux_Trans.get("alert_result_in_conf"));
+                itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
+            }
+            aux.put("item", itemPk);
+
+            if(result.getMsg() == null){
+                aux.put("status","Ok");
+            }else{
+                aux.put("status",result.getMsg());
+            }
+
+
             resultList.add(aux);
-            showNewOptDialog(resultList);
         }
+        showNewOptDialog(resultList);
     }
 
     private void showNewOptDialog(ArrayList<HMAux> resultList) {
@@ -325,20 +336,25 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         HMAux auxMove = new HMAux();
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
-            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("item"));
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("item"));
             if(resultList.get(i).hasConsistentValue("status")) {
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             }else{
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, "OK");
             }
 
-            formattedList.add(hmAux);
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
+
+
+
             if(resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
-                            ""+ io_inbound_item.getInbound_code()
-                            + io_inbound_item.getInbound_code()
+                            io_inbound_item.getInbound_prefix() +"."
+                            + io_inbound_item.getInbound_code() +"."
                             + io_inbound_item.getInbound_item())){
                 auxMove = hmAux;
+                formattedList.add(0,auxMove);
+            }else{
+                formattedList.add(hmAux);
             }
         }
         //
@@ -361,18 +377,25 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
             @Override
             public void onClick(View v) {
                 show.dismiss();
-
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                //
-
-//                if (finalAuxMove.get("status").equalsIgnoreCase("Ok")) {
-                    //
+                if (finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
-                    //atualizar a tela com os dados do move
-//                }
-
+                }else {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_move_list_title"),
+                            finalAuxMove.get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    frag_move_create.restoreUIFields();
+                                }
+                            },
+                            0
+                    );
+                }
             }
         });
     }
@@ -506,6 +529,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         Intent mIntent = new Intent(context, Act061_Main.class);
         Bundle bundle = new Bundle();
         bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act061_Main.INBOUND_FRAG_ITEM);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
         bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
