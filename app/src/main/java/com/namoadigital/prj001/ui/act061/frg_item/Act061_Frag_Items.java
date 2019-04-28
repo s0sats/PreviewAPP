@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items_Contract.I_View{
+    public static final String FRAG_SWITCH_STATE = "FRAG_SWITCH_STATE";
 
     private boolean bStatus = false;
     private Context context;
@@ -33,8 +36,10 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     private Act061_Frag_Items_Presenter mPresenter;
     private onFragItemInteraction mFragItemListener;
     private boolean pausedByScan = false;
+    private boolean filterActionPendencies = true;
     //
     private MKEditTextNM mketFilter;
+    private Switch swActionFilter;
     private RecyclerView rvItems;
     private Act061_IO_Items_Adapter mAdapter;
     //private Button btnAddItem;
@@ -71,6 +76,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         args.putInt(IO_InboundDao.INBOUND_PREFIX,inbound_prefix);
         args.putInt(IO_InboundDao.INBOUND_CODE,inbound_code);
+        args.putBoolean(FRAG_SWITCH_STATE, true);
         //
         fragment.setArguments(args);
         return fragment;
@@ -104,6 +110,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
             inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX,-1);
             inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE,-1);
+            filterActionPendencies = arguments.getBoolean(FRAG_SWITCH_STATE,true);
         }
     }
 
@@ -126,6 +133,15 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         //
         if (context instanceof Act061_Frag_Drawer.onFragDrawerInteraction) {
             mFragItemListener = (onFragItemInteraction) context;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //
+        if(getArguments() != null){
+            getArguments().putBoolean(FRAG_SWITCH_STATE,filterActionPendencies);
         }
     }
 
@@ -157,10 +173,13 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
 
     private void bindViews(View view) {
         mketFilter = view.findViewById(R.id.act061_item_frag_mket_filter);
+        swActionFilter = view.findViewById(R.id.act061_item_frag_sw_filter);
         rvItems = view.findViewById(R.id.act061_item_frag_rv_items);
         //
         mketFilter.setmBARCODE(true);
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
+        //
+        swActionFilter.setChecked(true);
         controls_sta.add(mketFilter);
         //
         if(mFragItemListener != null){
@@ -195,6 +214,19 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 }
             }
         });
+        //
+        swActionFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(mAdapter != null){
+                    filterActionPendencies = isChecked;
+                    mAdapter.updateFilterActionPendenciesStatus(filterActionPendencies);
+                    //
+                    mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -216,7 +248,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 context,
                 R.layout.act061_frag_item_cell,
                 itemList,
-                mInbound.getAllow_new_item() == 1
+                mInbound.getAllow_new_item() == 1,
+                swActionFilter.isChecked()
             );
             //
             mAdapter.setOnIoItemClickListener(new Act061_IO_Items_Adapter.OnIoItemClickListener() {
@@ -251,6 +284,22 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             //
             rvItems.setLayoutManager(new LinearLayoutManager(context));
             rvItems.setAdapter(mAdapter);
+            rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    //
+                    if(newState ==  RecyclerView.SCROLL_STATE_IDLE){
+                        mketFilter.setEnabled(true);
+                        swActionFilter.setEnabled(true);
+                    }else{
+                        mketFilter.setEnabled(false);
+                        swActionFilter.setEnabled(false);
+                    }
+                }
+            });
+            //Força o primeiro filtro para atualizar pelo switch
+            mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
         }
     }
 

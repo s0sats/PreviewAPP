@@ -537,14 +537,15 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked(String requesting_act) {
+        String ioProcess = mView.getIoProcess();
+        //
         switch (requesting_act){
             case ConstantBaseApp.ACT061:
-            case ConstantBaseApp.ACT063:
-                String ioProcess = mView.getIoProcess();
-                if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
+                //if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
                     proceedCallAct0061();
-                }
+                //}
                 break;
+            case ConstantBaseApp.ACT063:
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();

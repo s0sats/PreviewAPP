@@ -28,12 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Drawer_Contract.I_View {
+    public static final String DRAWER_FIRST_LOAD = "DRAWER_FIRST_LOAD";
 
     private boolean bStatus = false;
     private Context context;
     private int inboundPrefix;
     private int inboundCode;
     private IO_Inbound mInbound;
+    private boolean drawerFirstLoad = true;
     private Act061_Frag_Drawer_Presenter mPresenter;
 
     private TextView tvInboundId;
@@ -103,6 +105,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         args.putInt(IO_InboundDao.INBOUND_PREFIX,inbound_prefix);
         args.putInt(IO_InboundDao.INBOUND_CODE,inbound_code);
+        args.putBoolean(DRAWER_FIRST_LOAD,true);
         //
         fragment.setArguments(args);
         return fragment;
@@ -136,6 +139,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
             hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
             inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX,-1);
             inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE,-1);
+            drawerFirstLoad = arguments.getBoolean(DRAWER_FIRST_LOAD,true);
         }
     }
 
@@ -418,9 +422,16 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     public void onStart() {
         super.onStart();
         //
-        if(mFragDrawerListener != null){
+        if(drawerFirstLoad && mFragDrawerListener != null){
+            drawerFirstLoad = false;
             forceFragSelection(mFragDrawerListener.getFirstFragToLoad());
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getArguments().putBoolean(DRAWER_FIRST_LOAD,drawerFirstLoad);
     }
 
     @Override

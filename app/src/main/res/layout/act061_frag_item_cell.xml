@@ -70,7 +70,7 @@
 
     <TextView
             android:id="@+id/act061_frag_item_cell_tv_product_lbl"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -85,7 +85,7 @@
     />
     <TextView
             android:text="Prod 001 - trad"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/act061_frag_item_cell_tv_product_val"
             android:layout_marginTop="2dp"
@@ -96,7 +96,7 @@
             android:layout_marginStart="16dp"/>
     <TextView
             android:text="Serial - Trad"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/act061_frag_item_cell_tv_serial_lbl"
             android:layout_marginTop="2dp"
@@ -108,7 +108,7 @@
             android:textStyle="bold"/>
     <TextView
             android:text="SRL-001-trad"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/act061_frag_item_cell_tv_serial_val"
             android:layout_marginTop="2dp"
@@ -119,7 +119,7 @@
             app:layout_constraintHorizontal_bias="0.0"/>
     <TextView
             android:text="BMW - X5 - BRANCO - TRAD"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/act061_frag_item_cell_tv_brand_model_color"
             android:layout_marginTop="8dp"
@@ -128,14 +128,16 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="@+id/act061_frag_item_cell_gd_start"
             android:layout_marginStart="8dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:gravity="center"
+    />
     <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             app:srcCompat="@drawable/ic_play_ns_states"
             android:id="@+id/act061_frag_item_cell_iv_put_away"
             app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_gd_end"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_brand_model_color"
     />
@@ -145,7 +147,7 @@
             app:srcCompat="@drawable/ic_ok_ns_states"
             android:id="@+id/act061_frag_item_cell_iv_conf"
             app:layout_constraintEnd_toStartOf="@+id/act061_frag_item_cell_iv_put_away"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/act061_frag_item_cell_tv_brand_model_color"
     />

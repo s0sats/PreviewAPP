@@ -35,6 +35,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     private String mResource_Name = "act061_io_items_adapter";
     private OnIoItemClickListener mOnIoItemClickListener;
     private boolean inboundAllowNewItem;
+    private boolean filterActionPendencies;
 
     public interface OnIoItemClickListener{
 
@@ -55,12 +56,13 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         this.mOnIoItemClickListener = mOnIoItemClickListener;
     }
 
-    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues,boolean inboundAllowNewItem) {
+    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues,boolean inboundAllowNewItem,boolean filterActionPendencies) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
         this.mFilteredValues = mValues;
         this.inboundAllowNewItem = inboundAllowNewItem;
+        this.filterActionPendencies = filterActionPendencies;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -148,6 +150,10 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    public void updateFilterActionPendenciesStatus(boolean filterActionPendencies){
+        this.filterActionPendencies = filterActionPendencies;
+    }
+
     @Override
     public Filter getFilter() {
         if (valueFilter == null) {
@@ -168,7 +174,11 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                     aux.hasConsistentValue(MD_Product_SerialDao.SERIAL_ID)
                     ? ToolBox.AccentMapper(aux.get(MD_Product_SerialDao.SERIAL_ID)).toLowerCase()
                     : "";
-                if(!serialId.isEmpty() && serialId.contains(charString)){
+                if(!serialId.isEmpty()
+                    && serialId.contains(charString)
+                    && (filterStatus(aux))
+
+                ){
                     filteredList.add(aux);
                 }
             }
@@ -177,6 +187,31 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             filterResults.count = mFilteredValues.size();
             filterResults.values = mFilteredValues;
             return filterResults;
+        }
+
+        /**
+         * Verifica se não é para filtrar status ou
+         * filtra por pendind e put_away
+         * @param aux
+         * @return
+         */
+        private boolean filterStatus(HMAux aux) {
+            if(aux.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+                return
+                    !filterActionPendencies
+                        || (
+                        filterActionPendencies
+                            &&
+                            (aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                                || aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                            )
+                    );
+            }else{
+                //Não deveria acontecer.
+                return false;
+            }
+
+
         }
 
         @Override
