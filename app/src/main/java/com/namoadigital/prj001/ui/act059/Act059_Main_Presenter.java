@@ -159,16 +159,17 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
             IO_Conf_TrackingDao io_conf_trackingdao = new IO_Conf_TrackingDao(context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM);
-
+            DaoObjReturn objReturn = new DaoObjReturn();
             for (IO_Move_Tracking tracking : trackingFromMove) {
                 IO_Conf_Tracking item_tracking = new IO_Conf_Tracking();
                 item_tracking.setCustomer_code(tracking.getCustomer_code());
                 item_tracking.setPrefix(item.getInbound_prefix());
                 item_tracking.setCode(item.getInbound_code());
                 item_tracking.setItem(item.getInbound_item());
-                item_tracking.setType(ConstantBaseApp.IO_PROCESS_IN_CONF);
+                item_tracking.setType(ConstantBaseApp.IO_INBOUND);
                 item_tracking.setTracking(tracking.getTracking());
-                io_conf_trackingdao.addUpdate(item_tracking);
+                //ANALISAR O RETORNO E SE HOUVER ERRO NÃO PROSSEGUIR E EXIBIR MSG
+                objReturn = io_conf_trackingdao.addUpdate(item_tracking);
             }
 
             if (ToolBox_Con.isOnline(context)) {

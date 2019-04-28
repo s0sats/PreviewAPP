@@ -3,13 +3,17 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Conf_Tracking;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -191,6 +195,61 @@ public class IO_Conf_TrackingDao extends BaseDao implements DaoWithReturn<IO_Con
         }
 
         closeDB();
+    }
+
+    public DaoObjReturn removeByInboundItem(IO_Inbound_Item io_inbound_item, @Nullable SQLiteDatabase dbInstance){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        try{
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(io_inbound_item.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PREFIX).append(" = '").append(io_inbound_item.getInbound_prefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CODE).append(" = '").append(io_inbound_item.getInbound_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(ITEM).append(" = '").append(io_inbound_item.getInbound_item()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TYPE).append(" = '").append(ConstantBaseApp.IO_INBOUND).append("'");
+            //Tenta remoer e armazena retorno
+            addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
+
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        //
+        return daoObjReturn;
     }
 
     @Override

@@ -124,6 +124,18 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_inbound_item));
             }
+            //Tenta remover tracking
+            IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            DaoObjReturn confTrackingDaoRet = confTrackingDao.removeByInboundItem(io_inbound_item, db);
+            if(confTrackingDaoRet.hasError()){
+                throw new Exception(confTrackingDaoRet.getRawMessage());
+            }
+
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -205,6 +217,17 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
                 if(addUpdateRet == 0){
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_inbound_item));
+                }
+                //Tenta remover tracking
+                IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                DaoObjReturn confTrackingDaoRet = confTrackingDao.removeByInboundItem(io_inbound_item, db);
+                if(confTrackingDaoRet.hasError()){
+                    throw new Exception(confTrackingDaoRet.getRawMessage());
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
