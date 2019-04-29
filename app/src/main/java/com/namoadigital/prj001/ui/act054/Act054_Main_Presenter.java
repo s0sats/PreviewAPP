@@ -25,6 +25,7 @@ import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_011;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
@@ -57,8 +58,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private String mSerial_id;
     private String mTracking;
 
-    int pending_qty;
-    int waitingSyncMovePendency;
+    private int pending_qty;
+    private int waitingSyncMovePendency;
+    private int waitingSyncPutAwayPendency;
 
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -311,8 +313,15 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                         )
                 ).toSqlQuery()
         );
-        HMAux resultWaitingSync = io_moveDao.getByStringHM((
+        HMAux resultMoveWaitingSync = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+
+        HMAux resultInputAwayWaitingSync = io_inbound_itemDao.getByStringHM((
+                        new IO_Inbound_Item_Sql_011(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         )
                 ).toSqlQuery()
@@ -321,8 +330,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         pending_qty = 0;
 
         pending_qty = getPendencyCounterFromHmaux(resultPending);
-        waitingSyncMovePendency = getPendencyCounterFromHmaux(resultWaitingSync);
-        pending_qty = pending_qty + waitingSyncMovePendency;
+        waitingSyncMovePendency = getPendencyCounterFromHmaux(resultMoveWaitingSync);
+        waitingSyncPutAwayPendency = getPendencyCounterFromHmaux(resultInputAwayWaitingSync);
+        pending_qty = pending_qty + waitingSyncMovePendency+waitingSyncPutAwayPendency;
         return "(" + pending_qty + ")";
     }
 

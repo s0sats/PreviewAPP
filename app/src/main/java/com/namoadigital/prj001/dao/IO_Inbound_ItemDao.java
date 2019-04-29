@@ -49,7 +49,7 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String PLANNED_CLASS_CODE = "planned_class_code";
     public static final String SAVE_DATE = "save_date";
     public static final String UPDATE_REQUIRED = "update_required";
-
+    public static final String PENDING_QTY = "PENDING_QTY";
     //Constantes abaixo somente SÃO usada em queries
     public static final String PLANNED_ZONE_ID = "planned_zone_id";
     public static final String PLANNED_LOCAL_ID = "planned_local_id";
