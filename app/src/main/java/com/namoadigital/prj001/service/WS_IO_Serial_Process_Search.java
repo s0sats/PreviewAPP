@@ -116,7 +116,7 @@ public class WS_IO_Serial_Process_Search extends IntentService {
 
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_processing_list");
 
 
         mResource_Code = ToolBox_Inf.getResourceCode(

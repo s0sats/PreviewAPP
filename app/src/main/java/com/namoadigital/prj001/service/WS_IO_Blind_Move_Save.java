@@ -153,6 +153,8 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         env.setToken(token);
         env.setBlind(blindList);
         //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_receiving_data"), hmAuxRet, "", "0");
+        //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_IO_BLIND_SAVE,
             gson.toJson(env)
@@ -292,9 +294,11 @@ public class WS_IO_Blind_Move_Save extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
-        translist.add("msg_sending_data");
+        translist.add("msg_preparing_move_data");
+        translist.add("msg_no_move_to_send");
+        translist.add("msg_re_processing_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_save_ok");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

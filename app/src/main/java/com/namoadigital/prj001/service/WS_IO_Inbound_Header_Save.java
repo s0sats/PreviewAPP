@@ -186,6 +186,9 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
         translist.add("msg_receiving_data");
         translist.add("msg_processing_data");
         translist.add("msg_process_finalized");
+        translist.add("msg_empty_inbound");
+        translist.add("msg_preparing_inbound_data");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

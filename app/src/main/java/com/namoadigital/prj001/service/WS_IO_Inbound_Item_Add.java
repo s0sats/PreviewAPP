@@ -75,7 +75,7 @@ public class WS_IO_Inbound_Item_Add extends IntentService {
         //
         loadTranslation();
         //Lista arquivos de token de inbound
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_data"), "", "0");
         //
         if (!processToken(1)) {
             processToken(0);
@@ -84,10 +84,10 @@ public class WS_IO_Inbound_Item_Add extends IntentService {
         //Se lista vazia, dispara msg de erro.
         if (inboundHeaders == null || inboundHeaders.size() == 0) {
             if (menuSendProcess) {
-                HMAux auxApReturned = new HMAux();
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "", "0");
+                HMAux auxRet = new HMAux();
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxRet, "", "0");
             } else {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_item_to_add"), "", "0");
             }
             return;
         }
@@ -350,10 +350,13 @@ public class WS_IO_Inbound_Item_Add extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
+        translist.add("msg_preparing_data");
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
         translist.add("msg_processing_data");
-        translist.add("msg_process_finalized");
+        translist.add("msg_save_ok");
+        translist.add("msg_no_item_to_add");
+
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

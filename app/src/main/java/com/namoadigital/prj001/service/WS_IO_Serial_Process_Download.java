@@ -247,11 +247,11 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     //
                     sendCloseAct(hmAuxRet);
                 } else {
-                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_out_conf"), "", "0");
                 }
 
         }else{
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_move_planned"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_processing_out_conf"), "", "0");
         }
 
     }
@@ -393,8 +393,10 @@ public class WS_IO_Serial_Process_Download extends IntentService {
         translist.add("msg_processing_data");
         translist.add("msg_empty_list");
         translist.add("msg_error_processing_move_planned");
+        translist.add("msg_error_processing_out_conf");
         translist.add("msg_error_processing_move");
         translist.add("msg_process_finalized");
+            translist.add("msg_error_in_conf");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

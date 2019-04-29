@@ -4,15 +4,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Move;
@@ -20,7 +17,6 @@ import com.namoadigital.prj001.model.T_IO_Move_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Move_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Download;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -183,7 +179,7 @@ public class WS_IO_Move_Download extends IntentService {
         translist.add("msg_empty_list");
         translist.add("msg_error_processing_move_planned");
         translist.add("msg_error_processing_move");
-        translist.add("msg_process_finalized");
+            translist.add("msg_process_finalized");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

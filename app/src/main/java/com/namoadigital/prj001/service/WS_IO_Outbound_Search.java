@@ -29,11 +29,11 @@ public class WS_IO_Outbound_Search extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_io_inbound_search";
+    private String mResource_Name = "ws_io_outbound_search";
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_IO_Outbound_Search() {
-        super("ws_io_inbound_search");
+        super("WS_IO_Outbound_Search");
     }
 
 
@@ -120,7 +120,7 @@ public class WS_IO_Outbound_Search extends IntentService {
 
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_processing_list");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

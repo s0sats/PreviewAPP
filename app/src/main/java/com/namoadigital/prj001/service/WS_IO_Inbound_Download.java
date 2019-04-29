@@ -32,7 +32,7 @@ public class WS_IO_Inbound_Download extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_io_move_download";
+    private String mResource_Name = "ws_io_inbound_download";
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_IO_Inbound_Download() {

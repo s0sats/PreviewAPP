@@ -4,23 +4,16 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.IO_Move_Return;
-import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
-import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_010;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_004;
@@ -130,6 +123,7 @@ public class WS_IO_Move_Save extends IntentService {
             }
             reRun = false;
         }
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
         T_IO_Move_Save_Env env = new T_IO_Move_Save_Env();
         //
@@ -139,6 +133,8 @@ public class WS_IO_Move_Save extends IntentService {
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setToken(token);
         env.setMove(moveList);
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_IO_MOVE_SAVE,
@@ -292,9 +288,12 @@ public class WS_IO_Move_Save extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
+        translist.add("msg_preparing_move_data");
+        translist.add("msg_no_move_to_send");
+        translist.add("msg_re_processing_data");
+        translist.add("msg_save_ok");
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

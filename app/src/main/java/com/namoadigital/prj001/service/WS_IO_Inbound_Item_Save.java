@@ -45,7 +45,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     private ArrayList<T_IO_Inbound_Item_Env.IO_Inbound_Header> headerList = new ArrayList<>();
 
     public WS_IO_Inbound_Item_Save() {
-        super("ws_io_inbound_item_save");
+        super("WS_IO_Inbound_Item_Save");
     }
 
 
@@ -86,7 +86,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         File[] files = checkInboundTokenToSend();
         //
         if (files != null && files.length > 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_serial_from_token"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_itens_from_token"), "", "0");
             //
             file_to_del = files[0].getName();
             //
@@ -110,7 +110,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         } else {
             reSend = false;
             //
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_items_data"), "", "0");
             //Gera token
             String token = ToolBox_Inf.getToken(getApplicationContext());
 
@@ -122,7 +122,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                     HMAux auxApReturned = new HMAux();
                     ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "", "0");
                 } else {
-                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_items_to_update"), "", "0");
                 }
                 return;
             }
@@ -440,7 +440,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
         //
         if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
             if (reSend) {
-                ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_items_data"), "", "0");
                 //Reseta var de re transmissão.
                 reSend = false;
                 //
@@ -493,10 +493,15 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
+        translist.add("msg_loading_itens_from_token");
+        translist.add("msg_preparing_items_data");
+        translist.add("msg_no_items_to_update");
+        translist.add("msg_token_file_error");
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
         translist.add("msg_processing_data");
-        translist.add("msg_process_finalized");
+        translist.add("msg_re_processing_items_data");
+        translist.add("msg_save_ok");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

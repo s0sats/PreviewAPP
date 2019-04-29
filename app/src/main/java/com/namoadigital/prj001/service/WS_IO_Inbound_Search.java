@@ -32,7 +32,7 @@ public class WS_IO_Inbound_Search extends IntentService {
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_IO_Inbound_Search() {
-        super("ws_io_inbound_search");
+        super("WS_IO_Inbound_Search");
     }
 
 
@@ -119,7 +119,7 @@ public class WS_IO_Inbound_Search extends IntentService {
 
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_processing_list");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

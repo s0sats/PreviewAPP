@@ -28,7 +28,7 @@ public class WS_IO_Master_Data extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "WS_IO_Master_Data";
+    private String mResource_Name = "ws_io_master_data";
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_IO_Master_Data() {
@@ -121,7 +121,6 @@ public class WS_IO_Master_Data extends IntentService {
 
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
         translist.add("msg_processing_list");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
