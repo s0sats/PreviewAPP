@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Act054_Main_Contract {
@@ -23,6 +24,8 @@ public interface Act054_Main_Contract {
         void syncMovements();
 
         void getPendenciesList();
+
+        void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
     }
 
     interface I_View{
@@ -40,5 +43,7 @@ public interface Act054_Main_Contract {
         void setWs_process(String name);
 
         void refreshPendencyCount();
+
+        void showResult(ArrayList<HMAux> resultList);
     }
 }

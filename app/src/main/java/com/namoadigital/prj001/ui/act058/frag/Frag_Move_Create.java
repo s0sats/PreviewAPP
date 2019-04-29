@@ -636,7 +636,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     public void onStart() {
         super.onStart();
         bindValues();
-
     }
 
     private void bindValues() {
@@ -780,7 +779,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
         mListener.onAddOrRemoveControlSS(ss_local, true);
-//        ss_reason.setmHint(hmAux_Trans.get("reason_hint"));
+
     }
 
     private void setViewEnable() {
@@ -790,12 +789,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             enableForm(true, View.VISIBLE);
         } else {
             enableForm(false, View.GONE);
+            mket_serial.setVisibility(View.GONE);
         }
     }
 
     private void enableForm(boolean isEnable, int visibility) {
         mket_serial.setEnabled(isEnable);
-        mket_serial.setVisibility(visibility);
         ss_zone.setmEnabled(isEnable);
         ss_reason.setmEnabled(isEnable);
         ss_local.setmEnabled(isEnable);

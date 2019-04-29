@@ -127,6 +127,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("dialog_save_move_msg");
         transList.add("alert_results_ttl");
         transList.add("sys_alert_btn_ok");
+        transList.add("sys_alert_btn_cancel");
         transList.add("alert_move_results_ttl");
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
@@ -139,6 +140,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_offline_save_error_ttl");
         transList.add("alert_offline_save_error_msg");
         transList.add("alert_result_movement");
+        transList.add("alert_result_in_conf");
 
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
@@ -309,15 +311,23 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        disableProgressDialog();
 
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
+            disableProgressDialog();
         } else {
             if (ws_process.equals(WS_IO_Move_Save.class.getName())
                     || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-                showResults(moves);
+                try{
+                    if(!moves[0].isEmpty()) {
+                        showResults(moves);
+                    }
+                }catch (Exception e ){
+                    e.printStackTrace();
+                }
+                disableProgressDialog();
+
             }
             if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())){
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
@@ -325,6 +335,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                         = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
                 }.getType() );
                 showResults(actReturnList);
+                disableProgressDialog();
+
             }
         }
     }
