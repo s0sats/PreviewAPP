@@ -32,8 +32,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.microblink.MicroblinkSDK.getApplicationContext;
-
 public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_Presenter {
     Frag_Move_Create_Contract.I_View mView;
     private MD_Site_ZoneDao siteZoneDao;
@@ -155,7 +153,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         if (classCode == null) {
             classCode = 0;
         }
-        MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
+        MD_ClassDao classDao = new MD_ClassDao(context);
         MD_Class md_class = classDao.getByString(
                 new MD_Class_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -293,7 +291,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     @Override
     public ArrayList<HMAux> getClassList() {
-        MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
+        MD_ClassDao classDao = new MD_ClassDao(context);
 
         return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
