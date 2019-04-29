@@ -11,16 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
@@ -307,20 +304,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 //        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
         Toast.makeText(context, "Função indisponível", Toast.LENGTH_SHORT).show();
-        setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
-        //
-        showPD(
-            hmAux_Trans.get("dialog_serial_search_ttl"),
-            hmAux_Trans.get("dialog_serial_search_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
-        Bundle bundle = new Bundle();
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
     }
 
     private void recoverIntentsInfo() {
