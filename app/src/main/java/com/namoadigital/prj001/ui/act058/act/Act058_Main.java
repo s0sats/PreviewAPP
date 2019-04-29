@@ -132,6 +132,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
         transList.add("msg_move_save_ok");
+        transList.add("msg_serial_error");
 
         transList.add("alert_offline_save_msg");
         transList.add("alert_offline_save_ttl");
@@ -189,7 +190,13 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             move_type = movePlanned.getMove_type();
             viewMode = mPresenter.getViewMode(move_type);
             serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
-            serial_id = serialInfo.getSerial_id();
+            try{
+                serial_id = serialInfo.getSerial_id();
+            }catch (NullPointerException e ){
+                e.printStackTrace();
+               Toast.makeText(context, hmAux_Trans.get("msg_serial_error"), Toast.LENGTH_SHORT).show();
+               onBackPressed();
+            }
             to_local_code = movePlanned.getTo_local_code();
             to_zone_code = movePlanned.getTo_zone_code();
             move_prefix = movePlanned.getMove_prefix();
@@ -479,10 +486,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 //
 
                 if (auxMove.hasConsistentValue("status")
-                ||auxMove.get("status").equalsIgnoreCase("Ok")) {
+                && auxMove.get("status").equalsIgnoreCase("Ok")) {
                     //
                     onBackPressed();
                     //atualizar a tela com os dados do move
+                }else{
+                    frag_move_create.restoreUIFields();
                 }
 
             }
