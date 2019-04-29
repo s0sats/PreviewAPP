@@ -1,22 +1,25 @@
 package com.namoadigital.prj001.ui.act056;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
@@ -92,6 +95,12 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         transList.add("alert_error_on_processing_return_msg");
         transList.add("alert_no_inbound_found_ttl");
         transList.add("alert_no_inbound_found_msg");
+        transList.add("inbound_lbl");
+        transList.add("alert_inbound_results_ttl");
+        transList.add("progress_save_inbound_item_ttl");
+        transList.add("progress_save_inbound_item_msg");
+        transList.add("inbound_item_ret_empty_ttl");
+        transList.add("inbound_item_ret_empty_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -235,12 +244,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
             @Override
             public void onClick(View v) {
                 if(mPresenter.checkSearchParamFilled(ss_zone,ss_local,mket_inbound,mket_invoice)){
-                    mPresenter.executeInboundSearch(
-                            ss_zone.getmValue().get(SearchableSpinner.CODE),
-                            ss_local.getmValue().get(SearchableSpinner.CODE),
-                            mket_inbound.getText().toString().trim(),
-                            mket_invoice.getText().toString().trim()
-                    );
+                    mPresenter.checkSearchFlow();
                 }else{
                     showAlert(
                             hmAux_Trans.get("alert_fill_search_field_ttl"),
@@ -334,6 +338,61 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         }
     }
 
+    //region WsInboundItem
+    @Override
+    public void callSearchInbound() {
+        mPresenter.executeInboundSearch(
+            ss_zone.getmValue().get(SearchableSpinner.CODE),
+            ss_local.getmValue().get(SearchableSpinner.CODE),
+            mket_inbound.getText().toString().trim(),
+            mket_invoice.getText().toString().trim()
+        );
+    }
+
+    @Override
+    public void showResult(ArrayList<HMAux> resultList, final boolean hasError) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_inbound_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                resultList,
+                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                hmAux_Trans
+            )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                show.dismiss();
+                //
+                if(!hasError){
+                    callSearchInbound();
+                }
+            }
+        });
+
+    }
+    //endregion
+
     @Override
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
@@ -377,6 +436,10 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
             progressDialog.dismiss();
             //
             mPresenter.processSearchReturn(mLink);
+        }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processInboundItemReturn(mLink);
         }else{
             progressDialog.dismiss();
         }

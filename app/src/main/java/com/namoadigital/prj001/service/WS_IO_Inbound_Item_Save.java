@@ -61,6 +61,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             moveDao = new IO_MoveDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
+            menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
             //
             processWsInboundItemSave();
 
@@ -120,7 +121,7 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
             if (headerList == null || headerList.size() == 0) {
                 if (menuSendProcess) {
                     HMAux auxApReturned = new HMAux();
-                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "", "0");
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "OK", "0");
                 } else {
                     ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_items_to_update"), "", "0");
                 }

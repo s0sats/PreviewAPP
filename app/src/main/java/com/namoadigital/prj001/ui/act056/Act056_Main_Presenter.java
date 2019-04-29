@@ -3,29 +3,29 @@ package com.namoadigital.prj001.ui.act056;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
-import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Inbound_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
 
@@ -35,15 +35,17 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
     private MD_Site_ZoneDao siteZoneDao;
     private MD_Site_Zone_LocalDao siteZoneLocalDao;
     private IO_InboundDao inboundDao;
+    private IO_MoveDao moveDao;
 
     public Act056_Main_Presenter(Context context, Act056_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         //
-        this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-        this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-        this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM);
+        this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM);
+        this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM);
+        this.moveDao = new IO_MoveDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM);
     }
 
     @Override
@@ -129,25 +131,30 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
 
     @Override
     public void executeInboundSearch(String zone_code, String local_code, String inbound_id, String invoince) {
-        mView.setWsProcess(WS_IO_Inbound_Search.class.getName());
-        //
-        mView.showPD(
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Inbound_Search.class.getName());
+            //
+            mView.showPD(
                 hmAux_Trans.get("dialog_inbound_search_ttl"),
                 hmAux_Trans.get("dialog_inbound_search_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Inbound_Search.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE,zone_code);
-        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE,local_code);
-        bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID,inbound_id);
-        bundle.putString(IO_InboundDao.INVOICE_NUMBER,invoince);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE, zone_code);
+            bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE, local_code);
+            bundle.putString(WS_IO_Inbound_Search.KEY_CODE_ID, inbound_id);
+            bundle.putString(IO_InboundDao.INVOICE_NUMBER, invoince);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+
+        }
     }
 
     @Override
@@ -169,8 +176,8 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
             return true;
         }
         //VOLTAR FALSE APÓS TESTES
-        //return false;
-        return true;
+        return false;
+        //return true;
     }
 
     @Override
@@ -205,6 +212,117 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
             );
             //Gerar Exception ?!
             ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+    }
+
+    @Override
+    public void checkSearchFlow() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_save_inbound_item_ttl"),
+                hmAux_Trans.get("progress_save_inbound_item_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ConstantBaseApp.PROCESS_MENU_SEND,true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processInboundItemReturn(String inboundItemRet) {
+        if(inboundItemRet != null && inboundItemRet.length() > 0){
+            if(inboundItemRet.equals("OK")){
+                mView.callSearchInbound();
+            }else{
+                processJsonRet(inboundItemRet);
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("inbound_item_ret_empty_ttl"),
+                hmAux_Trans.get("inbound_item_ret_empty_msg")
+            );
+        }
+
+    }
+
+    private void processJsonRet(String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        try{
+            actReturnList  = gson.fromJson(
+                jsonRet,
+                new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>(){
+                }.getType() );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(actReturnList != null && actReturnList.size() > 0){
+            boolean hasError = false;
+            int inboundErroNextIdx = 0;
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound
+            for (WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn : actReturnList) {
+                String inboundCode = "";
+                //
+                if(actReturn.isMove()){
+                    IO_Move ioMove =
+                        moveDao.getByString(
+                            new IO_Move_Order_Item_Sql_001(
+                                actReturn.getCustomer_code(),
+                                actReturn.getPrefix(),
+                                actReturn.getCode()
+                            ).toSqlQuery()
+                        );
+                    if(ioMove != null){
+                        inboundCode = ioMove.getInbound_prefix()+"."+ioMove.getInbound_code();
+                    }else{
+                        //Não deveria acontecer...
+                        continue;
+                    }
+                }else{
+                    inboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                }
+                if(!auxResult.containsKey(inboundCode)
+                    ||(auxResult.containsKey(inboundCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                        )
+                ) {
+                    auxResult.put(inboundCode, actReturn.getRetStatus() + "\n" + actReturn.getMsg() );
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for(Map.Entry<String, String> item : auxResult.entrySet()){
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("inbound_lbl") );
+                hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
+                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
+                //Flutua itens com erro.
+                if(!item.getValue().equals("OK")){
+                    if(!item.getValue().contains(ConstantBaseApp.SYS_STATUS_ERROR)){
+                        hasError  = true;
+                    }
+                    resultList.add(inboundErroNextIdx,hmAux);
+                    inboundErroNextIdx++;
+                }else{
+                    resultList.add(hmAux);
+                }
+
+            }
+            //
+            mView.showResult(resultList,hasError);
         }
     }
 

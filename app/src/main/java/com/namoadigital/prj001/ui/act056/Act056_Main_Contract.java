@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
+
+import java.util.ArrayList;
 
 public interface Act056_Main_Contract {
 
@@ -18,6 +21,10 @@ public interface Act056_Main_Contract {
         void callAct051();
 
         void callAct057(Bundle bundle);
+
+        void callSearchInbound();
+
+        void showResult(ArrayList<HMAux> resultList, boolean hasError);
     }
 
     interface I_Presenter{
@@ -36,5 +43,9 @@ public interface Act056_Main_Contract {
         boolean checkSearchParamFilled(SearchableSpinner ss_zone, SearchableSpinner ss_local, MKEditTextNM mket_inbound, MKEditTextNM mket_invoice);
 
         void processSearchReturn(String searchRet);
+
+        void checkSearchFlow();
+
+        void processInboundItemReturn(String inboundItemRet);
     }
 }
