@@ -79,7 +79,7 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            Constant.ACT061
+            Constant.ACT062
         );
         //
         loadTranslation();

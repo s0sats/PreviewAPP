@@ -233,6 +233,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         tvModalLbl.setText(hmAux_Trans.get("modal_lbl"));
         tvCommentsLbl.setText(hmAux_Trans.get("comments_lbl"));
         tvPosition.setText(hmAux_Trans.get("position_lbl"));
+        rdoHeader.setText(hmAux_Trans.get("header_lbl"));
+        rdoItem.setText(hmAux_Trans.get("items_lbl"));
     }
 
     private void configPieViews() {

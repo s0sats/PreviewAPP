@@ -308,14 +308,15 @@
             android:orientation="vertical"
             android:padding="8dp"
     >
+        <!--android:drawableLeft="@drawable/ic_lupa_states"-->
         <RadioButton
                 android:id="@+id/act061_drawer_rdo_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:button="@color/padrao_TRANSPARENT"
-                android:drawableLeft="@drawable/ic_lupa_states"
+
                 android:drawablePadding="5dp"
-                android:text="Header"
+                android:text="Header - trad"
                 android:textColor="@color/namoa_dark_blue"
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -331,9 +332,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:button="@color/padrao_TRANSPARENT"
-                android:drawableLeft="@drawable/ic_lupa_states"
                 android:drawablePadding="5dp"
-                android:text="Itens"
+                android:text="Itens - trad"
                 android:textColor="@color/namoa_dark_blue"
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
