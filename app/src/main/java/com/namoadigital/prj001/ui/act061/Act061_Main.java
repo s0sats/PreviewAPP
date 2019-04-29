@@ -362,7 +362,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         //trad
-        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
+        tv_title.setText(hmAux_Trans.get("alert_inbound_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         lv_results.setAdapter(
