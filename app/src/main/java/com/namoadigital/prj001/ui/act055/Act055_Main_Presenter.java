@@ -3,9 +3,7 @@ package com.namoadigital.prj001.ui.act055;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Download;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
@@ -46,8 +44,8 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
         mView.setWsProcess(WS_IO_Move_Download.class.getName());
         //
         mView.showPD(
-                hmAux_Trans.get("dialog_serial_search_ttl"),
-                hmAux_Trans.get("dialog_serial_search_start")
+                hmAux_Trans.get("dialog_download_move_ttl"),
+                hmAux_Trans.get("dialog_download_move_start")
         );
         //
         Intent mIntent = new Intent(context, WBR_IO_Move_Download.class);
@@ -57,7 +55,6 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
     }
 
     @Override

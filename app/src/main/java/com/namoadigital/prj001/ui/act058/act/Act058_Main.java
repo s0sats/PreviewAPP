@@ -9,16 +9,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -125,8 +119,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("act058_title");
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
-        transList.add("alert_results_ttl");
-        transList.add("sys_alert_btn_ok");
+        //transList.add("alert_results_ttl");
         transList.add("alert_move_results_ttl");
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
@@ -139,6 +132,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_offline_save_error_ttl");
         transList.add("alert_offline_save_error_msg");
         transList.add("alert_result_movement");
+        transList.add("alert_result_in_conf");
 
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());

@@ -177,7 +177,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         rvItems = view.findViewById(R.id.act061_item_frag_rv_items);
         //
         mketFilter.setmBARCODE(true);
-        mketFilter.setHint(hmAux_Trans.get("filter_hint"));
+        mketFilter.setHint(hmAux_Trans.get("serial_filter_hint"));
         //
         controls_sta.add(mketFilter);
         //
@@ -240,6 +240,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 loadAdapter(
                     mPresenter.getItemList(inboundPrefix, inboundCode)
                 );
+                //
+                reapplyFilters();
             }
         }
     }
@@ -319,7 +321,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     public static List<String> getFragTranslationsVars() {
         List<String> transListFrag = new ArrayList<String>();
         //
-        transListFrag.add("filter_hint");
+        transListFrag.add("serial_filter_hint");
         //
         return transListFrag;
     }

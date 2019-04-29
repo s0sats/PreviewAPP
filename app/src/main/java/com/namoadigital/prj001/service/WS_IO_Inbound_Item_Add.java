@@ -302,6 +302,25 @@ public class WS_IO_Inbound_Item_Add extends IntentService {
 //                            }
                         }
                     }
+                }else{
+                    //tudo via query sem verificação......
+                    inboundDao.addUpdate(
+                        new IO_Inbound_Sql_008(
+                            saveReturn.getCustomer_code(),
+                            saveReturn.getInbound_prefix(),
+                            saveReturn.getInbound_code()
+                        ).toSqlQuery()
+
+                    );
+                    //
+                    inboundItemDao.remove(
+                        new IO_Inbound_Item_Sql_007(
+                            saveReturn.getCustomer_code(),
+                            saveReturn.getInbound_prefix(),
+                            saveReturn.getInbound_code(),
+                            0
+                        ).toSqlQuery()
+                    );
                 }
                 //
                 actReturnList.add(actReturn);

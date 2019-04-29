@@ -122,11 +122,17 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_header_save_error_ttl");
         transList.add("alert_header_save_no_return_msg ");
         transList.add("alert_header_save_process_error_msg");
+        transList.add("alert_header_save_error_msg");
         transList.add("alert_io_master_data_error_ttl");
         transList.add("alert_io_master_data_error_msg");
         transList.add("progress_save_inbound_item_ttl");
         transList.add("progress_save_inbound_item_msg");
         transList.add("inbound_lbl");
+        transList.add("alert_move_results_ttl");
+        transList.add("alert_header_save_ttl");
+        transList.add("alert_header_save_only_online_msg");
+        transList.add("alert_from_outbound_error_ttl");
+        transList.add("alert_from_outbound_error_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -376,10 +382,28 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //
+                refreshUi();
+                //
                 show.dismiss();
             }
         });
 
+    }
+
+    /**
+     * Reload dados dos frag.
+     */
+    private void refreshUi() {
+        if(act061_frag_drawer != null){
+            act061_frag_drawer.loadDataToScreen();
+        }
+        if(act061_frag_header != null){
+            act061_frag_header.loadDataToScreen();
+        }
+        if(act061_frag_item != null){
+            act061_frag_item.loadDataToScreen();
+        }
     }
 
     @Override
@@ -438,8 +462,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPresenter.executeWsSaveInboundHeader(mInbound, bNewProcess);
         } else {
             showAlert(
-                hmAux_Trans.get("alert_io_creation_ttl"),
-                hmAux_Trans.get("alert_creation_only_online_msg")
+                hmAux_Trans.get("alert_header_save_ttl"),
+                hmAux_Trans.get("alert_header_save_only_online_msg")
             );
         }
     }

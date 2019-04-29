@@ -1001,7 +1001,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         transList.add("zone_lbl");
         transList.add("zone_ttl");
         transList.add("position_lbl");
-        transList.add("position_ttl");
+        //transList.add("position_ttl");
         transList.add("comments_hint");
         transList.add("save_lbl");
         transList.add("site_reason_lbl");

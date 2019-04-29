@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -20,7 +19,6 @@ import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
-import com.namoadigital.prj001.ui.act059.Act059_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -78,12 +76,16 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act055_title");
-        transList.add("act055_lbl_new");
+        //transList.add("act055_lbl_new");
         transList.add("move_order_filter_hint");
         transList.add("alert_error_on_processing_return_ttl");
         transList.add("alert_error_on_processing_return_msg");
-        transList.add("alert_error_on_move_downloaded_not_found_ttl");
-        transList.add("alert_error_on_move_downloaded_not_found_msg");
+        transList.add("dialog_download_move_ttl");
+        transList.add("dialog_download_move_start");
+        transList.add("alert_error_on_processing_return_ttl");
+        transList.add("alert_error_on_processing_return_msg");
+        transList.add("alert_no_move_found_ttl");
+        transList.add("alert_no_move_found_msg");
         //Traducao para itens da lista
 
 

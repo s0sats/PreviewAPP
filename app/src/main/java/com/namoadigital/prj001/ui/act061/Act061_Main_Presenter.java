@@ -153,8 +153,8 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                 ToolBox_Inf.registerException(getClass().getName(), e);
                 //
                 mView.showAlert(
-                    hmAux_Trans.get("alert_io_master_data_error_ttl"),
-                    hmAux_Trans.get("alert_io_master_data_error_msg")
+                    hmAux_Trans.get("alert_from_outbound_error_ttl"),
+                    hmAux_Trans.get("alert_from_outbound_error_msg")
                 );
             }
         }

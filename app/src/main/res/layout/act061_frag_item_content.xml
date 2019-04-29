@@ -43,6 +43,8 @@
             app:layout_constraintEnd_toEndOf="@id/act061_item_frag_gd_end"
             app:layout_constraintBottom_toBottomOf="@id/act061_item_frag_mket_filter"
             android:padding="8dp"
+            android:thumbTint="@color/io_switch_filter"
+            android:checked="true"
     />
 
     <android.support.v7.widget.RecyclerView

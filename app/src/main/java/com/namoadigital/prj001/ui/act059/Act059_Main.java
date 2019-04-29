@@ -95,7 +95,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT058
+                Constant.ACT059
         );
         //
         mResource_Code_Frag = ToolBox_Inf.getResourceCode(
@@ -115,12 +115,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         transList.add("act059_title");
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
-        transList.add("alert_results_ttl");
-        transList.add("sys_alert_btn_ok");
         transList.add("alert_move_results_ttl");
         transList.add("alert_move_list_title");
-        transList.add("alert_move_ttl");
-        transList.add("msg_move_save_ok");
 
         transList.add("alert_offline_save_msg");
         transList.add("alert_offline_save_ttl");
