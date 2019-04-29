@@ -459,6 +459,9 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         transListFrag.add("modal_lbl");
         transListFrag.add("comments_lbl");
         transListFrag.add("position_lbl");
+        transListFrag.add("empty_position_lbl");
+        transListFrag.add("header_lbl");
+        transListFrag.add("items_lbl");
         //
         return transListFrag;
     }
