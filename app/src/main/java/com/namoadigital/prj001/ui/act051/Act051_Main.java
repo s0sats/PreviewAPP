@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
@@ -304,6 +306,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 //        context.sendBroadcast(mIntent);
 //        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
 
+        Toast.makeText(context, "Função indisponível", Toast.LENGTH_SHORT).show();
         setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
         //
         showPD(

@@ -124,6 +124,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_move_list_title");
         transList.add("alert_move_ttl");
         transList.add("msg_move_save_ok");
+        transList.add("msg_serial_error");
 
         transList.add("alert_offline_save_msg");
         transList.add("alert_offline_save_ttl");
@@ -181,7 +182,13 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             move_type = movePlanned.getMove_type();
             viewMode = mPresenter.getViewMode(move_type);
             serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
-            serial_id = serialInfo.getSerial_id();
+            try{
+                serial_id = serialInfo.getSerial_id();
+            }catch (NullPointerException e ){
+                e.printStackTrace();
+               Toast.makeText(context, hmAux_Trans.get("msg_serial_error"), Toast.LENGTH_SHORT).show();
+               onBackPressed();
+            }
             to_local_code = movePlanned.getTo_local_code();
             to_zone_code = movePlanned.getTo_zone_code();
             move_prefix = movePlanned.getMove_prefix();
@@ -303,15 +310,23 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        disableProgressDialog();
 
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
+            disableProgressDialog();
         } else {
             if (ws_process.equals(WS_IO_Move_Save.class.getName())
                     || ws_process.equals(WS_IO_Blind_Move_Save.class.getName())) {
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-                showResults(moves);
+                try{
+                    if(!moves[0].isEmpty()) {
+                        showResults(moves);
+                    }
+                }catch (Exception e ){
+                    e.printStackTrace();
+                }
+                disableProgressDialog();
+
             }
             if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())){
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
@@ -319,6 +334,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                         = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
                 }.getType() );
                 showResults(actReturnList);
+                disableProgressDialog();
+
             }
         }
     }
@@ -461,10 +478,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 //
 
                 if (auxMove.hasConsistentValue("status")
-                ||auxMove.get("status").equalsIgnoreCase("Ok")) {
+                && auxMove.get("status").equalsIgnoreCase("Ok")) {
                     //
                     onBackPressed();
                     //atualizar a tela com os dados do move
+                }else{
+                    frag_move_create.restoreUIFields();
                 }
 
             }

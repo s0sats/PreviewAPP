@@ -25,6 +25,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
@@ -57,7 +58,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private String pendeciesCount;
     String zoneDesc;
     private ArrayList<HMAux> wsResults = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,9 +124,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("alert_move_results_ttl");
         transList.add("alert_offline_search_title");
         transList.add("alert_offline_search_msg");
+        transList.add("alert_result_movement");
         //
-
-
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -141,6 +140,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void initVars() {
+        wsResults.clear();
         mPresenter = new Act054_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         bindViews();
@@ -364,6 +364,17 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         btnMoveOrderPendency.setText(hmAux_Trans.get("pendencies_lbl") + pendeciesCount);
     }
 
+    @Override
+    public void showResult(ArrayList<HMAux> resultList) {
+
+        if (resultList.size() > 0) {
+            wsResults.addAll(resultList);
+            showNewOptDialog(wsResults);
+        } else {
+            callMovementList();
+        }
+    }
+
     /**
      * Alguns WS mais antigos executam a chamada dessa assinatura do metodo
      * processCloseACT e aqui serão "encaminhados" para a segunda assinatura,
@@ -387,11 +398,21 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         //
         if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
             mPresenter.processIOMoveSearch(mLink);
+            progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-            showResults(moves);
+
+            if(!moves[0].isEmpty()) {
+                showResults(moves);
+            }else {
+                callMovementList();
+            }
+
+            progressDialog.dismiss();
+        }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+            progressDialog.dismiss();
         }
-        progressDialog.dismiss();
+
         //
     }
 
@@ -407,13 +428,15 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            mHmAux.put("title",  hmAux_Trans.get("alert_result_movement"));
             //
             moveList.add(mHmAux);
             //
         }
 
         if (moveList.size() > 0) {
+            wsResults.addAll(moveList);
+
             showNewOptDialog(moveList);
         } else {
             callMovementList();
@@ -510,13 +533,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
-        //Se erro ao carregar lista de Cliente, reseta var que indica se lista ja
-        //foi chamada.
-        if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
-//            onBackPressed();
-            //
-            disableProgressDialog();
-        }
+        //
+        disableProgressDialog();
     }
 
     @Override
@@ -526,6 +544,19 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         disableProgressDialog();
     }
 
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
@@ -533,6 +564,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 
+    //Metodo chamado ao finalizar o download da atualização.
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
         super.processCloseAPP(mLink, mRequired);
@@ -550,7 +582,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         finish();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
