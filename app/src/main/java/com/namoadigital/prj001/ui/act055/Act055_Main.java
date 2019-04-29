@@ -61,7 +61,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT054
+                Constant.ACT055
         );
 
         loadTranslation();
