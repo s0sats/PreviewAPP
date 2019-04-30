@@ -9,8 +9,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -26,7 +24,6 @@ import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_011;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
@@ -41,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
 
 
@@ -458,7 +454,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             HMAux auxResult = new HMAux();
             //Monta lista por inbound
             for (WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn : actReturnList) {
-                String inboundCode = "";
+                String moveCode = "";
                 //
                 if(actReturn.isMove()){
                     IO_Move ioMove =
@@ -470,17 +466,17 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                                     ).toSqlQuery()
                             );
                     if(ioMove != null){
-                        inboundCode = ioMove.getInbound_prefix()+"."+ioMove.getInbound_code();
+                        moveCode = ioMove.getMove_prefix()+"."+ioMove.getMove_code();
                     }
                 }else{
-                    inboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                    moveCode = actReturn.getPrefix() +"."+actReturn.getCode();
                 }
-                if(!auxResult.containsKey(inboundCode)
-                        ||(auxResult.containsKey(inboundCode)
+                if(!auxResult.containsKey(moveCode)
+                        ||(auxResult.containsKey(moveCode)
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    auxResult.put(inboundCode, actReturn.getRetStatus());
+                    auxResult.put(moveCode, actReturn.getRetStatus());
                 }
             }
             //For no resumido por inbound montando msg a ser exibida
