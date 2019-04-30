@@ -50,16 +50,11 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private MD_Product_SerialDao serialDao;
     private IO_MoveDao moveDao;
     private HMAux hmAux_Trans;
-    private MD_Product mdProduct;
-
     private String mProduct_id;
     private String mSerial_id;
     private String mTracking;
 
     private int pending_qty;
-
-
-
     private int waitingSyncMovePendency;
     private int waitingSyncPutAwayPendency;
 

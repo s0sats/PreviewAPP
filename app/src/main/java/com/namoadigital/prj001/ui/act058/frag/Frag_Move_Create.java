@@ -779,10 +779,12 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
         mListener.onAddOrRemoveControlSS(ss_local, true);
-
+        mListener.onAddOrRemoveControl(mket_serial, true);
+        mListener.onAddOrRemoveControl(mkedit_coments, true);
     }
 
     private void setViewEnable() {
+
         if (status != null
                 && (status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
                 || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY))) {
@@ -790,6 +792,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         } else {
             enableForm(false, View.GONE);
             mket_serial.setVisibility(View.GONE);
+        }
+
+        if(move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED)
+        ||move_type.equals(ConstantBaseApp.IO_PROCESS_MOVE)){
+            chk_change_zone.setVisibility(View.VISIBLE);
+        }else{
+            chk_change_zone.setVisibility(View.GONE);
         }
     }
 

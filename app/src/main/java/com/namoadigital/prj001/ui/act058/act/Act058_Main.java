@@ -556,11 +556,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     }
 
     @Override
-    public void onAddOrRemoveControl(MKEditTextNM mket_tracking, boolean add) {
+    public void onAddOrRemoveControl(MKEditTextNM mket_text, boolean add) {
         if (add) {
-            controls_sta.add(mket_tracking);
+            controls_sta.add(mket_text);
         } else {
-            controls_sta.remove(mket_tracking);
+            controls_sta.remove(mket_text);
         }
     }
 
