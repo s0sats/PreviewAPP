@@ -67,7 +67,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private int view_param;
     private boolean fromMove;
-    IO_Move I_o_move;
     private MD_Product_Serial mdProductSerial;
 //region UI Elements
     private View serialLayout;
@@ -645,7 +644,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         String zone_position = "";
 
         if(mdProductSerial.getZone_id() != null ) {
-            zone_position = mdProductSerial.getZone_id();
+            zone_position = mdProductSerial.getZone_desc();
             if(mdProductSerial.getLocal_id() != null){
                 zone_position = MessageFormat.format("{0} | {1}", zone_position, mdProductSerial.getLocal_id());
             }
@@ -683,7 +682,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_val.setVisibility(View.GONE);
         }
 
-        String toZoneLocal = (to_zone_code == null) ? "" : mPresenter.getZoneId(to_zone_code);
+        String toZoneLocal = (to_zone_code == null) ? "" : mPresenter.getZoneDesc(to_zone_code);
         toZoneLocal = (to_local_code == null) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(to_local_code, to_zone_code);
 
         if (toZoneLocal.isEmpty() || toZoneLocal.equals("-1")) {
@@ -888,11 +887,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         tv_serial_lbl.setText(hmAux_Trans.get("serial_lbl"));
         tv_class_lbl.setText(hmAux_Trans.get("class_lbl"));
         btn_save.setText(hmAux_Trans.get("save_lbl"));
+        mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
+        chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
         setSSZone();
         setSSLocal();
         setSSReason();
-        mkedit_coments.setHint(hmAux_Trans.get("comments_hint"));
-        chk_change_zone.setText(hmAux_Trans.get("change_to_zone_target_lbl"));
     }
 
     private void setSSReason() {

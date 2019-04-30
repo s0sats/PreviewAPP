@@ -4,9 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Blind_Move;
+import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Tracking;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
@@ -15,12 +27,18 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_004;
+import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_010;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
+
+import static com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create.DATEFORMATMKDATE;
 
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     public static final String NEXT_TMP = "next_tmp";
@@ -114,7 +132,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setTo_local_code(to_local_code);
         io_move.setTo_class_code(to_class_code);
         io_move.setReason_code(reason_code);
-        io_move.setDone_date(done_date);
+        io_move.setDone_date(ToolBox.sDTFormat_Agora(DATEFORMATMKDATE));
         io_move.setProduct_code(serial.getProduct_code());
         io_move.setSerial_code((int) serial.getSerial_code());
         io_move.setDone_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
@@ -299,7 +317,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_blind_move.setLocal_code(local_code);
         io_blind_move.setClass_code(classCode);
         io_blind_move.setReason_code(reasonCode);
-        io_blind_move.setSave_date(date_confirm);
+        io_blind_move.setSave_date(ToolBox.sDTFormat_Agora(DATEFORMATMKDATE));
         io_blind_move.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
         io_blind_move.setProduct_code(serial.getProduct_code());
         io_blind_move.setSerial_id(serial.getSerial_id());

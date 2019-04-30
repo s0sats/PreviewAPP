@@ -203,33 +203,35 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     @Override
     public void setDefaultZone(SearchableSpinner ss_zone) {
-        Integer selected_zone_code = ToolBox_Con.getPreference_Zone_Code(context);
+        Integer selected_zone_code = null;
 
         if (move_type!= null
-                && !status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 && (move_type.equals(ConstantBaseApp.IO_PROCESS_OUT_PICKING)
                 || move_type.equals(ConstantBaseApp.IO_PROCESS_IN_CONF))) {
             if(planned_zone_code !=null) {
                 selected_zone_code = planned_zone_code;
             }
-        } else if (to_zone_code != null) {
+        }
+        else if (to_zone_code != null
+        && status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             selected_zone_code = to_zone_code;
         }
+        if(selected_zone_code != null) {
+            MD_Site_Zone zone = getMd_site_zone(selected_zone_code);
 
-        MD_Site_Zone zone = getMd_site_zone(selected_zone_code);
+            //
+            if (zone != null) {
+                ToolBox_Inf.setSSmValue(
+                        ss_zone,
+                        String.valueOf(zone.getZone_code()),
+                        zone.getZone_id(),
+                        zone.getZone_desc(),
+                        true
+                );
+            } else {
+                //MSG DE ERRO ?
 
-        //
-        if (zone != null) {
-            ToolBox_Inf.setSSmValue(
-                    ss_zone,
-                    String.valueOf(zone.getZone_code()),
-                    zone.getZone_id(),
-                    zone.getZone_desc(),
-                    true
-            );
-        } else {
-            //MSG DE ERRO ?
-
+            }
         }
 
     }
@@ -253,13 +255,13 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
-    public String getZoneId(int zone_code) {
+    public String getZoneDesc(int zone_code) {
 
         MD_Site_Zone md_site_zone = getMd_site_zone(zone_code);
         if(md_site_zone== null || md_site_zone.getZone_id() == ""){
             return "";
         }
-        return md_site_zone.getZone_id();
+        return md_site_zone.getZone_desc();
     }
 
     @Override

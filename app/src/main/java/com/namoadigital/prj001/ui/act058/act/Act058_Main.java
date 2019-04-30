@@ -9,11 +9,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -64,7 +69,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private int zone_code;
     private int local_code;
     private Integer class_code;
-    String move_type;
+    private String move_type;
     private IO_Move movePlanned;
     private IO_Blind_Move blind_move;
     private int product_code;
@@ -451,7 +456,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 auxMove.putAll(resultList.get(i));
                 break;
             }
-
         }
         //
         lv_results.setAdapter(
