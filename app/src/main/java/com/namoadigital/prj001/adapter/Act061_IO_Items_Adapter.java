@@ -311,7 +311,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             }
             //
             if(item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_CODE) && !item.get(IO_Inbound_ItemDao.ZONE_CODE).isEmpty()){
-                String realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_ID) && !item.get(IO_Inbound_ItemDao.ZONE_ID).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_ID) : "";
+                String realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_DESC) && !item.get(IO_Inbound_ItemDao.ZONE_DESC).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_DESC) : "";
                 realized += item.hasConsistentValue(IO_Inbound_ItemDao.LOCAL_ID) && !item.get(IO_Inbound_ItemDao.LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "" ) + item.get(IO_Inbound_ItemDao.LOCAL_ID) : "";
                 tv_realized_val.setText(realized);
                 tv_realized_lbl.setVisibility(View.VISIBLE);

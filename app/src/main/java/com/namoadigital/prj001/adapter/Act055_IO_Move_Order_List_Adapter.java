@@ -203,23 +203,23 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
                 tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
             }
 
-            if(data.getZone_id() == null || data.getZone_id().isEmpty()){
+            if(data.getZone_desc() == null || data.getZone_desc().isEmpty()){
                 tv_io_current_position_lbl.setVisibility(View.GONE);
                 tv_io_current_position_zone_local_val.setVisibility(View.GONE);
             }else{
                 tv_io_current_position_lbl.setVisibility(View.VISIBLE);
                 tv_io_current_position_zone_local_val.setVisibility(View.VISIBLE);
-                formatZoneLocal(data.getZone_id(), data.getLocal_id(),tv_io_current_position_zone_local_val );
+                formatZoneLocal(data.getZone_desc(), data.getLocal_id(),tv_io_current_position_zone_local_val );
                 tv_io_current_position_lbl.setText(hmAux_Trans.get("current_position_lbl"));
             }
 
-            if(data.getPlanned_zone_id() == null ||data.getPlanned_zone_id().isEmpty()){
+            if(data.getPlanned_zone_desc() == null ||data.getPlanned_zone_desc().isEmpty()){
                 tv_io_suggested_position_lbl.setVisibility(View.GONE);
                 tv_io_suggested_position_zone_local_val.setVisibility(View.GONE);
             }else{
-                tv_io_current_position_lbl.setVisibility(View.VISIBLE);
-                tv_io_current_position_zone_local_val.setVisibility(View.VISIBLE);
-                formatZoneLocal(data.getPlanned_zone_id(), data.getPlanned_local_id(),tv_io_suggested_position_zone_local_val );
+                tv_io_suggested_position_lbl.setVisibility(View.VISIBLE);
+                tv_io_suggested_position_zone_local_val.setVisibility(View.VISIBLE);
+                formatZoneLocal(data.getPlanned_zone_desc(), data.getPlanned_local_id(),tv_io_suggested_position_zone_local_val );
                 tv_io_suggested_position_lbl.setText(hmAux_Trans.get("suggested_position_lbl"));
             }
         }
