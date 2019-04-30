@@ -25,7 +25,13 @@ public interface Act054_Main_Contract {
 
         void getPendenciesList();
 
+        void executeWsSaveItem();
+
         void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
+
+        boolean hasWaitingSyncMovePendency();
+
+        boolean hasWaitingSyncPutAwayPendency();
     }
 
     interface I_View{

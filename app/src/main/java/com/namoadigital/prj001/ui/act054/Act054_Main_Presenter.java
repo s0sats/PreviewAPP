@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.namoadigital.prj001.service.WS_IO_Move_Search.MOVE_ORIENTATION;
 
 
@@ -59,6 +61,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private String mTracking;
 
     private int pending_qty;
+
+
+
     private int waitingSyncMovePendency;
     private int waitingSyncPutAwayPendency;
 
@@ -301,28 +306,25 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        IO_Inbound_ItemDao io_inbound_itemDao = new IO_Inbound_ItemDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
         HMAux resultPending = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         )
                 ).toSqlQuery()
         );
+
         HMAux resultMoveWaitingSync = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
-                                ToolBox_Con.getPreference_Customer_Code(context)
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
                         )
                 ).toSqlQuery()
         );
 
-        HMAux resultInputAwayWaitingSync = io_inbound_itemDao.getByStringHM((
-                        new IO_Inbound_Item_Sql_011(
-                                ToolBox_Con.getPreference_Customer_Code(context)
+        HMAux resultInputAwayWaitingSync = io_moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ConstantBaseApp.IO_INBOUND
                         )
                 ).toSqlQuery()
         );
@@ -378,6 +380,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
 
+
     private String getMoveTypeParams(boolean inboundStatus, boolean outboundStatus, boolean movePlannedStatus, String moveType) {
         if (inboundStatus) {
             moveType = "INBOUND";
@@ -413,9 +416,26 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         return waitingSyncMovePendency > 0;
     }
 
-    public void setMovementFromSync(String prefix, String code, String status) {
 
-
+    @Override
+    public void executeWsSaveItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_save_inbound_item_ttl"),
+                    hmAux_Trans.get("progress_save_inbound_item_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override
@@ -465,28 +485,29 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             }
             //For no resumido por inbound montando msg a ser exibida
             for(Map.Entry<String, String> item : auxResult.entrySet()){
-                String inboundPk = mPrefix+"."+mCode;
+
                 HMAux hmAux = new HMAux();
                 //
                 //Monta HmAux
-                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("inbound_lbl") );
-                hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
-                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
+                hmAux.put("title", hmAux_Trans.get("planned_move_lbl") );
+                hmAux.put("label", item.getKey());
+                hmAux.put("status",item.getValue());
                 //
-                if(item.getKey().equals(inboundPk)){
-                    inboundResult = item.getValue().equals("OK");
-                    resultList.add(inboundNextIdx,hmAux);
-                    inboundNextIdx++;
-                }else{
-                    resultList.add(hmAux);
-                }
+                resultList.add(hmAux);
+
 
             }
             //
             mView.showResult(resultList);
         }
     }
-
-
+    @Override
+    public boolean hasWaitingSyncMovePendency() {
+        return waitingSyncMovePendency>0;
+    }
+    @Override
+    public boolean hasWaitingSyncPutAwayPendency() {
+        return waitingSyncPutAwayPendency >0;
+    }
 
 }
