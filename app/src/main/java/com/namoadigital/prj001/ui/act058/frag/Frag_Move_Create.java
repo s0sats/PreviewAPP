@@ -743,10 +743,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         setLabelsAndHint();
         setMkdate();
 
-        if (mPresenter.hasSerialPermission()) {
-            setSerialMKEditText();
-        } else {
+        if (mPresenter.hasSerialBypass()) {
             mket_serial.setVisibility(View.GONE);
+        } else {
+            setSerialMKEditText();
         }
 
         setSSMoveReason();

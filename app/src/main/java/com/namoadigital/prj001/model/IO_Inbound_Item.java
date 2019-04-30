@@ -33,6 +33,10 @@ public class IO_Inbound_Item implements Serializable {
     @Expose
     private String local_id;
     @Expose
+    private Integer class_code;
+    @Expose
+    private String class_id;
+    @Expose
     private String conf_date;
     @Expose
     private String status;
@@ -163,6 +167,22 @@ public class IO_Inbound_Item implements Serializable {
 
     public void setLocal_id(String local_id) {
         this.local_id = local_id;
+    }
+
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
+    }
+
+    public String getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(String class_id) {
+        this.class_id = class_id;
     }
 
     public String getConf_date() {

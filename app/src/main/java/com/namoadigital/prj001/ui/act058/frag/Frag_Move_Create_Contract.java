@@ -36,7 +36,7 @@ public interface Frag_Move_Create_Contract {
 
         String getLocalId(Integer local_code,Integer zone_code);
 
-        boolean hasSerialPermission();
+        boolean hasSerialBypass();
     }
 
     interface I_View{

@@ -300,11 +300,11 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
-    public boolean hasSerialPermission() {
+    public boolean hasSerialBypass() {
         return ToolBox_Inf.profileExists(
                 context,
                 Constant.PROFILE_MENU_IO,
-                Constant.PROFILE_MENU_IO_PARAM_CONFIRM_SERIAL
+                Constant.PROFILE_MENU_IO_PARAM_BYPASS_CONFIRM_SERIAL
         );
     }
 }
