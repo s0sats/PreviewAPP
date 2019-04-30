@@ -41,6 +41,8 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String ZONE_DESC =	"zone_desc";
     public static final String LOCAL_CODE = "local_code";
     public static final String LOCAL_ID	= "local_id";
+    public static final String CLASS_CODE = "class_code";
+    public static final String CLASS_ID	= "class_id";
     public static final String CONF_DATE = "conf_date";
     public static final String STATUS = "status";
     public static final String COMMENTS = "comments";
@@ -49,7 +51,7 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
     public static final String PLANNED_CLASS_CODE = "planned_class_code";
     public static final String SAVE_DATE = "save_date";
     public static final String UPDATE_REQUIRED = "update_required";
-
+    public static final String PENDING_QTY = "PENDING_QTY";
     //Constantes abaixo somente SÃO usada em queries
     public static final String PLANNED_ZONE_ID = "planned_zone_id";
     public static final String PLANNED_LOCAL_ID = "planned_local_id";
@@ -641,6 +643,16 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             }else{
                 io_inbound_item.setLocal_id(cursor.getString(cursor.getColumnIndex(LOCAL_ID)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(CLASS_CODE))) {
+                io_inbound_item.setClass_code(null);
+            }else{
+                io_inbound_item.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CLASS_ID))) {
+                io_inbound_item.setClass_id(null);
+            }else{
+                io_inbound_item.setClass_id(cursor.getString(cursor.getColumnIndex(CLASS_ID)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(CONF_DATE))) {
                 io_inbound_item.setConf_date(null);
             }else{
@@ -711,6 +723,8 @@ public class IO_Inbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Inbo
             contentValues.put(ZONE_DESC,io_inbound_item.getZone_desc());
             contentValues.put(LOCAL_CODE,io_inbound_item.getLocal_code());
             contentValues.put(LOCAL_ID,io_inbound_item.getLocal_id());
+            contentValues.put(CLASS_CODE,io_inbound_item.getClass_code());
+            contentValues.put(CLASS_ID,io_inbound_item.getClass_id());
             contentValues.put(CONF_DATE,io_inbound_item.getConf_date());
             if(io_inbound_item.getStatus() != null){
                 contentValues.put(STATUS,io_inbound_item.getStatus());

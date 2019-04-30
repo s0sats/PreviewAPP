@@ -263,13 +263,15 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                 }
                 if (validateOrderCategory()) {
                     if (validateOrientation(zoneDesc))
-                        if (mPresenter.hasPending_qty()) {
+                        if (mPresenter.hasWaitingSyncMovePendency()) {
                             mPresenter.syncMovements();
-                        } else {
+                        } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+                            mPresenter.executeWsSaveItem();
+                        }else{
                             callMovementList();
                         }
                     else {
-                        ToolBox.alertMSG(
+                            ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_must_fill_orientation_ttl"),
                                 hmAux_Trans.get("alert_must_fill_orientation_msg"),
@@ -404,12 +406,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
             if(!moves[0].isEmpty()) {
                 showResults(moves);
-            }else {
+            }else if (mPresenter.hasWaitingSyncMovePendency()) {
+                mPresenter.executeWsSaveItem();
+            }
+            else {
                 callMovementList();
             }
 
             progressDialog.dismiss();
         }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+            mPresenter.processItemSaveReturn(0,0, mLink);
             progressDialog.dismiss();
         }
 
@@ -428,7 +434,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            mHmAux.put("title",  hmAux_Trans.get("alert_result_movement"));
+            mHmAux.put("title",  hmAux_Trans.get("planned_move_lbl"));
             //
             moveList.add(mHmAux);
             //
@@ -436,10 +442,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
-
-            showNewOptDialog(moveList);
-        } else {
-            callMovementList();
+            if(!mPresenter.hasWaitingSyncPutAwayPendency()) {
+                showNewOptDialog(moveList);
+            }
         }
     }
 
@@ -461,6 +466,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             moveList.add(hmAux);

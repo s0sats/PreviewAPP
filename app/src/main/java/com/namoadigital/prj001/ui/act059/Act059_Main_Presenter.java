@@ -45,8 +45,6 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
 
     @Override
     public IO_Inbound_Item getInboudItem(Integer move_prefix, Integer move_code, Integer inbound_item) {
-
-
         return io_inbound_itemDao.getByString(new IO_Inbound_Item_Sql_006(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 move_prefix,
@@ -136,8 +134,7 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
         item.setZone_id(to_zone_id);
         item.setZone_desc(to_zone_desc);
         item.setLocal_code(to_local_code);
-        item.setLocal_code(to_local_code);
-        item.setLocal_code(to_local_code);
+        item.setClass_code(to_class_code);
         item.setConf_date(done_date);
         item.setProduct_code(serial.getProduct_code());
         item.setSerial_code((int) serial.getSerial_code());
@@ -147,6 +144,7 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
         item.setUpdate_required(1);
         item.setCustomer_code(customer_code);
         item.setComments(comments);
+
 
         DaoObjReturn daoObjReturnIoMove = io_inbound_itemDao.addUpdate(item);
 
