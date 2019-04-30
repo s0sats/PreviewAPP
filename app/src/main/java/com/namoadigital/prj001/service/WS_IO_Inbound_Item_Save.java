@@ -119,12 +119,9 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
 
             //Se lista vazia, dispara msg de erro.
             if (headerList == null || headerList.size() == 0) {
-                if (menuSendProcess) {
-                    HMAux auxApReturned = new HMAux();
-                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), auxApReturned, "OK", "0");
-                } else {
-                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_items_to_update"), "", "0");
-                }
+                String json =  actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>()) ;
+                //
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), json  , "0");
                 return;
             }
             //
@@ -444,6 +441,8 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
                 ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_items_data"), "", "0");
                 //Reseta var de re transmissão.
                 reSend = false;
+                //Reseta lista de cab após processo de token
+                headerList.clear();
                 //
                 processWsInboundItemSave();
             } else {

@@ -1,11 +1,6 @@
 package com.namoadigital.prj001.util;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,7 +31,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -47,129 +41,23 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.CH_RoomDao;
-import com.namoadigital.prj001.dao.EV_Module_ResDao;
-import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
-import com.namoadigital.prj001.dao.EV_ProfileDao;
-import com.namoadigital.prj001.dao.EV_UserDao;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
-import com.namoadigital.prj001.dao.MD_OperationDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
-import com.namoadigital.prj001.model.CH_Room;
-import com.namoadigital.prj001.model.Chat_Obj;
-import com.namoadigital.prj001.model.EV_Module_Res;
-import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
-import com.namoadigital.prj001.model.EV_Profile;
-import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
-import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
-import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
-import com.namoadigital.prj001.model.MD_Operation;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.MD_Site_Zone;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SM_SO_Service;
-import com.namoadigital.prj001.model.TSO_Save_Env;
-import com.namoadigital.prj001.model.TSerial_Save_Env;
-import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_AL_Full;
-import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
-import com.namoadigital.prj001.receiver.WBR_Cleanning;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.receiver.*;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Message_Sql_020;
-import com.namoadigital.prj001.sql.CH_Message_Sql_022;
-import com.namoadigital.prj001.sql.CH_Message_Sql_023;
-import com.namoadigital.prj001.sql.CH_Room_Sql_001;
-import com.namoadigital.prj001.sql.CH_Room_Sql_004;
-import com.namoadigital.prj001.sql.CH_Room_Sql_007;
-import com.namoadigital.prj001.sql.CH_Room_Sql_008;
-import com.namoadigital.prj001.sql.CH_Room_Sql_010;
-import com.namoadigital.prj001.sql.CH_Room_Sql_011;
-import com.namoadigital.prj001.sql.CH_Room_Sql_012;
-import com.namoadigital.prj001.sql.CH_Room_Sql_014;
-import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
-import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
-import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
-import com.namoadigital.prj001.sql.EV_Profile_Sql_002;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
-import com.namoadigital.prj001.sql.EV_User_Sql_001;
-import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
-import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
-import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
-import com.namoadigital.prj001.sql.SM_SO_Sql_014;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
-import com.namoadigital.prj001.sql.Sql_Act002_001;
-import com.namoadigital.prj001.sql.Sql_Act005_007;
-import com.namoadigital.prj001.sql.Sql_Act005_008;
-import com.namoadigital.prj001.sql.Sql_Act021_003;
-import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
-import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
-import com.namoadigital.prj001.sql.Sql_Form_x_Product;
-import com.namoadigital.prj001.sql.Sql_Form_x_Site;
-import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -179,15 +67,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -5453,6 +5333,26 @@ public class ToolBox_Inf {
             e.printStackTrace();
         }
         return isMBImported;
+    }
+
+
+    /**
+     * LUCHE - 30/04/2019
+     *
+     * Metodo que verifica se existe arquivo de token e qtd de inbounds dentro
+     *
+     * @return
+     */
+    public static boolean exitsInboundTokenFile() {
+        boolean existisFile = false;
+        try {
+            File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+            existisFile = inboundToken.length > 0;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            existisFile = false;
+        }
+        return existisFile;
     }
 
 }

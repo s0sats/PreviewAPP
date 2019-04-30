@@ -217,6 +217,16 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
 
     @Override
     public void checkSearchFlow() {
+        if(hasDataToSend()){
+            executeInboundItemsSave();
+        }else{
+            mView.callSearchInbound();
+        }
+
+    }
+
+    private void executeInboundItemsSave(){
+
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
             //
@@ -235,6 +245,26 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    /**
+     * Verifica se existem in_conf ou put_away para serem enviado.
+     * Utiliza query e tb analisa se existe arquivo de token a ser enviado.
+     * @return
+     */
+    private boolean hasDataToSend() {
+
+        //Selecnio Inbound update_required
+        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) inboundDao.query_HM(
+            new IO_Inbound_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        //Poderi simplificar, mas assim acho melhor para entender
+        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsInboundTokenFile())){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -311,7 +341,7 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
                 //Flutua itens com erro.
                 if(!item.getValue().equals("OK")){
-                    if(!item.getValue().contains(ConstantBaseApp.SYS_STATUS_ERROR)){
+                    if(item.getValue().startsWith(ConstantBaseApp.SYS_STATUS_ERROR)){
                         hasError  = true;
                     }
                     resultList.add(inboundErroNextIdx,hmAux);
