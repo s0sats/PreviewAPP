@@ -34,6 +34,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private boolean processFilter;
     private int downloadCounter;
     private boolean isOnline;
+    private boolean pendencies;
     private OnItemClickListner mOnItemClickListner;
     private OnItemCheckedChangeListener mOnItemCheckedChangeListener;
 
@@ -61,7 +62,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         this.mOnItemCheckedChangeListener = mOnItemCheckedChangeListener;
     }
 
-    public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline ) {
+    public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline , boolean pendencies) {
         this.context = context;
         this.mValues = mValues;
         this.resource = R.layout.act057_io_inbound_cell;
@@ -70,6 +71,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         this.mFilteredValues = mValues;
         this.downloadCounter = 0;
         this.isOnline = isOnline;
+        this.pendencies = pendencies;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -322,6 +324,12 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
                 tv_comment_val.setText(data.getComments());
                 tv_comment.setVisibility(View.VISIBLE);
                 tv_comment_val.setVisibility(View.VISIBLE);
+            }
+            //Se lista de pendents, não exibe icone nem checkbox
+            if(pendencies){
+                chkDownload.setVisibility(View.GONE);
+                chkDownload.setOnClickListener(null);
+                iv_offline.setVisibility(View.GONE);
             }
         }
 

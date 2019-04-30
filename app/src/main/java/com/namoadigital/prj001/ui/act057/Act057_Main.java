@@ -352,7 +352,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                 records,
                 filter_pending,
                 filter_process,
-                isOnline
+                isOnline,
+                listPendencies
         );
         //
         rv_inbound.setAdapter(mAdapter);

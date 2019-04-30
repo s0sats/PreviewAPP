@@ -64,6 +64,7 @@ public class Sql_Act057_001 implements Specification {
                             IO_InboundDao.TABLE + " i\n" +
                     "   WHERE\n" +
                     "    i.customer_code = '"+customer_code+"'\n" +
+                    "    and i.status in('"+ConstantBaseApp.SYS_STATUS_PENDING+"','"+ConstantBaseApp.SYS_STATUS_PROCESS+"')\n" +
                     "  ORDER BY \n" +
                     "    i.inbound_prefix,\n" +
                     "    i.inbound_code\n"
