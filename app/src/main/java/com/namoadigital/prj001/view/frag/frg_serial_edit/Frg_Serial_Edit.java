@@ -2259,12 +2259,20 @@ public class Frg_Serial_Edit extends BaseFragment {
 //            mdProductSerial.setLocal_control(mdProduct.getLocal_control());
 //        }
         //
-        mdProductSerial.setClass_code(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(SearchableSpinner.CODE)));
-        //mdProductSerial.setClass_id(ss_class.getmValue().get(MD_ClassDao.CLASS_ID));
-        mdProductSerial.setClass_id(ss_class.getmValue().get(SearchableSpinner.ID));
-        mdProductSerial.setClass_type(ss_class.getmValue().get(MD_ClassDao.CLASS_TYPE));
-        mdProductSerial.setClass_available(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(MD_ClassDao.CLASS_AVAILABLE)));
-        mdProductSerial.setClass_color(ss_class.getmValue().get(MD_ClassDao.CLASS_COLOR));
+        if(ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            mdProductSerial.setClass_code(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(SearchableSpinner.CODE)));
+            //mdProductSerial.setClass_id(ss_class.getmValue().get(MD_ClassDao.CLASS_ID));
+            mdProductSerial.setClass_id(ss_class.getmValue().get(SearchableSpinner.ID));
+            mdProductSerial.setClass_type(ss_class.getmValue().get(MD_ClassDao.CLASS_TYPE));
+            mdProductSerial.setClass_available(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(MD_ClassDao.CLASS_AVAILABLE)));
+            mdProductSerial.setClass_color(ss_class.getmValue().get(MD_ClassDao.CLASS_COLOR));
+        }else{
+            mdProductSerial.setClass_code(null);
+            mdProductSerial.setClass_id(null);
+            mdProductSerial.setClass_type(null);
+            mdProductSerial.setClass_available(null);
+            mdProductSerial.setClass_color(null);
+        }
         //
         mdProductSerial.setSite_code(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(SearchableSpinner.CODE)));
         mdProductSerial.setSite_id(ss_site.getmValue().get(MD_SiteDao.SITE_ID));
