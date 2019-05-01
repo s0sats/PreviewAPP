@@ -573,7 +573,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             db
                     );
             //Faz loop no seriais que não vieram via sincronismo
-            //Avaliando se esse serial tem vinculo com algum S.O
+            //LUCHE - 01/05/2019
+            //Avaliando se esse serial tem vinculo com as seguintes tabelas:
+            //SM_SO, IO_INBOUND_ITEM, IO_MOVE, IO_OUTBOUND_ITEM
             for (MD_Product_Serial productSerial : serialDelCheck) {
                 HMAux auxExists = this.getByStringHM(
                         new MD_Product_Serial_Sql_012(

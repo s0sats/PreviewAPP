@@ -318,7 +318,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                 }
                 //
                 if(mInbound.getModal_code() != null){
-                    tvModalVal.setText(String.valueOf(mInbound.getModal_code()));
+                    tvModalVal.setText(String.valueOf(mInbound.getModal_desc()));
                     //
                     tvModalLbl.setVisibility(View.VISIBLE);
                     tvModalVal.setVisibility(View.VISIBLE);

@@ -504,6 +504,16 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 mInbound.setLocal_id_conf(null);
             }
             //
+            if(ssModal != null && ssModal.getmValue() != null && ssModal.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
+                mInbound.setModal_code(Integer.valueOf(ssModal.getmValue().get(SearchableSpinner.CODE)));
+                mInbound.setModal_id(ssModal.getmValue().get(SearchableSpinner.ID));
+                mInbound.setModal_desc(ssModal.getmValue().get(SearchableSpinner.DESCRIPTION));
+            }else{
+                mInbound.setModal_code(null);
+                mInbound.setModal_id(null);
+                mInbound.setModal_desc(null);
+            }
+            //
             if (ssCarrier != null && ssCarrier.getmValue() != null && ssCarrier.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                 mInbound.setCarrier_code(Integer.valueOf(ssCarrier.getmValue().get(SearchableSpinner.CODE)));
                 mInbound.setCarrier_id(ssCarrier.getmValue().get(SearchableSpinner.ID));
