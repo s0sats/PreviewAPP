@@ -287,6 +287,42 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         ft.commit();
     }
 
+//    /**
+//     * LUCHE 01/05/2019 - FELIZ DIA DO TRABALHO TRABALHANDO....
+//     * Esse metodo funciona como o outro setFrag, porem sem destruir os fragmentos ja construido
+//     * Apenas escondendo e mostrando uma vez q o frag ja foi construido
+//     * Por hora nao será usa pois seria necessario rever o fluxo dos Frag
+//     *
+//     * Com esse metodo, não é preciso usar o retainInstance nos frags
+//     * @param type
+//     * @param sTag
+//     * @param <T>
+//     */
+//    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+//        FragmentTransaction ft = fm.beginTransaction();
+//        //FAz loop no fragmentos do mannager
+//        //Esconde todos que são o drawer
+//        for(Fragment frag :  fm.getFragments()){
+//            if(!frag.getTag().equals(INBOUND_FRAG_DRAWER)){
+//                ft.hide(frag);
+//            }
+//        }
+//        //Se o frag seleciona NÃO esta no fm,
+//        //  Adiciona e commit
+//        //Se ESTIVER, apenas o "mostra" e commit
+//        if (fm.findFragmentByTag(sTag) == null) {
+//            ft.add(R.id.act061_main_ll, type, sTag);
+//            ft.commit();
+//        } else {
+//            ft.show(fm.findFragmentByTag(sTag));
+//            ft.commit();
+//        }
+//        //Após exibi o frag, roda o loadDataToScreen
+//        //Opcional, mas pode fazer sentido para remover esse metodo de dentro do
+//        //onResume.
+//        //type.loadDataToScreen();
+//    }
+
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();

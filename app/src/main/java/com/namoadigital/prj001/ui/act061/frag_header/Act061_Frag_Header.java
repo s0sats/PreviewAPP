@@ -718,6 +718,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssConfLocal.setmStyle(1);
         ssConfLocal.setmShowLabel(false);
         //ssConfLocal.setmShowBarcode(true);
+        //OS SPINER ESTÃO DESABILITADOS, POIS
+        //PARA CORRETO FUNCIONAMENTO, teria que mexer na lib
+        //add interface disparada ao clicar no barcode.
 
     }
 
@@ -1119,7 +1122,12 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        bStatus = true;
+        //COM o atual metodo de fm.replace() ao setar o frag,
+        //AQUI deve ser colocado metodo para remover os controls add desse frag
+        //na act061, pois se não a cada recriação do frag, novos itens são add na lista
+        //e onresume que retorn o barcode se perderá
+        //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
+        bStatus = false;
     }
 
     public static List<String> getFragTranslationsVars() {
