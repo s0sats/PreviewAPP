@@ -233,8 +233,12 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             //
             if (mInbound != null) {
                 //
+
+                if(mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                    filterActionPendencies = !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+                }
                 swActionFilter.setChecked(
-                    !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                        filterActionPendencies
                 );
                 //
                 loadAdapter(

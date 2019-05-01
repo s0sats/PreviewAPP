@@ -8,14 +8,17 @@ public class IO_Inbound_Item_Sql_010 implements Specification {
     private int inbound_prefix;
     private int inbound_code;
     private int inbound_item;
-    private String status;
+    private int update_required;
+    private String save_date;
 
-    public IO_Inbound_Item_Sql_010(long customer_code, int inbound_prefix, int inbound_code, int inbound_item, String status) {
+
+    public IO_Inbound_Item_Sql_010(long customer_code, int inbound_prefix, int inbound_code, int inbound_item, int update_required, String save_date) {
         this.customer_code = customer_code;
         this.inbound_prefix = inbound_prefix;
         this.inbound_code = inbound_code;
         this.inbound_item = inbound_item;
-        this.status = status;
+        this.update_required = update_required;
+        this.save_date = save_date;
     }
 
     @Override
@@ -23,7 +26,8 @@ public class IO_Inbound_Item_Sql_010 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" UPDATE "+ IO_Inbound_ItemDao.TABLE + "  SET\n" +
-                        "   status = '"+status+"'\n" +
+                        "   update_required = '"+update_required+"',\n" +
+                        "   save_date = '" +save_date +"'\n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
                         "   and inbound_prefix = '"+inbound_prefix+"'\n" +
