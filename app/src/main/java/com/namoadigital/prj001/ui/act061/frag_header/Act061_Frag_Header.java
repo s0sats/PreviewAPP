@@ -17,9 +17,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.IO_OutboundDao;
-import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -81,6 +79,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private EditText etComments;
     private Button btnSave;
     private ArrayList<View> properties = new ArrayList<>();
+    private boolean pausedByScan = false;//Var controla se onResume forçado pela BarCode Act.
 
     /**
      * Interface principal do fragment
@@ -158,8 +157,13 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     @Override
     public void onResume() {
         super.onResume();
+        //Se chamada do reload foi por causa da leitura de barcode.
+        //pula recarga de dados.
+        if (!pausedByScan) {
+            loadDataToScreen();
+        }
         //
-        loadDataToScreen();
+        pausedByScan = false;
     }
 
     private void recoverBundleInfo(Bundle arguments) {
@@ -300,6 +304,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssConfZone.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
             @Override
             public void onValueChanged(HMAux hmAux) {
+                pausedByScan = true;
+                //
+                //ssConfZone.setmValue(hmAux);
                 processZoneValueChange(hmAux);
             }
         });
@@ -318,6 +325,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssConfLocal.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
             @Override
             public void onValueChanged(HMAux hmAux) {
+                pausedByScan = true;
+                //
                 processLocalValueChange(hmAux);
             }
         });
@@ -389,6 +398,13 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 views.remove(ssFromSite);
                 views.remove(ssFromOutbound);
                 views.remove(ssPartner);
+                if( mInbound != null
+                    && !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                    && inEdit
+                ){
+                    views.remove(ssConfZone);
+                    views.remove(ssConfLocal);
+                }
                 //
                 applyEditMode(views, inEdit);
                 break;
@@ -698,10 +714,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssConfZone.setmStyle(1);
-        ssConfZone.setmShowBarcode(true);
+        //ssConfZone.setmShowBarcode(true);
         ssConfLocal.setmStyle(1);
         ssConfLocal.setmShowLabel(false);
-        ssConfLocal.setmShowBarcode(true);
+        //ssConfLocal.setmShowBarcode(true);
 
     }
 
@@ -967,11 +983,29 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     loadZoneSS(false);
                     loadLocalSS(false);
                     if(mInbound.getZone_code_conf() != null){
-                        mPresenter.getZoneDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf());
+                        ToolBox_Inf.setSSmValue(
+                            ssConfZone,
+                            String.valueOf(mInbound.getZone_code_conf()),
+                            mInbound.getZone_id_conf(),
+                            mInbound.getZone_desc_conf(),
+                            true,
+                            false
+                        );
                     }
                     //
                     if(mInbound.getLocal_code_conf() != null){
-                        mPresenter.getLocalDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf(), mInbound.getLocal_code_conf());
+                        //mPresenter.getLocalDbValue(ssConfZone.getmOption(), mInbound.getZone_code_conf(), mInbound.getLocal_code_conf());
+                        ToolBox_Inf.setSSmValue(
+                            ssConfLocal,
+                            String.valueOf(mInbound.getLocal_code_conf()),
+                            mInbound.getLocal_id_conf(),
+                            mInbound.getLocal_id_conf(),
+                            true,
+                            MD_Site_Zone_LocalDao.SITE_CODE, String.valueOf(mInbound.getTo_site_code()),
+                            MD_SiteDao.SITE_DESC, String.valueOf(mInbound.getTo_site_code()),
+                            MD_Site_Zone_LocalDao.ZONE_CODE, String.valueOf(mInbound.getZone_code_conf()),
+                            MD_Site_ZoneDao.ZONE_DESC, mInbound.getZone_desc_conf()
+                        );
                     }
 
                 } else {

@@ -336,13 +336,22 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                     clPosition.setVisibility(View.VISIBLE);
                     String zoneLocal = "";
                     if(mInbound.getZone_code_conf() != null || mInbound.getLocal_code_conf() != null){
-                        zoneLocal += mInbound.getZone_id_conf();
+                        zoneLocal += mInbound.getZone_desc_conf();
                         zoneLocal += mInbound.getLocal_code_conf() != null ? (!zoneLocal.isEmpty() ?  " | " : "") + mInbound.getLocal_id_conf() : "";
                     }else{
                         zoneLocal = hmAux_Trans.get("empty_position_lbl");
                     }
                     //
                     tvZoneLocal.setText(zoneLocal);
+                    //verifica status pra saber se permitir editar doca
+                    if(mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING)){
+                        ivPositionEdit.setVisibility(View.VISIBLE);
+                        ivPositionEdit.setEnabled(true);
+                    }else{
+                        ivPositionEdit.setVisibility(View.GONE);
+                        ivPositionEdit.setEnabled(false);
+                    }
+
                 }
             }
         }
