@@ -799,7 +799,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     public void applyInboundCreated(HMAux hmAux_Trans, int inbound_prefix, int inbound_code, boolean newProcess, boolean inEdit) {
-        updateArguments(hmAux_Trans, inbound_prefix, inbound_code, newProcess);
+        updateArguments(hmAux_Trans, inbound_prefix, inbound_code, newProcess,inEdit);
         //
         this.hmAux_Trans = hmAux_Trans;
         this.inboundPrefix = inbound_prefix;
@@ -813,13 +813,14 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
     }
 
-    private void updateArguments(HMAux hmAux_trans, int inbound_prefix, int inbound_code, boolean bNewProcess) {
+    private void updateArguments(HMAux hmAux_trans, int inbound_prefix, int inbound_code, boolean bNewProcess, boolean inEdit) {
         Bundle args = getArguments();
         if (args != null) {
             args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_trans);
             args.putInt(IO_InboundDao.INBOUND_PREFIX, inbound_prefix);
             args.putInt(IO_InboundDao.INBOUND_CODE, inbound_code);
             args.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, bNewProcess);
+            args.putBoolean(ConstantBaseApp.IO_PROCESS_IN_EDIT_KEY, inEdit);
         }
 
     }
@@ -925,8 +926,12 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         if (bStatus) {
             if (mInbound != null) {
                 if (bNewProcess) {
-                    setUIForCreation(false);
-                    loadFromTypeSS(false);
+                    //Verifica no caso do novo, se fromType ja selecionado,
+                    //se sim, ão
+                    if(ssFromType == null || !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                        setUIForCreation(false);
+                        loadFromTypeSS(false);
+                    }
                 } else {
                     setUIForEdition();
                     applyViewsInteraction(INTERATION_EDIT_ON_OFF);
