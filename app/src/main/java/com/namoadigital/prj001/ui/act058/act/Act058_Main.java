@@ -422,7 +422,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    frag_move_create.restoreUIFields();
+                                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
                                 }
                             },
                             0
@@ -495,7 +495,24 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     //atualizar a tela com os dados do move
                 }else{
                     getMoveInfoFromBD();
-                    frag_move_create.restoreUIFields();
+                    frag_move_create.restoreUIFields(serialInfo,
+                            viewMode,
+                            true,
+                            hmAux_Trans_Frag,
+                            to_local_code,
+                            to_zone_code,
+                            move_prefix,
+                            move_code,
+                            reason_code,
+                            move_type,
+                            planned_zone_code,
+                            outbound_prefix,
+                            inbound_prefix,
+                            outbound_code,
+                            inbound_code,
+                            planned_local_code,
+                            status,
+                            to_class_code);
                 }
 
             }
