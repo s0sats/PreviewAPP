@@ -480,7 +480,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 HMAux hmAux = new HMAux();
                 //
                 //Monta HmAux
-                hmAux.put("title", hmAux_Trans.get("planned_move_lbl") );
+                hmAux.put("title", hmAux_Trans.get("inbound_move_lbl") );
                 hmAux.put("label", item.getKey());
                 hmAux.put("status",item.getValue());
                 //

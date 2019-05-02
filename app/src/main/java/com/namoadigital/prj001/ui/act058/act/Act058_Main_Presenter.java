@@ -201,8 +201,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             io_move.getInbound_prefix(),
             io_move.getInbound_code(),
             io_move.getInbound_item(),
-                1,
-                ToolBox.sDTFormat_Agora(DATEFORMATMKDATE)).toSqlQuery()
+            ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
         );
     }
 
