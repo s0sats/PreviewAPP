@@ -903,10 +903,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_local.setmShowBarcode(true);
         ss_local.setmShowLabel(false);
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
-        if(status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)){
-            mPresenter.setLocalValue(ss_local, to_zone_code, to_local_code);
+
+
+        if(status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)){
+            mPresenter.setLocalValue(ss_local, 0, 0);
         }else {
-            mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
+            mPresenter.setLocalValue(ss_local, to_zone_code, to_local_code);
         }
     }
 

@@ -8,16 +8,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -97,20 +101,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
              *
              *
              */
-            ToolBox_Inf.showNoConnectionDialog(context);
 
-//            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
-//            //
-//            if (serial_list.size() > 0) {
-//                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-//            } else {
-//                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-//                    // mudar mensagem
-//                    ToolBox_Inf.showNoConnectionDialog(context);
-//                } else {
-//                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-//                }
-//            }
             ArrayList<IO_Serial_Process_Record> serial_list = hasLocalSerial(product_id, serial_id, tracking);
             //
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), isOnline);
@@ -135,20 +126,25 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     }
 
     private ArrayList<IO_Serial_Process_Record> hasLocalSerial(String product_id, String serial_id, String tracking) {
-//        ArrayList<MD_Product_Serial> serial_list =
-//                (ArrayList<MD_Product_Serial>) serialDao.query(
-//                        new Sql_Act020_002(
-//                                ToolBox_Con.getPreference_Customer_Code(context),
-//                                ToolBox_Con.getPreference_Site_Code(context),
-//                                product_id,
-//                                serial_id,
-//                                tracking
-//                        ).toSqlQuery()
-//                );
+        ArrayList<MD_Product_Serial> serial_list =
+                (ArrayList<MD_Product_Serial>) serialDao.query(
+                        new IO_Move_Order_Item_Sql_009(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context),
+                                product_id,
+                                serial_id,
+                                tracking
+                        ).toSqlQuery()
+                );
 
-        ArrayList<IO_Serial_Process_Record> serial_list = new ArrayList<>();
+        ArrayList<IO_Serial_Process_Record> serial_process_records = new ArrayList<>();
+        IO_MoveDao moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
 
-        return serial_list;
+
+
+        return serial_process_records;
     }
 
     @Override
