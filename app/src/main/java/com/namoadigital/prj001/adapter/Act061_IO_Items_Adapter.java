@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,7 +38,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     private boolean inboundAllowNewItem;
     private boolean filterActionPendencies;
 
-    public interface OnIoItemClickListener{
+    public interface OnIoItemClickListener {
 
         void onSerialClick(HMAux item);
 
@@ -56,7 +57,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         this.mOnIoItemClickListener = mOnIoItemClickListener;
     }
 
-    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues,boolean inboundAllowNewItem,boolean filterActionPendencies) {
+    public Act061_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues, boolean inboundAllowNewItem, boolean filterActionPendencies) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
@@ -97,11 +98,11 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view;
         //
-        if(viewType == VIEW_TYPE_ITEM){
+        if (viewType == VIEW_TYPE_ITEM) {
             view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(resource, viewGroup, false);
             return new IOInboundViewHolder(view);
-        }else{
+        } else {
             view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.act061_frag_item_cell_footer, viewGroup, false);
             return new FooterVH(view);
@@ -115,21 +116,21 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             if (viewHolder instanceof IOInboundViewHolder) {
                 IOInboundViewHolder holder = (IOInboundViewHolder) viewHolder;
                 holder.bindData(mFilteredValues.get(position));
-            } else if(viewHolder instanceof FooterVH){
+            } else if (viewHolder instanceof FooterVH) {
                 FooterVH holder = (FooterVH) viewHolder;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public int getItemCount() {
-        if(mFilteredValues == null){
+        if (mFilteredValues == null) {
             return 0;
         }
         //
-        if(mFilteredValues.size() == 0){
+        if (mFilteredValues.size() == 0) {
             return 1;
         }
 
@@ -139,18 +140,18 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemViewType(int position) {
         //return super.getItemViewType(position);
-        if(mFilteredValues != null) {
+        if (mFilteredValues != null) {
             if (position == mFilteredValues.size()) {
                 return VIEW_TYPE_FOOTER;
             } else {
                 return VIEW_TYPE_ITEM;
             }
-        }else{
+        } else {
             return VIEW_TYPE_FOOTER;
         }
     }
 
-    public void updateFilterActionPendenciesStatus(boolean filterActionPendencies){
+    public void updateFilterActionPendenciesStatus(boolean filterActionPendencies) {
         this.filterActionPendencies = filterActionPendencies;
     }
 
@@ -162,23 +163,23 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         return valueFilter;
     }
 
-    private class IoItemFilter extends Filter{
+    private class IoItemFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
             ArrayList<HMAux> filteredList = new ArrayList<>();
             //
-            for(HMAux aux: mValues){
+            for (HMAux aux : mValues) {
                 String serialId =
                     aux.hasConsistentValue(MD_Product_SerialDao.SERIAL_ID)
-                    ? ToolBox.AccentMapper(aux.get(MD_Product_SerialDao.SERIAL_ID)).toLowerCase()
-                    : "";
-                if(!serialId.isEmpty()
+                        ? ToolBox.AccentMapper(aux.get(MD_Product_SerialDao.SERIAL_ID)).toLowerCase()
+                        : "";
+                if (!serialId.isEmpty()
                     && serialId.contains(charString)
                     && (filterStatus(aux))
 
-                ){
+                ) {
                     filteredList.add(aux);
                 }
             }
@@ -192,11 +193,12 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         /**
          * Verifica se não é para filtrar status ou
          * filtra por pendind e put_away
+         *
          * @param aux
          * @return
          */
         private boolean filterStatus(HMAux aux) {
-            if(aux.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+            if (aux.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
                 return
                     !filterActionPendencies
                         || (
@@ -206,7 +208,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                                 || aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
                             )
                     );
-            }else{
+            } else {
                 //Não deveria acontecer.
                 return false;
             }
@@ -222,7 +224,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tv_row_id;
         private TextView tv_status;
         private ImageView iv_serial;//image
@@ -282,7 +284,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             return itemView;
         }
 
-        public void bindData(HMAux item){
+        public void bindData(HMAux item) {
             //Esconde views
             resetVisibility();
             //
@@ -294,31 +296,26 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             tv_serial_val.setText(item.get(MD_Product_SerialDao.SERIAL_ID));
             tv_brand_model_color.setVisibility(View.GONE);
             String brandModelColor = formatSerialBrandModelColor(item).trim();
-            if(!brandModelColor.isEmpty()) {
+            if (!brandModelColor.isEmpty()) {
                 tv_brand_model_color.setText(brandModelColor);
                 tv_brand_model_color.setVisibility(View.VISIBLE);
             }
             //
-            if(
+            if (
                 (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty())
                     || (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty())
-            ){
+            ) {
                 String suggestedPosition = item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty() ? item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID) : "";
-                suggestedPosition += item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "" ) + item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) : "";
+                suggestedPosition += item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "") + item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) : "";
                 tv_suggestion_val.setText(suggestedPosition);
                 tv_sugestion_lbl.setVisibility(View.VISIBLE);
                 tv_suggestion_val.setVisibility(View.VISIBLE);
             }
+            //Seta dados do realizado.Info depende do status do item e tipo de inbound
+            setRealized(item);
+
             //
-            if(item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_CODE) && !item.get(IO_Inbound_ItemDao.ZONE_CODE).isEmpty()){
-                String realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_DESC) && !item.get(IO_Inbound_ItemDao.ZONE_DESC).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_DESC) : "";
-                realized += item.hasConsistentValue(IO_Inbound_ItemDao.LOCAL_ID) && !item.get(IO_Inbound_ItemDao.LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "" ) + item.get(IO_Inbound_ItemDao.LOCAL_ID) : "";
-                tv_realized_val.setText(realized);
-                tv_realized_lbl.setVisibility(View.VISIBLE);
-                tv_realized_val.setVisibility(View.VISIBLE);
-            }
-            //
-            if(item.hasConsistentValue(IO_Inbound_ItemDao.CONF_DATE) && !item.get(IO_Inbound_ItemDao.CONF_DATE).isEmpty()){
+            if (item.hasConsistentValue(IO_Inbound_ItemDao.CONF_DATE) && !item.get(IO_Inbound_ItemDao.CONF_DATE).isEmpty()) {
                 tv_conf_dt_val.setText(
                     ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.get(IO_Inbound_ItemDao.CONF_DATE)),
@@ -330,14 +327,14 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 tv_conf_dt_val.setVisibility(View.VISIBLE);
             }
             //Define qual icone deve ser exibido.
-            if(item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS) && !item.get(IO_InboundDao.PUT_AWAY_PROCESS).isEmpty()) {
+            if (item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS) && !item.get(IO_InboundDao.PUT_AWAY_PROCESS).isEmpty()) {
                 if (item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("0")) {
                     iv_conf.setVisibility(View.VISIBLE);
                     iv_put_away.setVisibility(View.GONE);
                 } else {
-                    if(
+                    if (
                         item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-                        && ( item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                            && (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
                             || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
                         )
                     ) {
@@ -353,8 +350,35 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             defineButtonsLayout(item);
         }
 
+        private void setRealized(HMAux item) {
+            String realized = "";
+
+            if (item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS)
+                && item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("1")
+                && item.hasConsistentValue(IO_InboundDao.STATUS)
+                && (item.get(IO_InboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE) || item.get(IO_InboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))
+                && item.hasConsistentValue(IO_MoveDao.TO_ZONE_DESC)
+                && item.hasConsistentValue(IO_MoveDao.TO_LOCAL_ID)
+            ) {
+                realized = item.hasConsistentValue(IO_MoveDao.TO_ZONE_DESC) && !item.get(IO_MoveDao.TO_ZONE_DESC).isEmpty() ? item.get(IO_MoveDao.TO_ZONE_DESC) : "";
+                realized += item.hasConsistentValue(IO_MoveDao.TO_LOCAL_ID) && !item.get(IO_MoveDao.TO_LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_MoveDao.TO_LOCAL_ID) : "";
+                tv_realized_val.setText(realized);
+                tv_realized_lbl.setVisibility(View.VISIBLE);
+                tv_realized_val.setVisibility(View.VISIBLE);
+
+            } else {
+                if (item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_CODE) && !item.get(IO_Inbound_ItemDao.ZONE_CODE).isEmpty()) {
+                    realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_DESC) && !item.get(IO_Inbound_ItemDao.ZONE_DESC).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_DESC) : "";
+                    realized += item.hasConsistentValue(IO_Inbound_ItemDao.LOCAL_ID) && !item.get(IO_Inbound_ItemDao.LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_Inbound_ItemDao.LOCAL_ID) : "";
+                    tv_realized_val.setText(realized);
+                    tv_realized_lbl.setVisibility(View.VISIBLE);
+                    tv_realized_val.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
         private void defineButtonsLayout(HMAux item) {
-            if(item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+            if (item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
 
                 if (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
                     iv_conf.setImageDrawable(
@@ -378,17 +402,17 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 //Cancela ação do btn caso o status não permita uma ação.
                 if (
                     item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
-                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
-                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
-                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
+                        || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                        || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                        || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
                 ) {
                     iv_conf.setEnabled(false);
                     iv_put_away.setEnabled(false);
-                }else{
+                } else {
                     iv_conf.setEnabled(true);
                     iv_put_away.setEnabled(true);
                 }
-            }else{
+            } else {
                 iv_conf.setEnabled(false);
                 iv_conf.setVisibility(View.GONE);
                 iv_put_away.setEnabled(false);
@@ -414,7 +438,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
         @Override
         public void onClick(View v) {
-            if(mOnIoItemClickListener != null) {
+            if (mOnIoItemClickListener != null) {
                 switch (v.getId()) {
                     case R.id.act061_frag_item_cell_iv_serial:
                         mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
@@ -432,13 +456,13 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         private String formatSerialBrandModelColor(HMAux data) {
             String
                 serialBrandModelColor = data.get(MD_Product_SerialDao.BRAND_DESC) == null || data.get(MD_Product_SerialDao.BRAND_DESC).isEmpty() ? "" : data.get(MD_Product_SerialDao.BRAND_DESC);
-            serialBrandModelColor +=  (data.get(MD_Product_SerialDao.MODEL_DESC) == null || data.get(MD_Product_SerialDao.MODEL_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.MODEL_DESC));
-            serialBrandModelColor +=  (data.get(MD_Product_SerialDao.COLOR_DESC) == null || data.get(MD_Product_SerialDao.COLOR_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.COLOR_DESC));
+            serialBrandModelColor += (data.get(MD_Product_SerialDao.MODEL_DESC) == null || data.get(MD_Product_SerialDao.MODEL_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.MODEL_DESC));
+            serialBrandModelColor += (data.get(MD_Product_SerialDao.COLOR_DESC) == null || data.get(MD_Product_SerialDao.COLOR_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.COLOR_DESC));
             return serialBrandModelColor;
         }
     }
 
-    public class FooterVH extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class FooterVH extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Button btnAddItem;
 
         public FooterVH(@NonNull View itemView) {
@@ -447,10 +471,10 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             btnAddItem = itemView.findViewById(R.id.act061_frag_item_footer_btn_add);
             btnAddItem.setText(hmAux_Trans.get("btn_add_item"));
             //
-            if(inboundAllowNewItem){
+            if (inboundAllowNewItem) {
                 btnAddItem.setVisibility(View.VISIBLE);
                 btnAddItem.setOnClickListener(this);
-            }else{
+            } else {
                 btnAddItem.setVisibility(View.GONE);
                 btnAddItem.setOnClickListener(null);
             }
@@ -458,7 +482,7 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
         @Override
         public void onClick(View v) {
-            if(mOnIoItemClickListener != null){
+            if (mOnIoItemClickListener != null) {
                 mOnIoItemClickListener.onAddItemClick();
             }
         }
