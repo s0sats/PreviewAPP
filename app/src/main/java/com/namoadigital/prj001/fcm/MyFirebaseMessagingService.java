@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -19,21 +18,19 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
-import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
-import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
-import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -179,10 +176,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             //
             if (fcmMessage.getTitle().trim().equalsIgnoreCase("<SM_SO_UPDATE>") &&
-                    fcmMessage.getModule().trim().equalsIgnoreCase("SM_")) {
+                    fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SO)) {
 
                 checkNService_SO_Status(fcmMessage);
 
+            }
+            //LUCHE - 02/05/2019
+            //ADD TRATATIVA MODULO IO   IO_
+            else if(fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_IO)) {
+                handleIoFCM(fcmMessage);
             } else {
                 //
                 fcmMessageDao.addUpdate(fcmMessage);
@@ -260,13 +262,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         }
 
-        sendFCMStatus();
+        sendFCMStatus(fcmMessage.getTitle());
     }
 
-    private void sendFCMStatus() {
+    private void handleIoFCM(FCMMessage fcmMessage) {
+        try{
+            IO_InboundDao ioInboundDao = new IO_InboundDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
+            JSONObject jsonObject = jsonObjectRoot.getJSONObject("inbound");
+
+            String customer_code = fcmMessage.getCustomer();
+            String inbound_prefix = jsonObject.getString(IO_InboundDao.INBOUND_PREFIX);
+            String inbound_code = jsonObject.getString(IO_InboundDao.INBOUND_CODE);
+            String inbound_scn = jsonObject.getString(IO_InboundDao.SCN);
+            String status = jsonObject.getString(IO_InboundDao.STATUS);
+
+            // Update S.O.
+            ioInboundDao.addUpdate(
+                new IO_Inbound_Sql_012(
+                    Long.parseLong(customer_code),
+                    Integer.parseInt(inbound_prefix),
+                    Integer.parseInt(inbound_code),
+                    Integer.parseInt(inbound_scn)
+                ).toSqlQuery()
+            );
+
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        sendFCMStatus(fcmMessage.getTitle());
+    }
+
+    private void sendFCMStatus(String module_type) {
         Intent mIntent = new Intent();
         mIntent.setAction(Constant.WS_FCM);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE,module_type);
         //
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }

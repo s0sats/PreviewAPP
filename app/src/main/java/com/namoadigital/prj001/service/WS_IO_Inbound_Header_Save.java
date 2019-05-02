@@ -164,6 +164,7 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
                     }else{
                         ioInbound.setToken(null);
                         ioInbound.setScn(inboundRet.getScn());
+                        ioInbound.setUpdate_required(0);
                         inboundDao.addUpdate(ioInbound);
                     }
                 }

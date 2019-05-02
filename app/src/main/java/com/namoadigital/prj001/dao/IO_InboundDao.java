@@ -466,15 +466,14 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                     //Tenta update e armazena retorno
                     addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
                     //Se deletou e não rolou exception, executa insert
-                    if (addUpdateRet > 0) {
-                        //Seta Pk no itens
-                        io_inbound.setPK();
-                        daoObjReturn = addUpdate(io_inbound, db);
-                        //Esse if não teria necessidade, pq se desse merda, ja teria dado exception
-                        if (daoObjReturn.hasError()) {
-                            throw new Exception(daoObjReturn.getErrorMsg());
-                        }
+                    //Seta Pk no itens
+                    io_inbound.setPK();
+                    daoObjReturn = addUpdate(io_inbound, db);
+                    //Esse if não teria necessidade, pq se desse merda, ja teria dado exception
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getErrorMsg());
                     }
+
                 }
             }
             //

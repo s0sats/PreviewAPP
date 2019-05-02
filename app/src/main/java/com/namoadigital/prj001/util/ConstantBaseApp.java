@@ -555,7 +555,14 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
     public static final String EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE = "EXCEPTION_DATABASE_CUSTOMER_-1";
 
+    //FCM
     public static final String WS_FCM = "WS_FCM";
+    public static final String FCM_MODULE_IO = "IO_";
+    public static final String FCM_MODULE_SO = "SM_";
+    public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
+
+
+
     /*
      Constante Status AP
      */

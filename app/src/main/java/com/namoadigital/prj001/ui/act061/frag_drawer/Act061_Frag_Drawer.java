@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.ui.act061.frag_drawer;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,12 +11,10 @@ import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.*;
 import az.plainpie.PieView;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
@@ -88,6 +89,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         void updateDrawerState(boolean stateOpen);
 
         String getFirstFragToLoad();
+
+        void prepareSyncProcess();
     }
 
     public onFragDrawerInteraction getFragDrawerListener() {
@@ -165,6 +168,26 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     }
 
     private void iniAction() {
+        tvInboundId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_sync_data_ttl"),
+                    hmAux_Trans.get("alert_sync_data_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(mFragDrawerListener != null){
+                                mFragDrawerListener.prepareSyncProcess();
+                            }
+                        }
+                    },
+                    1
+                );
+            }
+        });
+        //
         ivPositionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -266,6 +289,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
             //
             if(mInbound != null) {
                 tvInboundId.setText(mInbound.getInbound_prefix()+"."+mInbound.getInbound_code());
+                setInboundSyncIcon();
                 tvStatus.setText(hmAux_Trans.get(mInbound.getStatus()));
                 tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mInbound.getStatus())));
                 //
@@ -356,6 +380,20 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
             }
         }
 
+    }
+
+    public void setInboundSyncIcon() {
+        if(mInbound != null){
+            Drawable rightDraw = null;
+            Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
+            if(mInbound.getSync_required() == 1 /*|| mInbound.getUpdate_required() == 1 */){
+                rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
+                rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+                background = getResources().getDrawable(R.drawable.stroke_yellow_states);
+            }
+            tvInboundId.setCompoundDrawablesWithIntrinsicBounds(null,null,rightDraw,null);
+            tvInboundId.setBackground(background);
+        }
     }
 
     private void setPieViewVals() {
@@ -471,6 +509,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         transListFrag.add("empty_position_lbl");
         transListFrag.add("header_lbl");
         transListFrag.add("items_lbl");
+        transListFrag.add("alert_sync_data_ttl");
+        transListFrag.add("alert_sync_data_msg");
         //
         return transListFrag;
     }

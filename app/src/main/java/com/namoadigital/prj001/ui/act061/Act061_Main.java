@@ -1,13 +1,16 @@
 package com.namoadigital.prj001.ui.act061;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,10 +31,7 @@ import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -71,6 +71,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private boolean bNewProcess;
     private String wsProcess;
     private String fragToLoad = INBOUND_FRAG_HEADER;
+    //Receiver do que captura disparo do FCM
+    private FCMReceiver fcmReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,6 +135,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_header_save_only_online_msg");
         transList.add("alert_from_outbound_error_ttl");
         transList.add("alert_from_outbound_error_msg");
+        //
+        transList.add("dialog_inbound_download_ttl");
+        transList.add("dialog_inbound_download_msg");
+        transList.add("alert_download_return_ttl");
+        transList.add("alert_download_return_msg");
+        transList.add("alert_sync_ok_refresh_is_needed_msg");
+        transList.add("alert_sync_data_ttl");
+        transList.add("alert_sync_data_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -202,7 +212,26 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         //
         initFragment();
         //
+        initFCMReceiver();
+        //
         loadForcedFrag();
+    }
+
+    private void initFCMReceiver() {
+        fcmReceiver = new FCMReceiver();
+        //
+        startStopFCMReceiver(true);
+    }
+
+    private void startStopFCMReceiver(boolean start) {
+        if(start){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Constant.WS_FCM);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        }else{
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        }
     }
 
     private void loadForcedFrag() {
@@ -430,16 +459,26 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     /**
      * Reload dados dos frag.
      */
+
     private void refreshUi() {
         if(act061_frag_drawer != null){
             act061_frag_drawer.loadDataToScreen();
         }
         if(act061_frag_header != null){
-            act061_frag_header.loadDataToScreen();
+            //act061_frag_header.loadDataToScreen();
+            //Load inbound chama o loadDataToScreen após atualiza dados da inbound.
+            act061_frag_header.loadInbound();
         }
         if(act061_frag_item != null){
             act061_frag_item.loadDataToScreen();
         }
+    }
+
+    @Override
+    public void prepareFullRefresh() {
+        loadInbound();
+        //
+        refreshUi();
     }
 
     @Override
@@ -530,6 +569,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public String getFirstFragToLoad() {
         return fragToLoad != null ? fragToLoad : INBOUND_FRAG_HEADER;
+    }
+
+    @Override
+    public void prepareSyncProcess() {
+        mPresenter.checkSyncProcess(mInbound);
     }
 
     //endregion
@@ -663,6 +707,29 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     }
 
+    private class FCMReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if( bundle != null
+                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_IO_INBOUND_UPDATE)
+                && act061_frag_drawer != null
+            ){
+                act061_frag_drawer.loadDataToScreen();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Para receiver que ouve o FCM
+        startStopFCMReceiver(false);
+        //
+        super.onDestroy();
+
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         //super.processCloseACT(mLink, mRequired);
@@ -683,6 +750,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             progressDialog.dismiss();
         } else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
             mPresenter.processItemSaveReturn(mPrefix, mCode, mLink);
+            progressDialog.dismiss();
+        } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Download.class.getName())) {
+            mPresenter.processDownloadReturn(mPrefix, mCode,hmAux);
             progressDialog.dismiss();
         } else {
             progressDialog.dismiss();

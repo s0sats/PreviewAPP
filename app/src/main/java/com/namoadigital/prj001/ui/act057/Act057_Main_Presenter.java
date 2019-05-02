@@ -107,8 +107,8 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
             }
         }else{
             mView.showAlert(
-                    hmAux.get("alert_download_return_ttl"),
-                    hmAux.get("alert_download_return_error_msg")
+                hmAux_Trans.get("alert_download_return_ttl"),
+                hmAux_Trans.get("alert_download_return_error_msg")
             );
         }
     }

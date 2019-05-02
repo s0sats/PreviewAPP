@@ -60,6 +60,7 @@
                     android:gravity="center"
                     android:background="@drawable/stroke_blue2_states"
                     android:drawableEnd="@drawable/ic_sync_black_24dp"
+                    android:clickable="true"
             />
 
             <az.plainpie.PieView

@@ -32,6 +32,8 @@ public interface Act061_Main_Contract {
         void callAct062();
 
         void showResult(ArrayList<HMAux> resultList, boolean inboundResult);
+
+        void prepareFullRefresh();
     }
 
     interface I_Presenter{
@@ -61,5 +63,9 @@ public interface Act061_Main_Contract {
         void executeWsSaveItem();
 
         void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
+
+        void checkSyncProcess(IO_Inbound mInbound);
+
+        void processDownloadReturn(int mPrefix, int mCode, HMAux hmAux);
     }
 }

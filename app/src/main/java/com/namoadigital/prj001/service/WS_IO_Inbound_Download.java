@@ -4,17 +4,14 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Inbound_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Inbound_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Download;
@@ -23,9 +20,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class WS_IO_Inbound_Download extends IntentService {
 
@@ -118,7 +113,7 @@ public class WS_IO_Inbound_Download extends IntentService {
      */
     private void processResponse(ArrayList<IO_Inbound> inbounds_list) {
         if(inbounds_list != null && inbounds_list.size() > 0 ) {
-            Set<MD_Product_Serial> serialHashList = new HashSet<>();
+            //Set<MD_Product_Serial> serialHashList = new HashSet<>();
             HMAux hmAuxRet = new HMAux();
             hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
             //
@@ -128,21 +123,22 @@ public class WS_IO_Inbound_Download extends IntentService {
                     Constant.DB_VERSION_CUSTOM
             );
             //
-            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                    Constant.DB_VERSION_CUSTOM
-            );
-            //Faz loop na lista retornada setando pk nos itens e adicionando seriais a serem salvos
-            //na lista de seriais.
-            for(IO_Inbound io_inbound: inbounds_list){
-                io_inbound.setPK();
-                serialHashList.addAll(io_inbound.getSerial());
-            }
-            //Inserte/Atualiza seriais
-            serialDao.addUpdateTmp(serialHashList,false);
-            //Insere / Atualiza lista de inbound
-            DaoObjReturn daoReturn = inboundDao.addUpdate(inbounds_list,false);
+//            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+//                    getApplicationContext(),
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+//                    Constant.DB_VERSION_CUSTOM
+//            );
+//            //Faz loop na lista retornada setando pk nos itens e adicionando seriais a serem salvos
+//            //na lista de seriais.
+//            for(IO_Inbound io_inbound: inbounds_list){
+//                io_inbound.setPK();
+//                serialHashList.addAll(io_inbound.getSerial());
+//            }
+//            //Inserte/Atualiza seriais
+//            serialDao.addUpdateTmp(serialHashList,false);
+//            //Insere / Atualiza lista de inbound
+//            DaoObjReturn daoReturn = inboundDao.addUpdate(inbounds_list,false);
+            DaoObjReturn daoReturn = inboundDao.processFull(inbounds_list);
             //Caso sucesso ao inserir inbound, envia retorno com a pk do item selecionado
             //ou sem pk se mais de um item for selecionado.
             if (!daoReturn.hasError()) {

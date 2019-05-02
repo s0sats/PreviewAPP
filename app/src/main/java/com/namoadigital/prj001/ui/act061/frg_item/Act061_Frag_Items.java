@@ -230,6 +230,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     public void loadDataToScreen() {
         //super.loadDataToScreen();
         if(bStatus) {
+            loadInbound();
             //
             if (mInbound != null) {
                 //

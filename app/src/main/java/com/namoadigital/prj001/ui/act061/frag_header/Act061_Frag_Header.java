@@ -785,7 +785,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         mkdtArrivalDt.setmRequired(false);
     }
 
-    private void loadInbound() {
+    public void loadInbound() {
         if (mFragHeaderListener != null) {
             if (bNewProcess) {
                 mInbound = new IO_Inbound();
@@ -1041,6 +1041,15 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         String.valueOf(mInbound.getModal_code()),
                         mInbound.getModal_id(),
                         mInbound.getModal_desc(),
+                        true,
+                        false
+                    );
+                }else{
+                    ToolBox_Inf.setSSmValue(
+                        ssModal,
+                        null,
+                        null,
+                        null,
                         true,
                         false
                     );

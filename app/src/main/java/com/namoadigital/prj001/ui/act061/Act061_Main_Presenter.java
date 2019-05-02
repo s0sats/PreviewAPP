@@ -1,29 +1,26 @@
 package com.namoadigital.prj001.ui.act061;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -417,6 +414,111 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     private String formatInboundInfo(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn){
         return actReturn.getPrefix() +"."+ actReturn.getCode()
             +( !actReturn.isMove() ?"."+actReturn.getItem(): "");
+    }
+
+    @Override
+    public void checkSyncProcess(IO_Inbound mInbound) {
+         if(mInbound.getUpdate_required() == 1 || isInboundInTokenFile(mInbound.getInbound_prefix(),mInbound.getInbound_code())){
+             //Se itens pendentes de envio, chama o save que, se finalizado com sucesso,
+             //retona inbound full. Nesse caso náo precisa baixar a Inbound depois
+             //
+             executeWsSaveItem();
+         }else{
+             //Se não tem update_required, apenas atualiza full
+             String inboundList = mInbound.getInbound_prefix() +"."+ mInbound.getInbound_code();
+             executeWsInboundDownload(inboundList);
+         }
+    }
+
+    private void executeWsInboundDownload(String inboundList) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Inbound_Download.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_inbound_download_ttl"),
+                hmAux_Trans.get("dialog_inbound_download_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Inbound_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(IO_InboundDao.INBOUND_CODE, inboundList);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processDownloadReturn(int mPrefix, int mCode, HMAux hmAux) {
+        if(hmAux.hasConsistentValue(ConstantBaseApp.HMAUX_PROCESS_KEY)){
+            if( hmAux.hasConsistentValue(ConstantBaseApp.HMAUX_PREFIX_KEY)
+                && hmAux.hasConsistentValue(ConstantBaseApp.HMAUX_CODE_KEY)
+                && hmAux.get(ConstantBaseApp.HMAUX_PREFIX_KEY).equals(String.valueOf(mPrefix))
+                && hmAux.get(ConstantBaseApp.HMAUX_CODE_KEY).equals(String.valueOf(mCode))
+            ){
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_download_return_ttl"),
+                    hmAux_Trans.get("alert_sync_ok_refresh_is_needed_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.prepareFullRefresh();
+                        }
+                    },
+                    0
+                );
+
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_download_return_ttl"),
+                    hmAux_Trans.get("alert_download_return_error_msg")
+                );
+            }
+
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_download_return_ttl"),
+                hmAux_Trans.get("alert_download_return_error_msg")
+            );
+        }
+    }
+
+    private boolean isInboundInTokenFile(int inbound_prefix, int inbound_code) {
+        boolean retToken = false;
+        File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+        if(inboundToken != null && inboundToken.length > 0){
+            try {
+                Gson gson =  new GsonBuilder().serializeNulls().create();
+                T_IO_Inbound_Item_Env env =
+                    gson.fromJson(
+                        ToolBox_Inf.getContents(inboundToken[0]),
+                        T_IO_Inbound_Item_Env.class
+                    );
+                //
+                if(env != null){
+                    for(T_IO_Inbound_Item_Env.IO_Inbound_Header inboundHeader : env.getInbound()){
+                        if(
+                            inboundHeader.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                            && inboundHeader.getInbound_prefix() == inbound_prefix
+                            && inboundHeader.getInbound_code() == inbound_code
+                        ){
+                            retToken = true;
+                            break;
+                        }
+                    }
+                }else{
+                    retToken = false;
+                }
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                retToken = false;
+            }
+        }
+        //
+        return retToken;
     }
 
     @Override
