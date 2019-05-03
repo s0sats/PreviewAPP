@@ -152,16 +152,19 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void setSerialList() {
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
-        btnBlindMove.setText(hmAux_Trans.get("btn_blind_serial_move"));
+        btnBlindMove.setText(hmAux_Trans.get("btn_blind_serial_move") + " (" + mSerial_id + ")");
+        if(hasMoveBlind()){
+            btnBlindMove.setVisibility(View.VISIBLE);
+        }else{
+            btnBlindMove.setVisibility(View.GONE);
+        }
         if(serialListData.isEmpty()) {
             mSerialRecyclerView.setVisibility(View.INVISIBLE);
             tvEmptyState.setText(hmAux_Trans.get("no_record_found_lbl"));
             tvEmptyState.setVisibility(View.VISIBLE);
             llLimitExceeded.setVisibility(View.GONE);
             tvSerialListSize.setVisibility(View.GONE);
-            if(hasMoveBlind()){
-                btnBlindMove.setVisibility(View.VISIBLE);
-            }
+
         }else{
             tvEmptyState.setVisibility(View.GONE);
             mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, isOnline, serial_jump);

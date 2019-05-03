@@ -177,11 +177,12 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.SERIAL_CODE)) {
                 record.setSerial_code(Integer.parseInt(serial_record.get(MD_Product_SerialDao.SERIAL_CODE)));
             }
-            if(serial_id != null && serial_id.equals(serial_record.get(MD_Product_SerialDao.SERIAL_ID))){
+            if(serial_id != null && serial_id.equalsIgnoreCase(serial_record.get(MD_Product_SerialDao.SERIAL_ID))){
                 allowBlindMove = false;
             }else {
-                record.setSerial_id(serial_record.get(MD_Product_SerialDao.SERIAL_ID));
+                allowBlindMove = true;
             }
+            record.setSerial_id(serial_record.get(MD_Product_SerialDao.SERIAL_ID));
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.SITE_CODE)) {
                 record.setSite_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.SITE_CODE)));
             }

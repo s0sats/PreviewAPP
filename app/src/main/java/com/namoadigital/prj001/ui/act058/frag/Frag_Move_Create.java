@@ -682,8 +682,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             tv_move_order_val.setVisibility(View.GONE);
         }
 
-        String toZoneLocal = (to_zone_code == null) ? "" : mPresenter.getZoneDesc(to_zone_code);
-        toZoneLocal = (to_local_code == null) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(to_local_code, to_zone_code);
+        String toZoneLocal = (planned_zone_code == null || planned_zone_code == -1 ) ? "" : mPresenter.getZoneDesc(planned_zone_code);
+        toZoneLocal = (planned_local_code == null || planned_local_code == -1) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
 
         if (toZoneLocal.isEmpty() || toZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
@@ -905,11 +905,16 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
 
 
-        if(status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
-                || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)){
-            mPresenter.setLocalValue(ss_local, 0, 0);
-        }else {
-            mPresenter.setLocalValue(ss_local, to_zone_code, to_local_code);
+        //feito na pressa, rever apos demonstracao
+        if(move_type != null && move_type.equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)){
+            mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
+        } else {
+            if (status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                    || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)) {
+                mPresenter.setLocalValue(ss_local, 0, 0);
+            } else {
+                mPresenter.setLocalValue(ss_local, to_zone_code, to_local_code);
+            }
         }
     }
 
