@@ -60,6 +60,8 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
     public static final String PENDING_QTY = "PENDING_QTY";
     public static final String PLANNED_ZONE_ID = "planned_zone_id";
     public static final String PLANNED_LOCAL_ID = "planned_local_id";
+    public static final String TO_ZONE_DESC = "to_zone_desc";
+    public static final String TO_LOCAL_ID = "to_local_id";
 
     public IO_MoveDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
