@@ -130,19 +130,21 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("progress_save_inbound_item_ttl");
         transList.add("progress_save_inbound_item_msg");
         transList.add("inbound_lbl");
-        transList.add("alert_move_results_ttl");
         transList.add("alert_header_save_ttl");
         transList.add("alert_header_save_only_online_msg");
         transList.add("alert_from_outbound_error_ttl");
         transList.add("alert_from_outbound_error_msg");
         //
         transList.add("dialog_inbound_download_ttl");
-        transList.add("dialog_inbound_download_msg");
+        transList.add("dialog_inbound_download_start");
         transList.add("alert_download_return_ttl");
         transList.add("alert_download_return_msg");
         transList.add("alert_sync_ok_refresh_is_needed_msg");
         transList.add("alert_sync_data_ttl");
         transList.add("alert_sync_data_msg");
+        transList.add("alert_inbound_results_ttl");
+        transList.add("alert_download_return_error_msg");
+
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
