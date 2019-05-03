@@ -193,11 +193,21 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         if(ToolBox_Con.isOnline(context) && !isLocalProcess) {
             mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
         }else{
-            HMAux hmMove = new HMAux();
-            hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
-            hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
-            hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
-            mPresenter.processSearchReturn(hmMove);
+            if(isLocalProcess){
+                HMAux hmMove = new HMAux();
+                hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
+                hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
+                hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
+                mPresenter.processSearchReturn(hmMove);
+            }else {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_offline_search_title"),
+                        hmAux_Trans.get("alert_offline_search_msg"),
+                        null,
+                        0
+                );
+            }
         }
     }
 

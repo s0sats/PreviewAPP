@@ -100,6 +100,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("destiny_lbl");
         transList.add("origin_lbl");
         transList.add("planned_move_lbl");
+        transList.add("inbound_move_lbl");
         transList.add("outbound_lbl");
         transList.add("inbound_lbl");
         transList.add("orientation_lbl");
@@ -406,7 +407,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
             if(!moves[0].isEmpty()) {
                 showResults(moves);
-            }else if (mPresenter.hasWaitingSyncMovePendency()) {
+            }else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveItem();
             }
             else {
@@ -444,6 +445,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             wsResults.addAll(moveList);
             if(!mPresenter.hasWaitingSyncPutAwayPendency()) {
                 showNewOptDialog(moveList);
+            }else{
+                mPresenter.executeWsSaveItem();
             }
         }
     }

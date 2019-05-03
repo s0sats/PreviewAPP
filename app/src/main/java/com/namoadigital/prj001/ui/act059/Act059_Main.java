@@ -68,6 +68,20 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     private Integer zone_code_conf;
     private Integer local_code_conf;
     private MD_Product_Serial serialInfo;
+    private Integer to_local_code;
+    private Integer to_zone_code;
+    private int move_prefix;
+    private int move_code;
+    private Integer reason_code;
+    private Integer planned_zone_code;
+    private Integer outbound_prefix;
+    private Integer inbound_prefix;
+    private Integer outbound_code;
+    private Integer inbound_code;
+    private Integer planned_local_code;
+    private String status;
+    private Integer to_class_code;
+    int viewMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,21 +189,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     }
 
     private void initVars() {
-        Integer to_local_code;
-        Integer to_zone_code;
-        int move_prefix;
-        int move_code;
-        Integer reason_code;
-        Integer planned_zone_code;
-        Integer outbound_prefix;
-        Integer inbound_prefix;
-        Integer outbound_code;
-        Integer inbound_code;
-        Integer planned_local_code;
-        String status;
-        Integer to_class_code;
 
-        int viewMode;
         mPresenter = new Act059_Main_Presenter(context, this, hmAux_Trans);
 
         io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
@@ -388,7 +388,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    frag_move_create.restoreUIFields();
+                                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
                                 }
                             },
                             0

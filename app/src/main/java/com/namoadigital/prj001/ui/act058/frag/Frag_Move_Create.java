@@ -34,7 +34,6 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
-import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -1035,7 +1034,25 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         return transList;
     }
 
-    public void restoreUIFields() {
+    public void restoreUIFields(MD_Product_Serial serialInfo, int viewMode, boolean fromMove, HMAux hmAux_Trans_Frag, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code, Integer outbound_prefix, Integer inbound_prefix, Integer outbound_code, Integer inbound_code, Integer planned_local_code, String status, Integer to_class_code) {
+        this.fromMove = fromMove;
+        this.view_param = viewMode;
+        mdProductSerial = serialInfo;
+        this.hmAux_Trans = hmAux_Trans_Frag;
+        this.to_local_code = to_local_code;
+        this.to_zone_code = to_zone_code;
+        this.move_prefix = move_prefix;
+        this.move_code = move_code;
+        this.reason_code = reason_code;
+        this.move_type = move_type;
+        this.planned_zone_code =planned_zone_code;
+        this.outbound_prefix =outbound_prefix;
+        this.inbound_prefix =inbound_prefix;
+        this.outbound_code = outbound_code;
+        this.inbound_code = inbound_code;
+        this.planned_local_code = planned_local_code;
+        this.status = status;
+        this.to_class_code = to_class_code;
         initializeViews();
     }
 
