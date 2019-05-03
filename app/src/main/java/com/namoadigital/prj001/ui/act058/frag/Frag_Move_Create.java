@@ -47,6 +47,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -176,7 +177,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             fromMove = getArguments().getBoolean(ORIGIN_PARAM);
             view_param = getArguments().getInt(VIEW_PARAM);
             mdProductSerial = (MD_Product_Serial) getArguments().getSerializable(MD_Product_SerialDao.TABLE);
-            this.hmAux_Trans = (HMAux) getArguments().getSerializable(HMAUX_TRANS);
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) getArguments().getSerializable(HMAUX_TRANS));
             to_local_code = (Integer) getArguments().getSerializable(IO_MoveDao.TO_LOCAL_CODE);
             to_zone_code = (Integer) getArguments().getSerializable(IO_MoveDao.TO_ZONE_CODE);
             move_prefix = getArguments().getInt(IO_MoveDao.MOVE_PREFIX);
