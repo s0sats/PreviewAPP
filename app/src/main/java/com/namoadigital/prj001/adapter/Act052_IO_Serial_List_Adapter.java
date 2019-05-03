@@ -186,14 +186,15 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             if (serialBrandModelColor == null || serialBrandModelColor.isEmpty()) {
                 tvSerialBrandModelColor.setVisibility(View.GONE);
             } else {
+                tvSerialBrandModelColor.setVisibility(View.VISIBLE);
                 tvSerialBrandModelColor.setText(serialBrandModelColor);
             }
         }
 
         private String formatSerialBrandModelColor(IO_Serial_Process_Record data) {
-            String serialBrandModelColor = data.getBrand_desc() == null ? "" : data.getBrand_desc();
-            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null ? "" : " | " + data.getModel_desc());
-            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null ? "" : " | " + data.getColor_desc());
+            String serialBrandModelColor = data.getBrand_desc() == null || data.getBrand_desc().isEmpty()? "" : data.getBrand_desc();
+            serialBrandModelColor = serialBrandModelColor + (data.getModel_desc() == null || data.getModel_desc().isEmpty()? "" : " | " + data.getModel_desc());
+            serialBrandModelColor = serialBrandModelColor + (data.getColor_desc() == null || data.getColor_desc().isEmpty()? "" : " | " + data.getColor_desc());
             return serialBrandModelColor;
         }
 
@@ -203,14 +204,18 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             }
             switch (processType) {
                 case ConstantBaseApp.IO_PROCESS_IN_CONF:
-                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
+                    ivStatusIcon.setVisibility(View.VISIBLE);
+                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_right_bold_black_24dp));
                     break;
                 case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
+                    ivStatusIcon.setVisibility(View.VISIBLE);
+                    ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_bold_black_24dp));
                     break;
                 case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
                 case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                case ConstantBaseApp.IO_PROCESS_MOVE:
+                    ivStatusIcon.setVisibility(View.VISIBLE);
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
                     break;
                 default:

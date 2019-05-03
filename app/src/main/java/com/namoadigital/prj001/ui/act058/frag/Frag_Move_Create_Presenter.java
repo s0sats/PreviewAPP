@@ -105,22 +105,6 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
 
     }
 
-    @Override
-    public void setLocalValue(SearchableSpinner ss_local) {
-
-        if (to_local_code != null && to_local_code >0) {
-            MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(to_zone_code, to_local_code);
-
-            ToolBox_Inf.setSSmValue(
-                    ss_local,
-                    String.valueOf(mdSiteZoneLocal.getLocal_code()),
-                    mdSiteZoneLocal.getLocal_id(),
-                    mdSiteZoneLocal.getLocal_id(),
-                    true
-            );
-        }
-    }
-
     private MD_Site_Zone_Local getMd_site_zone_local(Integer zone_code, Integer local_code) {
         return siteZoneLocalDao.getByString(
                 new MD_Site_Zone_Local_Sql_002(
@@ -138,14 +122,15 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         if (zone_code != null && zone_code >0
              &&   local_code != null && local_code >0) {
             MD_Site_Zone_Local mdSiteZoneLocal = getMd_site_zone_local(zone_code, local_code);
-
-            ToolBox_Inf.setSSmValue(
-                    ss_local,
-                    String.valueOf(mdSiteZoneLocal.getLocal_code()),
-                    mdSiteZoneLocal.getLocal_id(),
-                    mdSiteZoneLocal.getLocal_id(),
-                    true
-            );
+            if(mdSiteZoneLocal != null) {
+                ToolBox_Inf.setSSmValue(
+                        ss_local,
+                        String.valueOf(mdSiteZoneLocal.getLocal_code()),
+                        mdSiteZoneLocal.getLocal_id(),
+                        mdSiteZoneLocal.getLocal_id(),
+                        true
+                );
+            }
         }
     }
 

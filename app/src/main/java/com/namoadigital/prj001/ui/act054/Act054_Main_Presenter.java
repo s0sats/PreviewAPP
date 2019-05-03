@@ -16,7 +16,6 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;

@@ -16,8 +16,6 @@ public interface Frag_Move_Create_Contract {
 
         void loadLocalSS(SearchableSpinner ss_zone, SearchableSpinner ss_local, boolean reset_val);
 
-        void setLocalValue(SearchableSpinner ss_local);
-
         void setLocalValue(SearchableSpinner ss_local, Integer zone_code, Integer local_code);
 
         MD_Class getClassFromMove(Integer classCode);
