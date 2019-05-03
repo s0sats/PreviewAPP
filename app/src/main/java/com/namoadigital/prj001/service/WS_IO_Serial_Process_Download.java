@@ -347,13 +347,13 @@ public class WS_IO_Serial_Process_Download extends IntentService {
             hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(move.get(0).getSerial().get(0).getProduct_code()));
             hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(move.get(0).getSerial().get(0).getSerial_code()));
 
-            if(move.get(0).getPlanned_class_code() != null) {
+            if(move.get(0).getPlanned_zone_code() != null) {
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, String.valueOf(move.get(0).getPlanned_zone_code()));
             }else{
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_ZONE_CODE_KEY, "");
             }
 
-            if(move.get(0).getPlanned_class_code() != null) {
+            if(move.get(0).getPlanned_local_code() != null) {
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, String.valueOf(move.get(0).getPlanned_local_code()));
             }else{
                 hmAuxRet.put(ConstantBaseApp.HMAUX_PLANNED_LOCAL_CODE_KEY, "");
