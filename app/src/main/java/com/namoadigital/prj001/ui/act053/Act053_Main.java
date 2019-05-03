@@ -98,6 +98,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private void loadTranslation() {
             List<String> transList = new ArrayList<>();
             //
+            transList.add("act053_title");
             transList.add("progress_tracking_search_ttl");
             transList.add("progress_tracking_search_msg");
             transList.add("alert_save_serial_return_ttl");
