@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -55,6 +56,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private MD_Product md_product;
     private boolean serial_jump;
     private LinearLayout llLimitExceeded;
+    private boolean allowBlindMove;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,7 +233,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         ) && !ToolBox_Con.isOnline(context)
                 && !mSerial_id.isEmpty()
                 && !mProduct_id.isEmpty()
-                && serialListData.size() == 1;
+                && allowBlindMove;
     }
 
     private void initAction() {
@@ -254,6 +256,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             mSerial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
             mProduct_id = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER);
             serial_jump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+            allowBlindMove = bundle.getBoolean(IO_Blind_MoveDao.FLAG_BLIND, false);
         } else {
             serialListData = new ArrayList<>();
             isOnline = true;
@@ -262,6 +265,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
             mSerial_id = "";
             mProduct_id = "";
             serial_jump = false;
+            allowBlindMove = false;
         }
         //
     }

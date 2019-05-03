@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class IO_Move_Order_Item_Sql_010 implements Specification{
@@ -28,7 +30,7 @@ public class IO_Move_Order_Item_Sql_010 implements Specification{
         return sb
                 .append(" SELECT\n" +
                         "   DISTINCT " +
-                        "       s.*\n" +
+                        "       s.*,  m.status " + IO_Inbound_ItemDao.STATUS + "\n" +
                         " FROM\n" +
                         "     " + MD_ProductDao.TABLE + " p\n" +
                         " INNER JOIN\n" +
@@ -43,7 +45,7 @@ public class IO_Move_Order_Item_Sql_010 implements Specification{
                         "                                   and m.product_code = s.product_code\n" +
                         "                                   and m.serial_code = s.serial_code      \n" +
                         "                                   and m.conf_date = ''      \n" +
-                        "                                   and m.status = " + ConstantBaseApp.SYS_STATUS_PENDING+ "\n"+
+                        "                                   and m.status = '" + ConstantBaseApp.SYS_STATUS_PENDING+ "'\n"+
                         " LEFT JOIN\n" +
                         "     " + MD_Product_Serial_TrackingDao.TABLE + " t on t.customer_code = s.customer_code\n" +
                         "                                   and t.product_code = s.product_code\n" +
