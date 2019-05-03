@@ -91,6 +91,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         String getFirstFragToLoad();
 
         void prepareSyncProcess();
+
+        boolean hasInboundUpdateRequired();
     }
 
     public onFragDrawerInteraction getFragDrawerListener() {
@@ -386,7 +388,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         if(mInbound != null){
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if(mInbound.getSync_required() == 1 /*|| mInbound.getUpdate_required() == 1 */){
+            if(mInbound.getSync_required() == 1 || mFragDrawerListener.hasInboundUpdateRequired()){
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                 background = getResources().getDrawable(R.drawable.stroke_yellow_states);

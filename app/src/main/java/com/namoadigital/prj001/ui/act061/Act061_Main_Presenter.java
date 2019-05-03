@@ -298,27 +298,33 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     @Override
     public void checkForUpdateRequired(int mPrefix, int mCode) {
         if (ToolBox_Con.isOnline(context)) {
-            HMAux auxUpdate = inboundDao.getByStringHM(
-                new IO_Inbound_Sql_011(
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    mPrefix,
-                    mCode
-                ).toSqlQuery()
-            );
-            //
-            if (auxUpdate != null && auxUpdate.hasConsistentValue(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO)) {
-                if (auxUpdate.get(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO).equals("0")
-                ) {
-                    mView.callAct062();
-                } else {
-                    executeWsSaveItem();
-                }
+            if (hasUpdateRequired(mPrefix,mCode)) {
+                executeWsSaveItem();
             }else{
                 mView.callAct062();
             }
         }else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    private boolean hasUpdateRequired(int mPrefix, int mCode){
+        HMAux auxUpdate = inboundDao.getByStringHM(
+            new IO_Inbound_Sql_011(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mPrefix,
+                mCode
+            ).toSqlQuery()
+        );
+        //
+        if (
+            auxUpdate != null
+            && auxUpdate.hasConsistentValue(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO)
+            && auxUpdate.get(IO_Inbound_Sql_010.HAS_UPDATE_TO_DO).equals("1")
+        ){
+            return true;
+        }
+        return  false;
     }
 
     @Override
@@ -418,7 +424,8 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     @Override
     public void checkSyncProcess(IO_Inbound mInbound) {
-         if(mInbound.getUpdate_required() == 1 || isInboundInTokenFile(mInbound.getInbound_prefix(),mInbound.getInbound_code())){
+
+         if(hasUpdateRequired(mInbound.getInbound_prefix(),mInbound.getInbound_code()) || isInboundInTokenFile(mInbound.getInbound_prefix(),mInbound.getInbound_code())){
              //Se itens pendentes de envio, chama o save que, se finalizado com sucesso,
              //retona inbound full. Nesse caso náo precisa baixar a Inbound depois
              //
@@ -486,6 +493,11 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public boolean hasUpdateRequiredDbOrToken(int mPrefix, int mCode) {
+       return hasUpdateRequired(mPrefix,mCode) || isInboundInTokenFile(mPrefix,mCode);
+    }
+
     private boolean isInboundInTokenFile(int inbound_prefix, int inbound_code) {
         boolean retToken = false;
         File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
@@ -520,6 +532,8 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         //
         return retToken;
     }
+
+
 
     @Override
     public void onBackPressedClicked() {

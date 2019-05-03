@@ -196,6 +196,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             }
 
         };
+        //
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
         //Usa o status de criação para definir de drawer aberto ou fechado no carregamento da tela.
         //Se novo, fecha o drawer
         setDrawerState(!bNewProcess);
@@ -490,6 +493,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mCode = inbound_code;
             bNewProcess = false;
         }
+        //Atualiza dados da inbound naAct
+        loadInbound();
         //
         act061_frag_header.toggleIvEditStates(true);
         act061_frag_header.applyInboundCreated(hmAux_Trans, mPrefix, mCode, bNewProcess, false);
@@ -576,6 +581,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mPresenter.checkSyncProcess(mInbound);
     }
 
+    @Override
+    public boolean hasInboundUpdateRequired() {
+        return mPresenter.hasUpdateRequiredDbOrToken(mPrefix,mCode);
+    }
+
     //endregion
 
     //region FragItems
@@ -583,6 +593,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
         this.controls_sta.addAll(controls_sta);
+    }
+
+    @Override
+    public void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.removeAll(controls_sta);
     }
 
     @Override
@@ -699,13 +714,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
 
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        mDrawerToggle.syncState();
-        //
-        super.onPostCreate(savedInstanceState);
-
-    }
+//    @Override
+//    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+//        super.onPostCreate(savedInstanceState);
+//        mDrawerToggle.syncState();
+//
+//    }
 
     private class FCMReceiver extends BroadcastReceiver {
         @Override

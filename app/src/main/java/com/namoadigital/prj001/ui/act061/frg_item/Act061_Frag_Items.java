@@ -60,6 +60,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
 
         void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
 
+        void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+
         void callAddItemAct();
 
         void callInConfCreateItemAct(HMAux item);
@@ -154,6 +156,9 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(mFragItemListener != null){
+            mFragItemListener.removeFragItemsControlsMk(controls_sta);
+        }
         //
         bStatus = false;
     }

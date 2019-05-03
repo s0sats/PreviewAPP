@@ -331,6 +331,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);

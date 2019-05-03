@@ -67,5 +67,7 @@ public interface Act061_Main_Contract {
         void checkSyncProcess(IO_Inbound mInbound);
 
         void processDownloadReturn(int mPrefix, int mCode, HMAux hmAux);
+
+        boolean hasUpdateRequiredDbOrToken(int mPrefix, int mCode);
     }
 }
