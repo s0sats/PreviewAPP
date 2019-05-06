@@ -334,28 +334,72 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bNewProcess || hasHeaderChanged()) {
-                    //Sem else aqui pois proprio metodo exibira msg de erro
-                    if (validateSave()) {
-                        setDataToInbound();
-                        //blockAll();
-                        applyViewsInteraction(INTERATION_BLOCK_ALL);
-                        //
-                        if (mFragHeaderListener != null) {
-                            toggleIvEditStates(false);
-                            mFragHeaderListener.saveInboundHeader(mInbound);
+                if (validateDates()) {
+                    if (bNewProcess || hasHeaderChanged()) {
+                        //Sem else aqui pois proprio metodo exibira msg de erro
+                        if (validateSave()) {
+                            setDataToInbound();
+                            //blockAll();
+                            applyViewsInteraction(INTERATION_BLOCK_ALL);
+                            //
+                            if (mFragHeaderListener != null) {
+                                toggleIvEditStates(false);
+                                mFragHeaderListener.saveInboundHeader(mInbound);
+                            }
                         }
-                    }
-                } else {
-                    if (mFragHeaderListener != null) {
-                        mFragHeaderListener.showFragAlert(
-                            hmAux_Trans.get("alert_no_data_changed_ttl"),
-                            hmAux_Trans.get("alert_no_data_changed_msg")
-                        );
+                    } else {
+                        if (mFragHeaderListener != null) {
+                            mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_no_data_changed_ttl"),
+                                hmAux_Trans.get("alert_no_data_changed_msg")
+                            );
+                        }
                     }
                 }
             }
         });
+    }
+
+    private boolean validateDates() {
+        HMAux invoiceDt = mkdtInvoinceDt.getMketContents();
+        HMAux etaDt = mkdtEtaDt.getMketContents();
+        HMAux arrivalDt = mkdtArrivalDt.getMketContents();
+        String msg = "";
+        boolean validate = true;
+        //
+        if (invoiceDt == null
+            || (invoiceDt.get(MkDateTime.DATE_KEY).length() > 0 && invoiceDt.get(MkDateTime.HOUR_KEY).length() == 0)
+            || (invoiceDt.get(MkDateTime.DATE_KEY).length()== 0 && invoiceDt.get(MkDateTime.HOUR_KEY).length() > 0)
+        ) {
+            msg += hmAux_Trans.get("invoice_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+            validate = false;
+        }
+        //
+        if (
+            etaDt == null
+                || (etaDt.get(MkDateTime.DATE_KEY).length() > 0 && etaDt.get(MkDateTime.HOUR_KEY).length() == 0)
+                || (etaDt.get(MkDateTime.DATE_KEY).length()== 0 && etaDt.get(MkDateTime.HOUR_KEY).length() > 0)
+        ) {
+            msg += hmAux_Trans.get("eta_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+            validate = false;
+        }
+        if (arrivalDt == null
+            || (arrivalDt.get(MkDateTime.DATE_KEY).length() > 0 && arrivalDt.get(MkDateTime.HOUR_KEY).length() == 0)
+            || (arrivalDt.get(MkDateTime.DATE_KEY).length()== 0 && arrivalDt.get(MkDateTime.HOUR_KEY).length() > 0)
+        ) {
+            msg += hmAux_Trans.get("arrival_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+            validate = false;
+        }
+        if (!validate) {
+            if (mFragHeaderListener != null) {
+                mFragHeaderListener.showFragAlert(
+                    hmAux_Trans.get("alert_header_save_validation_ttl"),
+                    msg
+                );
+            }
+        }
+        //
+        return validate;
     }
 
     /**
@@ -573,7 +617,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             ssFromType == null
                 || ssFromType.getmValue() == null
                 || (ssFromType.getmValue() != null && !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
-            msg += hmAux_Trans.get("alert_no_from_type_selected_msg");
+            msg += hmAux_Trans.get("alert_no_from_type_selected_msg") + "\n";
             validate = false;
 
         }
@@ -585,7 +629,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     ssFromSite == null
                         || ssFromSite.getmValue() == null
                         || (ssFromSite.getmValue() != null && !ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
-                    msg += hmAux_Trans.get("alert_no_from_site_selected_msg");
+                    msg += hmAux_Trans.get("alert_no_from_site_selected_msg")+ "\n";
                     validate = false;
                 }
             } else {
@@ -593,30 +637,30 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     ssPartner == null
                         || ssPartner.getmValue() == null
                         || (ssPartner.getmValue() != null && !ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
-                    msg += hmAux_Trans.get("alert_no_from_partner_selected_msg");
+                    msg += hmAux_Trans.get("alert_no_from_partner_selected_msg")+ "\n";
                     validate = false;
                 }
             }
             //
-            if (!mkdtInvoinceDt.isValid()) {
-                msg += hmAux_Trans.get("alert_invalid_date_msg");
-                validate = false;
-            }
-            //
-            if (!mkdtEtaDt.isValid()) {
-                msg += hmAux_Trans.get("alert_invalid_date_msg");
-                validate = false;
-            }
-            if (!mkdtArrivalDt.isValid()) {
-                msg += hmAux_Trans.get("alert_invalid_date_msg");
-                validate = false;
-            }
+//            if (!mkdtInvoinceDt.isValid()) {
+//                msg += hmAux_Trans.get("invoice_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+//                validate = false;
+//            }
+//            //
+//            if (!mkdtEtaDt.isValid()) {
+//                msg += hmAux_Trans.get("eta_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+//                validate = false;
+//            }
+//            if (!mkdtArrivalDt.isValid()) {
+//                msg += hmAux_Trans.get("arrival_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+//                validate = false;
+//            }
         }
         //
         if (!validate) {
             if (mFragHeaderListener != null) {
                 mFragHeaderListener.showFragAlert(
-                    hmAux_Trans.get("alert_no_from_partner_selected_msg"),
+                    hmAux_Trans.get("alert_header_save_validation_ttl"),
                     msg
                 );
             }
@@ -1182,6 +1226,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("carrier_lbl");
         transListFrag.add("zone_conf_lbl");
         transListFrag.add("local_conf_lbl");
+        transListFrag.add("alert_header_save_validation_ttl");
         //
         return transListFrag;
     }
