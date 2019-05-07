@@ -1225,7 +1225,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private String formatSuggestion(String zone_id, String zone_desc, String local_id) {
-        String ret = zone_id != null && !zone_id.isEmpty() ? zone_id : "";
+        //String ret = zone_id != null && !zone_id.isEmpty() ? zone_id : "";
+        String ret = zone_desc != null && !zone_desc.isEmpty() ? zone_desc : "";
         ret += !ret.isEmpty() && local_id != null && !local_id.isEmpty() ? " | " : "";
         ret += local_id;
         return  ret;
