@@ -193,7 +193,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             to_zone_code = zone_code;
             move_prefix = -1;
             move_code = -1;
-            reason_code = null;
+            reason_code = mPresenter.getReasonCodeDefault(ToolBox_Con.getPreference_Site_Code(context));
             outbound_prefix = null;
             inbound_prefix = null;
             outbound_code = null;

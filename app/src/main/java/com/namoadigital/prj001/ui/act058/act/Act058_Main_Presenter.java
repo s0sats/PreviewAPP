@@ -13,12 +13,14 @@ import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Blind_Move;
 import com.namoadigital.prj001.model.IO_Blind_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
@@ -32,6 +34,7 @@ import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_004;
 import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_010;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -44,6 +47,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     public static final String NEXT_TMP = "next_tmp";
     private IO_Blind_MoveDao blindMoveDao;
     private MD_Product_SerialDao productSerialDao;
+    private MD_SiteDao md_siteDao;
     private IO_MoveDao ioMoveDao;
     private IO_Move_TrackingDao ioMoveTrackingDao;
     private Context context;
@@ -62,6 +66,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+        this.md_siteDao = new MD_SiteDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
         this.hmAux_trans = hmAux_trans;
@@ -197,11 +204,11 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         //
         //No futuro verificar de atualiza alem do status, os dados de posição.
         io_inbound_itemDao.addUpdate(new IO_Inbound_Item_Sql_010(
-            ToolBox_Con.getPreference_Customer_Code(context),
-            io_move.getInbound_prefix(),
-            io_move.getInbound_code(),
-            io_move.getInbound_item(),
-            ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
+                ToolBox_Con.getPreference_Customer_Code(context),
+                io_move.getInbound_prefix(),
+                io_move.getInbound_code(),
+                io_move.getInbound_item(),
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
         );
     }
 
@@ -361,6 +368,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             );
         }
     }
+
     @Override
     public int getBlindTmp() {
         List<HMAux> blind_move = blindMoveDao.query_HM(new IO_Blind_Move_Sql_002().toSqlQuery());
@@ -369,6 +377,18 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
             return 1;
         }
         return Integer.valueOf(blind_move.get(0).get(NEXT_TMP));
+    }
+
+    @Override
+    public Integer getReasonCodeDefault(String preference_site_code) {
+        MD_Site site = md_siteDao.getByString(
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        preference_site_code
+                ).toSqlQuery()
+        );
+
+        return site.getReason_code();
     }
 
 }
