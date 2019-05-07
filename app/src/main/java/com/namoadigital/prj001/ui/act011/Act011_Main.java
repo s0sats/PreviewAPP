@@ -298,6 +298,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("btn_check_new");
         transList.add("alert_error_on_create_form_ttl");
         transList.add("alert_error_on_create_form_msg");
+        transList.add("alert_data_not_sent_ttl");
+        transList.add("alert_resend_data_by_menu_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2652,6 +2654,29 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         formData.setLocation_type("");
         formData.setLocation_lat("");
         formData.setLocation_lng("");
+    }
+
+    /**
+     * LUCHE
+     * @param mLink
+     * @param mRequired
+     */
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans.get("alert_data_not_sent_ttl"),
+            hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    flowControl();
+                }
+            },
+            0
+        );
     }
 
     @Override
