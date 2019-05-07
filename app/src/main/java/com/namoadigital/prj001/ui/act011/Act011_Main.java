@@ -1541,7 +1541,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
-        photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
+        && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+            photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        }else{
+            photoFF.setmValue("p_" + prefix + cf.get("custom_form_seq") + ".jpg");
+        }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
