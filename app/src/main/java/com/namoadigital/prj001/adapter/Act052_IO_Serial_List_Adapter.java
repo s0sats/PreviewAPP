@@ -96,7 +96,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
 
-        if (record.getSite_code() == null && record.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
+        if (record.getSite_code() == null && record.getProcess_type() !=null && record.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
             mListener.onClickListItem(record);
         }else if (record.getSite_code() == null || record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
             mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
@@ -175,7 +175,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
 
-            if (data.getSite_code() == null && data.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
+
+            if (data.getSite_code() == null && data.getProcess_type() != null && data.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
                 clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
             }else if (data.getSite_code() != null && data.getSite_code() == Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
                 clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
