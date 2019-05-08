@@ -288,7 +288,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act058_frg_placeholder, type, sTag);
-            ft.addToBackStack(null);
+            //ft.addToBackStack(null);
             ft.commit();
         } else {
 
@@ -735,5 +735,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.clear();
     }
 }
