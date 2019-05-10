@@ -583,6 +583,9 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_Generate_NForm_PDF" />
         <receiver android:name=".receiver.WBR_Generate_NForm_PDF" />
 
+        <service android:name=".service.WS_Upload_Other_User_Img" />
+        <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
+
     </application>
 
 </manifest>

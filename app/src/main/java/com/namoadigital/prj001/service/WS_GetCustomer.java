@@ -142,9 +142,13 @@ public class WS_GetCustomer extends IntentService {
                     }.getType()
             );
             userInfo = users.get(0);
-            //No primeiro loop, verifica se novo usr igual é diferente ultimo logado
+            //No primeiro loop, verifica se novo usr é diferente ultimo logado
             //Se for apaga os bancos de dados, arquivos de token, exception e support
             if(forIdx == 0 && userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+                //Luche - 10/05/2019
+                //Antes de apagar tudo, copia arquivos não enviados para pasta imgs/unsentImgs e tenta enviar arquivos.
+                ToolBox_Inf.copyUnsentImgs(getApplicationContext());
+                //
                 ArrayList<File> listToDelete = new ArrayList<>();
                 //
                 File[] files_db = ToolBox_Inf.getListDB("namoa_sms");

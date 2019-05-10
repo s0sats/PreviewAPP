@@ -78,6 +78,7 @@ public class AppBase extends Application {
         SUPPORT_PATH = DB_PATH + "/support";
         TOKEN_PATH = DB_PATH + "/token";
         CHAT_PATH = DB_PATH + "/chat";
+        UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
