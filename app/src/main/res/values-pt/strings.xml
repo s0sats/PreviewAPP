@@ -102,6 +102,8 @@
     <string name="notification_ttl_upload">Carregando</string>
     <string name="notification_msg_upload">Enviando arquivos para o servidor</string>
     <string name="msg_not_sent_data_will_be_lost">AVISO: OS DADOS NÃO ENVIADOS SERÃO PERDIDOS!</string>
+    <string name="alert_move_unsent_data_error_ttl">Unsent data</string>
+    <string name="alert_move_unsent_data_error_msg">Error on trying to copy unsent data ! Try to login again !</string>
 
 
 </resources>

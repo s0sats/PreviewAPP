@@ -146,8 +146,13 @@ public class WS_GetCustomer extends IntentService {
             //Se for apaga os bancos de dados, arquivos de token, exception e support
             if(forIdx == 0 && userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
                 //Luche - 10/05/2019
-                //Antes de apagar tudo, copia arquivos não enviados para pasta imgs/unsentImgs e tenta enviar arquivos.
-                ToolBox_Inf.copyUnsentImgs(getApplicationContext());
+                //Antes de apagar tudo, caso haja arquivos pendentes de envio, move arquivos não enviados para pasta imgs/unsentImgs
+                //SE ERRO AO COPIAR, IMPEDE QUE O USUARIO CONTINUE
+                if(ToolBox_Inf.hasUnsentImgs(getApplicationContext())){
+                    if(!ToolBox_Inf.moveUnsentImgs(getApplicationContext())){
+                       throw new Exception(getApplicationContext().getString(R.string.alert_move_unsent_data_error_msg));
+                    }
+                }
                 //
                 ArrayList<File> listToDelete = new ArrayList<>();
                 //

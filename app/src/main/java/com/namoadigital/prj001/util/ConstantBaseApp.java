@@ -342,6 +342,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PKG_APP_TYPE_STANDARD = "STANDARD";
     public static String PKG_APP_TYPE_DEFAULT;
     public static final String CLEAN_TOKEN_FILE_KEY = "clean_token_file_key";
+    public static final String BACKUP_UNSENT_IMG_KEY = "backup_unsent_img_key";
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";

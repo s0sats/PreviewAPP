@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
@@ -282,9 +283,31 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             ToolBox_Inf.deleteFileListExceptionSafe(files_token);
             ToolBox_Con.setPreference_CleanTokenFiles(getApplicationContext(),-1);
         }
-        //
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
 
+        /**
+        * LUCHE - 13/05/2019
+        * Se usr decidiu atualizar e há troca de versão do banco,
+        * busca imagens pendentes de transmissao e tenta a copia das imagens.
+        * EM CASO DE ERRO AO COPIAR IMGS, IMPEDE ATUALIZAÇÃO DE SOFTWARE
+        *
+        */
+        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
+            if(!ToolBox_Inf.moveUnsentImgs(context)){
+                progressDialog.dismiss();
+                //
+                ToolBox.alertMSG(
+                    context,
+                    context.getString(R.string.alert_move_unsent_data_error_ttl),
+                    context.getString(R.string.alert_move_unsent_data_error_msg),
+                    null,
+                    0
+                );
+            }else{
+                ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+            }
+        }else{
+            ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        }
     }
 
     @Override
@@ -311,6 +334,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //mas usr não decidiu atualizar o app, reseta var.
         if(ToolBox_Con.getPreference_CleanTokenFiles(context) == 1){
             ToolBox_Con.setPreference_CleanTokenFiles(context, -1);
+        }
+        //
+        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
+            ToolBox_Con.setPreference_BkpUnsentImg(context,false);
         }
         //
         mPresenter.executeLoginProcess(

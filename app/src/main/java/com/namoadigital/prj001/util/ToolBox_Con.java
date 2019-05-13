@@ -5,32 +5,17 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.DaoObjReturn;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.*;
+import java.net.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -261,6 +246,35 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region CLEAN_TOKEN_FILE_KEY
+
+    /**
+     * LUCHE - 13/05/2019
+     * Preferencia para identificar se as imagens não enviadas devem ser copiadas para o diretorio
+     * de "unsent"após atualização de software com troca de versão de banco de dados ou troca de usuario.
+     * @param context
+     * @param unsentImg
+     */
+    public static void setPreference_BkpUnsentImg(Context context, boolean unsentImg) {
+        SharedPreferences sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putBoolean(
+            Constant.BACKUP_UNSENT_IMG_KEY,
+            unsentImg
+        ).apply();
+    }
+
+    public static boolean getPreference_BkpUnsentImg(Context context) {
+        SharedPreferences sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getBoolean(
+            Constant.BACKUP_UNSENT_IMG_KEY,
+            false
+        );
+    }
+    //endregion
 
     //region User_Code
     public static void setPreference_User_Code(Context context, String user_code) {

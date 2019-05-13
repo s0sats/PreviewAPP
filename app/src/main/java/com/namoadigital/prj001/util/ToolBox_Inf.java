@@ -1250,15 +1250,33 @@ public class ToolBox_Inf {
                 ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
             }
             //
-            copyUnsentImgs(context);
+            if(hasUnsentImgs(context)){
+                //Se preferencia para checkar backup de imagens pra verdadeiro.
+                ToolBox_Con.setPreference_BkpUnsentImg(context,true);
+            }
         }
         return aux;
     }
 
-    public static void copyUnsentImgs(Context context) {
+    /**
+     * Verifica se existem imagens não enviadas em TODOS os bancos.
+     * @param context
+     * @return
+     */
+    public static boolean hasUnsentImgs(Context context){
+        ArrayList<GE_File> geFiles = getUnsentGeFiles(context);
+        return geFiles != null && geFiles.size() > 0;
+    }
+
+    /**
+     * Busca em todos os bancos existentes se existens imagens pendentes
+     * de envio e retorna lista as pendentes.
+     * @param context
+     * @return
+     */
+    private static ArrayList<GE_File> getUnsentGeFiles(Context context) {
         File[] dbList = getListDB("C_", true);
         ArrayList<GE_File> geFiles = new ArrayList<>();
-        int errorCount = 0;
         GE_FileDao geFileDao = null;
         //Gera lista de GeFiles
         for(File dbFile : dbList){
@@ -1273,20 +1291,40 @@ public class ToolBox_Inf {
                     Constant.DB_VERSION_CUSTOM
                 );
                 //
-                 geFiles.addAll(geFileDao.query(
-                        new GE_File_Sql_001().toSqlQuery()
+                geFiles.addAll(geFileDao.query(
+                    new GE_File_Sql_001().toSqlQuery()
                     )
-                 );
+                );
             }
         }
+        //
+        return geFiles;
+    }
+
+    /**
+     * LUCHE - 13/05/2019
+     * Metodo que move as imagens pendentes de envio para pasta de UnsentImgs.
+     * @param context - Contexto
+     * @return false se erro ao copiar alguma foto
+     */
+    public static boolean moveUnsentImgs(Context context) {
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+        int errorCount = 0;
+        //Recebe lista de imagens a serem enviadas.
+        geFiles = getUnsentGeFiles(context);
         //CopiaArquivos
         for(GE_File geFile : geFiles){
             File fromFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO,geFile.getFile_path());
             File toFile = new File(ConstantBaseApp.UNSENT_IMG_PATH);
             try {
-                //Apesar do nome do metodo, verifica se arquivo ja esta na pasta de destino
-                if(!verifyDownloadFileInf(geFile.getFile_path(),toFile.getPath())) {
+                //Verifica se arquivo EXISTE na pasta origem e NÃO EXISTE na destino
+                if( verifyDownloadFileInf(geFile.getFile_path(),fromFile.getParent())
+                    && !verifyDownloadFileInf(geFile.getFile_path(),toFile.getParent())
+                ) {
                     copyFile(fromFile, toFile);
+//                    if(!fromFile.renameTo(toFile)){
+//                        errorCount++;
+//                    }
                 }
             }catch (Exception e){
                 registerException(CLASS_NAME,e);
@@ -1298,10 +1336,8 @@ public class ToolBox_Inf {
             Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
             context.sendBroadcast(mIntent);
         }
-        //
-        if(errorCount > 0){
-            //Impedir login ou sincronismo....
-        }
+        //Se contador de erro 0 , então sucesso.
+        return errorCount == 0;
     }
 
     public static String BitMapToBase64(Bitmap bm) {
