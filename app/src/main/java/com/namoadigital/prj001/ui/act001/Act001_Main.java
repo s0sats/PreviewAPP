@@ -303,6 +303,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     0
                 );
             }else{
+                //Reseta preferencia
+                ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+                //
                 ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
             }
         }else{

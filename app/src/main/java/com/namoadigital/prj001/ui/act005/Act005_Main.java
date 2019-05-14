@@ -1236,6 +1236,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processGo() {
         super.processGo();
+        //
+        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
+            ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+            //
+            activateUpload(context);
+        }
+
         mPresenter.executeSyncProcess(1);
     }
 
@@ -1244,7 +1251,35 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
         //
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+
+        /**
+         * LUCHE - 13/05/2019
+         * Se usr decidiu atualizar e há troca de versão do banco,
+         * busca imagens pendentes de transmissao e tenta a copia das imagens.
+         * EM CASO DE ERRO AO COPIAR IMGS, IMPEDE ATUALIZAÇÃO DE SOFTWARE
+         *
+         */
+        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
+            if(!ToolBox_Inf.moveUnsentImgs(context)){
+                progressDialog.dismiss();
+                //
+                ToolBox.alertMSG(
+                    context,
+                    context.getString(R.string.alert_move_unsent_data_error_ttl),
+                    context.getString(R.string.alert_move_unsent_data_error_msg),
+                    null,
+                    0
+                );
+            }else{
+                //Reseta preferencia
+                ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+                //
+                ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+            }
+        }else{
+            ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        }
     }
 
     private void setRes(String label, String status, String final_status) {
