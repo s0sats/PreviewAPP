@@ -430,7 +430,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         switch (signature) {
             case 1:
-                if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
+                if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()) && formData.getSignature_name() != null && !formData.getSignature_name().isEmpty()) {
                     checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
                 } else {
 //                    mView.showMsg(

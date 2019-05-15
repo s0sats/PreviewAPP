@@ -2080,7 +2080,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void getSignatueF(String mValue) {
         String sName = mValue;
 
-        if (sName.trim().length() != 0) {
+        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
