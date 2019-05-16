@@ -40,6 +40,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FUL
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
 
 
 /**
