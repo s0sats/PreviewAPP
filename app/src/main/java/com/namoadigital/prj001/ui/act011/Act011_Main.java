@@ -193,7 +193,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String mSite_Code;
     private Integer mOperation_Code;
 
-    private String wsSoProcess;
+    private String wsSoProcess = "";
     private ArrayList<HMAux> wsResults = new ArrayList<>();
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
@@ -2656,9 +2656,26 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
-        formData.setLocation_type("");
-        formData.setLocation_lat("");
-        formData.setLocation_lng("");
+        if( wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+           || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+        ){
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_data_not_sent_ttl"),
+                hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        flowControl();
+                    }
+                },
+                0
+            );
+        }else {
+            formData.setLocation_type("");
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
+        }
     }
 
     /**
@@ -2773,8 +2790,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            setWsSoProcess("");
             if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
