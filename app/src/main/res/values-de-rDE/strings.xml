@@ -100,6 +100,8 @@
     <string name="msg_not_sent_data_will_be_lost">VORSICHT! NICHT GESENDETE DATEN GEHEN FÜR IMMER VERLOREN!</string>
     <string name="notification_ttl_upload">Loading</string>
     <string name="notification_msg_upload">Sending files to server</string>
+    <string name="alert_move_unsent_data_error_ttl">Unsent data</string>
+    <string name="alert_move_unsent_data_error_msg">Error on trying to copy unsent data ! Try to login again !</string>
 
 
     <!--Traduções antigas em Ingles, apagar apos teste das strings em alemao-->

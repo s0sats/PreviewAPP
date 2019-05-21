@@ -545,8 +545,8 @@ public class Act027_Header extends BaseFragment {
                 tv_total_qty_service_title.setText(hmAux_Trans.get("total_qty_service"));
                 tv_total_qty_service.setText(valueOf(mSm_so.getTotal_qty_service()));
 
-                tv_total_price_title.setText(hmAux_Trans.get("total_price"));
-                tv_total_price.setText(valueOf(mSm_so.getTotal_price()));
+               /* tv_total_price_title.setText(hmAux_Trans.get("total_price"));
+                tv_total_price.setText(valueOf(mSm_so.getTotal_price()));*/
 
                 tv_add_inf1_title.setText(hmAux_Trans.get("add_info1_ttl"));
                 tv_add_inf1.setText(mSm_so.getAdd_inf1() == null ? "" : valueOf(mSm_so.getAdd_inf1()));

@@ -193,7 +193,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String mSite_Code;
     private Integer mOperation_Code;
 
-    private String wsSoProcess;
+    private String wsSoProcess = "";
     private ArrayList<HMAux> wsResults = new ArrayList<>();
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
@@ -300,6 +300,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("lbl_serial_data");
         transList.add("alert_error_on_create_form_ttl");
         transList.add("alert_error_on_create_form_msg");
+        transList.add("alert_data_not_sent_ttl");
+        transList.add("alert_resend_data_by_menu_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1543,7 +1545,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
-        photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
+        && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+            photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        }else{
+            photoFF.setmValue("p_" + prefix + cf.get("custom_form_seq") + ".jpg");
+        }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
@@ -2075,7 +2082,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void getSignatueF(String mValue) {
         String sName = mValue;
 
-        if (sName.trim().length() != 0) {
+        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
@@ -2651,9 +2658,49 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
-        formData.setLocation_type("");
-        formData.setLocation_lat("");
-        formData.setLocation_lng("");
+        if( wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+           || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+        ){
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_data_not_sent_ttl"),
+                hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        flowControl();
+                    }
+                },
+                0
+            );
+        }else {
+            formData.setLocation_type("");
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
+        }
+    }
+
+    /**
+     * LUCHE
+     * @param mLink
+     * @param mRequired
+     */
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans.get("alert_data_not_sent_ttl"),
+            hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    flowControl();
+                }
+            },
+            0
+        );
     }
 
     @Override
@@ -2745,8 +2792,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            setWsSoProcess("");
             if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {

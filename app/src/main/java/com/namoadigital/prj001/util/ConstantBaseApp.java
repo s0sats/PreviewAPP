@@ -211,6 +211,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String TOKEN_PATH;
     public static String CHAT_PATH;
     public static String CACHE_CHAT_PATH;
+    public static String UNSENT_IMG_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -365,6 +366,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PKG_APP_TYPE_STANDARD = "STANDARD";
     public static String PKG_APP_TYPE_DEFAULT;
     public static final String CLEAN_TOKEN_FILE_KEY = "clean_token_file_key";
+    public static final String BACKUP_UNSENT_IMG_KEY = "backup_unsent_img_key";
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
@@ -414,6 +416,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_CHAT_ROOM = 669;
     //Alarms
     public static final int ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP = 670;
+    public static final int ALARM_REQUEST_CODE_WS_UPLOAD_UNSENT_IMGS = 671;
     //Request codes
     public static final int REQUEST_CODE_SERIAL_LOG = 666;
 
