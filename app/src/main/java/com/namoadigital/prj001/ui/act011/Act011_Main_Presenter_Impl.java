@@ -528,6 +528,20 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
+    public boolean checkNFormExists(GE_Custom_Form_Local formLocal) {
+        GE_Custom_Form result = custom_formDao.getByString(
+                new GE_Custom_Form_Sql_001(
+                        String.valueOf(formLocal.getCustomer_code()),
+                        String.valueOf(formLocal.getCustom_form_type()),
+                        String.valueOf(formLocal.getCustom_form_code()),
+                        String.valueOf(formLocal.getCustom_form_version())
+                ).toSqlQuery()
+        );
+        return result != null;
+    }
+
+
+    @Override
     public MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id) {
         MD_Product_Serial result = md_product_serialDao.getByString(new MD_Product_Serial_Sql_016(customer_code,
                 product_code,
