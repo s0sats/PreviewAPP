@@ -19,32 +19,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
-import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
-import com.namoa_digital.namoa_library.ctls.CustomFF;
-import com.namoa_digital.namoa_library.ctls.LabelFF;
-import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
-import com.namoa_digital.namoa_library.ctls.PhotoFF;
-import com.namoa_digital.namoa_library.ctls.PictureFF;
-import com.namoa_digital.namoa_library.ctls.RatingBarFF;
-import com.namoa_digital.namoa_library.ctls.RatingImageFF;
+import android.widget.*;
+import com.namoa_digital.namoa_library.ctls.*;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -52,27 +30,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
-import com.namoadigital.prj001.dao.GE_Custom_FormDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.GE_Custom_Form_Data;
-import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
-import com.namoadigital.prj001.model.GE_Custom_Form_Local;
-import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -80,13 +39,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
-import com.namoadigital.prj001.sql.GE_File_Sql_003;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act011_003;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
@@ -95,17 +48,12 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 
@@ -895,16 +843,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
-
-        formLocalDao.remove(
-                new GE_Custom_Form_Local_Sql_007(
-                        String.valueOf(formData.getCustomer_code()),
-                        String.valueOf(formData.getCustom_form_type()),
-                        String.valueOf(formData.getCustom_form_code()),
-                        String.valueOf(formData.getCustom_form_version()),
-                        String.valueOf(formData.getCustom_form_data())
-                ).toSqlQuery()
-        );
+        //LUCHE 27/05/2019
+        //Modificado ordem do delete para primeiro deletar o item e somente depois o "cabeçalho"
+        //Modificado query que deleta a tabela cabeçalho para faze-lo apenas se ele não existir na fields
         //
         formFieldLocalDao.remove(
                 new GE_Custom_Form_Field_Local_Sql_004(
@@ -916,6 +857,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 ).toSqlQuery()
         );
         //
+        formLocalDao.remove(
+            new GE_Custom_Form_Local_Sql_007(
+                String.valueOf(formData.getCustomer_code()),
+                String.valueOf(formData.getCustom_form_type()),
+                String.valueOf(formData.getCustom_form_code()),
+                String.valueOf(formData.getCustom_form_version()),
+                String.valueOf(formData.getCustom_form_data())
+            ).toSqlQuery()
+        );
+        //
+        formDataFieldDao.remove(
+            new GE_Custom_Form_Data_Field_Sql_002(
+                String.valueOf(formData.getCustomer_code()),
+                String.valueOf(formData.getCustom_form_type()),
+                String.valueOf(formData.getCustom_form_code()),
+                String.valueOf(formData.getCustom_form_version()),
+                String.valueOf(formData.getCustom_form_data())
+            ).toSqlQuery()
+        );
         //
         formDataDao.remove(
                 new GE_Custom_Form_Data_Sql_002(
@@ -927,16 +887,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 ).toSqlQuery()
         );
         //
-        //
-        formDataFieldDao.remove(
-                new GE_Custom_Form_Data_Field_Sql_002(
-                        String.valueOf(formData.getCustomer_code()),
-                        String.valueOf(formData.getCustom_form_type()),
-                        String.valueOf(formData.getCustom_form_code()),
-                        String.valueOf(formData.getCustom_form_version()),
-                        String.valueOf(formData.getCustom_form_data())
-                ).toSqlQuery()
-        );
 
         callAct005(context);
 

@@ -1,10 +1,15 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by DANIEL.LUCHE on 22/02/2017.
+ *
+ * LUCHE - 27/05/2019
+ *
+ * Modificado query adicionando validação not exists na tabela form_data_field.
  */
 
 public class GE_Custom_Form_Data_Sql_002 implements Specification {
@@ -37,7 +42,19 @@ public class GE_Custom_Form_Data_Sql_002 implements Specification {
                         "   AND custom_form_type = '"+custom_form_type+"' \n " +
                         "   AND custom_form_code = '"+custom_form_code+"'\n " +
                         "   AND custom_form_version ='"+custom_form_version+"'\n " +
-                        "   AND custom_form_data = '"+custom_form_data+"'; ")
+                        "   AND custom_form_data = '"+custom_form_data+"'\n" +
+                        "   AND NOT EXISTS (\n" +
+                        "                   SELECT 1\n" +
+                        "                   FROM\n" +
+                        "                       "+ GE_Custom_Form_Data_FieldDao.TABLE +" \n " +
+                        "                   WHERE\n " +
+                        "                     customer_code = '"+customer_code+"'\n " +
+                        "                     AND custom_form_type = '"+custom_form_type+"' \n " +
+                        "                     AND custom_form_code = '"+custom_form_code+"'\n " +
+                        "                     AND custom_form_version ='"+custom_form_version+"'\n " +
+                        "                     AND custom_form_data = '"+custom_form_data+"'\n" +
+                        "   )\n" +
+                    "; ")
                 .toString();
     }
 }
