@@ -206,6 +206,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_finalize_title");
         transList.add("alert_finalize_msg");
 
+        transList.add("alert_nform_expired_ttl");
+        transList.add("alert_nform_expired_msg");
+
         transList.add("alert_question_finalize_title");
         transList.add("alert_question_finalize_msg");
 
@@ -1905,7 +1908,24 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
         if (mSo_Prefix == null || mSo_Code == null) {
             if(finalizeNewFlow) {
-                callAct006(context);
+                if(mPresenter.checkNFormExists(formLocal)){
+                    callAct006(context);
+                }else{
+                    finalizeNewFlow = false;
+                    //
+                    ToolBox.alertMSG(
+                            Act011_Main.this,
+                            hmAux_Trans.get("alert_nform_expired_ttl"),
+                            hmAux_Trans.get("alert_nform_expired_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    callAct005(context);
+                                }
+                            },
+                            0
+                    );
+                }
             }else{
                 callAct005(context);
             }
@@ -2745,6 +2765,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
+                progressDialog.dismiss();
                 flowControl();
             }
         }
