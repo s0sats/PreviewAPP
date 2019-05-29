@@ -2593,14 +2593,25 @@ public class Frg_Serial_Edit extends BaseFragment {
         // E produto controla local
         // E produto não controla IO
         // E produto não tem site restriction
+        // E forceLoggedSiteRestriction FALSE
         //
         if( md_site != null
             && md_site.getIo_control() == 0
             && mdProduct.getLocal_control() == 1
             && mdProduct.getIo_control() == 0
             && mdProduct.getSite_restriction() == 0
+            && !forceLoggedSiteRestriction
         ) {
             ss_site.setmOption(siteList);
+            //Se o site que veio no serial não esta na lista de site dele, adicionado na lista.
+            if (ss_site.getmValue() != null && ss_site.getmValue().size() > 0 && !checkDbValInOption(ss_site, String.valueOf(mdProductSerial.getSite_code()))) {
+                ArrayList<HMAux> newOption = new ArrayList<>();
+                newOption.add(ss_site.getmValue());
+                newOption.addAll(siteList);
+                siteList = newOption;
+                //
+                ss_site.setmOption(siteList);
+            }
         }else{
             HMAux loggedSite = new HMAux();
             //
