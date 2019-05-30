@@ -2699,7 +2699,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                     );
                 } else {
                     if (new_serial) {
-                        if(haveTosuggestSite(md_site)) {
+                        if(applySiteSuggestion(md_site)) {
                             ss_site.setmValue(loggedSite);
                             ss_site.setmEnabled(false);
                         }
@@ -2714,7 +2714,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             } else {
                 if (new_serial) {
-                    if(haveTosuggestSite(md_site)) {
+                    if(applySiteSuggestion(md_site)) {
                         ss_site.setmValue(loggedSite);
                     }
                 }
@@ -2730,31 +2730,27 @@ public class Frg_Serial_Edit extends BaseFragment {
     /**
      * LUCHE - 30/05/2019
      *
-     * Veri
+     * Verifica se deve sugerir site
+     * A regra que PULA a sugestão de site é :
+     *  1 -Site não controla IO
+     *  2 - Produto Não é tem restrição
+     *  3 - forceLoggedSiteRestriction é false.
+     * O metodo avalia a regra de  pular a sugestão e nega o resultado.
      *
      * @return
      * @param md_site
      */
-    private boolean haveTosuggestSite(MD_Site md_site) {
-        boolean teste = false;
-        teste =
-            md_site != null
-            && (
-                md_site.getIo_control() == 1
-                || (
-                    md_site.getIo_control() == 0
-                    && (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
-                    )
-                )
-            ;
-
-        teste = !(md_site != null
+    private boolean applySiteSuggestion(MD_Site md_site) {
+//        return md_site != null
+//            && (md_site.getIo_control() == 1
+//                || (md_site.getIo_control() == 0
+//                    && (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
+//            )
+//        );
+        return !(md_site != null
                     && md_site.getIo_control() == 0
                     && mdProduct.getSite_restriction() == 0
                     && !forceLoggedSiteRestriction);
-
-
-        return teste;
     }
 
     private void loadZoneSS(boolean reset_val) {
