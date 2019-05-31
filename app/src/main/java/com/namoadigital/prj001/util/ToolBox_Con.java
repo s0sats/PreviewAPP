@@ -194,6 +194,30 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region Act054
+    //
+    public static void setPreference_Act054(Context context, String pref_key, boolean pref_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putBoolean(
+                pref_key,
+                pref_value
+        ).apply();
+    }
+
+    public static boolean getPreference_Act054(Context context, String pref_key, boolean default_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getBoolean(
+                pref_key,
+                default_value
+        );
+    }
+
+
+    //endregion
+
     //region PKG_APK_TYPE
     public static void setPreference_PKG_APP_TYPE(Context context, String PKG_APP_TYPE) {
         SharedPreferences sharedPreferences =
