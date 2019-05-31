@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
@@ -160,6 +161,37 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
         //
         mView.callAct053(bundle);
+    }
+
+    @Override
+    public void editNonLocationSerial(IO_Serial_Process_Record record) {
+        Bundle bundle = new Bundle();
+        MD_Product_Serial serial = getSerial(record);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(record.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,record.getSerial_id());
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+        //
+        mView.callAct053(bundle);
+    }
+
+
+    private MD_Product_Serial getSerial(IO_Serial_Process_Record item) {
+        MD_Product_Serial serial = null;
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        try {
+            serial = serialDao.getByString(
+                    new MD_Product_Serial_Sql_009(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            item.getProduct_code(),
+                            item.getSerial_code()).toSqlQuery()
+            );
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        return serial;
     }
 
     /**

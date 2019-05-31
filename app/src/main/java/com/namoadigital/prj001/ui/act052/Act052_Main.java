@@ -167,7 +167,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
         }else{
             tvEmptyState.setVisibility(View.GONE);
-            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, isOnline, serial_jump);
+            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, isOnline, serial_jump, mPresenter);
             mSerialRecyclerView.setAdapter(mSerialListAdapter);
             mSerialRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 private boolean isScrolling;
@@ -305,7 +305,11 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
-        mPresenter.executeWsProcessDownload(data);
+        if(data.getSite_code() == null){
+            mPresenter.editNonLocationSerial(data);
+        }else {
+            mPresenter.executeWsProcessDownload(data);
+        }
     }
 
     @Override

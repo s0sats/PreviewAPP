@@ -21,6 +21,8 @@ public interface Act052_Main_Contract {
 
         void createNewSerialFlow(MD_Product_Serial productSerial);
 
+        void editNonLocationSerial(IO_Serial_Process_Record record);
+
         boolean isSiteInboundAutoCreation();
     }
 
