@@ -169,18 +169,6 @@ public class Act064_Main_Presenter implements Act064_Main_Contract.I_Presenter {
 
         blindMoveDao.addUpdate(io_blind_move);
 
-        IO_Blind_Move_TrackingDao ioBlindTrackingDao = new IO_Blind_Move_TrackingDao(context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM);
-
-        IO_Blind_Move_Tracking blindMoveTracking = new IO_Blind_Move_Tracking();
-        List<MD_Product_Serial_Tracking> tracking1 = getTracking(customer_code, product_code, serial_code);
-        for (MD_Product_Serial_Tracking tracking : tracking1) {
-            blindMoveTracking.setCustomer_code(tracking.getCustomer_code());
-            blindMoveTracking.setBlind_tmp(io_blind_move.getBlind_tmp());
-            blindMoveTracking.setTracking(tracking.getTracking());
-            ioBlindTrackingDao.addUpdate(blindMoveTracking);
-        }
 
         mView.showSaveSucessfully();
 
