@@ -135,8 +135,8 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         }
     }
 
-    @Override
-    public MD_Product getMd_product(String mProduct_id) {
+
+    private MD_Product getMd_product(String mProduct_id) {
         MD_ProductDao mdProductDao = new MD_ProductDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -152,7 +152,9 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void createNewSerialFlow(MD_Product_Serial productSerial) {
+    public void createNewSerialFlow(String mProduct_id, String mSerial_id) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        MD_Product_Serial productSerial = md_product.createNewSerialForThisProduct(mSerial_id);
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID,productSerial.getSerial_id());
@@ -217,5 +219,31 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean hasCreateSerialPermission(String mProduct_id, String mSerial_id, boolean serial_jump) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        return md_product != null
+                && md_product.getLocal_control() == 1
+                && md_product.getIo_control() == 1
+                && mSerial_id != null
+                && !mSerial_id.isEmpty()
+                && !serial_jump
+                && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+                && isSiteInboundAutoCreation()
+                && ToolBox_Con.isOnline(context);
+    }
+
+    @Override
+    public void callBlindMove(String mProduct_id, String mSerial_id) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        Bundle bundle = new Bundle();
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(md_product.getProduct_code()));
+        bundle.putString(MD_ProductDao.PRODUCT_ID, md_product.getProduct_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,mSerial_id);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
+        //
+        mView.callAct064(bundle);
     }
 }

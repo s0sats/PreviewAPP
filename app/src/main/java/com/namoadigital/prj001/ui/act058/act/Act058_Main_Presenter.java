@@ -41,7 +41,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create.DATEFORMATMKDATE;
+import static com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create.DATE_FORMAT_MKDATE;
 
 class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     public static final String NEXT_TMP = "next_tmp";
@@ -139,7 +139,7 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_move.setTo_local_code(to_local_code);
         io_move.setTo_class_code(to_class_code);
         io_move.setReason_code(reason_code);
-        io_move.setDone_date(ToolBox.sDTFormat_Agora(DATEFORMATMKDATE));
+        io_move.setDone_date(ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE));
         io_move.setProduct_code(serial.getProduct_code());
         io_move.setSerial_code((int) serial.getSerial_code());
         io_move.setDone_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
@@ -324,12 +324,13 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         io_blind_move.setLocal_code(local_code);
         io_blind_move.setClass_code(classCode);
         io_blind_move.setReason_code(reasonCode);
-        io_blind_move.setSave_date(ToolBox.sDTFormat_Agora(DATEFORMATMKDATE));
+        io_blind_move.setSave_date(ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE));
         io_blind_move.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
         io_blind_move.setProduct_code(serial.getProduct_code());
         io_blind_move.setSerial_id(serial.getSerial_id());
         io_blind_move.setSerial_code((int) serial.getSerial_code());
         io_blind_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
+        io_blind_move.setFlag_blind(0);
         io_blind_move.setBlind_tmp(blind_tmp);
 
         blindMoveDao.addUpdate(io_blind_move);

@@ -17,13 +17,15 @@ public interface Act052_Main_Contract {
 
         void executeWsProcessDownload(IO_Serial_Process_Record data);
 
-        MD_Product getMd_product(String mProduct_id);
-
-        void createNewSerialFlow(MD_Product_Serial productSerial);
+        void createNewSerialFlow(String mProduct_id, String mSerial_id);
 
         void editNonLocationSerial(IO_Serial_Process_Record record);
 
         boolean isSiteInboundAutoCreation();
+
+        boolean hasCreateSerialPermission(String mProduct_id, String mSerial_id, boolean serial_jump);
+
+        void callBlindMove(String mProduct_id, String mSerial_id);
     }
 
     interface I_View{
@@ -39,5 +41,7 @@ public interface Act052_Main_Contract {
         void callAct058(Bundle bundle);
 
         void callAct061(Bundle bundle);
+
+        void callAct064(Bundle bundle);
     }
 }

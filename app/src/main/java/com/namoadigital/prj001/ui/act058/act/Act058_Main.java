@@ -574,7 +574,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         mPresenter.onBackPressed(actRequest);
     }
 

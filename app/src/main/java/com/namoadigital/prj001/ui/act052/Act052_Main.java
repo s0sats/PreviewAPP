@@ -26,6 +26,7 @@ import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
+import com.namoadigital.prj001.ui.act064.Act064_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -53,7 +54,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private long record_page;
     private String mSerial_id;
     private String mProduct_id;
-    private MD_Product md_product;
     private boolean serial_jump;
     private LinearLayout llLimitExceeded;
     private boolean allowBlindMove;
@@ -132,23 +132,12 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     private void setBtnCreateSerial() {
         btn_create_serial.setVisibility(View.GONE);
-        md_product = mPresenter.getMd_product(mProduct_id);
         //
-        if (md_product != null
-            && md_product.getLocal_control() == 1
-            && md_product.getIo_control() == 1
-            && mSerial_id != null
-            && !mSerial_id.isEmpty()
-            && !serial_jump
-            && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
-            && mPresenter.isSiteInboundAutoCreation()
-            && ToolBox_Con.isOnline(context)
-        ) {
+        if (mPresenter.hasCreateSerialPermission(mProduct_id, mSerial_id,serial_jump) ) {
             btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + mSerial_id + ")");
             btn_create_serial.setVisibility(View.VISIBLE);
         }
     }
-
     private void setSerialList() {
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
@@ -243,7 +232,13 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.createNewSerialFlow(md_product.createNewSerialForThisProduct(mSerial_id));
+                mPresenter.createNewSerialFlow(mProduct_id, mSerial_id);
+            }
+        });
+        btnBlindMove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.callBlindMove(mProduct_id, mSerial_id);
             }
         });
     }
@@ -337,6 +332,15 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     @Override
     public void callAct061(Bundle bundle) {
         Intent mIntent = new Intent(context, Act061_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct064(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act064_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

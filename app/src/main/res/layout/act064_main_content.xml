@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act064.Act064_Main"
+    tools:showIn="@layout/act064_main">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,20 +19,19 @@
             layout="@layout/header_product_serial_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/act064_ss_zone"
             app:layout_constraintEnd_toStartOf="@+id/gl_right"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/gl_left"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
             android:id="@+id/act064_ss_zone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/act064_ss_local"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toStartOf="@+id/gl_right"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/gl_left"
@@ -39,28 +41,27 @@
             android:id="@+id/act064_ss_local"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/frg_serial_edit_ss_site_reason"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@+id/gl_right"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/gl_left"
             app:layout_constraintTop_toBottomOf="@+id/act064_ss_zone" />
 
         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-            android:id="@+id/frg_serial_edit_ss_site_reason"
+            android:id="@+id/act064_ss_site_reason"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/act058_btn_save"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@+id/gl_right"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/gl_left"
             app:layout_constraintTop_toBottomOf="@+id/act064_ss_local" />
 
-
         <Button
-            android:id="@+id/act058_btn_save"
+            android:id="@+id/act064_btn_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:background="@drawable/btn_namoa_main_states"
             android:focusable="true"
@@ -69,8 +70,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/gl_right"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/gl_left"
-            app:layout_constraintTop_toBottomOf="@+id/frg_serial_edit_ss_site_reason" />
+            app:layout_constraintStart_toStartOf="@id/gl_left" />
 
         <android.support.constraint.Guideline
             android:id="@+id/gl_left"
