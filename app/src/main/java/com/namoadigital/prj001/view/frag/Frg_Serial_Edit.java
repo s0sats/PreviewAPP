@@ -512,7 +512,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
-
+        pausedByScan = false;
+        //
         View view = inflater.inflate(R.layout.frg_serial_edit, container, false);
 
         recoverBundleInfo();
@@ -1334,6 +1335,16 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
             public void reportTextBySpecialist(String s) {
+                //pausedByScan = true;
+            }
+        });
+        //LUCHE - 04/06/2019
+        //A interface IMKEditTextTextBySpecialist só é dispara se o barcode é lido, em caso de desistencia,
+        //não era acionado e o metodo onResume era rodado fazendo com que as informações alteradas fossem perdidas.
+        //Implementado listner no click do drawable direito "barcode"
+        mket_serial_id.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
                 pausedByScan = true;
             }
         });
@@ -1648,10 +1659,22 @@ public class Frg_Serial_Edit extends BaseFragment {
         final ImageView iv_close = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
         //
         tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
-        //setDelegateTextBySpecialist
-        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+
+        //LUCHE - 04/06/2019
+        //Modificado interface que seta o pausedByScan para true.
+        //A interface IMKEditTextTextBySpecialist só é dispara se o barcode é lido, em caso de desistencia,
+        //não era acionado e o metodo onResume era rodado fazendo com que as informações alteradas fossem perdidas.
+        //Implementado listner no click do drawable direito "barcode"
+        //
+//        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+//            @Override
+//            public void reportTextBySpecialist(String s) {
+//                pausedByScan = true;
+//            }
+//        });
+        mket_tracking.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
             @Override
-            public void reportTextBySpecialist(String s) {
+            public void reportDrawbleRightClick(int i) {
                 pausedByScan = true;
             }
         });
@@ -3010,6 +3033,14 @@ public class Frg_Serial_Edit extends BaseFragment {
         args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         //
         this.setArguments(args);
+        //LUCHE - 04/06/2019
+        //Para corrigir bug de recarregar os dados do serial original e listner do btn Action
+        //quando a Act sai de primeiro plano, verifica se o metodo loadDataToScrenn() deve ser rodado no
+        //onResume.
+        //Caso algum dado tenha sido alterado ou o serial digitado tenha sido alterado, não recarrega os dados.
+        if(checkSerialChanges() || serialIdChanged){
+            pausedByScan = true;
+        }
     }
 
 

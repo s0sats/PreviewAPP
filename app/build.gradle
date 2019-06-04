@@ -77,7 +77,7 @@ repositories {
     maven { url 'http://maven.microblink.com' }
 }
 //Var com o nome do import da lib
-def namoaLibVersion = "com.namoa_digital:library:0.0.392.mf"
+def namoaLibVersion = "com.namoa_digital:library:0.0.393.mf"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
