@@ -239,8 +239,8 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     public void callBlindMove(String mProduct_id, String mSerial_id) {
         MD_Product md_product = getMd_product(mProduct_id);
         Bundle bundle = new Bundle();
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(md_product.getProduct_code()));
-        bundle.putString(MD_ProductDao.PRODUCT_ID, md_product.getProduct_id());
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, md_product.getProduct_code());
+        bundle.putString(MD_Product_SerialDao.PRODUCT_ID, md_product.getProduct_id());
         bundle.putString(MD_Product_SerialDao.SERIAL_ID,mSerial_id);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
         //

@@ -223,7 +223,7 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         int mProduct_code, mSerial_code;
         String actRequest, mSerial_id, mProduct_id;
         if (bundle != null) {
-            mProduct_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
+            mProduct_code = (int) bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE);
             mProduct_id = bundle.getString(MD_Product_SerialDao.PRODUCT_ID);
             mSerial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
             mSerial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID);

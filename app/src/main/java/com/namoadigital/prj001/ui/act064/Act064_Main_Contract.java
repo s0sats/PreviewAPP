@@ -25,8 +25,6 @@ public interface Act064_Main_Contract {
 
         void setDefaultZone(SearchableSpinner ss_zone);
 
-        MD_Product_Serial getSerialInfo(long product_code, int serial_code);
-
         void saveBlindMove(int zone_code, int local_code, int reason_code);
 
         ArrayList<HMAux> getMoveReasonList();

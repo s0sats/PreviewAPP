@@ -143,14 +143,6 @@ public class Act064_Main_Presenter implements Act064_Main_Contract.I_Presenter {
     }
 
     @Override
-    public MD_Product_Serial getSerialInfo(long product_code, int serial_code) {
-        return productSerialDao.getByString(new MD_Product_Serial_Sql_009(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                product_code,
-                serial_code).toSqlQuery());
-    }
-
-    @Override
     public void saveBlindMove(int zone_code, int local_code, int reason_code) {
         IO_Blind_Move io_blind_move = new IO_Blind_Move();
         long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
@@ -166,12 +158,8 @@ public class Act064_Main_Presenter implements Act064_Main_Contract.I_Presenter {
         io_blind_move.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         io_blind_move.setFlag_blind(1);
         io_blind_move.setBlind_tmp(getBlindTmp());
-
         blindMoveDao.addUpdate(io_blind_move);
-
-
         mView.showSaveSucessfully();
-
     }
 
     private List<MD_Product_Serial_Tracking> getTracking(long customer_code,
