@@ -2199,6 +2199,16 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
         HMAux siteSelected = ss_site.getmValue();
+        //LUCHE - 05/06/2019
+        //Verifica se apesar da flag siteChanged ser verdadeira, o site db é igual ao site selecionado.
+        //
+        if (mdProductSerial.getSite_code() != null
+            && siteSelected.hasConsistentValue(SearchableSpinner.ID)
+            && siteSelected.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
+        ) {
+            Log.d("SITE_CHANGE", "true");
+            return true;
+        }
         //Por mais maluco que seja, esse if abaixo significa
         //if site origem null == site.atual null
         if (
@@ -2214,16 +2224,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             Log.d("SITE_CHANGE", "true");
             return true;
         }
-        //Valida se hmAux tem as chave, mas ainda pode ser null
-//        if (
-//            !siteSelected.containsKey(SearchableSpinner.ID)
-//            || !siteSelected.containsKey(SearchableSpinner.DESCRIPTION)
-//            || !siteSelected.containsKey(MD_SiteDao.SITE_ID)
-//            || !siteSelected.containsKey(MD_SiteDao.IO_CONTROL)
-//            || !siteSelected.containsKey(MD_SiteDao.INBOUND_AUTO_CREATE)
-//        ) {
-//            return false;
-//        }
         //
         if (mdProductSerial.getProduct_io_control() == 0) {
             Log.d("SITE_CHANGE", "true");
