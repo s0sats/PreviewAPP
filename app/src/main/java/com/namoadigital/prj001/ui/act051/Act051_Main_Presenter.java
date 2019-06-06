@@ -23,6 +23,7 @@ import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_009;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_010;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -130,8 +131,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     private ArrayList<IO_Serial_Process_Record> hasLocalSerial(String product_id, String serial_id, String tracking) {
         ArrayList<IO_Serial_Process_Record> serial_process_records = new ArrayList<>();
         ArrayList<HMAux> serial_list = new ArrayList<>();
-        List<HMAux> move_list =
-                (ArrayList<HMAux>) serialDao.query_HM(
+        List<HMAux> move_list = serialDao.query_HM(
                         new IO_Move_Order_Item_Sql_009(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context),
@@ -142,8 +142,18 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                 );
 
 
-        List<HMAux> in_conf_list = (ArrayList<HMAux>) serialDao.query_HM(
+        List<HMAux> in_conf_list = serialDao.query_HM(
                         new IO_Move_Order_Item_Sql_010(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context),
+                                product_id,
+                                serial_id,
+                                tracking
+                        ).toSqlQuery()
+                );
+
+        List<HMAux> serial_offline_list= serialDao.query_HM(
+                        new Sql_Act020_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context),
                                 product_id,
@@ -153,6 +163,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                 );
         serial_list.addAll(move_list);
         serial_list.addAll(in_conf_list);
+        serial_list.addAll(serial_offline_list);
         getSerialProcessRecordListFromHMaux(serial_process_records, serial_list, serial_id);
         return serial_process_records;
     }
@@ -240,6 +251,8 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             }else if(serial_record.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
             && serial_record.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)){
                 record.setProcess_type(ConstantBaseApp.IO_PROCESS_IN_CONF);
+            }else{
+                record.setProcess_type(ConstantBaseApp.IO_PROCESS_MOVE);
             }
 
             serial_process_records.add(record);
