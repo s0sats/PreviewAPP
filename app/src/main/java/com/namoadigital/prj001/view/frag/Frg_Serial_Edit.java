@@ -147,7 +147,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private HMAux oldZone = new HMAux();
     private HMAux oldLocal = new HMAux();
     private boolean serialIdChanged = false;
-    private boolean pausedByScan = false;
+    //Variavel que controla de no onResume, o metodo loadDataToScreen deve ser ignorado.
+    private boolean skipLoadDataToScreen = false;
     private boolean siteChanged = false;
     //VIEW_SO_EDIT
     private TextView tv_brand_model_color;
@@ -512,7 +513,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
-        pausedByScan = false;
+        skipLoadDataToScreen = false;
         //
         View view = inflater.inflate(R.layout.frg_serial_edit, container, false);
 
@@ -1335,7 +1336,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
             public void reportTextBySpecialist(String s) {
-                //pausedByScan = true;
+                //skipLoadDataToScreen = true;
             }
         });
         //LUCHE - 04/06/2019
@@ -1345,7 +1346,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
             @Override
             public void reportDrawbleRightClick(int i) {
-                pausedByScan = true;
+                skipLoadDataToScreen = true;
             }
         });
         //Clique para abertura do dialog com informações de log.
@@ -1661,7 +1662,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
 
         //LUCHE - 04/06/2019
-        //Modificado interface que seta o pausedByScan para true.
+        //Modificado interface que seta o skipLoadDataToScreen para true.
         //A interface IMKEditTextTextBySpecialist só é dispara se o barcode é lido, em caso de desistencia,
         //não era acionado e o metodo onResume era rodado fazendo com que as informações alteradas fossem perdidas.
         //Implementado listner no click do drawable direito "barcode"
@@ -1669,13 +1670,13 @@ public class Frg_Serial_Edit extends BaseFragment {
 //        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
 //            @Override
 //            public void reportTextBySpecialist(String s) {
-//                pausedByScan = true;
+//                skipLoadDataToScreen = true;
 //            }
 //        });
         mket_tracking.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
             @Override
             public void reportDrawbleRightClick(int i) {
-                pausedByScan = true;
+                skipLoadDataToScreen = true;
             }
         });
         builder.setView(view);
@@ -2200,8 +2201,11 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         HMAux siteSelected = ss_site.getmValue();
         //LUCHE - 05/06/2019
-        //Verifica se apesar da flag siteChanged ser verdadeira, o site db é igual ao site selecionado.
-        //
+        //Verifica se apesar da flag siteChanged ser verdadeira, o site que esta no mdProdSerial é
+        //igual ao site selecionado.
+        //Essa situação acontece na criação de serial, se o usuario trocar o site e depois alterar o serial id digitado.
+        //Ao após verificar existencia, e o serial di digitado for novo, os dados da tela são setados no obj. Por isso,
+        //é necessario validá-la aqui.
         if (mdProductSerial.getSite_code() != null
             && siteSelected.hasConsistentValue(SearchableSpinner.ID)
             && siteSelected.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
@@ -3014,12 +3018,12 @@ public class Frg_Serial_Edit extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!pausedByScan) {
+        if (!skipLoadDataToScreen) {
             loadDataToScreen();
             //
             informFragIsReady();
         }
-        pausedByScan = false;
+        skipLoadDataToScreen = false;
     }
 
     @Override
@@ -3039,7 +3043,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //onResume.
         //Caso algum dado tenha sido alterado ou o serial digitado tenha sido alterado, não recarrega os dados.
         if(checkSerialChanges() || serialIdChanged){
-            pausedByScan = true;
+            skipLoadDataToScreen = true;
         }
     }
 
