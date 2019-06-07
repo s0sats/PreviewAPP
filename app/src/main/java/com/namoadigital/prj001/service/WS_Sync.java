@@ -183,8 +183,12 @@ public class WS_Sync extends IntentService {
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE, -1L);
             boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS, false);
+            //LUCHE - 07/06/2019
+            //Add param que redefine timeout da chamada.
+            //Usada somente no sync full
+            int connection_timeout = bundle.getInt(Constant.WS_CONNECTION_TIMEOUT, 60000);
 
-            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess);
+            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
@@ -213,7 +217,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "");
     }
 
-    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess) throws Exception {
+    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess, int connection_timeout) throws Exception {
         EV_UserDao userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao = new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -315,10 +319,12 @@ public class WS_Sync extends IntentService {
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
-
+        //LUCHE - 07/06/2019
+        //Adicionado passagem de timeout como parametro
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SYNC,
-                gson.toJson(env)
+                gson.toJson(env),
+                connection_timeout
         );
 
         TSync_Rec rec = gson.fromJson(

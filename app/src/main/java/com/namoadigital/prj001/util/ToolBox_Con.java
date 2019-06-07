@@ -27,11 +27,39 @@ public class ToolBox_Con {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Con";
 
+    /**
+     * LUCHE - 07/06/2019
+     *
+     * Assinatura original do metodo.
+     * @param urlEnd - Url
+     * @param params - Json ja pronto para envio
+     * @return
+     * @throws Exception
+     */
     public static String connWebService(String urlEnd, String params) throws Exception {
-        StringBuilder sb = new StringBuilder();
+        return connWebService(urlEnd, params, 60000);
+    }
 
+    /**
+     * LUCHE - 07/06/2019
+     *
+     * Nova assinatura do metodo connWebService, que recebe como ultimo parametro o timeout a ser
+     * considerado.
+     *
+     * Metodo criado para possibilitar timeout diferenciado em algumas chamadas de WS mais pesadas,
+     * como o Sincronismo
+     *
+     * @param urlEnd - Url
+     * @param params - Json ja pronto para envio
+     * @param timeout - Tempo  de Timeout
+     * @return - Json retornado pelo server
+     * @throws Exception
+     */
+    public static String connWebService(String urlEnd, String params,Integer timeout) throws Exception {
+        StringBuilder sb = new StringBuilder();
         URL url;
         HttpsURLConnection conn = null;
+        timeout = timeout != null ? timeout : 60000 ;
 
         url = new URL(urlEnd);
 
@@ -43,8 +71,8 @@ public class ToolBox_Con {
         conn.setSSLSocketFactory(contextS.getSocketFactory());
         conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
 
-        conn.setReadTimeout(60000);
-        conn.setConnectTimeout(60000);
+        conn.setReadTimeout(timeout);
+        conn.setConnectTimeout(timeout);
 
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
@@ -71,7 +99,6 @@ public class ToolBox_Con {
 
         return sb.toString();
     }
-
     //Teste de chama GET "https://chat.namoadigital.com/messageDist?msg_prefix=201712&msg_code=2267"
     public static String connHttpGet(String urlEnd, String params) throws Exception {
         StringBuilder sb = new StringBuilder();

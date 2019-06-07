@@ -413,6 +413,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
     //
     public static final String N_FORM_PDF_PREFIX = "form_";
+    public static final String WS_CONNECTION_TIMEOUT = "WS_CONNECTION_TIMEOUT";
 
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
