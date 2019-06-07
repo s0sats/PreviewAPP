@@ -100,6 +100,28 @@
 
 
             <TextView
+                    android:id="@+id/act061_drawer_tv_transport_order_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Transport Order - trad"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
+                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_status"/>
+
+            <TextView
+                android:id="@+id/act061_drawer_tv_transport_order_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="right"
+                android:text="Site - trad"
+                app:layout_constraintBottom_toBottomOf="@+id/act061_drawer_tv_transport_order_lbl"
+                app:layout_constraintEnd_toStartOf="@+id/act061_drawer_gd_end"
+                app:layout_constraintStart_toEndOf="@+id/act061_drawer_tv_transport_order_lbl"
+                app:layout_constraintTop_toTopOf="@+id/act061_drawer_tv_transport_order_lbl" />
+
+            <TextView
                     android:id="@+id/act061_drawer_tv_from"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -107,7 +129,7 @@
                     android:text="From - trad"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/act061_drawer_gd_start"
-                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_status"/>
+                    app:layout_constraintTop_toBottomOf="@+id/act061_drawer_tv_transport_order_val"/>
 
             <TextView
                     android:id="@+id/act061_drawer_tv_from_val"

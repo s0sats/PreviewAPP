@@ -49,6 +49,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     private TextView tvEtaDtVal;
     private TextView tvInvoiceLbl;
     private TextView tvInvoiceVal;
+    private TextView tvTransportOrderLbl;
+    private TextView tvTransportOrderVal;
     private TextView tvFromLbl;
     private TextView tvFromVal;
     private TextView tvModalLbl;
@@ -233,6 +235,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         tvEtaDtVal= view.findViewById(R.id.act061_drawer_tv_eta_dt_val);
         tvInvoiceLbl = view.findViewById(R.id.act061_drawer_tv_invoice);
         tvInvoiceVal = view.findViewById(R.id.act061_drawer_tv_invoice_val);
+        tvTransportOrderLbl= view.findViewById(R.id.act061_drawer_tv_transport_order_lbl);
+        tvTransportOrderVal= view.findViewById(R.id.act061_drawer_tv_transport_order_val);
         tvFromLbl= view.findViewById(R.id.act061_drawer_tv_from);
         tvFromVal= view.findViewById(R.id.act061_drawer_tv_from_val);
         tvModalLbl= view.findViewById(R.id.act061_drawer_tv_modal);
@@ -329,6 +333,18 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                     //
                     tvInvoiceLbl.setVisibility(View.VISIBLE);
                     tvInvoiceVal.setVisibility(View.VISIBLE);
+                }
+                //
+                if(mInbound.getTransport_order() != null
+                   && !mInbound.getTransport_order().isEmpty()
+                ){
+                    //tvFromVal.setText(hmAux_Trans.get(mInbound.getFrom_type()));
+                    tvTransportOrderVal.setText(
+                        mInbound.getTransport_order()
+                    );
+                    //
+                    tvTransportOrderLbl.setVisibility(View.VISIBLE);
+                    tvTransportOrderVal.setVisibility(View.VISIBLE);
                 }
                 //
                 if(mInbound.getFrom_type() != null
@@ -447,6 +463,8 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         tvInvoiceLbl.setVisibility(View.GONE);
         tvInvoiceVal.setText("");
         tvInvoiceVal.setVisibility(View.GONE);
+        tvTransportOrderLbl.setVisibility(View.GONE);
+        tvTransportOrderVal.setText("");
         tvFromLbl.setVisibility(View.GONE);
         tvFromVal.setText("");
         tvFromVal.setVisibility(View.GONE);

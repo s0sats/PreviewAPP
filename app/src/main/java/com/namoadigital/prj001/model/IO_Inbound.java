@@ -98,6 +98,8 @@ public class IO_Inbound implements Serializable {
     private Integer outbound_prefix;
     @Expose
     private Integer outbound_code;
+    @Expose
+    private String transport_order;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server
@@ -481,5 +483,13 @@ public class IO_Inbound implements Serializable {
 
     public void setOutbound_code(Integer outbound_code) {
         this.outbound_code = outbound_code;
+    }
+
+    public String getTransport_order() {
+        return transport_order;
+    }
+
+    public void setTransport_order(String transport_order) {
+        this.transport_order = transport_order;
     }
 }

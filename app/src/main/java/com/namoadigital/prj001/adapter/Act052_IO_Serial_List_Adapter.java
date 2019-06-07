@@ -59,6 +59,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         transList.add("serial_lbl");
         transList.add("alert_serial_out_site_title");
         transList.add("alert_serial_out_site_msg");
+        transList.add("serial_transp_order_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -121,6 +122,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
         protected final ConstraintLayout clBackground;
         protected final TextView tvIoProductLbl;
+        protected final TextView tvIoTranspOrderLbl;
+        protected final TextView tvIoTranspOrderVal;
         protected final TextView tvIoSerialLbl;
         protected final TextView tvIoSerialExtCodeLbl;
         protected final TextView tvStatusDesc;
@@ -141,6 +144,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             this.itemVIew = itemView;
             clBackground = itemView.findViewById(R.id.act052_main_cl_background);
             tvIoProductLbl = itemView.findViewById(R.id.act052_tv_io_product_lbl);
+            tvIoTranspOrderLbl = itemView.findViewById(R.id.act052_tv_io_transp_order_lbl);
+            tvIoTranspOrderVal = itemView.findViewById(R.id.act052_tv_io_transp_order_val);
             tvIoSerialLbl = itemView.findViewById(R.id.act052_tv_io_serial_lbl);
             tvIoSerialExtCodeLbl = itemView.findViewById(R.id.act052_tv_io_serial_ext_code_lbl);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
@@ -166,10 +171,18 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvIoProductLbl.setText(hmAux_Trans.get("product_lbl"));
             tvIoSerialLbl.setText(hmAux_Trans.get("serial_lbl"));
             tvIoSerialExtCodeLbl.setText(hmAux_Trans.get("serial_code_lbl"));
+            tvIoTranspOrderLbl.setText(hmAux_Trans.get("serial_transp_order_lbl"));
 
             tvProductExtCodeVal.setText(data.getProduct_id());
             tvProductDescVal.setText(data.getProduct_desc());
             tvSerialExtCodeVal.setText(data.getSerial_id());
+            tvIoTranspOrderVal.setVisibility(View.VISIBLE);
+            tvIoTranspOrderLbl.setVisibility(View.VISIBLE);
+            if(data.getTransport_order() == null || data.getTransport_order().isEmpty()){
+                tvIoTranspOrderVal.setVisibility(View.GONE);
+                tvIoTranspOrderLbl.setVisibility(View.GONE);
+            }
+            tvIoTranspOrderVal.setText(data.getTransport_order());
             tvSerialZone.setText(data.getZone_desc());
             tvSerialPosition.setText(data.getLocal_id());
             setTvSerialBrandModelColor(data);

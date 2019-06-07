@@ -48,16 +48,39 @@
             app:layout_constraintTop_toTopOf="@+id/act052_tv_io_status_desc" />
 
         <TextView
-            android:id="@+id/act052_tv_io_product_lbl"
+            android:id="@+id/act052_tv_io_transp_order_lbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Product - trad"
+            android:text="Transport Order - trad:"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/act052_tv_serial_list_position"
             app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_status_desc" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_transp_order_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/act052_tv_io_transp_order_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_status_desc" />
+
+        <TextView
+            android:id="@+id/act052_tv_io_product_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Product - trad"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/act052_tv_serial_list_position"
+            app:layout_constraintTop_toBottomOf="@+id/act052_tv_io_transp_order_val" />
 
         <TextView
             android:id="@+id/act052_tv_io_product_ext_code_val"
