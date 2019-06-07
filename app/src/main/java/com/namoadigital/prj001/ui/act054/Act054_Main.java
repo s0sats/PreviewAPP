@@ -23,6 +23,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
@@ -99,6 +100,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("destiny_lbl");
         transList.add("origin_lbl");
         transList.add("planned_move_lbl");
+        transList.add("blind_move_lbl");
         transList.add("inbound_move_lbl");
         transList.add("outbound_lbl");
         transList.add("inbound_lbl");
@@ -206,7 +208,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         chkPlannedMove = findViewById(R.id.act054_cb_planned_move);
         llIoZone = findViewById(R.id.act054_ll_io_zone);
         ssIoZone = findViewById(R.id.act054_ss_io_zone);
-
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         chkIoOrigins = findViewById(R.id.act054_cb_io_origins);
         chkIoDestiny = findViewById(R.id.act054_cb_io_destiny);
@@ -275,6 +276,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                             mPresenter.executeWsSaveItem();
+                        } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                            mPresenter.executeWsSaveBlindItem();
                         } else {
                             callMovementList();
                         }
@@ -414,10 +417,10 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (!moves[0].isEmpty()) {
-                showResults(moves);
+                showResults(moves,true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveItem();
-            } else {
+            } else if (mPresenter.hasWaitingSyncPutAwayPendency()){
                 callMovementList();
             }
 
@@ -425,6 +428,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
             mPresenter.processItemSaveReturn(0, 0, mLink);
             progressDialog.dismiss();
+        } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
+            String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            try{
+                if(!moves[0].isEmpty()) {
+                    showResults(moves, false);
+                }
+            }catch (Exception e ){
+                e.printStackTrace();
+            }
+            disableProgressDialog();
         }
 
         //
@@ -445,7 +458,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         return (chkInbound.isChecked() || chkOutbound.isChecked() || chkPlannedMove.isChecked());
     }
 
-    private void showResults(String[] moveArray) {
+    private void showResults(String[] moveArray, boolean isMovePlanned) {
         ArrayList<HMAux> moveList = new ArrayList<>();
         for (int i = 0; i < moveArray.length; i++) {
             String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
@@ -453,7 +466,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
+            if(isMovePlanned) {
+                mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
+            }else{
+                mHmAux.put("title", hmAux_Trans.get("blind_move_lbl"));
+            }
             //
             moveList.add(mHmAux);
             //

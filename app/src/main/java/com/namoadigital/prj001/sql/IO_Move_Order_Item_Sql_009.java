@@ -51,7 +51,6 @@ public class IO_Move_Order_Item_Sql_009 implements Specification {
                         " WHERE\n" +
                         "     p.customer_code = '" + customer_code + "'\n" +
                         "     and s.site_code = '" + site_code + "'\n"+
-
                         "     and ( '" + product_id + "' is null or p.product_id = '" + product_id + "')\n" +
                         "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
                         "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +

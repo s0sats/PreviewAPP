@@ -40,7 +40,11 @@ public interface Act054_Main_Contract {
 
         boolean hasWaitingSyncMovePendency();
 
+        boolean hasWaitingSyncBlindPendency();
+
         boolean hasWaitingSyncPutAwayPendency();
+
+        void executeWsSaveBlindItem();
     }
 
     interface I_View{

@@ -159,11 +159,12 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                 bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound_item.getSerial_code()));
                 try {
                     bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound_item.getSerial().get(0).getSerial_id()));
-                }catch (NullPointerException e ){
+                }catch (Exception e ){
                     e.printStackTrace();
                     bundle.putString(MD_Product_SerialDao.SERIAL_ID, data.getSerial_id());
                 }
                 bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                mView.callAct061(bundle);
                 break;
             case ConstantBaseApp.IO_PROCESS_OUT_CONF:
 
@@ -181,7 +182,12 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                 MD_Product_Serial serial = getSerial(data);
                 bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) serial.getProduct_code());
                 bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, (int) serial.getSerial_code());
-                bundle.putInt(MD_Product_SerialDao.CLASS_CODE, (int) serial.getClass_code());
+                try {
+                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, (int) serial.getClass_code());
+                }catch (Exception e ){
+                    e.printStackTrace();
+                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, -1);
+                }
                 bundle.putInt(IO_Blind_MoveDao.ZONE_CODE,-1 );
                 bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE,-1 );
                 bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);

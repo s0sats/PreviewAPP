@@ -221,8 +221,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                     ivStatusIcon.setVisibility(View.VISIBLE);
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_bold_black_24dp));
                     break;
-                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                case ConstantBaseApp.IO_INBOUND:
+                case ConstantBaseApp.IO_OUTBOUND:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                 case ConstantBaseApp.IO_PROCESS_MOVE:
                     ivStatusIcon.setVisibility(View.VISIBLE);

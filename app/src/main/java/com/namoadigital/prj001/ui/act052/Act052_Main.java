@@ -29,6 +29,7 @@ import com.namoadigital.prj001.ui.act059.Act059_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act064.Act064_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -301,7 +302,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
-        if(data.getSite_code() == null){
+        if(data.getSite_code() == null && !ConstantBaseApp.IO_PROCESS_IN_CONF.equals(data.getProcess_type())) {
             mPresenter.editNonLocationSerial(data);
         }else {
             mPresenter.executeWsProcessDownload(data);
