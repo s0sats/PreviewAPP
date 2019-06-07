@@ -169,8 +169,8 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             case ConstantBaseApp.IO_PROCESS_OUT_CONF:
 
                 break;
-            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+            case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
+            case ConstantBaseApp.SYS_STATUS_PICKING:
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                 IO_Move io_move = getMove(data);
                 bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
