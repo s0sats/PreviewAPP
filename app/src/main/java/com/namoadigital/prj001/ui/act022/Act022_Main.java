@@ -118,6 +118,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
         mk_serial_id.setHint(hmAux_Trans.get("serial_hint_lbl"));
+        //LUCHE - 10/06/2019
+        setupMketSerialInputTech();
 
         if (supportNFC) {
             iv_nfc.setVisibility(View.VISIBLE);
@@ -141,6 +143,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         mdProduct = mPresenter.getMD_Produt(product_code);
 
         tv_product_desc.setText(mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+        //LUCHE - 10/06/2019
+        setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
     }
 
     private void recoverIntentsInfo() {
@@ -227,6 +231,55 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
                 mPresenter.processValidation(product_code, serial_id, "", mk_serial_id.getText().toString());
             }
         });
+    }
+
+    /**
+     * LUCHE - 10/06/2019
+     * <p>
+     * Metodo que seta quais são as tecnologias de entrada de dados
+     * usando os parametros do profile.
+     */
+    private void setupMketSerialInputTech() {
+        //LUCHE - 10/06/2019
+        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
+        //via parametro do profile.
+        mk_serial_id.setmOCR(false);
+        mk_serial_id.setmNFC(false);
+        mk_serial_id.setmBARCODE(
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+            )
+        );
+        //Verifica se a lib de OCR esta importada no flavor
+        //e se o profise do user possui acesso ao OCR
+        if (ToolBox_Inf.isMicroBlinkImported()) {
+            mk_serial_id.setmOCRVin(
+                ToolBox_Inf.profileExists(
+                    context,
+                    Constant.PROFILE_MENU_PROFILE,
+                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                )
+            );
+        } else {
+            mk_serial_id.setmOCRVin(false);
+        }
+    }
+
+    /**
+     * 14/11/18 - LUCHE
+     * Adicionando metodo para que a validação a "quebra de leitura de vin" fosse possivel. Necessidade
+     * MOSOLF
+     * Seta regra de validação no campo.
+     * Seta também variaveis para ignorarem mim e max e validação de vin após leitura de barcode
+     * para true;
+     * @param serial_rule
+     */
+    public void setSerialRule(String serial_rule){
+        mk_serial_id.setmInputTypeValidator(serial_rule);
+        mk_serial_id.setmIgnoreVINValidationOnRead(true);
+        mk_serial_id.setmIgnoreMaxMinSize(true);
     }
 
     @Override
