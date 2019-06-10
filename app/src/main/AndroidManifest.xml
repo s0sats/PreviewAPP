@@ -390,11 +390,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.act060.Act060_Main"
+        <activity
+            android:name=".ui.act060.Act060_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act061.Act061_Main"
             android:label="@string/app_name"
@@ -415,6 +416,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act064.Act064_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act065.Act065_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
