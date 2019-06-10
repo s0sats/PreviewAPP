@@ -122,6 +122,7 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
             record.setInbound_code(Integer.parseInt(hmAux.get(IO_InboundDao.INBOUND_CODE)));
             record.setInbound_id(hmAux.get(IO_InboundDao.INBOUND_ID));
             record.setInbound_desc(hmAux.get(IO_InboundDao.INBOUND_DESC));
+            record.setTransport_order(hmAux.get(IO_InboundDao.TRANSPORT_ORDER));
             record.setCreate_date(null);
             record.setEta_date(hmAux.get(IO_InboundDao.ETA_DATE));
             record.setInvoice_number(hmAux.get(IO_InboundDao.INVOICE_NUMBER));

@@ -132,6 +132,30 @@
             />
 
         <TextView
+                android:id="@+id/act057_io_inbound_cell_tv_transpor_order"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Transport: - Trad"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/act057_io_inbound_cell_guide_start"
+                app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_desc_val" />
+
+        <TextView
+                android:id="@+id/act057_io_inbound_cell_tv_transpor_order_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="xx.xx.xx"
+                app:layout_constraintBottom_toBottomOf="@+id/act057_io_inbound_cell_tv_transpor_order"
+                app:layout_constraintEnd_toStartOf="@+id/act057_io_inbound_cell_guide_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_transpor_order"
+                app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_transpor_order"
+                app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
             android:id="@+id/act057_io_inbound_cell_tv_create_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -139,7 +163,7 @@
             android:text="Data: - Trad"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/act057_io_inbound_cell_guide_start"
-            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_desc_val" />
+            app:layout_constraintTop_toBottomOf="@+id/act057_io_inbound_cell_tv_transpor_order_val" />
 
         <TextView
             android:id="@+id/act057_io_inbound_cell_tv_create_date_val"

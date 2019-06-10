@@ -17,6 +17,7 @@ public class IO_Inbound_Search_Record implements Serializable {
     private Float perc_done;
     private String from;
     private String modal;
+    private String transport_order;
     //Propriedade usada somente no adapter
     private boolean toDownload;
     private boolean sameSiteAsLoggedOrFree;
@@ -123,6 +124,14 @@ public class IO_Inbound_Search_Record implements Serializable {
 
     public void setModal(String modal) {
         this.modal = modal;
+    }
+
+    public String getTransport_order() {
+        return transport_order;
+    }
+
+    public void setTransport_order(String transport_order) {
+        this.transport_order = transport_order;
     }
 
     public boolean isToDownload() {

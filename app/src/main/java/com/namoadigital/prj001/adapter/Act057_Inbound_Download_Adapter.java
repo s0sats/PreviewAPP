@@ -91,6 +91,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         transList.add("invoice_lbl");
         transList.add("from_lbl");
         transList.add("modal_lbl");
+        transList.add("transport_order_lbl");
         transList.add("comment_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -152,6 +153,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         private TextView tv_inbound_id_val;
         private TextView tv_inbound_desc;
         private TextView tv_inbound_desc_val;
+        private TextView tv_transport_order;
+        private TextView tv_transport_order_val;
         private TextView tv_create_dt;
         private TextView tv_create_dt_val;
         private TextView tv_eta_dt;
@@ -209,6 +212,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             tv_inbound_id_val= itemView.findViewById(R.id.act057_io_inbound_cell_tv_id_val);
             tv_inbound_desc = itemView.findViewById(R.id.act057_io_inbound_cell_tv_desc);
             tv_inbound_desc_val= itemView.findViewById(R.id.act057_io_inbound_cell_tv_desc_val);
+            tv_transport_order = itemView.findViewById(R.id.act057_io_inbound_cell_tv_transpor_order);
+            tv_transport_order_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_transpor_order_val);
             tv_create_dt = itemView.findViewById(R.id.act057_io_inbound_cell_tv_create_date);
             tv_create_dt_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_create_date_val);
             tv_eta_dt  = itemView.findViewById(R.id.act057_io_inbound_cell_tv_eta_date);
@@ -264,6 +269,12 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
                 tv_inbound_desc_val.setText(data.getInbound_desc());
                 tv_inbound_desc.setVisibility(View.VISIBLE);
                 tv_inbound_desc_val.setVisibility(View.VISIBLE);
+            }
+            if(data.getTransport_order() != null && data.getTransport_order().trim().length() > 0){
+                tv_transport_order.setText(hmAux_Trans.get("transport_order_lbl"));
+                tv_transport_order_val.setText(data.getTransport_order());
+                tv_transport_order.setVisibility(View.VISIBLE);
+                tv_transport_order_val.setVisibility(View.VISIBLE);
             }
             tv_create_dt.setVisibility(View.GONE);
             tv_create_dt_val.setVisibility(View.GONE);
@@ -337,6 +348,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             cl_main_bg.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
             chkDownload.setVisibility(isOnline ? View.VISIBLE : View.GONE);
             iv_offline.setVisibility(isOnline ? View.GONE :View.VISIBLE);
+            tv_transport_order.setVisibility(View.GONE);
+            tv_transport_order_val.setVisibility(View.GONE);
             tv_modal.setVisibility(View.GONE);
             tv_modal_val.setVisibility(View.GONE);
             tv_comment.setVisibility(View.GONE);
