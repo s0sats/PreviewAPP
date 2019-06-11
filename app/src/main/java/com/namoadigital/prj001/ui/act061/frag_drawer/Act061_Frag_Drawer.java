@@ -11,8 +11,11 @@ import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import az.plainpie.PieView;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -27,6 +30,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import az.plainpie.PieView;
 
 public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Drawer_Contract.I_View {
     public static final String DRAWER_FIRST_LOAD = "DRAWER_FIRST_LOAD";

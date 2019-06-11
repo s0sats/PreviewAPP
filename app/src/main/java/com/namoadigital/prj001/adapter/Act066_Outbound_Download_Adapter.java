@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.IO_Inbound_Search_Record;
+import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -26,12 +26,12 @@ import java.util.List;
 
 import az.plainpie.PieView;
 
-public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private Context context;
     private int resource;
-    private List<IO_Inbound_Search_Record> mValues;
-    private List<IO_Inbound_Search_Record> mFilteredValues;
+    private List<IO_Outbound_Search_Record> mValues;
+    private List<IO_Outbound_Search_Record> mFilteredValues;
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String mResource_Name = "act057_inbound_download_adapter";
@@ -45,7 +45,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private OnItemCheckedChangeListener mOnItemCheckedChangeListener;
 
     public interface OnItemClickListner{
-        void onItemClick(IO_Inbound_Search_Record item);
+        void onItemClick(IO_Outbound_Search_Record item);
     }
 
     public interface OnItemCheckedChangeListener{
@@ -68,7 +68,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         this.mOnItemCheckedChangeListener = mOnItemCheckedChangeListener;
     }
 
-    public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline , boolean pendencies) {
+    public Act066_Outbound_Download_Adapter(Context context, List<IO_Outbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline , boolean pendencies) {
         this.context = context;
         this.mValues = mValues;
         this.resource = R.layout.act057_io_inbound_cell;
@@ -134,14 +134,14 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
 
     }
 
-    public String getInboundsToDownload(){
+    public String getOutboundsToDownload(){
         String inboundToDownload = "";
         //
         for(int i = 0;i < mFilteredValues.size(); i++){
             if(mFilteredValues.get(i).isToDownload()){
                 inboundToDownload += "|"+
-                            mFilteredValues.get(i).getInbound_prefix()+"."+
-                            mFilteredValues.get(i).getInbound_code();
+                        mFilteredValues.get(i).getOutbound_prefix()+"."+
+                        mFilteredValues.get(i).getOutbound_code();
             }
         }
         //
@@ -207,26 +207,26 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
                     }
                 }
             });
-            iv_offline = itemView.findViewById(R.id.act057_io_inbound_cell_iv_offline);
-            tv_status = itemView.findViewById(R.id.act057_io_inbound_cell_tv_status);
-            pv_done = itemView.findViewById(R.id.act057_io_inbound_cell_pv_done);
+            iv_offline = itemView.findViewById(R.id.act066_io_outbound_cell_iv_offline);
+            tv_status = itemView.findViewById(R.id.act066_io_outbound_cell_tv_status);
+            pv_done = itemView.findViewById(R.id.act066_io_outbound_cell_pv_done);
             configPvUI(pv_done);
-            tv_inbound_id = itemView.findViewById(R.id.act057_io_inbound_cell_tv_id);
-            tv_inbound_id_val= itemView.findViewById(R.id.act057_io_inbound_cell_tv_id_val);
-            tv_inbound_desc = itemView.findViewById(R.id.act057_io_inbound_cell_tv_desc);
-            tv_inbound_desc_val= itemView.findViewById(R.id.act057_io_inbound_cell_tv_desc_val);
-            tv_create_dt = itemView.findViewById(R.id.act057_io_inbound_cell_tv_create_date);
-            tv_create_dt_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_create_date_val);
-            tv_eta_dt  = itemView.findViewById(R.id.act057_io_inbound_cell_tv_eta_date);
-            tv_eta_dt_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_eta_date_val);
-            tv_invoice = itemView.findViewById(R.id.act057_io_inbound_cell_tv_invoice);
-            tv_invoice_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_invoice_val);
-            tv_from = itemView.findViewById(R.id.act057_io_inbound_cell_tv_from);
-            tv_from_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_from_val);
-            tv_modal = itemView.findViewById(R.id.act057_io_inbound_cell_tv_modal);
-            tv_modal_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_modal_val);
-            tv_comment = itemView.findViewById(R.id.act057_io_inbound_cell_tv_comment);
-            tv_comment_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_comment_val);
+            tv_inbound_id = itemView.findViewById(R.id.act066_io_outbound_cell_tv_id);
+            tv_inbound_id_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_id_val);
+            tv_inbound_desc = itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc);
+            tv_inbound_desc_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc_val);
+            tv_create_dt = itemView.findViewById(R.id.act066_io_outbound_cell_tv_create_date);
+            tv_create_dt_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_create_date_val);
+            tv_eta_dt  = itemView.findViewById(R.id.act066_io_outbound_cell_tv_eta_date);
+            tv_eta_dt_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_eta_date_val);
+            tv_invoice = itemView.findViewById(R.id.act066_io_outbound_cell_tv_invoice);
+            tv_invoice_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_invoice_val);
+            tv_from = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to);
+            tv_from_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to_val);
+            tv_modal = itemView.findViewById(R.id.act066_io_outbound_cell_tv_modal);
+            tv_modal_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_modal_val);
+            tv_comment = itemView.findViewById(R.id.act066_io_outbound_cell_tv_comment);
+            tv_comment_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_comment_val);
         }
 
         private void configPvUI(PieView pv_done) {
@@ -243,7 +243,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             return itemView;
         }
 
-        public void bindData(IO_Inbound_Search_Record data){
+        public void bindData(IO_Outbound_Search_Record data){
             //Esconde views
             resetVisibility();
             //
@@ -257,17 +257,17 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             //pv_done.setInnerText("✓");
             tv_inbound_id.setVisibility(View.GONE);
             tv_inbound_id_val.setVisibility(View.GONE);
-            if(data.getInbound_id() != null && data.getInbound_id().trim().length() > 0){
+            if(data.getOutbound_id() != null && data.getOutbound_id().trim().length() > 0){
                 tv_inbound_id.setText(hmAux_Trans.get("inbound_id_lbl"));
-                tv_inbound_id_val.setText(data.getInbound_id());
+                tv_inbound_id_val.setText(data.getOutbound_id());
                 tv_inbound_id.setVisibility(View.VISIBLE);
                 tv_inbound_id_val.setVisibility(View.VISIBLE);
             }
             tv_inbound_desc.setVisibility(View.GONE);
             tv_inbound_desc_val.setVisibility(View.GONE);
-            if(data.getInbound_desc() != null && data.getInbound_desc().trim().length() > 0){
+            if(data.getOutbound_desc() != null && data.getOutbound_desc().trim().length() > 0){
                 tv_inbound_desc.setText(hmAux_Trans.get("inbound_desc_lbl"));
-                tv_inbound_desc_val.setText(data.getInbound_desc());
+                tv_inbound_desc_val.setText(data.getOutbound_desc());
                 tv_inbound_desc.setVisibility(View.VISIBLE);
                 tv_inbound_desc_val.setVisibility(View.VISIBLE);
             }
@@ -310,9 +310,9 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             //
             tv_from.setVisibility(View.GONE);
             tv_from_val.setVisibility(View.GONE);
-            if(data.getFrom() != null && data.getFrom().trim().length() > 0) {
+            if(data.getTo() != null && data.getTo().trim().length() > 0) {
                 tv_from.setText(hmAux_Trans.get("from_lbl"));
-                tv_from_val.setText(data.getFrom());
+                tv_from_val.setText(data.getTo());
                 //
                 tv_from.setVisibility(View.VISIBLE);
                 tv_from_val.setVisibility(View.VISIBLE);
@@ -365,21 +365,21 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
 //            if (charString.isEmpty()) {
 //                mFilteredValues = mValues;
 //            } else {
-                List<IO_Inbound_Search_Record> filteredList = new ArrayList<>();
-                for (IO_Inbound_Search_Record row : mValues) {
-                    //Resgata todos os campos concatenado e com remoção de acentuacao
-                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
-                    if (rowFields.contains(charString)
+            List<IO_Outbound_Search_Record> filteredList = new ArrayList<>();
+            for (IO_Outbound_Search_Record row : mValues) {
+                //Resgata todos os campos concatenado e com remoção de acentuacao
+                String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
+                if (rowFields.contains(charString)
                         && (
-                            (pendingFilter && processFilter)
-                            || (!pendingFilter || (pendingFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)))
-                            && (!processFilter || (processFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)))
-                        )
-                    ) {
-                        filteredList.add(row);
-                    }
+                        (pendingFilter && processFilter)
+                                || (!pendingFilter || (pendingFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)))
+                                && (!processFilter || (processFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)))
+                )
+                ) {
+                    filteredList.add(row);
                 }
-                mFilteredValues = filteredList;
+            }
+            mFilteredValues = filteredList;
             //}
             FilterResults filterResults = new FilterResults();
             filterResults.count = mFilteredValues.size();
@@ -389,7 +389,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mFilteredValues = (ArrayList<IO_Inbound_Search_Record>) results.values;
+            mFilteredValues = (ArrayList<IO_Outbound_Search_Record>) results.values;
             notifyDataSetChanged();
         }
     }

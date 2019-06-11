@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**

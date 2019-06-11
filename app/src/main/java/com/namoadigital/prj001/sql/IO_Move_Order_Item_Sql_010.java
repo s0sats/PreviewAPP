@@ -5,7 +5,6 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class IO_Move_Order_Item_Sql_010 implements Specification{

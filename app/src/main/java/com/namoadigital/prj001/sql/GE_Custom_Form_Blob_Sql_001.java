@@ -1,9 +1,7 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 
 /**
  * Created by neomatrix on 08/02/17.

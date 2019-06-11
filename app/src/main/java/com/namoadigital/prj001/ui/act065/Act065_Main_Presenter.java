@@ -41,7 +41,7 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
     @Override
     public String getOutboundPendencies() {
-        return null;
+        return "0";
     }
 
     @Override

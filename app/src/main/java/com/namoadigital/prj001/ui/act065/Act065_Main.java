@@ -92,9 +92,9 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPresenter.checkSearchParamFilled(ss_zone,ss_local,mket_outbound,mket_invoice)){
+                if (mPresenter.checkSearchParamFilled(ss_zone, ss_local, mket_outbound, mket_invoice)) {
                     mPresenter.checkSearchFlow();
-                }else{
+                } else {
                     showAlert(
                             hmAux_Trans.get("alert_fill_search_field_ttl"),
                             hmAux_Trans.get("alert_fill_search_field_msg")
@@ -103,25 +103,25 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
             }
         });
         //
-//        btn_creation.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                callAct061();
-//            }
-//        });
-        //
+        btn_creation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                callAct067();
+            }
+        });
+
         btn_pendencies.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPresenter.getOutboundPendencies().equalsIgnoreCase("0")){
+                if (mPresenter.getOutboundPendencies().equalsIgnoreCase("0")) {
                     showAlert(
                             hmAux_Trans.get("alert_no_pendencies_ttl"),
                             hmAux_Trans.get("alert_no_pendencies_msg")
                     );
-                }else{
+                } else {
                     Bundle bundle = new Bundle();
                     //
-                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT056);
 //                    bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
                     //
 //                    callAct057(bundle);
@@ -145,8 +145,8 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
     }
 
     private void processLocalValueChange(HMAux hmAux) {
-        if(!ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)){
-            mPresenter.loadZoneSS(ss_zone,false,true);
+        if (!ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+            mPresenter.loadZoneSS(ss_zone, false, true);
             //
             ToolBox_Inf.setSSmValue(
                     ss_zone,
@@ -156,7 +156,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
                     false
             );
             //
-            mPresenter.loadLocalSS(ss_zone,ss_local,false);
+            mPresenter.loadLocalSS(ss_zone, ss_local, false);
         }
     }
 
@@ -245,7 +245,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         btn_pendencies.setText(setBtnPendenciesQty());
         //
         //Se profile de criação de outbound, exibi btn
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND_NEW)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND_NEW)) {
             btn_creation.setVisibility(View.VISIBLE);
         }
         //Add componentes nas listas da base act
@@ -257,7 +257,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
 
     private String setBtnPendenciesQty() {
         return hmAux_Trans.get("btn_pendencies")
-                +" ("+mPresenter.getOutboundPendencies()+")";
+                + " (" + mPresenter.getOutboundPendencies() + ")";
     }
 
     private void bindViews() {
@@ -291,10 +291,11 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
     /**
      * Metodo chamado quando o valor do spinner de site é alterado, seja via leitura do barcode ou
      * via mudança via spinner.
+     *
      * @param hmAux
      */
     private void processZoneValueChange(HMAux hmAux) {
-        mPresenter.loadLocalSS(ss_zone,ss_local,true);
+        mPresenter.loadLocalSS(ss_zone, ss_local, true);
         //
         if (hmAux != null && hmAux.size() > 0 && ss_local.getmOption().size() == 1) {
             ss_local.setmValue(ss_local.getmOption().get(0));

@@ -4,7 +4,6 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 

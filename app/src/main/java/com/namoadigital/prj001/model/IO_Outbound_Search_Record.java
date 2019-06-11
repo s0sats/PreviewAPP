@@ -12,9 +12,12 @@ public class IO_Outbound_Search_Record {
     private String invoice_number;
     private String status;
     private String comments;
-    private Double perc_done;
+    private Float perc_done;
     private String to;
     private String modal;
+    //Propriedade usada somente no adapter
+    private boolean toDownload;
+    private boolean sameSiteAsLoggedOrFree;
 
     public int getCustomer_code() {
         return customer_code;
@@ -96,11 +99,11 @@ public class IO_Outbound_Search_Record {
         this.comments = comments;
     }
 
-    public Double getPerc_done() {
+    public Float getPerc_done() {
         return perc_done;
     }
 
-    public void setPerc_done(Double perc_done) {
+    public void setPerc_done(Float perc_done) {
         this.perc_done = perc_done;
     }
 
@@ -118,5 +121,40 @@ public class IO_Outbound_Search_Record {
 
     public void setModal(String modal) {
         this.modal = modal;
+    }
+
+    public boolean isToDownload() {
+        return toDownload;
+    }
+
+    public void setToDownload(boolean toDownload) {
+        this.toDownload = toDownload;
+    }
+
+    public boolean isSameSiteAsLoggedOrFree() {
+        return sameSiteAsLoggedOrFree;
+    }
+
+    public void setSameSiteAsLoggedOrFree(boolean sameSiteAsLoggedOrFree) {
+        this.sameSiteAsLoggedOrFree = sameSiteAsLoggedOrFree;
+    }
+
+    public String getAllFieldForFilter(){
+
+        return  (
+                outbound_prefix + "|" +
+                        outbound_code + "|" +
+                        outbound_id + "|" +
+                        outbound_desc + "|" +
+                        create_date + "|" +
+                        eta_date + "|" +
+                        invoice_number + "|" +
+                        //status + "|" +
+                        //comments + "|" +
+                        to + "|" +
+                        modal)
+                .replace("null|","")
+                .replace("null","")
+                ;
     }
 }
