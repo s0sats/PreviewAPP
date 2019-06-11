@@ -3,12 +3,14 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-
+import android.support.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -158,6 +160,30 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
     @Override
     public GE_Custom_Form_Data getByString(String s_query) {
+         return getByString(s_query,null);
+//        GE_Custom_Form_Data custom_form_data = null;
+//        openDB();
+//
+//        try {
+//
+//            Cursor cursor = db.rawQuery(s_query, null);
+//
+//            while (cursor.moveToNext()) {
+//                custom_form_data = toGE_Custom_Form_DataMapper.map(cursor);
+//            }
+//
+//            cursor.close();
+//        } catch (Exception e) {
+//            ToolBox_Inf.registerException(getClass().getName(), e);
+//        } finally {
+//        }
+//
+//        closeDB();
+//
+//        return custom_form_data;
+    }
+
+    public GE_Custom_Form_Data getByString(String s_query,@Nullable DaoObjReturn daoObjReturn) {
         GE_Custom_Form_Data custom_form_data = null;
         openDB();
 
@@ -171,7 +197,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
+            if(daoObjReturn != null){
+                daoObjReturn.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
+            }
+            //
             ToolBox_Inf.registerException(getClass().getName(), e);
+
         } finally {
         }
 
@@ -179,7 +210,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
         return custom_form_data;
     }
-
     @Override
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;

@@ -603,6 +603,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
         bundle.putInt(Constant.GC_STATUS_JUMP, jump_validation_UR);//Valida Update require
         bundle.putInt(Constant.GC_STATUS, 1);
+        //LUCHE - 07/06/2019
+        //Add param que redefine timeout da chamada.Usada somente no sync full
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 120000);
 
         mIntent.putExtras(bundle);
         //

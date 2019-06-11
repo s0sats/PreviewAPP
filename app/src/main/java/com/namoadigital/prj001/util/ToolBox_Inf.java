@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -190,6 +191,13 @@ public class ToolBox_Inf {
         if (!dirApk.exists()) {
             dirApk.mkdir();
         }
+        //10/05/2019 - Diretorio da apk baixada.
+        File dirUnsetImg = new File(Constant.UNSENT_IMG_PATH);
+        if (!dirUnsetImg.exists()) {
+            dirUnsetImg.mkdir();
+        }
+
+
     }
 
     public static String md5(String s) {
@@ -405,6 +413,33 @@ public class ToolBox_Inf {
                     , json);
 
             return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return "Error: " + e.toString();
+        }
+    }
+
+    /**
+     * Luche - 10/05/2019
+     *
+     * Metodo para upload de imagem que foram movidas para pasta UnsentImgs
+     *
+     * @param json - Json do Envio
+     * @param filePath - String com o caminho do diretorio pasta onde o arquivo esta localizado
+     * @param fileName - String com o nome do arquivo
+     * @param sNewName - Novo nome, quando houver
+     * @return
+     */
+    public static String uploadFileUnsentImg(String json, String filePath, String fileName,@Nullable String sNewName) {
+        try {
+            //Como no processo de SO a foto pode mudar de nome,
+            //Verifica qual o nome o arquivo esta no momento.
+            String sRealFileName = sNewName != null ? sNewName : fileName;
+            FileInputStream fstrm = new FileInputStream(filePath + "/" + sRealFileName);
+            HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD, json);
+            return hfu.Send_Now(fstrm, fileName);
 
         } catch (Exception e) {
             String error = e.toString();
@@ -1202,12 +1237,107 @@ public class ToolBox_Inf {
      */
     private static HMAux checkNewDbVersion(Context context, Integer db_version){
         HMAux aux = new HMAux();
-        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
+//        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
+//            //
+//            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
+//            ToolBox_Con.setPreference_CleanTokenFiles(context,1);
+//        }
+
+        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
             //
-            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
-            ToolBox_Con.setPreference_CleanTokenFiles(context,1);
+            if(hasPendingData(context,getListDB("C_", true))) {
+                aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
+                ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
+            }
+            //
+            if(hasUnsentImgs(context)){
+                //Se preferencia para checkar backup de imagens pra verdadeiro.
+                ToolBox_Con.setPreference_BkpUnsentImg(context,true);
+            }
         }
         return aux;
+    }
+
+    /**
+     * Verifica se existem imagens não enviadas em TODOS os bancos.
+     * @param context
+     * @return
+     */
+    public static boolean hasUnsentImgs(Context context){
+        ArrayList<GE_File> geFiles = getUnsentGeFiles(context);
+        return geFiles != null && geFiles.size() > 0;
+    }
+
+    /**
+     * Busca em todos os bancos existentes se existens imagens pendentes
+     * de envio e retorna lista as pendentes.
+     * @param context
+     * @return
+     */
+    private static ArrayList<GE_File> getUnsentGeFiles(Context context) {
+        File[] dbList = getListDB("C_", true);
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+        GE_FileDao geFileDao = null;
+        //Gera lista de GeFiles
+        for(File dbFile : dbList){
+            String[] db_full_name = dbFile.getName().contains("_") ? dbFile.getName().split("_") : new String[]{};
+            //Valida customer_code,pois o code esta sendo gerado pelo nome do arquivo.
+            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
+            //
+            if(customer_code != null && customer_code != -1){
+                geFileDao = new GE_FileDao(
+                    context,
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                geFiles.addAll(geFileDao.query(
+                    new GE_File_Sql_001().toSqlQuery()
+                    )
+                );
+            }
+        }
+        //
+        return geFiles;
+    }
+
+    /**
+     * LUCHE - 13/05/2019
+     * Metodo que move as imagens pendentes de envio para pasta de UnsentImgs.
+     * @param context - Contexto
+     * @return false se erro ao copiar alguma foto
+     */
+    public static boolean moveUnsentImgs(Context context) {
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+        int errorCount = 0;
+        //Recebe lista de imagens a serem enviadas.
+        geFiles = getUnsentGeFiles(context);
+        //CopiaArquivos
+        for(GE_File geFile : geFiles){
+            File fromFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO,geFile.getFile_path());
+            File toFile = new File(ConstantBaseApp.UNSENT_IMG_PATH);
+            try {
+                //Verifica se arquivo EXISTE na pasta origem e NÃO EXISTE na destino
+                if( verifyDownloadFileInf(geFile.getFile_path(),fromFile.getParent())
+                    && !verifyDownloadFileInf(geFile.getFile_path(),toFile.getParent())
+                ) {
+                    copyFile(fromFile, toFile);
+//                    if(!fromFile.renameTo(toFile)){
+//                        errorCount++;
+//                    }
+                }
+            }catch (Exception e){
+                registerException(CLASS_NAME,e);
+                errorCount++;
+            }
+        }
+        //Se itens na lista, chama serviço de envio
+        if(geFiles.size() > 0){
+            Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
+            context.sendBroadcast(mIntent);
+        }
+        //Se contador de erro 0 , então sucesso.
+        return errorCount == 0;
     }
 
     public static String BitMapToBase64(Bitmap bm) {
@@ -2283,7 +2413,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean isUploadRunning() {
-        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING) {
+        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
             return true;
         }
         return false;

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -151,7 +152,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private HMAux oldZone = new HMAux();
     private HMAux oldLocal = new HMAux();
     private boolean serialIdChanged = false;
-    private boolean pausedByScan = false;
+    //Variavel que controla de no onResume, o metodo loadDataToScreen deve ser ignorado.
+    private boolean skipLoadDataToScreen = false;
     private boolean siteChanged = false;
     //VIEW_SO_EDIT
     private TextView tv_brand_model_color;
@@ -556,7 +558,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
-
+        skipLoadDataToScreen = false;
+        //
         View view = inflater.inflate(R.layout.frg_serial_edit, container, false);
 
         recoverBundleInfo();
@@ -1460,7 +1463,17 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
             public void reportTextBySpecialist(String s) {
-                pausedByScan = true;
+                //skipLoadDataToScreen = true;
+            }
+        });
+        //LUCHE - 04/06/2019
+        //A interface IMKEditTextTextBySpecialist só é dispara se o barcode é lido, em caso de desistencia,
+        //não era acionado e o metodo onResume era rodado fazendo com que as informações alteradas fossem perdidas.
+        //Implementado listner no click do drawable direito "barcode"
+        mket_serial_id.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
+                skipLoadDataToScreen = true;
             }
         });
         //Clique para abertura do dialog com informações de log.
@@ -1563,20 +1576,17 @@ public class Frg_Serial_Edit extends BaseFragment {
                     }
                     handleMoveReasonSS();
                 }
-
-
             }
         });
         //
         ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
-                Log.i("MoveReason", "onItemPreSelected");
+
             }
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                Log.i("MoveReason", "onItemPostSelected");
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
                 if (
                         ss_site.getmValue().get(SearchableSpinner.CODE) == null
@@ -1618,7 +1628,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                 handleMoveReasonSS();
             }
         });
-
         //
         ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -1938,11 +1947,23 @@ public class Frg_Serial_Edit extends BaseFragment {
         final ImageView iv_close = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
         //
         tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
-        //setDelegateTextBySpecialist
-        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+
+        //LUCHE - 04/06/2019
+        //Modificado interface que seta o skipLoadDataToScreen para true.
+        //A interface IMKEditTextTextBySpecialist só é dispara se o barcode é lido, em caso de desistencia,
+        //não era acionado e o metodo onResume era rodado fazendo com que as informações alteradas fossem perdidas.
+        //Implementado listner no click do drawable direito "barcode"
+        //
+//        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+//            @Override
+//            public void reportTextBySpecialist(String s) {
+//                skipLoadDataToScreen = true;
+//            }
+//        });
+        mket_tracking.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
             @Override
-            public void reportTextBySpecialist(String s) {
-                pausedByScan = true;
+            public void reportDrawbleRightClick(int i) {
+                skipLoadDataToScreen = true;
             }
         });
         builder.setView(view);
@@ -2487,6 +2508,19 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
         HMAux siteSelected = ss_site.getmValue();
+        //LUCHE - 05/06/2019
+        //Verifica se apesar da flag siteChanged ser verdadeira, o site que esta no mdProdSerial é
+        //igual ao site selecionado.
+        //Essa situação acontece na criação de serial, se o usuario trocar o site e depois alterar o serial id digitado.
+        //Ao após verificar existencia, e o serial di digitado for novo, os dados da tela são setados no obj. Por isso,
+        //é necessario validá-la aqui.
+        if (mdProductSerial.getSite_code() != null
+            && siteSelected.hasConsistentValue(SearchableSpinner.ID)
+            && siteSelected.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
+        ) {
+            Log.d("SITE_CHANGE", "true");
+            return true;
+        }
         //Por mais maluco que seja, esse if abaixo significa
         //if site origem null == site.atual null
         if (
@@ -2502,16 +2536,6 @@ public class Frg_Serial_Edit extends BaseFragment {
             Log.d("SITE_CHANGE", "true");
             return true;
         }
-        //Valida se hmAux tem as chave, mas ainda pode ser null
-//        if (
-//            !siteSelected.containsKey(SearchableSpinner.ID)
-//            || !siteSelected.containsKey(SearchableSpinner.DESCRIPTION)
-//            || !siteSelected.containsKey(MD_SiteDao.SITE_ID)
-//            || !siteSelected.containsKey(MD_SiteDao.IO_CONTROL)
-//            || !siteSelected.containsKey(MD_SiteDao.INBOUND_AUTO_CREATE)
-//        ) {
-//            return false;
-//        }
         //
         if (mdProductSerial.getProduct_io_control() == 0) {
             Log.d("SITE_CHANGE", "true");
@@ -2560,7 +2584,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_site.setBackground(context.getDrawable(R.drawable.shape_error));
         ss_site_zone.setBackground(context.getDrawable(R.drawable.shape_error));
         ss_site_zone_local.setBackground(context.getDrawable(R.drawable.shape_error));
-
         //Pega posição do ultimo item e faz Scroll
         int x = (int) ss_site_zone_local.getX();
         int y = ss_site_zone_local.getTop() + ((View) ss_site_zone_local.getParent()).getTop();
@@ -3012,24 +3035,26 @@ public class Frg_Serial_Edit extends BaseFragment {
             //if (mdProduct.getSite_restriction() == 1) {
             if (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction) {
                 if (ss_site.getmOption() == null
-                        || ss_site.getmOption().size() == 0
+                    || ss_site.getmOption().size() == 0
                 ) {
                     abortReported = true;
                     //
                     showAlertDialog(
-                            hmAux_Trans.get("alert_no_site_option_ttl"),
-                            hmAux_Trans.get("alert_no_site_option_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    informFragAbort();
-                                }
+                        hmAux_Trans.get("alert_no_site_option_ttl"),
+                        hmAux_Trans.get("alert_no_site_option_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                informFragAbort();
                             }
+                        }
                     );
                 } else {
                     if (new_serial) {
-                        ss_site.setmValue(loggedSite);
-                        ss_site.setmEnabled(false);
+                        if(applySiteSuggestion(md_site)) {
+                            ss_site.setmValue(loggedSite);
+                            ss_site.setmEnabled(false);
+                        }
                         //}else if( mdProduct.getSite_restriction() == 1
                     } else if ((mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
                             && mdProductSerial.getSite_code() != null
@@ -3041,7 +3066,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             } else {
                 if (new_serial && !isIOProcess) {
-                    ss_site.setmValue(loggedSite);
+                    if(applySiteSuggestion(md_site)) {
+                        ss_site.setmValue(loggedSite);
+                    }
                 }
             }
         }
@@ -3049,6 +3076,33 @@ public class Frg_Serial_Edit extends BaseFragment {
         if (mdProduct.getIo_control() == 1 && mdProductSerial.getSite_io_control() != null && mdProductSerial.getSite_io_control() == 1) {
             ss_site.setmEnabled(false);
         }
+
+    }
+
+    /**
+     * LUCHE - 30/05/2019
+     *
+     * Verifica se deve sugerir site
+     * A regra que PULA a sugestão de site é :
+     *  1 -Site não controla IO
+     *  2 - Produto Não é tem restrição
+     *  3 - forceLoggedSiteRestriction é false.
+     * O metodo avalia a regra de  pular a sugestão e nega o resultado.
+     *
+     * @return
+     * @param md_site
+     */
+    private boolean applySiteSuggestion(MD_Site md_site) {
+//        return md_site != null
+//            && (md_site.getIo_control() == 1
+//                || (md_site.getIo_control() == 0
+//                    && (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
+//            )
+//        );
+        return !(md_site != null
+                    && md_site.getIo_control() == 0
+                    && mdProduct.getSite_restriction() == 0
+                    && !forceLoggedSiteRestriction);
     }
 
     private void loadZoneSS(boolean reset_val) {
@@ -3292,12 +3346,19 @@ public class Frg_Serial_Edit extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!pausedByScan) {
+        if (!skipLoadDataToScreen) {
             loadDataToScreen();
             //
             informFragIsReady();
+        }else{
+            //LUCHE - 11/06/2019
+            //Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner
+            //são muito grandes.Ex.: Usr com 5 mil sites.
+            //Ao recarregar a tela ,se flag skipLoadDataToScreen true, remonta listas dos spinner
+            //que foram zeradas no momento do onSaveInstanceState.
+            spinnersInitializer();
         }
-        pausedByScan = false;
+        skipLoadDataToScreen = false;
     }
 
     @Override
@@ -3311,9 +3372,46 @@ public class Frg_Serial_Edit extends BaseFragment {
         args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         //
         this.setArguments(args);
+        //LUCHE - 04/06/2019
+        //Para corrigir bug de recarregar os dados do serial original e listner do btn Action
+        //quando a Act sai de primeiro plano, verifica se o metodo loadDataToScrenn() deve ser rodado no
+        //onResume.
+        //Caso algum dado tenha sido alterado ou o serial digitado tenha sido alterado, não recarrega os dados.
+        if(checkSerialChanges() || serialIdChanged){
+            skipLoadDataToScreen = true;
+        }
     }
 
+    /**
+     * LUCHE - 11/06/2019
+     * Metodo implementado pois quando as listas dos SS eram muito grandes,
+     * estourava o tamanho do bundle do SaveState.
+     *
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        clearSSOptions();
+        super.onSaveInstanceState(outState);
+    }
 
+    /**
+     * LUCHE - 11/06/2019
+     * Metodo que limpa o mOptions de todos componentes SS antes de chamar o saveInstance
+     *
+     * Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner
+     * são muito grandes.Ex.: Usr com 5 mil sites.
+     */
+    private void clearSSOptions() {
+        for (int i = 0; i < serialProperties.size(); i++) {
+            Object propertie = serialProperties.get(i);
+            //Se for SearchableSpinner
+            if (propertie instanceof SearchableSpinner) {
+                ((SearchableSpinner) propertie).getmOption().clear();
+            }
+        }
+
+    }
 
     @Override
     public void onDestroyView() {
@@ -3322,4 +3420,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         bStatus = false;
     }
     //endregion
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

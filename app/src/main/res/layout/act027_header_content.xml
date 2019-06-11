@@ -821,7 +821,9 @@
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
                     android:text="Total Price"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone"
+                />
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_total_price"
@@ -830,7 +832,9 @@
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
                     android:text="1200.00"
-                    android:textSize="@dimen/font_size_title_md" />
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone"
+                />
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf1_title"

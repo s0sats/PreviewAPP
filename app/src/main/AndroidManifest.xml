@@ -640,24 +640,20 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_Serial_Log" />
         <service android:name=".service.WS_SO_Next_Orders" />
-        <service android:name=".service.WS_SO_Favorite_List" />
 
+        <service android:name=".service.WS_SO_Favorite_List" />
         <receiver android:name=".receiver.WBR_SO_Favorite_List" />
 
         <service android:name=".service.WS_SO_Client_List" />
-
         <receiver android:name=".receiver.WBR_SO_Client_List" />
 
         <service android:name=".service.WS_SO_Creation_Save" />
-
         <receiver android:name=".receiver.WBR_SO_Creation_Save" />
 
         <service android:name=".service.WS_Generate_NForm_PDF" />
-
         <receiver android:name=".receiver.WBR_Generate_NForm_PDF" />
 
         <service android:name=".service.WS_IO_Serial_Process_Search" />
-
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Search" />
 
         <service android:name=".service.WS_IO_Serial_Process_Download" />
@@ -720,6 +716,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Item_Add" />
 
+        <service android:name=".service.WS_Upload_Other_User_Img" />
+        <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
 
     </application>
 

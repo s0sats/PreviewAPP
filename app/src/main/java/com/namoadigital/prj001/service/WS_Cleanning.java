@@ -2,32 +2,11 @@ package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.FCMMessageDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
-import com.namoadigital.prj001.sql.GE_File_Sql_005;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_001;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_002;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_003;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_006;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_007;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_008;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -235,7 +214,20 @@ public class WS_Cleanning extends IntentService {
         );
 
         for (HMAux hmAux : hmAuxs) {
-
+            //LUCHE - 27/05/2019
+            //Modificado ordem do delete para primeiro deletar o item e somente depois o "cabeçalho"
+            //Modificado query que deleta a tabela cabeçalho para faze-lo apenas se ele não existir na fields
+            //
+            formFieldLocalDao.remove(
+                new GE_Custom_Form_Field_Local_Sql_004(
+                    hmAux.get("customer_code"),
+                    hmAux.get("custom_form_type"),
+                    hmAux.get("custom_form_code"),
+                    hmAux.get("custom_form_version"),
+                    hmAux.get("custom_form_data")
+                ).toSqlQuery()
+            );
+            //
             formLocalDao.remove(
                     new GE_Custom_Form_Local_Sql_007(
                             hmAux.get("customer_code"),
@@ -246,28 +238,18 @@ public class WS_Cleanning extends IntentService {
                     ).toSqlQuery()
             );
             //
-            formFieldLocalDao.remove(
-                    new GE_Custom_Form_Field_Local_Sql_004(
-                            hmAux.get("customer_code"),
-                            hmAux.get("custom_form_type"),
-                            hmAux.get("custom_form_code"),
-                            hmAux.get("custom_form_version"),
-                            hmAux.get("custom_form_data")
-                    ).toSqlQuery()
+            formDataFieldDao.remove(
+                new GE_Custom_Form_Data_Field_Sql_002(
+                    hmAux.get("customer_code"),
+                    hmAux.get("custom_form_type"),
+                    hmAux.get("custom_form_code"),
+                    hmAux.get("custom_form_version"),
+                    hmAux.get("custom_form_data")
+                ).toSqlQuery()
             );
             //
             formDataDao.remove(
                     new GE_Custom_Form_Data_Sql_002(
-                            hmAux.get("customer_code"),
-                            hmAux.get("custom_form_type"),
-                            hmAux.get("custom_form_code"),
-                            hmAux.get("custom_form_version"),
-                            hmAux.get("custom_form_data")
-                    ).toSqlQuery()
-            );
-            //
-            formDataFieldDao.remove(
-                    new GE_Custom_Form_Data_Field_Sql_002(
                             hmAux.get("customer_code"),
                             hmAux.get("custom_form_type"),
                             hmAux.get("custom_form_code"),

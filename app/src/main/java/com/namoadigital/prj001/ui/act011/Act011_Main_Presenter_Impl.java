@@ -430,7 +430,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         switch (signature) {
             case 1:
-                if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
+                if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()) && formData.getSignature_name() != null && !formData.getSignature_name().isEmpty()) {
                     checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
                 } else {
 //                    mView.showMsg(
@@ -477,6 +477,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      */
     @Override
     public void deleteFormLocal(GE_Custom_Form_Local formLocal) {
+        DaoObjReturn objReturn = new DaoObjReturn();
         GE_Custom_Form_Data customFormData = custom_form_dataDao.getByString(
             new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
                 String.valueOf(formLocal.getCustomer_code()),
@@ -484,48 +485,65 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 String.valueOf(formLocal.getCustom_form_code()),
                 String.valueOf(formLocal.getCustom_form_version()),
                 String.valueOf(formLocal.getCustom_form_data())
-            ).toSqlQuery()
+            ).toSqlQuery(),
+            objReturn
         );
         //Se não existe custom_form_data para esse custom_form_local,
         //permite a deleção.
         //Se não, registra exception e NÃO DELETA O custom_form_local
-        if(customFormData == null || customFormData.getCustomer_code() <= 0 ) {
-            custom_form_LocalDao.remove(
-                new GE_Custom_Form_Local_Sql_005(
-                    String.valueOf(formLocal.getCustomer_code()),
-                    String.valueOf(formLocal.getCustom_form_type()),
-                    String.valueOf(formLocal.getCustom_form_code()),
-                    String.valueOf(formLocal.getCustom_form_version()),
-                    String.valueOf(formLocal.getCustom_form_data())
-                ).toSqlQuery()
-            );
-        }else{
-            try{
-                Gson gson = new GsonBuilder().serializeNulls().create();
-                String JsonFormLocal = "";
-                String JsonFormData = "";
-                try{
-                    JsonFormLocal = gson.toJson(formLocal);
-                    JsonFormData = gson.toJson(customFormData);
+        if(!objReturn.hasError()) {
+            if (customFormData == null || customFormData.getCustomer_code() <= 0) {
+                custom_form_LocalDao.remove(
+                    new GE_Custom_Form_Local_Sql_005(
+                        String.valueOf(formLocal.getCustomer_code()),
+                        String.valueOf(formLocal.getCustom_form_type()),
+                        String.valueOf(formLocal.getCustom_form_code()),
+                        String.valueOf(formLocal.getCustom_form_version()),
+                        String.valueOf(formLocal.getCustom_form_data())
+                    ).toSqlQuery()
+                );
+            } else {
+                try {
+                    Gson gson = new GsonBuilder().serializeNulls().create();
+                    String JsonFormLocal = "";
+                    String JsonFormData = "";
+                    try {
+                        JsonFormLocal = gson.toJson(formLocal);
+                        JsonFormData = gson.toJson(customFormData);
 
-                }catch (Exception e){
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //
+                    String msg = "Erro ao tentar apagar o registro da GE_Custom_form_local"
+                        + " quando existe um registro na GE_Custom_Form_Data.\n "
+                        + "Situação aconteceu quando o app identificou que o form aberto era novo, não havia "
+                        + " sido salva nem via 'clique na foto',(bNew = true) e o obj formData era != null e status pending.\n"
+                        + " Chamado pelo metodo exitAlert() noOnBackPressed.\n"
+                        + " Dados do custom_form_local: \n" + JsonFormLocal + "\n"
+                        + " Dados do custom_form_data: \n" + JsonFormData + "\n";
+
+                    throw new Exception(msg);
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-                //
-                String msg =  "Erro ao tentar apagar o registro da GE_Custom_form_local"
-                             + " quando existe um registro na GE_Custom_Form_Data.\n "
-                             + "Situação aconteceu quando o app identificou que o form aberto era novo, não havia "
-                             + " sido salva nem via 'clique na foto',(bNew = true) e o obj formData era != null e status pending.\n"
-                             + " Chamado pelo metodo exitAlert() noOnBackPressed.\n"
-                             + " Dados do custom_form_local: \n" + JsonFormLocal+"\n"
-                             + " Dados do custom_form_data: \n" + JsonFormData+"\n";
-
-                throw new Exception(msg);
-            }catch (Exception e){
-                ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
     }
+
+    @Override
+    public boolean checkNFormExists(GE_Custom_Form_Local formLocal) {
+        GE_Custom_Form result = custom_formDao.getByString(
+                new GE_Custom_Form_Sql_001(
+                        String.valueOf(formLocal.getCustomer_code()),
+                        String.valueOf(formLocal.getCustom_form_type()),
+                        String.valueOf(formLocal.getCustom_form_code()),
+                        String.valueOf(formLocal.getCustom_form_version())
+                ).toSqlQuery()
+        );
+        return result != null;
+    }
+
 
     @Override
     public MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id) {

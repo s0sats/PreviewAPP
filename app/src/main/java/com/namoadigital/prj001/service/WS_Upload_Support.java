@@ -247,6 +247,18 @@ public class WS_Upload_Support extends IntentService {
         //
         ToolBox_Inf.writeIn(device_data,deviceInfoFile);
         //
+        //LUCHE - 14/05/2019
+        //Add unsentImgs
+        //Lista /imgs/unsentImgs
+        File[] files_unsent_imgs = ToolBox_Inf.getListOfFiles_v4(Constant.UNSENT_IMG_PATH,".jpg",".png");
+        File files_unsent_imgs_list = new File(Constant.SUPPORT_PATH,"unsent_imgs.txt");
+
+        if(files_unsent_imgs_list.exists()){
+            files_unsent_imgs_list.delete();
+        }
+        for (File file : files_unsent_imgs ) {
+            ToolBox_Inf.writeIn(file.getName().concat("\n"),files_unsent_imgs_list);
+        }
         //Envia broadcast e monta zip
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_data"), "", "0");
 

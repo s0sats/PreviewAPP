@@ -31,6 +31,8 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 activateDownLoadPicture(context);
                 activateLogo(context);
                 //activeChatService(context);
+                //Add disparo do serviço de UnsentImgs
+                activateUnsentUpload(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
@@ -103,6 +105,16 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentLogo);
+    }
+
+    /**
+     * LUCHE - 14/05/2019
+     * Metodo que chama serviço de upload das imagens do diretorio UnsentImgs
+     * @param context
+     */
+    private void activateUnsentUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Other_User_Img.class);
+        context.sendBroadcast(mIntent);
     }
 
 
