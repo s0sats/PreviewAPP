@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -3022,6 +3023,13 @@ public class Frg_Serial_Edit extends BaseFragment {
             loadDataToScreen();
             //
             informFragIsReady();
+        }else{
+            //LUCHE - 11/06/2019
+            //Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner
+            //são muito grandes.Ex.: Usr com 5 mil sites.
+            //Ao recarregar a tela ,se flag skipLoadDataToScreen true, remonta listas dos spinner
+            //que foram zeradas no momento do onSaveInstanceState.
+            spinnersInitializer();
         }
         skipLoadDataToScreen = false;
     }
@@ -3047,7 +3055,36 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
     }
 
+    /**
+     * LUCHE - 11/06/2019
+     * Metodo implementado pois quando as listas dos SS eram muito grandes,
+     * estourava o tamanho do bundle do SaveState.
+     *
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        clearSSOptions();
+        super.onSaveInstanceState(outState);
+    }
 
+    /**
+     * LUCHE - 11/06/2019
+     * Metodo que limpa o mOptions de todos componentes SS antes de chamar o saveInstance
+     *
+     * Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner
+     * são muito grandes.Ex.: Usr com 5 mil sites.
+     */
+    private void clearSSOptions() {
+        for (int i = 0; i < serialProperties.size(); i++) {
+            Object propertie = serialProperties.get(i);
+            //Se for SearchableSpinner
+            if (propertie instanceof SearchableSpinner) {
+                ((SearchableSpinner) propertie).getmOption().clear();
+            }
+        }
+
+    }
 
     @Override
     public void onDestroyView() {
@@ -3056,4 +3093,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         bStatus = false;
     }
     //endregion
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
