@@ -16,9 +16,10 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Outbound_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Search;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
@@ -51,6 +52,19 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
     @Override
     public String getOutboundPendencies() {
+        HMAux hmAux = outboundDao.getByStringHM(
+                new IO_Outbound_Item_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        if(hmAux != null && hmAux.hasConsistentValue(IO_Inbound_Sql_001.PENDENCY_QTY)){
+            return hmAux.get(IO_Outbound_Item_Sql_002.PENDENCY_QTY);
+        }else{
+            //Msg informando erro?
+
+        }
+        //
         return "0";
     }
 

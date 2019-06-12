@@ -24,8 +24,11 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act066_Outbound_Download_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.ui.act065.Act065_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -35,10 +38,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act057.Act057_Main.LIST_PENDENCIES_KEY;
-
 public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I_View{
-
+    public static final String LIST_PENDENCIES_KEY = "LIST_PENDENCIES_KEY";
     private Act066_Main_Presenter mPresenter;
     private ConstraintLayout cl_no_result;
     private ConstraintLayout cl_result;
@@ -49,7 +50,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     private TextView tv_record_count;
     private MKEditTextNM mket_filter;
     private ImageView iv_status_filter;
-    private RecyclerView rv_inbound;
+    private RecyclerView rv_outbound;
     private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
@@ -57,7 +58,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     private String wsProcess;
     private String bundle_zone_code;
     private String bundle_local_code;
-    private String bundle_inbound_id;
+    private String bundle_outbound_id;
     private String bundle_invoice;
     private long bundle_record_count;
     private long bundle_record_page;
@@ -102,11 +103,11 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         transList.add("filter_hint");
         transList.add("dialog_filter_title");
         //
-        transList.add("dialog_inbound_download_ttl");
-        transList.add("dialog_inbound_download_start");
+        transList.add("dialog_outbound_download_ttl");
+        transList.add("dialog_outbound_download_start");
         transList.add("download_lbl");
-        transList.add("alert_no_inbound_selected_ttl");
-        transList.add("alert_no_inbound_selected_msg");
+        transList.add("alert_no_outbound_selected_ttl");
+        transList.add("alert_no_outbound_selected_msg");
         transList.add("no_record_found_lbl");
         transList.add("records_found_lbl");
         transList.add("records_display_limit_lbl");
@@ -117,8 +118,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         transList.add("alert_qty_records_founded");
         transList.add("alert_download_return_ttl");
         transList.add("alert_download_return_error_msg");
-        transList.add("alert_inbound_different_to_site_ttl");
-        transList.add("alert_inbound_different_to_site_msg");
+        transList.add("alert_outbound_different_to_site_ttl");
+        transList.add("alert_outbound_different_to_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -156,7 +157,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         if (bundle != null) {
             bundle_zone_code = bundle.getString(IO_InboundDao.ZONE_CODE_CONF,"");
             bundle_local_code = bundle.getString(IO_InboundDao.LOCAL_CODE_CONF,"");
-            bundle_inbound_id = bundle.getString(IO_InboundDao.INBOUND_ID,"");
+            bundle_outbound_id = bundle.getString(IO_InboundDao.INBOUND_ID,"");
             bundle_invoice = bundle.getString(IO_InboundDao.INVOICE_NUMBER,"");
             bundle_record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT,0);
             bundle_record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
@@ -173,7 +174,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         } else {
             bundle_zone_code = "";
             bundle_local_code = "";
-            bundle_inbound_id = "";
+            bundle_outbound_id = "";
             bundle_invoice = "";
             bundle_record_count = 0;
             bundle_record_page = 0;
@@ -193,7 +194,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         tv_record_count = findViewById(R.id.act066_tv_record_count);
         mket_filter = findViewById(R.id.act066_mket_filter);
         iv_status_filter = findViewById(R.id.act066_iv_status_filter);
-        rv_inbound = findViewById(R.id.act066_rv_inbound_list);
+        rv_outbound = findViewById(R.id.act066_rv_outbound_list);
         btn_download = findViewById(R.id.act066_btn_download);
     }
 
@@ -252,16 +253,16 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 public void onItemClick(IO_Outbound_Search_Record item) {
                     if(item.isSameSiteAsLoggedOrFree()) {
                         Bundle bundle = new Bundle();
-                        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+                        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
                         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getOutbound_prefix()));
                         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(item.getOutbound_code()));
                         //
-                        callAct061(bundle);
+                        callAct068(bundle);
                     }else{
                         ToolBox.alertMSG(
                                 context,
-                                hmAux_Trans.get("alert_inbound_different_to_site_ttl"),
-                                hmAux_Trans.get("alert_inbound_different_to_site_msg"),
+                                hmAux_Trans.get("alert_outbound_different_to_site_ttl"),
+                                hmAux_Trans.get("alert_outbound_different_to_site_msg"),
                                 null,
                                 0
                         );
@@ -285,14 +286,14 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
             @Override
             public void onClick(View v) {
                 if(mAdapter != null){
-                    String inbounds = mAdapter.getOutboundsToDownload();
-                    if(inbounds != null && inbounds.trim().length() > 0){
-                        mPresenter.executeOutboundDownload(inbounds);
+                    String outbounds = mAdapter.getOutboundsToDownload();
+                    if(outbounds != null && outbounds.trim().length() > 0){
+                        mPresenter.executeOutboundDownload(outbounds);
 
                     }else{
                         showAlert(
-                                hmAux_Trans.get("alert_no_inbound_selected_ttl"),
-                                hmAux_Trans.get("alert_no_inbound_selected_msg")
+                                hmAux_Trans.get("alert_no_outbound_selected_ttl"),
+                                hmAux_Trans.get("alert_no_outbound_selected_msg")
                         );
                     }
                 }
@@ -310,19 +311,126 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
             iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if(wsProcess.equals(WS_IO_Outbound_Download.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processDownloadReturn(hmAux);
+//        }else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())){
+//            progressDialog.dismiss();
+//            //
+//            mPresenter.processOutboundItemReturn(mLink);
+        }else{
+            progressDialog.dismiss();
+        }
+    }
+
+    //region Handling WS Errors
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+    //endregion
+
+
+
     @Override
     public void showAlert(String ttl, String msg) {
-
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null
+                ,0
+        );
     }
 
     @Override
     public void setRecordInfo(int record_size) {
-
+        if (record_size > 0) {
+            cl_no_result.setVisibility(View.GONE);
+            cl_limit_exceeded.setVisibility(View.GONE);
+            cl_result.setVisibility(View.VISIBLE);
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
+            //
+            if (bundle_record_count > bundle_record_page) {
+                showQtyExceededMsg();
+            }
+        } else {
+            tv_records.setVisibility(View.GONE);
+            cl_no_result.setVisibility(View.VISIBLE);
+            tv_no_records.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void showQtyExceededMsg() {
-
+        cl_limit_exceeded.setVisibility(View.VISIBLE);
+        tv_record_limit.setText(hmAux_Trans.get("records_display_limit_lbl") + " "+ bundle_record_page);
+        tv_record_count.setText(hmAux_Trans.get("records_lbl") + " "+ bundle_record_count);
+        //
+        showAlert(
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" +
+                        bundle_record_count + " " + hmAux_Trans.get("alert_qty_records_founded")
+        );
     }
 
     @Override
@@ -336,35 +444,41 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 listPendencies
         );
         //
-        rv_inbound.setAdapter(mAdapter);
-        rv_inbound.setLayoutManager(
+        rv_outbound.setAdapter(mAdapter);
+        rv_outbound.setLayoutManager(
                 new LinearLayoutManager(context)
         );
     }
 
     @Override
     public void setWsProcess(String wsProcess) {
-
+        this.wsProcess = wsProcess;
     }
 
     @Override
     public void showPD(String ttl, String msg) {
-
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
-    public void callAct056() {
-
+    public void callAct069() {
+//        Intent mIntent = new Intent(context, Act067_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(mIntent);
+        finish();
     }
 
     @Override
-    public void callAct061(Bundle bundle) {
-
-    }
-
-    @Override
-    public void callAct062() {
-
+    public void callAct068(Bundle bundle) {
+//        Intent mIntent = new Intent(context, Act068_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -376,6 +490,13 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     public void callAct065() {
         Intent mIntent = new Intent(context, Act065_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE, bundle_zone_code);
+        bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE, bundle_local_code);
+        bundle.putString(WS_IO_Outbound_Search.KEY_CODE_ID, bundle_outbound_id);
+        bundle.putString(IO_InboundDao.INVOICE_NUMBER, bundle_invoice);
+        //
         startActivity(mIntent);
         finish();
     }

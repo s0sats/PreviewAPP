@@ -124,7 +124,7 @@
             android:layout_marginTop="8dp"
             android:hint="Search Desc - Trad"
             android:inputType="text"
-            app:layout_constraintBottom_toTopOf="@id/act066_rv_inbound_list"
+            app:layout_constraintBottom_toTopOf="@id/act066_rv_outbound_list"
             app:layout_constraintEnd_toStartOf="@id/act066_iv_status_filter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act066_cl_limit_exceeded"
@@ -139,13 +139,13 @@
             android:padding="10dp"
             android:src="@drawable/ic_filter_black_24px"
             android:tint="@color/namoa_color_gray_4"
-            app:layout_constraintBottom_toTopOf="@id/act066_rv_inbound_list"
+            app:layout_constraintBottom_toTopOf="@id/act066_rv_outbound_list"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act066_cl_limit_exceeded"
             />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/act066_rv_inbound_list"
+            android:id="@+id/act066_rv_outbound_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
@@ -170,7 +170,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act066_rv_inbound_list" />
+            app:layout_constraintTop_toBottomOf="@id/act066_rv_outbound_list" />
 
     </android.support.constraint.ConstraintLayout>
 

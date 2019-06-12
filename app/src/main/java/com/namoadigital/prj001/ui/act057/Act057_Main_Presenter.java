@@ -103,7 +103,7 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
 
                 mView.callAct061(bundle);
             }else{
-                mView.callAct062();
+                mView.callAct051();
             }
         }else{
             mView.showAlert(

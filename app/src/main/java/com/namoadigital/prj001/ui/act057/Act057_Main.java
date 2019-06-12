@@ -469,7 +469,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     @Override
-    public void callAct062() {
+    public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);

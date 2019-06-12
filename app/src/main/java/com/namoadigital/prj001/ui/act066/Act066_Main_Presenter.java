@@ -9,9 +9,12 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.sql.Sql_Act057_001;
+import com.namoadigital.prj001.sql.Sql_Act066_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -57,7 +60,7 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
         mView.setOnline(false);
         //
         ArrayList<HMAux> outbounds = (ArrayList<HMAux>) outboundDao.query_HM(
-            new Sql_Act057_001(
+            new Sql_Act066_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 true,
                 true
@@ -79,14 +82,14 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
     @Override
     public void executeOutboundDownload(String outboundList) {
         if(ToolBox_Con.isOnline(context)) {
-            mView.setWsProcess(WS_IO_Outbound_Search.class.getName());
+            mView.setWsProcess(WS_IO_Outbound_Download.class.getName());
             //
             mView.showPD(
                     hmAux_Trans.get("dialog_outbound_download_ttl"),
                     hmAux_Trans.get("dialog_outbound_download_start")
             );
             //
-            Intent mIntent = new Intent(context, WBR_IO_Outbound_Search.class);
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Download.class);
             Bundle bundle = new Bundle();
             bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE, zone_code);
@@ -113,9 +116,9 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
                 bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,hmAux.get(ConstantBaseApp.HMAUX_PREFIX_KEY));
                 bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,hmAux.get(ConstantBaseApp.HMAUX_CODE_KEY));
 
-                mView.callAct061(bundle);
+//                mView.callAct061(bundle);
             }else{
-                mView.callAct062();
+                mView.callAct065();
             }
         }else{
             mView.showAlert(

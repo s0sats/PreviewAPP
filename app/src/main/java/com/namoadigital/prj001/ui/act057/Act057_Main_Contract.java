@@ -27,7 +27,7 @@ public interface Act057_Main_Contract {
 
         void callAct061(Bundle bundle);
 
-        void callAct062();
+        void callAct051();
 
         void setOnline(boolean online);
 

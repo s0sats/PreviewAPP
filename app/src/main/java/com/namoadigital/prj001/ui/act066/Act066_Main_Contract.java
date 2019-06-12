@@ -23,11 +23,9 @@ public interface Act066_Main_Contract {
 
         void showPD(String ttl, String msg);
 
-        void callAct056();
+        void callAct069();
 
-        void callAct061(Bundle bundle);
-
-        void callAct062();
+        void callAct068(Bundle bundle);
 
         void setOnline(boolean online);
 
