@@ -199,6 +199,10 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean usesSuggestionLocation = false;//Se deve considerar chamar Ws deSugestão.
     //Será usado quando erro ao criar ou alterar dados e fluxo não pode seguir
     private boolean forceSaveAgain = false;
+    //LUCHE - 12/06/2019
+    //Var que controla se site ja foi sugerido. após primeira sugestão, não deve ser mais sugerido, deve
+    //manter o que ja esta preenchido.
+    private boolean isSiteAlreadySuggested = false;
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -2284,7 +2288,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         if(ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             mdProductSerial.setClass_code(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(SearchableSpinner.CODE)));
             //mdProductSerial.setClass_id(ss_class.getmValue().get(MD_ClassDao.CLASS_ID));
-            mdProductSerial.setClass_id(ss_class.getmValue().get(SearchableSpinner.ID));
+            mdProductSerial.setClass_id(ss_class.getmValue().get(SearchableSpinner.DESCRIPTION));
             mdProductSerial.setClass_type(ss_class.getmValue().get(MD_ClassDao.CLASS_TYPE));
             mdProductSerial.setClass_available(ToolBox_Inf.mIntegerParse(ss_class.getmValue().get(MD_ClassDao.CLASS_AVAILABLE)));
             mdProductSerial.setClass_color(ss_class.getmValue().get(MD_ClassDao.CLASS_COLOR));
@@ -3051,9 +3055,11 @@ public class Frg_Serial_Edit extends BaseFragment {
                     );
                 } else {
                     if (new_serial) {
-                        if(applySiteSuggestion(md_site)) {
+                        if(applySiteSuggestion(md_site) && !isSiteAlreadySuggested) {
                             ss_site.setmValue(loggedSite);
                             ss_site.setmEnabled(false);
+                            isSiteAlreadySuggested = true;
+
                         }
                         //}else if( mdProduct.getSite_restriction() == 1
                     } else if ((mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction)
@@ -3066,8 +3072,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             } else {
                 if (new_serial && !isIOProcess) {
-                    if(applySiteSuggestion(md_site)) {
+                    if(applySiteSuggestion(md_site) && !isSiteAlreadySuggested) {
                         ss_site.setmValue(loggedSite);
+                        isSiteAlreadySuggested = true;
                     }
                 }
             }
@@ -3399,6 +3406,10 @@ public class Frg_Serial_Edit extends BaseFragment {
      * LUCHE - 11/06/2019
      * Metodo que limpa o mOptions de todos componentes SS antes de chamar o saveInstance
      *
+     * LUCHE - 12/06/2019
+     * Modificado metodo para antes de chamar a limpeza do Option,
+     * fechar o dialog. Correção de bug
+     *
      * Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner
      * são muito grandes.Ex.: Usr com 5 mil sites.
      */
@@ -3407,6 +3418,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             Object propertie = serialProperties.get(i);
             //Se for SearchableSpinner
             if (propertie instanceof SearchableSpinner) {
+                ((SearchableSpinner) propertie).dismissDialogOption();
                 ((SearchableSpinner) propertie).getmOption().clear();
             }
         }

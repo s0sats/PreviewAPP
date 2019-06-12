@@ -9,70 +9,21 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
-import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.FCMMessageDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.receiver.WBR_AP_Save;
-import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
-import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
-import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_SO_Approval;
-import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
-import com.namoadigital.prj001.receiver.WBR_Save;
-import com.namoadigital.prj001.receiver.WBR_Serial_Save;
-import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Support;
-import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.ScreenStatusService;
-import com.namoadigital.prj001.service.WS_AP_Save;
-import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
-import com.namoadigital.prj001.service.WS_Save;
-import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.CH_Message_Sql_025;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
-import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
-import com.namoadigital.prj001.sql.Sql_Act005_001;
-import com.namoadigital.prj001.sql.Sql_Act005_002;
-import com.namoadigital.prj001.sql.Sql_Act005_003;
-import com.namoadigital.prj001.sql.Sql_Act005_004;
-import com.namoadigital.prj001.sql.Sql_Act005_005;
-import com.namoadigital.prj001.sql.Sql_Act005_006;
-import com.namoadigital.prj001.sql.Sql_Act005_007;
-import com.namoadigital.prj001.sql.Sql_Act005_008;
-import com.namoadigital.prj001.sql.Sql_Act021_002;
-import com.namoadigital.prj001.sql.Sql_Act021_003;
-import com.namoadigital.prj001.sql.Sql_Act021_004;
+import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -184,7 +135,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 )
         );
         //
-        menuList.add(
+        /*menuList.add(
                 new MenuMainNamoa(
                         Act005_Main.MENU_ID_IO_ASSETS,
                         ConstantBaseApp.PROFILE_PRJ001_OI,
@@ -192,7 +143,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         "lbl_io_assets",
                         R.drawable.ic_n_assets
                 )
-        );
+        );*/
         //
         menuList.add(
                 new MenuMainNamoa(

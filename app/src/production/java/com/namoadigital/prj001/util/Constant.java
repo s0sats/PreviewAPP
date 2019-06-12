@@ -33,7 +33,22 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_CREATION = "https://portal.namoadigital.com/ws/prj001/sm_order/server_save_so.ws";
     public static final String WS_SO_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_so.ws";
     public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
-
+    //IO
+    public static final String WS_IO_SERIAL_PROCESS_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial.ws";
+    public static final String WS_IO_SERIAL_PROCESS_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial_obj.ws";
+    public static final String WS_IO_MOVE_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_move.ws";
+    public static final String WS_IO_INBOUND_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_inbound.ws";
+    public static final String WS_IO_OUTBOUND_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_outbound.ws";
+    public static final String WS_IO_MOVE_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_move_obj.ws";
+    public static final String WS_IO_MOVE_SAVE = "https://portal.namoadigital.com/ws/prj001/io/server_move_save.ws";
+    public static final String WS_IO_INBOUND_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_inbound_obj.ws";
+    public static final String WS_IO_OUTBOUND_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_outbound_obj.ws";
+    public static final String WS_IO_MASTER_DATA = "https://portal.namoadigital.com/ws/prj001/io/server_master_data.ws";
+    public static final String WS_IO_FROM_OUTBOUND_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_outbound_search.ws";
+    public static final String WS_IO_INBOUND_HEADER_SAVE = "https://portal.namoadigital.com/ws/prj001/io/server_inbound_save.ws";
+    public static final String WS_IO_ADDRESS_SUGGESTION = "https://portal.namoadigital.com/ws/prj001/io/server_address_suggestion.ws";
+    public static final String WS_IO_BLIND_SAVE = "https://portal.namoadigital.com/ws/prj001/io/server_blind_save.ws";
+    public static final String WS_IO_INBOUND_ITEM_SAVE = "https://portal.namoadigital.com/ws/prj001/io/server_inbound_item_save.ws";
 
 
     public static final String WS_ENABLE_NFC = "https://portal.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
