@@ -683,7 +683,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         String toZoneLocal = (planned_zone_code == null || planned_zone_code == -1 ) ? "" : mPresenter.getZoneDesc(planned_zone_code);
-        toZoneLocal = (planned_local_code == null || planned_local_code == -1) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
+        toZoneLocal = (planned_local_code == null || planned_local_code == -1) ? "-1" : toZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
 
         if (toZoneLocal.isEmpty() || toZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);

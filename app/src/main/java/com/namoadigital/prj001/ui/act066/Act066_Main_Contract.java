@@ -31,6 +31,8 @@ public interface Act066_Main_Contract {
 
         void setOnline(boolean online);
 
+        void callAct065();
+
     }
 
     interface I_Presenter{

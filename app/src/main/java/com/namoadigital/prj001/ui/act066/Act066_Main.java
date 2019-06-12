@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.ui.act066;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act066_Outbound_Download_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act065.Act065_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -323,7 +327,19 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
 
     @Override
     public void loadOutboundList(ArrayList<IO_Outbound_Search_Record> records) {
-
+        mAdapter = new Act066_Outbound_Download_Adapter(
+                context,
+                records,
+                filter_pending,
+                filter_process,
+                isOnline,
+                listPendencies
+        );
+        //
+        rv_inbound.setAdapter(mAdapter);
+        rv_inbound.setLayoutManager(
+                new LinearLayoutManager(context)
+        );
     }
 
     @Override
@@ -354,6 +370,14 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     @Override
     public void setOnline(boolean online) {
 
+    }
+
+    @Override
+    public void callAct065() {
+        Intent mIntent = new Intent(context, Act065_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     private void showStatusFilterDialog() {
@@ -400,5 +424,11 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 );
         //
         builder.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 }

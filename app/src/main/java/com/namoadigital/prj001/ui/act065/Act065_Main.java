@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act065;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +14,11 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -161,6 +167,89 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if(wsProcess.equals(WS_IO_Outbound_Search.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processSearchReturn(mLink);
+//        }else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())){
+//            progressDialog.dismiss();
+//            //
+//            mPresenter.processOutboundItemReturn(mLink);
+        }else{
+            progressDialog.dismiss();
+        }
+    }
+
+    //region Handling WS Errors
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+    //endregion
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
+
+    @Override
     public void showAlert(String ttl, String msg) {
         ToolBox.alertMSG(
                 context,
@@ -169,6 +258,52 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
                 null,
                 0
         );
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void callSearchOutbound() {
+        mPresenter.executeOutboundSearch(
+                ss_zone.getmValue().get(SearchableSpinner.CODE),
+                ss_local.getmValue().get(SearchableSpinner.CODE),
+                mket_outbound.getText().toString().trim(),
+                mket_invoice.getText().toString().trim()
+        );
+    }
+
+    @Override
+    public void showPD(String dialog_outbound_search_ttl, String dialog_outbound_search_start) {
+        enableProgressDialog(
+                dialog_outbound_search_ttl,
+                dialog_outbound_search_start,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct066(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act066_Main.class);
+
+        if(bundle != null ){
+            mIntent.putExtras(bundle);
+        }
+
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     private void loadTranslation() {
@@ -197,6 +332,10 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         transList.add("progress_save_outbound_item_msg");
         transList.add("outbound_item_ret_empty_ttl");
         transList.add("outbound_item_ret_empty_msg");
+        transList.add("alert_no_inbound_found_ttl");
+        transList.add("alert_no_inbound_found_msg");
+        transList.add("dialog_inbound_search_ttl");
+        transList.add("dialog_inbound_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

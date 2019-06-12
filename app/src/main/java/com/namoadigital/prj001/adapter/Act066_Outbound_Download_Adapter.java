@@ -34,8 +34,8 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
     private List<IO_Outbound_Search_Record> mFilteredValues;
     private String mResource_Code;
     private HMAux hmAux_Trans;
-    private String mResource_Name = "act057_inbound_download_adapter";
-    private InboundDownloadFilter valueFilter;
+    private String mResource_Name = "act066_outbound_download_adapter";
+    private OutboundDownloadFilter valueFilter;
     private boolean pendingFilter;
     private boolean processFilter;
     private int downloadCounter;
@@ -71,7 +71,7 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
     public Act066_Outbound_Download_Adapter(Context context, List<IO_Outbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline , boolean pendencies) {
         this.context = context;
         this.mValues = mValues;
-        this.resource = R.layout.act057_io_inbound_cell;
+        this.resource = R.layout.act066_io_outbound_cell;
         this.pendingFilter = pendingFilter;
         this.processFilter = processFilter;
         this.mFilteredValues = mValues;
@@ -90,8 +90,8 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("inbound_id_lbl");
-        transList.add("inbound_desc_lbl");
+        transList.add("outbound_id_lbl");
+        transList.add("outbound_desc_lbl");
         transList.add("create_date_lbl");
         transList.add("eta_date_lbl");
         transList.add("invoice_lbl");
@@ -113,12 +113,12 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(resource, viewGroup, false);
-        return new InboundDownloadViewHolder(view);
+        return new OutboundDownloadViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        InboundDownloadViewHolder holder = (InboundDownloadViewHolder) viewHolder;
+        OutboundDownloadViewHolder holder = (OutboundDownloadViewHolder) viewHolder;
         //
         holder.bindData(mFilteredValues.get(position));
     }
@@ -135,29 +135,29 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
     }
 
     public String getOutboundsToDownload(){
-        String inboundToDownload = "";
+        String outboundToDownload = "";
         //
         for(int i = 0;i < mFilteredValues.size(); i++){
             if(mFilteredValues.get(i).isToDownload()){
-                inboundToDownload += "|"+
+                outboundToDownload += "|"+
                         mFilteredValues.get(i).getOutbound_prefix()+"."+
                         mFilteredValues.get(i).getOutbound_code();
             }
         }
         //
-        return inboundToDownload.substring(1);
+        return outboundToDownload.substring(1);
     }
 
-    public class InboundDownloadViewHolder extends RecyclerView.ViewHolder{
+    public class OutboundDownloadViewHolder extends RecyclerView.ViewHolder{
         private ConstraintLayout cl_main_bg;
         private CheckBox chkDownload;
         private ImageView iv_offline;
         private TextView tv_status;
         private PieView pv_done;
-        private TextView tv_inbound_id;
-        private TextView tv_inbound_id_val;
-        private TextView tv_inbound_desc;
-        private TextView tv_inbound_desc_val;
+        private TextView tv_outbound_id;
+        private TextView tv_outbound_id_val;
+        private TextView tv_outbound_desc;
+        private TextView tv_outbound_desc_val;
         private TextView tv_create_dt;
         private TextView tv_create_dt_val;
         private TextView tv_eta_dt;
@@ -172,7 +172,7 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
         private TextView tv_comment_val;
         private View itemView;
 
-        public InboundDownloadViewHolder(@NonNull View itemView) {
+        public OutboundDownloadViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
             //
@@ -189,8 +189,8 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
                 }
             });
             //
-            cl_main_bg = itemView.findViewById(R.id.act057_main_cl_background);
-            chkDownload = itemView.findViewById(R.id.act057_io_inbound_cell_chk_download);
+            cl_main_bg = itemView.findViewById(R.id.act066_main_cl_background);
+            chkDownload = itemView.findViewById(R.id.act066_io_outbound_cell_chk_download);
             chkDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -211,10 +211,10 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
             tv_status = itemView.findViewById(R.id.act066_io_outbound_cell_tv_status);
             pv_done = itemView.findViewById(R.id.act066_io_outbound_cell_pv_done);
             configPvUI(pv_done);
-            tv_inbound_id = itemView.findViewById(R.id.act066_io_outbound_cell_tv_id);
-            tv_inbound_id_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_id_val);
-            tv_inbound_desc = itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc);
-            tv_inbound_desc_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc_val);
+            tv_outbound_id = itemView.findViewById(R.id.act066_io_outbound_cell_tv_id);
+            tv_outbound_id_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_id_val);
+            tv_outbound_desc = itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc);
+            tv_outbound_desc_val= itemView.findViewById(R.id.act066_io_outbound_cell_tv_desc_val);
             tv_create_dt = itemView.findViewById(R.id.act066_io_outbound_cell_tv_create_date);
             tv_create_dt_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_create_date_val);
             tv_eta_dt  = itemView.findViewById(R.id.act066_io_outbound_cell_tv_eta_date);
@@ -255,21 +255,21 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(data.getStatus())));
             pv_done.setPercentage(data.getPerc_done() != null ?  data.getPerc_done() : 0.0f);
             //pv_done.setInnerText("✓");
-            tv_inbound_id.setVisibility(View.GONE);
-            tv_inbound_id_val.setVisibility(View.GONE);
+            tv_outbound_id.setVisibility(View.GONE);
+            tv_outbound_id_val.setVisibility(View.GONE);
             if(data.getOutbound_id() != null && data.getOutbound_id().trim().length() > 0){
-                tv_inbound_id.setText(hmAux_Trans.get("inbound_id_lbl"));
-                tv_inbound_id_val.setText(data.getOutbound_id());
-                tv_inbound_id.setVisibility(View.VISIBLE);
-                tv_inbound_id_val.setVisibility(View.VISIBLE);
+                tv_outbound_id.setText(hmAux_Trans.get("outbound_id_lbl"));
+                tv_outbound_id_val.setText(data.getOutbound_id());
+                tv_outbound_id.setVisibility(View.VISIBLE);
+                tv_outbound_id_val.setVisibility(View.VISIBLE);
             }
-            tv_inbound_desc.setVisibility(View.GONE);
-            tv_inbound_desc_val.setVisibility(View.GONE);
+            tv_outbound_desc.setVisibility(View.GONE);
+            tv_outbound_desc_val.setVisibility(View.GONE);
             if(data.getOutbound_desc() != null && data.getOutbound_desc().trim().length() > 0){
-                tv_inbound_desc.setText(hmAux_Trans.get("inbound_desc_lbl"));
-                tv_inbound_desc_val.setText(data.getOutbound_desc());
-                tv_inbound_desc.setVisibility(View.VISIBLE);
-                tv_inbound_desc_val.setVisibility(View.VISIBLE);
+                tv_outbound_desc.setText(hmAux_Trans.get("outbound_desc_lbl"));
+                tv_outbound_desc_val.setText(data.getOutbound_desc());
+                tv_outbound_desc.setVisibility(View.VISIBLE);
+                tv_outbound_desc_val.setVisibility(View.VISIBLE);
             }
             tv_create_dt.setVisibility(View.GONE);
             tv_create_dt_val.setVisibility(View.GONE);
@@ -353,12 +353,12 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
     @Override
     public Filter getFilter() {
         if (valueFilter == null) {
-            valueFilter = new InboundDownloadFilter();
+            valueFilter = new OutboundDownloadFilter();
         }
         return valueFilter;
     }
 
-    private class InboundDownloadFilter extends Filter{
+    private class OutboundDownloadFilter extends Filter{
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
