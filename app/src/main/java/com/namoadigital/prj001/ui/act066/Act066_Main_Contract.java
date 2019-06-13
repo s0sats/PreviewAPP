@@ -23,7 +23,7 @@ public interface Act066_Main_Contract {
 
         void showPD(String ttl, String msg);
 
-        void callAct069();
+        void callAct067();
 
         void callAct068(Bundle bundle);
 

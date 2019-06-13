@@ -30,6 +30,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.ui.act065.Act065_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -38,7 +39,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I_View{
+public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I_View {
     public static final String LIST_PENDENCIES_KEY = "LIST_PENDENCIES_KEY";
     private Act066_Main_Presenter mPresenter;
     private ConstraintLayout cl_no_result;
@@ -142,9 +143,9 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         bindViews();
         setupViews();
         //
-        if(listPendencies) {
+        if (listPendencies) {
             mPresenter.getPendenciesList();
-        }else{
+        } else {
             mPresenter.processListInfo(bundle_record_count, bundle_record_page, records);
         }
         //
@@ -155,22 +156,22 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            bundle_zone_code = bundle.getString(IO_InboundDao.ZONE_CODE_CONF,"");
-            bundle_local_code = bundle.getString(IO_InboundDao.LOCAL_CODE_CONF,"");
-            bundle_outbound_id = bundle.getString(IO_InboundDao.INBOUND_ID,"");
-            bundle_invoice = bundle.getString(IO_InboundDao.INVOICE_NUMBER,"");
-            bundle_record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT,0);
-            bundle_record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
+            bundle_zone_code = bundle.getString(IO_InboundDao.ZONE_CODE_CONF, "");
+            bundle_local_code = bundle.getString(IO_InboundDao.LOCAL_CODE_CONF, "");
+            bundle_outbound_id = bundle.getString(IO_InboundDao.INBOUND_ID, "");
+            bundle_invoice = bundle.getString(IO_InboundDao.INVOICE_NUMBER, "");
+            bundle_record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, 0);
+            bundle_record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, 0);
             try {
                 records = (ArrayList<IO_Outbound_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
                 //Se lista vazia, veio pelos pendentes.
                 isOnline = records.size() > 0;
-            }catch (Exception e){
+            } catch (Exception e) {
                 records = new ArrayList<>();
                 isOnline = false;
             }
-            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
-            listPendencies = bundle.getBoolean(LIST_PENDENCIES_KEY,false);
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT056);
+            listPendencies = bundle.getBoolean(LIST_PENDENCIES_KEY, false);
         } else {
             bundle_zone_code = "";
             bundle_local_code = "";
@@ -204,7 +205,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         btn_download.setText(hmAux_Trans.get("download_lbl"));
         btn_download.setEnabled(false);
-        btn_download.setVisibility(isOnline ? View.VISIBLE : View.GONE );
+        btn_download.setVisibility(isOnline ? View.VISIBLE : View.GONE);
         controls_sta.add(mket_filter);
     }
 
@@ -225,6 +226,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         setTitleLanguage();
         setFooter();
     }
+
     private void initActions() {
         iv_status_filter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,24 +243,24 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                if(mAdapter != null){
+                if (mAdapter != null) {
                     mAdapter.getFilter().filter(s.trim());
                 }
             }
         });
         //
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.setOnItemClickListner(new Act066_Outbound_Download_Adapter.OnItemClickListner() {
                 @Override
                 public void onItemClick(IO_Outbound_Search_Record item) {
-                    if(item.isSameSiteAsLoggedOrFree()) {
+                    if (item.isSameSiteAsLoggedOrFree()) {
                         Bundle bundle = new Bundle();
                         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
                         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getOutbound_prefix()));
                         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(item.getOutbound_code()));
                         //
                         callAct068(bundle);
-                    }else{
+                    } else {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_outbound_different_to_site_ttl"),
@@ -274,7 +276,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 @Override
                 public void onItemCheckedChange(int downloadCounter) {
                     btn_download.setText(
-                            hmAux_Trans.get("download_lbl") + " ("+downloadCounter+")"
+                            hmAux_Trans.get("download_lbl") + " (" + downloadCounter + ")"
                     );
                     //
                     btn_download.setEnabled(downloadCounter > 0);
@@ -285,12 +287,12 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         btn_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAdapter != null){
+                if (mAdapter != null) {
                     String outbounds = mAdapter.getOutboundsToDownload();
-                    if(outbounds != null && outbounds.trim().length() > 0){
+                    if (outbounds != null && outbounds.trim().length() > 0) {
                         mPresenter.executeOutboundDownload(outbounds);
 
-                    }else{
+                    } else {
                         showAlert(
                                 hmAux_Trans.get("alert_no_outbound_selected_ttl"),
                                 hmAux_Trans.get("alert_no_outbound_selected_msg")
@@ -305,9 +307,9 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
      * Aplica cor no icone de filtro dependendo do valor dos filtros
      */
     private void updateIvFilterState() {
-        if(filter_pending || filter_process ){
+        if (filter_pending || filter_process) {
             iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        }else{
+        } else {
             iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
@@ -320,7 +322,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        if(wsProcess.equals(WS_IO_Outbound_Download.class.getName())){
+        if (wsProcess.equals(WS_IO_Outbound_Download.class.getName())) {
             progressDialog.dismiss();
             //
             mPresenter.processDownloadReturn(hmAux);
@@ -328,7 +330,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
 //            progressDialog.dismiss();
 //            //
 //            mPresenter.processOutboundItemReturn(mLink);
-        }else{
+        } else {
             progressDialog.dismiss();
         }
     }
@@ -390,7 +392,6 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     //endregion
 
 
-
     @Override
     public void showAlert(String ttl, String msg) {
         ToolBox.alertMSG(
@@ -398,7 +399,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 ttl,
                 msg,
                 null
-                ,0
+                , 0
         );
     }
 
@@ -423,8 +424,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     @Override
     public void showQtyExceededMsg() {
         cl_limit_exceeded.setVisibility(View.VISIBLE);
-        tv_record_limit.setText(hmAux_Trans.get("records_display_limit_lbl") + " "+ bundle_record_page);
-        tv_record_count.setText(hmAux_Trans.get("records_lbl") + " "+ bundle_record_count);
+        tv_record_limit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + bundle_record_page);
+        tv_record_count.setText(hmAux_Trans.get("records_lbl") + " " + bundle_record_count);
         //
         showAlert(
                 hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
@@ -466,10 +467,16 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     }
 
     @Override
-    public void callAct069() {
-//        Intent mIntent = new Intent(context, Act067_Main.class);
-//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(mIntent);
+    public void callAct067() {
+        Intent mIntent = new Intent(context, Act067_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+        bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,true);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
         finish();
     }
 
@@ -503,7 +510,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
 
     private void showStatusFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View view = (View) LayoutInflater.from(context).inflate(R.layout.act066_filter_dialog,null);
+        View view = (View) LayoutInflater.from(context).inflate(R.layout.act066_filter_dialog, null);
         //
         TextView tvTitle = view.findViewById(R.id.act066_filter_dialog_tv_title);
         final CheckBox chkPending = view.findViewById(R.id.act066_filter_dialog_chk_pending);
@@ -532,8 +539,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                                 filter_pending = chkPending.isChecked();
                                 filter_process = chkProcess.isChecked();
                                 updateIvFilterState();
-                                if(mAdapter != null){
-                                    mAdapter.updateStatusFilter(filter_pending,filter_process);
+                                if (mAdapter != null) {
+                                    mAdapter.updateStatusFilter(filter_pending, filter_process);
                                     mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
                                 }
                             }

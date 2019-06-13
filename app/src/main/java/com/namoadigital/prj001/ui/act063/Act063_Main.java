@@ -140,7 +140,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         setBtnCreationVisibility();
         //
         //
-        mPresenter.prepareDataToScreen(record_count,record_page,serial_list);
+        mPresenter.prepareDataToScreen(record_count,record_page,serial_list, mJump);
     }
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();

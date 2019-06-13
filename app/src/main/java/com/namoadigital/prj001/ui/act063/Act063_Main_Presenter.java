@@ -41,13 +41,13 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list) {
+    public void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list, boolean mJump) {
         //Seta qtd de registro
         mView.setRecordInfo(serial_list.size(),record_page);
         //chama
         mView.loadProductSerialList(serial_list);
         //Se qtd 1, chama proxima define flow
-        if (serial_list.size() == 1) {
+        if (serial_list.size() == 1 && mJump) {
             //Se 1 item, esconde o btn de criação.
             mView.setBtnCreateVisibility(false);
             //

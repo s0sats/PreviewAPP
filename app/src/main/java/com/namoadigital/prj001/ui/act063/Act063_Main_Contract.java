@@ -28,7 +28,7 @@ public interface Act063_Main_Contract {
 
         MD_Product getProductInfo(String productID);
 
-        void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list);
+        void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list, boolean mJump);
 
         void defineFlow(MD_Product_Serial mdProductSerial, boolean serialCreation);
 
