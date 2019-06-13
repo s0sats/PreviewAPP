@@ -555,15 +555,16 @@ public class Act050_Frag_SO extends BaseFragment {
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.size() == 0) {
                     setEdtClientContent("", "", "", "");
-                }
-                for (SM_SO_Client client : clientsList) {
-                    if (hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(client.getClient_code()))) {
-                        setClientInfo(
+                } else {
+                    for (SM_SO_Client client : clientsList) {
+                        if (hmAux.hasConsistentValue(SearchableSpinner.CODE) && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(client.getClient_code()))) {
+                            setClientInfo(
                                 client.getClient_id(),
                                 client.getClient_name(),
                                 client.getClient_phone(),
                                 client.getClient_email(),
                                 client.getClient_code());
+                        }
                     }
                 }
             }
