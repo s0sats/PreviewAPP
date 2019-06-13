@@ -1906,12 +1906,13 @@ public class Frg_Serial_Edit extends BaseFragment {
             ss_site_reason_value.put(SearchableSpinner.CODE, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
             for (HMAux moveReason :
                     moveReasonList) {
-                String reasonId = moveReason.get(REASON_ID);
-                String reasonCode = ss_site.getmValue().get(MD_SiteDao.REASON_CODE);
+                String reasonCodeItem = moveReason.get(SearchableSpinner.CODE);
+                String reasonCodeSite = ss_site.getmValue().get(MD_SiteDao.REASON_CODE);
 
-                if(reasonId !=null && reasonId.equals(reasonCode)) {
+                if(reasonCodeItem != null && reasonCodeItem.equals(reasonCodeSite)) {
                     ss_site_reason_value.put(SearchableSpinner.DESCRIPTION, ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
                     ss_site_reason.setmValue(moveReason);
+                    break;
                 }
             }
         }
@@ -2301,13 +2302,14 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
         mdProductSerial.setSite_code(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setSite_id(ss_site.getmValue().get(MD_SiteDao.SITE_ID));
+        mdProductSerial.setSite_id(ss_site.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setSite_desc(ss_site.getmValue().get(SearchableSpinner.DESCRIPTION));
         mdProductSerial.setSite_io_control(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(MD_SiteDao.IO_CONTROL)));
         mdProductSerial.setInbound_auto_create(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(MD_SiteDao.INBOUND_AUTO_CREATE)));
+        mdProductSerial.setSite_reason_code(ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
         //
         mdProductSerial.setZone_code(ToolBox_Inf.mIntegerParse(ss_site_zone.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setZone_id(ss_site_zone.getmValue().get(MD_Site_ZoneDao.ZONE_ID));
+        mdProductSerial.setZone_id(ss_site_zone.getmValue().get(SearchableSpinner.CODE));
         mdProductSerial.setZone_desc(ss_site_zone.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setLocal_code(ToolBox_Inf.mIntegerParse(ss_site_zone_local.getmValue().get(SearchableSpinner.CODE)));
@@ -2318,23 +2320,23 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setAdd_inf3(mket_info3.getText().toString().trim());
         //
         mdProductSerial.setBrand_code(ToolBox_Inf.mIntegerParse(ss_brand.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setBrand_id(ss_brand.getmValue().get(MD_BrandDao.BRAND_ID));
+        mdProductSerial.setBrand_id(ss_brand.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setBrand_desc(ss_brand.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setModel_code(ToolBox_Inf.mIntegerParse(ss_brand_model.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setModel_id(ss_brand_model.getmValue().get(MD_Brand_ModelDao.MODEL_ID));
+        mdProductSerial.setModel_id(ss_brand_model.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setModel_desc(ss_brand_model.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setColor_code(ToolBox_Inf.mIntegerParse(ss_brand_color.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setColor_id(ss_brand_color.getmValue().get(MD_Brand_ColorDao.COLOR_ID));
+        mdProductSerial.setColor_id(ss_brand_color.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setColor_desc(ss_brand_color.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setSegment_code(ToolBox_Inf.mIntegerParse(ss_segment.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setSegment_id(ss_segment.getmValue().get(MD_SegmentDao.SEGMENT_ID));
+        mdProductSerial.setSegment_id(ss_segment.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setSegment_desc(ss_segment.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setCategory_price_code(ToolBox_Inf.mIntegerParse(ss_category_price.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setCategory_price_id(ss_category_price.getmValue().get(MD_Category_PriceDao.CATEGORY_PRICE_ID));
+        mdProductSerial.setCategory_price_id(ss_category_price.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setCategory_price_desc(ss_category_price.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setUpdate_required(1);
@@ -2519,8 +2521,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         //Ao após verificar existencia, e o serial di digitado for novo, os dados da tela são setados no obj. Por isso,
         //é necessario validá-la aqui.
         if (mdProductSerial.getSite_code() != null
-            && siteSelected.hasConsistentValue(SearchableSpinner.ID)
-            && siteSelected.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
+            && siteSelected.hasConsistentValue(SearchableSpinner.CODE)
+            && siteSelected.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
         ) {
             Log.d("SITE_CHANGE", "true");
             return true;

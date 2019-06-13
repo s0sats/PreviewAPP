@@ -557,7 +557,7 @@ public class Act050_Frag_SO extends BaseFragment {
                     setEdtClientContent("", "", "", "");
                 }
                 for (SM_SO_Client client : clientsList) {
-                    if (client.getClient_id().equals(hmAux.get(SearchableSpinner.CODE))) {
+                    if (hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(client.getClient_code()))) {
                         setClientInfo(
                                 client.getClient_id(),
                                 client.getClient_name(),

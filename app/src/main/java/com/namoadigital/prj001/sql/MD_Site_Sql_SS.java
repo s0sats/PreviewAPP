@@ -25,6 +25,7 @@ public class MD_Site_Sql_SS implements Specification {
                         "   site_code " + SearchableSpinner.CODE + ", \n" +
                         "   site_id "+ SearchableSpinner.ID + ", \n" +
                         "   site_desc " + SearchableSpinner.DESCRIPTION + ", \n" +
+                        "   site_id , \n" +
                         "   io_control,\n " +
                         "   inbound_auto_create \n ," +
                         "   reason_code \n " +
