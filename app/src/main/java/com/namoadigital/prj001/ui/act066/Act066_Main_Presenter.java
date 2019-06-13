@@ -137,17 +137,17 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
             record.setOutbound_code(Integer.parseInt(hmAux.get(IO_OutboundDao.OUTBOUND_CODE)));
             record.setOutbound_id(hmAux.get(IO_OutboundDao.OUTBOUND_ID));
             record.setOutbound_desc(hmAux.get(IO_OutboundDao.OUTBOUND_DESC));
-            record.setCreate_date(null);
+            record.setCreate_date(hmAux.get(IO_OutboundDao.OUTBOUND_DESC));
             record.setEta_date(hmAux.get(IO_OutboundDao.ETA_DATE));
             record.setInvoice_number(hmAux.get(IO_OutboundDao.INVOICE_NUMBER));
             record.setStatus(hmAux.get(IO_OutboundDao.STATUS));
             record.setComments(hmAux.get(IO_OutboundDao.COMMENTS));
-            record.setPerc_done(Float.valueOf(hmAux.get(Sql_Act057_001.PERC_DONE)));
+            record.setPerc_done(Float.valueOf(hmAux.get(Sql_Act066_001.PERC_DONE)));
 
             record.setModal(hmAux.get(IO_OutboundDao.MODAL_CODE));
             //
-            if( hmAux.hasConsistentValue(IO_OutboundDao.TO_SITE_CODE)
-                && hmAux.get(IO_OutboundDao.TO_SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context)))
+            if( hmAux.hasConsistentValue(IO_OutboundDao.FROM_SITE_CODE)
+                && hmAux.get(IO_OutboundDao.FROM_SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context)))
             {
                 record.setSameSiteAsLoggedOrFree(true);
             }else{

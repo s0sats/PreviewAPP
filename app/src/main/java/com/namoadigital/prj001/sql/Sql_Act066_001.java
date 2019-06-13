@@ -26,7 +26,7 @@ public class Sql_Act066_001 implements Specification {
                         "          i.*,\n" +
                         "          IFNULL(\n" +
                         "           (SELECT   \n" +
-                        "              round((((t.conf_parcial + t.picking_process) / t.tot) * 100),1) "+PERC_DONE+" \n" +
+                        "              round((((t.conf_parcial + t.picking_parcial) / t.tot) * 100),1) "+PERC_DONE+" \n" +
                         "           FROM(\n" +
                         "               SELECT            \n" +
                         "                 round( COUNT(1) * (i.picking_process + 1) , 2) tot,         \n" +
