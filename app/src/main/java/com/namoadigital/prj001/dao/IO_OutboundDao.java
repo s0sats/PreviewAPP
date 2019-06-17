@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -138,6 +139,109 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
         }
 
         closeDB();
+
+        return daoObjReturn;
+    }
+
+    public DaoObjReturn addUpdate(IO_Outbound io_outbound, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
+            //
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_outbound.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(OUTBOUND_PREFIX).append(" = '").append(String.valueOf(io_outbound.getOutbound_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(OUTBOUND_CODE).append(" = '").append(String.valueOf(io_outbound.getOutbound_code())).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(io_outbound), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if(addUpdateRet == 0){
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(io_outbound));
+            }
+            //Se operação de insert ou update executada com sucesso
+            //Segue para inserção dos itens.
+            IO_Outbound_ItemDao outboundItemDao = new IO_Outbound_ItemDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
+            daoObjReturn = outboundItemDao.addUpdate(io_outbound.getItems(),false,db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //
+            IO_MoveDao moveDao = new IO_MoveDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            daoObjReturn = moveDao.addUpdate(io_outbound.getMove(),false,db);
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //Tenta insert dos Seriais NÃO POSSUI RETURN....
+            if(io_outbound.getSerial() != null && io_outbound.getSerial().size() > 0){
+                serialDao.addUpdateTmpByInbound(io_outbound.getSerial(),db);
+            }
+            //
+            //Se db não foi passado, finaliza transaction com sucesso
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
 
         return daoObjReturn;
     }
@@ -611,4 +715,102 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             return contentValues;
         }
     }
+
+    /**
+     * LUCHE - 22/04/2019
+     *
+     * Metodo criado para executar a OUTBOUND FULL, agrupando tudo dentro da transaction
+     *  as tarefas de , deletar itens, movimentação picking deletar cabeçalho e finalmente reinserção de
+     *  cabeçalho e item
+     * @param io_outbounds
+     * @return
+     */
+    public DaoObjReturn processFull(ArrayList<IO_Outbound> io_outbounds){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        IO_Outbound_ItemDao itemDao = new IO_Outbound_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        IO_MoveDao moveDao = new IO_MoveDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        openDB();
+
+        try {
+            db.beginTransaction();
+            for(IO_Outbound io_outbound :io_outbounds) {
+                //Onde a magica acontece
+                //Tenta o delete do items da inbound
+                daoObjReturn = itemDao.remove(io_outbound, db);
+                //verifica se erro ao remover itens
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                //verifica se erro ao remover moves
+                daoObjReturn = moveDao.removeInboundMoves(io_outbound, db);
+                //
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                //Se sucesso ao deleta itens
+                if (!daoObjReturn.hasError()) {
+                    curAction = DaoObjReturn.DELETE;
+                    //Where para update
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(io_outbound.getCustomer_code()).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(OUTBOUND_PREFIX).append(" = '").append(io_outbound.getOutbound_prefix()).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(OUTBOUND_CODE).append(" = '").append(io_outbound.getOutbound_code()).append("'");
+                    //Tenta update e armazena retorno
+                    addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
+                    //Se deletou e não rolou exception, executa insert
+                    //Seta Pk no itens
+                    io_outbound.setPK();
+                    daoObjReturn = addUpdate(io_outbound, db);
+                    //Esse if não teria necessidade, pq se desse merda, ja teria dado exception
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
+
+                }
+            }
+            //
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+
+        return daoObjReturn;
+    }
+
+
 }

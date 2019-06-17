@@ -259,7 +259,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(item.getOutbound_prefix()));
                         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(item.getOutbound_code()));
                         //
-                        callAct068(bundle);
+                        callAct067(bundle);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -467,24 +467,11 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     }
 
     @Override
-    public void callAct067() {
+    public void callAct067(Bundle bundle) {
         Intent mIntent = new Intent(context, Act067_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
-        bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,true);
-        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void callAct068(Bundle bundle) {
-//        Intent mIntent = new Intent(context, Act068_Main.class);
-//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(mIntent);
         finish();
     }
 

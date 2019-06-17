@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Outbound {
+public class IO_Outbound implements Serializable {
 
     private long customer_code;
     private int outbound_prefix;
@@ -47,6 +50,9 @@ public class IO_Outbound {
     private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @Expose
+    //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    private ArrayList<IO_Move> move = new ArrayList<>();
     private int update_required;
     private int sync_required;
     private String token;
@@ -393,6 +399,14 @@ public class IO_Outbound {
 
     public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
     }
 
     public int getUpdate_required() {

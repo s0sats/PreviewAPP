@@ -88,6 +88,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT064 = "act064";
     public static final String ACT065 = "act065";
     public static final String ACT066 = "act066";
+    public static final String ACT067 = "act067";
 
     public static final String title_lbl = "_title";
 
@@ -565,6 +566,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_MODULE_IO = "IO_";
     public static final String FCM_MODULE_SO = "SM_";
     public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
+    public static final String FCM_ACTION_IO_OUTBOUND_UPDATE = "<IO_OUTBOUND_UPDATE>";
 
 
 

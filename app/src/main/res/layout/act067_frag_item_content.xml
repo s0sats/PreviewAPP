@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/act067_item_frag_gd_start"
+        app:layout_constraintGuide_begin="8dp"
+        android:orientation="vertical"/>
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/act067_item_frag_gd_end"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="8dp"/>
+
+    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/act067_item_frag_mket_filter"
+        app:layout_constraintStart_toStartOf="@+id/act067_item_frag_gd_start"
+        app:layout_constraintEnd_toStartOf="@+id/act067_item_frag_sw_filter"
+        app:mBARCODE="false"
+        app:mNFC="false"
+        app:mOCR="false"
+        app:mOCRVin="false"
+        />
+
+    <Switch
+        android:id="@+id/act067_item_frag_sw_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/act067_item_frag_mket_filter"
+        app:layout_constraintEnd_toEndOf="@id/act067_item_frag_gd_end"
+        app:layout_constraintBottom_toBottomOf="@id/act067_item_frag_mket_filter"
+        android:padding="8dp"
+        android:thumbTint="@color/io_switch_filter"
+        android:checked="true"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/act067_item_frag_mket_filter"
+        app:layout_constraintEnd_toStartOf="@+id/act067_item_frag_gd_end"
+        app:layout_constraintStart_toStartOf="@+id/act067_item_frag_gd_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/act067_item_frag_rv_items"
+        tools:listitem="@layout/act067_frag_item_cell"
+        />
+
+
+</android.support.constraint.ConstraintLayout>
