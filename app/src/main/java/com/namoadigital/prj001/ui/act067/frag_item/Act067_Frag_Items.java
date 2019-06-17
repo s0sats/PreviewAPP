@@ -66,9 +66,9 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
 
         void callAddItemAct();
 
-        void callInConfCreateItemAct(HMAux item);
+        void callOutConfCreateItemAct(HMAux item);
 
-        void callPutAwayCreateItemAct(HMAux item);
+        void callPickingCreateItemAct(HMAux item);
 
         void callSerialEdition(HMAux item);
     }
@@ -278,14 +278,14 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
                 @Override
                 public void onConfClick(HMAux item) {
                     if(mFragItemListener != null) {
-                        mFragItemListener.callInConfCreateItemAct(item);
+                        mFragItemListener.callOutConfCreateItemAct(item);
                     }
                 }
 
                 @Override
                 public void onPutAwayClick(HMAux item) {
                     if(mFragItemListener != null) {
-                        mFragItemListener.callPutAwayCreateItemAct(item);
+                        mFragItemListener.callPickingCreateItemAct(item);
                     }
                 }
 

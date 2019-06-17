@@ -46,10 +46,10 @@ import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
-import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
-import com.namoadigital.prj001.ui.act059.Act059_Main;
+import com.namoadigital.prj001.ui.act060.Act060_Main;
 import com.namoadigital.prj001.ui.act062.Act062_Main;
+import com.namoadigital.prj001.ui.act065.Act065_Main;
 import com.namoadigital.prj001.ui.act067.frag_drawer.Act067_Frag_Drawer;
 import com.namoadigital.prj001.ui.act067.frag_header.Act067_Frag_Header;
 import com.namoadigital.prj001.ui.act067.frag_item.Act067_Frag_Items;
@@ -162,9 +162,9 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         //Trad Frag Drawer
         transList.addAll(Act067_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
-//        transList.addAll(Act061_Frag_Header.getFragTranslationsVars());
+        transList.addAll(Act067_Frag_Header.getFragTranslationsVars());
         //Trad Frag Item
-//        transList.addAll(Act061_Frag_Items.getFragTranslationsVars());
+        transList.addAll(Act067_Frag_Items.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -349,8 +349,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT061;
-        mAct_Title = Constant.ACT061 + "_" + "title";
+        mAct_Info = Constant.ACT067;
+        mAct_Title = Constant.ACT067 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -586,12 +586,12 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void callInConfCreateItemAct(HMAux item) {
-        callAct059(item);
+    public void callOutConfCreateItemAct(HMAux item) {
+        callAct060(item);
     }
 
     @Override
-    public void callPutAwayCreateItemAct(HMAux item) {
+    public void callPickingCreateItemAct(HMAux item) {
         mPresenter.processPutAwayMove(item);
     }
 
@@ -613,8 +613,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         finish();
     }
 
-    private void callAct059(HMAux item) {
-        Intent mIntent = new Intent(context, Act059_Main.class);
+    private void callAct060(HMAux item) {
+        Intent mIntent = new Intent(context, Act060_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
@@ -643,7 +643,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         if (bundle != null) {
-            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
             bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
             bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
 
@@ -807,8 +807,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void callAct056() {
-        Intent mIntent = new Intent(context, Act056_Main.class);
+    public void callAct065() {
+        Intent mIntent = new Intent(context, Act065_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

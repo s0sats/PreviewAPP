@@ -21,8 +21,6 @@ public interface Act067_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
-        void callAct056();
-
         void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
 
         void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
@@ -38,6 +36,8 @@ public interface Act067_Main_Contract {
         void showResult(ArrayList<HMAux> resultList, boolean inboundResult);
 
         void prepareFullRefresh();
+
+        void callAct065();
     }
 
     interface I_Presenter{

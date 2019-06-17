@@ -15,10 +15,10 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act066.Act066_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -112,7 +112,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         btn_creation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                callAct067();
+                callAct067();
             }
         });
 
@@ -134,6 +134,19 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
                 }
             }
         });
+    }
+
+    private void callAct067() {
+        Intent mIntent = new Intent(context, Act067_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
+        bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, true);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     private void iniSetup() {

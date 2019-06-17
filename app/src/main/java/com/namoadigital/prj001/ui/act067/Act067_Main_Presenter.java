@@ -560,7 +560,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct056();
+        mView.callAct065();
     }
 
 }
