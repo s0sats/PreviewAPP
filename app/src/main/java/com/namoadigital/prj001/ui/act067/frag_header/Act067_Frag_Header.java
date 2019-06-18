@@ -102,7 +102,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
          */
         IO_Outbound getOutboundFromAct(int prefix, int code);
 
-        void fromTypeSelected(String from_type);
+        void toTypeSelected(String from_type);
 
         void searchFromOutboundList(String from_site);
 
@@ -218,7 +218,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 if (hmAux != null && hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
                     if (mFragHeaderListener != null) {
                         if (ToolBox_Con.isOnline(context)) {
-                            mFragHeaderListener.fromTypeSelected(hmAux.get(SearchableSpinner.CODE));
+                            mFragHeaderListener.toTypeSelected(hmAux.get(SearchableSpinner.CODE));
                         } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }
@@ -243,7 +243,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     } else {
                         if (ToolBox_Con.isOnline(context)) {
                             inEdit = !inEdit;
-                            mFragHeaderListener.fromTypeSelected(mOutbound.getTo_type());
+                            mFragHeaderListener.toTypeSelected(mOutbound.getTo_type());
                         } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }

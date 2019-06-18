@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Env;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
@@ -45,6 +46,11 @@ public class WS_IO_Master_Data extends IntentService {
 
             String site_code = bundle.getString(MD_SiteDao.SITE_CODE);
             String type = bundle.getString(IO_InboundDao.FROM_TYPE,"");
+
+            if(type == null || type.isEmpty()) {
+                type = bundle.getString(IO_OutboundDao.TO_TYPE, "");
+            }
+
             String action = bundle.getString(ConstantBaseApp.IO_ACTION_KEY);
 
             processWsIoMasterDataProcess(site_code,type, action);

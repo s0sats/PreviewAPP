@@ -494,7 +494,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void fromTypeSelected(String from_type) {
+    public void toTypeSelected(String from_type) {
         mPresenter.executeWSMasterData(from_type, bNewProcess);
     }
 

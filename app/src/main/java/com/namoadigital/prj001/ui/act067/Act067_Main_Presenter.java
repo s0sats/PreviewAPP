@@ -104,7 +104,6 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         }
     }
 
-
     @Override
     public void processIOMasterDataRet(String wsReturn) {
         if (wsReturn != null && !wsReturn.trim().isEmpty()) {
