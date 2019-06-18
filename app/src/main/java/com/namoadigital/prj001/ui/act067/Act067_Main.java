@@ -39,7 +39,6 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
@@ -130,8 +129,6 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
         transList.add("dialog_io_master_data_ttl");
         transList.add("dialog_io_master_data_start");
-        transList.add("dialog_from_outbound_ttl");
-        transList.add("dialog_from_outbound_start");
         transList.add("dialog_outbound_header_save_ttl");
         transList.add("dialog_outbound_header_save_start");
         transList.add("alert_header_save_error_ttl");
