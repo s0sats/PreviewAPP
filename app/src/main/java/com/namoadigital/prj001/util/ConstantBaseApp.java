@@ -607,8 +607,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
     public static final String IO_INBOUND = "INBOUND";
     public static final String IO_OUTBOUND = "OUTBOUND";
-    public static final String IO_FROM_TYPE_SITE = "SITE";
-    public static final String IO_FROM_TYPE_PARTNER = "PARTNER";
+    public static final String IO_HEADER_TYPE_SITE = "SITE";
+    public static final String IO_HEADER_TYPE_PARTNER = "PARTNER";
     public static final String IO_ACTION_KEY = "IO_ACTION_KEY";
     public static final String IO_ACTION_NEW = "NEW";
     public static final String IO_ACTION_EDIT = "EDIT";

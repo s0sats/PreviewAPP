@@ -510,7 +510,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 mInbound.setFrom_site_desc(null);
             }
             //
-            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
                 if (ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     mInbound.setFrom_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
                     mInbound.setFrom_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
@@ -633,7 +633,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         //Se passou no primeiro if, continua a analise dos proximos campos
         //se não, pula e vai direto pra msg de erro.
         if (validate) {
-            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_HEADER_TYPE_SITE)) {
                 if (
                     ssFromSite == null
                         || ssFromSite.getmValue() == null
@@ -794,15 +794,15 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         }
         //
         HMAux optSite = new HMAux();
-        optSite.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_SITE));
+        optSite.put(SearchableSpinner.CODE, ConstantBaseApp.IO_HEADER_TYPE_SITE);
+        optSite.put(SearchableSpinner.ID, ConstantBaseApp.IO_HEADER_TYPE_SITE);
+        optSite.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_HEADER_TYPE_SITE));
         mOptions.add(optSite);
         //
         HMAux optPartner = new HMAux();
-        optPartner.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_PARTNER));
+        optPartner.put(SearchableSpinner.CODE, ConstantBaseApp.IO_HEADER_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.ID, ConstantBaseApp.IO_HEADER_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_HEADER_TYPE_PARTNER));
         mOptions.add(optPartner);
         //
         ssFromType.setmOption(mOptions);
@@ -1144,7 +1144,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivFromOutbound.setEnabled(false);
         ivFromOutbound.setVisibility(View.GONE);
         //
-        if(mInbound.getFrom_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)){
+        if(mInbound.getFrom_type().equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)){
             ssPartner.setVisibility(View.VISIBLE);
             ssFromSite.setVisibility(View.GONE);
         }else{
@@ -1159,7 +1159,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivEdit.setVisibility(View.GONE);
         //
         if (isMasterDataLoaded) {
-            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+            if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
                 ssPartner.setVisibility(View.VISIBLE);
                 ssFromSite.setVisibility(View.GONE);
                 ssFromOutbound.setVisibility(View.GONE);

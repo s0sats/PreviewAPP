@@ -23,7 +23,6 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
@@ -456,7 +455,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         if (mOutbound != null) {
             token = token.isEmpty() ? ToolBox_Inf.getToken(context) : token;
             mOutbound.setCustomer_code(bNewProcess ? ToolBox_Con.getPreference_Customer_Code(context) : mOutbound.getCustomer_code());
-            //mOutbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
             mOutbound.setToken(token);
             mOutbound.setOutbound_id(etOutboundId.getText().toString());
             mOutbound.setOutbound_desc(etOutboundDesc.getText().toString());
@@ -472,12 +470,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 mOutbound.setTo_partner_code(null);
                 mOutbound.setTo_partner_id(null);
                 mOutbound.setTo_partner_desc(null);
-//                mOutbound.setTo_site_code(null);
                 mOutbound.setTo_site_id(null);
                 mOutbound.setTo_site_desc(null);
             }
             //
-            if (ssToType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+            if (ssToType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
                 if (ssPartner != null && ssPartner.getmValue() != null && ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     mOutbound.setTo_partner_code(Integer.valueOf(ssPartner.getmValue().get(SearchableSpinner.CODE)));
                     mOutbound.setTo_partner_id(ssPartner.getmValue().get(SearchableSpinner.ID));
@@ -580,11 +577,19 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private boolean validateSave() {
         boolean validate = true;
         String msg = "";
+        ssToType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssToSite.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssPartner.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
         //
         if (
                 ssToType == null
                         || ssToType.getmValue() == null
                         || (ssToType.getmValue() != null && !ssToType.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
+            try {
+                ssToType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            }catch (NullPointerException e ){
+                ToolBox_Inf.registerException(e);
+            }
             msg += hmAux_Trans.get("alert_no_from_type_selected_msg") + "\n";
             validate = false;
 
@@ -592,11 +597,16 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //Se passou no primeiro if, continua a analise dos proximos campos
         //se não, pula e vai direto pra msg de erro.
         if (validate) {
-            if (ssToType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_FROM_TYPE_SITE)) {
+            if (ssToType.getmValue().get(SearchableSpinner.CODE).equalsIgnoreCase(Constant.IO_HEADER_TYPE_SITE)) {
                 if (
                         ssToSite == null
                                 || ssToSite.getmValue() == null
                                 || (ssToSite.getmValue() != null && !ssToSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
+                    try {
+                        ssToSite.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                    }catch (NullPointerException e ){
+                        ToolBox_Inf.registerException(e);
+                    }
                     msg += hmAux_Trans.get("alert_no_from_site_selected_msg") + "\n";
                     validate = false;
                 }
@@ -605,6 +615,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         ssPartner == null
                                 || ssPartner.getmValue() == null
                                 || (ssPartner.getmValue() != null && !ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
+                    try {
+                        ssPartner.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                    }catch (NullPointerException e ){
+                        ToolBox_Inf.registerException(e);
+                    }
                     msg += hmAux_Trans.get("alert_no_from_partner_selected_msg") + "\n";
                     validate = false;
                 }
@@ -641,7 +656,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ivEdit = view.findViewById(R.id.act067_header_iv_edit);
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
-        ssToSite = view.findViewById(R.id.act067_header_ss_from_site);
+        ssToSite = view.findViewById(R.id.act067_header_ss_to_site);
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
@@ -723,10 +738,10 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssConfZone.setmStyle(1);
-        //ssConfZone.setmShowBarcode(true);
+        ssConfZone.setmShowBarcode(true);
         ssConfLocal.setmStyle(1);
         ssConfLocal.setmShowLabel(false);
-        //ssConfLocal.setmShowBarcode(true);
+        ssConfLocal.setmShowBarcode(true);
         //OS SPINER ESTÃO DESABILITADOS, POIS
         //PARA CORRETO FUNCIONAMENTO, teria que mexer na lib
         //add interface disparada ao clicar no barcode.
@@ -740,15 +755,15 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         }
         //
         HMAux optSite = new HMAux();
-        optSite.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_SITE);
-        optSite.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_SITE));
+        optSite.put(SearchableSpinner.CODE, ConstantBaseApp.IO_HEADER_TYPE_SITE);
+        optSite.put(SearchableSpinner.ID, ConstantBaseApp.IO_HEADER_TYPE_SITE);
+        optSite.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_HEADER_TYPE_SITE));
         mOptions.add(optSite);
         //
         HMAux optPartner = new HMAux();
-        optPartner.put(SearchableSpinner.CODE, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.ID, ConstantBaseApp.IO_FROM_TYPE_PARTNER);
-        optPartner.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_FROM_TYPE_PARTNER));
+        optPartner.put(SearchableSpinner.CODE, ConstantBaseApp.IO_HEADER_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.ID, ConstantBaseApp.IO_HEADER_TYPE_PARTNER);
+        optPartner.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(ConstantBaseApp.IO_HEADER_TYPE_PARTNER));
         mOptions.add(optPartner);
         //
         ssToType.setmOption(mOptions);
@@ -829,15 +844,15 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         loadCarrierrSS(generatePartnerSSOption(partners));
         loadModalSS(generateModalSSOption(modals));
         if (bNewProcess) {
-            loadFromSiteSS(generateFromSiteSSOption(sites));
+            loadToSiteSS(generateToSiteSSOption(sites));
             loadPartnerSS(generatePartnerSSOption(partners));
             setUIForCreation(true);
             applyViewsInteraction(INTERATION_NEW_OUTBOUND);
         }
     }
 
-    private void loadFromSiteSS(ArrayList<HMAux> rawFromSiteList) {
-        ssToSite.setmOption(rawFromSiteList);
+    private void loadToSiteSS(ArrayList<HMAux> rawToSiteList) {
+        ssToSite.setmOption(rawToSiteList);
     }
 
     private void loadPartnerSS(ArrayList<HMAux> rawPartnerList) {
@@ -852,7 +867,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssModal.setmOption(rawModalList);
     }
 
-    private ArrayList<HMAux> generateFromSiteSSOption(ArrayList<MD_Site> sites) {
+    private ArrayList<HMAux> generateToSiteSSOption(ArrayList<MD_Site> sites) {
         ArrayList<HMAux> auxList = new ArrayList<>();
         for (MD_Site site : sites) {
             HMAux aux = new HMAux();
@@ -896,7 +911,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         if (bStatus) {
             if (mOutbound != null) {
                 if (bNewProcess) {
-                    //Verifica no caso do novo, se fromType ja selecionado,
+                    //Verifica no caso do novo, se toType ja selecionado,
                     //se sim, ão
                     if (ssToType == null || !ssToType.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                         setUIForCreation(false);
@@ -1057,7 +1072,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToSite.setmEnabled(false);
         ssPartner.setmEnabled(false);
         //
-        if (mOutbound.getTo_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+        if (mOutbound.getTo_type().equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
             ssPartner.setVisibility(View.VISIBLE);
             ssToSite.setVisibility(View.GONE);
         } else {
@@ -1072,7 +1087,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ivEdit.setVisibility(View.GONE);
         //
         if (isMasterDataLoaded) {
-            if (ssToType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
+            if (ssToType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
                 ssPartner.setVisibility(View.VISIBLE);
                 ssToSite.setVisibility(View.GONE);
             } else {

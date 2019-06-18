@@ -357,7 +357,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                 ){
                     //tvFromVal.setText(hmAux_Trans.get(mInbound.getFrom_type()));
                     tvFromVal.setText(
-                        mInbound.getFrom_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER) ? mInbound.getFrom_partner_desc() :  mInbound.getFrom_site_desc()
+                        mInbound.getFrom_type().equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER) ? mInbound.getFrom_partner_desc() :  mInbound.getFrom_site_desc()
                     );
                     //
                     tvFromLbl.setVisibility(View.VISIBLE);

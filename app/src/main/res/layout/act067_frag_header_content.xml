@@ -81,7 +81,7 @@
                 app:layout_constraintGuide_end="8dp"/>
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                android:id="@+id/act067_header_ss_from_site"
+                android:id="@+id/act067_header_ss_to_site"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act067_header_ss_from_site"/>
+                app:layout_constraintTop_toBottomOf="@id/act067_header_ss_to_site"/>
 
             <TextView
                 android:id="@+id/act067_header_tv_outbound"
