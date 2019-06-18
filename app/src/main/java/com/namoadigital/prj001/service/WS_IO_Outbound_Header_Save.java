@@ -103,7 +103,7 @@ public class WS_IO_Outbound_Header_Save extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_IO_INBOUND_HEADER_SAVE,
+                Constant.WS_IO_OUTBOUND_HEADER_SAVE,
                 gsonEnv.toJson(env)
         );
         //

@@ -42,6 +42,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -720,7 +721,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         if (wsProcess.equalsIgnoreCase(WS_IO_Master_Data.class.getName())) {
             mPresenter.processIOMasterDataRet(mLink);
             progressDialog.dismiss();
-        } else if (wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_IO_Outbound_Header_Save.class.getName())) {
             mPresenter.processHeaderSave(mPrefix, mCode, mLink);
             progressDialog.dismiss();
         } else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())) {

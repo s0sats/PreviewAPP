@@ -71,8 +71,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private MkDateTime mkdtInvoinceDt;
     private TextView tvEtaDtLbl;
     private MkDateTime mkdtEtaDt;
-    private TextView tvArrivalDtLbl;
-    private MkDateTime mkdtArrivalDt;
+    private TextView tvDepartureDtLbl;
+    private MkDateTime mkdtDepartureDt;
     private SearchableSpinner ssModal;
     private SearchableSpinner ssPartner;
     private SearchableSpinner ssCarrier;
@@ -338,7 +338,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private boolean validateDates() {
         HMAux invoiceDt = mkdtInvoinceDt.getMketContents();
         HMAux etaDt = mkdtEtaDt.getMketContents();
-        HMAux arrivalDt = mkdtArrivalDt.getMketContents();
+        HMAux departureDt = mkdtDepartureDt.getMketContents();
         String msg = "";
         boolean validate = true;
         //
@@ -358,11 +358,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             msg += hmAux_Trans.get("eta_dt_lbl") + ": " + hmAux_Trans.get("alert_invalid_date_msg") + "\n";
             validate = false;
         }
-        if (arrivalDt == null
-                || (arrivalDt.get(MkDateTime.DATE_KEY).length() > 0 && arrivalDt.get(MkDateTime.HOUR_KEY).length() == 0)
-                || (arrivalDt.get(MkDateTime.DATE_KEY).length() == 0 && arrivalDt.get(MkDateTime.HOUR_KEY).length() > 0)
+        if (departureDt == null
+                || (departureDt.get(MkDateTime.DATE_KEY).length() > 0 && departureDt.get(MkDateTime.HOUR_KEY).length() == 0)
+                || (departureDt.get(MkDateTime.DATE_KEY).length() == 0 && departureDt.get(MkDateTime.HOUR_KEY).length() > 0)
         ) {
-            msg += hmAux_Trans.get("arrival_dt_lbl") + ": " + hmAux_Trans.get("alert_invalid_date_msg") + "\n";
+            msg += hmAux_Trans.get("departure_dt_lbl") + ": " + hmAux_Trans.get("alert_invalid_date_msg") + "\n";
             validate = false;
         }
         if (!validate) {
@@ -462,7 +462,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             mOutbound.setInvoice_number(etInvoice.getText().toString());
             mOutbound.setInvoice_date(mkdtInvoinceDt.getmValue());
             mOutbound.setEta_date(mkdtEtaDt.getmValue());
-            mOutbound.setDeparture_date(mkdtArrivalDt.getmValue());
+            mOutbound.setDeparture_date(mkdtDepartureDt.getmValue());
             mOutbound.setTo_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mOutbound.setTo_type(ssToType.getmValue().get(SearchableSpinner.CODE));
             //Reseta campos do obj se novo obj
@@ -634,8 +634,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 //                msg += hmAux_Trans.get("eta_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
 //                validate = false;
 //            }
-//            if (!mkdtArrivalDt.isValid()) {
-//                msg += hmAux_Trans.get("arrival_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
+//            if (!mkdtDepartureDt.isValid()) {
+//                msg += hmAux_Trans.get("departure_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
 //                validate = false;
 //            }
         }
@@ -672,8 +672,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         mkdtInvoinceDt = view.findViewById(R.id.act067_header_mkdt_invoice_dt);
         tvEtaDtLbl = view.findViewById(R.id.act067_header_tv_eta_dt);
         mkdtEtaDt = view.findViewById(R.id.act067_header_mkdt_eta_dt);
-        tvArrivalDtLbl = view.findViewById(R.id.act067_header_tv_arrival_dt);
-        mkdtArrivalDt = view.findViewById(R.id.act067_header_mkdt_arrival_dt);
+        tvDepartureDtLbl = view.findViewById(R.id.act067_header_tv_departure_dt);
+        mkdtDepartureDt = view.findViewById(R.id.act067_header_mkdt_departure_dt);
         ssModal = view.findViewById(R.id.act067_header_ss_modal);
         ssCarrier = view.findViewById(R.id.act067_header_ss_carrier);
         tvTruckNumLbl = view.findViewById(R.id.act067_header_tv_truck_num);
@@ -694,7 +694,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(etInvoice);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
-        properties.add(mkdtArrivalDt);
+        properties.add(mkdtDepartureDt);
         properties.add(ssModal);
         properties.add(ssCarrier);
         properties.add(etTruckNum);
@@ -721,7 +721,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssConfZone.setmLabel(hmAux_Trans.get("zone_conf_lbl"));
         ssConfLocal.setmLabel(hmAux_Trans.get("local_conf_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
-        tvArrivalDtLbl.setText(hmAux_Trans.get("arrival_dt_lbl"));
+        tvDepartureDtLbl.setText(hmAux_Trans.get("departure_dt_lbl"));
         ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
         ssCarrier.setmLabel(hmAux_Trans.get("carrier_lbl"));
         tvTruckNumLbl.setText(hmAux_Trans.get("truck_lbl"));
@@ -794,9 +794,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         mkdtEtaDt.setmHighlightWhenInvalid(false);
         mkdtEtaDt.setmRequired(false);
         //
-        mkdtArrivalDt.setmLabel("");
-        mkdtArrivalDt.setmHighlightWhenInvalid(false);
-        mkdtArrivalDt.setmRequired(false);
+        mkdtDepartureDt.setmLabel("");
+        mkdtDepartureDt.setmHighlightWhenInvalid(false);
+        mkdtDepartureDt.setmRequired(false);
     }
 
     public void loadOutbound() {
@@ -1019,7 +1019,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 etInvoice.setTag(mOutbound.getInvoice_number());
                 mkdtInvoinceDt.setmValue(mOutbound.getInvoice_date(), true);
                 mkdtEtaDt.setmValue(mOutbound.getEta_date(), true);
-                mkdtArrivalDt.setmValue(mOutbound.getDeparture_date(), true);
+                mkdtDepartureDt.setmValue(mOutbound.getDeparture_date(), true);
                 if (mOutbound.getModal_code() != null) {
                     ToolBox_Inf.setSSmValue(
                             ssModal,
@@ -1141,7 +1141,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("invoice_lbl");
         transListFrag.add("invoice_dt_lbl");
         transListFrag.add("eta_dt_lbl");
-        transListFrag.add("arrival_dt_lbl");
+        transListFrag.add("departure_dt_lbl");
         transListFrag.add("modal_lbl");
         transListFrag.add("partner_lbl");
         transListFrag.add("truck_lbl");

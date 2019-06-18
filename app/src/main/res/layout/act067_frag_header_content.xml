@@ -267,7 +267,7 @@
                 app:mTextStyleBold="true"/>
 
             <TextView
-                android:id="@+id/act067_header_tv_arrival_dt"
+                android:id="@+id/act067_header_tv_departure_dt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Arrival - trad"
@@ -277,12 +277,12 @@
                 app:layout_constraintTop_toBottomOf="@id/act067_header_mkdt_eta_dt"/>
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
-                android:id="@+id/act067_header_mkdt_arrival_dt"
+                android:id="@+id/act067_header_mkdt_departure_dt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
                 app:layout_constraintStart_toStartOf="@id/act067_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@id/act067_header_tv_arrival_dt"
+                app:layout_constraintTop_toBottomOf="@id/act067_header_tv_departure_dt"
                 app:mConfigType="DATE_HOUR"
                 app:mHighlightWhenInvalid="true"
                 app:mTextStyleBold="true"/>
@@ -293,7 +293,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act067_header_mkdt_arrival_dt"/>
+                app:layout_constraintTop_toBottomOf="@id/act067_header_mkdt_departure_dt"/>
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                 android:id="@+id/act067_header_ss_carrier"

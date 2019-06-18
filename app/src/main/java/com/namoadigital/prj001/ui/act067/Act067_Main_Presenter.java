@@ -137,8 +137,8 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             mView.setWsProcess(WS_IO_Outbound_Header_Save.class.getName());
             //
             mView.showPD(
-                    hmAux_Trans.get("dialog_inbound_header_save_ttl"),
-                    hmAux_Trans.get("dialog_inbound_header_save_start")
+                    hmAux_Trans.get("dialog_outbound_header_save_ttl"),
+                    hmAux_Trans.get("dialog_outbound_header_save_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Outbound_Header_Save.class);

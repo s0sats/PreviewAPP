@@ -7,54 +7,93 @@ import java.util.ArrayList;
 
 public class IO_Outbound implements Serializable {
 
+    @Expose
     private long customer_code;
+    @Expose
     private int outbound_prefix;
+    @Expose
     private int outbound_code;
+    @Expose
     private String outbound_desc;
+    @Expose
     private String outbound_id;
+    @Expose
     private int scn;
+    @Expose
     private String origin;
+    @Expose
     private String transport_order;
+    @Expose
     private String invoice_number;
+    @Expose
     private String invoice_date;
+    @Expose
     private String eta_date;
+    @Expose
     private String departure_date;
+    @Expose
     private String loading_date;
+    @Expose
     private int from_site_code;
+    @Expose
     private String to_type;
+    @Expose
     private Integer to_partner_code;
+    @Expose
     private String to_partner_id;
+    @Expose
     private String to_partner_desc;
+    @Expose
     private Integer to_site_code;
+    @Expose
     private String to_site_id;
+    @Expose
     private String to_site_desc;
+    @Expose
     private Integer carrier_code;
     private String carrier_id;
     private String carrier_desc;
+    @Expose
     private String truck_number;
+    @Expose
     private String driver;
+    @Expose
     private String comments;
+    @Expose
     private String status;
+    @Expose
     private Double perc_done;
+    @Expose
     private Integer modal_code;
     private String modal_id;
     private String modal_desc;
+    @Expose
     private int allow_new_item;
+    @Expose
     private Integer zone_code_picking;
     private String zone_id_picking;
     private String zone_desc_picking;
+    @Expose
     private Integer local_code_picking;
+    @Expose
     private String local_id_picking;
+    @Expose
     private int picking_process;
+    @Expose
     private int done_automatic;
+    @Expose
     private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
-    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     @Expose
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    @Expose
     private ArrayList<IO_Move> move = new ArrayList<>();
+    @Expose
     private int update_required;
+    @Expose
     private int sync_required;
+    @Expose
     private String token;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item

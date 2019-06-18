@@ -19,7 +19,6 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.act067.frag_header.Act067_Frag_Header"></activity>
         <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
@@ -752,8 +751,10 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_IO_Inbound_Item_Add" />
 
         <service android:name=".service.WS_Upload_Other_User_Img" />
+        <service android:name=".service.WS_IO_Outbound_Header_Save" />
 
         <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
+        <receiver android:name=".receiver.WBR_IO_Outbound_Header_Save" />
     </application>
 
 </manifest>
