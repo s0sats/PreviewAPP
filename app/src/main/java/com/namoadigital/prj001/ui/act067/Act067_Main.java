@@ -35,7 +35,6 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
@@ -499,11 +498,6 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void searchFromOutboundList(String from_site) {
-        mPresenter.executeWsSearchOutbound(from_site);
-    }
-
-    @Override
     public void showAlert(String ttl, String msg) {
         ToolBox.alertMSG(
                 context,
@@ -671,13 +665,6 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
-        if (act067_frag_header != null) {
-            act067_frag_header.updateFromOutboundList(outbound);
-        }
-    }
-
-    @Override
     public void callAct062() {
         Intent mIntent = new Intent(context, Act062_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -735,9 +722,6 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         super.processCloseACT(mLink, mRequired, hmAux);
         if (wsProcess.equalsIgnoreCase(WS_IO_Master_Data.class.getName())) {
             mPresenter.processIOMasterDataRet(mLink);
-            progressDialog.dismiss();
-        } else if (wsProcess.equalsIgnoreCase(WS_IO_From_Site_Search.class.getName())) {
-            mPresenter.processFromOutboundRet(mLink);
             progressDialog.dismiss();
         } else if (wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())) {
             mPresenter.processHeaderSave(mPrefix, mCode, mLink);

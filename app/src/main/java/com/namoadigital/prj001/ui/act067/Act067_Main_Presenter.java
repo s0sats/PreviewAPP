@@ -132,54 +132,6 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void executeWsSearchOutbound(String from_site) {
-        if (ToolBox_Con.isOnline(context)) {
-            mView.setWsProcess(WS_IO_From_Site_Search.class.getName());
-            //
-            mView.showPD(
-                    hmAux_Trans.get("dialog_from_outbound_ttl"),
-                    hmAux_Trans.get("dialog_from_outbound_start")
-            );
-            //
-            Intent mIntent = new Intent(context, WBR_IO_From_Site_Search.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            bundle.putString(IO_OutboundDao.FROM_SITE_CODE, from_site);
-            bundle.putString(IO_OutboundDao.TO_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
-        } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
-        }
-    }
-
-    @Override
-    public void processFromOutboundRet(String wsReturn) {
-        if (wsReturn != null && !wsReturn.trim().isEmpty()) {
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            //
-            try {
-                T_IO_From_Site_Search_Rec rec = gson.fromJson(
-                        wsReturn,
-                        T_IO_From_Site_Search_Rec.class
-                );
-                //
-                mView.setFromOutboundList(
-                        rec.getOutbound()
-                );
-            } catch (Exception e) {
-                ToolBox_Inf.registerException(getClass().getName(), e);
-                //
-                mView.showAlert(
-                        hmAux_Trans.get("alert_from_outbound_error_ttl"),
-                        hmAux_Trans.get("alert_from_outbound_error_msg")
-                );
-            }
-        }
-    }
-
-    @Override
     public void executeWsSaveOutboundHeader(IO_Outbound mOutbound, boolean newProcess) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_IO_Outbound_Header_Save.class.getName());

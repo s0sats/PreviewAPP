@@ -23,8 +23,6 @@ public interface Act067_Main_Contract {
 
         void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
 
-        void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
-
         void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess);
 
         void callAct058(Bundle bundle);
@@ -49,10 +47,6 @@ public interface Act067_Main_Contract {
         void onBackPressedClicked();
 
         void processIOMasterDataRet(String wsReturn);
-
-        void executeWsSearchOutbound(String from_site);
-
-        void processFromOutboundRet(String wsReturn);
 
         void executeWsSaveOutboundHeader(IO_Outbound mOutbound, boolean newProcess);
 

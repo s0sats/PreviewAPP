@@ -64,10 +64,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private TextView tvOutboundDescLbl;
     private EditText etOutboundDesc;
     private SearchableSpinner ssToSite;
-    private SearchableSpinner ssFromOutbound;
     private SearchableSpinner ssConfZone;
     private SearchableSpinner ssConfLocal;
-    private ImageView ivFromOutbound;
     private TextView tvInvoiceLbl;
     private EditText etInvoice;
     private TextView tvInvoiceDtLbl;
@@ -103,8 +101,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         IO_Outbound getOutboundFromAct(int prefix, int code);
 
         void toTypeSelected(String from_type);
-
-        void searchFromOutboundList(String from_site);
 
         void showFragAlert(String ttl, String msg);
 
@@ -265,35 +261,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                if (hmAux != null && hmAux.size() > 0 && hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
-                    ivFromOutbound.setEnabled(true);
-                    //
-                    if (!hmAux.get(SearchableSpinner.CODE).equalsIgnoreCase(oldSite.get(SearchableSpinner.CODE))) {
-                        resetSSFromOutbound();
-                    }
-                } else {
-                    ivFromOutbound.setEnabled(false);
-                    ssFromOutbound.setmEnabled(false);
-                    resetSSFromOutbound();
-                }
-            }
-        });
-        //
-        ivFromOutbound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ssFromOutbound != null && ssFromOutbound.getmOption() != null) {
-                    if (ssFromOutbound.getmOption().size() == 0) {
-                        if (mFragHeaderListener != null
-                                && ssToSite.getmValue() != null
-                                && ssToSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
-                        ) {
-                            mFragHeaderListener.searchFromOutboundList(ssToSite.getmValue().get(SearchableSpinner.CODE));
-                        }
-                    } else {
-                        ssFromOutbound.performEtValueClick();
-                    }
-                }
+
             }
         });
         //
@@ -450,7 +418,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             case INTERATION_EDIT_ON_OFF:
                 views.remove(ssToType);
                 views.remove(ssToSite);
-                views.remove(ssFromOutbound);
                 views.remove(ssPartner);
                 if (mOutbound != null
                         && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING)
@@ -465,7 +432,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             case INTERATION_NEW_OUTBOUND:
                 views.remove(ssToType);
                 views.remove(ssToSite);
-                views.remove(ssFromOutbound);
                 //
                 applyEditMode(views, true);
                 break;
@@ -531,14 +497,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     mOutbound.setTo_site_code(null);
                     mOutbound.setTo_site_id(null);
                     mOutbound.setTo_site_desc(null);
-                }
-                //
-                if (ssFromOutbound != null && ssFromOutbound.getmValue() != null && ssFromOutbound.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                    mOutbound.setOutbound_prefix(ToolBox_Inf.convertStringToInt(ssFromOutbound.getmValue().get(IO_OutboundDao.OUTBOUND_PREFIX)));
-                    mOutbound.setOutbound_code(ToolBox_Inf.convertStringToInt(ssFromOutbound.getmValue().get(IO_OutboundDao.OUTBOUND_CODE)));
-                } else {
-                    mOutbound.setOutbound_prefix(-1);
-                    mOutbound.setOutbound_code(-1);
                 }
             }
             if (ssConfZone != null && ssConfZone.getmValue() != null && ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -679,20 +637,12 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         return validate;
     }
 
-    private void resetSSFromOutbound() {
-        ToolBox_Inf.setSSmValue(ssFromOutbound, null, null, null, false, false);
-        ssFromOutbound.setmOption(new ArrayList<HMAux>());
-    }
-
     private void bindViews(View view) {
         ivEdit = view.findViewById(R.id.act067_header_iv_edit);
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
         ssToSite = view.findViewById(R.id.act067_header_ss_from_site);
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
-        ssFromOutbound = view.findViewById(R.id.act067_header_ss_from_outbound);
-        ivFromOutbound = view.findViewById(R.id.act067_header_iv_from_outbound);
-        ivFromOutbound.setEnabled(false);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
         tvOutboundIdLbl = view.findViewById(R.id.act067_header_tv_outbound_id);
@@ -726,7 +676,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(ssConfZone);
         properties.add(ssConfLocal);
         properties.add(ssPartner);
-        properties.add(ssFromOutbound);
         properties.add(etInvoice);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
@@ -749,7 +698,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType.setmLabel(hmAux_Trans.get("to_type_lbl"));
         ssToSite.setmLabel(hmAux_Trans.get("to_site_lbl"));
         ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
-        ssFromOutbound.setmLabel(hmAux_Trans.get("from_outbound_lbl"));
         tvOutboundLbl.setText(hmAux_Trans.get("outbound_code_lbl"));
         tvOutboundIdLbl.setText(hmAux_Trans.get("outbound_id_lbl"));
         tvOutboundDescLbl.setText(hmAux_Trans.get("outbound_desc_lbl"));
@@ -772,9 +720,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType.setmStyle(1);
         ssToSite.setmStyle(1);
         ssPartner.setmStyle(1);
-        ssFromOutbound.setmShowLabel(false);
-        ssFromOutbound.setmStyle(1);
-        ssFromOutbound.setmEnabled(false);
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssConfZone.setmStyle(1);
@@ -891,10 +836,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         }
     }
 
-    public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
-        loadFromOutboundSS(generateFromOutboundSSOption(outbound));
-    }
-
     private void loadFromSiteSS(ArrayList<HMAux> rawFromSiteList) {
         ssToSite.setmOption(rawFromSiteList);
     }
@@ -910,13 +851,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private void loadModalSS(ArrayList<HMAux> rawModalList) {
         ssModal.setmOption(rawModalList);
     }
-
-    private void loadFromOutboundSS(ArrayList<HMAux> rawFromOutboundList) {
-        ssFromOutbound.setmOption(rawFromOutboundList);
-        ssFromOutbound.setmEnabled(rawFromOutboundList != null && rawFromOutboundList.size() > 0);
-        ssFromOutbound.performEtValueClick();
-    }
-
 
     private ArrayList<HMAux> generateFromSiteSSOption(ArrayList<MD_Site> sites) {
         ArrayList<HMAux> auxList = new ArrayList<>();
@@ -951,24 +885,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             aux.put(SearchableSpinner.CODE, String.valueOf(modalObj.getModal_code()));
             aux.put(SearchableSpinner.ID, modalObj.getModal_id());
             aux.put(SearchableSpinner.DESCRIPTION, modalObj.getModal_desc());
-            auxList.add(aux);
-        }
-        //
-        return auxList;
-    }
-
-    private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_Outbound_Search_Record> outbounds) {
-        ArrayList<HMAux> auxList = new ArrayList<>();
-        for (IO_Outbound_Search_Record outbound : outbounds) {
-            String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
-                    ? " - " + outbound.getOutbound_desc()
-                    : "";
-            HMAux aux = new HMAux();
-            aux.put(SearchableSpinner.CODE, String.valueOf(outbound.getOutbound_prefix()) + "." + String.valueOf(outbound.getOutbound_code()));
-            aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
-            aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
-            aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
-            aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
             auxList.add(aux);
         }
         //
@@ -1140,10 +1056,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType.setmEnabled(false);
         ssToSite.setmEnabled(false);
         ssPartner.setmEnabled(false);
-        ssFromOutbound.setmEnabled(false);
-        ssFromOutbound.setVisibility(View.GONE);
-        ivFromOutbound.setEnabled(false);
-        ivFromOutbound.setVisibility(View.GONE);
         //
         if (mOutbound.getTo_type().equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
             ssPartner.setVisibility(View.VISIBLE);
@@ -1163,15 +1075,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             if (ssToType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_FROM_TYPE_PARTNER)) {
                 ssPartner.setVisibility(View.VISIBLE);
                 ssToSite.setVisibility(View.GONE);
-                ssFromOutbound.setVisibility(View.GONE);
-                ssFromOutbound.setmEnabled(false);
-                ivFromOutbound.setVisibility(View.GONE);
             } else {
                 ssPartner.setVisibility(View.GONE);
                 ssToSite.setVisibility(View.VISIBLE);
-                ssFromOutbound.setVisibility(View.VISIBLE);
-                ssFromOutbound.setmEnabled(false);
-                ivFromOutbound.setVisibility(View.VISIBLE);
             }
         }
     }
