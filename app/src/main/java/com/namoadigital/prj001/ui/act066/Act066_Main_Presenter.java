@@ -116,7 +116,7 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
                 bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,hmAux.get(ConstantBaseApp.HMAUX_PREFIX_KEY));
                 bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,hmAux.get(ConstantBaseApp.HMAUX_CODE_KEY));
 
-//                mView.callAct061(bundle);
+                mView.callAct067(bundle);
             }else{
                 mView.callAct065();
             }

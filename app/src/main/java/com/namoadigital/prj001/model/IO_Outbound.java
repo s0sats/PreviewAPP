@@ -75,7 +75,6 @@ public class IO_Outbound implements Serializable {
     private String zone_desc_picking;
     @Expose
     private Integer local_code_picking;
-    @Expose
     private String local_id_picking;
     @Expose
     private int picking_process;
@@ -471,4 +470,6 @@ public class IO_Outbound implements Serializable {
     public void setToken(String token) {
         this.token = token;
     }
+
+
 }

@@ -65,8 +65,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private TextView tvOutboundDescLbl;
     private EditText etOutboundDesc;
     private SearchableSpinner ssToSite;
-    private SearchableSpinner ssConfZone;
-    private SearchableSpinner ssConfLocal;
+    private SearchableSpinner ssPickingZone;
+    private SearchableSpinner ssPickingLocal;
     private TextView tvInvoiceLbl;
     private EditText etInvoice;
     private TextView tvInvoiceDtLbl;
@@ -266,7 +266,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             }
         });
         //
-        ssConfZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+        ssPickingZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -278,16 +278,16 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             }
         });
         //
-        ssConfZone.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+        ssPickingZone.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
             @Override
             public void onValueChanged(HMAux hmAux) {
                 pausedByScan = true;
                 //
-                //ssConfZone.setmValue(hmAux);
+                //ssPickingZone.setmValue(hmAux);
                 processZoneValueChange(hmAux);
             }
         });
-        ssConfLocal.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+        ssPickingLocal.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -299,7 +299,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             }
         });
         //
-        ssConfLocal.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+        ssPickingLocal.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
             @Override
             public void onValueChanged(HMAux hmAux) {
                 pausedByScan = true;
@@ -388,17 +388,17 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private void processZoneValueChange(HMAux hmAux) {
         loadLocalSS(true);
         //
-        if (hmAux != null && hmAux.size() > 0 && ssConfLocal.getmOption().size() == 1) {
-            ssConfLocal.setmValue(ssConfLocal.getmOption().get(0));
+        if (hmAux != null && hmAux.size() > 0 && ssPickingLocal.getmOption().size() == 1) {
+            ssPickingLocal.setmValue(ssPickingLocal.getmOption().get(0));
         }
     }
 
     private void processLocalValueChange(HMAux hmAux) {
-        if (!ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+        if (!ssPickingZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             loadZoneSS(true);
             //
             ToolBox_Inf.setSSmValue(
-                    ssConfZone,
+                    ssPickingZone,
                     hmAux.get(MD_Site_ZoneDao.ZONE_CODE),
                     hmAux.get(MD_Site_ZoneDao.ZONE_ID),
                     hmAux.get(MD_Site_ZoneDao.ZONE_DESC),
@@ -424,8 +424,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING)
                         && inEdit
                 ) {
-                    views.remove(ssConfZone);
-                    views.remove(ssConfLocal);
+                    views.remove(ssPickingZone);
+                    views.remove(ssPickingLocal);
                 }
                 //
                 applyEditMode(views, inEdit);
@@ -500,18 +500,18 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     mOutbound.setTo_site_desc(null);
                 }
             }
-            if (ssConfZone != null && ssConfZone.getmValue() != null && ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                mOutbound.setZone_code_picking(Integer.valueOf(ssConfZone.getmValue().get(SearchableSpinner.CODE)));
-                mOutbound.setZone_id_picking(ssConfZone.getmValue().get(SearchableSpinner.ID));
-                mOutbound.setZone_desc_picking(ssConfZone.getmValue().get(SearchableSpinner.DESCRIPTION));
+            if (ssPickingZone != null && ssPickingZone.getmValue() != null && ssPickingZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mOutbound.setZone_code_picking(Integer.valueOf(ssPickingZone.getmValue().get(SearchableSpinner.CODE)));
+                mOutbound.setZone_id_picking(ssPickingZone.getmValue().get(SearchableSpinner.ID));
+                mOutbound.setZone_desc_picking(ssPickingZone.getmValue().get(SearchableSpinner.DESCRIPTION));
             } else {
                 mOutbound.setZone_code_picking(null);
                 mOutbound.setZone_id_picking(null);
                 mOutbound.setZone_desc_picking(null);
             }
-            if (ssConfLocal != null && ssConfLocal.getmValue() != null && ssConfLocal.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                mOutbound.setLocal_code_picking(Integer.valueOf(ssConfLocal.getmValue().get(SearchableSpinner.CODE)));
-                mOutbound.setLocal_id_picking(ssConfLocal.getmValue().get(SearchableSpinner.ID));
+            if (ssPickingLocal != null && ssPickingLocal.getmValue() != null && ssPickingLocal.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                mOutbound.setLocal_code_picking(Integer.valueOf(ssPickingLocal.getmValue().get(SearchableSpinner.CODE)));
+                mOutbound.setLocal_id_picking(ssPickingLocal.getmValue().get(SearchableSpinner.ID));
             } else {
                 mOutbound.setLocal_code_picking(null);
                 mOutbound.setLocal_id_picking(null);
@@ -669,8 +669,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         etOutboundId = view.findViewById(R.id.act067_header_et_outbound_id);
         tvOutboundDescLbl = view.findViewById(R.id.act067_header_tv_outbound_desc);
         etOutboundDesc = view.findViewById(R.id.act067_header_et_outbound_desc);
-        ssConfZone = view.findViewById(R.id.act067_header_ss_zone_conf);
-        ssConfLocal = view.findViewById(R.id.act067_header_ss_local_conf);
+        ssPickingZone = view.findViewById(R.id.act067_header_ss_zone_conf);
+        ssPickingLocal = view.findViewById(R.id.act067_header_ss_local_conf);
         tvInvoiceLbl = view.findViewById(R.id.act067_header_tv_invoice);
         etInvoice = view.findViewById(R.id.editact067_header_et_invoice);
         tvInvoiceDtLbl = view.findViewById(R.id.act067_header_tv_invoice_dt);
@@ -693,8 +693,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(etOutboundId);
         properties.add(etOutboundDesc);
         properties.add(ssToSite);
-        properties.add(ssConfZone);
-        properties.add(ssConfLocal);
+        properties.add(ssPickingZone);
+        properties.add(ssPickingLocal);
         properties.add(ssPartner);
         properties.add(etInvoice);
         properties.add(mkedtTransportOrder);
@@ -707,8 +707,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(etDriver);
         properties.add(etComments);
         //
-        controls_ss.add(ssConfZone);
-        controls_ss.add(ssConfLocal);
+        controls_ss.add(ssPickingZone);
+        controls_ss.add(ssPickingLocal);
         controls_sta.add(mkedtTransportOrder);
         //
         if (mFragHeaderListener != null) {
@@ -725,8 +725,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         tvOutboundDescLbl.setText(hmAux_Trans.get("outbound_desc_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
         tvInvoiceDtLbl.setText(hmAux_Trans.get("invoice_dt_lbl"));
-        ssConfZone.setmLabel(hmAux_Trans.get("zone_conf_lbl"));
-        ssConfLocal.setmLabel(hmAux_Trans.get("local_conf_lbl"));
+        ssPickingZone.setmLabel(hmAux_Trans.get("zone_picking_lbl"));
+        ssPickingLocal.setmLabel(hmAux_Trans.get("local_picking_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvDepartureDtLbl.setText(hmAux_Trans.get("departure_dt_lbl"));
         ssModal.setmLabel(hmAux_Trans.get("modal_lbl"));
@@ -744,11 +744,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssPartner.setmStyle(1);
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
-        ssConfZone.setmStyle(1);
-        ssConfZone.setmShowBarcode(true);
-        ssConfLocal.setmStyle(1);
-        ssConfLocal.setmShowLabel(false);
-        ssConfLocal.setmShowBarcode(true);
+        ssPickingZone.setmStyle(1);
+        ssPickingZone.setmShowBarcode(true);
+        ssPickingLocal.setmStyle(1);
+        ssPickingLocal.setmShowLabel(false);
+        ssPickingLocal.setmShowBarcode(true);
         //OS SPINER ESTÃO DESABILITADOS, POIS
         //PARA CORRETO FUNCIONAMENTO, teria que mexer na lib
         //add interface disparada ao clicar no barcode.
@@ -778,18 +778,18 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 
     private void loadZoneSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ssConfZone, null, null, null, false, false);
+            ToolBox_Inf.setSSmValue(ssPickingZone, null, null, null, false, false);
         }
         //
-        ssConfZone.setmOption(mPresenter.getZonesOptions());
+        ssPickingZone.setmOption(mPresenter.getZonesOptions());
     }
 
     private void loadLocalSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ssConfLocal, null, null, null, false, false);
+            ToolBox_Inf.setSSmValue(ssPickingLocal, null, null, null, false, false);
         }
         //
-        ssConfLocal.setmOption(mPresenter.getLocalsOptions(ssConfZone.getmValue().get(SearchableSpinner.CODE)));
+        ssPickingLocal.setmOption(mPresenter.getLocalsOptions(ssPickingZone.getmValue().get(SearchableSpinner.CODE)));
     }
 
     private void configMkDt() {
@@ -976,14 +976,14 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 etOutboundDesc.setTag(mOutbound.getOutbound_desc());
                 //
                 if (mOutbound.getPicking_process() == 1) {
-                    ssConfZone.setVisibility(View.VISIBLE);
-                    ssConfLocal.setVisibility(View.VISIBLE);
+                    ssPickingZone.setVisibility(View.VISIBLE);
+                    ssPickingLocal.setVisibility(View.VISIBLE);
                     //
                     loadZoneSS(false);
                     loadLocalSS(false);
                     if (mOutbound.getZone_code_picking() != null) {
                         ToolBox_Inf.setSSmValue(
-                                ssConfZone,
+                                ssPickingZone,
                                 String.valueOf(mOutbound.getZone_code_picking()),
                                 mOutbound.getZone_id_picking(),
                                 mOutbound.getZone_desc_picking(),
@@ -993,9 +993,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     }
                     //
                     if (mOutbound.getLocal_code_picking() != null) {
-                        //mPresenter.getLocalDbValue(ssConfZone.getmOption(), mOutbound.getZone_code_conf(), mOutbound.getLocal_code_conf());
+                        //mPresenter.getLocalDbValue(ssPickingZone.getmOption(), mOutbound.getZone_code_conf(), mOutbound.getLocal_code_conf());
                         ToolBox_Inf.setSSmValue(
-                                ssConfLocal,
+                                ssPickingLocal,
                                 String.valueOf(mOutbound.getLocal_code_picking()),
                                 mOutbound.getLocal_id_picking(),
                                 mOutbound.getLocal_id_picking(),
@@ -1008,8 +1008,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     }
 
                 } else {
-                    ssConfZone.setVisibility(View.GONE);
-                    ssConfLocal.setVisibility(View.GONE);
+                    ssPickingZone.setVisibility(View.GONE);
+                    ssPickingLocal.setVisibility(View.GONE);
                 }
                 etInvoice.setText(mOutbound.getInvoice_number());
                 etInvoice.setTag(mOutbound.getInvoice_number());
@@ -1151,8 +1151,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("alert_no_data_changed_msg");
         transListFrag.add("alert_invalid_date_msg");
         transListFrag.add("carrier_lbl");
-        transListFrag.add("zone_conf_lbl");
-        transListFrag.add("local_conf_lbl");
+        transListFrag.add("zone_picking_lbl");
+        transListFrag.add("local_picking_lbl");
         transListFrag.add("alert_header_save_validation_ttl");
         //
         return transListFrag;

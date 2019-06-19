@@ -347,7 +347,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT067;
-        mAct_Title = Constant.ACT067 + "_" + "title";
+        mAct_Title = Constant.ACT067 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);

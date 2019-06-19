@@ -135,10 +135,10 @@ public class WS_IO_Outbound_Download extends IntentService {
             );
             //Faz loop na lista retornada setando pk nos itens e adicionando seriais a serem salvos
             //na lista de seriais.
-            for(IO_Outbound io_outbound: outbounds_list){
-                io_outbound.setPK();
-                serialHashList.addAll(io_outbound.getSerial());
-            }
+//            for(IO_Outbound io_outbound: outbounds_list){
+//                io_outbound.setPK();
+//                serialHashList.addAll(io_outbound.getSerial());
+//            }
             //Inserte/Atualiza seriais
             serialDao.addUpdate(serialHashList,false);
             //Insere / Atualiza lista de outbound

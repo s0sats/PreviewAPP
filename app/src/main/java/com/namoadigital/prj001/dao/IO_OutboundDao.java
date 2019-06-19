@@ -58,7 +58,10 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String MODAL_CODE = "modal_code";
     public static final String ALLOW_NEW_ITEM = "allow_new_item";
     public static final String ZONE_CODE_PICKING = "zone_code_picking";
+    public static final String ZONE_ID_PICKING = "zone_id_picking";
+    public static final String ZONE_DESC_PICKING = "zone_desc_picking";
     public static final String LOCAL_CODE_PICKING = "local_code_picking";
+    public static final String LOCAL_ID_PICKING = "local_id_picking";
     public static final String PICKING_PROCESS = "picking_process";
     public static final String DONE_AUTOMATIC = "done_automatic";
     public static final String UPDATE_REQUIRED = "update_required";
@@ -279,13 +282,13 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                 }
                 //Se operação de insert ou update executada com sucesso
                 //Segue para inserção dos itens.
-                IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                IO_Outbound_ItemDao ioOutboundItemDao = new IO_Outbound_ItemDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
                 //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
-                DaoObjReturn outboundItemRet = ioInboundItemDao.addUpdate(io_outbound.getItems(),false,db);
+                DaoObjReturn outboundItemRet = ioOutboundItemDao.addUpdate(io_outbound.getItems(),false,db);
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if(outboundItemRet.hasError()){
                     throw new Exception(outboundItemRet.getErrorMsg());
@@ -610,10 +613,25 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }else{
                 io_outbound.setZone_code_picking(cursor.getInt(cursor.getColumnIndex(ZONE_CODE_PICKING)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_ID_PICKING))){
+                io_outbound.setZone_id_picking(null);
+            }else{
+                io_outbound.setZone_id_picking(cursor.getString(cursor.getColumnIndex(ZONE_ID_PICKING)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_DESC_PICKING))){
+                io_outbound.setZone_desc_picking(null);
+            }else{
+                io_outbound.setZone_desc_picking(cursor.getString(cursor.getColumnIndex(ZONE_DESC_PICKING)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(LOCAL_CODE_PICKING))){
                 io_outbound.setLocal_code_picking(null);
             }else{
                 io_outbound.setLocal_code_picking(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE_PICKING)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LOCAL_ID_PICKING))){
+                io_outbound.setLocal_id_picking(null);
+            }else{
+                io_outbound.setLocal_id_picking(cursor.getString(cursor.getColumnIndex(LOCAL_ID_PICKING)));
             }
             io_outbound.setPicking_process(cursor.getInt(cursor.getColumnIndex(PICKING_PROCESS)));
             io_outbound.setDone_automatic(cursor.getInt(cursor.getColumnIndex(DONE_AUTOMATIC)));
@@ -690,7 +708,12 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                 contentValues.put(ALLOW_NEW_ITEM ,io_outbound.getAllow_new_item());
             }
             contentValues.put(ZONE_CODE_PICKING ,io_outbound.getZone_code_picking());
+            contentValues.put(ZONE_ID_PICKING ,io_outbound.getZone_id_picking());
+            contentValues.put(ZONE_DESC_PICKING,io_outbound.getZone_desc_picking());
+
             contentValues.put(LOCAL_CODE_PICKING ,io_outbound.getLocal_code_picking());
+            contentValues.put(LOCAL_ID_PICKING ,io_outbound.getLocal_id_picking());
+
             if(io_outbound.getPicking_process () > -1){
                 contentValues.put(PICKING_PROCESS ,io_outbound.getPicking_process());
             }
