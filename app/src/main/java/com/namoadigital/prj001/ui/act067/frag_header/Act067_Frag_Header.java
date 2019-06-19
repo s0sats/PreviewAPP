@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -56,6 +57,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private ImageView ivEdit;
     private SearchableSpinner ssToType;
     private ConstraintLayout clOtherInfo;
+    private MKEditTextNM mkedtTransportOrder;
     private TextView tvOutboundLbl;
     private TextView tvOutboundPrefixCode;
     private TextView tvOutboundIdLbl;
@@ -465,6 +467,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             mOutbound.setDeparture_date(mkdtDepartureDt.getmValue());
             mOutbound.setTo_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mOutbound.setTo_type(ssToType.getmValue().get(SearchableSpinner.CODE));
+            mOutbound.setTransport_order(mkedtTransportOrder.getText().toString());
+            mOutbound.setFrom_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             //Reseta campos do obj se novo obj
             if (bNewProcess) {
                 mOutbound.setTo_partner_code(null);
@@ -657,6 +661,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
         ssToSite = view.findViewById(R.id.act067_header_ss_to_site);
+        mkedtTransportOrder = view.findViewById(R.id.act067_header_mket_transport_order);
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
@@ -692,6 +697,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(ssConfLocal);
         properties.add(ssPartner);
         properties.add(etInvoice);
+        properties.add(mkedtTransportOrder);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
         properties.add(mkdtDepartureDt);
@@ -703,6 +709,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //
         controls_ss.add(ssConfZone);
         controls_ss.add(ssConfLocal);
+        controls_sta.add(mkedtTransportOrder);
         //
         if (mFragHeaderListener != null) {
             mFragHeaderListener.addFragHeaderControlsSS(controls_ss);
@@ -939,17 +946,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                             String.valueOf(mOutbound.getTo_partner_code()),
                             mOutbound.getTo_partner_id(),
                             mOutbound.getTo_partner_desc(),
-                            true,
-                            false
-                    );
-                }
-                //
-                if (mOutbound.getTo_site_code() != null && mOutbound.getTo_site_code() > 0) {
-                    ToolBox_Inf.setSSmValue(
-                            ssToSite,
-                            String.valueOf(mOutbound.getTo_site_code()),
-                            mOutbound.getTo_site_id(),
-                            mOutbound.getTo_site_desc(),
                             true,
                             false
                     );

@@ -1023,17 +1023,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     );
                 }
                 //
-                if (mInbound.getFrom_site_code() != null && mInbound.getFrom_site_code() > 0) {
-                    ToolBox_Inf.setSSmValue(
-                        ssFromSite,
-                        String.valueOf(mInbound.getFrom_site_code()),
-                        mInbound.getFrom_site_id(),
-                        mInbound.getFrom_site_desc(),
-                        true,
-                        false
-                    );
-                }
-                //
                 if (mInbound.getInbound_prefix() > 0 && mInbound.getInbound_code() > 0) {
                     tvInboundLbl.setVisibility(View.VISIBLE);
                     tvInboundPrefixCode.setVisibility(View.VISIBLE);

@@ -207,7 +207,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT063;
-        mAct_Title = Constant.ACT063 + "_" + "title";
+        mAct_Title = Constant.ACT063 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);

@@ -90,7 +90,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT057
+                Constant.ACT066
         );
         //
         loadTranslation();
@@ -214,8 +214,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT057;
-        mAct_Title = Constant.ACT057 + "_" + "title";
+        mAct_Info = Constant.ACT066;
+        mAct_Title = Constant.ACT066 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
