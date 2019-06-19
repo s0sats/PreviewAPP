@@ -51,5 +51,7 @@ public interface Act053_Main_Contract {
         boolean isItemSavedOk();
 
         void setItemSavedOk(boolean itemSavedOk);
+
+        void callAct067(Bundle bundle);
     }
 }

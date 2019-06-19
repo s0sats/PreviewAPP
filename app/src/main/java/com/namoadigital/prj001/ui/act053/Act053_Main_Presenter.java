@@ -545,11 +545,36 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     proceedCallAct0061();
                 //}
                 break;
+            case ConstantBaseApp.ACT067:
+                //if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
+                proceedCallAct0067();
+                //}
+                break;
             case ConstantBaseApp.ACT063:
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
                 break;
+        }
+    }
+
+    private void proceedCallAct0067() {
+        if(mView.isItemSavedOk()){
+            mView.callAct067(prepareAct067Bundle());
+        } else{
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_leave_add_item_ttl"),
+                    hmAux_Trans.get("alert_not_save_item_will_be_lost_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItem();
+                            mView.callAct067(prepareAct067Bundle());
+                        }
+                    },
+                    1
+            );
         }
     }
 
@@ -603,4 +628,13 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());
         return bundle;
     }
+    private Bundle prepareAct067Bundle() {
+        Bundle bundle = new Bundle();
+        //COMO ACT061 É SÓ INBOUND, PASSA O PROCESSO COMO INBOUND.
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ConstantBaseApp.IO_OUTBOUND);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,mView.getIoPrefix());
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());
+        return bundle;
+    }
+
 }

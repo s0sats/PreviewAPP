@@ -246,6 +246,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
             bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
             bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, ConstantBaseApp.IO_SERIAL_EDIT);
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT067);
             //
             mView.callAct053(bundle);
         }

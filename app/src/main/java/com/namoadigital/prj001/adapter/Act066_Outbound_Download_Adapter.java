@@ -164,8 +164,8 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
         private TextView tv_eta_dt_val;
         private TextView tv_invoice;
         private TextView tv_invoice_val;
-        private TextView tv_from;
-        private TextView tv_from_val;
+        private TextView tv_to;
+        private TextView tv_to_val;
         private TextView tv_modal;
         private TextView tv_modal_val;
         private TextView tv_comment;
@@ -221,8 +221,8 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
             tv_eta_dt_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_eta_date_val);
             tv_invoice = itemView.findViewById(R.id.act066_io_outbound_cell_tv_invoice);
             tv_invoice_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_invoice_val);
-            tv_from = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to);
-            tv_from_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to_val);
+            tv_to = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to);
+            tv_to_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_to_val);
             tv_modal = itemView.findViewById(R.id.act066_io_outbound_cell_tv_modal);
             tv_modal_val = itemView.findViewById(R.id.act066_io_outbound_cell_tv_modal_val);
             tv_comment = itemView.findViewById(R.id.act066_io_outbound_cell_tv_comment);
@@ -308,14 +308,14 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
                 tv_invoice_val.setVisibility(View.VISIBLE);
             }
             //
-            tv_from.setVisibility(View.GONE);
-            tv_from_val.setVisibility(View.GONE);
+            tv_to.setVisibility(View.GONE);
+            tv_to_val.setVisibility(View.GONE);
             if(data.getTo() != null && data.getTo().trim().length() > 0) {
-                tv_from.setText(hmAux_Trans.get("from_lbl"));
-                tv_from_val.setText(data.getTo());
+                tv_to.setText(hmAux_Trans.get("from_lbl"));
+                tv_to_val.setText(data.getTo());
                 //
-                tv_from.setVisibility(View.VISIBLE);
-                tv_from_val.setVisibility(View.VISIBLE);
+                tv_to.setVisibility(View.VISIBLE);
+                tv_to_val.setVisibility(View.VISIBLE);
             }
             //
             if(data.getModal() != null && data.getModal().trim().length() > 0) {

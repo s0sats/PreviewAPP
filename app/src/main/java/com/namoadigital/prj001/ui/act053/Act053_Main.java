@@ -27,6 +27,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -590,6 +591,23 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    public void callAct067(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act067_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act067_Main.OUTBOUND_FRAG_ITEM);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+
 
     @Override
     public void callAct051() {

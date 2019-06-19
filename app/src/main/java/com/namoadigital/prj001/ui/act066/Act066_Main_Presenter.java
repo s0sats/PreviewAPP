@@ -28,10 +28,6 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
     private Act066_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private IO_OutboundDao outboundDao;
-    private String zone_code;
-    private String local_code;
-    private String outbound_id;
-    private String invoince;
 
     public Act066_Main_Presenter(Context context, Act066_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -91,11 +87,6 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
             //
             Intent mIntent = new Intent(context, WBR_IO_Outbound_Download.class);
             Bundle bundle = new Bundle();
-            bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            bundle.putString(MD_Site_Zone_LocalDao.ZONE_CODE, zone_code);
-            bundle.putString(MD_Site_Zone_LocalDao.LOCAL_CODE, local_code);
-            bundle.putString(WS_IO_Outbound_Search.KEY_CODE_ID, outbound_id);
-            bundle.putString(IO_OutboundDao.INVOICE_NUMBER, invoince);
             bundle.putString(IO_OutboundDao.OUTBOUND_CODE, outboundList);
             mIntent.putExtras(bundle);
             //
@@ -146,6 +137,13 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
 
             record.setModal(hmAux.get(IO_OutboundDao.MODAL_CODE));
             //
+
+            if(hmAux.get(IO_OutboundDao.TO_TYPE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
+                record.setTo(hmAux.get(IO_OutboundDao.TO_PARTNER_ID));
+            }else{
+                record.setTo(hmAux.get(IO_OutboundDao.TO_SITE_ID));
+            }
+
             if( hmAux.hasConsistentValue(IO_OutboundDao.FROM_SITE_CODE)
                 && hmAux.get(IO_OutboundDao.FROM_SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context)))
             {
