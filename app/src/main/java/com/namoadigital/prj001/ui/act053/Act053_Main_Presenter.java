@@ -33,7 +33,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private IO_InboundDao inboundDao;
+    private IO_OutboundDao outboundDao;
     private IO_Inbound_ItemDao inboundItemDao;
+    private IO_Outbound_ItemDao outboundItemDao;
 
 
     public Act053_Main_Presenter(Context context, Act053_Main_Contract.I_View mView,HMAux hmAux_Trans, long product_code) {
@@ -75,6 +77,18 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        //
+        outboundDao = new IO_OutboundDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        outboundItemDao= new IO_Outbound_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
@@ -82,6 +96,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         switch (requesting_act){
             case ConstantBaseApp.ACT061:
                 mView.callAct061(prepareAct061Bundle());
+                break;
+            case ConstantBaseApp.ACT067:
+                mView.callAct067(prepareAct067Bundle());
                 break;
             case ConstantBaseApp.ACT051:
             default:
@@ -377,6 +394,8 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     generateIoInboundItem();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
+                    generateIoOutboundItem();
+                    break;
                 case ConstantBaseApp.IO_SERIAL_EDIT:
                     defineFlow(requesting_act);
                     break;
@@ -422,6 +441,54 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                         inboundItem.getCustomer_code(),
                         inboundItem.getInbound_prefix(),
                         inboundItem.getInbound_code(),
+                        0
+                    ).toSqlQuery()
+                );
+                //
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_error_item_save_ttl"),
+                    hmAux_Trans.get("alert_error_item_save_msg")
+                );
+            }
+        }
+    }
+    private void generateIoOutboundItem() {
+        MD_Product_Serial mdProductSerial = mView.getProductSerial();
+        //
+        if(mdProductSerial != null){
+            IO_Outbound_Item outboundItem = new IO_Outbound_Item();
+            //
+            outboundItem.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+            outboundItem.setInbound_prefix(Integer.parseInt(mView.getIoPrefix()));
+            outboundItem.setInbound_code(Integer.parseInt(mView.getIoCode()));
+            outboundItem.setInbound_item(0);
+            outboundItem.setProduct_code(mdProductSerial.getProduct_code());
+            outboundItem.setSerial_code(mdProductSerial.getSerial_code());
+            outboundItem.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
+            outboundItem.setSave_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            outboundItem.setUpdate_required(1);
+            //Atualiza cabeçalho da outbound para seta como update required
+            outboundDao.addUpdate(
+                new IO_Outbound_Sql_004(
+                    outboundItem.getCustomer_code(),
+                    outboundItem.getOutbound_prefix(),
+                    outboundItem.getOutbound_code(),
+                    1
+                ).toSqlQuery()
+            );
+            //
+            DaoObjReturn daoObjReturn = outboundItemDao.addUpdate(outboundItem);
+            if(!daoObjReturn.hasError()){
+                //Var que indica q foi salvo no banco, teve retorno OK.
+                mView.setItemSavedOk(false);
+                //
+                executeWSInbounItem();
+            }else{
+                outboundDao.addUpdate(
+                    new IO_Outbound_Sql_004(
+                        outboundItem.getCustomer_code(),
+                        outboundItem.getOutbound_prefix(),
+                        outboundItem.getOutbound_code(),
                         0
                     ).toSqlQuery()
                 );
@@ -630,7 +697,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     }
     private Bundle prepareAct067Bundle() {
         Bundle bundle = new Bundle();
-        //COMO ACT061 É SÓ INBOUND, PASSA O PROCESSO COMO INBOUND.
+
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ConstantBaseApp.IO_OUTBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,mView.getIoPrefix());
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());

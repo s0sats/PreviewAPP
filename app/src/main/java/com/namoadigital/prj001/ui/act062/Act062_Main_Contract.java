@@ -22,6 +22,8 @@ public interface Act062_Main_Contract {
 
         void callAct061();
 
+        void callAct067();
+
         void callAct051();
     }
 

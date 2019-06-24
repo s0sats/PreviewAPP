@@ -190,7 +190,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             if ( md_product.getAllow_new_serial_cl() == 1
                 && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
                 && !fragSerial_ID.equals("")
-                && requestingActProcess.equals(ConstantBaseApp.IO_INBOUND)
+                && (requestingActProcess.equals(ConstantBaseApp.IO_INBOUND) || requestingActProcess.equals(ConstantBaseApp.IO_OUTBOUND))
             ) {
                 btn_create_serial.setVisibility(View.VISIBLE);
             } else {
