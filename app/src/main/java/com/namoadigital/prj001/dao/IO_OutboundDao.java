@@ -56,6 +56,8 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String STATUS = "status";
     public static final String PERC_DONE = "perc_done";
     public static final String MODAL_CODE = "modal_code";
+    public static final String MODAL_ID = "modal_id";
+    public static final String MODAL_DESC = "modal_desc";
     public static final String ALLOW_NEW_ITEM = "allow_new_item";
     public static final String ZONE_CODE_PICKING = "zone_code_picking";
     public static final String ZONE_ID_PICKING = "zone_id_picking";
@@ -607,6 +609,16 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }else{
                 io_outbound.setModal_code(cursor.getInt(cursor.getColumnIndex(MODAL_CODE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(MODAL_ID))){
+                io_outbound.setModal_id(null);
+            }else {
+                io_outbound.setModal_id(cursor.getString(cursor.getColumnIndex(MODAL_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MODAL_DESC))){
+                io_outbound.setModal_desc(null);
+            }else {
+                io_outbound.setModal_desc(cursor.getString(cursor.getColumnIndex(MODAL_DESC)));
+            }
             io_outbound.setAllow_new_item(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_ITEM)));
             if(cursor.isNull(cursor.getColumnIndex(ZONE_CODE_PICKING))){
                 io_outbound.setZone_code_picking(null);
@@ -704,6 +716,8 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }
             contentValues.put(PERC_DONE ,io_outbound.getPerc_done());
             contentValues.put(MODAL_CODE ,io_outbound.getModal_code());
+            contentValues.put(MODAL_ID ,io_outbound.getModal_id());
+            contentValues.put(MODAL_DESC ,io_outbound.getModal_desc());
             if(io_outbound.getAllow_new_item() > -1){
                 contentValues.put(ALLOW_NEW_ITEM ,io_outbound.getAllow_new_item());
             }

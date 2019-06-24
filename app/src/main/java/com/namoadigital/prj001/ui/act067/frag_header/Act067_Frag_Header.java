@@ -465,7 +465,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             mOutbound.setInvoice_date(mkdtInvoinceDt.getmValue());
             mOutbound.setEta_date(mkdtEtaDt.getmValue());
             mOutbound.setDeparture_date(mkdtDepartureDt.getmValue());
-            mOutbound.setTo_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mOutbound.setTo_type(ssToType.getmValue().get(SearchableSpinner.CODE));
             mOutbound.setTransport_order(mkedtTransportOrder.getText().toString());
             mOutbound.setFrom_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
