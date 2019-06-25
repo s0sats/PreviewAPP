@@ -276,14 +276,14 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
                 }
 
                 @Override
-                public void onConfClick(HMAux item) {
+                public void onPickingDoneClick(HMAux item) {
                     if(mFragItemListener != null) {
                         mFragItemListener.callOutConfCreateItemAct(item);
                     }
                 }
 
                 @Override
-                public void onPutAwayClick(HMAux item) {
+                public void onPickingClick(HMAux item) {
                     if(mFragItemListener != null) {
                         mFragItemListener.callPickingCreateItemAct(item);
                     }

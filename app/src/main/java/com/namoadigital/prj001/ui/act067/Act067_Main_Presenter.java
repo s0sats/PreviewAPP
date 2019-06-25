@@ -34,6 +34,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_006;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_014;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_002;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_010;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_011;
@@ -212,7 +213,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         IO_Move io_move;
         try {
             io_move = ioMoveDao.getByString(
-                    new IO_Move_Order_Item_Sql_006(
+                    new IO_Move_Order_Item_Sql_014(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             item.get(IO_Outbound_ItemDao.OUTBOUND_PREFIX),
                             item.get(IO_Outbound_ItemDao.OUTBOUND_CODE),
@@ -224,7 +225,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             io_move = null;
         }
 
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
         bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
         bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
@@ -250,7 +251,6 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             //
             mView.callAct053(bundle);
         }
-
     }
 
     private MD_Product_Serial getSerial(HMAux item) {

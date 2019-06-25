@@ -600,7 +600,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             bundle = new Bundle();
         }
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
-        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act067_Main.OUTBOUND_FRAG_ITEM);
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -48,9 +48,9 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
         void onSerialClick(HMAux item);
 
-        void onConfClick(HMAux item);
+        void onPickingDoneClick(HMAux item);
 
-        void onPutAwayClick(HMAux item);
+        void onPickingClick(HMAux item);
 
         void onAddItemClick();
     }
@@ -448,10 +448,10 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                         mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
                         break;
                     case R.id.act067_act067_frag_item_cell_iv_picking_done:
-                        mOnIoItemClickListener.onConfClick(mFilteredValues.get(getAdapterPosition()));
+                        mOnIoItemClickListener.onPickingDoneClick(mFilteredValues.get(getAdapterPosition()));
                         break;
                     case R.id.act067_frag_item_cell_iv_picking:
-                        mOnIoItemClickListener.onPutAwayClick(mFilteredValues.get(getAdapterPosition()));
+                        mOnIoItemClickListener.onPickingClick(mFilteredValues.get(getAdapterPosition()));
                         break;
                 }
             }
