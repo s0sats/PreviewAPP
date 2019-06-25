@@ -21,13 +21,13 @@ public class IO_Outbound_Item {
     @Expose
     private  String status;
     @Expose
+    private  Integer inbound_prefix;
+    @Expose
     private  Integer inbound_code;
     @Expose
     private  Integer inbound_item;
     @Expose
     private  String comments;
-    @Expose
-    private  Integer inbound_prefix;
     @Expose
     private  String save_date;
     @Expose

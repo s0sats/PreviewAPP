@@ -133,16 +133,10 @@ public class WS_IO_Outbound_Download extends IntentService {
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                     Constant.DB_VERSION_CUSTOM
             );
-            //Faz loop na lista retornada setando pk nos itens e adicionando seriais a serem salvos
-            //na lista de seriais.
-//            for(IO_Outbound io_outbound: outbounds_list){
-//                io_outbound.setPK();
-//                serialHashList.addAll(io_outbound.getSerial());
-//            }
             //Inserte/Atualiza seriais
             serialDao.addUpdate(serialHashList,false);
             //Insere / Atualiza lista de outbound
-            DaoObjReturn daoReturn = outboundDao.addUpdate(outbounds_list,false);
+            DaoObjReturn daoReturn = outboundDao.processFull(outbounds_list);
             //Caso sucesso ao inserir outbound, envia retorno com a pk do item selecionado
             //ou sem pk se mais de um item for selecionado.
             if (!daoReturn.hasError()) {
