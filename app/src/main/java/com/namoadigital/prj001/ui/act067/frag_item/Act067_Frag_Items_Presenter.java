@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -31,12 +31,12 @@ public class Act067_Frag_Items_Presenter implements Act067_Frag_Items_Contract.I
 
 
     @Override
-    public ArrayList<HMAux> getItemList(int inboundPrefix, int inboundCode) {
+    public ArrayList<HMAux> getItemList(int outboundPrefix, int outboundCode) {
         return (ArrayList<HMAux>) itemDao.query_HM(
-            new IO_Inbound_Item_Sql_002(
+            new IO_Outbound_Item_Sql_003(
                 ToolBox_Con.getPreference_Customer_Code(context),
-                inboundPrefix,
-                inboundCode
+                outboundPrefix,
+                outboundCode
             ).toSqlQuery()
         );
     }
