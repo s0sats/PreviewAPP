@@ -16,9 +16,9 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -41,7 +41,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     private HMAux hmAux_Trans;
     private String mResource_Name = "act067_io_items_adapter";
     private Act067_IO_Items_Adapter.OnIoItemClickListener mOnIoItemClickListener;
-    private boolean inboundAllowNewItem;
+    private boolean outboundAllowNewItem;
     private boolean filterActionPendencies;
 
     public interface OnIoItemClickListener {
@@ -63,12 +63,12 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         this.mOnIoItemClickListener = mOnIoItemClickListener;
     }
 
-    public Act067_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues, boolean inboundAllowNewItem, boolean filterActionPendencies) {
+    public Act067_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues, boolean outboundAllowNewItem, boolean filterActionPendencies) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
         this.mFilteredValues = mValues;
-        this.inboundAllowNewItem = inboundAllowNewItem;
+        this.outboundAllowNewItem = outboundAllowNewItem;
         this.filterActionPendencies = filterActionPendencies;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
@@ -198,28 +198,26 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
         /**
          * Verifica se não é para filtrar status ou
-         * filtra por pendind e put_away
+         * filtra por picking e picking_done
          *
          * @param aux
          * @return
          */
         private boolean filterStatus(HMAux aux) {
-            if (aux.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+            if (aux.hasConsistentValue(IO_Outbound_ItemDao.STATUS)) {
                 return
                         !filterActionPendencies
                                 || (
                                 filterActionPendencies
                                         &&
-                                        (aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)
-                                                || aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                                        (aux.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING)
+                                                || aux.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)
                                         )
                         );
             } else {
                 //Não deveria acontecer.
                 return false;
             }
-
-
         }
 
         @Override
@@ -233,14 +231,14 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tv_row_id;
         private TextView tv_status;
-        private ImageView iv_serial;//image
+        private ImageView iv_serial;
         private TextView tv_product_lbl;
         private TextView tv_product_val;
         private TextView tv_serial_lbl;
         private TextView tv_serial_val;
         private TextView tv_brand_model_color;
-        private ImageView iv_put_away;
-        private ImageView iv_conf;
+        private ImageView iv_picking;
+        private ImageView iv_picking_done;
         private ConstraintLayout cl_suggestion;
         private TextView tv_sugestion_lbl;
         private TextView tv_suggestion_val;
@@ -263,8 +261,8 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             tv_serial_lbl = itemView.findViewById(R.id.act067_frag_item_cell_tv_serial_lbl);
             tv_serial_val = itemView.findViewById(R.id.act067_frag_item_cell_tv_serial_val);
             tv_brand_model_color = itemView.findViewById(R.id.act067_frag_item_cell_tv_brand_model_color);
-            iv_put_away = itemView.findViewById(R.id.act067_frag_item_cell_iv_put_away);
-            iv_conf = itemView.findViewById(R.id.act067_frag_item_cell_iv_conf);
+            iv_picking = itemView.findViewById(R.id.act067_frag_item_cell_iv_picking);
+            iv_picking_done = itemView.findViewById(R.id.act067_act067_frag_item_cell_iv_picking_done);
             cl_suggestion = itemView.findViewById(R.id.act067_frag_item_cell_cl_suggestion);
             tv_sugestion_lbl = itemView.findViewById(R.id.act067_frag_item_cell_tv_sugestion_lbl);
             tv_suggestion_val = itemView.findViewById(R.id.act067_frag_item_cell_tv_suggestion_val);
@@ -281,8 +279,8 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             tv_conf_dt_lbl.setText(hmAux_Trans.get("conf_date_lbl"));
             //
             iv_serial.setOnClickListener(this);
-            iv_conf.setOnClickListener(this);
-            iv_put_away.setOnClickListener(this);
+            iv_picking_done.setOnClickListener(this);
+            iv_picking.setOnClickListener(this);
 
         }
 
@@ -294,9 +292,9 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             //Esconde views
             resetVisibility();
             //
-            tv_row_id.setText(item.get(IO_Inbound_ItemDao.INBOUND_ITEM));
-            tv_status.setText(hmAux_Trans.get(item.get(IO_Inbound_ItemDao.STATUS)));
-            tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.get(IO_Inbound_ItemDao.STATUS))));
+            tv_row_id.setText(item.get(IO_Outbound_ItemDao.OUTBOUND_ITEM));
+            tv_status.setText(hmAux_Trans.get(item.get(IO_Outbound_ItemDao.STATUS)));
+            tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.get(IO_Outbound_ItemDao.STATUS))));
             //iv_serial.setOnClickListener();
             tv_product_val.setText(item.get(MD_Product_SerialDao.PRODUCT_DESC));
             tv_serial_val.setText(item.get(MD_Product_SerialDao.SERIAL_ID));
@@ -308,11 +306,11 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             }
             //
             if (
-                    (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty())
-                            || (item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty())
+                    (item.hasConsistentValue(IO_OutboundDao.ZONE_ID_PICKING) && !item.get(IO_OutboundDao.ZONE_ID_PICKING).isEmpty())
+                            || (item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty())
             ) {
-                String suggestedPosition = item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_ZONE_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID).isEmpty() ? item.get(IO_Inbound_ItemDao.PLANNED_ZONE_ID) : "";
-                suggestedPosition += item.hasConsistentValue(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) && !item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "") + item.get(IO_Inbound_ItemDao.PLANNED_LOCAL_ID) : "";
+                String suggestedPosition = item.hasConsistentValue(IO_OutboundDao.ZONE_ID_PICKING) && !item.get(IO_OutboundDao.ZONE_ID_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_ID_PICKING) : "";
+                suggestedPosition += item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "") + item.get(IO_OutboundDao.LOCAL_ID_PICKING) : "";
                 tv_suggestion_val.setText(suggestedPosition);
                 tv_sugestion_lbl.setVisibility(View.VISIBLE);
                 tv_suggestion_val.setVisibility(View.VISIBLE);
@@ -321,10 +319,10 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             setRealized(item);
 
             //
-            if (item.hasConsistentValue(IO_Inbound_ItemDao.CONF_DATE) && !item.get(IO_Inbound_ItemDao.CONF_DATE).isEmpty()) {
+            if (item.hasConsistentValue(IO_Outbound_ItemDao.CONF_DATE) && !item.get(IO_Outbound_ItemDao.CONF_DATE).isEmpty()) {
                 tv_conf_dt_val.setText(
                         ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(item.get(IO_Inbound_ItemDao.CONF_DATE)),
+                                ToolBox_Inf.dateToMilliseconds(item.get(IO_Outbound_ItemDao.CONF_DATE)),
                                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                         )
 
@@ -333,22 +331,22 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 tv_conf_dt_val.setVisibility(View.VISIBLE);
             }
             //Define qual icone deve ser exibido.
-            if (item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS) && !item.get(IO_InboundDao.PUT_AWAY_PROCESS).isEmpty()) {
-                if (item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("0")) {
-                    iv_conf.setVisibility(View.VISIBLE);
-                    iv_put_away.setVisibility(View.GONE);
+            if (item.hasConsistentValue(IO_OutboundDao.PICKING_PROCESS) && !item.get(IO_OutboundDao.PICKING_PROCESS).isEmpty()) {
+                if (item.get(IO_OutboundDao.PICKING_PROCESS).equals("0")) {
+                    iv_picking_done.setVisibility(View.VISIBLE);
+                    iv_picking.setVisibility(View.GONE);
                 } else {
                     if (
-                            item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-                                    && (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
-                                    || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                            item.hasConsistentValue(IO_Outbound_ItemDao.STATUS)
+                                    && (item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                                    || item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)
                             )
                     ) {
-                        iv_conf.setVisibility(View.GONE);
-                        iv_put_away.setVisibility(View.VISIBLE);
+                        iv_picking_done.setVisibility(View.VISIBLE);
+                        iv_picking.setVisibility(View.GONE);
                     } else {
-                        iv_conf.setVisibility(View.VISIBLE);
-                        iv_put_away.setVisibility(View.GONE);
+                        iv_picking_done.setVisibility(View.GONE);
+                        iv_picking.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -359,10 +357,10 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         private void setRealized(HMAux item) {
             String realized = "";
 
-            if (item.hasConsistentValue(IO_InboundDao.PUT_AWAY_PROCESS)
-                    && item.get(IO_InboundDao.PUT_AWAY_PROCESS).equals("1")
-                    && item.hasConsistentValue(IO_InboundDao.STATUS)
-                    && (item.get(IO_InboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE) || item.get(IO_InboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))
+            if (item.hasConsistentValue(IO_OutboundDao.PICKING_PROCESS)
+                    && item.get(IO_OutboundDao.PICKING_PROCESS).equals("1")
+                    && item.hasConsistentValue(IO_OutboundDao.STATUS)
+                    && (item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE) || item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))
                     && item.hasConsistentValue(IO_MoveDao.TO_ZONE_DESC)
                     && item.hasConsistentValue(IO_MoveDao.TO_LOCAL_ID)
             ) {
@@ -373,9 +371,9 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 tv_realized_val.setVisibility(View.VISIBLE);
 
             } else {
-                if (item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_CODE) && !item.get(IO_Inbound_ItemDao.ZONE_CODE).isEmpty()) {
-                    realized = item.hasConsistentValue(IO_Inbound_ItemDao.ZONE_DESC) && !item.get(IO_Inbound_ItemDao.ZONE_DESC).isEmpty() ? item.get(IO_Inbound_ItemDao.ZONE_DESC) : "";
-                    realized += item.hasConsistentValue(IO_Inbound_ItemDao.LOCAL_ID) && !item.get(IO_Inbound_ItemDao.LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_Inbound_ItemDao.LOCAL_ID) : "";
+                if (item.hasConsistentValue(IO_OutboundDao.ZONE_CODE_PICKING) && !item.get(IO_OutboundDao.ZONE_CODE_PICKING).isEmpty()) {
+                    realized = item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_DESC_PICKING) : "";
+                    realized += item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_OutboundDao.LOCAL_ID_PICKING) : "";
                     tv_realized_val.setText(realized);
                     tv_realized_lbl.setVisibility(View.VISIBLE);
                     tv_realized_val.setVisibility(View.VISIBLE);
@@ -384,45 +382,45 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         private void defineButtonsLayout(HMAux item) {
-            if (item.hasConsistentValue(IO_Inbound_ItemDao.STATUS)) {
+            if (item.hasConsistentValue(IO_Outbound_ItemDao.STATUS)) {
 
-                if (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
-                    iv_conf.setImageDrawable(
+                if (item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)) {
+                    iv_picking_done.setImageDrawable(
                             context.getDrawable(R.drawable.ic_ok_orange_ns_states)
                     );
                 } else {
-                    iv_conf.setImageDrawable(
+                    iv_picking_done.setImageDrawable(
                             context.getDrawable(R.drawable.ic_ok_ns_states)
                     );
                 }
                 //
-                if (item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)) {
-                    iv_put_away.setImageDrawable(
+                if (item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING)) {
+                    iv_picking.setImageDrawable(
                             context.getDrawable(R.drawable.io_bg_orange_states)
                     );
                 } else {
-                    iv_put_away.setImageDrawable(
+                    iv_picking.setImageDrawable(
                             context.getDrawable(R.drawable.io_bg_green_states)
                     );
                 }
                 //Cancela ação do btn caso o status não permita uma ação.
                 if (
-                        item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
-                                || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
-                                || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
-                                || item.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
+                        item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                                || item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                                || item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                                || item.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
                 ) {
-                    iv_conf.setEnabled(false);
-                    iv_put_away.setEnabled(false);
+                    iv_picking_done.setEnabled(false);
+                    iv_picking.setEnabled(false);
                 } else {
-                    iv_conf.setEnabled(true);
-                    iv_put_away.setEnabled(true);
+                    iv_picking_done.setEnabled(true);
+                    iv_picking.setEnabled(true);
                 }
             } else {
-                iv_conf.setEnabled(false);
-                iv_conf.setVisibility(View.GONE);
-                iv_put_away.setEnabled(false);
-                iv_put_away.setVisibility(View.GONE);
+                iv_picking_done.setEnabled(false);
+                iv_picking_done.setVisibility(View.GONE);
+                iv_picking.setEnabled(false);
+                iv_picking.setVisibility(View.GONE);
             }
         }
 
@@ -437,8 +435,8 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             tv_conf_dt_lbl.setVisibility(View.INVISIBLE);
             tv_conf_dt_val.setVisibility(View.INVISIBLE);
             //
-            iv_conf.setVisibility(View.GONE);
-            iv_put_away.setVisibility(View.GONE);
+            iv_picking_done.setVisibility(View.GONE);
+            iv_picking.setVisibility(View.GONE);
 
         }
 
@@ -449,10 +447,10 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                     case R.id.act067_frag_item_cell_iv_serial:
                         mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
                         break;
-                    case R.id.act067_frag_item_cell_iv_conf:
+                    case R.id.act067_act067_frag_item_cell_iv_picking_done:
                         mOnIoItemClickListener.onConfClick(mFilteredValues.get(getAdapterPosition()));
                         break;
-                    case R.id.act067_frag_item_cell_iv_put_away:
+                    case R.id.act067_frag_item_cell_iv_picking:
                         mOnIoItemClickListener.onPutAwayClick(mFilteredValues.get(getAdapterPosition()));
                         break;
                 }
@@ -477,7 +475,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             btnAddItem = itemView.findViewById(R.id.act067_frag_item_footer_btn_add);
             btnAddItem.setText(hmAux_Trans.get("btn_add_item"));
             //
-            if (inboundAllowNewItem) {
+            if (outboundAllowNewItem) {
                 btnAddItem.setVisibility(View.VISIBLE);
                 btnAddItem.setOnClickListener(this);
             } else {

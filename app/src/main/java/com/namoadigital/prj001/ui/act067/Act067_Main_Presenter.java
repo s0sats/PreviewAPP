@@ -203,7 +203,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void processPutAwayMove(HMAux item) {
+    public void processPickingMove(HMAux item) {
         Bundle bundle = new Bundle();
         IO_MoveDao ioMoveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -214,9 +214,9 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             io_move = ioMoveDao.getByString(
                     new IO_Move_Order_Item_Sql_006(
                             ToolBox_Con.getPreference_Customer_Code(context),
-                            item.get(IO_Outbound_ItemDao.INBOUND_PREFIX),
-                            item.get(IO_Outbound_ItemDao.INBOUND_CODE),
-                            item.get(IO_Outbound_ItemDao.INBOUND_ITEM)
+                            item.get(IO_Outbound_ItemDao.OUTBOUND_PREFIX),
+                            item.get(IO_Outbound_ItemDao.OUTBOUND_CODE),
+                            item.get(IO_Outbound_ItemDao.OUTBOUND_ITEM)
                     ).toSqlQuery()
             );
         } catch (NullPointerException e) {
@@ -308,8 +308,8 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             mView.setWsProcess(WS_IO_Outbound_Item_Save.class.getName());
             //
             mView.showPD(
-                    hmAux_Trans.get("progress_save_inbound_item_ttl"),
-                    hmAux_Trans.get("progress_save_inbound_item_msg")
+                    hmAux_Trans.get("progress_save_outbound_item_ttl"),
+                    hmAux_Trans.get("progress_save_outbound_item_msg")
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
@@ -338,12 +338,12 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         }
         //
         if(actReturnList != null && actReturnList.size() > 0){
-            boolean inboundResult = true;
-            int inboundNextIdx = 0;
+            boolean outboundResult = true;
+            int outboundNextIdx = 0;
             HMAux auxResult = new HMAux();
-            //Monta lista por inbound
+            //Monta lista por outbound
             for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
-                String inboundCode = "";
+                String outboundCode = "";
                 //
                 if(actReturn.isMove()){
                     IO_Move ioMove =
@@ -355,40 +355,40 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
                                     ).toSqlQuery()
                             );
                     if(ioMove != null){
-                        inboundCode = ioMove.getOutbound_prefix()+"."+ioMove.getOutbound_code();
+                        outboundCode = ioMove.getOutbound_prefix()+"."+ioMove.getOutbound_code();
                     }
                 }else{
-                    inboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                    outboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
                 }
-                if(!auxResult.containsKey(inboundCode)
-                        ||(auxResult.containsKey(inboundCode)
+                if(!auxResult.containsKey(outboundCode)
+                        ||(auxResult.containsKey(outboundCode)
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    auxResult.put(inboundCode, actReturn.getRetStatus());
+                    auxResult.put(outboundCode, actReturn.getRetStatus());
                 }
             }
-            //For no resumido por inbound montando msg a ser exibida
+            //For no resumido por outbound montando msg a ser exibida
             for(Map.Entry<String, String> item : auxResult.entrySet()){
-                String inboundPk = mPrefix+"."+mCode;
+                String outboundPk = mPrefix+"."+mCode;
                 HMAux hmAux = new HMAux();
                 //
                 //Monta HmAux
-                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("inbound_lbl") );
+                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("outbound_lbl") );
                 hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
                 //
-                if(item.getKey().equals(inboundPk)){
-                    inboundResult = item.getValue().equals("OK");
-                    resultList.add(inboundNextIdx,hmAux);
-                    inboundNextIdx++;
+                if(item.getKey().equals(outboundPk)){
+                    outboundResult = item.getValue().equals("OK");
+                    resultList.add(outboundNextIdx,hmAux);
+                    outboundNextIdx++;
                 }else{
                     resultList.add(hmAux);
                 }
 
             }
             //
-            mView.showResult(resultList,inboundResult);
+            mView.showResult(resultList,outboundResult);
         }
     }
 
@@ -402,28 +402,28 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
 
         if(hasUpdateRequired(mOutbound.getOutbound_prefix(),mOutbound.getOutbound_code()) || isOutboundInTokenFile(mOutbound.getOutbound_prefix(),mOutbound.getOutbound_code())){
             //Se itens pendentes de envio, chama o save que, se finalizado com sucesso,
-            //retona inbound full. Nesse caso náo precisa baixar a Outbound depois
+            //retona outbound full. Nesse caso náo precisa baixar a Outbound depois
             //
             executeWsSaveItem();
         }else{
             //Se não tem update_required, apenas atualiza full
-            String inboundList = mOutbound.getOutbound_prefix() +"."+ mOutbound.getOutbound_code();
-            executeWsOutboundDownload(inboundList);
+            String outboundList = mOutbound.getOutbound_prefix() +"."+ mOutbound.getOutbound_code();
+            executeWsOutboundDownload(outboundList);
         }
     }
 
-    private void executeWsOutboundDownload(String inboundList) {
+    private void executeWsOutboundDownload(String outboundList) {
         if(ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_IO_Outbound_Download.class.getName());
             //
             mView.showPD(
-                    hmAux_Trans.get("dialog_inbound_download_ttl"),
-                    hmAux_Trans.get("dialog_inbound_download_start")
+                    hmAux_Trans.get("dialog_outbound_download_ttl"),
+                    hmAux_Trans.get("dialog_outbound_download_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Outbound_Download.class);
             Bundle bundle = new Bundle();
-            bundle.putString(IO_OutboundDao.OUTBOUND_CODE, inboundList);
+            bundle.putString(IO_OutboundDao.OUTBOUND_CODE, outboundList);
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
@@ -473,24 +473,24 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         return hasUpdateRequired(mPrefix,mCode) || isOutboundInTokenFile(mPrefix,mCode);
     }
 
-    private boolean isOutboundInTokenFile(int inbound_prefix, int inbound_code) {
+    private boolean isOutboundInTokenFile(int outbound_prefix, int outbound_code) {
         boolean retToken = false;
-        File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
-        if(inboundToken != null && inboundToken.length > 0){
+        File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+        if(outboundToken != null && outboundToken.length > 0){
             try {
                 Gson gson =  new GsonBuilder().serializeNulls().create();
                 T_IO_Outbound_Item_Env env =
                         gson.fromJson(
-                                ToolBox_Inf.getContents(inboundToken[0]),
+                                ToolBox_Inf.getContents(outboundToken[0]),
                                 T_IO_Outbound_Item_Env.class
                         );
                 //
                 if(env != null){
-                    for(T_IO_Outbound_Item_Env.IO_Outbound_Header inboundHeader : env.getOutbound()){
+                    for(T_IO_Outbound_Item_Env.IO_Outbound_Header outboundHeader : env.getOutbound()){
                         if(
-                                inboundHeader.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                                        && inboundHeader.getOutbound_prefix() == inbound_prefix
-                                        && inboundHeader.getOutbound_code() == inbound_code
+                                outboundHeader.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                        && outboundHeader.getOutbound_prefix() == outbound_prefix
+                                        && outboundHeader.getOutbound_code() == outbound_code
                         ){
                             retToken = true;
                             break;
@@ -507,8 +507,6 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         //
         return retToken;
     }
-
-
 
     @Override
     public void onBackPressedClicked() {

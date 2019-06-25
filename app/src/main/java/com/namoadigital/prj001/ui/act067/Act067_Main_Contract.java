@@ -52,7 +52,7 @@ public interface Act067_Main_Contract {
 
         void processHeaderSave(int mPrefix, int mCode, String actReturnJson);
 
-        void processPutAwayMove(HMAux item);
+        void processPickingMove(HMAux item);
 
         void processSerialEdition(HMAux item);
 
