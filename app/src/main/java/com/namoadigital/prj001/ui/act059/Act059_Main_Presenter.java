@@ -73,7 +73,6 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                 return 0;
             case ConstantBaseApp.IO_INBOUND:
-            case ConstantBaseApp.IO_OUTBOUND:
                 return 1;
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
                 if(has_put_away == 0) {
@@ -81,6 +80,8 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
                 }else{
                     return 3;
                 }
+            case ConstantBaseApp.IO_OUTBOUND:
+                return 4;
             default:
                 return -1;
         }

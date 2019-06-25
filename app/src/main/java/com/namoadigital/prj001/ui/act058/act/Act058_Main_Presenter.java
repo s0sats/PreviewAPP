@@ -120,8 +120,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 
         switch (move_type) {
             case ConstantBaseApp.IO_INBOUND:
-            case ConstantBaseApp.IO_OUTBOUND:
                 return 1;
+            case ConstantBaseApp.IO_OUTBOUND:
+                return 4;
             case ConstantBaseApp.IO_PROCESS_MOVE:
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
             default:
