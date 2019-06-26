@@ -459,9 +459,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             IO_Outbound_Item outboundItem = new IO_Outbound_Item();
             //
             outboundItem.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-            outboundItem.setInbound_prefix(Integer.parseInt(mView.getIoPrefix()));
-            outboundItem.setInbound_code(Integer.parseInt(mView.getIoCode()));
-            outboundItem.setInbound_item(0);
+            outboundItem.setOutbound_prefix(Integer.parseInt(mView.getIoPrefix()));
+            outboundItem.setOutbound_code(Integer.parseInt(mView.getIoCode()));
+            outboundItem.setOutbound_item(0);
             outboundItem.setProduct_code(mdProductSerial.getProduct_code());
             outboundItem.setSerial_code(mdProductSerial.getSerial_code());
             outboundItem.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
@@ -482,7 +482,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 //Var que indica q foi salvo no banco, teve retorno OK.
                 mView.setItemSavedOk(false);
                 //
-                executeWSInbounItem();
+                executeWSOutbounItem();
             }else{
                 outboundDao.addUpdate(
                     new IO_Outbound_Sql_004(
@@ -521,12 +521,32 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         }
     }
 
+    private void executeWSOutbounItem() {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Outbound_Item_Add.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Add.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
     @Override
     public void processInboundItemAdd(String wsJsonReturn) {
         if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
             ArrayList<WS_IO_Inbound_Item_Add.InboundItemSaveActReturn> saveActReturns = null;
-            int mPrefix =ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
-            int mCode =ToolBox_Inf.convertStringToInt(mView.getIoCode());
+            int mPrefix = ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
+            int mCode = ToolBox_Inf.convertStringToInt(mView.getIoCode());
             //
             try {
                 Gson gson = new GsonBuilder().serializeNulls().create();
@@ -590,10 +610,83 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public void processOutboundItemAdd(String wsJsonReturn) {
+        if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
+            ArrayList<WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn> saveActReturns = null;
+            int mPrefix = ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
+            int mCode = ToolBox_Inf.convertStringToInt(mView.getIoCode());
+            //
+            try {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                saveActReturns = gson.fromJson(
+                        wsJsonReturn,
+                        new
+                                TypeToken<ArrayList<WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn>>() {
+                                }.getType()
+                );
+                //
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                mView.showAlertDialog(
+                        hmAux_Trans.get("alert_add_item_error_on_return_ttl"),
+                        hmAux_Trans.get("alert_add_item_error_on_return_msg")
+
+                );
+            }
+            //
+            if(saveActReturns != null && saveActReturns.size() > 0){
+                boolean finalResult = false;
+                ArrayList<HMAux> resultList = new ArrayList<>();
+                MD_Product_Serial serial =  mView.getProductSerial();
+                //
+                for(WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn actReturn :saveActReturns){
+                    HMAux hmAux = new HMAux();
+                    if(actReturn.isRetStatus()
+                            &&   actReturn.getOutbound_prefix() == mPrefix
+                            &&   actReturn.getOutbound_code() == mCode
+                    ){
+                        finalResult = true;
+                    }
+                    //Monta HmAux
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("item_lbl"));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("serial_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,formatProductSerialDes(serial));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("inbound_lbl") );
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, formatOutboundInfo(actReturn));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("message_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, actReturn.isRetStatus() ? "OK": actReturn.getMsg());
+                    //
+                    resultList.add(hmAux);
+                }
+                //
+                mView.showResultDialog(resultList,finalResult);
+
+            }else{
+                mView.showAlertDialog(
+                        hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                        hmAux_Trans.get("alert_add_item_empty_return_msg")
+                );
+            }
+        }else{
+            mView.showAlertDialog(
+                    hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                    hmAux_Trans.get("alert_add_item_empty_return_msg")
+            );
+        }
+    }
+
     private String formatInboundInfo(WS_IO_Inbound_Item_Add.InboundItemSaveActReturn actReturn) {
         return actReturn.getInbound_prefix()
             +"."+actReturn.getInbound_code()
             +"."+(actReturn.getInbound_item() != null ? actReturn.getInbound_item() : "0");
+    }
+
+    private String formatOutboundInfo(WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn actReturn) {
+        return actReturn.getOutbound_prefix()
+            +"."+actReturn.getOutbound_code()
+            +"."+(actReturn.getOutbound_item() != null ? actReturn.getOutbound_item() : "0");
     }
 
     private String formatProductSerialDes(MD_Product_Serial serial) {

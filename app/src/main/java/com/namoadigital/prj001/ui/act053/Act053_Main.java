@@ -649,7 +649,6 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             mPresenter.extractSearchResult(mLink);
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
-            //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
                 mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
             } else {
@@ -662,6 +661,9 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             mPresenter.processAddresSuggestionResult(mLink);
         }else if(wsProcess.equals(WS_IO_Inbound_Item_Add.class.getName())){
             mPresenter.processInboundItemAdd(mLink);
+            //onBackPressed();
+        }else if(wsProcess.equals(WS_IO_Outbound_Item_Add.class.getName())){
+            mPresenter.processOutboundItemAdd(mLink);
             //onBackPressed();
         }
         //

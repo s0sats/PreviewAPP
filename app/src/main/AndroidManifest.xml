@@ -751,10 +751,21 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_IO_Inbound_Item_Add" />
 
         <service android:name=".service.WS_Upload_Other_User_Img" />
-        <service android:name=".service.WS_IO_Outbound_Header_Save" />
 
         <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
+
+        <service android:name=".service.WS_IO_Outbound_Header_Save" />
+
         <receiver android:name=".receiver.WBR_IO_Outbound_Header_Save" />
+
+        <service android:name=".service.WS_IO_Outbound_Item_Add" />
+
+        <receiver android:name=".receiver.WBR_IO_Outbound_Item_Add" />
+
+        <service android:name=".service.WS_IO_Outbound_Item_Save" />
+
+        <receiver android:name=".receiver.WBR_IO_Outbound_Item_Save" />
+
     </application>
 
 </manifest>

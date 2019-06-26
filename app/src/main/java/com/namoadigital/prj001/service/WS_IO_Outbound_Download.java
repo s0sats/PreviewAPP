@@ -39,7 +39,6 @@ public class WS_IO_Outbound_Download extends IntentService {
         super("WS_IO_Outbound_Download");
     }
 
-
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();

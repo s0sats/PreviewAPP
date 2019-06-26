@@ -9,7 +9,7 @@ public class T_IO_Outbound_Item_Env extends Main_Header_Env{
     @Expose
     private String token;
     @Expose
-    private ArrayList<IO_Outbound_Header> inbound = new ArrayList<>();
+    private ArrayList<IO_Outbound_Header> outbound = new ArrayList<>();
     @Expose
     private int reprocess;
 
@@ -22,11 +22,11 @@ public class T_IO_Outbound_Item_Env extends Main_Header_Env{
     }
 
     public ArrayList<IO_Outbound_Header> getOutbound() {
-        return inbound;
+        return outbound;
     }
 
-    public void setOutbound(ArrayList<IO_Outbound_Header> inbound) {
-        this.inbound = inbound;
+    public void setOutbound(ArrayList<IO_Outbound_Header> outbound) {
+        this.outbound = outbound;
     }
 
     public int getReprocess() {
@@ -41,9 +41,9 @@ public class T_IO_Outbound_Item_Env extends Main_Header_Env{
         @Expose
         private long customer_code;
         @Expose
-        private int inbound_prefix;
+        private int outbound_prefix;
         @Expose
-        private int inbound_code;
+        private int outbound_code;
         @Expose
         private int scn;
         @Expose
@@ -60,19 +60,19 @@ public class T_IO_Outbound_Item_Env extends Main_Header_Env{
         }
 
         public int getOutbound_prefix() {
-            return inbound_prefix;
+            return outbound_prefix;
         }
 
-        public void setOutbound_prefix(int inbound_prefix) {
-            this.inbound_prefix = inbound_prefix;
+        public void setOutbound_prefix(int outbound_prefix) {
+            this.outbound_prefix = outbound_prefix;
         }
 
         public int getOutbound_code() {
-            return inbound_code;
+            return outbound_code;
         }
 
-        public void setOutbound_code(int inbound_code) {
-            this.inbound_code = inbound_code;
+        public void setOutbound_code(int outbound_code) {
+            this.outbound_code = outbound_code;
         }
 
         public int getScn() {

@@ -41,6 +41,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
@@ -340,16 +341,51 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 disableProgressDialog();
 
             }
-            if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())){
+            if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
-                ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>  actReturnList
+                ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList
                         = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
-                }.getType() );
+                }.getType());
                 showResults(actReturnList);
                 disableProgressDialog();
-
             }
+
+            if (ws_process.equals(WS_IO_Outbound_Item_Save.class.getName())) {
+                Gson gsonParser = new GsonBuilder().serializeNulls().create();
+                ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> outboundReturnList
+                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                }.getType());
+                showOutboundResults(outboundReturnList);
+                disableProgressDialog();
+            }
+
         }
+    }
+
+    private void showOutboundResults(ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> outboundReturnList) {
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        for(WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn result : outboundReturnList){
+            HMAux aux = new HMAux();
+            String itemPk;
+
+            if(result.isMove()) {
+                itemPk= result.getPrefix() + "." + result.getCode();
+                aux.put("title", hmAux_Trans.get("alert_result_movement"));
+            }else{
+                aux.put("title", hmAux_Trans.get("alert_result_in_conf"));
+                itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
+            }
+            aux.put("item", itemPk);
+
+            if(result.getMsg() == null){
+                aux.put("status","Ok");
+            }else{
+                aux.put("status",result.getMsg());
+            }
+
+            resultList.add(aux);
+        }
+        showNewOptDialog(resultList);
     }
 
     private void showResults(ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList) {
