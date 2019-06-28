@@ -147,6 +147,7 @@ public class WS_IO_Outbound_Item_Add extends IntentService {
                     outboundHeader.setCustomer_code(ioOutbound.getCustomer_code());
                     outboundHeader.setOutbound_prefix(ioOutbound.getOutbound_prefix());
                     outboundHeader.setOutbound_code(ioOutbound.getOutbound_code());
+
                     outboundHeader.setScn(ioOutbound.getScn());
                     //Pega apenas os itens com update required
                     outboundHeader.getItems().add(outboundItem);

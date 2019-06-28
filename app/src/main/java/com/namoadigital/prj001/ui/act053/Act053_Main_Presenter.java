@@ -467,6 +467,10 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             outboundItem.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
             outboundItem.setSave_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             outboundItem.setUpdate_required(1);
+            outboundItem.setInbound_prefix(mdProductSerial.getInbound_prefix());
+            outboundItem.setInbound_code(mdProductSerial.getInbound_code());
+            outboundItem.setInbound_item(mdProductSerial.getInbound_prefix());
+
             //Atualiza cabeçalho da outbound para seta como update required
             outboundDao.addUpdate(
                 new IO_Outbound_Sql_004(
@@ -598,7 +602,6 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 mView.showAlertDialog(
                     hmAux_Trans.get("alert_add_item_empty_return_ttl"),
                     hmAux_Trans.get("alert_add_item_empty_return_msg")
-
                 );
             }
         }else{
@@ -653,7 +656,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("item_lbl"));
                     hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("serial_lbl"));
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,formatProductSerialDes(serial));
-                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("inbound_lbl") );
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("outbound_lbl") );
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, formatOutboundInfo(actReturn));
                     hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("message_lbl"));
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, actReturn.isRetStatus() ? "OK": actReturn.getMsg());

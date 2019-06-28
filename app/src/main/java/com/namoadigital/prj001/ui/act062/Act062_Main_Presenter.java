@@ -37,9 +37,9 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = new MD_ProductDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM);
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
             mView.setWs_process(WS_Serial_Search.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("dialog_serial_search_ttl"),
-                hmAux_Trans.get("dialog_serial_search_start")
+                    hmAux_Trans.get("dialog_serial_search_ttl"),
+                    hmAux_Trans.get("dialog_serial_search_start")
             );
 
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
@@ -75,11 +75,11 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
 
     private MD_Product searchProduct(String product_id) {
         MD_Product md_product = mdProductDao.getByString(
-            new MD_Product_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                "",
-                product_id
-            ).toSqlQuery()
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        product_id
+                ).toSqlQuery()
         );
         //
         return md_product;
@@ -88,9 +88,9 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
     @Override
     public void getMD_Products() {
         ArrayList<MD_Product> productList = (ArrayList<MD_Product>) mdProductDao.query(
-            new MD_Product_Sql_002(
-                ToolBox_Con.getPreference_Customer_Code(context)
-            ).toSqlQuery()
+                new MD_Product_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
         );
         //
         mView.setProduct(productList);
@@ -100,8 +100,8 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
     public void extractSearchResult(String result) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         TSerial_Search_Rec rec = gson.fromJson(
-            result,
-            TSerial_Search_Rec.class);
+                result,
+                TSerial_Search_Rec.class);
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
@@ -111,8 +111,8 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
     private void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
-                hmAux_Trans.get("alert_no_serial_found_ttl"),
-                hmAux_Trans.get("alert_no_serial_found_msg")
+                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+                    hmAux_Trans.get("alert_no_serial_found_msg")
             );
         } else {
 
@@ -120,6 +120,13 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
 
             Bundle bundle = new Bundle();
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
+            bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProduct != null ? mdProduct.getProduct_id() : "");
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
+            bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
+
 
             if (results.size() != 0) {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
@@ -128,22 +135,28 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
                 if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
                     bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
                     bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+                    if(hasInboundAttach(serial_list.get(0))) {
+                        mView.callAct063(bundle);
+                    }else{
+                        mView.showMsg(
+                                hmAux_Trans.get("alert_serial_without_inbound_ttl"),
+                                hmAux_Trans.get("alert_serial_without_inbound_msg")
+                        );
+                    }
+                    return;
                 } else {
                     bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
                     bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
                 }
             }
 
-            bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
-            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
-            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
-
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProduct != null ? mdProduct.getProduct_id() : "");
-            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
-            bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
-
             mView.callAct063(bundle);
+
         }
+    }
+
+    private boolean hasInboundAttach(MD_Product_Serial md_product_serial) {
+        return md_product_serial.getInbound_prefix() == null || md_product_serial.getInbound_prefix()  == 0  ? false : true;
     }
 
     private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {
@@ -200,11 +213,11 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked(String requestingAct) {
-        switch (requestingAct){
+        switch (requestingAct) {
             case ConstantBaseApp.ACT061:
                 mView.callAct061();
                 break;
-             case ConstantBaseApp.ACT067:
+            case ConstantBaseApp.ACT067:
                 mView.callAct067();
                 break;
             case ConstantBaseApp.ACT051:

@@ -13,6 +13,8 @@ public interface Act063_Main_Contract {
 
         void setRecordInfo(int seriaListSize, long record_page);
 
+        void showMsg(String title, String msg);
+
         void loadProductSerialList(ArrayList<MD_Product_Serial> serial_list);
 
         void showQtyExceededMsg(long record_count, long record_page);

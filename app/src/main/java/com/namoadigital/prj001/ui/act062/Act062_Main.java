@@ -110,6 +110,8 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         transList.add("alert_no_search_parameter_msg");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        transList.add("alert_serial_without_inbound_ttl");
+        transList.add("alert_serial_without_inbound_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

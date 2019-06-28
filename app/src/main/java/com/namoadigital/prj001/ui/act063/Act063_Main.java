@@ -84,9 +84,9 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
 
     private void iniSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            Constant.ACT063
+                context,
+                mModule_Code,
+                Constant.ACT063
         );
         //
         loadTranslation();
@@ -113,13 +113,15 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         transList.add("btn_create_serial");
         transList.add("alert_serial_in_another_site_ttl");
         transList.add("alert_serial_in_another_site_msg");
+        transList.add("alert_serial_without_inbound_ttl");
+        transList.add("alert_serial_without_inbound_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -127,10 +129,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         recoverIntentsInfo();
         //
         mPresenter = new Act063_Main_Presenter(
-            context,
-            this,
-            hmAux_Trans
-
+                context,
+                this,
+                hmAux_Trans,
+                requestingActProcess
         );
         //
         md_product = mPresenter.getProductInfo(fragProduct_ID);
@@ -140,8 +142,9 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         setBtnCreationVisibility();
         //
         //
-        mPresenter.prepareDataToScreen(record_count,record_page,serial_list, mJump);
+        mPresenter.prepareDataToScreen(record_count, record_page, serial_list, mJump);
     }
+
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
         //
@@ -159,15 +162,15 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
 
             }
             //Var Io
-            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT051);
-            requestingActProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY,"");
-            requestingActPrefix = bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY,"-1");
-            requestingActCode = bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY,"-1");
-        }else{
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT051);
+            requestingActProcess = bundle.getString(ConstantBaseApp.HMAUX_PROCESS_KEY, "");
+            requestingActPrefix = bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1");
+            requestingActCode = bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1");
+        } else {
             requestingAct = ConstantBaseApp.ACT051;
             requestingActProcess = "";
             requestingActPrefix = "-1";
-            requestingActCode =  "-1";
+            requestingActCode = "-1";
         }
     }
 
@@ -187,10 +190,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
     private void setBtnCreationVisibility() {
         if (md_product != null) {
             //
-            if ( md_product.getAllow_new_serial_cl() == 1
-                && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
-                && !fragSerial_ID.equals("")
-                && (requestingActProcess.equals(ConstantBaseApp.IO_INBOUND) || requestingActProcess.equals(ConstantBaseApp.IO_OUTBOUND))
+            if (md_product.getAllow_new_serial_cl() == 1
+                    && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+                    && !fragSerial_ID.equals("")
+                    && (requestingActProcess.equals(ConstantBaseApp.IO_INBOUND))
             ) {
                 btn_create_serial.setVisibility(View.VISIBLE);
             } else {
@@ -251,9 +254,9 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         setRecordInfo(serial_list.size(), record_page);
         //
         mAdapter = new Act020_Prod_Serial_Adapter(
-            context,
-            R.layout.act020_cell,
-            serial_list
+                context,
+                R.layout.act020_cell,
+                serial_list
         );
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
@@ -266,19 +269,19 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         ll_records.setVisibility(View.VISIBLE);
 
         tv_records_limit.setText(
-            hmAux_Trans.get("records_display_limit_lbl") + " " + record_page
+                hmAux_Trans.get("records_display_limit_lbl") + " " + record_page
         );
 
         tv_records_count.setText(
-            hmAux_Trans.get("records_found_lbl") + " " + record_count
+                hmAux_Trans.get("records_found_lbl") + " " + record_count
         );
 
         ToolBox.alertMSG(
-            context,
-            hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
-            hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
-            null,
-            0);
+                context,
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
+                null,
+                0);
     }
 
     private void initActions() {
@@ -286,21 +289,33 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
+
                 mPresenter.processItemClick(productSerial);
+
             }
         });
         //
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(fragSerial_ID),true);
+                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(fragSerial_ID), true);
             }
         });
-
     }
 
-    public void setBtnCreateVisibility(boolean visible){
-        btn_create_serial.setVisibility(visible ? View.VISIBLE : View.GONE );
+    @Override
+    public void showMsg(String title, String msg) {
+        ToolBox.alertMSG(
+                context,
+                title,
+                msg,
+                null,
+                0
+        );
+    }
+
+    public void setBtnCreateVisibility(boolean visible) {
+        btn_create_serial.setVisibility(visible ? View.VISIBLE : View.GONE);
         btn_create_serial.setEnabled(visible);
     }
 
@@ -312,10 +327,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             bundle = new Bundle();
         }
         //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
-        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
-        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, requestingActProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, requestingActPrefix);
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, requestingActCode);
 
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -333,10 +348,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
         bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
         //Infos IO
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
-        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
-        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, requestingActProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, requestingActPrefix);
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, requestingActCode);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -345,7 +360,6 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
 }
