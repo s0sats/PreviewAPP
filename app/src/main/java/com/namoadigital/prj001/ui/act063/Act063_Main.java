@@ -102,6 +102,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         transList.add("progress_nfc_msg");
         transList.add("showing_lbl");
         transList.add("records_lbl");
+
         transList.add("no_record_found_lbl");
         transList.add("alert_nfc_return");
         transList.add("alert_qty_records_exceeded_ttl");
@@ -182,7 +183,7 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         tv_records_count = (TextView) findViewById(R.id.act063_tv_record_count);
         lv_prod_serial_list = (ListView) findViewById(R.id.act063_lv_prod_serial);
         tv_no_result = (TextView) findViewById(R.id.act063_tv_no_result);
-        tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
+        tv_no_result.setText(hmAux_Trans.get("no_record_found_lbl"));
         btn_create_serial = findViewById(R.id.act063_btn_create_serial);
         btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + fragSerial_ID + ")");
     }
@@ -203,7 +204,6 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             btn_create_serial.setVisibility(View.GONE);
         }
     }
-
 
     private void iniUIFooter() {
         iniFooter();

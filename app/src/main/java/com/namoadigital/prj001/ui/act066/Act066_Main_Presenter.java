@@ -6,14 +6,9 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
-import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
-import com.namoadigital.prj001.sql.Sql_Act057_001;
 import com.namoadigital.prj001.sql.Sql_Act066_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -103,9 +98,9 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
                && hmAux.hasConsistentValue(ConstantBaseApp.HMAUX_CODE_KEY)
             ){
                 Bundle bundle = new Bundle();
-                bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,hmAux.get(ConstantBaseApp.HMAUX_PROCESS_KEY));
-                bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,hmAux.get(ConstantBaseApp.HMAUX_PREFIX_KEY));
-                bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,hmAux.get(ConstantBaseApp.HMAUX_CODE_KEY));
+                bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, hmAux.get(ConstantBaseApp.HMAUX_PROCESS_KEY));
+                bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, hmAux.get(ConstantBaseApp.HMAUX_PREFIX_KEY));
+                bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, hmAux.get(ConstantBaseApp.HMAUX_CODE_KEY));
 
                 mView.callAct067(bundle);
             }else{

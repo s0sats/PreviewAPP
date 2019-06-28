@@ -43,15 +43,15 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
 
     private boolean bStatus = false;
     private Context context;
-    private int inboundPrefix;
-    private int inboundCode;
+    private int outboundPrefix;
+    private int outboundCode;
     private IO_Outbound mOutbound;
     private boolean drawerFirstLoad = true;
     private Act067_Frag_Drawer_Presenter mPresenter;
 
     private TextView tvOutboundId;
     private PieView pvConf;
-    private PieView pvPutAway;
+    private PieView pvPicking;
     private TextView tvStatus;
     private TextView tvDepartureDtLbl;
     private TextView tvDepartureDtVal;
@@ -154,8 +154,8 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         //
         if(arguments != null){
             hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
-            inboundPrefix = arguments.getInt(IO_OutboundDao.OUTBOUND_PREFIX,-1);
-            inboundCode = arguments.getInt(IO_OutboundDao.OUTBOUND_CODE,-1);
+            outboundPrefix = arguments.getInt(IO_OutboundDao.OUTBOUND_PREFIX,-1);
+            outboundCode = arguments.getInt(IO_OutboundDao.OUTBOUND_CODE,-1);
             drawerFirstLoad = arguments.getBoolean(DRAWER_FIRST_LOAD,true);
         }
     }
@@ -237,7 +237,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     private void bindViews(View view) {
         tvOutboundId = view.findViewById(R.id.act067_drawer_tv_id);
         pvConf= view.findViewById(R.id.act067_drawer_pv_conf);
-        pvPutAway= view.findViewById(R.id.act067_drawer_pv_put_away);
+        pvPicking = view.findViewById(R.id.act067_drawer_pv_put_away);
         tvStatus= view.findViewById(R.id.act067_drawer_tv_status);
         tvDepartureDtLbl = view.findViewById(R.id.act067_drawer_tv_create_dt);
         tvDepartureDtVal = view.findViewById(R.id.act067_drawer_tv_create_dt_val);
@@ -278,7 +278,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
 
     private void configPieViews() {
         setPieViewUI(pvConf);
-        setPieViewUI(pvPutAway);
+        setPieViewUI(pvPicking);
     }
 
     /**
@@ -286,10 +286,8 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
      * @param pieView
      */
     private void setPieViewUI(PieView pieView) {
-        //pv_done.setTextColor(context.getResources().getColor(R.color.namoa_status_done));
         pieView.setTextColor(context.getResources().getColor(R.color.font_normal));
         pieView.setPercentageBackgroundColor(context.getResources().getColor(R.color.namoa_status_done));
-        //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
         pieView.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
     }
@@ -301,7 +299,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         if (bStatus && mFragDrawerListener != null) {
             hideView();
             //
-            mOutbound = mFragDrawerListener.getOutboundFromAct(inboundPrefix,inboundCode);
+            mOutbound = mFragDrawerListener.getOutboundFromAct(outboundPrefix,outboundCode);
             //
             if(mOutbound != null) {
                 tvOutboundId.setText(mOutbound.getOutbound_prefix()+"."+mOutbound.getOutbound_code());
@@ -425,7 +423,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     }
 
     private void setPieViewVals() {
-        HMAux percents = mPresenter.getPercents(inboundPrefix,inboundCode);
+        HMAux percents = mPresenter.getPercents(outboundPrefix,outboundCode);
         //
         if(percents != null && percents.size() > 0){
             try {
@@ -433,20 +431,20 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
                         percents.hasConsistentValue(Sql_Act067_001.CONF_PERC) ? Float.parseFloat(percents.get(Sql_Act067_001.CONF_PERC)) : 0
                 );
                 //
-                pvPutAway.setPercentage(
+                pvPicking.setPercentage(
                         percents.hasConsistentValue(Sql_Act067_001.PICKING_PERC) ? Float.parseFloat(percents.get(Sql_Act067_001.PICKING_PERC)) : 0
                 );
                 //
-                pvPutAway.setVisibility(mOutbound.getPicking_process() == 1 ? View.VISIBLE : View.GONE);
+                pvPicking.setVisibility(mOutbound.getPicking_process() == 1 ? View.VISIBLE : View.GONE);
             }catch (Exception e){
                 e.printStackTrace();
                 //
                 pvConf.setPercentage(0);
-                pvPutAway.setPercentage(0);
+                pvPicking.setPercentage(0);
             }
         }else{
             pvConf.setPercentage(0);
-            pvPutAway.setPercentage(0);
+            pvPicking.setPercentage(0);
         }
     }
 

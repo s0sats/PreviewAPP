@@ -9,7 +9,7 @@ public class T_IO_Outbound_Item_Rec {
     private String error_msg;
     private String save;
     private ArrayList<T_IO_Outbound_Item_Rec.IO_Outbound_Item_Save_Return> result = new ArrayList<>();
-    private ArrayList<IO_Outbound> inbound = new ArrayList<>();
+    private ArrayList<IO_Outbound> outbound = new ArrayList<>();
     private ArrayList<IO_Move> move = new ArrayList<>();
 
     public String getApp() {
@@ -61,11 +61,11 @@ public class T_IO_Outbound_Item_Rec {
     }
 
     public ArrayList<IO_Outbound> getOutbound() {
-        return inbound;
+        return outbound;
     }
 
-    public void setOutbound(ArrayList<IO_Outbound> inbound) {
-        this.inbound = inbound;
+    public void setOutbound(ArrayList<IO_Outbound> outbound) {
+        this.outbound = outbound;
     }
 
     public ArrayList<IO_Move> getMove() {
@@ -78,8 +78,8 @@ public class T_IO_Outbound_Item_Rec {
 
     public class  IO_Outbound_Item_Save_Return{
         private long customer_code;
-        private int inbound_prefix;
-        private int inbound_code;
+        private int outbound_prefix;
+        private int outbound_code;
         private int scn;
         private String ret_status;
         private String ret_msg;
@@ -94,19 +94,19 @@ public class T_IO_Outbound_Item_Rec {
         }
 
         public int getOutbound_prefix() {
-            return inbound_prefix;
+            return outbound_prefix;
         }
 
-        public void setOutbound_prefix(int inbound_prefix) {
-            this.inbound_prefix = inbound_prefix;
+        public void setOutbound_prefix(int outbound_prefix) {
+            this.outbound_prefix = outbound_prefix;
         }
 
         public int getOutbound_code() {
-            return inbound_code;
+            return outbound_code;
         }
 
-        public void setOutbound_code(int inbound_code) {
-            this.inbound_code = inbound_code;
+        public void setOutbound_code(int outbound_code) {
+            this.outbound_code = outbound_code;
         }
 
         public int getScn() {
@@ -143,7 +143,7 @@ public class T_IO_Outbound_Item_Rec {
     }
 
     public class  IO_Outbound_Item_Save_Return_Item{
-        private Integer inbound_item;
+        private Integer outbound_item;
         private Integer move_prefix;
         private Integer move_code;
         private String ret_status = "";
@@ -151,11 +151,11 @@ public class T_IO_Outbound_Item_Rec {
         private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
         //
         public Integer getOutbound_item() {
-            return inbound_item;
+            return outbound_item;
         }
 
-        public void setOutbound_item(Integer inbound_item) {
-            this.inbound_item = inbound_item;
+        public void setOutbound_item(Integer outbound_item) {
+            this.outbound_item = outbound_item;
         }
 
         public Integer getMove_prefix() {

@@ -65,7 +65,7 @@ public class IO_Outbound_Sql_011 implements Specification {
                         "             and m.outbound_prefix = '"+outbound_prefix+"'\n" +
                         "             and m.outbound_code = '"+outbound_code+"'\n" +
                         "             --define put_away\n" +
-                        "             and m.move_type = '"+ ConstantBaseApp.IO_INBOUND +"' \n" +
+                        "             and m.move_type = '"+ ConstantBaseApp.IO_OUTBOUND +"' \n" +
                         "             and m.outbound_prefix is not null \n" +
                         "             and m.outbound_code is not null \n" +
                         "             and m.outbound_item is not null  \n" +

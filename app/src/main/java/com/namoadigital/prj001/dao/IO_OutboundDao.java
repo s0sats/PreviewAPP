@@ -783,7 +783,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             db.beginTransaction();
             for(IO_Outbound io_outbound :io_outbounds) {
                 //Onde a magica acontece
-                //Tenta o delete do items da inbound
+                //Tenta o delete do items da outbound
                 daoObjReturn = itemDao.remove(io_outbound, db);
                 //verifica se erro ao remover itens
                 if(daoObjReturn.hasError()){
