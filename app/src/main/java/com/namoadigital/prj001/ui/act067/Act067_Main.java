@@ -567,6 +567,11 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
+    public void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
+        this.controls_ss.removeAll(controls_ss);
+    }
+
+    @Override
     public void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
         this.controls_sta.removeAll(controls_sta);
     }

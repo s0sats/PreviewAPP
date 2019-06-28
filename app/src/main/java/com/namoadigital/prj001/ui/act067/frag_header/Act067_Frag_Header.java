@@ -108,6 +108,12 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         void saveOutboundHeader(IO_Outbound mOutbound);
 
         void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
+
+        void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+
+        void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
+
+        void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
     }
 
     public Act067_Frag_Header.onFragHeaderInteraction getFragHeaderListener() {
@@ -712,6 +718,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //
         if (mFragHeaderListener != null) {
             mFragHeaderListener.addFragHeaderControlsSS(controls_ss);
+            mFragHeaderListener.addFragItemsControlsMk(controls_sta);
         }
     }
 
@@ -1121,6 +1128,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //na act067, pois se não a cada recriação do frag, novos itens são add na lista
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
+        if(mFragHeaderListener != null){
+            mFragHeaderListener.addFragItemsControlsMk(controls_sta);
+        }
         bStatus = false;
     }
 
