@@ -16,19 +16,17 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_009;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_010;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_012;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
-import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,29 +131,41 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     private ArrayList<IO_Serial_Process_Record> hasLocalSerial(String product_id, String serial_id, String tracking) {
         ArrayList<IO_Serial_Process_Record> serial_process_records = new ArrayList<>();
         ArrayList<HMAux> serial_list = new ArrayList<>();
-        List<HMAux> move_list =
-                (ArrayList<HMAux>) serialDao.query_HM(
-                        new IO_Move_Order_Item_Sql_009(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ToolBox_Con.getPreference_Site_Code(context),
-                                product_id,
-                                serial_id,
-                                tracking
-                        ).toSqlQuery()
-                );
+        List<HMAux> move_list = serialDao.query_HM(
+                new IO_Move_Order_Item_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        product_id,
+                        serial_id,
+                        tracking
+                ).toSqlQuery()
+        );
 
 
-        List<HMAux> in_conf_list = (ArrayList<HMAux>) serialDao.query_HM(
-                        new IO_Move_Order_Item_Sql_010(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ToolBox_Con.getPreference_Site_Code(context),
-                                product_id,
-                                serial_id,
-                                tracking
-                        ).toSqlQuery()
-                );
+        List<HMAux> in_conf_list = serialDao.query_HM(
+                new IO_Move_Order_Item_Sql_010(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        product_id,
+                        serial_id,
+                        tracking
+                ).toSqlQuery()
+        );
+
+        List<HMAux> serial_offline_list = serialDao.query_HM(
+                new IO_Move_Order_Item_Sql_012(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        product_id,
+                        serial_id,
+                        tracking
+                ).toSqlQuery()
+        );
+
+
         serial_list.addAll(move_list);
         serial_list.addAll(in_conf_list);
+        serial_list.addAll(serial_offline_list);
         getSerialProcessRecordListFromHMaux(serial_process_records, serial_list, serial_id);
         return serial_process_records;
     }
@@ -177,27 +187,37 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.SERIAL_CODE)) {
                 record.setSerial_code(Integer.parseInt(serial_record.get(MD_Product_SerialDao.SERIAL_CODE)));
             }
-            if(serial_id != null && serial_id.equalsIgnoreCase(serial_record.get(MD_Product_SerialDao.SERIAL_ID))){
+            if (serial_id != null && serial_id.equalsIgnoreCase(serial_record.get(MD_Product_SerialDao.SERIAL_ID))) {
                 allowBlindMove = false;
-            }else {
+            } else {
                 allowBlindMove = true;
             }
             record.setSerial_id(serial_record.get(MD_Product_SerialDao.SERIAL_ID));
-            if (serial_record.hasConsistentValue(MD_Product_SerialDao.SITE_CODE)) {
+            if (serial_record.hasConsistentValue(MD_Product_SerialDao.SITE_CODE) && !serial_record.get(MD_Product_SerialDao.SITE_CODE).isEmpty()) {
                 record.setSite_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.SITE_CODE)));
             }
             record.setSite_id(serial_record.get(MD_Product_SerialDao.SITE_ID));
             record.setSite_desc(serial_record.get(MD_Product_SerialDao.SITE_DESC));
 
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.ZONE_CODE)) {
-                record.setZone_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.ZONE_CODE)));
+                try {
+                    record.setZone_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.ZONE_CODE)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    record.setZone_code(0);
+                }
             }
 
             record.setZone_id(serial_record.get(MD_Product_SerialDao.ZONE_ID));
             record.setZone_desc(serial_record.get(MD_Product_SerialDao.ZONE_DESC));
 
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.LOCAL_CODE)) {
-                record.setLocal_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.LOCAL_CODE)));
+                try {
+                    record.setLocal_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.LOCAL_CODE)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    record.setLocal_code(0);
+                }
             }
 
             record.setLocal_id(serial_record.get(MD_Product_SerialDao.LOCAL_ID));
@@ -205,7 +225,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.BRAND_CODE)) {
                 try {
                     record.setBrand_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.BRAND_CODE)));
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                     record.setBrand_code(null);
                 }
@@ -217,7 +237,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.MODEL_CODE)) {
                 try {
                     record.setModel_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.MODEL_CODE)));
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                     record.setModel_code(null);
                 }
@@ -229,7 +249,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             if (serial_record.hasConsistentValue(MD_Product_SerialDao.COLOR_CODE)) {
                 try {
                     record.setColor_code(Integer.valueOf(serial_record.get(MD_Product_SerialDao.COLOR_CODE)));
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                     record.setColor_code(null);
                 }
@@ -238,11 +258,31 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
             record.setColor_id(serial_record.get(MD_Product_SerialDao.COLOR_ID));
             record.setColor_desc(serial_record.get(MD_Product_SerialDao.COLOR_DESC));
 
-            if(serial_record.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
-                record.setProcess_type(serial_record.get(IO_MoveDao.MOVE_TYPE));
-            }else if(serial_record.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-            && serial_record.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)){
-                record.setProcess_type(ConstantBaseApp.IO_PROCESS_IN_CONF);
+            if (serial_record.hasConsistentValue(IO_MoveDao.MOVE_TYPE)) {
+                String type;
+                switch (serial_record.get(IO_MoveDao.MOVE_TYPE)) {
+                    case ConstantBaseApp.IO_INBOUND:
+                        type = ConstantBaseApp.SYS_STATUS_PUT_AWAY;
+                        break;
+                    case ConstantBaseApp.IO_OUTBOUND:
+                        type = ConstantBaseApp.SYS_STATUS_PICKING;
+                        break;
+                    case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                        type = ConstantBaseApp.IO_PROCESS_MOVE_PLANNED;
+                        break;
+                    default:
+                        type = ConstantBaseApp.IO_PROCESS_MOVE;
+                }
+                record.setProcess_type(type);
+            } else if (serial_record.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
+                    && serial_record.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                if(serial_record.hasConsistentValue(IO_Inbound_ItemDao.INBOUND_CODE)) {
+                    record.setProcess_type(ConstantBaseApp.IO_PROCESS_IN_CONF);
+                }else{
+                    record.setProcess_type(ConstantBaseApp.IO_PROCESS_OUT_CONF);
+                }
+            } else {
+                record.setProcess_type(ConstantBaseApp.IO_PROCESS_MOVE);
             }
 
             serial_process_records.add(record);

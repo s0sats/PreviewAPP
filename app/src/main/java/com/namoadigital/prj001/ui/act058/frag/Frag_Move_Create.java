@@ -63,7 +63,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private static final String VIEW_PARAM = "view_param";
     public static final String ORIGIN_PARAM = "ORIGIN";
     public static final String HMAUX_TRANS = "hmaux_trans";
-    public static final String DATEFORMATMKDATE = "yyyy-MM-dd HH:mm:ss Z";
+    public static final String DATE_FORMAT_MKDATE = "yyyy-MM-dd HH:mm:ss Z";
 
     private int view_param;
     private boolean fromMove;
@@ -934,7 +934,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setMkdate() {
-        String defaultDateTime = ToolBox.sDTFormat_Agora(DATEFORMATMKDATE);
+        String defaultDateTime = ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE);
         mkdate_confirm.setmLabel(hmAux_Trans.get("confirm_date_lbl"));
         mkdate_confirm.setmValue(defaultDateTime, true);
         mkdate_confirm.setmRequired(true);

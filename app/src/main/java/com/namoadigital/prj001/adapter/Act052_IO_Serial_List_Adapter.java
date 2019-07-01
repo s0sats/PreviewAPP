@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
+import com.namoadigital.prj001.ui.act052.Act052_Main_Presenter;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -28,18 +29,20 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     private final boolean serial_jump;
     private List<IO_Serial_Process_Record> mValues;
     private Context context;
+    private Act052_Main_Presenter mPresenter;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
     private String mResource_Code;
     private String mResource_Name = "act052_io_serial_list_adapter";
 
-    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, boolean isOnline, boolean serial_jump) {
+    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, boolean isOnline, boolean serial_jump, Act052_Main_Presenter mPresenter) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
         this.hmAux_Trans = new HMAux();
         this.isOnline = isOnline;
         this.serial_jump = serial_jump;
+        this.mPresenter = mPresenter;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -56,6 +59,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         transList.add("serial_lbl");
         transList.add("alert_serial_out_site_title");
         transList.add("alert_serial_out_site_msg");
+        transList.add("serial_transp_order_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -99,7 +103,11 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         if (record.getSite_code() == null && record.getProcess_type() !=null && record.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
             mListener.onClickListItem(record);
         }else if (record.getSite_code() == null || record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
-            mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
+            if(mPresenter.isSiteInboundAutoCreation()) {
+                mListener.onClickListItem(record);
+            }else{
+                mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
+            }
         } else {
             mListener.onClickListItem(record);
         }
@@ -114,6 +122,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
         protected final ConstraintLayout clBackground;
         protected final TextView tvIoProductLbl;
+        protected final TextView tvIoTranspOrderLbl;
+        protected final TextView tvIoTranspOrderVal;
         protected final TextView tvIoSerialLbl;
         protected final TextView tvIoSerialExtCodeLbl;
         protected final TextView tvStatusDesc;
@@ -134,6 +144,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             this.itemVIew = itemView;
             clBackground = itemView.findViewById(R.id.act052_main_cl_background);
             tvIoProductLbl = itemView.findViewById(R.id.act052_tv_io_product_lbl);
+            tvIoTranspOrderLbl = itemView.findViewById(R.id.act052_tv_io_transp_order_lbl);
+            tvIoTranspOrderVal = itemView.findViewById(R.id.act052_tv_io_transp_order_val);
             tvIoSerialLbl = itemView.findViewById(R.id.act052_tv_io_serial_lbl);
             tvIoSerialExtCodeLbl = itemView.findViewById(R.id.act052_tv_io_serial_ext_code_lbl);
             tvStatusDesc = itemView.findViewById(R.id.act052_tv_io_status_desc);
@@ -159,10 +171,18 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvIoProductLbl.setText(hmAux_Trans.get("product_lbl"));
             tvIoSerialLbl.setText(hmAux_Trans.get("serial_lbl"));
             tvIoSerialExtCodeLbl.setText(hmAux_Trans.get("serial_code_lbl"));
+            tvIoTranspOrderLbl.setText(hmAux_Trans.get("serial_transp_order_lbl"));
 
             tvProductExtCodeVal.setText(data.getProduct_id());
             tvProductDescVal.setText(data.getProduct_desc());
             tvSerialExtCodeVal.setText(data.getSerial_id());
+            tvIoTranspOrderVal.setVisibility(View.VISIBLE);
+            tvIoTranspOrderLbl.setVisibility(View.VISIBLE);
+            if(data.getTransport_order() == null || data.getTransport_order().isEmpty()){
+                tvIoTranspOrderVal.setVisibility(View.GONE);
+                tvIoTranspOrderLbl.setVisibility(View.GONE);
+            }
+            tvIoTranspOrderVal.setText(data.getTransport_order());
             tvSerialZone.setText(data.getZone_desc());
             tvSerialPosition.setText(data.getLocal_id());
             setTvSerialBrandModelColor(data);
@@ -175,7 +195,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 ivOfflineMode.setVisibility(View.VISIBLE);
             }
 
-
             if (data.getSite_code() == null && data.getProcess_type() != null && data.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
                 clBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
             }else if (data.getSite_code() != null && data.getSite_code() == Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
@@ -183,8 +202,6 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             } else {
                 clBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
             }
-
-
         }
 
         private void setTvSerialBrandModelColor(IO_Serial_Process_Record data) {
@@ -217,8 +234,8 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                     ivStatusIcon.setVisibility(View.VISIBLE);
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_bold_black_24dp));
                     break;
-                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
-                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                case ConstantBaseApp.IO_INBOUND:
+                case ConstantBaseApp.IO_OUTBOUND:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                 case ConstantBaseApp.IO_PROCESS_MOVE:
                     ivStatusIcon.setVisibility(View.VISIBLE);

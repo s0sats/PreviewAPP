@@ -40,6 +40,7 @@ public class IO_Move_Search_Record implements Serializable {
     private Integer color_code;
     private String color_id;
     private String color_desc;
+    private String transport_order;
 
     public int getCustomer_code() {
         return customer_code;
@@ -329,6 +330,13 @@ public class IO_Move_Search_Record implements Serializable {
         this.color_desc = color_desc;
     }
 
+    public String getTransport_order() {
+        return transport_order;
+    }
+
+    public void setTransport_order(String transport_order) {
+        this.transport_order = transport_order;
+    }
 
     public String getAllFieldForFilter() {
         return (customer_code + "|" +
@@ -366,6 +374,7 @@ public class IO_Move_Search_Record implements Serializable {
                 model_desc + "|" +
                 color_code + "|" +
                 color_id + "|" +
-                color_desc).replaceAll("null", "");
+                color_desc + "|" +
+                transport_order).replaceAll("null", "");
     }
 }

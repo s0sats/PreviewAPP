@@ -15,7 +15,7 @@
 
         <include
             android:id="@+id/act058_serial_layout"
-            layout="@layout/act058_product_serial_info"
+            layout="@layout/header_product_serial_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"

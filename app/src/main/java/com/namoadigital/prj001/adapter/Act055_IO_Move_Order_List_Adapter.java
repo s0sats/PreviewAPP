@@ -63,6 +63,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         transList.add("inbound_not_found");
         transList.add("current_position_lbl");
         transList.add("suggested_position_lbl");
+        transList.add("serial_transport_order_lbl");
         transList.add(ConstantBaseApp.IO_INBOUND);
         transList.add(ConstantBaseApp.IO_OUTBOUND);
         transList.add(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED);
@@ -145,6 +146,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         protected final TextView tv_io_current_position_zone_local_val;
         protected final TextView tv_io_suggested_position_lbl;
         protected final TextView tv_io_suggested_position_zone_local_val;
+        protected final TextView tv_io_serial_transport_order_lbl;
+        protected final TextView tv_io_serial_transport_order_val;
         private final View itemVIew;
 
 
@@ -169,6 +172,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             tv_io_current_position_zone_local_val = itemView.findViewById(R.id.act055_tv_io_current_position_zone_local_val);
             tv_io_suggested_position_lbl = itemView.findViewById(R.id.act055_tv_io_suggested_position_lbl);
             tv_io_suggested_position_zone_local_val = itemView.findViewById(R.id.act055_tv_io_suggested_position_zone_local_val);
+            tv_io_serial_transport_order_lbl = itemView.findViewById(R.id.act055_tv_io_serial_transport_order_lbl);
+            tv_io_serial_transport_order_val = itemView.findViewById(R.id.act055_tv_io_serial_transport_order_val);
         }
 
         public View getItemView() {
@@ -201,6 +206,16 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
                 tv_io_inbound_lbl.setVisibility(View.VISIBLE);
                 tv_io_inbound_val.setText(formatPrefixSufix(data.getInbound_prefix(), data.getInbound_code()));
                 tv_io_inbound_lbl.setText(hmAux_Trans.get("inbound_lbl"));
+            }
+
+            if(data.getTransport_order() == null || data.getTransport_order().isEmpty()) {
+                tv_io_serial_transport_order_lbl.setVisibility(View.GONE);
+                tv_io_serial_transport_order_val.setVisibility(View.GONE);
+            }else{
+                tv_io_serial_transport_order_val.setVisibility(View.VISIBLE);
+                tv_io_serial_transport_order_lbl.setVisibility(View.VISIBLE);
+                tv_io_serial_transport_order_val.setText(data.getTransport_order());
+                tv_io_serial_transport_order_lbl.setText(hmAux_Trans.get("serial_transport_order_lbl"));
             }
 
             if(data.getZone_desc() == null || data.getZone_desc().isEmpty()){

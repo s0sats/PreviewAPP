@@ -41,7 +41,7 @@ public class IO_Blind_MoveDao extends BaseDao implements DaoWithReturn<IO_Blind_
     public static final String SAVE_DATE = "save_date";
     public static final String TOKEN = "token";
     public static final String ERROR_MSG = "error_msg";
-
+    public static final String PENDING_QTY = "PENDING_QTY";
 
     public IO_Blind_MoveDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);

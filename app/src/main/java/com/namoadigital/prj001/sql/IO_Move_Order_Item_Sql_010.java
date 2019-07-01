@@ -44,7 +44,7 @@ public class IO_Move_Order_Item_Sql_010 implements Specification{
                         "     io_inbound_item m                      on m.customer_code = s.customer_code\n" +
                         "                                   and m.product_code = s.product_code\n" +
                         "                                   and m.serial_code = s.serial_code      \n" +
-                        "                                   and m.conf_date = ''      \n" +
+                        "                                   and (m.conf_date = '' or m.conf_date is null)      \n" +
                         "                                   and m.status = '" + ConstantBaseApp.SYS_STATUS_PENDING+ "'\n"+
                         " LEFT JOIN\n" +
                         "     " + MD_Product_Serial_TrackingDao.TABLE + " t on t.customer_code = s.customer_code\n" +
@@ -52,8 +52,7 @@ public class IO_Move_Order_Item_Sql_010 implements Specification{
                         "                                   and t.serial_code = s.serial_code        \n" +
                         " WHERE\n" +
                         "     p.customer_code = '" + customer_code + "'\n" +
-                        "     and s.site_code = '" + site_code + "'\n"+
-
+                        "     and (s.site_code = '" + site_code + "' or s.site_code is null)\n"+
                         "     and ( '" + product_id + "' is null or p.product_id = '" + product_id + "')\n" +
                         "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
                         "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +

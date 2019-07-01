@@ -31,6 +31,8 @@ public class IO_Serial_Process_Record implements Serializable {
     private String color_desc;
     private String process_type;
     private ArrayList<TrackingObj> tracking_list;
+    private String transport_order;
+
 
     public long getCustomer_code() {
         return customer_code;
@@ -244,5 +246,13 @@ public class IO_Serial_Process_Record implements Serializable {
         public void setTracking(String tracking) {
             this.tracking = tracking;
         }
+    }
+
+    public String getTransport_order() {
+        return transport_order;
+    }
+
+    public void setTransport_order(String transport_order) {
+        this.transport_order = transport_order;
     }
 }

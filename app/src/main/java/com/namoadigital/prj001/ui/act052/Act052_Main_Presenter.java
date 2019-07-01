@@ -12,13 +12,17 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.IO_Blind_Move;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
+import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_011;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_011;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
@@ -31,7 +35,6 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     private Context context;
     private Act052_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
-    private IO_Serial_Process_Record record;
 
     public Act052_Main_Presenter(Context context, Act052_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -130,12 +133,110 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
             //
         }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+            setFlowByProcessStatus(data);
+
+//            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
-    @Override
-    public MD_Product getMd_product(String mProduct_id) {
+    private void setFlowByProcessStatus(IO_Serial_Process_Record data) {
+
+        String processType = data.getProcess_type();
+
+        if(processType == null){
+            processType = "";
+        }
+
+        Bundle bundle = new Bundle();
+        switch (processType) {
+            case ConstantBaseApp.IO_PROCESS_IN_CONF:
+                IO_Inbound_Item inbound_item = getInboundItem(data);
+                bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
+                bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+                bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(inbound_item.getInbound_prefix()));
+                bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(inbound_item.getInbound_code()));
+                bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound_item.getProduct_code()));
+                bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound_item.getSerial_code()));
+                try {
+                    bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound_item.getSerial().get(0).getSerial_id()));
+                }catch (Exception e ){
+                    e.printStackTrace();
+                    bundle.putString(MD_Product_SerialDao.SERIAL_ID, data.getSerial_id());
+                }
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                mView.callAct061(bundle);
+                break;
+            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+
+                break;
+            case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
+            case ConstantBaseApp.SYS_STATUS_PICKING:
+            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+                IO_Move io_move = getMove(data);
+                bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
+                bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                mView.callAct058(bundle);
+                break;
+            case ConstantBaseApp.IO_PROCESS_MOVE:
+                MD_Product_Serial serial = getSerial(data);
+                bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) serial.getProduct_code());
+                bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, (int) serial.getSerial_code());
+                try {
+                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, (int) serial.getClass_code());
+                }catch (Exception e ){
+                    e.printStackTrace();
+                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, -1);
+                }
+                bundle.putInt(IO_Blind_MoveDao.ZONE_CODE,-1 );
+                bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE,-1 );
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                mView.callAct058(bundle);
+                break;
+            default:
+
+        }
+
+    }
+
+    private IO_Move getMove(IO_Serial_Process_Record data) {
+        IO_MoveDao moveDao = new IO_MoveDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        IO_Move item = moveDao.getByString(
+                new IO_Move_Order_Item_Sql_011(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        (int) data.getProduct_code(),
+                        data.getSerial_code()
+                ).toSqlQuery()
+        );
+        return item;
+
+    }
+
+    private IO_Inbound_Item getInboundItem(IO_Serial_Process_Record data) {
+
+        IO_Inbound_ItemDao itemDao = new IO_Inbound_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        IO_Inbound_Item item = itemDao.getByString(
+                new IO_Inbound_Item_Sql_011(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        (int) data.getProduct_code(),
+                        data.getSerial_code()
+                ).toSqlQuery()
+        );
+        return item;
+    }
+
+
+    private MD_Product getMd_product(String mProduct_id) {
         MD_ProductDao mdProductDao = new MD_ProductDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -151,7 +252,9 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void createNewSerialFlow(MD_Product_Serial productSerial) {
+    public void createNewSerialFlow(String mProduct_id, String mSerial_id) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        MD_Product_Serial productSerial = md_product.createNewSerialForThisProduct(mSerial_id);
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID,productSerial.getSerial_id());
@@ -160,6 +263,37 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
         //
         mView.callAct053(bundle);
+    }
+
+    @Override
+    public void editNonLocationSerial(IO_Serial_Process_Record record) {
+        Bundle bundle = new Bundle();
+        MD_Product_Serial serial = getSerial(record);
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(record.getProduct_code()));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,record.getSerial_id());
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
+        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+        //
+        mView.callAct053(bundle);
+    }
+
+
+    private MD_Product_Serial getSerial(IO_Serial_Process_Record item) {
+        MD_Product_Serial serial = null;
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        try {
+            serial = serialDao.getByString(
+                    new MD_Product_Serial_Sql_009(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            item.getProduct_code(),
+                            item.getSerial_code()).toSqlQuery()
+            );
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        return serial;
     }
 
     /**
@@ -185,5 +319,31 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean hasCreateSerialPermission(String mProduct_id, String mSerial_id, boolean serial_jump) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        return md_product != null
+                && md_product.getLocal_control() == 1
+                && md_product.getIo_control() == 1
+                && mSerial_id != null
+                && !mSerial_id.isEmpty()
+                && !serial_jump
+                && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
+                && isSiteInboundAutoCreation()
+                && ToolBox_Con.isOnline(context);
+    }
+
+    @Override
+    public void callBlindMove(String mProduct_id, String mSerial_id) {
+        MD_Product md_product = getMd_product(mProduct_id);
+        Bundle bundle = new Bundle();
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, md_product.getProduct_code());
+        bundle.putString(MD_Product_SerialDao.PRODUCT_ID, md_product.getProduct_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID,mSerial_id);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
+        //
+        mView.callAct064(bundle);
     }
 }

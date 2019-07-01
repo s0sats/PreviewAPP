@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act054;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,13 +17,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
@@ -42,11 +41,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     public static final String ZERO_PENDENCY = "(0)";
     public static final String IS_LOCAL_PROCESS = "isLocalProcess";
-    private CheckBox cbInbound;
-    private CheckBox cbOutbound;
-    private CheckBox cbPlannedMove;
-    private CheckBox cbIoOrigins;
-    private CheckBox cbIoDestiny;
+    private CheckBox chkInbound;
+    private CheckBox chkOutbound;
+    private CheckBox chkPlannedMove;
+    private CheckBox chkIoOrigins;
+    private CheckBox chkIoDestiny;
     private LinearLayout llIoZone;
     private SearchableSpinner ssIoZone;
     private TextView tvIoOrientationLbl;
@@ -58,6 +57,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private String pendeciesCount;
     String zoneDesc;
     private ArrayList<HMAux> wsResults = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +100,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("destiny_lbl");
         transList.add("origin_lbl");
         transList.add("planned_move_lbl");
+        transList.add("blind_move_lbl");
         transList.add("inbound_move_lbl");
         transList.add("outbound_lbl");
         transList.add("inbound_lbl");
@@ -155,16 +156,24 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ssIoZone.setmShowLabel(true);
         ssIoZone.setmShowBarcode(true);
         ssIoZone.setmStyle(1);
-        cbIoDestiny.setEnabled(false);
-        cbIoOrigins.setEnabled(false);
+
+        chkPlannedMove.setChecked(mPresenter.getSearchFilterPreferences(Act054_Main_Contract.MOVE_PLANNED_TYPE_SEARCH, true));
+        chkInbound.setChecked(mPresenter.getSearchFilterPreferences(Act054_Main_Contract.INBOUND_TYPE_SEARCH, true));
+        chkOutbound.setChecked(mPresenter.getSearchFilterPreferences(Act054_Main_Contract.OUTBOUND_TYPE_SEARCH, true));
+        chkIoDestiny.setChecked(mPresenter.getSearchFilterPreferences(Act054_Main_Contract.DESTINY_ORIENTATION_SEARCH, false));
+        chkIoOrigins.setChecked(mPresenter.getSearchFilterPreferences(Act054_Main_Contract.ORIGIN_ORIENTATION_SEARCH, false));
+
+        chkIoDestiny.setEnabled(false);
+        chkIoOrigins.setEnabled(false);
+
         for (HMAux hmAux : zoneList) {
             if (hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
                 String s = hmAux.get(SearchableSpinner.CODE);
                 String preference_zone_code = String.valueOf(ToolBox_Con.getPreference_Zone_Code(this));
                 if (hmAux.get(SearchableSpinner.CODE).equals(preference_zone_code)) {
                     ssIoZone.setmValue(hmAux);
-                    cbIoDestiny.setEnabled(true);
-                    cbIoOrigins.setEnabled(true);
+                    chkIoDestiny.setEnabled(true);
+                    chkIoOrigins.setEnabled(true);
                     break;
                 }
             }
@@ -181,11 +190,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         ssIoZone.setmTitle(hmAux_Trans.get("user_zone_lbl"));
         btnSearchMoveOrder.setText(hmAux_Trans.get("search_move_order_lbl"));
         btnMoveOrderPendency.setText(hmAux_Trans.get("pendencies_lbl") + pendeciesCount);
-        cbIoDestiny.setText(hmAux_Trans.get("destiny_lbl"));
-        cbIoOrigins.setText(hmAux_Trans.get("origin_lbl"));
-        cbPlannedMove.setText(hmAux_Trans.get("planned_move_lbl"));
-        cbOutbound.setText(hmAux_Trans.get("outbound_lbl"));
-        cbInbound.setText(hmAux_Trans.get("inbound_lbl"));
+        chkIoDestiny.setText(hmAux_Trans.get("destiny_lbl"));
+        chkIoOrigins.setText(hmAux_Trans.get("origin_lbl"));
+        chkPlannedMove.setText(hmAux_Trans.get("planned_move_lbl"));
+        chkOutbound.setText(hmAux_Trans.get("outbound_lbl"));
+        chkInbound.setText(hmAux_Trans.get("inbound_lbl"));
         tvIoOrientationLbl.setText(hmAux_Trans.get("orientation_lbl"));
     }
 
@@ -194,15 +203,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void bindViews() {
-        cbInbound = findViewById(R.id.act054_cb_inbound);
-        cbOutbound = findViewById(R.id.act054_cb_outbound);
-        cbPlannedMove = findViewById(R.id.act054_cb_planned_move);
+        chkInbound = findViewById(R.id.act054_cb_inbound);
+        chkOutbound = findViewById(R.id.act054_cb_outbound);
+        chkPlannedMove = findViewById(R.id.act054_cb_planned_move);
         llIoZone = findViewById(R.id.act054_ll_io_zone);
         ssIoZone = findViewById(R.id.act054_ss_io_zone);
-
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
-        cbIoOrigins = findViewById(R.id.act054_cb_io_origins);
-        cbIoDestiny = findViewById(R.id.act054_cb_io_destiny);
+        chkIoOrigins = findViewById(R.id.act054_cb_io_origins);
+        chkIoDestiny = findViewById(R.id.act054_cb_io_destiny);
         btnSearchMoveOrder = findViewById(R.id.act054_search_btn_move_order);
         btnMoveOrderPendency = findViewById(R.id.act054_btn_move_order_pendency);
     }
@@ -241,14 +249,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.hasConsistentValue(SearchableSpinner.ID)) {
-                    cbIoDestiny.setEnabled(true);
-                    cbIoOrigins.setEnabled(true);
+                    chkIoDestiny.setEnabled(true);
+                    chkIoOrigins.setEnabled(true);
                 } else {
                     ssIoZone.setmHint(hmAux_Trans.get("user_zone_hint"));
-                    cbIoDestiny.setEnabled(false);
-                    cbIoDestiny.setChecked(false);
-                    cbIoOrigins.setEnabled(false);
-                    cbIoOrigins.setChecked(false);
+                    chkIoDestiny.setEnabled(false);
+                    chkIoDestiny.setChecked(false);
+                    chkIoOrigins.setEnabled(false);
+                    chkIoOrigins.setChecked(false);
                 }
             }
         });
@@ -268,11 +276,13 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                             mPresenter.executeWsSaveItem();
-                        }else{
+                        } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                            mPresenter.executeWsSaveBlindItem();
+                        } else {
                             callMovementList();
                         }
                     else {
-                            ToolBox.alertMSG(
+                        ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_must_fill_orientation_ttl"),
                                 hmAux_Trans.get("alert_must_fill_orientation_msg"),
@@ -304,7 +314,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             null,
                             0
                     );
-                }else{
+                } else {
                     mPresenter.getPendenciesList();
                 }
             }
@@ -312,16 +322,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private void callMovementList() {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mPresenter.getMovements(
-                    cbInbound.isChecked(),
-                    cbOutbound.isChecked(),
-                    cbPlannedMove.isChecked(),
+                    chkInbound.isChecked(),
+                    chkOutbound.isChecked(),
+                    chkPlannedMove.isChecked(),
                     zoneDesc,
-                    cbIoOrigins.isChecked(),
-                    cbIoDestiny.isChecked()
+                    chkIoOrigins.isChecked(),
+                    chkIoDestiny.isChecked()
             );
-        }else{
+        } else {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_offline_search_title"),
@@ -333,7 +343,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     }
 
     private boolean validateOrientation(String zoneDesc) {
-        return ((!zoneDesc.isEmpty() && (cbIoOrigins.isChecked() || cbIoDestiny.isChecked())) || zoneDesc.isEmpty());
+        return ((!zoneDesc.isEmpty() && (chkIoOrigins.isChecked() || chkIoDestiny.isChecked())) || zoneDesc.isEmpty());
     }
 
     @Override
@@ -400,34 +410,55 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
+
             mPresenter.processIOMoveSearch(mLink);
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
-            if(!moves[0].isEmpty()) {
-                showResults(moves);
-            }else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+            if (!moves[0].isEmpty()) {
+                showResults(moves,true);
+            } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveItem();
-            }
-            else {
+            } else if (mPresenter.hasWaitingSyncPutAwayPendency()){
                 callMovementList();
             }
 
             progressDialog.dismiss();
-        }else if(wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
-            mPresenter.processItemSaveReturn(0,0, mLink);
+        } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+            mPresenter.processItemSaveReturn(0, 0, mLink);
             progressDialog.dismiss();
+        } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
+            String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            try{
+                if(!moves[0].isEmpty()) {
+                    showResults(moves, false);
+                }
+            }catch (Exception e ){
+                e.printStackTrace();
+            }
+            disableProgressDialog();
         }
 
         //
     }
 
-    private boolean validateOrderCategory() {
-        return (cbInbound.isChecked() || cbOutbound.isChecked() || cbPlannedMove.isChecked());
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.saveSearchPreferences(chkPlannedMove.isChecked(),
+                chkInbound.isChecked(),
+                chkOutbound.isChecked(),
+                chkIoOrigins.isChecked(),
+                chkIoDestiny.isChecked())
+        ;
     }
 
-    private void showResults(String[] moveArray) {
+    private boolean validateOrderCategory() {
+        return (chkInbound.isChecked() || chkOutbound.isChecked() || chkPlannedMove.isChecked());
+    }
+
+    private void showResults(String[] moveArray, boolean isMovePlanned) {
         ArrayList<HMAux> moveList = new ArrayList<>();
         for (int i = 0; i < moveArray.length; i++) {
             String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
@@ -435,7 +466,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            mHmAux.put("title",  hmAux_Trans.get("planned_move_lbl"));
+            if(isMovePlanned) {
+                mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
+            }else{
+                mHmAux.put("title", hmAux_Trans.get("blind_move_lbl"));
+            }
             //
             moveList.add(mHmAux);
             //
@@ -443,9 +478,9 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
-            if(!mPresenter.hasWaitingSyncPutAwayPendency()) {
+            if (!mPresenter.hasWaitingSyncPutAwayPendency()) {
                 showNewOptDialog(moveList);
-            }else{
+            } else {
                 mPresenter.executeWsSaveItem();
             }
         }

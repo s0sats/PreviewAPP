@@ -26,7 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create.DATEFORMATMKDATE;
+import static com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create.DATE_FORMAT_MKDATE;
 
 public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  {
     Context context;
@@ -138,7 +138,7 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
         item.setConf_date(done_date);
         item.setProduct_code(serial.getProduct_code());
         item.setSerial_code((int) serial.getSerial_code());
-        item.setSave_date(ToolBox.sDTFormat_Agora(DATEFORMATMKDATE));
+        item.setSave_date(ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE));
         item.getSerial().add(serial);
         item.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         item.setUpdate_required(1);

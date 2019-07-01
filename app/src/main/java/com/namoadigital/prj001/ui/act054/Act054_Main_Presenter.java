@@ -17,12 +17,15 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.model.T_IO_Move_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
@@ -56,6 +59,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private int pending_qty;
     private int waitingSyncMovePendency;
     private int waitingSyncPutAwayPendency;
+    private int waitingSyncBlindPendency;
 
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -319,12 +323,20 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 ).toSqlQuery()
         );
 
+        HMAux resultBlindWaitingSync = io_moveDao.getByStringHM((
+                        new IO_Blind_Move_Sql_006(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+
         pending_qty = 0;
 
         pending_qty = getPendencyCounterFromHmaux(resultPending);
         waitingSyncMovePendency = getPendencyCounterFromHmaux(resultMoveWaitingSync);
         waitingSyncPutAwayPendency = getPendencyCounterFromHmaux(resultInputAwayWaitingSync);
-        pending_qty = pending_qty + waitingSyncMovePendency+waitingSyncPutAwayPendency;
+        waitingSyncBlindPendency = getPendencyCounterFromHmaux(resultBlindWaitingSync);
+        pending_qty = pending_qty + waitingSyncMovePendency + waitingSyncPutAwayPendency + waitingSyncBlindPendency;
         return "(" + pending_qty + ")";
     }
 
@@ -429,6 +441,20 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     @Override
+    public void saveSearchPreferences(boolean move_planned_status, boolean inbound_status, boolean outbound_status, boolean origin_status, boolean destiny_status) {
+        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.MOVE_PLANNED_TYPE_SEARCH, move_planned_status);
+        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.INBOUND_TYPE_SEARCH, inbound_status);
+        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.OUTBOUND_TYPE_SEARCH,  outbound_status);
+        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.ORIGIN_ORIENTATION_SEARCH,  origin_status);
+        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.DESTINY_ORIENTATION_SEARCH, destiny_status);
+    }
+
+    @Override
+    public boolean getSearchFilterPreferences(String key_prefs, boolean default_value) {
+        return ToolBox_Con.getPreference_Act054(context, key_prefs, default_value);
+    }
+
+    @Override
     public void processItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
@@ -495,9 +521,39 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     public boolean hasWaitingSyncMovePendency() {
         return waitingSyncMovePendency>0;
     }
+
+    @Override
+    public boolean hasWaitingSyncBlindPendency() {
+        return waitingSyncBlindPendency>0;
+    }
+
     @Override
     public boolean hasWaitingSyncPutAwayPendency() {
         return waitingSyncPutAwayPendency >0;
+    }
+
+    @Override
+    public void executeWsSaveBlindItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Blind_Move_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_save_move_ttl"),
+                    hmAux_Trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Blind_Move_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                    hmAux_Trans.get("alert_offline_save_msg")
+            );
+        }
     }
 
 }

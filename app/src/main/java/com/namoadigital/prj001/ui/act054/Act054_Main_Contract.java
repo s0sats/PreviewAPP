@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface Act054_Main_Contract {
+    String MOVE_PLANNED_TYPE_SEARCH = "move_planned_type_search";
+    String INBOUND_TYPE_SEARCH = "inbound_type_search";
+    String OUTBOUND_TYPE_SEARCH = "outbound_type_search";
+    String ORIGIN_ORIENTATION_SEARCH = "origin_orientation_search";
+    String DESTINY_ORIENTATION_SEARCH = "destiny_orientation_search";
 
     interface I_Presenter{
 
@@ -27,11 +32,19 @@ public interface Act054_Main_Contract {
 
         void executeWsSaveItem();
 
+        void saveSearchPreferences(boolean move_planned_status, boolean inbound_status, boolean outbound_status, boolean origin_status, boolean destiny_status);
+
+        boolean getSearchFilterPreferences(String key_prefs, boolean default_value);
+
         void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
 
         boolean hasWaitingSyncMovePendency();
 
+        boolean hasWaitingSyncBlindPendency();
+
         boolean hasWaitingSyncPutAwayPendency();
+
+        void executeWsSaveBlindItem();
     }
 
     interface I_View{
