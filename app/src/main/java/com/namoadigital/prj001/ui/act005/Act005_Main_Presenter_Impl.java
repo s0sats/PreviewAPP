@@ -24,6 +24,7 @@ import com.namoadigital.prj001.receiver.*;
 import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -135,7 +136,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 )
         );
         //
-        /*menuList.add(
+        menuList.add(
                 new MenuMainNamoa(
                         Act005_Main.MENU_ID_IO_ASSETS,
                         ConstantBaseApp.PROFILE_PRJ001_OI,
@@ -143,7 +144,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         "lbl_io_assets",
                         R.drawable.ic_n_assets
                 )
-        );*/
+        );
         //
         menuList.add(
                 new MenuMainNamoa(
