@@ -1040,8 +1040,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     ssConfZone.setVisibility(View.VISIBLE);
                     ssConfLocal.setVisibility(View.VISIBLE);
                     //
-                    loadZoneSS(false);
-                    loadLocalSS(false);
                     if(mInbound.getZone_code_conf() != null){
                         ToolBox_Inf.setSSmValue(
                             ssConfZone,
@@ -1067,7 +1065,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                             MD_Site_ZoneDao.ZONE_DESC, mInbound.getZone_desc_conf()
                         );
                     }
-
+                    loadZoneSS(false);
+                    loadLocalSS(false);
                 } else {
                     ssConfZone.setVisibility(View.GONE);
                     ssConfLocal.setVisibility(View.GONE);
