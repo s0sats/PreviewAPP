@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,9 +25,15 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.service.WS_IO_Address_Suggestion;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Add;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Add;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -121,7 +128,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             transList.add("alert_address_suggestion_fails_msg");
             transList.add("item_lbl");
             transList.add("serial_lbl");
-            transList.add("inbound_lbl");
+            transList.add("outbound_lbl");
             transList.add("message_lbl");
             transList.add("alert_add_item_empty_return_ttl");
             transList.add("alert_add_item_empty_return_msg");
@@ -592,6 +599,23 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     @Override
+    public void callAct067(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act067_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+
+
+    @Override
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -631,7 +655,6 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             mPresenter.extractSearchResult(mLink);
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
-            //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
                 mPresenter.processSerialSaveResult(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id(), hmAux);
             } else {
@@ -644,6 +667,9 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             mPresenter.processAddresSuggestionResult(mLink);
         }else if(wsProcess.equals(WS_IO_Inbound_Item_Add.class.getName())){
             mPresenter.processInboundItemAdd(mLink);
+            //onBackPressed();
+        }else if(wsProcess.equals(WS_IO_Outbound_Item_Add.class.getName())){
+            mPresenter.processOutboundItemAdd(mLink);
             //onBackPressed();
         }
         //

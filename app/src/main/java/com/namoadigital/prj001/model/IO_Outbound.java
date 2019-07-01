@@ -1,49 +1,98 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Outbound {
+public class IO_Outbound implements Serializable {
 
+    @Expose
     private long customer_code;
+    @Expose
     private int outbound_prefix;
+    @Expose
     private int outbound_code;
+    @Expose
     private String outbound_desc;
+    @Expose
     private String outbound_id;
+    @Expose
     private int scn;
+    @Expose
     private String origin;
+    @Expose
     private String transport_order;
+    @Expose
     private String invoice_number;
+    @Expose
     private String invoice_date;
+    @Expose
     private String eta_date;
+    @Expose
     private String departure_date;
+    @Expose
     private String loading_date;
+    @Expose
     private int from_site_code;
+    @Expose
     private String to_type;
+    @Expose
     private Integer to_partner_code;
+    @Expose
     private String to_partner_id;
+    @Expose
     private String to_partner_desc;
+    @Expose
     private Integer to_site_code;
+    @Expose
     private String to_site_id;
+    @Expose
     private String to_site_desc;
+    @Expose
     private Integer carrier_code;
     private String carrier_id;
     private String carrier_desc;
+    @Expose
     private String truck_number;
+    @Expose
     private String driver;
+    @Expose
     private String comments;
+    @Expose
     private String status;
+    @Expose
     private Double perc_done;
+    @Expose
     private Integer modal_code;
+    private String modal_id;
+    private String modal_desc;
+    @Expose
     private int allow_new_item;
+    @Expose
     private Integer zone_code_picking;
+    private String zone_id_picking;
+    private String zone_desc_picking;
+    @Expose
     private Integer local_code_picking;
+    private String local_id_picking;
+    @Expose
     private int picking_process;
+    @Expose
     private int done_automatic;
+    @Expose
     private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    @Expose
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
+    @Expose
+    private ArrayList<IO_Move> move = new ArrayList<>();
+    @Expose
     private int update_required;
+    @Expose
     private int sync_required;
+    @Expose
     private String token;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
@@ -52,6 +101,46 @@ public class IO_Outbound {
         for (IO_Outbound_Item ioOutboundItem:items){
             ioOutboundItem.setPK(this);
         }
+    }
+
+    public String getModal_id() {
+        return modal_id;
+    }
+
+    public void setModal_id(String modal_id) {
+        this.modal_id = modal_id;
+    }
+
+    public String getModal_desc() {
+        return modal_desc;
+    }
+
+    public void setModal_desc(String modal_desc) {
+        this.modal_desc = modal_desc;
+    }
+
+    public String getZone_id_picking() {
+        return zone_id_picking;
+    }
+
+    public void setZone_id_picking(String zone_id_picking) {
+        this.zone_id_picking = zone_id_picking;
+    }
+
+    public String getZone_desc_picking() {
+        return zone_desc_picking;
+    }
+
+    public void setZone_desc_picking(String zone_desc_picking) {
+        this.zone_desc_picking = zone_desc_picking;
+    }
+
+    public String getLocal_id_picking() {
+        return local_id_picking;
+    }
+
+    public void setLocal_id_picking(String local_id_picking) {
+        this.local_id_picking = local_id_picking;
     }
 
     public long getCustomer_code() {
@@ -350,6 +439,14 @@ public class IO_Outbound {
         this.serial = serial;
     }
 
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
+    }
+
     public int getUpdate_required() {
         return update_required;
     }
@@ -373,4 +470,6 @@ public class IO_Outbound {
     public void setToken(String token) {
         this.token = token;
     }
+
+
 }

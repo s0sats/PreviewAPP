@@ -243,7 +243,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.act058_frg_placeholder, type, sTag);
+            ft.replace(R.id.act059_frg_placeholder, type, sTag);
             ft.addToBackStack(null);
             ft.commit();
         } else {

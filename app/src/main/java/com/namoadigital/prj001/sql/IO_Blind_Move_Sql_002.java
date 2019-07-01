@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 
 //Definir autoincremento para o campo blindtmp

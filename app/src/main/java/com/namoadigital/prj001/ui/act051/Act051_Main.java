@@ -26,6 +26,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act065.Act065_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -273,21 +274,12 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     private void processIOOutbound(HMAux optionsInfo) {
-        setWsProcess(WS_IO_Blind_Move_Save.class.getName());
-        //
-        showPD(
-                hmAux_Trans.get("dialog_save_move_ttl"),
-                hmAux_Trans.get("dialog_save_move_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Blind_Move_Save.class);
-        Bundle bundle = new Bundle();
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
 
-        Toast.makeText(context, "Função indisponível", Toast.LENGTH_SHORT).show();
+        Intent mIntent = new Intent(context, Act065_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+
     }
 
     private void recoverIntentsInfo() {

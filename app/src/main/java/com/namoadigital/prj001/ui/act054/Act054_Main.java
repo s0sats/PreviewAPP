@@ -382,7 +382,11 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
-            showNewOptDialog(wsResults);
+            if (mPresenter.hasWaitingSyncBlindPendency()){
+                mPresenter.executeWsSaveBlindItem();
+            }else {
+                showNewOptDialog(wsResults);
+            }
         } else {
             callMovementList();
         }
@@ -410,20 +414,17 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if (wsProcess.equals(WS_IO_Move_Search.class.getName())) {
-
             mPresenter.processIOMoveSearch(mLink);
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-
             if (!moves[0].isEmpty()) {
                 showResults(moves,true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveItem();
-            } else if (mPresenter.hasWaitingSyncPutAwayPendency()){
-                callMovementList();
+            } else if (mPresenter.hasWaitingSyncBlindPendency()){
+                mPresenter.executeWsSaveBlindItem();
             }
-
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
             mPresenter.processItemSaveReturn(0, 0, mLink);
@@ -478,10 +479,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
-            if (!mPresenter.hasWaitingSyncPutAwayPendency()) {
-                showNewOptDialog(moveList);
-            } else {
+            if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveItem();
+            } else {
+                if (mPresenter.hasWaitingSyncBlindPendency()){
+                    mPresenter.executeWsSaveBlindItem();
+                }else {
+                    showNewOptDialog(moveList);
+                }
             }
         }
     }

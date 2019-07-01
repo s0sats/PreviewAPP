@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act065.Act065_Main"
+    tools:showIn="@layout/act065_main">
+
+    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+        android:id="@+id/act065_ss_zone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_back"
+        android:hint="Zona-trad"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+        android:id="@+id/act065_ss_local"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/border_back"
+        android:hint="Local -trad"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_ss_zone"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/act065_cl_outbound_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_back"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_ss_local">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act065_mket_outbound_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Codigo / ID -trad"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/act065_cl_invoice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_back"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_cl_outbound_id">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act065_mket_invoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Invoince -trad"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/act065_btn_outbound_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/namoa_cell_3_states"
+        android:gravity="left"
+        android:padding="20dp"
+        android:text="Busca Outbound - trad"
+        android:textColor="@color/padrao_WHITE"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_cl_invoice" />
+
+    <Button
+        android:id="@+id/act065_btn_outbound_creation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/namoa_cell_2_states"
+        android:gravity="left"
+        android:padding="20dp"
+        android:text="Nova Outbound - trad"
+        android:textColor="@color/padrao_WHITE"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_btn_outbound_search" />
+
+    <Button
+        android:id="@+id/act065_btn_outbound_pendency"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/namoa_cell_2_states"
+        android:gravity="left"
+        android:padding="20dp"
+        android:text="Pendentes(0/0) - trad"
+        android:textColor="@color/padrao_WHITE"
+        app:layout_constraintEnd_toEndOf="@id/act065_guide_end"
+        app:layout_constraintStart_toStartOf="@id/act065_guide_start"
+        app:layout_constraintTop_toBottomOf="@id/act065_btn_outbound_creation" />
+
+    <include
+        layout="@layout/footer_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act065_guide_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_begin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act065_guide_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_end="8dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

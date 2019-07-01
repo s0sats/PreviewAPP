@@ -33,7 +33,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private IO_InboundDao inboundDao;
+    private IO_OutboundDao outboundDao;
     private IO_Inbound_ItemDao inboundItemDao;
+    private IO_Outbound_ItemDao outboundItemDao;
 
 
     public Act053_Main_Presenter(Context context, Act053_Main_Contract.I_View mView,HMAux hmAux_Trans, long product_code) {
@@ -75,6 +77,18 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        //
+        outboundDao = new IO_OutboundDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        outboundItemDao= new IO_Outbound_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
@@ -82,6 +96,9 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         switch (requesting_act){
             case ConstantBaseApp.ACT061:
                 mView.callAct061(prepareAct061Bundle());
+                break;
+            case ConstantBaseApp.ACT067:
+                mView.callAct067(prepareAct067Bundle());
                 break;
             case ConstantBaseApp.ACT051:
             default:
@@ -377,6 +394,8 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     generateIoInboundItem();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
+                    generateIoOutboundItem();
+                    break;
                 case ConstantBaseApp.IO_SERIAL_EDIT:
                     defineFlow(requesting_act);
                     break;
@@ -433,6 +452,58 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
             }
         }
     }
+    private void generateIoOutboundItem() {
+        MD_Product_Serial mdProductSerial = mView.getProductSerial();
+        //
+        if(mdProductSerial != null){
+            IO_Outbound_Item outboundItem = new IO_Outbound_Item();
+            //
+            outboundItem.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+            outboundItem.setOutbound_prefix(Integer.parseInt(mView.getIoPrefix()));
+            outboundItem.setOutbound_code(Integer.parseInt(mView.getIoCode()));
+            outboundItem.setOutbound_item(0);
+            outboundItem.setProduct_code(mdProductSerial.getProduct_code());
+            outboundItem.setSerial_code(mdProductSerial.getSerial_code());
+            outboundItem.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
+            outboundItem.setSave_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            outboundItem.setUpdate_required(1);
+            outboundItem.setInbound_prefix(mdProductSerial.getInbound_prefix());
+            outboundItem.setInbound_code(mdProductSerial.getInbound_code());
+            outboundItem.setInbound_item(mdProductSerial.getInbound_prefix());
+
+            //Atualiza cabeçalho da outbound para seta como update required
+            outboundDao.addUpdate(
+                new IO_Outbound_Sql_004(
+                    outboundItem.getCustomer_code(),
+                    outboundItem.getOutbound_prefix(),
+                    outboundItem.getOutbound_code(),
+                    1
+                ).toSqlQuery()
+            );
+            //
+            DaoObjReturn daoObjReturn = outboundItemDao.addUpdate(outboundItem);
+            if(!daoObjReturn.hasError()){
+                //Var que indica q foi salvo no banco, teve retorno OK.
+                mView.setItemSavedOk(false);
+                //
+                executeWSOutbounItem();
+            }else{
+                outboundDao.addUpdate(
+                    new IO_Outbound_Sql_004(
+                        outboundItem.getCustomer_code(),
+                        outboundItem.getOutbound_prefix(),
+                        outboundItem.getOutbound_code(),
+                        0
+                    ).toSqlQuery()
+                );
+                //
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_error_item_save_ttl"),
+                    hmAux_Trans.get("alert_error_item_save_msg")
+                );
+            }
+        }
+    }
 
     private void executeWSInbounItem() {
         if(ToolBox_Con.isOnline(context)) {
@@ -454,12 +525,32 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         }
     }
 
+    private void executeWSOutbounItem() {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Outbound_Item_Add.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Add.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
     @Override
     public void processInboundItemAdd(String wsJsonReturn) {
         if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
             ArrayList<WS_IO_Inbound_Item_Add.InboundItemSaveActReturn> saveActReturns = null;
-            int mPrefix =ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
-            int mCode =ToolBox_Inf.convertStringToInt(mView.getIoCode());
+            int mPrefix = ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
+            int mCode = ToolBox_Inf.convertStringToInt(mView.getIoCode());
             //
             try {
                 Gson gson = new GsonBuilder().serializeNulls().create();
@@ -511,7 +602,6 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                 mView.showAlertDialog(
                     hmAux_Trans.get("alert_add_item_empty_return_ttl"),
                     hmAux_Trans.get("alert_add_item_empty_return_msg")
-
                 );
             }
         }else{
@@ -523,10 +613,83 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public void processOutboundItemAdd(String wsJsonReturn) {
+        if(wsJsonReturn != null && !wsJsonReturn.isEmpty()){
+            ArrayList<WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn> saveActReturns = null;
+            int mPrefix = ToolBox_Inf.convertStringToInt(mView.getIoPrefix());
+            int mCode = ToolBox_Inf.convertStringToInt(mView.getIoCode());
+            //
+            try {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                saveActReturns = gson.fromJson(
+                        wsJsonReturn,
+                        new
+                                TypeToken<ArrayList<WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn>>() {
+                                }.getType()
+                );
+                //
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                mView.showAlertDialog(
+                        hmAux_Trans.get("alert_add_item_error_on_return_ttl"),
+                        hmAux_Trans.get("alert_add_item_error_on_return_msg")
+
+                );
+            }
+            //
+            if(saveActReturns != null && saveActReturns.size() > 0){
+                boolean finalResult = false;
+                ArrayList<HMAux> resultList = new ArrayList<>();
+                MD_Product_Serial serial =  mView.getProductSerial();
+                //
+                for(WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn actReturn :saveActReturns){
+                    HMAux hmAux = new HMAux();
+                    if(actReturn.isRetStatus()
+                            &&   actReturn.getOutbound_prefix() == mPrefix
+                            &&   actReturn.getOutbound_code() == mCode
+                    ){
+                        finalResult = true;
+                    }
+                    //Monta HmAux
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("item_lbl"));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("serial_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,formatProductSerialDes(serial));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("outbound_lbl") );
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, formatOutboundInfo(actReturn));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("message_lbl"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, actReturn.isRetStatus() ? "OK": actReturn.getMsg());
+                    //
+                    resultList.add(hmAux);
+                }
+                //
+                mView.showResultDialog(resultList,finalResult);
+
+            }else{
+                mView.showAlertDialog(
+                        hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                        hmAux_Trans.get("alert_add_item_empty_return_msg")
+                );
+            }
+        }else{
+            mView.showAlertDialog(
+                    hmAux_Trans.get("alert_add_item_empty_return_ttl"),
+                    hmAux_Trans.get("alert_add_item_empty_return_msg")
+            );
+        }
+    }
+
     private String formatInboundInfo(WS_IO_Inbound_Item_Add.InboundItemSaveActReturn actReturn) {
         return actReturn.getInbound_prefix()
             +"."+actReturn.getInbound_code()
             +"."+(actReturn.getInbound_item() != null ? actReturn.getInbound_item() : "0");
+    }
+
+    private String formatOutboundInfo(WS_IO_Outbound_Item_Add.OutboundItemSaveActReturn actReturn) {
+        return actReturn.getOutbound_prefix()
+            +"."+actReturn.getOutbound_code()
+            +"."+(actReturn.getOutbound_item() != null ? actReturn.getOutbound_item() : "0");
     }
 
     private String formatProductSerialDes(MD_Product_Serial serial) {
@@ -545,11 +708,36 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     proceedCallAct0061();
                 //}
                 break;
+            case ConstantBaseApp.ACT067:
+                //if(ioProcess.equals(ConstantBaseApp.IO_INBOUND)){
+                proceedCallAct0067();
+                //}
+                break;
             case ConstantBaseApp.ACT063:
             case ConstantBaseApp.ACT051:
             default:
                 mView.callAct051();
                 break;
+        }
+    }
+
+    private void proceedCallAct0067() {
+        if(mView.isItemSavedOk()){
+            mView.callAct067(prepareAct067Bundle());
+        } else{
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_leave_add_item_ttl"),
+                    hmAux_Trans.get("alert_not_save_item_will_be_lost_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItem();
+                            mView.callAct067(prepareAct067Bundle());
+                        }
+                    },
+                    1
+            );
         }
     }
 
@@ -603,4 +791,13 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());
         return bundle;
     }
+    private Bundle prepareAct067Bundle() {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,ConstantBaseApp.IO_OUTBOUND);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,mView.getIoPrefix());
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,mView.getIoCode());
+        return bundle;
+    }
+
 }

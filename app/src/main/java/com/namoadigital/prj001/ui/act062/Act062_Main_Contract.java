@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act062;
 
 import android.os.Bundle;
+
 import com.namoadigital.prj001.model.MD_Product;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public interface Act062_Main_Contract {
         void callAct063(Bundle bundle);
 
         void callAct061();
+
+        void callAct067();
 
         void callAct051();
     }

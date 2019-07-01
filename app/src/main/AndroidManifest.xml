@@ -391,6 +391,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.act060.Act060_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.act061.Act061_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -408,13 +414,30 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".ui.act064.Act064_Main"
+        <activity
+            android:name=".ui.act064.Act064_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act065.Act065_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act066.Act066_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act067.Act067_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -727,6 +750,18 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_Upload_Other_User_Img" />
 
         <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
+
+        <service android:name=".service.WS_IO_Outbound_Header_Save" />
+
+        <receiver android:name=".receiver.WBR_IO_Outbound_Header_Save" />
+
+        <service android:name=".service.WS_IO_Outbound_Item_Add" />
+
+        <receiver android:name=".receiver.WBR_IO_Outbound_Item_Add" />
+
+        <service android:name=".service.WS_IO_Outbound_Item_Save" />
+
+        <receiver android:name=".receiver.WBR_IO_Outbound_Item_Save" />
 
     </application>
 

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /*
     Seleção de move para processo offline

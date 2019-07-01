@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
@@ -19,6 +20,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act063.Act063_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -108,6 +110,8 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         transList.add("alert_no_search_parameter_msg");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        transList.add("alert_serial_without_inbound_ttl");
+        transList.add("alert_serial_without_inbound_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -434,6 +438,22 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
     @Override
     public void callAct061() {
         Intent mIntent = new Intent(context, Act061_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY,requestingActProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,requestingActPrefix);
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,requestingActCode);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct067() {
+        Intent mIntent = new Intent(context, Act067_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();

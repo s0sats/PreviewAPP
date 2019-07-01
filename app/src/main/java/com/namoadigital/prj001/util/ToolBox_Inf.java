@@ -5485,4 +5485,23 @@ public class ToolBox_Inf {
         return existisFile;
     }
 
+    /**
+     * LUCHE - 30/04/2019
+     *
+     * Metodo que verifica se existe arquivo de token e qtd de inbounds dentro
+     *
+     * @return
+     */
+    public static boolean exitsOutboundTokenFile() {
+        boolean existisFile = false;
+        try {
+            File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX);
+            existisFile = outboundToken.length > 0;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            existisFile = false;
+        }
+        return existisFile;
+    }
+
 }

@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,6 +38,8 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
     public static final String INBOUND_CODE = "inbound_code";
     public static final String INBOUND_ITEM = "inbound_item";
     public static final String COMMENTS = "comments";
+    public static final String SAVE_DATE = "save_date";
+    public static final String UPDATE_REQUIRED = "update_required";
 
 
     public IO_Outbound_ItemDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -291,6 +294,61 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
         return daoObjReturn;
     }
 
+    /**
+     * Remove todos itens baseado na PK do cabeçalho
+     *
+     * @param io_outbound
+     * @param dbInstance
+     * @return
+     */
+    public DaoObjReturn remove(IO_Outbound io_outbound, @Nullable SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long sqlRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_outbound.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(OUTBOUND_PREFIX).append(" = '").append(String.valueOf(io_outbound.getOutbound_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(OUTBOUND_CODE).append(" = '").append(String.valueOf(io_outbound.getOutbound_code())).append("'");
+            //
+            sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterados.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(sqlRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
     @Override
     public IO_Outbound_Item getByString(String sQuery) {
         IO_Outbound_Item io_outbound_item = null;
@@ -423,6 +481,16 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             } else {
                 io_outbound_item.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(SAVE_DATE))) {
+                io_outbound_item.setSave_date(null);
+            }else{
+                io_outbound_item.setSave_date(cursor.getString(cursor.getColumnIndex(SAVE_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                io_outbound_item.setUpdate_required(0);
+            }else{
+                io_outbound_item.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
             //
             return io_outbound_item;
         }
@@ -458,6 +526,11 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             contentValues.put(INBOUND_CODE, io_outbound_item.getInbound_code());
             contentValues.put(INBOUND_ITEM, io_outbound_item.getInbound_item());
             contentValues.put(COMMENTS, io_outbound_item.getComments());
+            contentValues.put(SAVE_DATE, io_outbound_item.getSave_date());
+            contentValues.put(UPDATE_REQUIRED, io_outbound_item.getUpdate_required());
+
+
+
 
             return contentValues;
         }

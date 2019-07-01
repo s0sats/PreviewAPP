@@ -22,6 +22,8 @@ public interface Act053_Main_Contract {
         void defineWsRetFlow(String ioProcess, String requesting_act);
 
         void processInboundItemAdd(String wsJsonReturn);
+
+        void processOutboundItemAdd(String wsJsonReturn);
     }
 
     interface I_View extends Frg_Serial_Edit_View {
@@ -51,5 +53,7 @@ public interface Act053_Main_Contract {
         boolean isItemSavedOk();
 
         void setItemSavedOk(boolean itemSavedOk);
+
+        void callAct067(Bundle bundle);
     }
 }

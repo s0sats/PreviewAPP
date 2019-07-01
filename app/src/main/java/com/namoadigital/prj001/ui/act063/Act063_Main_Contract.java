@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act063;
 
 import android.os.Bundle;
+
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
@@ -11,6 +12,8 @@ public interface Act063_Main_Contract {
     interface I_View{
 
         void setRecordInfo(int seriaListSize, long record_page);
+
+        void showMsg(String title, String msg);
 
         void loadProductSerialList(ArrayList<MD_Product_Serial> serial_list);
 
@@ -27,7 +30,7 @@ public interface Act063_Main_Contract {
 
         MD_Product getProductInfo(String productID);
 
-        void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list);
+        void prepareDataToScreen(long record_count, long record_page, ArrayList<MD_Product_Serial> serial_list, boolean mJump);
 
         void defineFlow(MD_Product_Serial mdProductSerial, boolean serialCreation);
 

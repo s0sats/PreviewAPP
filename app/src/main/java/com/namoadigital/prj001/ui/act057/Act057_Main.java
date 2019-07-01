@@ -214,7 +214,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT057;
-        mAct_Title = Constant.ACT057 + "_" + "title";
+        mAct_Title = Constant.ACT057 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -243,9 +243,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
-
             }
-
             @Override
             public void reportTextChange(String s, boolean b) {
                 if(mAdapter != null){
@@ -469,7 +467,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     @Override
-    public void callAct062() {
+    public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
@@ -549,7 +547,6 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
 

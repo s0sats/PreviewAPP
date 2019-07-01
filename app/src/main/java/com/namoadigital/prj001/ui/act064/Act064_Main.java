@@ -191,7 +191,7 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT064;
-        mAct_Title = Constant.ACT064 + "_title";
+        mAct_Title = Constant.ACT064 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -308,6 +308,8 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         tv_serial_val = serialLayout.findViewById(R.id.tv_serial_val);
         iv_offline_mode = serialLayout.findViewById(R.id.iv_offline_mode);
         iv_serial_history = serialLayout.findViewById(R.id.iv_serial_history);
+        controls_ss.add(ss_zone);
+        controls_ss.add(ss_local);
     }
 
     @Override

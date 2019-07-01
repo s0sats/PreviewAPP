@@ -1,18 +1,37 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 public class IO_Outbound_Item {
+
+    @Expose
     private  long customer_code;
+    @Expose
     private  int outbound_prefix;
+    @Expose
     private  int outbound_code;
+    @Expose
     private  int outbound_item;
+    @Expose
     private  long product_code;
+    @Expose
     private  long serial_code;
+    @Expose
     private  String conf_date;
+    @Expose
     private  String status;
-    private  Integer inbound_code;
-    private  Integer inbound_item;
-    private  String comments;
+    @Expose
     private  Integer inbound_prefix;
+    @Expose
+    private  Integer inbound_code;
+    @Expose
+    private  Integer inbound_item;
+    @Expose
+    private  String comments;
+    @Expose
+    private  String save_date;
+    @Expose
+    private  int update_required;
 
     public void IO_Outbound_Item(){
         this.customer_code = -1;
@@ -121,5 +140,21 @@ public class IO_Outbound_Item {
 
     public void setInbound_prefix(Integer inbound_prefix) {
         this.inbound_prefix = inbound_prefix;
+    }
+
+    public String getSave_date() {
+        return save_date;
+    }
+
+    public void setSave_date(String save_date) {
+        this.save_date = save_date;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 }

@@ -418,6 +418,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                     isSuccessfully = false;
                 }
                 break;
+
         }
 
         if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -683,7 +684,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         String toZoneLocal = (planned_zone_code == null || planned_zone_code == -1 ) ? "" : mPresenter.getZoneDesc(planned_zone_code);
-        toZoneLocal = (planned_local_code == null || planned_local_code == -1) ? toZoneLocal+"" : toZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
+        toZoneLocal = (planned_local_code == null || planned_local_code == -1) ? "-1" : toZoneLocal + "|" +mPresenter.getLocalId(planned_local_code, planned_zone_code);
 
         if (toZoneLocal.isEmpty() || toZoneLocal.equals("-1")) {
             tv_move_to_lbl.setVisibility(View.GONE);
@@ -774,6 +775,15 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 mkedit_coments.setVisibility(View.VISIBLE);
                 mkdate_confirm.setVisibility(View.VISIBLE);
                 break;
+            case 4:
+                ss_zone.setmEnabled(false);
+                ss_local.setmEnabled(false);
+                tv_move_to_lbl.setVisibility(View.GONE);
+                tv_move_to_val.setVisibility(View.GONE);
+                ss_reason.setVisibility(View.GONE);
+                mkedit_coments.setVisibility(View.GONE);
+                mkdate_confirm.setVisibility(View.GONE);
+                break;
         }
 
         mListener.onAddOrRemoveControlSS(ss_zone, true);
@@ -803,9 +813,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private void enableForm(boolean isEnable, int visibility) {
         mket_serial.setEnabled(isEnable);
-        ss_zone.setmEnabled(isEnable);
+        if(isEnable && !move_type.equals(Constant.IO_OUTBOUND)) {
+            ss_zone.setmEnabled(isEnable);
+            ss_local.setmEnabled(isEnable);
+        }
         ss_reason.setmEnabled(isEnable);
-        ss_local.setmEnabled(isEnable);
         ss_class.setmEnabled(isEnable);
         iv_add_tracking.setEnabled(isEnable);
         chk_change_zone.setEnabled(isEnable);
@@ -904,9 +916,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_local.setmShowLabel(false);
         mPresenter.loadLocalSS(ss_zone, ss_local, false);
 
-
         //feito na pressa, rever apos demonstracao
-        if(move_type != null && move_type.equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)){
+        if(move_type != null && ( move_type.equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)
+                                || move_type.equalsIgnoreCase(ConstantBaseApp.IO_OUTBOUND))){
             mPresenter.setLocalValue(ss_local, planned_zone_code, planned_local_code);
         } else {
             if (status.equals(ConstantBaseApp.SYS_STATUS_PENDING)

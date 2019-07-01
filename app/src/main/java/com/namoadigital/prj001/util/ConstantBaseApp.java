@@ -86,6 +86,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT062 = "act062";
     public static final String ACT063 = "act063";
     public static final String ACT064 = "act064";
+    public static final String ACT065 = "act065";
+    public static final String ACT066 = "act066";
+    public static final String ACT067 = "act067";
 
     public static final String title_lbl = "_title";
 
@@ -564,6 +567,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_MODULE_IO = "IO_";
     public static final String FCM_MODULE_SO = "SM_";
     public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
+    public static final String FCM_ACTION_IO_OUTBOUND_UPDATE = "<IO_OUTBOUND_UPDATE>";
 
 
 
@@ -604,8 +608,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_PROCESS_OUT_CONF = "OUT_CONF";
     public static final String IO_INBOUND = "INBOUND";
     public static final String IO_OUTBOUND = "OUTBOUND";
-    public static final String IO_FROM_TYPE_SITE = "SITE";
-    public static final String IO_FROM_TYPE_PARTNER = "PARTNER";
+    public static final String IO_HEADER_TYPE_SITE = "SITE";
+    public static final String IO_HEADER_TYPE_PARTNER = "PARTNER";
     public static final String IO_ACTION_KEY = "IO_ACTION_KEY";
     public static final String IO_ACTION_NEW = "NEW";
     public static final String IO_ACTION_EDIT = "EDIT";

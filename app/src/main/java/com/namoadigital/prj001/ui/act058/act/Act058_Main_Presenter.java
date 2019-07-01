@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.IO_Blind_Move_TrackingDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
@@ -24,15 +25,18 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_002;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_004;
 import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_010;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_010;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -120,8 +124,9 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
 
         switch (move_type) {
             case ConstantBaseApp.IO_INBOUND:
-            case ConstantBaseApp.IO_OUTBOUND:
                 return 1;
+            case ConstantBaseApp.IO_OUTBOUND:
+                return 4;
             case ConstantBaseApp.IO_PROCESS_MOVE:
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
             default:
@@ -187,11 +192,28 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
                     Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
-//                    callWS_IO_Move_Save();
-//                    callWS_IO_Outbound_Item(io_move);
+                    setOutboundItemStatus(io_move);
+                    callWS_IO_Outbound_Item();
                     break;
             }
         }
+    }
+
+    private void setOutboundItemStatus(IO_Move io_move) {
+        IO_Outbound_ItemDao io_outbound_itemDao = new IO_Outbound_ItemDao(context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ),
+                Constant.DB_VERSION_CUSTOM);
+        //
+        //No futuro verificar de atualiza alem do status, os dados de posição.
+        io_outbound_itemDao.addUpdate(new IO_Outbound_Item_Sql_010(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                io_move.getOutbound_prefix(),
+                io_move.getOutbound_code(),
+                io_move.getOutbound_item(),
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC).toSqlQuery()
+        );
     }
 
 
@@ -258,29 +280,16 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
         }
     }
 
-    private void callWS_IO_Outbound_Item(IO_Move io_move) {
-        //TBD FAzer select de item, se tiver atualiza, caso contrario nao adicionar ou atualizar
-//        IO_Outbound_Item item = new IO_Outbound_Item();
-//        IO_Outbound_ItemDao io_outbound_itemDao = new IO_Outbound_ItemDao(context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM);
-//        item.setCustomer_code(io_move.getCustomer_code());
-//        item.setInbound_prefix(io_move.getInbound_prefix());
-//        item.setInbound_code(io_move.getInbound_code());
-//        item.setInbound_item(io_move.getInbound_item());
-//        item.setProduct_code(io_move.getProduct_code());
-//        item.setSerial_code(io_move.getSerial_code());
-//        item.setStatus(io_move.getStatus());
-//        io_outbound_itemDao.addUpdate(item);
-        //todo mudar para serviço de outbound_item
-        mView.setWs_process(WS_IO_Move_Save.class.getName());
+    private void callWS_IO_Outbound_Item() {
+
+        mView.setWs_process(WS_IO_Outbound_Item_Save.class.getName());
         //
         mView.showPD(
                 hmAux_trans.get("dialog_save_move_ttl"),
                 hmAux_trans.get("dialog_save_move_msg")
         );
         //
-        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
         Bundle bundle = new Bundle();
         //
         mIntent.putExtras(bundle);
