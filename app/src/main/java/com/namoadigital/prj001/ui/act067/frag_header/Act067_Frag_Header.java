@@ -980,6 +980,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 etOutboundId.setTag(mOutbound.getOutbound_id());
                 etOutboundDesc.setText(mOutbound.getOutbound_desc());
                 etOutboundDesc.setTag(mOutbound.getOutbound_desc());
+                mkedtTransportOrder.setText(mOutbound.getTransport_order());
+                mkedtTransportOrder.setTag(mOutbound.getTransport_order());
                 //
                 if (mOutbound.getPicking_process() == 1) {
                     ssPickingZone.setVisibility(View.VISIBLE);
