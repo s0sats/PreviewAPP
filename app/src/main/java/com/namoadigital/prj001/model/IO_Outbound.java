@@ -11,6 +11,7 @@ public class IO_Outbound {
     private String outbound_id;
     private int scn;
     private String origin;
+    private String transport_order;
     private String invoice_number;
     private String invoice_date;
     private String eta_date;
@@ -107,6 +108,14 @@ public class IO_Outbound {
 
     public void setOrigin(String origin) {
         this.origin = origin;
+    }
+
+    public String getTransport_order() {
+        return transport_order;
+    }
+
+    public void setTransport_order(String transport_order) {
+        this.transport_order = transport_order;
     }
 
     public String getInvoice_number() {

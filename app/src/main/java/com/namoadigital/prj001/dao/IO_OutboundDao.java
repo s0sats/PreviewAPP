@@ -32,6 +32,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     public static final String OUTBOUND_ID = "outbound_id";
     public static final String SCN = "scn";
     public static final String ORIGIN = "origin";
+    public static final String TRANSPORT_ORDER = "transport_order";
     public static final String INVOICE_NUMBER = "invoice_number";
     public static final String INVOICE_DATE = "invoice_date";
     public static final String ETA_DATE = "eta_date";
@@ -396,6 +397,11 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }
             io_outbound.setScn(cursor.getInt(cursor.getColumnIndex(SCN)));
             io_outbound.setOrigin(cursor.getString(cursor.getColumnIndex(ORIGIN)));
+            if(cursor.isNull(cursor.getColumnIndex(TRANSPORT_ORDER))){
+                io_outbound.setTransport_order(null);
+            }else{
+                io_outbound.setTransport_order(cursor.getString(cursor.getColumnIndex(TRANSPORT_ORDER)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(INVOICE_NUMBER))){
                 io_outbound.setInvoice_number(null);
             }else{
@@ -547,6 +553,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             if(io_outbound.getOrigin() != null){
                 contentValues.put(ORIGIN ,io_outbound.getOrigin());
             }
+            contentValues.put(TRANSPORT_ORDER ,io_outbound.getTransport_order());
             contentValues.put(INVOICE_NUMBER ,io_outbound.getInvoice_number());
             contentValues.put(INVOICE_DATE ,io_outbound.getInvoice_date());
             contentValues.put(ETA_DATE ,io_outbound.getEta_date());
