@@ -15,15 +15,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -34,17 +29,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -53,7 +40,6 @@ import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
 import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header;
 import com.namoadigital.prj001.ui.act061.frg_item.Act061_Frag_Items;
 import com.namoadigital.prj001.ui.act062.Act062_Main;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -115,7 +101,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            Constant.ACT061
+            ConstantBaseApp.ACT061
         );
         //
         loadTranslation();
@@ -157,6 +143,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_sync_data_msg");
         transList.add("alert_inbound_results_ttl");
         transList.add("alert_download_return_error_msg");
+        //
+        transList.add("dialog_transport_order_search_ttl");
+        transList.add("dialog_transport_order_search_msg");
+        transList.add("alert_transport_order_return_ttl");
+        transList.add("alert_outbound_not_found_msg");
+        transList.add("alert_x_outbound_founded_msg");
+        transList.add("alert_on_processing_return_msg");
+
 
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
@@ -244,7 +238,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private void startStopFCMReceiver(boolean start) {
         if(start){
             IntentFilter filter = new IntentFilter();
-            filter.addAction(Constant.WS_FCM);
+            filter.addAction(ConstantBaseApp.WS_FCM);
             filter.addCategory(Intent.CATEGORY_DEFAULT);
             LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
         }else{
@@ -384,12 +378,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT061;
-        mAct_Title = Constant.ACT061 + "_" + "title";
+        mAct_Info = ConstantBaseApp.ACT061;
+        mAct_Title = ConstantBaseApp.ACT061 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
-        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
-        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        mSite_Value = mFooter.get(ConstantBaseApp.FOOTER_SITE);
+        mOperation_Value = mFooter.get(ConstantBaseApp.FOOTER_OPERATION);
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
@@ -567,6 +561,17 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
         this.controls_ss.addAll(controls_ss);
     }
+
+    @Override
+    public void addFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.addAll(controls_sta);
+    }
+
+    @Override
+    public void getDataFromTransportOrder(String transportOrder) {
+        mPresenter.executeWsSearchTransportOrder(transportOrder);
+    }
+
     //region DrawerFragment
 
     @Override
@@ -713,6 +718,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
+    public void updateTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record) {
+        // TODO: 01/07/2019  - Implementar o preenchimento dos dados recebido no frag header.
+    }
+
+    @Override
     public void callAct062() {
         Intent mIntent = new Intent(context, Act062_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -783,7 +793,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         } else if(wsProcess.equalsIgnoreCase(WS_IO_Inbound_Download.class.getName())) {
             mPresenter.processDownloadReturn(mPrefix, mCode,hmAux);
             progressDialog.dismiss();
-        } else {
+        } else if(wsProcess.equals(WS_IO_Transport_Order_Out_Search.class.getName())) {
+            mPresenter.processFromTransportOrderRet(mLink);
+        }else{
             progressDialog.dismiss();
         }
     }
@@ -829,8 +841,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         //
         Intent mIntent = new Intent(context, WBR_Logout.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        bundle.putString(ConstantBaseApp.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(ConstantBaseApp.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         //
         mIntent.putExtras(bundle);
         //

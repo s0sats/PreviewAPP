@@ -3,11 +3,7 @@ package com.namoadigital.prj001.ui.act061;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.model.*;
 
 import java.util.ArrayList;
 
@@ -38,6 +34,8 @@ public interface Act061_Main_Contract {
         void showResult(ArrayList<HMAux> resultList, boolean inboundResult);
 
         void prepareFullRefresh();
+
+        void updateTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record);
     }
 
     interface I_Presenter{
@@ -73,5 +71,9 @@ public interface Act061_Main_Contract {
         void processDownloadReturn(int mPrefix, int mCode, HMAux hmAux);
 
         boolean hasUpdateRequiredDbOrToken(int mPrefix, int mCode);
+
+        void executeWsSearchTransportOrder(String transportOrder);
+
+        void processFromTransportOrderRet(String outboundJson);
     }
 }

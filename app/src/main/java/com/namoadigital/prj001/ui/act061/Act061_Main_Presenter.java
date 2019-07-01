@@ -4,40 +4,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.T_IO_From_Site_Search_Rec;
-import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
-import com.namoadigital.prj001.receiver.WBR_IO_From_Site_Search;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Download;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_010;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_011;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_006;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -55,6 +32,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     private IO_InboundDao inboundDao;
     private MD_Product_SerialDao serialDao;
     private IO_MoveDao moveDao;
+    private Gson gson;
 
     public Act061_Main_Presenter(Context context, Act061_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -64,6 +42,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.moveDao = new IO_MoveDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.gson = new GsonBuilder().serializeNulls().create();
     }
 
 
@@ -108,7 +87,6 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     @Override
     public void processIOMasterDataRet(String wsReturn) {
         if (wsReturn != null && !wsReturn.trim().isEmpty()) {
-            Gson gson = new GsonBuilder().serializeNulls().create();
             //
             try {
                 T_IO_Master_Data_Rec rec = gson.fromJson(
@@ -158,7 +136,6 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     @Override
     public void processFromOutboundRet(String wsReturn) {
         if (wsReturn != null && !wsReturn.trim().isEmpty()) {
-            Gson gson = new GsonBuilder().serializeNulls().create();
             //
             try {
                 T_IO_From_Site_Search_Rec rec = gson.fromJson(
@@ -214,7 +191,6 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             );
         } else {
             try {
-                Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 retObj =
                     gson.fromJson(
@@ -373,7 +349,6 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     @Override
     public void processItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
         ArrayList<HMAux> resultList = new ArrayList<>();
         try{
@@ -526,7 +501,6 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
         if(inboundToken != null && inboundToken.length > 0){
             try {
-                Gson gson =  new GsonBuilder().serializeNulls().create();
                 T_IO_Inbound_Item_Env env =
                     gson.fromJson(
                         ToolBox_Inf.getContents(inboundToken[0]),
@@ -556,7 +530,76 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         return retToken;
     }
 
+    @Override
+    public void executeWsSearchTransportOrder(String transportOrder) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Transport_Order_Out_Search.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_transport_order_search_ttl"),
+                hmAux_Trans.get("dialog_transport_order_search_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Transport_Order_Out_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(IO_InboundDao.TRANSPORT_ORDER, transportOrder);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
 
+    @Override
+    public void processFromTransportOrderRet(String outboundJson) {
+        if(outboundJson != null && !outboundJson.isEmpty() ) {
+            ArrayList<IO_From_Outbound_Search_Record> outbounds = null;
+            try {
+                outbounds = gson.fromJson(
+                                outboundJson,
+                                new TypeToken<ArrayList<IO_From_Outbound_Search_Record>>(){
+                                }.getType()
+                            );
+
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                //
+                mView.showAlert(
+                    hmAux_Trans.get("alert_transport_order_return_ttl"),
+                    hmAux_Trans.get("alert_on_processing_return_msg")
+                );
+            }
+            //
+            if(outbounds != null && outbounds.size() > 0){
+                if(outbounds.get(0).getCount() == 0){
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_transport_order_return_ttl"),
+                        hmAux_Trans.get("alert_outbound_not_found_msg")
+                    );
+                } else if(outbounds.get(0).getCount() == 1) {
+                    mView.updateTransportOrderData(outbounds.get(0));
+
+                } else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_transport_order_return_ttl"),
+                        outbounds.get(0).getCount() +" "+ hmAux_Trans.get("alert_x_outbound_founded_msg")
+                    );
+                }
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_transport_order_return_ttl"),
+                    hmAux_Trans.get("alert_outbound_not_found_msg")
+                );
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_transport_order_return_ttl"),
+                hmAux_Trans.get("alert_on_processing_return_msg")
+            );
+        }
+
+    }
 
     @Override
     public void onBackPressedClicked() {
