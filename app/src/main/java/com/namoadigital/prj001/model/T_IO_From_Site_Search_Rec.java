@@ -7,7 +7,7 @@ public class T_IO_From_Site_Search_Rec {
     private String validation;
     private String link_url;
     private String error_msg;
-    private ArrayList<IO_Outbound_Search_Record> outbound = new ArrayList<>();
+    private ArrayList<IO_From_Outbound_Search_Record> outbound = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -41,11 +41,11 @@ public class T_IO_From_Site_Search_Rec {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<IO_Outbound_Search_Record> getOutbound() {
+    public ArrayList<IO_From_Outbound_Search_Record> getOutbound() {
         return outbound;
     }
 
-    public void setOutbound(ArrayList<IO_Outbound_Search_Record> outbound) {
+    public void setOutbound(ArrayList<IO_From_Outbound_Search_Record> outbound) {
         this.outbound = outbound;
     }
 }

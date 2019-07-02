@@ -21,7 +21,7 @@ public interface Act061_Main_Contract {
 
         void setMDList(ArrayList<MD_Site> sites, ArrayList<MD_Partner> partners, ArrayList<T_IO_Master_Data_Rec.ModalObj> modals);
 
-        void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound);
+        void setFromOutboundList(ArrayList<IO_From_Outbound_Search_Record> outbound);
 
         void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess);
 
@@ -35,7 +35,7 @@ public interface Act061_Main_Contract {
 
         void prepareFullRefresh();
 
-        void updateTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record);
+        void setTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record);
     }
 
     interface I_Presenter{
@@ -48,7 +48,7 @@ public interface Act061_Main_Contract {
 
         void processIOMasterDataRet(String wsReturn);
 
-        void executeWsSearchOutbound(String from_site);
+        void executeWsSearchOutbound(String from_site, String transportOrder);
 
         void processFromOutboundRet(String wsReturn);
 

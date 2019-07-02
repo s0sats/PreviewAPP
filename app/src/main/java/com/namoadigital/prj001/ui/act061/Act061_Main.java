@@ -149,8 +149,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_transport_order_return_ttl");
         transList.add("alert_outbound_not_found_msg");
         transList.add("alert_x_outbound_founded_msg");
-        transList.add("alert_on_processing_return_msg");
-
+        transList.add("alert_from_outbound_ttl");
+        transList.add("alert_from_outbound_not_found_msg");
 
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
@@ -528,8 +528,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void searchFromOutboundList(String from_site) {
-        mPresenter.executeWsSearchOutbound(from_site);
+    public void searchFromOutboundList(String from_site, String transportOrder) {
+        mPresenter.executeWsSearchOutbound(from_site,transportOrder);
     }
 
     @Override
@@ -711,15 +711,24 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void setFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
+    public void setFromOutboundList(ArrayList<IO_From_Outbound_Search_Record> outbound) {
         if (act061_frag_header != null) {
             act061_frag_header.updateFromOutboundList(outbound);
         }
     }
 
+    /**
+     * Metodo que recebe obj retornado do server e seta no fragHeader
+     * @param io_from_outbound_search_record
+     */
     @Override
-    public void updateTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record) {
-        // TODO: 01/07/2019  - Implementar o preenchimento dos dados recebido no frag header.
+    public void setTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record) {
+        if (act061_frag_header != null) {
+            act061_frag_header.updateDataFromTransportOrder(io_from_outbound_search_record);
+        }
+
+        // TODO: 02/07/2019 - VERIFICAR  Add outbound retornado pela transport order na lista de fromOutbound
+        // TODO: 02/07/2019 - Verificar liberação do campo fromOutbound após retorno do transportOrder pois hj campo fica bloqueado
     }
 
     @Override
@@ -794,6 +803,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPresenter.processDownloadReturn(mPrefix, mCode,hmAux);
             progressDialog.dismiss();
         } else if(wsProcess.equals(WS_IO_Transport_Order_Out_Search.class.getName())) {
+            progressDialog.dismiss();
             mPresenter.processFromTransportOrderRet(mLink);
         }else{
             progressDialog.dismiss();

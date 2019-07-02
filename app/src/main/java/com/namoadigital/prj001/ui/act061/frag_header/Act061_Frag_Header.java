@@ -12,23 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_InboundDao;
-import com.namoadigital.prj001.dao.IO_OutboundDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
-import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -93,6 +84,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private Button btnSave;
     private ArrayList<View> properties = new ArrayList<>();
     private boolean pausedByScan = false;//Var controla se onResume forçado pela BarCode Act.
+    private HMAux transportOrderOutbound = new HMAux();
 
     /**
      * Interface principal do fragment
@@ -109,7 +101,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
         void fromTypeSelected(String from_type);
 
-        void searchFromOutboundList(String from_site);
+        void searchFromOutboundList(String from_site, String transportOrder);
 
         void showFragAlert(String ttl, String msg);
 
@@ -219,9 +211,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         mketTransportOrder.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus ){
-                    ivTransportOrder.performClick();
-                }
+//                if(!hasFocus){
+//                    ivTransportOrder.performClick();
+//                }
             }
         });
         //
@@ -236,6 +228,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             @Override
             public void onClick(View v) {
                 if(triggerTransporOrderSearch()){
+                    mketTransportOrder.requestFocus();
+                    //
                     mFragHeaderListener.getDataFromTransportOrder(mketTransportOrder.getText().toString().trim());
                 }
             }
@@ -250,13 +244,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux != null && hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
-                    if (mFragHeaderListener != null) {
-                        if (ToolBox_Con.isOnline(context)) {
-                            mFragHeaderListener.fromTypeSelected(hmAux.get(SearchableSpinner.CODE));
-                        } else {
-                            ToolBox_Inf.showNoConnectionDialog(context);
-                        }
-                    }
+                    triggerFromTypeWs(hmAux);
                 }
             }
         });
@@ -313,6 +301,20 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         });
         //
+        ssFromOutbound.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(hmAux != null && hmAux.size() > 0 && hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+                    setFromOutboundData(hmAux);
+                }
+            }
+        });
+        //
         ivFromOutbound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -322,7 +324,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                             && ssFromSite.getmValue() != null
                             && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
                         ) {
-                            mFragHeaderListener.searchFromOutboundList(ssFromSite.getmValue().get(SearchableSpinner.CODE));
+                            mFragHeaderListener.searchFromOutboundList(
+                                ssFromSite.getmValue().get(SearchableSpinner.CODE),
+                                mketTransportOrder.getText().toString().trim()
+                            );
                         }
                     } else {
                         ssFromOutbound.performEtValueClick();
@@ -402,8 +407,41 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         });
     }
 
+    private void setFromOutboundData(HMAux hmAux) {
+        ssFromOutbound.setmValue(hmAux);
+        ssFromOutbound.getmOption().add(hmAux);
+        //
+        if(hmAux.hasConsistentValue(IO_InboundDao.CARRIER_CODE)) {
+            ssCarrier.setmValue(ssCarrier.getmOptionItemByCode(false, hmAux.get(IO_InboundDao.CARRIER_CODE)));
+        } else{
+            ssCarrier.setmValue(new HMAux());
+        }
+        //
+        etDriver.setText(hmAux.get(IO_InboundDao.DRIVER));
+        etTruckNum.setText(hmAux.get(IO_InboundDao.TRUCK_NUMBER));
+        //
+        bWsTransportCalled = true;
+        //
+        mFragHeaderListener.showFragAlert(
+            hmAux_Trans.get("alert_transport_order_data_applied_ttl"),
+            hmAux_Trans.get("alert_transport_order_data_applied_msg")
+        );
+
+    }
+
+    private void triggerFromTypeWs(HMAux fromType) {
+        if (mFragHeaderListener != null) {
+            if (ToolBox_Con.isOnline(context)) {
+                mFragHeaderListener.fromTypeSelected(fromType.get(SearchableSpinner.CODE));
+            } else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }
+    }
+
     private boolean triggerTransporOrderSearch() {
-        return !bWsTransportCalled && mFragHeaderListener != null;
+        //return !bWsTransportCalled && mFragHeaderListener != null;
+        return mFragHeaderListener != null;
     }
 
     private boolean validateDates() {
@@ -931,11 +969,66 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             loadPartnerSS(generatePartnerSSOption(partners));
             setUIForCreation(true);
             applyViewsInteraction(INTERATION_NEW_INBOUND);
+            //
+            if(!bWsTransportCalled) {
+                checkForTransportOrderData();
+            }
         }
     }
 
-    public void updateFromOutboundList(ArrayList<IO_Outbound_Search_Record> outbound) {
+    /**
+     * Verifica se um outbound foi retornada da busca de transport order
+     * e seta os dados nos campos.
+     */
+    private void checkForTransportOrderData() {
+        if(transportOrderOutbound != null && transportOrderOutbound.size() > 0 ){
+            setFromOutboundData(transportOrderOutbound);
+        }
+    }
+
+    public void updateFromOutboundList(ArrayList<IO_From_Outbound_Search_Record> outbound) {
         loadFromOutboundSS(generateFromOutboundSSOption(outbound));
+    }
+
+    /**
+     * LUCHE - 02/07/2019
+     *
+     * Metodo chamada no retorno do WS de busca de outbound pela Transport Order
+     * Seta variaveis que serão preenchidas com valores retornados do server.
+     * @param fromOutbound - Obj retornado pelo Server.
+     */
+    public void updateDataFromTransportOrder(IO_From_Outbound_Search_Record fromOutbound){
+        transportOrderOutbound.clear();
+        if(fromOutbound.getOutbound_prefix() != null && fromOutbound.getOutbound_code() != null ) {
+            transportOrderOutbound = generateFromOutboundSSItem(fromOutbound);
+            //Se from type retornado , verifica necessidade de chamar o Ws que carrega master data.
+            if(fromOutbound.getFrom_type() != null && !fromOutbound.getFrom_type().isEmpty()){
+                ssFromType.setmValue(ssFromType.getmOptionItemByCode(false, fromOutbound.getFrom_type()));
+                if(searchForMasterData(fromOutbound.getFrom_type())){
+                    triggerFromTypeWs(ssFromType.getmValue());
+                }else{
+                    checkForTransportOrderData();
+                }
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 02/07/2019
+     * Verifica ncessida de chamar Ws de Master Data.
+     * Se ssFromType for vazio ou o fromType da outbound for diferente do setado no spinner
+     * ou as listas de modal ou carrier forem vazias, retorna verdadeiro
+     * @param outboundFromType - FromType retornado da busca por transport Order
+     * @return
+     */
+    private boolean searchForMasterData(String outboundFromType) {
+        HMAux fromType = ssFromType.getmValue();
+        return  (fromType.size() == 0
+                || (fromType.hasConsistentValue(SearchableSpinner.CODE) && !fromType.get(SearchableSpinner.CODE).equals(outboundFromType)
+                || (ssModal.getmOption() == null || ssModal.getmOption().size() == 0
+                    || ssCarrier.getmOption() == null || ssCarrier.getmOption().size() == 0)
+            )
+        );
     }
 
     private void loadFromSiteSS(ArrayList<HMAux> rawFromSiteList) {
@@ -1000,10 +1093,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         return auxList;
     }
 
-    private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_Outbound_Search_Record> outbounds) {
+    private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_From_Outbound_Search_Record> outbounds) {
         ArrayList<HMAux> auxList = new ArrayList<>();
-        for (IO_Outbound_Search_Record outbound : outbounds) {
-            String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
+        for (IO_From_Outbound_Search_Record outbound : outbounds) {
+            /*String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
                 ? " - " + outbound.getOutbound_desc()
                 : "";
             HMAux aux = new HMAux();
@@ -1012,10 +1105,31 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
             aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
             aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
-            auxList.add(aux);
+            auxList.add(aux);*/
+            auxList.add(
+                generateFromOutboundSSItem(outbound)
+            );
         }
         //
         return auxList;
+    }
+
+    private HMAux generateFromOutboundSSItem(IO_From_Outbound_Search_Record outbound) {
+        HMAux aux = new HMAux();
+        String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
+            ? " - " + outbound.getOutbound_desc()
+            : "";
+        //
+        aux.put(SearchableSpinner.CODE, outbound.getOutbound_prefix() + "." + outbound.getOutbound_code());
+        aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
+        aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
+        aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
+        aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
+        aux.put(IO_InboundDao.CARRIER_CODE, String.valueOf(outbound.getCarrier_code()));
+        aux.put(IO_InboundDao.DRIVER, outbound.getDriver());
+        aux.put(IO_InboundDao.TRUCK_NUMBER, outbound.getTruck_number());
+        //
+        return  aux;
     }
 
     @Override
@@ -1270,6 +1384,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("local_conf_lbl");
         transListFrag.add("alert_header_save_validation_ttl");
         transListFrag.add("transport_order_lbl");
+        transListFrag.add("alert_transport_order_data_applied_ttl");
+        transListFrag.add("alert_transport_order_data_applied_msg");
         //
         return transListFrag;
     }

@@ -41,8 +41,9 @@ public class WS_IO_From_Site_Search extends IntentService {
         try {
             String to_site_code = bundle.getString(IO_InboundDao.TO_SITE_CODE,"-1");
             String from_site_code = bundle.getString(IO_InboundDao.FROM_SITE_CODE,"");
+            String transport_order = bundle.getString(IO_InboundDao.TRANSPORT_ORDER,"");
             //
-            processWsFromOutboundSearch(from_site_code,to_site_code);
+            processWsFromOutboundSearch(from_site_code,to_site_code,transport_order);
 
         } catch (Exception e) {
 
@@ -58,7 +59,7 @@ public class WS_IO_From_Site_Search extends IntentService {
         }
     }
 
-    private void processWsFromOutboundSearch(String from_site_code, String to_site_code) throws Exception {
+    private void processWsFromOutboundSearch(String from_site_code, String to_site_code, String transport_order) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -72,6 +73,7 @@ public class WS_IO_From_Site_Search extends IntentService {
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setFrom_site_code(from_site_code);
         env.setTo_site_code(to_site_code);
+        env.setTransport_order(transport_order);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), "", "0");
 
@@ -82,7 +84,7 @@ public class WS_IO_From_Site_Search extends IntentService {
         //
         T_IO_From_Site_Search_Rec rec = gson.fromJson(
                 resultado,
-            T_IO_From_Site_Search_Rec.class
+                T_IO_From_Site_Search_Rec.class
         );
         //
         if (!ToolBox_Inf.processWSCheckValidation(

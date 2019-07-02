@@ -111,7 +111,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeWsSearchOutbound(String from_site) {
+    public void executeWsSearchOutbound(String from_site, String transportOrder) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_IO_From_Site_Search.class.getName());
             //
@@ -125,6 +125,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             bundle.putString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             bundle.putString(IO_InboundDao.FROM_SITE_CODE, from_site);
             bundle.putString(IO_InboundDao.TO_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(IO_InboundDao.TRANSPORT_ORDER, transportOrder);
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
@@ -136,15 +137,12 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     @Override
     public void processFromOutboundRet(String wsReturn) {
         if (wsReturn != null && !wsReturn.trim().isEmpty()) {
+            T_IO_From_Site_Search_Rec rec = null;
             //
             try {
-                T_IO_From_Site_Search_Rec rec = gson.fromJson(
+                rec = gson.fromJson(
                     wsReturn,
                     T_IO_From_Site_Search_Rec.class
-                );
-                //
-                mView.setFromOutboundList(
-                    rec.getOutbound()
                 );
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
@@ -154,6 +152,20 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_from_outbound_error_msg")
                 );
             }
+            //
+            if(rec != null){
+                if(rec.getOutbound() != null && rec.getOutbound().size() > 0){
+                    mView.setFromOutboundList(
+                        rec.getOutbound()
+                    );
+                } else {
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_from_outbound_ttl"),
+                        hmAux_Trans.get("alert_from_outbound_not_found_msg")
+                    );
+                }
+            }
+
         }
     }
 
@@ -578,7 +590,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                         hmAux_Trans.get("alert_outbound_not_found_msg")
                     );
                 } else if(outbounds.get(0).getCount() == 1) {
-                    mView.updateTransportOrderData(outbounds.get(0));
+                    mView.setTransportOrderData(outbounds.get(0));
 
                 } else{
                     mView.showAlert(

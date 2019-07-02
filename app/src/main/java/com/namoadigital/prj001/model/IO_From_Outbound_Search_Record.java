@@ -13,11 +13,11 @@ public class IO_From_Outbound_Search_Record implements Serializable {
     private Integer customer_code;
     private int count;
     private String from_type;
-    private int outbound_prefix;
-    private int outbound_code;
+    private Integer outbound_prefix;
+    private Integer outbound_code;
     private String outbound_id;
     private String outbound_desc;
-    private int carrier_code;
+    private Integer carrier_code;
     private String truck_number;
     private String driver;
 
@@ -45,19 +45,19 @@ public class IO_From_Outbound_Search_Record implements Serializable {
         this.from_type = from_type;
     }
 
-    public int getOutbound_prefix() {
+    public Integer getOutbound_prefix() {
         return outbound_prefix;
     }
 
-    public void setOutbound_prefix(int outbound_prefix) {
+    public void setOutbound_prefix(Integer outbound_prefix) {
         this.outbound_prefix = outbound_prefix;
     }
 
-    public int getOutbound_code() {
+    public Integer getOutbound_code() {
         return outbound_code;
     }
 
-    public void setOutbound_code(int outbound_code) {
+    public void setOutbound_code(Integer outbound_code) {
         this.outbound_code = outbound_code;
     }
 
@@ -77,11 +77,11 @@ public class IO_From_Outbound_Search_Record implements Serializable {
         this.outbound_desc = outbound_desc;
     }
 
-    public int getCarrier_code() {
+    public Integer getCarrier_code() {
         return carrier_code;
     }
 
-    public void setCarrier_code(int carrier_code) {
+    public void setCarrier_code(Integer carrier_code) {
         this.carrier_code = carrier_code;
     }
 
