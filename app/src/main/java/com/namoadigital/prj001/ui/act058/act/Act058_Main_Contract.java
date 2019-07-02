@@ -49,5 +49,7 @@ public interface Act058_Main_Contract {
         void callAct051();
 
         void callAct061();
+
+        void callAct067();
     }
 }

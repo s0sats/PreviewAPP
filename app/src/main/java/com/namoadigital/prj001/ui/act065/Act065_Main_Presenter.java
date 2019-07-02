@@ -20,6 +20,7 @@ import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_009;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
@@ -183,7 +184,6 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
             context.sendBroadcast(mIntent);
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
-
         }
     }
 
@@ -229,14 +229,13 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
     private boolean hasDataToSend() {
         //Select Outbound update_required
-        ArrayList<HMAux> inboundAux = null;
-//                = (ArrayList<HMAux>) outboundDao.query_HM(
-//                new IO_Inbound_Sql_009(
-//                        ToolBox_Con.getPreference_Customer_Code(context)
-//                ).toSqlQuery()
-//        );
+        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) outboundDao.query_HM(
+                new IO_Outbound_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
         //Poderi simplificar, mas assim acho melhor para entender
-        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsInboundTokenFile())){
+        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile())){
             return true;
         }
         return false;

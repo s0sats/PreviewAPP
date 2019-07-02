@@ -696,7 +696,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             Bundle bundle = intent.getExtras();
             if( bundle != null
                     && bundle.containsKey(ConstantBaseApp.SW_TYPE)
-                    && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_IO_INBOUND_UPDATE)
+                    && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_IO_OUTBOUND_UPDATE)
                     && act067_frag_drawer != null
             ){
                 act067_frag_drawer.loadDataToScreen();

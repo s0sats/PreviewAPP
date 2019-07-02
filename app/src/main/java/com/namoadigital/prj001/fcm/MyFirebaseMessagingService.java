@@ -19,6 +19,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.FCMMessage;
@@ -28,6 +29,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
@@ -270,6 +272,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void handleIoFCM(FCMMessage fcmMessage) {
+        if(fcmMessage.getTitle().equals("<IO_INBOUND_UPDATE>")) {
+            handleInboundFCM(fcmMessage);
+        }else {
+            handleOutboundFCM(fcmMessage);
+        }
+        //
+        sendFCMStatus(fcmMessage.getTitle());
+    }
+
+    private void handleInboundFCM(FCMMessage fcmMessage) {
         try{
             IO_InboundDao ioInboundDao = new IO_InboundDao(
                 getApplicationContext(),
@@ -298,8 +310,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
-        //
-        sendFCMStatus(fcmMessage.getTitle());
+    }
+
+    private void handleOutboundFCM(FCMMessage fcmMessage) {
+        try{
+            IO_OutboundDao ioOutboundDao = new IO_OutboundDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
+            JSONObject jsonObject = jsonObjectRoot.getJSONObject("outbound");
+
+            String customer_code = fcmMessage.getCustomer();
+            String outbound_prefix = jsonObject.getString(IO_OutboundDao.OUTBOUND_PREFIX);
+            String outbound_code = jsonObject.getString(IO_OutboundDao.OUTBOUND_CODE);
+            String outbound_scn = jsonObject.getString(IO_OutboundDao.SCN);
+            String status = jsonObject.getString(IO_OutboundDao.STATUS);
+
+            // Update S.O.
+            ioOutboundDao.addUpdate(
+                    new IO_Outbound_Sql_012(
+                            Long.parseLong(customer_code),
+                            Integer.parseInt(outbound_prefix),
+                            Integer.parseInt(outbound_code),
+                            Integer.parseInt(outbound_scn)
+                    ).toSqlQuery()
+            );
+
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 
     private void sendFCMStatus(String module_type) {
