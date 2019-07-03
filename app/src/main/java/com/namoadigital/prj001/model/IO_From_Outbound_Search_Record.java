@@ -13,11 +13,19 @@ public class IO_From_Outbound_Search_Record implements Serializable {
     private Integer customer_code;
     private int count;
     private String from_type;
+    private int outbound_from_site_code;
+    private String outbound_from_site_id;
+    private String outbound_from_site_desc;
+    private int outbound_to_site_code;
+    private String outbound_to_site_id;
+    private String outbound_to_site_desc;
     private Integer outbound_prefix;
     private Integer outbound_code;
     private String outbound_id;
     private String outbound_desc;
     private Integer carrier_code;
+    private String carrier_id;
+    private String carrier_desc;
     private String truck_number;
     private String driver;
 
@@ -43,6 +51,54 @@ public class IO_From_Outbound_Search_Record implements Serializable {
 
     public void setFrom_type(String from_type) {
         this.from_type = from_type;
+    }
+
+    public int getOutbound_from_site_code() {
+        return outbound_from_site_code;
+    }
+
+    public void setOutbound_from_site_code(int outbound_from_site_code) {
+        this.outbound_from_site_code = outbound_from_site_code;
+    }
+
+    public String getOutbound_from_site_id() {
+        return outbound_from_site_id;
+    }
+
+    public void setOutbound_from_site_id(String outbound_from_site_id) {
+        this.outbound_from_site_id = outbound_from_site_id;
+    }
+
+    public String getOutbound_from_site_desc() {
+        return outbound_from_site_desc;
+    }
+
+    public void setOutbound_from_site_desc(String outbound_from_site_desc) {
+        this.outbound_from_site_desc = outbound_from_site_desc;
+    }
+
+    public int getOutbound_to_site_code() {
+        return outbound_to_site_code;
+    }
+
+    public void setOutbound_to_site_code(int outbound_to_site_code) {
+        this.outbound_to_site_code = outbound_to_site_code;
+    }
+
+    public String getOutbound_to_site_id() {
+        return outbound_to_site_id;
+    }
+
+    public void setOutbound_to_site_id(String outbound_to_site_id) {
+        this.outbound_to_site_id = outbound_to_site_id;
+    }
+
+    public String getOutbound_to_site_desc() {
+        return outbound_to_site_desc;
+    }
+
+    public void setOutbound_to_site_desc(String outbound_to_site_desc) {
+        this.outbound_to_site_desc = outbound_to_site_desc;
     }
 
     public Integer getOutbound_prefix() {
@@ -83,6 +139,22 @@ public class IO_From_Outbound_Search_Record implements Serializable {
 
     public void setCarrier_code(Integer carrier_code) {
         this.carrier_code = carrier_code;
+    }
+
+    public String getCarrier_id() {
+        return carrier_id;
+    }
+
+    public void setCarrier_id(String carrier_id) {
+        this.carrier_id = carrier_id;
+    }
+
+    public String getCarrier_desc() {
+        return carrier_desc;
+    }
+
+    public void setCarrier_desc(String carrier_desc) {
+        this.carrier_desc = carrier_desc;
     }
 
     public String getTruck_number() {

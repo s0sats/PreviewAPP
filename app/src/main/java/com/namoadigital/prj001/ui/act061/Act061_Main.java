@@ -151,6 +151,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_x_outbound_founded_msg");
         transList.add("alert_from_outbound_ttl");
         transList.add("alert_from_outbound_not_found_msg");
+        transList.add("alert_outbound_to_another_site_msg");
+        transList.add("alert_outbound_destination_msg");
 
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());

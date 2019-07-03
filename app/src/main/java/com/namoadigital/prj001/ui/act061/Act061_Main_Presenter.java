@@ -584,18 +584,30 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             }
             //
             if(outbounds != null && outbounds.size() > 0){
-                if(outbounds.get(0).getCount() == 0){
+                IO_From_Outbound_Search_Record outbound = outbounds.get(0);
+                if(outbound.getCount() == 0){
                     mView.showAlert(
                         hmAux_Trans.get("alert_transport_order_return_ttl"),
                         hmAux_Trans.get("alert_outbound_not_found_msg")
                     );
-                } else if(outbounds.get(0).getCount() == 1) {
-                    mView.setTransportOrderData(outbounds.get(0));
+                } else if(outbound.getCount() == 1) {
+                    //Se encontrou outbound, verifica se to_site da outbound é igual ao site logado
+                    //(que é o to_site da inbound)
+                    if(ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(outbound.getOutbound_to_site_code()))){
+                        mView.setTransportOrderData(outbound);
+                    } else{
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_transport_order_return_ttl"),
+                            hmAux_Trans.get("alert_outbound_to_another_site_msg")
+                                +"\n" + hmAux_Trans.get("alert_outbound_destination_msg")
+                                +"\n"+ outbound.getOutbound_to_site_desc()
+                        );
+                    }
 
                 } else{
                     mView.showAlert(
                         hmAux_Trans.get("alert_transport_order_return_ttl"),
-                        outbounds.get(0).getCount() +" "+ hmAux_Trans.get("alert_x_outbound_founded_msg")
+                        outbound.getCount() +" "+ hmAux_Trans.get("alert_x_outbound_founded_msg")
                     );
                 }
             }else{

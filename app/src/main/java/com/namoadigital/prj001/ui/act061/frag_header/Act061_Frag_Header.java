@@ -319,7 +319,14 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             @Override
             public void onClick(View v) {
                 if (ssFromOutbound != null && ssFromOutbound.getmOption() != null) {
-                    if (ssFromOutbound.getmOption().size() == 0) {
+                    if (
+                        ssFromOutbound.getmOption().size() == 0
+                        || ( ssFromOutbound.getmOption().size() == 1
+                             && ssFromOutbound.getmOption().get(0).hasConsistentValue(SearchableSpinner.CODE)
+                             && transportOrderOutbound.hasConsistentValue(SearchableSpinner.CODE)
+                             && ssFromOutbound.getmOption().get(0).get(SearchableSpinner.CODE).equals(transportOrderOutbound.get(SearchableSpinner.CODE))
+                            )
+                    ) {
                         if (mFragHeaderListener != null
                             && ssFromSite.getmValue() != null
                             && ssFromSite.getmValue().hasConsistentValue(SearchableSpinner.CODE)
@@ -331,6 +338,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         }
                     } else {
                         ssFromOutbound.performEtValueClick();
+
                     }
                 }
             }
@@ -408,11 +416,27 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private void setFromOutboundData(HMAux hmAux) {
+        if(hmAux.hasConsistentValue(IO_InboundDao.FROM_SITE_CODE)) {
+            ToolBox_Inf.setSSmValue(
+                ssFromSite,
+                hmAux.get(IO_InboundDao.FROM_SITE_CODE),
+                hmAux.get(IO_InboundDao.FROM_SITE_ID),
+                hmAux.get(IO_InboundDao.FROM_SITE_DESC),
+                false,
+                false
+            );
+        }
         ssFromOutbound.setmValue(hmAux);
-        ssFromOutbound.getmOption().add(hmAux);
-        //
+        //VERIFICAR SE ITEM ABAIXO FUNCIONA AO SELECIONAR OUBOUND
         if(hmAux.hasConsistentValue(IO_InboundDao.CARRIER_CODE)) {
-            ssCarrier.setmValue(ssCarrier.getmOptionItemByCode(false, hmAux.get(IO_InboundDao.CARRIER_CODE)));
+            ToolBox_Inf.setSSmValue(
+                ssCarrier,
+                hmAux.get(IO_InboundDao.CARRIER_CODE),
+                hmAux.get(IO_InboundDao.CARRIER_ID),
+                hmAux.get(IO_InboundDao.CARRIER_DESC),
+                false,
+                false
+            );
         } else{
             ssCarrier.setmValue(new HMAux());
         }
@@ -441,7 +465,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
     private boolean triggerTransporOrderSearch() {
         //return !bWsTransportCalled && mFragHeaderListener != null;
-        return mFragHeaderListener != null;
+        return bNewProcess && mFragHeaderListener != null;
     }
 
     private boolean validateDates() {
@@ -553,6 +577,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 ((SearchableSpinner) view).setmEnabled(enable);
             } else if (view instanceof MkDateTime) {
                 ((MkDateTime) view).setmEnabled(enable);
+            } else if (view instanceof MKEditTextNM) {
+                ((MKEditTextNM) view).setEnabled(enable);
             } else {
                 view.setEnabled(enable);
             }
@@ -566,6 +592,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             mInbound.setCustomer_code(bNewProcess ? ToolBox_Con.getPreference_Customer_Code(context) : mInbound.getCustomer_code());
             //mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
             mInbound.setToken(token);
+            mInbound.setTransport_order(mketTransportOrder.getText().toString().trim());
             mInbound.setInbound_id(etInboundId.getText().toString());
             mInbound.setInbound_desc(etInboundDesc.getText().toString());
             mInbound.setOrigin(ConstantBaseApp.SO_ORIGIN_CHANGE_APP);
@@ -1003,8 +1030,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             transportOrderOutbound = generateFromOutboundSSItem(fromOutbound);
             //Se from type retornado , verifica necessidade de chamar o Ws que carrega master data.
             if(fromOutbound.getFrom_type() != null && !fromOutbound.getFrom_type().isEmpty()){
+                HMAux oldType = ssFromType.getmValue();
+                //Atualiza valor
                 ssFromType.setmValue(ssFromType.getmOptionItemByCode(false, fromOutbound.getFrom_type()));
-                if(searchForMasterData(fromOutbound.getFrom_type())){
+                if(haveToCallMasterData(oldType,fromOutbound.getFrom_type())){
                     triggerFromTypeWs(ssFromType.getmValue());
                 }else{
                     checkForTransportOrderData();
@@ -1018,13 +1047,14 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
      * Verifica ncessida de chamar Ws de Master Data.
      * Se ssFromType for vazio ou o fromType da outbound for diferente do setado no spinner
      * ou as listas de modal ou carrier forem vazias, retorna verdadeiro
+     *
+     * @param oldType
      * @param outboundFromType - FromType retornado da busca por transport Order
      * @return
      */
-    private boolean searchForMasterData(String outboundFromType) {
-        HMAux fromType = ssFromType.getmValue();
-        return  (fromType.size() == 0
-                || (fromType.hasConsistentValue(SearchableSpinner.CODE) && !fromType.get(SearchableSpinner.CODE).equals(outboundFromType)
+    private boolean haveToCallMasterData(HMAux oldType, String outboundFromType) {
+        return  (oldType.size() == 0
+                || (oldType.hasConsistentValue(SearchableSpinner.CODE) && !oldType.get(SearchableSpinner.CODE).equals(outboundFromType)
                 || (ssModal.getmOption() == null || ssModal.getmOption().size() == 0
                     || ssCarrier.getmOption() == null || ssCarrier.getmOption().size() == 0)
             )
@@ -1096,16 +1126,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private ArrayList<HMAux> generateFromOutboundSSOption(ArrayList<IO_From_Outbound_Search_Record> outbounds) {
         ArrayList<HMAux> auxList = new ArrayList<>();
         for (IO_From_Outbound_Search_Record outbound : outbounds) {
-            /*String desc = outbound.getOutbound_desc() != null && outbound.getOutbound_desc().trim().length() > 0
-                ? " - " + outbound.getOutbound_desc()
-                : "";
-            HMAux aux = new HMAux();
-            aux.put(SearchableSpinner.CODE, outbound.getOutbound_prefix() + "." + outbound.getOutbound_code());
-            aux.put(SearchableSpinner.ID, outbound.getOutbound_id());
-            aux.put(SearchableSpinner.DESCRIPTION, outbound.getOutbound_id() + desc);
-            aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
-            aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
-            auxList.add(aux);*/
             auxList.add(
                 generateFromOutboundSSItem(outbound)
             );
@@ -1129,6 +1149,12 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         aux.put(IO_InboundDao.DRIVER, outbound.getDriver());
         aux.put(IO_InboundDao.TRUCK_NUMBER, outbound.getTruck_number());
         //
+        if(outbound.getOutbound_from_site_code() != 0){
+            aux.put(IO_InboundDao.FROM_SITE_CODE, String.valueOf(outbound.getOutbound_from_site_code()));
+            aux.put(IO_InboundDao.FROM_SITE_ID, String.valueOf(outbound.getOutbound_from_site_id()));
+            aux.put(IO_InboundDao.FROM_SITE_DESC, String.valueOf(outbound.getOutbound_from_site_desc()));
+        }
+        //
         return  aux;
     }
 
@@ -1147,6 +1173,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     setUIForEdition();
                     applyViewsInteraction(INTERATION_EDIT_ON_OFF);
                 }
+                //
+                mketTransportOrder.setText(mInbound.getTransport_order());
+                mketTransportOrder.setTag(mInbound.getTransport_order());
                 //
                 if (mInbound.getFrom_type() != null && !mInbound.getFrom_type().isEmpty()) {
                     ToolBox_Inf.setSSmValue(
@@ -1290,6 +1319,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssFromOutbound.setVisibility(View.GONE);
         ivFromOutbound.setEnabled(false);
         ivFromOutbound.setVisibility(View.GONE);
+        ivTransportOrder.setEnabled(false);
+        ivTransportOrder.setVisibility(View.GONE);
         //
         if(mInbound.getFrom_type().equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)){
             ssPartner.setVisibility(View.VISIBLE);

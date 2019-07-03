@@ -142,7 +142,7 @@ public class WS_IO_Inbound_Header_Save extends IntentService {
                 inboundRet.getInbound_prefix(),
                 inboundRet.getInbound_code(),
                 inboundRet.getRet_status().equalsIgnoreCase("OK"),
-                inboundRet.getRet_status(),
+                inboundRet.getRet_msg(),
                 newProcess,
                 inboundRet.getInbound().size() > 0
 
