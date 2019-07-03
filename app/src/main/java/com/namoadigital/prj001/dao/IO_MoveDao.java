@@ -293,7 +293,7 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
      * @param dbInstance
      * @return
      */
-    public DaoObjReturn removeInboundMoves(IO_Outbound io_outbound, @Nullable SQLiteDatabase dbInstance) {
+    public DaoObjReturn removeOutboundMoves(IO_Outbound io_outbound, @Nullable SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -308,9 +308,9 @@ public class IO_MoveDao extends BaseDao implements DaoWithReturn<IO_Move> {
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(io_outbound.getCustomer_code())).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(INBOUND_PREFIX).append(" = '").append(String.valueOf(io_outbound.getOutbound_prefix())).append("'");
+            sbWhere.append(OUTBOUND_PREFIX).append(" = '").append(String.valueOf(io_outbound.getOutbound_prefix())).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(INBOUND_CODE).append(" = '").append(String.valueOf(io_outbound.getOutbound_code())).append("'");
+            sbWhere.append(OUTBOUND_CODE).append(" = '").append(String.valueOf(io_outbound.getOutbound_code())).append("'");
             //
             sqlRet = db.delete(TABLE, sbWhere.toString(), null);
         } catch (SQLiteException e) {

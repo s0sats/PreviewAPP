@@ -456,7 +456,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param md_product_serials
      * @param dbInstance
      */
-    public void addUpdateTmpByInbound(Iterable<MD_Product_Serial> md_product_serials, SQLiteDatabase dbInstance){
+    public void addUpdateTmpByIOProcess(Iterable<MD_Product_Serial> md_product_serials, SQLiteDatabase dbInstance){
         for(MD_Product_Serial serial : md_product_serials ){
             addUpdateTmp(serial,dbInstance);
         }
