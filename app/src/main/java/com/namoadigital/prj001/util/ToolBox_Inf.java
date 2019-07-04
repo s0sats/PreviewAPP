@@ -3169,7 +3169,16 @@ public class ToolBox_Inf {
         );
     }
 
-    public static ArrayList<HMAux> statusList(HMAux hmAux_trans, String... status) {
+    /**
+     * Metodo usado no Action Plan para gerar a lista de status do Spinner
+     * O metodo possui a lista de status geral como a array e EXCLUI DESSA LISTA
+     * os status enviados como parametros...
+     *
+     * @param hmAux_trans - Traduções dos status
+     * @param status - Lista de status que NÃO SERÃO EXIBIDOS.
+     * @return - Lista de status QUE NÃO FORAM ENVIADOS.
+     */
+    public static ArrayList<HMAux> formApStatusList(HMAux hmAux_trans, String... status) {
         ArrayList<HMAux> statusList = new ArrayList<>();
         //
         String[] mStatus = {

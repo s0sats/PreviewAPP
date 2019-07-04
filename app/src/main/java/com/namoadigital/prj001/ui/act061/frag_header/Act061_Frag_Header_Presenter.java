@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.ui.act061.frag_header;
 
 import android.content.Context;
-
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -106,5 +108,94 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
         );
         //
         return localList;
+    }
+
+    /**
+     * Verifica se existe algum item já confirmado.
+     *
+     * @param inbound_prefix - Prefixo da inbound
+     * @param inbound_code - Codigo da inbound
+     * @return - True se algum item confirmado.
+     */
+    @Override
+    public boolean hasConfirmedItem(int inbound_prefix, int inbound_code) {
+        return false;
+    }
+
+    /**
+     * Verifica se todos os item foram finalizados.
+     *
+     * @param inbound_prefix - Prefixo da inbound
+     * @param inbound_code - Codigo da inbound
+     * @param put_away_process - Se inbound é put_away_process
+     * @return - True se todos os itens estiverem finalizados.
+     */
+    @Override
+    public boolean allItemsDone(int inbound_prefix, int inbound_code, int put_away_process) {
+        return false;
+    }
+
+    /**
+     * Verifica se existe algum item já confirmado.
+     *
+     * @param mInbound - Obj inbound carregado.
+     * @return - True se algum item confirmado.
+     */
+    @Override
+    public boolean hasConfirmedItem(IO_Inbound mInbound) {
+        if(mInbound.getItems() != null && mInbound.getItems().size() > 0 ){
+            for(IO_Inbound_Item inboundItem : mInbound.getItems()){
+                if( inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                    || inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    || inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                ){
+                    return true;
+                }
+            }
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Verifica se todos os item foram finalizados.
+     * @param mInbound - Obj inbound carregado.
+     * @return - True se todos os itens estiverem finalizados.
+     */
+    @Override
+    public boolean allItemsDone(IO_Inbound mInbound) {
+        int doneItems = 0;
+        if(mInbound.getItems() != null && mInbound.getItems().size() > 0 ){
+            //
+            for(IO_Inbound_Item inboundItem : mInbound.getItems()){
+                if( inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) ){
+                    doneItems++;
+                }
+            }
+            //
+            return doneItems == mInbound.getItems().size();
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Gera lista de hmAux baseado nos status passados.
+     *
+     * @param status - Lista com status que devem compor o mOption
+     * @return - Lista de status para spinner
+     */
+    @Override
+    public ArrayList<HMAux> generateStatusList(ArrayList<String> status) {
+        ArrayList<HMAux> statusList = new ArrayList<>();
+        for (String s : status ){
+            HMAux hmAux = new HMAux();
+            hmAux.put(SearchableSpinner.CODE, s);
+            hmAux.put(SearchableSpinner.ID, s);
+            hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(s));
+            //
+            statusList.add(hmAux);
+        }
+        return statusList;
     }
 }

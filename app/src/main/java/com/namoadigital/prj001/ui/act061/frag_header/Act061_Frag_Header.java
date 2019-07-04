@@ -55,6 +55,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private ConstraintLayout clOtherInfo;
     private TextView tvInboundLbl;
     private TextView tvInboundPrefixCode;
+    private SearchableSpinner ssStatus;
     private TextView tvInboundIdLbl;
     private EditText etInboundId;
     private TextView tvInboundDescLbl;
@@ -344,6 +345,21 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         });
         //
+        ssStatus.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            HMAux preValue = new HMAux();
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+                preValue = hmAux;
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(!validateStatusChange()){
+                    ssStatus.setmValue(preValue);
+                }
+            }
+        });
+        //
         ssConfZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -352,6 +368,20 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                //Se zerou zona e status
+                if(hmAux == null || hmAux.size() == 0){
+//                    if( mInbound.getPut_away_process() == 1
+//                        && ssStatus.getmValue() != null
+//                        && ssStatus.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+//                        && ssStatus.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)
+//                    ){
+//                        ssStatus.setmValue(ssStatus.getmOptionItemByCode(false,ConstantBaseApp.SYS_STATUS_PENDING));
+//                    }
+                    if(!validateStatusChange()){
+                        ssStatus.setmValue(ssStatus.getmOptionItemByCode(false,ConstantBaseApp.SYS_STATUS_PENDING));
+                        ssStatus.requestFocus();
+                    }
+                }
                 processZoneValueChange(hmAux);
             }
         });
@@ -392,7 +422,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 if (validateDates()) {
                     if (bNewProcess || hasHeaderChanged()) {
                         //Sem else aqui pois proprio metodo exibira msg de erro
-                        if (validateSave()) {
+                        if (validateSave() && validateStatusChange()) {
                             setDataToInbound();
                             //blockAll();
                             applyViewsInteraction(INTERATION_BLOCK_ALL);
@@ -558,12 +588,17 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     views.remove(ssConfLocal);
                 }
                 //
+                if(mInbound != null & mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                    views.remove(ssStatus);
+                }
+                //
                 applyEditMode(views, inEdit);
                 break;
             case INTERATION_NEW_INBOUND:
                 views.remove(ssFromType);
                 views.remove(ssFromSite);
                 views.remove(ssFromOutbound);
+                views.remove(ssStatus);
                 //
                 applyEditMode(views, true);
                 break;
@@ -578,7 +613,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             } else if (view instanceof MkDateTime) {
                 ((MkDateTime) view).setmEnabled(enable);
             } else if (view instanceof MKEditTextNM) {
-                ((MKEditTextNM) view).setEnabled(enable);
+                //((MKEditTextNM) view).setEnabled(enable);
+                setMketEnabled(((MKEditTextNM) view),enable);
             } else {
                 view.setEnabled(enable);
             }
@@ -593,6 +629,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             //mInbound.setToken(bNewProcess ? getSaveNewToken() : ToolBox_Inf.getToken(context));
             mInbound.setToken(token);
             mInbound.setTransport_order(mketTransportOrder.getText().toString().trim());
+            //mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus());
+            mInbound.setStatus(ssStatus.getmValue().get(SearchableSpinner.CODE));
             mInbound.setInbound_id(etInboundId.getText().toString());
             mInbound.setInbound_desc(etInboundDesc.getText().toString());
             mInbound.setOrigin(ConstantBaseApp.SO_ORIGIN_CHANGE_APP);
@@ -681,7 +719,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             mInbound.setTruck_number(etTruckNum.getText().toString());
             mInbound.setDriver(etDriver.getText().toString());
             mInbound.setComments(etComments.getText().toString());
-            mInbound.setStatus(bNewProcess ? ConstantBaseApp.SYS_STATUS_PENDING : mInbound.getStatus());
             mInbound.setUpdate_required(1);
         }
     }
@@ -799,6 +836,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivFromOutbound.setEnabled(false);
         tvInboundLbl = view.findViewById(R.id.act061_header_tv_inbound);
         tvInboundPrefixCode = view.findViewById(R.id.act061_header_tv_inbound_code);
+        ssStatus = view.findViewById(R.id.act061_header_ss_status);
         tvInboundIdLbl = view.findViewById(R.id.act061_header_tv_inbound_id);
         etInboundId = view.findViewById(R.id.act061_header_et_inbound_id);
         tvInboundDescLbl = view.findViewById(R.id.act061_header_tv_inbound_desc);
@@ -832,6 +870,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         properties.add(ssConfLocal);
         properties.add(ssPartner);
         properties.add(ssFromOutbound);
+        properties.add(ssStatus);
         properties.add(etInvoice);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
@@ -858,6 +897,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssFromSite.setmLabel(hmAux_Trans.get("from_site_lbl"));
         ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
         ssFromOutbound.setmLabel(hmAux_Trans.get("from_outbound_lbl"));
+        ssStatus.setmLabel(hmAux_Trans.get("status_lbl"));
         tvInboundLbl.setText(hmAux_Trans.get("inbound_code_lbl"));
         tvInboundIdLbl.setText(hmAux_Trans.get("inbound_id_lbl"));
         tvInboundDescLbl.setText(hmAux_Trans.get("inbound_desc_lbl"));
@@ -883,6 +923,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ssFromOutbound.setmShowLabel(false);
         ssFromOutbound.setmStyle(1);
         ssFromOutbound.setmEnabled(false);
+        ssStatus.setmShowLabel(false);
+        ssStatus.setmStyle(1);
+        ssStatus.setmEnabled(false);
+        ssStatus.setmCanClean(false);
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssConfZone.setmStyle(1);
@@ -931,6 +975,146 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         }
         //
         ssConfLocal.setmOption(mPresenter.getLocalsOptions(ssConfZone.getmValue().get(SearchableSpinner.CODE)));
+    }
+
+    private void loadStatusSS(String status){
+        ArrayList<String> statusToList = new ArrayList<>();
+        //
+//        switch(status){
+//            case ConstantBaseApp.SYS_STATUS_PENDING :
+//                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+//                //
+//                if(mInbound.getPut_away_process() == 0
+//                    || (mInbound.getPut_away_process() == 1
+//                        && mInbound.getZone_code_conf() != null
+//                        && mInbound.getLocal_code_conf() != null
+//                    )
+//                ){
+//                    statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+//                }
+//                break;
+//            case ConstantBaseApp.SYS_STATUS_PROCESS :
+//                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+//                //
+//                if(!mPresenter.hasConfirmedItem(mInbound)){
+//                    statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+//                }
+//                //
+//                if(mPresenter.allItemsDone(mInbound)){
+//                    statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+//                }
+//                break;
+//            case ConstantBaseApp.SYS_STATUS_DONE:
+//            default:
+//                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+//                break;
+//        }
+
+        switch(status){
+            case ConstantBaseApp.SYS_STATUS_PENDING :
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+                break;
+            case ConstantBaseApp.SYS_STATUS_PROCESS :
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+                break;
+            case ConstantBaseApp.SYS_STATUS_DONE:
+            default:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+                break;
+        }
+        //
+        ssStatus.setmOption(
+            mPresenter.generateStatusList(
+                statusToList
+            )
+        );
+
+    }
+    private boolean validateStatusChange(){
+        HMAux ssStatusValue = ssStatus.getmValue();
+        //
+        if(!ssStatusValue.hasConsistentValue(SearchableSpinner.CODE)){
+            return false;
+        }else {
+            switch (mInbound.getStatus()) {
+                case ConstantBaseApp.SYS_STATUS_PENDING:
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                        return true;
+                    }
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)){
+                        if(mInbound.getPut_away_process() == 0
+                                    || (mInbound.getPut_away_process() == 1
+                                        && ssConfZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                                        && ssConfLocal.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                                    )
+                        ){
+                            return true;
+                        }else{
+                            mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_zone_local_required_msg")
+                            );
+                            //
+                            return false;
+                        }
+                    }
+                    //
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                        mFragHeaderListener.showFragAlert(
+                            hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                            hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
+                    break;
+                case ConstantBaseApp.SYS_STATUS_PROCESS:
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                       if(!mPresenter.hasConfirmedItem(mInbound)){
+                            return true;
+                       }else{
+                           mFragHeaderListener.showFragAlert(
+                               hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                               hmAux_Trans.get("alert_exist_confirmed_items_msg")
+                           );
+                           //
+                           return false;
+                       }
+                    }
+                    //
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                        if(mPresenter.allItemsDone(mInbound)){
+                            return true;
+                        } else{
+                            mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_exist_items_to_be_done_msg")
+                            );
+                            //
+                            return false;
+                        }
+                    }
+                    break;
+                case ConstantBaseApp.SYS_STATUS_DONE:
+                default:
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                        return true;
+                    } else{
+                        mFragHeaderListener.showFragAlert(
+                            hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                            hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
+
+            }
+        }
+        //
+        return false;
     }
 
     private void configMkDt() {
@@ -1218,6 +1402,38 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     tvInboundLbl.setVisibility(View.GONE);
                     tvInboundPrefixCode.setVisibility(View.GONE);
                 }
+                //
+                if(mInbound.getStatus() != null){
+                    loadStatusSS(mInbound.getStatus());
+                    //
+                    ToolBox_Inf.setSSmValue(
+                        ssStatus,
+                        mInbound.getStatus(),
+                        mInbound.getStatus(),
+                        hmAux_Trans.get(mInbound.getStatus()),
+                        true,
+                        false
+                    );
+                    //
+                    if( mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                        || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    ){
+                        ssStatus.setmEnabled(false);
+                    }
+                }else{
+                    if(bNewProcess) {
+                        //Inicia com status pendente
+                        ToolBox_Inf.setSSmValue(
+                            ssStatus,
+                            ConstantBaseApp.SYS_STATUS_PENDING,
+                            ConstantBaseApp.SYS_STATUS_PENDING,
+                            hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING),
+                            true,
+                            false
+                        );
+                    }
+                }
+                //
                 etInboundId.setText(mInbound.getInbound_id());
                 etInboundId.setTag(mInbound.getInbound_id());
                 etInboundDesc.setText(mInbound.getInbound_desc());
@@ -1329,12 +1545,14 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             ssPartner.setVisibility(View.GONE);
             ssFromSite.setVisibility(View.VISIBLE);
         }
+        ssStatus.setVisibility(View.VISIBLE);
     }
 
 
     private void setUIForCreation(boolean isMasterDataLoaded) {
         clOtherInfo.setVisibility(isMasterDataLoaded ? View.VISIBLE : View.GONE);
         ivEdit.setVisibility(View.GONE);
+        ssStatus.setVisibility(View.GONE);
         //
         if (isMasterDataLoaded) {
             if (ssFromType.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
@@ -1357,6 +1575,21 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivEdit.setEnabled(enabled);
     }
 
+    private void setMketEnabled(MKEditTextNM mket, boolean enabled){
+        if(enabled){
+            mket.setmBARCODE(true);
+            mket.setmNFC(false);
+            mket.setmOCR(false);
+            mket.setmOCRVin(false);
+            mket.setEnabled(true);
+        } else{
+            mket.setmBARCODE(false);
+            mket.setmNFC(false);
+            mket.setmOCR(false);
+            mket.setmOCRVin(false);
+            mket.setEnabled(false);
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -1414,9 +1647,16 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("zone_conf_lbl");
         transListFrag.add("local_conf_lbl");
         transListFrag.add("alert_header_save_validation_ttl");
+        //
         transListFrag.add("transport_order_lbl");
         transListFrag.add("alert_transport_order_data_applied_ttl");
         transListFrag.add("alert_transport_order_data_applied_msg");
+        transListFrag.add("status_lbl");
+        transListFrag.add("alert_status_change_validation_error_ttl");
+        transListFrag.add("alert_zone_local_required_msg");
+        transListFrag.add("alert_status_change_not_allowed_msg");
+        transListFrag.add("alert_exist_confirmed_items_msg");
+        transListFrag.add("alert_exist_items_to_be_done_msg");
         //
         return transListFrag;
     }

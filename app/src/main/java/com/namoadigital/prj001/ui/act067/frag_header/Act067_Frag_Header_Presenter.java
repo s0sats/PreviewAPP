@@ -1,20 +1,19 @@
 package com.namoadigital.prj001.ui.act067.frag_header;
 
 import android.content.Context;
-
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
-import com.namoadigital.prj001.ui.act061.frag_header.Act061_Frag_Header_Contract;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
-public class Act067_Frag_Header_Presenter implements Act061_Frag_Header_Contract.I_Presenter  {
+public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract.I_Presenter  {
+
 
     private Context context;
     private Act067_Frag_Header_Contract.I_View mView;
