@@ -5,12 +5,18 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.sql.SM_SO_Sql_015;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
 import com.namoadigital.prj001.sql.Sql_Act014_001;
 import com.namoadigital.prj001.sql.Sql_Act014_003;
+import com.namoadigital.prj001.sql.Sql_Act014_004;
+import com.namoadigital.prj001.sql.Sql_Act014_005;
+import com.namoadigital.prj001.sql.Sql_Act014_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -103,6 +109,60 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             senList.add(hmAuxTotal);
 
         }
+
+        if(ToolBox_Inf.profileExists(context , Constant.PROFILE_MENU_IO , Constant.PROFILE_MENU_IO_PARAM_INBOUND)){
+
+            IO_InboundDao ioInboundDao = new IO_InboundDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> inboundHistoric = ioInboundDao.query_HM(
+                    new Sql_Act014_004(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            hmAux_Trans
+                    ).toSqlQuery()
+            );
+            //
+            senList.addAll(inboundHistoric);
+        }
+
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_IO , Constant.PROFILE_MENU_IO_PARAM_MOVE_REQUEST)){
+            IO_MoveDao ioMovedDao = new IO_MoveDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> moveHistoric = ioMovedDao.query_HM(
+                    new Sql_Act014_005(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            hmAux_Trans
+                    ).toSqlQuery()
+            );
+            //
+            senList.addAll(moveHistoric);
+        }
+
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_IO ,Constant.PROFILE_MENU_IO_PARAM_OUTBOUND)){
+            IO_OutboundDao ioOutboundDao = new IO_OutboundDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> outboundHistoric = ioOutboundDao.query_HM(
+                    new Sql_Act014_006(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            hmAux_Trans
+                    ).toSqlQuery()
+            );
+            //
+            senList.addAll(outboundHistoric);
+        }
+
+
         //
         mView.loadSentData(senList);
     }
@@ -121,6 +181,18 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             }
 
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_FORM_AP))) {
+                mView.callAct039(context);
+            }
+
+            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_INBOUND))) {
+                mView.callAct039(context);
+            }
+
+            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_MOVE_PLANNED))) {
+                mView.callAct039(context);
+            }
+
+            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_OUTBOUND))) {
                 mView.callAct039(context);
             }
 

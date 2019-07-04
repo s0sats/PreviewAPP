@@ -37,6 +37,9 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
     public static final String LABEL_TRANS_OS = "lbl_type_service_order";
     public static final String LABEL_TRANS_FORM_AP = "lbl_type_form_ap";
+    public static final String LABEL_TRANS_IO_INBOUND = "lbl_type_io_inbound";
+    public static final String LABEL_TRANS_IO_MOVE_PLANNED = "lbl_type_io_move_planned";
+    public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
 
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
@@ -76,6 +79,9 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         translateList.add(LABEL_TRANS_CHECKLIST);
         translateList.add(LABEL_TRANS_OS);
         translateList.add(LABEL_TRANS_FORM_AP);
+        translateList.add(LABEL_TRANS_IO_INBOUND);
+        translateList.add(LABEL_TRANS_IO_MOVE_PLANNED);
+        translateList.add(LABEL_TRANS_IO_OUTBOUND);
         translateList.add("alert_no_sent_data_title");
         translateList.add("alert_no_sent_data_msg");
 
