@@ -137,7 +137,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         transList.add("alert_offline_save_ttl");
         transList.add("progress_tracking_search_ttl");
         transList.add("progress_tracking_search_msg");
-        transList.add("alert_result_in_conf");
+        transList.add("alert_result_out_conf");
         transList.add("alert_result_movement");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
@@ -243,7 +243,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 inbound_code,
                 planned_local_code,
                 status,
-                null
+                serialInfo.getClass_code()
         );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
@@ -375,7 +375,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                if (finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
+                if (finalAuxMove.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_1) && finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
                 } else {
                     ToolBox.alertMSG(
@@ -425,34 +425,16 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
     @Override
     public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
-        HMAux zoneInfo = frag_move_create.getZoneInfo();
-        HMAux localInfo = frag_move_create.getLocalInfo();
-
-        if (!zoneInfo.hasConsistentValue(SearchableSpinner.ID)) {
-            zoneInfo.put(SearchableSpinner.ID, "");
-        }
-
-        if (!zoneInfo.hasConsistentValue(SearchableSpinner.DESCRIPTION)) {
-            zoneInfo.put(SearchableSpinner.DESCRIPTION, "");
-        }
-
-        if (!localInfo.hasConsistentValue(SearchableSpinner.ID)) {
-            localInfo.put(SearchableSpinner.ID, "");
-        }
-
-        if (!localInfo.hasConsistentValue(SearchableSpinner.DESCRIPTION)) {
-            localInfo.put(SearchableSpinner.DESCRIPTION, "");
-        }
 
         mPresenter.executeOutConfPersistence(customer_code,
                 io_prefix,
                 io_code,
                 to_zone_code,
-                zoneInfo.get(SearchableSpinner.ID),
-                zoneInfo.get(SearchableSpinner.DESCRIPTION),
+                null,
+                null,
                 to_local_code,
-                localInfo.get(SearchableSpinner.ID),
-                localInfo.get(SearchableSpinner.DESCRIPTION),
+                null,
+                null,
                 to_class_code,
                 reason_code,
                 comments,

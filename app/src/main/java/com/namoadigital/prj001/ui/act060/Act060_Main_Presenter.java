@@ -142,8 +142,8 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
     @Override
     public void executeOutConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Outbound_Item item, List<IO_Move_Tracking> trackingFromMove) {
         item.setCustomer_code(customer_code);
-        item.setInbound_prefix(io_prefix);
-        item.setInbound_code(io_code);
+        item.setOutbound_prefix(io_prefix);
+        item.setOutbound_code(io_code);
         item.setConf_date(done_date);
         item.setProduct_code(serial.getProduct_code());
         item.setSerial_code((int) serial.getSerial_code());
@@ -152,7 +152,6 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
         item.setUpdate_required(1);
         item.setCustomer_code(customer_code);
         item.setComments(comments);
-
 
         DaoObjReturn daoObjReturnIoMove = outboundItemDao.addUpdate(item);
 
@@ -165,14 +164,16 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
             IO_Conf_TrackingDao io_conf_trackingdao = new IO_Conf_TrackingDao(context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM);
+
             DaoObjReturn objReturn = new DaoObjReturn();
+
             for (IO_Move_Tracking tracking : trackingFromMove) {
                 IO_Conf_Tracking item_tracking = new IO_Conf_Tracking();
                 item_tracking.setCustomer_code(tracking.getCustomer_code());
-                item_tracking.setPrefix(item.getInbound_prefix());
-                item_tracking.setCode(item.getInbound_code());
-                item_tracking.setItem(item.getInbound_item());
-                item_tracking.setType(ConstantBaseApp.IO_INBOUND);
+                item_tracking.setPrefix(item.getOutbound_prefix());
+                item_tracking.setCode(item.getOutbound_code());
+                item_tracking.setItem(item.getOutbound_item());
+                item_tracking.setType(ConstantBaseApp.IO_OUTBOUND);
                 item_tracking.setTracking(tracking.getTracking());
                 //ANALISAR O RETORNO E SE HOUVER ERRO NÃO PROSSEGUIR E EXIBIR MSG
                 objReturn = io_conf_trackingdao.addUpdate(item_tracking);
