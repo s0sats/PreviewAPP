@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
+
+import java.util.ArrayList;
 
 public interface Act065_Main_Contract {
 
@@ -20,6 +23,8 @@ public interface Act065_Main_Contract {
         void callAct051();
 
         void callAct066(Bundle bundle);
+
+        void showResult(ArrayList<HMAux> resultList, boolean hasError);
     }
 
     interface I_Presenter{
