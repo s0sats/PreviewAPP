@@ -144,7 +144,11 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         setupViews();
         //
         if (listPendencies) {
-            mPresenter.getPendenciesList();
+            if (requestingAct.equals(ConstantBaseApp.ACT014)) {
+                mPresenter.getPendenciesList();
+            } else {
+                mPresenter.getPendenciesList();
+            }
         } else {
             mPresenter.processListInfo(bundle_record_count, bundle_record_page, records);
         }
@@ -307,10 +311,14 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
      * Aplica cor no icone de filtro dependendo do valor dos filtros
      */
     private void updateIvFilterState() {
-        if (filter_pending || filter_process) {
-            iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        if (requestingAct.equals(ConstantBaseApp.ACT014)) {
+            iv_status_filter.setVisibility(View.GONE);
         } else {
-            iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+            if (filter_pending || filter_process) {
+                iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+            } else {
+                iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+            }
         }
     }
 
@@ -470,6 +478,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     public void callAct067(Bundle bundle) {
         Intent mIntent = new Intent(context, Act067_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

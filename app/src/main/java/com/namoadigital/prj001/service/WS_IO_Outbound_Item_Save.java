@@ -314,7 +314,7 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
                 actReturn.setRetStatus(saveReturnItem.getRet_status() == null ? "OK" : saveReturnItem.getRet_status());
                 //Se  status diferente de OK, coloca msg, se não branco.
                 actReturn.setMsg(
-                        !actReturn.getRetStatus().equals("OK") ? saveReturnItem.getRet_msg() : null
+                        !actReturn.getMsg().equals("OK") ? saveReturnItem.getRet_msg() : null
                 );
                 //Se uma movimentação, seta o prefx e code da move e seta isMove como true.
                 if(saveReturnItem.getMove_prefix() != null &&  saveReturnItem.getMove_code() != null){

@@ -38,6 +38,8 @@ public interface Act061_Main_Contract {
         void showResult(ArrayList<HMAux> resultList, boolean inboundResult);
 
         void prepareFullRefresh();
+
+        void callAct014();
     }
 
     interface I_Presenter{
@@ -46,7 +48,7 @@ public interface Act061_Main_Contract {
 
         void executeWSMasterData(String type, boolean action);
 
-        void onBackPressedClicked();
+        void onBackPressedClicked(String requestAct);
 
         void processIOMasterDataRet(String wsReturn);
 

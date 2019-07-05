@@ -10,6 +10,7 @@ import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.sql.Sql_Act066_001;
+import com.namoadigital.prj001.sql.Sql_Act066_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -56,6 +57,32 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
                 true,
                 true
             ).toSqlQuery()
+        );
+        //
+        for(HMAux outbound: outbounds){
+            IO_Outbound_Search_Record aux = getHmAuxToOutboundSearchRecord(outbound);
+            if(aux != null){
+                searchRecords.add(aux);
+            }
+        }
+        //
+        mView.setRecordInfo(searchRecords.size());
+        //
+        mView.loadOutboundList(searchRecords);
+    }
+
+    @Override
+    public void getHistoricList() {
+        ArrayList<IO_Outbound_Search_Record> searchRecords = new ArrayList<>();
+        //
+        mView.setOnline(false);
+        //
+        ArrayList<HMAux> outbounds = (ArrayList<HMAux>) outboundDao.query_HM(
+                new Sql_Act066_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        true,
+                        true
+                ).toSqlQuery()
         );
         //
         for(HMAux outbound: outbounds){

@@ -26,4 +26,8 @@ public interface Act014_Main_View {
     void callAct055(Context context, Bundle bundle);
 
     void showMsg();
+
+    void callAct057(Context context);
+
+    void callAct066(Context context);
 }

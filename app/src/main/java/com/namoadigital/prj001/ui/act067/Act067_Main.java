@@ -43,6 +43,7 @@ import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act060.Act060_Main;
@@ -85,6 +86,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     private String fragToLoad = OUTBOUND_FRAG_HEADER;
     //Receiver do que captura disparo do FCM
     private FCMReceiver fcmReceiver;
+    private String requestAct;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -304,6 +306,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             mPrefix = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_PREFIX_KEY, "-1"));
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
+            requestAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
             fragToLoad = bundle.getString(Act067_Main.FIRST_FRAG_TO_LOAD, OUTBOUND_FRAG_HEADER);
         } else {
             mIoProcess = "";
@@ -311,6 +314,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             mCode = -1;
             bNewProcess = false;
             fragToLoad = OUTBOUND_FRAG_HEADER;
+            requestAct = ConstantBaseApp.ACT056;
         }
     }
 
@@ -791,6 +795,15 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         finish();
     }
 
+
+    @Override
+    public void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public void callAct065() {
         Intent mIntent = new Intent(context, Act065_Main.class);
@@ -801,8 +814,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(requestAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

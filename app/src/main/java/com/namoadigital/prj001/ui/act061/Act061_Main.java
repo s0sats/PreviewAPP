@@ -45,6 +45,7 @@ import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -86,6 +87,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private String fragToLoad = INBOUND_FRAG_HEADER;
     //Receiver do que captura disparo do FCM
     private FCMReceiver fcmReceiver;
+    private String requestAct;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -308,12 +310,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
             fragToLoad = bundle.getString(Act061_Main.FIRST_FRAG_TO_LOAD, INBOUND_FRAG_HEADER);
+            requestAct = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT056);
         } else {
             mIoProcess = "";
             mPrefix = -1;
             mCode = -1;
             bNewProcess = false;
             fragToLoad = INBOUND_FRAG_HEADER;
+            requestAct = ConstantBaseApp.ACT056;
         }
     }
 
@@ -497,6 +501,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         loadInbound();
         //
         refreshUi();
+    }
+
+    @Override
+    public void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -852,7 +864,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(requestAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

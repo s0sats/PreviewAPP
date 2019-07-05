@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
@@ -36,6 +35,8 @@ public interface Act067_Main_Contract {
         void prepareFullRefresh();
 
         void callAct065();
+
+        void callAct014();
     }
 
     interface I_Presenter{
@@ -44,7 +45,7 @@ public interface Act067_Main_Contract {
 
         void executeWSMasterData(String type, boolean action);
 
-        void onBackPressedClicked();
+        void onBackPressedClicked(String requestAct);
 
         void processIOMasterDataRet(String wsReturn);
 

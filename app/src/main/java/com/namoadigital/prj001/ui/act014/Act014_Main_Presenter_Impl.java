@@ -193,7 +193,7 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             }
 
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_INBOUND))) {
-                mView.callAct039(context);
+                mView.callAct057(context);
             }
 
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_MOVE))) {
@@ -208,7 +208,8 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             }
 
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_OUTBOUND))) {
-                mView.callAct039(context);
+                mView.callAct066(context);
+
             }
 
         } else {

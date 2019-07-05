@@ -278,8 +278,8 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
             }
         }else{
             mView.showAlert(
-                    hmAux_trans.get("inbound_item_ret_empty_ttl"),
-                    hmAux_trans.get("inbound_item_ret_empty_msg")
+                    hmAux_trans.get("outbound_item_ret_empty_ttl"),
+                    hmAux_trans.get("outbound_item_ret_empty_msg")
             );
         }
     }
@@ -299,11 +299,11 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
         //
         if(actReturnList != null && actReturnList.size() > 0){
             boolean hasError = false;
-            int inboundErroNextIdx = 0;
+            int outboundErroNextIdx = 0;
             HMAux auxResult = new HMAux();
-            //Monta lista por inbound
+            //Monta lista por outbound
             for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
-                String inboundCode = "";
+                String outboundCode = "";
                 //
                 if(actReturn.isMove()){
                     IO_Move ioMove =
@@ -315,23 +315,23 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
                                     ).toSqlQuery()
                             );
                     if(ioMove != null){
-                        inboundCode = ioMove.getInbound_prefix()+"."+ioMove.getInbound_code();
+                        outboundCode = ioMove.getOutbound_prefix()+"."+ioMove.getOutbound_code();
                     }else{
                         //Não deveria acontecer...
                         continue;
                     }
                 }else{
-                    inboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                    outboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
                 }
-                if(!auxResult.containsKey(inboundCode)
-                        ||(auxResult.containsKey(inboundCode)
+                if(!auxResult.containsKey(outboundCode)
+                        ||(auxResult.containsKey(outboundCode)
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    auxResult.put(inboundCode, actReturn.getRetStatus() + "\n" + actReturn.getMsg() );
+                    auxResult.put(outboundCode, actReturn.getRetStatus() + "\n" + actReturn.getMsg() );
                 }
             }
-            //For no resumido por inbound montando msg a ser exibida
+            //For no resumido por outbound montando msg a ser exibida
             for(Map.Entry<String, String> item : auxResult.entrySet()){
                 HMAux hmAux = new HMAux();
                 //
@@ -344,8 +344,8 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
                     if(item.getValue().startsWith(ConstantBaseApp.SYS_STATUS_ERROR)){
                         hasError  = true;
                     }
-                    resultList.add(inboundErroNextIdx,hmAux);
-                    inboundErroNextIdx++;
+                    resultList.add(outboundErroNextIdx,hmAux);
+                    outboundErroNextIdx++;
                 }else{
                     resultList.add(hmAux);
                 }
