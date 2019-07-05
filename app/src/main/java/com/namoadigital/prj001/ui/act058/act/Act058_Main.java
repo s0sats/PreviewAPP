@@ -354,12 +354,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             if (ws_process.equals(WS_IO_Outbound_Item_Save.class.getName())) {
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
                 ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> outboundReturnList
-                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>() {
                 }.getType());
                 showOutboundResults(outboundReturnList);
                 disableProgressDialog();
             }
-
         }
     }
 
