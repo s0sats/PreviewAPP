@@ -56,7 +56,64 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
             ).toSqlQuery()
         );
         //
+        checkWaitingSyncStatusChange(ioInbound);
+        //
         return ioInbound;
+    }
+
+    /**
+     * Analisa se inbound deve ser atualizado pro status wainting sync.
+     *
+     * @param ioInbound - Inbound a ser carregada na tela.
+     */
+    private void checkWaitingSyncStatusChange(IO_Inbound ioInbound) {
+        //Se condições atendidas, altera status da inbound.
+        if( ioInbound != null
+            && ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PROCESS)
+            && ioInbound.getDone_automatic() == 1
+            && allItemsDone(ioInbound)
+        ){
+            ioInbound.setStatus(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            DaoObjReturn daoObj = inboundDao.addUpdate(ioInbound);
+            if(daoObj.hasError()){
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_error_update_inbound_to_wainting_sync_ttl"),
+                    hmAux_Trans.get("alert_error_update_inbound_to_wainting_sync_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressedClicked();
+                        }
+                    },
+                    0
+                );
+            }
+        }
+    }
+
+    /**
+     * Verifica se todos os item foram finalizados.
+     * @param mInbound - Obj inbound carregado.
+     * @return - True se todos os itens estiverem finalizados.
+     */
+    private boolean allItemsDone(IO_Inbound mInbound) {
+        HMAux hmAux = inboundDao.getByStringHM(
+                                    new Sql_Act061_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        mInbound.getInbound_prefix(),
+                                        mInbound.getInbound_code()
+                                ).toSqlQuery()
+        );
+        //
+        if( hmAux != null
+            && hmAux.hasConsistentValue(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            && hmAux.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC).equals("1")
+        ){
+            return true;
+        }
+        //
+        return false;
     }
 
     @Override

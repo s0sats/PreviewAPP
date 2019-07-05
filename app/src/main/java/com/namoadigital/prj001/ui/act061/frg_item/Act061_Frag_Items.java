@@ -242,6 +242,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 //
                 if(mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
                     filterActionPendencies = !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+                    swActionFilter.setEnabled(false);
                 }
                 swActionFilter.setChecked(
                         filterActionPendencies
@@ -298,20 +299,24 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             //
             rvItems.setLayoutManager(new LinearLayoutManager(context));
             rvItems.setAdapter(mAdapter);
-            rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                    //
-                    if(newState ==  RecyclerView.SCROLL_STATE_IDLE){
-                        mketFilter.setEnabled(true);
-                        swActionFilter.setEnabled(true);
-                    }else{
-                        mketFilter.setEnabled(false);
-                        swActionFilter.setEnabled(false);
+            //Se status diferente de done, seta evento de scroll, pois , caso contrario
+            //não faz sentido.
+            if(!mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        //
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            mketFilter.setEnabled(true);
+                            swActionFilter.setEnabled(true);
+                        } else {
+                            mketFilter.setEnabled(false);
+                            swActionFilter.setEnabled(false);
+                        }
                     }
-                }
-            });
+                });
+            }
 
         }
     }

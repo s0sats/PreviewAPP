@@ -991,9 +991,12 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
                 break;
             case ConstantBaseApp.SYS_STATUS_PROCESS :
-                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
                 statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
                 statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+                break;
+            case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                 break;
             case ConstantBaseApp.SYS_STATUS_DONE:
             default:
@@ -1334,7 +1337,16 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     }
                 } else {
                     setUIForEdition();
-                    applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                    //
+                    if( mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                        || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                    ) {
+                        ivEdit.setVisibility(View.GONE);
+                        ivEdit.setEnabled(false);
+                        applyViewsInteraction(INTERATION_BLOCK_ALL);
+                    } else{
+                        applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                    }
                 }
                 //
                 mketTransportOrder.setText(mInbound.getTransport_order());
@@ -1502,6 +1514,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         }
 
+    }
+
+    private void setInboundToWaintingSyncProcess() {
+        mInbound.setStatus(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
     }
 
     private void setUIForEdition() {

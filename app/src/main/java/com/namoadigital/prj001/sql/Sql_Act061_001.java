@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
@@ -36,20 +37,29 @@ public class Sql_Act061_001 implements Specification {
                         "     SELECT\n" +
                         "       ROUND(COUNT(1),2) tot,         \n" +
                         "       SUM(\n" +
-                        "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE +"' OR  i.status = '"+ConstantBaseApp.SYS_STATUS_PUT_AWAY+"' \n" +
+                        "             CASE WHEN i.status in( '"+ConstantBaseApp.SYS_STATUS_DONE +"',\n" +
+                                                             "'"+ConstantBaseApp.SYS_STATUS_PUT_AWAY+"',\n" +
+                                                             "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') \n" +
                         "                  THEN 1\n" +
                         "                  ELSE 0\n" +
                         "             END\n" +
                         "       ) conf_parcial,\n" +
                         "       SUM(\n" +
                         "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE +"'\n" +
+                        "                                   OR ( i.status ='"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'\n" +
+                        "                                        AND m.status ='"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
                         "                  THEN 1\n" +
                         "                  ELSE 0\n" +
                         "             END\n" +
                         "       ) put_away_parcial\n" +
                         "       \n" +
                         "     FROM\n" +
-                            IO_Inbound_ItemDao.TABLE + " i\n" +
+                        "       "+ IO_Inbound_ItemDao.TABLE + " i\n" +
+                        "     LEFT JOIN\n" +
+                        "       "+  IO_MoveDao.TABLE+" m on i.customer_code = m.customer_code\n" +
+                        "                      AND i.inbound_prefix  = m.inbound_prefix\n" +
+                        "                      AND i.inbound_code = m.inbound_code \n" +
+                        "                      AND i.inbound_item = m.inbound_item \n " +
                         "     WHERE\n" +
                         "       i.customer_code = '"+customer_code+"'\n" +
                         "       and i.inbound_prefix = '"+inbound_prefix+"'\n" +

@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
@@ -38,13 +39,18 @@ public class Sql_Act057_001 implements Specification {
                     "               SELECT            \n" +
                     "                 round( COUNT(1) * (i.put_away_process + 1) , 2) tot,         \n" +
                     "                 SUM(\n" +
-                    "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' OR  it.status = '"+ ConstantBaseApp.SYS_STATUS_PUT_AWAY +"' \n" +
+                    "                       CASE WHEN it.status in( '"+ConstantBaseApp.SYS_STATUS_DONE +"',\n" +
+                                                                    "'"+ConstantBaseApp.SYS_STATUS_PUT_AWAY+"',\n" +
+                                                                    "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') \n" +
                     "                            THEN 1\n" +
                     "                            ELSE 0\n" +
                     "                       END\n" +
                     "                 ) conf_parcial,\n" +
                     "                 SUM(\n" +
-                    "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' AND i.put_away_process = 1\n" +
+                    "                       CASE WHEN i.put_away_process = 1 AND ( it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"'\n" +
+                    "                                                              OR ( it.status ='"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'\n" +
+                    "                                                                   AND m.status ='"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
+                    "                                                             )\n" +
                     "                            THEN 1\n" +
                     "                            ELSE 0\n" +
                     "                       END\n" +
@@ -53,6 +59,11 @@ public class Sql_Act057_001 implements Specification {
                     "                 \n" +
                     "               FROM\n" +
                                 IO_Inbound_ItemDao.TABLE +" it\n" +
+                    "     LEFT JOIN\n" +
+                    "       "+  IO_MoveDao.TABLE+" m on it.customer_code = m.customer_code\n" +
+                    "                      AND it.inbound_prefix  = m.inbound_prefix\n" +
+                    "                      AND it.inbound_code = m.inbound_code \n" +
+                    "                      AND it.inbound_item = m.inbound_item \n " +
                     "               WHERE\n" +
                     "                it.customer_code = i.customer_code \n" +
                     "                and it.inbound_prefix = i.inbound_prefix \n" +
@@ -64,7 +75,7 @@ public class Sql_Act057_001 implements Specification {
                             IO_InboundDao.TABLE + " i\n" +
                     "   WHERE\n" +
                     "    i.customer_code = '"+customer_code+"'\n" +
-                    "    and i.status in('"+ConstantBaseApp.SYS_STATUS_PENDING+"','"+ConstantBaseApp.SYS_STATUS_PROCESS+"')\n" +
+                    "    and i.status in('"+ConstantBaseApp.SYS_STATUS_PENDING+"','"+ConstantBaseApp.SYS_STATUS_PROCESS+"','"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
                     "  ORDER BY \n" +
                     "    i.inbound_prefix,\n" +
                     "    i.inbound_code\n"
