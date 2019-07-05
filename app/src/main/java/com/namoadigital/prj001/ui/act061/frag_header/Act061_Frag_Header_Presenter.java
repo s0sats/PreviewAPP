@@ -110,37 +110,6 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
         return localList;
     }
 
-    /**
-     * Verifica se existe algum item já confirmado.
-     *
-     * @param inbound_prefix - Prefixo da inbound
-     * @param inbound_code - Codigo da inbound
-     * @return - True se algum item confirmado.
-     */
-    @Override
-    public boolean hasConfirmedItem(int inbound_prefix, int inbound_code) {
-        return false;
-    }
-
-    /**
-     * Verifica se todos os item foram finalizados.
-     *
-     * @param inbound_prefix - Prefixo da inbound
-     * @param inbound_code - Codigo da inbound
-     * @param put_away_process - Se inbound é put_away_process
-     * @return - True se todos os itens estiverem finalizados.
-     */
-    @Override
-    public boolean allItemsDone(int inbound_prefix, int inbound_code, int put_away_process) {
-        return false;
-    }
-
-    /**
-     * Verifica se existe algum item já confirmado.
-     *
-     * @param mInbound - Obj inbound carregado.
-     * @return - True se algum item confirmado.
-     */
     @Override
     public boolean hasConfirmedItem(IO_Inbound mInbound) {
         if(mInbound.getItems() != null && mInbound.getItems().size() > 0 ){

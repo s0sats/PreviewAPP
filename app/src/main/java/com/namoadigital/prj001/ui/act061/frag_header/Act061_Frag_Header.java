@@ -85,7 +85,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private Button btnSave;
     private ArrayList<View> properties = new ArrayList<>();
     private boolean pausedByScan = false;//Var controla se onResume forçado pela BarCode Act.
-    private HMAux transportOrderOutbound = new HMAux();
+    private HMAux transportOrderOutbound = new HMAux();//Var que recebe outbound via transportOrder
 
     /**
      * Interface principal do fragment
@@ -100,18 +100,54 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
          */
         IO_Inbound getInboundFromAct(int prefix, int code);
 
+        /**
+         * Metodo chamado quando a troca do from type seleciona
+         *
+         * @param from_type - From type selecionado
+         */
         void fromTypeSelected(String from_type);
 
+        /**
+         * Metodo que disparado pelo botão de busca de FromOutbound é clicado
+         *
+         * @param from_site - From Site selecionado
+         * @param transportOrder - Valor do campo transport order
+         */
         void searchFromOutboundList(String from_site, String transportOrder);
 
+        /**
+         * Metodo invocado para exibir mensagem para o usuario.
+         *
+         * @param ttl - Titulo do dialog
+         * @param msg - Mensagem do dialog
+         */
         void showFragAlert(String ttl, String msg);
 
+        /**
+         * Metodo que chama o Save do cabaelho da inbound
+         *
+         * @param mInbound - Obj inbound com os valores dos campos do formulario.
+         */
         void saveInboundHeader(IO_Inbound mInbound);
+
+        /**
+         * Metodo que informa a act os objetos SearchableSpinner
+         * @param controls_ss - Lista de SearchableSpinner do fragment
+         */
 
         void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
+        /**
+         * Metodo que informa a act os objetos MKEditTextNM
+         * @param controls_sta - Lista de MKEditTextNM do fragment
+         */
         void addFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta);
 
+        /**
+         * Metodo disparado pelo botão de busca de outbound utilizando a transpor order digitada
+         *
+         * @param transportOrder - Transport Order digitada
+         */
         void getDataFromTransportOrder(String transportOrder);
     }
 
@@ -209,14 +245,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private void initActions() {
-        mketTransportOrder.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-//                if(!hasFocus){
-//                    ivTransportOrder.performClick();
-//                }
-            }
-        });
         //
         mketTransportOrder.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
@@ -370,13 +398,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             public void onItemPostSelected(HMAux hmAux) {
                 //Se zerou zona e status
                 if(hmAux == null || hmAux.size() == 0){
-//                    if( mInbound.getPut_away_process() == 1
-//                        && ssStatus.getmValue() != null
-//                        && ssStatus.getmValue().hasConsistentValue(SearchableSpinner.CODE)
-//                        && ssStatus.getmValue().get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)
-//                    ){
-//                        ssStatus.setmValue(ssStatus.getmOptionItemByCode(false,ConstantBaseApp.SYS_STATUS_PENDING));
-//                    }
                     if(!validateStatusChange()){
                         ssStatus.setmValue(ssStatus.getmOptionItemByCode(false,ConstantBaseApp.SYS_STATUS_PENDING));
                         ssStatus.requestFocus();
@@ -494,7 +515,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private boolean triggerTransporOrderSearch() {
-        //return !bWsTransportCalled && mFragHeaderListener != null;
         return bNewProcess && mFragHeaderListener != null;
     }
 
@@ -613,7 +633,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             } else if (view instanceof MkDateTime) {
                 ((MkDateTime) view).setmEnabled(enable);
             } else if (view instanceof MKEditTextNM) {
-                //((MKEditTextNM) view).setEnabled(enable);
                 setMketEnabled(((MKEditTextNM) view),enable);
             } else {
                 view.setEnabled(enable);
@@ -733,7 +752,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     String text = ((EditText) view).getText().toString();
 
                     if (!text.equals(tag)) {
-                        // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
                         //headerChanged = true;
                         return true;
                     }
@@ -790,19 +808,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 }
             }
             //
-//            if (!mkdtInvoinceDt.isValid()) {
-//                msg += hmAux_Trans.get("invoice_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
-//                validate = false;
-//            }
-//            //
-//            if (!mkdtEtaDt.isValid()) {
-//                msg += hmAux_Trans.get("eta_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
-//                validate = false;
-//            }
-//            if (!mkdtArrivalDt.isValid()) {
-//                msg += hmAux_Trans.get("arrival_dt_lbl") + ": "+ hmAux_Trans.get("alert_invalid_date_msg") +"\n";
-//                validate = false;
-//            }
         }
         //
         if (!validate) {
@@ -980,36 +985,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private void loadStatusSS(String status){
         ArrayList<String> statusToList = new ArrayList<>();
         //
-//        switch(status){
-//            case ConstantBaseApp.SYS_STATUS_PENDING :
-//                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
-//                //
-//                if(mInbound.getPut_away_process() == 0
-//                    || (mInbound.getPut_away_process() == 1
-//                        && mInbound.getZone_code_conf() != null
-//                        && mInbound.getLocal_code_conf() != null
-//                    )
-//                ){
-//                    statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
-//                }
-//                break;
-//            case ConstantBaseApp.SYS_STATUS_PROCESS :
-//                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
-//                //
-//                if(!mPresenter.hasConfirmedItem(mInbound)){
-//                    statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
-//                }
-//                //
-//                if(mPresenter.allItemsDone(mInbound)){
-//                    statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
-//                }
-//                break;
-//            case ConstantBaseApp.SYS_STATUS_DONE:
-//            default:
-//                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
-//                break;
-//        }
-
         switch(status){
             case ConstantBaseApp.SYS_STATUS_PENDING :
                 statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
@@ -1083,6 +1058,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                            //
                            return false;
                        }
+                    }
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)) {
+                        return true;
                     }
                     //
                     if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
@@ -1347,6 +1325,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         if (bStatus) {
             if (mInbound != null) {
                 if (bNewProcess) {
+                    mInbound.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
                     //Verifica no caso do novo, se fromType ja selecionado,
                     //se sim, ão
                     if(ssFromType == null || !ssFromType.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {

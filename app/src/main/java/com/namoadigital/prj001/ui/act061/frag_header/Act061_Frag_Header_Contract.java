@@ -20,10 +20,6 @@ public interface Act061_Frag_Header_Contract {
 
         ArrayList<HMAux> getLocalsOptions(String zone_code);
 
-        boolean hasConfirmedItem(int inbound_prefix, int inbound_code);
-
-        boolean allItemsDone(int inbound_prefix, int inbound_code, int put_away_process);
-
         ArrayList<HMAux> generateStatusList(ArrayList<String> status);
 
         boolean hasConfirmedItem(IO_Inbound mInbound);
