@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Move_Download;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -27,6 +29,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act014.Act014_Main.FROM_HISTORIC;
 import static com.namoadigital.prj001.ui.act054.Act054_Main.IS_LOCAL_PROCESS;
 
 public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I_View, Act055_IO_Move_Order_List_Adapter.Act055ListListener {
@@ -40,6 +43,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private String wsProcess;
     private String requestAct;
     private boolean isLocalProcess;
+    private boolean fromHistoric;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +81,6 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act055_title");
-        //transList.add("act055_lbl_new");
         transList.add("move_order_filter_hint");
         transList.add("alert_error_on_processing_return_ttl");
         transList.add("alert_error_on_processing_return_msg");
@@ -88,7 +91,6 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         transList.add("alert_no_move_found_ttl");
         transList.add("alert_no_move_found_msg");
         //Traducao para itens da lista
-
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -123,6 +125,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         if (bundle != null) {
             mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
             isLocalProcess = bundle.getBoolean(IS_LOCAL_PROCESS, false);
+            fromHistoric = bundle.getBoolean(FROM_HISTORIC, false);
             requestAct = bundle.getString(Constant.MAIN_REQUESTING_ACT);
         } else {
             requestAct = Constant.ACT005;
@@ -190,23 +193,25 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-        if(ToolBox_Con.isOnline(context) && !isLocalProcess) {
-            mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
-        }else{
-            if(isLocalProcess){
-                HMAux hmMove = new HMAux();
-                hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
-                hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
-                hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
-                mPresenter.processSearchReturn(hmMove);
-            }else {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_offline_search_title"),
-                        hmAux_Trans.get("alert_offline_search_msg"),
-                        null,
-                        0
-                );
+        if (!fromHistoric) {
+            if (ToolBox_Con.isOnline(context) && !isLocalProcess) {
+                mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
+            } else {
+                if (isLocalProcess) {
+                    HMAux hmMove = new HMAux();
+                    hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
+                    hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
+                    hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
+                    mPresenter.processSearchReturn(hmMove);
+                } else {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_offline_search_title"),
+                            hmAux_Trans.get("alert_offline_search_msg"),
+                            null,
+                            0
+                    );
+                }
             }
         }
     }
@@ -238,6 +243,14 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     @Override
     public void callAct012() {
         Intent mIntent = new Intent(context, Act012_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

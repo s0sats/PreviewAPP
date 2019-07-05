@@ -34,7 +34,7 @@ public class Sql_Act014_004 implements Specification {
                         "   and t.status in (" +
                         "                       '"+ ConstantBase.SYS_STATUS_CANCELLED +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_DONE +
-                        " ); \n"
+                        "' ); \n"
                 )
                 .toString();
     }

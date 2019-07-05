@@ -5,7 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.database.Specification;
 
-import static com.namoadigital.prj001.ui.act014.Act014_Main.LABEL_TRANS_IO_MOVE_PLANNED;
+import static com.namoadigital.prj001.ui.act014.Act014_Main.LABEL_TRANS_IO_MOVE;
 
 public class Sql_Act014_005 implements Specification {
     public static final String SENT_QTY = "sent_qty";
@@ -24,7 +24,7 @@ public class Sql_Act014_005 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "     count(1) "+ SENT_QTY+",\n " +
-                        "    '"+hmAux_Trans.get(LABEL_TRANS_IO_MOVE_PLANNED)+"' " + TYPE + "\n " +
+                        "    '"+hmAux_Trans.get(LABEL_TRANS_IO_MOVE)+"' " + TYPE + "\n " +
                         " FROM\n" +
                         IO_MoveDao.TABLE + " t \n" +
                         " WHERE\n" +
@@ -32,7 +32,7 @@ public class Sql_Act014_005 implements Specification {
                         "   and t.status in (" +
                         "                       '"+ ConstantBase.SYS_STATUS_CANCELLED +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_DONE +
-                        " ); \n"
+                        "' ); \n"
                 )
                 .toString();
     }

@@ -30,6 +30,9 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT054:
                 mView.callAct054();
                 break;
+            case ConstantBaseApp.ACT014:
+                mView.callAct014();
+                break;
             case ConstantBaseApp.ACT012:
                 mView.callAct012();
                 break;
