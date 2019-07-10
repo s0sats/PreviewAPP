@@ -449,7 +449,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         }
         if(act067_frag_header != null){
             //act067_frag_header.loadDataToScreen();
-            //Load inbound chama o loadDataToScreen após atualiza dados da inbound.
+            //Load outbound chama o loadDataToScreen após atualiza dados da inbound.
             act067_frag_header.loadOutbound();
         }
         if(act067_frag_item != null){

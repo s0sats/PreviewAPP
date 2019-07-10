@@ -343,9 +343,9 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
 
             if (resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
-                    io_outbound_item.getInbound_prefix() + "."
-                            + io_outbound_item.getInbound_code() + "."
-                            + io_outbound_item.getInbound_item())) {
+                    io_outbound_item.getOutbound_prefix() + "."
+                            + io_outbound_item.getOutbound_code() + "."
+                            + io_outbound_item.getOutbound_item())) {
                 auxMove = hmAux;
                 formattedList.add(0, auxMove);
             } else {

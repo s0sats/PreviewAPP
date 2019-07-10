@@ -145,7 +145,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         //
         if (listPendencies) {
             if (requestingAct.equals(ConstantBaseApp.ACT014)) {
-                mPresenter.getPendenciesList();
+                mPresenter.getHistoricList();
             } else {
                 mPresenter.getPendenciesList();
             }

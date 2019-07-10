@@ -5,15 +5,15 @@ import com.namoadigital.prj001.database.Specification;
 
 public class IO_Outbound_Item_Sql_007 implements Specification {
     private long customer_code;
-    private int inbound_prefix;
-    private int inbound_code;
-    private int inbound_item;
+    private int outbound_prefix;
+    private int outbound_code;
+    private int outbound_item;
 
-    public IO_Outbound_Item_Sql_007(long customer_code, int inbound_prefix, int inbound_code, int inbound_item) {
+    public IO_Outbound_Item_Sql_007(long customer_code, int outbound_prefix, int outbound_code, int outbound_item) {
         this.customer_code = customer_code;
-        this.inbound_prefix = inbound_prefix;
-        this.inbound_code = inbound_code;
-        this.inbound_item = inbound_item;
+        this.outbound_prefix = outbound_prefix;
+        this.outbound_code = outbound_code;
+        this.outbound_item = outbound_item;
     }
 
     @Override
@@ -25,9 +25,9 @@ public class IO_Outbound_Item_Sql_007 implements Specification {
                         IO_Outbound_ItemDao.TABLE + " \n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
-                        "   and inbound_prefix = '"+inbound_prefix+"'\n" +
-                        "   and inbound_code = '"+inbound_code+"'\n" +
-                        "   and inbound_item = '"+inbound_item+"'\n")
+                        "   and outbound_prefix = '"+outbound_prefix+"'\n" +
+                        "   and outbound_code = '"+outbound_code+"'\n" +
+                        "   and outbound_item = '"+outbound_item+"'\n")
                 .toString();
     }
 }
