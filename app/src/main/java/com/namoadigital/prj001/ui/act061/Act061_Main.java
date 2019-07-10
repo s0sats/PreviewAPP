@@ -29,11 +29,14 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
+import com.namoadigital.prj001.ui.act057.Act057_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act059.Act059_Main;
 import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
@@ -72,6 +75,9 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private String fragToLoad = INBOUND_FRAG_HEADER;
     //Receiver do que captura disparo do FCM
     private FCMReceiver fcmReceiver;
+    private String requestingAct;
+    private String productCode;
+    private String serialCode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -304,19 +310,25 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mCode = Integer.parseInt(bundle.getString(ConstantBaseApp.HMAUX_CODE_KEY, "-1"));
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
             fragToLoad = bundle.getString(Act061_Main.FIRST_FRAG_TO_LOAD, INBOUND_FRAG_HEADER);
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT056);
+            productCode = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE,"-1");
+            serialCode = bundle.getString(MD_Product_SerialDao.SERIAL_CODE,"-1");
         } else {
             mIoProcess = "";
             mPrefix = -1;
             mCode = -1;
             bNewProcess = false;
             fragToLoad = INBOUND_FRAG_HEADER;
+            requestingAct = ConstantBaseApp.ACT056;
+            productCode = "-1";
+            serialCode = "-1";
         }
     }
 
     private void initFragment() {
         act061_frag_drawer = Act061_Frag_Drawer.getInstance(hmAux_Trans, mPrefix, mCode);
         act061_frag_header = Act061_Frag_Header.getInstance(hmAux_Trans, mPrefix, mCode, bNewProcess);
-        act061_frag_item = Act061_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode);
+        act061_frag_item = Act061_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode, productCode,serialCode);
         //
         setDrawer(act061_frag_drawer, INBOUND_FRAG_DRAWER);
         //
@@ -406,6 +418,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
     }
 
     @Override
@@ -574,6 +591,16 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mPresenter.executeWsSearchTransportOrder(transportOrder);
     }
 
+    @Override
+    public void removeFragItemsControlsSS(ArrayList<SearchableSpinner> controls_ss) {
+        this.controls_ss.removeAll(controls_ss);
+    }
+
+    @Override
+    public void removeFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.removeAll(controls_sta);
+    }
+
     //region DrawerFragment
 
     @Override
@@ -640,6 +667,29 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void callSerialEdition(HMAux item) {
         mPresenter.processSerialEdition(item);
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct057() {
+        Intent mIntent = new Intent(context, Act057_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+        bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -876,7 +926,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

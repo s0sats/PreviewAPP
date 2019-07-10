@@ -36,6 +36,12 @@ public interface Act061_Main_Contract {
         void prepareFullRefresh();
 
         void setTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record);
+
+        void callAct057();
+
+        void callAct051();
+
+        String getRequestingAct();
     }
 
     interface I_Presenter{
@@ -43,8 +49,6 @@ public interface Act061_Main_Contract {
         IO_Inbound getInbound(int prefix,int code);
 
         void executeWSMasterData(String type, boolean action);
-
-        void onBackPressedClicked();
 
         void processIOMasterDataRet(String wsReturn);
 
@@ -75,5 +79,7 @@ public interface Act061_Main_Contract {
         void executeWsSearchTransportOrder(String transportOrder);
 
         void processFromTransportOrderRet(String outboundJson);
+
+        void onBackPressedClicked(String requestingAct);
     }
 }

@@ -13,5 +13,7 @@ public interface Act061_Frag_Items_Contract {
     interface I_Presenter{
 
         ArrayList<HMAux> getItemList(int inboundPrefix, int inboundCode);
+
+        int getSerialCodePosition(ArrayList<HMAux> itemList, String productCode, String serialCode);
     }
 }

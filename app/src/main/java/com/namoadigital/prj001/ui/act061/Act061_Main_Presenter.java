@@ -83,7 +83,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            onBackPressedClicked();
+                            onBackPressedClicked(mView.getRequestingAct());
                         }
                     },
                     0
@@ -682,8 +682,24 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     }
 
+
+
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct056();
+    public void onBackPressedClicked(String requestingAct) {
+        switch (requestingAct){
+            //Quando o 52, retorna para tela de busca de Serial, act051
+            case ConstantBaseApp.ACT052:
+                mView.callAct051();
+                break;
+            case ConstantBaseApp.ACT057:
+                mView.callAct057();
+                break;
+            case ConstantBaseApp.ACT056:
+            case ConstantBaseApp.ACT058:
+            case ConstantBaseApp.ACT059:
+            default:
+                mView.callAct056();
+        }
+
     }
 }

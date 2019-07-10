@@ -40,4 +40,19 @@ public class Act061_Frag_Items_Presenter implements Act061_Frag_Items_Contract.I
             ).toSqlQuery()
         );
     }
+
+    @Override
+    public int getSerialCodePosition(ArrayList<HMAux> itemList, String productCode, String serialCode) {
+        for(int i = 0; i < itemList.size();i++){
+            if(
+                itemList.get(i).hasConsistentValue(IO_Inbound_ItemDao.PRODUCT_CODE)
+                && itemList.get(i).hasConsistentValue(IO_Inbound_ItemDao.SERIAL_CODE)
+                && itemList.get(i).get(IO_Inbound_ItemDao.PRODUCT_CODE).equals(productCode)
+                && itemList.get(i).get(IO_Inbound_ItemDao.SERIAL_CODE).equals(serialCode)
+            ){
+                return i;
+            }
+        }
+        return 0;
+    }
 }

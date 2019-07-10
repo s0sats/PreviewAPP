@@ -417,6 +417,7 @@ public class Act056_Main extends Base_Activity implements Act056_Main_Contract.I
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
         bundle.putBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY,true);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

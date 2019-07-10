@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act061_IO_Items_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -43,6 +44,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     private Switch swActionFilter;
     private RecyclerView rvItems;
     private Act061_IO_Items_Adapter mAdapter;
+    private String productCode;
+    private String serialCode;
     //private Button btnAddItem;
 
     /**
@@ -72,13 +75,15 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         void callSerialEdition(HMAux item);
     }
 
-    public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code){
+    public static Act061_Frag_Items getInstance(HMAux hmAux_Trans, int inbound_prefix, int inbound_code, String productCode, String serialCode){
         Act061_Frag_Items fragment = new Act061_Frag_Items();
         Bundle args = new Bundle();
         //
         args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         args.putInt(IO_InboundDao.INBOUND_PREFIX,inbound_prefix);
         args.putInt(IO_InboundDao.INBOUND_CODE,inbound_code);
+        args.putString(IO_Inbound_ItemDao.PRODUCT_CODE,productCode);
+        args.putString(IO_Inbound_ItemDao.SERIAL_CODE,serialCode);
         args.putBoolean(FRAG_SWITCH_STATE, true);
         //
         fragment.setArguments(args);
@@ -113,6 +118,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
             inboundPrefix = arguments.getInt(IO_InboundDao.INBOUND_PREFIX,-1);
             inboundCode = arguments.getInt(IO_InboundDao.INBOUND_CODE,-1);
+            productCode = arguments.getString(IO_Inbound_ItemDao.PRODUCT_CODE,"-1");
+            serialCode = arguments.getString(IO_Inbound_ItemDao.SERIAL_CODE,"-1");
             filterActionPendencies = arguments.getBoolean(FRAG_SWITCH_STATE,true);
         }
     }
@@ -264,7 +271,9 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                 R.layout.act061_frag_item_cell,
                 itemList,
                 allowNewItem(),
-                swActionFilter.isChecked()
+                swActionFilter.isChecked(),
+                productCode,
+                serialCode
             );
             //
             mAdapter.setOnIoItemClickListener(new Act061_IO_Items_Adapter.OnIoItemClickListener() {
@@ -299,6 +308,13 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             //
             rvItems.setLayoutManager(new LinearLayoutManager(context));
             rvItems.setAdapter(mAdapter);
+            //Se foi passado serial, modifica cor da celula e posiciona no serial passado.
+            if(!productCode.equals("-1") && !serialCode.equals("-1")){
+                int serialPosition = mPresenter.getSerialCodePosition(itemList,productCode,serialCode);
+                if(serialPosition > 0){
+                    rvItems.scrollToPosition(serialPosition);
+                }
+            }
             //Se status diferente de done, seta evento de scroll, pois , caso contrario
             //não faz sentido.
             if(!mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {

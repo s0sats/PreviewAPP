@@ -149,6 +149,20 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
          * @param transportOrder - Transport Order digitada
          */
         void getDataFromTransportOrder(String transportOrder);
+
+        /**
+         * Metodo disparado no onDestroyView e que passa lista de spinner a serem removidos
+         * da lista de controles da Act
+         * @param controls_ss
+         */
+        void removeFragItemsControlsSS(ArrayList<SearchableSpinner> controls_ss);
+
+        /**
+         * Metodo disparado no onDestroyView e que passa lista de mket a serem removidos
+         * da lista de controles da Act
+         * @param controls_sta
+         */
+        void removeFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta);
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -1610,6 +1624,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         //na act061, pois se não a cada recriação do frag, novos itens são add na lista
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
+        if(mFragHeaderListener != null){
+            mFragHeaderListener.removeFragItemsControlsSS(controls_ss);
+            mFragHeaderListener.removeFragItemsControlsSta(controls_sta);
+        }
         bStatus = false;
     }
 
