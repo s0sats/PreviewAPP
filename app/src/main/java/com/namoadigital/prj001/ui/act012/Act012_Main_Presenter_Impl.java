@@ -5,6 +5,9 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
@@ -12,6 +15,9 @@ import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.sql.Sql_Act012_002;
 import com.namoadigital.prj001.sql.Sql_Act012_003;
 import com.namoadigital.prj001.sql.Sql_Act012_004;
+import com.namoadigital.prj001.sql.Sql_Act012_005;
+import com.namoadigital.prj001.sql.Sql_Act012_006;
+import com.namoadigital.prj001.sql.Sql_Act012_007;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -105,6 +111,59 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                 pendencies.addAll(soExpressPendencies);
             }
         }
+
+        if(ToolBox_Inf.profileExists(context , Constant.PROFILE_MENU_IO , Constant.PROFILE_MENU_IO_PARAM_INBOUND)){
+
+            IO_InboundDao ioInboundDao = new IO_InboundDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> inboundPendencies = ioInboundDao.query_HM(
+                    new Sql_Act012_005(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            label_translation
+                    ).toSqlQuery()
+            );
+            //
+            pendencies.addAll(inboundPendencies);
+        }
+
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_IO , Constant.PROFILE_MENU_IO_PARAM_MOVE_REQUEST)){
+            IO_MoveDao ioMovedDao = new IO_MoveDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> movePendencies = ioMovedDao.query_HM(
+                    new Sql_Act012_006(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            label_translation
+                    ).toSqlQuery()
+            );
+            //
+            pendencies.addAll(movePendencies);
+        }
+
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_IO ,Constant.PROFILE_MENU_IO_PARAM_OUTBOUND)){
+            IO_OutboundDao ioOutboundDao = new IO_OutboundDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> outboundPendencies = ioOutboundDao.query_HM(
+                    new Sql_Act012_007(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            label_translation
+                    ).toSqlQuery()
+            );
+            //
+            pendencies.addAll(outboundPendencies);
+        }
+
 
         mView.loadPendencies(pendencies);
     }
