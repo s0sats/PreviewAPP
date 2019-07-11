@@ -337,7 +337,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         //trad
-        tv_title.setText(hmAux_Trans.get("alert_inbound_results_ttl"));
+        tv_title.setText(hmAux_Trans.get("alert_outbound_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         lv_results.setAdapter(
@@ -393,10 +393,6 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         transList.add("progress_save_outbound_item_msg");
         transList.add("outbound_item_ret_empty_ttl");
         transList.add("outbound_item_ret_empty_msg");
-        transList.add("alert_no_inbound_found_ttl");
-        transList.add("alert_no_inbound_found_msg");
-        transList.add("dialog_inbound_search_ttl");
-        transList.add("dialog_inbound_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
