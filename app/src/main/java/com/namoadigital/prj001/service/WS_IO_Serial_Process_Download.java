@@ -40,6 +40,8 @@ public class WS_IO_Serial_Process_Download extends IntentService {
     private String mResource_Name = "ws_io_serial_process_download";
     private Gson gson = new GsonBuilder().serializeNulls().create();
     private MD_Product_SerialDao serialDao;
+    private String product_code;
+    private String serial_code;
 
 
     public WS_IO_Serial_Process_Download() {
@@ -59,9 +61,9 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     Constant.DB_VERSION_CUSTOM
             );
             //
-            String product_code = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE);
-            String serial_code = bundle.getString(MD_Product_SerialDao.SERIAL_CODE);
-
+            product_code = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE,"");
+            serial_code = bundle.getString(MD_Product_SerialDao.SERIAL_CODE,"");
+            //
             processWsIoSerialProcessDownload(product_code, serial_code);
 
         } catch (Exception e) {
@@ -201,9 +203,11 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 if(inbound.get(0).getSerial() != null && inbound.get(0).getSerial().size() > 0) {
                     //serialDao.addUpdateTmp(inbound.get(0).getSerial().get(0));
                     serialDao.addUpdateTmp(inbound.get(0).getSerial(),false);
-                    hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getProduct_code()));
-                    hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_code()));
-                    hmAuxRet.put(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_id()));
+//                    hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getProduct_code()));
+//                    hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_code()));
+//                    hmAuxRet.put(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound.get(0).getSerial().get(0).getSerial_id()));
+                    hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, product_code);
+                    hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, serial_code);
                 }
                 //
                 hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(inbound.get(0).getInbound_prefix()));
@@ -239,7 +243,10 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 DaoObjReturn daoReturn = outboundDao.addUpdate(outbound.get(0));
                 if (!daoReturn.hasError()) {
                     if(outbound.get(0).getSerial() != null && outbound.get(0).getSerial().size() > 0) {
+                        //TODO verificar se deve salvar todos os seriais e não só o primeiro
                         serialDao.addUpdateTmp(outbound.get(0).getSerial().get(0));
+                        hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, product_code);
+                        hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, serial_code);
                     }
                     //
                     hmAuxRet.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(outbound.get(0).getOutbound_prefix()));

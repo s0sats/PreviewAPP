@@ -9,15 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -31,7 +26,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -530,9 +524,10 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
-        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));
+//Caso haja a necessidade de destacar o item na lista de inbound
+//        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT059);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
