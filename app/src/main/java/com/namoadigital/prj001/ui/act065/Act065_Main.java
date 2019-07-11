@@ -441,7 +441,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         btn_pendencies.setText(setBtnPendenciesQty());
         //
         //Se profile de criação de outbound, exibi btn
-        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND_NEW)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_OUTBOUND_NEW)) {
             btn_creation.setVisibility(View.VISIBLE);
         }
         //Add componentes nas listas da base act
