@@ -15,11 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,18 +29,12 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
-import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
-import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.service.*;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
@@ -788,6 +778,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
+
+
     /**
      * Metodo que recebe obj retornado do server e seta no fragHeader
      * @param io_from_outbound_search_record
@@ -801,23 +793,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         // TODO: 02/07/2019 - VERIFICAR  Add outbound retornado pela transport order na lista de fromOutbound
         // TODO: 02/07/2019 - Verificar liberação do campo fromOutbound após retorno do transportOrder pois hj campo fica bloqueado
     }
-
-    @Override
-    public void callAct062() {
-        Intent mIntent = new Intent(context, Act062_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
-        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
-        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
-        mIntent.putExtras(bundle);
-        //
-        startActivity(mIntent);
-        finish();
-    }
-
 
 //    @Override
 //    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -941,6 +916,23 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    public void callAct062() {
+        Intent mIntent = new Intent(context, Act062_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
+        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, mIoProcess);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
 
     @Override
     public void onBackPressed() {

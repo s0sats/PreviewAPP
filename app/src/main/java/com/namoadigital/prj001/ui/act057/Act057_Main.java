@@ -470,10 +470,13 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         Intent mIntent = new Intent(context, Act061_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if(bundle != null){
-            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,listPendencies ? ConstantBaseApp.ACT057 : ConstantBaseApp.ACT056);
-            bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+            if(listPendencies && requestingAct.equals(ConstantBaseApp.ACT056)){
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT057);
+            }else{
+                bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+            }
         }
-
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
