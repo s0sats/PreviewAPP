@@ -12,14 +12,14 @@ import com.namoadigital.prj001.database.Specification;
  */
 public class IO_Outbound_Item_Sql_005 implements Specification {
     private long customer_code;
-    private int inbound_prefix;
-    private int inbound_code;
+    private int outbound_prefix;
+    private int outbound_code;
     private int update_required;
 
-    public IO_Outbound_Item_Sql_005(long customer_code, int inbound_prefix, int inbound_code, int update_required) {
+    public IO_Outbound_Item_Sql_005(long customer_code, int outbound_prefix, int outbound_code, int update_required) {
         this.customer_code = customer_code;
-        this.inbound_prefix = inbound_prefix;
-        this.inbound_code = inbound_code;
+        this.outbound_prefix = outbound_prefix;
+        this.outbound_code = outbound_code;
         this.update_required = update_required;
     }
 
@@ -31,8 +31,8 @@ public class IO_Outbound_Item_Sql_005 implements Specification {
                         "   update_required = '"+update_required+"'\n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
-                        "   and inbound_prefix = '"+inbound_prefix+"'\n" +
-                        "   and inbound_code = '"+inbound_code+"'\n" +
+                        "   and outbound_prefix = '"+outbound_prefix+"'\n" +
+                        "   and outbound_code = '"+outbound_code+"'\n" +
                         "; \n"
                 )
                 .toString();

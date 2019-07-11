@@ -106,13 +106,13 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             }
             //Se operação de insert ou update executada com sucesso
             //Segue para inserção dos itens.
-            IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+            IO_Outbound_ItemDao ioOutboundItemDao = new IO_Outbound_ItemDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM
             );
             //Chama insertUpdate de lista de item,passando db como param aguardando retorno.
-            DaoObjReturn outboundItemRet = ioInboundItemDao.addUpdate(io_outbound.getItems(),false,db);
+            DaoObjReturn outboundItemRet = ioOutboundItemDao.addUpdate(io_outbound.getItems(),false,db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if(outboundItemRet.hasError()){
                 throw new Exception(outboundItemRet.getErrorMsg());
@@ -211,7 +211,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             );
             //Tenta insert dos Seriais NÃO POSSUI RETURN....
             if(io_outbound.getSerial() != null && io_outbound.getSerial().size() > 0){
-                serialDao.addUpdateTmpByInbound(io_outbound.getSerial(),db);
+                serialDao.addUpdateTmpByIOProcess(io_outbound.getSerial(),db);
             }
             //
             //Se db não foi passado, finaliza transaction com sucesso
@@ -365,14 +365,14 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
             if(io_outbound != null){
                 //Se operação de insert ou update executada com sucesso
                 //Segue para inserção dos itens.
-                IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                IO_Outbound_ItemDao ioOutboundItemDao = new IO_Outbound_ItemDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
                 //
                 io_outbound.setItems(
-                        (ArrayList<IO_Outbound_Item>) ioInboundItemDao.query(
+                        (ArrayList<IO_Outbound_Item>) ioOutboundItemDao.query(
                                 new IO_Outbound_Item_Sql_001(
                                         io_outbound.getCustomer_code(),
                                         io_outbound.getOutbound_prefix(),
@@ -434,14 +434,14 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                 if(uAux != null){
                     //Se operação de insert ou update executada com sucesso
                     //Segue para inserção dos itens.
-                    IO_Outbound_ItemDao ioInboundItemDao = new IO_Outbound_ItemDao(
+                    IO_Outbound_ItemDao ioOutboundItemDao = new IO_Outbound_ItemDao(
                             context,
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
                     //
                     uAux.setItems(
-                            (ArrayList<IO_Outbound_Item>) ioInboundItemDao.query(
+                            (ArrayList<IO_Outbound_Item>) ioOutboundItemDao.query(
                                     new IO_Outbound_Item_Sql_001(
                                             uAux.getCustomer_code(),
                                             uAux.getOutbound_prefix(),
@@ -754,7 +754,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
     }
 
     /**
-     * LUCHE - 22/04/2019
+     * BARRIONUEVO - 03/07/2019
      *
      * Metodo criado para executar a OUTBOUND FULL, agrupando tudo dentro da transaction
      *  as tarefas de , deletar itens, movimentação picking deletar cabeçalho e finalmente reinserção de
@@ -790,7 +790,7 @@ public class IO_OutboundDao extends BaseDao implements DaoWithReturn<IO_Outbound
                     throw new Exception(daoObjReturn.getRawMessage());
                 }
                 //verifica se erro ao remover moves
-                daoObjReturn = moveDao.removeInboundMoves(io_outbound, db);
+                daoObjReturn = moveDao.removeOutboundMoves(io_outbound, db);
                 //
                 if(daoObjReturn.hasError()){
                     throw new Exception(daoObjReturn.getRawMessage());

@@ -24,6 +24,9 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.ui.act039.Act039_Main;
+import com.namoadigital.prj001.ui.act055.Act055_Main;
+import com.namoadigital.prj001.ui.act057.Act057_Main;
+import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,13 +34,18 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act066.Act066_Main.LIST_PENDENCIES_KEY;
+
 
 public class Act014_Main extends Base_Activity implements Act014_Main_View {
 
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
     public static final String LABEL_TRANS_OS = "lbl_type_service_order";
     public static final String LABEL_TRANS_FORM_AP = "lbl_type_form_ap";
-
+    public static final String LABEL_TRANS_IO_INBOUND = "lbl_type_io_inbound";
+    public static final String LABEL_TRANS_IO_MOVE = "lbl_type_io_move";
+    public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
+    public static final String FROM_HISTORIC = "from_historic";
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
     private Namoa_Custom_Cell_2_Adapter mAdapter;
@@ -76,6 +84,9 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         translateList.add(LABEL_TRANS_CHECKLIST);
         translateList.add(LABEL_TRANS_OS);
         translateList.add(LABEL_TRANS_FORM_AP);
+        translateList.add(LABEL_TRANS_IO_INBOUND);
+        translateList.add(LABEL_TRANS_IO_MOVE);
+        translateList.add(LABEL_TRANS_IO_OUTBOUND);
         translateList.add("alert_no_sent_data_title");
         translateList.add("alert_no_sent_data_msg");
 
@@ -231,6 +242,21 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     }
 
     @Override
+    public void callAct055(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act055_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle == null) {
+            bundle = new Bundle();
+            bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+        }
+
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void showMsg() {
         ToolBox.alertMSG(
                 Act014_Main.this,
@@ -239,6 +265,36 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
                 null,
                 0
         );
+    }
+
+    @Override
+    public void callAct057(Context context) {
+        Intent mIntent = new Intent(context, Act057_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct066(Context context) {
+
+
+        Intent mIntent = new Intent(context, Act066_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

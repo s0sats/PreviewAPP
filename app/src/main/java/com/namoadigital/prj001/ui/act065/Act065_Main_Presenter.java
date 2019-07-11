@@ -6,20 +6,27 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.T_IO_Outbound_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_009;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
@@ -29,6 +36,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  {
     Context context;
@@ -153,9 +161,30 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
     @Override
     public void checkSearchFlow() {
         if(hasDataToSend()){
-//            executeOutboundItemsSave();
+            executeOutboundItemsSave();
         }else{
             mView.callSearchOutbound();
+        }
+    }
+
+    private void executeOutboundItemsSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Outbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("progress_save_outbound_item_ttl"),
+                    hmAux_trans.get("progress_save_outbound_item_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ConstantBaseApp.PROCESS_MENU_SEND,true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -183,7 +212,6 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
             context.sendBroadcast(mIntent);
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
-
         }
     }
 
@@ -229,17 +257,102 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
     private boolean hasDataToSend() {
         //Select Outbound update_required
-        ArrayList<HMAux> inboundAux = null;
-//                = (ArrayList<HMAux>) outboundDao.query_HM(
-//                new IO_Inbound_Sql_009(
-//                        ToolBox_Con.getPreference_Customer_Code(context)
-//                ).toSqlQuery()
-//        );
+        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) outboundDao.query_HM(
+                new IO_Outbound_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
         //Poderi simplificar, mas assim acho melhor para entender
-        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsInboundTokenFile())){
+        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile())){
             return true;
         }
         return false;
     }
 
+    public void processOutboundItemReturn(String outboundItemRet) {
+        if(outboundItemRet != null && outboundItemRet.length() > 0){
+            if(outboundItemRet.equals("OK")){
+                mView.callSearchOutbound();
+            }else{
+                processJsonRet(outboundItemRet);
+            }
+        }else{
+            mView.showAlert(
+                    hmAux_trans.get("outbound_item_ret_empty_ttl"),
+                    hmAux_trans.get("outbound_item_ret_empty_msg")
+            );
+        }
+    }
+
+    private void processJsonRet(String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        try{
+            actReturnList  = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>(){
+                    }.getType() );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(actReturnList != null && actReturnList.size() > 0){
+            boolean hasError = false;
+            int outboundErroNextIdx = 0;
+            HMAux auxResult = new HMAux();
+            //Monta lista por outbound
+            for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
+                String outboundCode = "";
+                //
+                if(actReturn.isMove()){
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if(ioMove != null){
+                        outboundCode = ioMove.getOutbound_prefix()+"."+ioMove.getOutbound_code();
+                    }else{
+                        //Não deveria acontecer...
+                        continue;
+                    }
+                }else{
+                    outboundCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                }
+                if(!auxResult.containsKey(outboundCode)
+                        ||(auxResult.containsKey(outboundCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    auxResult.put(outboundCode, actReturn.getRetStatus() + "\n" + actReturn.getMsg() );
+                }
+            }
+            //For no resumido por outbound montando msg a ser exibida
+            for(Map.Entry<String, String> item : auxResult.entrySet()){
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_trans.get("outbound_lbl") );
+                hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
+                hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.getValue());
+                //Flutua itens com erro.
+                if(!item.getValue().equals("OK")){
+                    if(item.getValue().startsWith(ConstantBaseApp.SYS_STATUS_ERROR)){
+                        hasError  = true;
+                    }
+                    resultList.add(outboundErroNextIdx,hmAux);
+                    outboundErroNextIdx++;
+                }else{
+                    resultList.add(hmAux);
+                }
+
+            }
+            //
+            mView.showResult(resultList,hasError);
+        }
+    }
 }

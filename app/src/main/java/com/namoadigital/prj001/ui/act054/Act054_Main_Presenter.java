@@ -392,11 +392,11 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         return moveType;
     }
 
-    private String getMoveOrientationParams(boolean outboundStatus, boolean originStatus, String moveOrientation) {
+    private String getMoveOrientationParams(boolean originStatus, boolean destinyStatus, String moveOrientation) {
         if (originStatus) {
             moveOrientation = "ORIGIN";
         }
-        moveOrientation = addParamToString(outboundStatus, moveOrientation, "DESTINY");
+        moveOrientation = addParamToString(destinyStatus, moveOrientation, "DESTINY");
         return moveOrientation;
     }
 

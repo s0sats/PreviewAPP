@@ -2,6 +2,8 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.util.ArrayList;
+
 public class IO_Outbound_Item {
 
     @Expose
@@ -32,6 +34,9 @@ public class IO_Outbound_Item {
     private  String save_date;
     @Expose
     private  int update_required;
+
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    private ArrayList<IO_Move> move = new ArrayList<>();
 
     public void IO_Outbound_Item(){
         this.customer_code = -1;
@@ -156,5 +161,21 @@ public class IO_Outbound_Item {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
+    }
+
+    public ArrayList<IO_Move> getMove() {
+        return move;
+    }
+
+    public void setMove(ArrayList<IO_Move> move) {
+        this.move = move;
     }
 }

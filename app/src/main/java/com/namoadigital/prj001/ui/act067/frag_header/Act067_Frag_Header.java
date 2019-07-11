@@ -980,13 +980,13 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 etOutboundId.setTag(mOutbound.getOutbound_id());
                 etOutboundDesc.setText(mOutbound.getOutbound_desc());
                 etOutboundDesc.setTag(mOutbound.getOutbound_desc());
+                mkedtTransportOrder.setText(mOutbound.getTransport_order());
+                mkedtTransportOrder.setTag(mOutbound.getTransport_order());
                 //
                 if (mOutbound.getPicking_process() == 1) {
                     ssPickingZone.setVisibility(View.VISIBLE);
                     ssPickingLocal.setVisibility(View.VISIBLE);
                     //
-                    loadZoneSS(false);
-                    loadLocalSS(false);
                     if (mOutbound.getZone_code_picking() != null) {
                         ToolBox_Inf.setSSmValue(
                                 ssPickingZone,
@@ -1012,7 +1012,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                                 MD_Site_ZoneDao.ZONE_DESC, mOutbound.getZone_desc_picking()
                         );
                     }
-
+                    loadZoneSS(false);
+                    loadLocalSS(false);
                 } else {
                     ssPickingZone.setVisibility(View.GONE);
                     ssPickingLocal.setVisibility(View.GONE);
@@ -1128,9 +1129,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //na act067, pois se não a cada recriação do frag, novos itens são add na lista
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
-        if(mFragHeaderListener != null){
-            mFragHeaderListener.addFragItemsControlsMk(controls_sta);
-        }
         bStatus = false;
     }
 

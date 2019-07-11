@@ -47,6 +47,7 @@ import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
+import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -353,12 +354,11 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             if (ws_process.equals(WS_IO_Outbound_Item_Save.class.getName())) {
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
                 ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> outboundReturnList
-                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                        = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>() {
                 }.getType());
                 showOutboundResults(outboundReturnList);
                 disableProgressDialog();
             }
-
         }
     }
 
@@ -754,7 +754,24 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
         bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serial_code));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT059);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT058);
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct067() {
+        Intent mIntent = new Intent(context, Act067_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act061_Main.INBOUND_FRAG_ITEM);
+        bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(movePlanned.getOutbound_prefix()));
+        bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(movePlanned.getOutbound_code()));
+        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT058);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);

@@ -1,11 +1,16 @@
 package com.namoadigital.prj001.ui.act065;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -13,8 +18,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act066.Act066_Main;
@@ -191,10 +198,10 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
             progressDialog.dismiss();
             //
             mPresenter.processSearchReturn(mLink);
-//        }else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())){
-//            progressDialog.dismiss();
-//            //
-//            mPresenter.processOutboundItemReturn(mLink);
+        }else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())){
+            progressDialog.dismiss();
+            //
+            mPresenter.processOutboundItemReturn(mLink);
         }else{
             progressDialog.dismiss();
         }
@@ -258,7 +265,6 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
 
@@ -319,6 +325,48 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         finish();
     }
 
+    @Override
+    public void showResult(ArrayList<HMAux> resultList, final boolean hasError) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_outbound_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        resultList,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                show.dismiss();
+                //
+                if(!hasError){
+                    callSearchOutbound();
+                }
+            }
+        });
+    }
+
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("act065_title");
@@ -345,10 +393,6 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
         transList.add("progress_save_outbound_item_msg");
         transList.add("outbound_item_ret_empty_ttl");
         transList.add("outbound_item_ret_empty_msg");
-        transList.add("alert_no_inbound_found_ttl");
-        transList.add("alert_no_inbound_found_msg");
-        transList.add("dialog_inbound_search_ttl");
-        transList.add("dialog_inbound_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

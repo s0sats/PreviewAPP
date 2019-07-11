@@ -191,7 +191,6 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                     callWS_IO_Inbound_Item();
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
-                    Toast.makeText(context, ConstantBaseApp.IO_PROCESS_OUT_PICKING, Toast.LENGTH_SHORT).show();
                     setOutboundItemStatus(io_move);
                     callWS_IO_Outbound_Item();
                     break;
@@ -281,25 +280,34 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
     }
 
     private void callWS_IO_Outbound_Item() {
-
-        mView.setWs_process(WS_IO_Outbound_Item_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_trans.get("dialog_save_move_ttl"),
-                hmAux_trans.get("dialog_save_move_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
-        Bundle bundle = new Bundle();
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(WS_IO_Outbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_trans.get("dialog_save_move_ttl"),
+                    hmAux_trans.get("dialog_save_move_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            mView.showAlert(
+                    hmAux_trans.get("alert_offline_save_ttl"),
+                    hmAux_trans.get("alert_offline_save_msg")
+            );
+        }
     }
 
     @Override
     public void onBackPressed(String actRequest) {
         switch (actRequest) {
+            case ConstantBaseApp.ACT067:
+                mView.callAct067();
+                break;
             case ConstantBaseApp.ACT061:
                 mView.callAct061();
                 break;

@@ -233,7 +233,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
             );
             //Tenta insert dos Seriais NÃO POSSUI RETURN....
             if(io_inbound.getSerial() != null && io_inbound.getSerial().size() > 0){
-                serialDao.addUpdateTmpByInbound(io_inbound.getSerial(),db);
+                serialDao.addUpdateTmpByIOProcess(io_inbound.getSerial(),db);
             }
             //
             //Se db não foi passado, finaliza transaction com sucesso
@@ -339,7 +339,7 @@ public class IO_InboundDao extends BaseDao implements DaoWithReturn<IO_Inbound>{
                 }
                 //Tenta insert dos Seriais NÃO POSSUI RETURN....
                 if(io_inbound.getSerial() != null && io_inbound.getSerial().size() > 0){
-                    serialDao.addUpdateTmpByInbound(io_inbound.getSerial(),db);
+                    serialDao.addUpdateTmpByIOProcess(io_inbound.getSerial(),db);
                 }
 
             }

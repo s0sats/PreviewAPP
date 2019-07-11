@@ -42,6 +42,10 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     public static final String LABEL_TRANS_OS = "lbl_type_service_order";
     public static final String LABEL_TRANS_FORM_AP = "lbl_type_form_ap";
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
+    public static final String LABEL_TRANS_IO_INBOUND = "lbl_type_io_inbound";
+    public static final String LABEL_TRANS_IO_MOVE = "lbl_type_io_move";
+    public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
+
 
     private ListView lv_pendencies;
     private Act012_Main_Presenter mPresenter;
@@ -83,6 +87,9 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         translateList.add(LABEL_TRANS_OS);
         translateList.add(LABEL_TRANS_FORM_AP);
         translateList.add(LABEL_TRANS_OS_EXPRESS);
+        translateList.add(LABEL_TRANS_IO_INBOUND);
+        translateList.add(LABEL_TRANS_IO_MOVE);
+        translateList.add(LABEL_TRANS_IO_OUTBOUND);
         translateList.add("alert_no_pendencies_title");
         translateList.add("alert_no_pendencies_msg");
 

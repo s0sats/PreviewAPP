@@ -42,5 +42,7 @@ public interface Act066_Main_Contract {
         void processDownloadReturn(HMAux hmAux);
 
         void getPendenciesList();
+
+        void getHistoricList();
     }
 }

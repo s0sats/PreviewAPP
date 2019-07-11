@@ -11,7 +11,7 @@ public class IO_Outbound_Item_Sql_010 implements Specification {
     private int outbound_item;
     private String status;
 
-    public IO_Outbound_Item_Sql_010(long customer_code, Integer outbound_prefix, Integer outbound_code, Integer outbound_item, String waitingSync) {
+    public IO_Outbound_Item_Sql_010(long customer_code, Integer outbound_prefix, Integer outbound_code, Integer outbound_item, String status) {
         this.customer_code = customer_code;
         this.outbound_prefix = outbound_prefix;
         this.outbound_code = outbound_code;

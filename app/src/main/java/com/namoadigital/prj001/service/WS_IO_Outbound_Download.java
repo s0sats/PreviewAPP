@@ -117,7 +117,7 @@ public class WS_IO_Outbound_Download extends IntentService {
      */
     private void processResponse(ArrayList<IO_Outbound> outbounds_list) {
         if(outbounds_list != null && outbounds_list.size() > 0 ) {
-            Set<MD_Product_Serial> serialHashList = new HashSet<>();
+
             HMAux hmAuxRet = new HMAux();
             hmAuxRet.put(Constant.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
             //
@@ -133,7 +133,7 @@ public class WS_IO_Outbound_Download extends IntentService {
                     Constant.DB_VERSION_CUSTOM
             );
             //Inserte/Atualiza seriais
-            serialDao.addUpdate(serialHashList,false);
+
             //Insere / Atualiza lista de outbound
             DaoObjReturn daoReturn = outboundDao.processFull(outbounds_list);
             //Caso sucesso ao inserir outbound, envia retorno com a pk do item selecionado

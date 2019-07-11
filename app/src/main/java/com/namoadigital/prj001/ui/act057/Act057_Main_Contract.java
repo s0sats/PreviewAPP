@@ -44,5 +44,7 @@ public interface Act057_Main_Contract {
         void processDownloadReturn(HMAux hmAux);
 
         void getPendenciesList();
+
+        void getHistoricList();
     }
 }
