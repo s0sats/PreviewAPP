@@ -243,8 +243,7 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                 DaoObjReturn daoReturn = outboundDao.addUpdate(outbound.get(0));
                 if (!daoReturn.hasError()) {
                     if(outbound.get(0).getSerial() != null && outbound.get(0).getSerial().size() > 0) {
-                        //TODO verificar se deve salvar todos os seriais e não só o primeiro
-                        serialDao.addUpdateTmp(outbound.get(0).getSerial().get(0));
+                        serialDao.addUpdateTmp(outbound.get(0).getSerial(),false);
                         hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, product_code);
                         hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, serial_code);
                     }

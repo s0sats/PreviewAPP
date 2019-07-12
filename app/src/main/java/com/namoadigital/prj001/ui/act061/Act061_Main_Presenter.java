@@ -82,7 +82,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            onBackPressedClicked(mView.getRequestingAct());
+                            onBackPressedClicked(mView.getRequestingAct(),false);
                         }
                     },
                     0
@@ -288,6 +288,8 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                         hmAux_Trans.get("alert_header_save_error_msg")
                             + "\n" + retObj.getMsg()
                     );
+                    //
+                    mView.setDrawerLocked(true);
                 }
             }
 
@@ -684,24 +686,40 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
 
     @Override
-    public void onBackPressedClicked(String requestingAct) {
-        switch (requestingAct){
-            case ConstantBaseApp.ACT014:
-                mView.callAct014();
-                break;
-            //Quando o 52, retorna para tela de busca de Serial, act051
-            case ConstantBaseApp.ACT052:
-                mView.callAct051();
-                break;
-            case ConstantBaseApp.ACT057:
-                mView.callAct057();
-                break;
-            case ConstantBaseApp.ACT056:
-            case ConstantBaseApp.ACT058:
-            case ConstantBaseApp.ACT059:
-            default:
-                mView.callAct056();
+    public void onBackPressedClicked(final String requestingAct, boolean headerInfoChanged) {
+        if(!headerInfoChanged) {
+            switch (requestingAct) {
+                case ConstantBaseApp.ACT014:
+                    mView.callAct014();
+                    break;
+                //Quando o 52, retorna para tela de busca de Serial, act051
+                case ConstantBaseApp.ACT052:
+                    mView.callAct051();
+                    break;
+                case ConstantBaseApp.ACT057:
+                    mView.callAct057();
+                    break;
+                case ConstantBaseApp.ACT056:
+                case ConstantBaseApp.ACT058:
+                case ConstantBaseApp.ACT059:
+                default:
+                    mView.callAct056();
+            }
+        } else {
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
+                hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressedClicked(requestingAct,false);
+                    }
+                },
+                1
+            );
         }
-
     }
+
+
 }

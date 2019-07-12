@@ -3,10 +3,12 @@ package com.namoadigital.prj001.ui.act061.frag_header;
 import android.content.Context;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.IO_Inbound;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
@@ -22,6 +24,7 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
     private HMAux hmAux_Trans;
     private MD_Site_ZoneDao zoneDao;
     private MD_Site_Zone_LocalDao localDao;
+    private IO_InboundDao inboundDao;
 
     public Act061_Frag_Header_Presenter(Context context, Act061_Frag_Header_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -29,7 +32,7 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
         this.hmAux_Trans = hmAux_Trans;
         this.zoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.localDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-
+        this.inboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
     }
 
 
@@ -166,5 +169,21 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
             statusList.add(hmAux);
         }
         return statusList;
+    }
+
+    @Override
+    public boolean hasSyncRequired(int inbound_prefix, int inbound_code) {
+        IO_Inbound ioInbound = inboundDao.getByString(
+                                    new IO_Inbound_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        inbound_prefix,
+                                        inbound_code
+                                    ).toSqlQuery()
+                                );
+        //
+        if(ioInbound != null && ioInbound.getSync_required() == 1){
+            return true;
+        }
+        return false;
     }
 }

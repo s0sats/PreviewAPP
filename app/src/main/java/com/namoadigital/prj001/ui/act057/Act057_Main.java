@@ -52,6 +52,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
+    private boolean filter_waiting = true;
     private boolean isOnline = true;
     private String wsProcess;
     private String bundle_zone_code;
@@ -396,6 +397,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         TextView tvTitle = view.findViewById(R.id.act057_filter_dialog_tv_title);
         final CheckBox chkPending = view.findViewById(R.id.act057_filter_dialog_chk_pending);
         final CheckBox chkProcess = view.findViewById(R.id.act057_filter_dialog_chk_process);
+        final CheckBox chkWaitingSync = view.findViewById(R.id.act057_filter_dialog_chk_waiting_sync);
         //
         tvTitle.setText(hmAux_Trans.get("dialog_filter_title"));
         //
@@ -409,6 +411,11 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         //
+        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
+        chkWaitingSync.setChecked(filter_waiting);
+        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        //
         builder
                 .setView(view)
                 .setCancelable(true)
@@ -419,9 +426,10 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                             public void onClick(DialogInterface dialog, int which) {
                                 filter_pending = chkPending.isChecked();
                                 filter_process = chkProcess.isChecked();
+                                filter_waiting = chkWaitingSync.isChecked();
                                 updateIvFilterState();
                                 if(mAdapter != null){
-                                    mAdapter.updateStatusFilter(filter_pending,filter_process);
+                                    mAdapter.updateStatusFilter(filter_pending,filter_process, filter_waiting );
                                     mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
                                 }
                             }

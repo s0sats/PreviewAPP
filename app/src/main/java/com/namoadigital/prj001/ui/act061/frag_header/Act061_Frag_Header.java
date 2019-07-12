@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act061.frag_header;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.*;
@@ -155,14 +157,21 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
          * da lista de controles da Act
          * @param controls_ss
          */
-        void removeFragItemsControlsSS(ArrayList<SearchableSpinner> controls_ss);
+        void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
         /**
          * Metodo disparado no onDestroyView e que passa lista de mket a serem removidos
          * da lista de controles da Act
          * @param controls_sta
          */
-        void removeFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta);
+        void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta);
+
+        /**
+         * Metodo disparado para modificar
+         *
+         * @param stateOpen
+         */
+        void updateDrawerState(boolean stateOpen);
     }
 
     public onFragHeaderInteraction getFragHeaderListener() {
@@ -267,6 +276,13 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         });
         //
+        mketTransportOrder.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
+                pausedByScan = true;
+            }
+        });
+        //
         ivTransportOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,28 +311,24 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         ivEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(inEdit) {
-                    inEdit = !inEdit;
-                }else{
-                    if(
-                        ssModal.getmOption() != null
-                        && ssModal.getmOption().size() > 0
-                        && ssCarrier.getmOption() != null
-                        && ssCarrier.getmOption().size() > 0
-                    ) {
-                        inEdit = !inEdit;
-                    } else{
-                        if (ToolBox_Con.isOnline(context)) {
-                            inEdit = !inEdit;
-                            mFragHeaderListener.fromTypeSelected(mInbound.getFrom_type());
-                        } else {
-                            ToolBox_Inf.showNoConnectionDialog(context);
-                        }
-                    }
+                if(!mPresenter.hasSyncRequired(mInbound.getInbound_prefix(), mInbound.getInbound_code())) {
+                    toggleEditAction();
+                } else {
+                    ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_must_sync_to_edit_ttl"),
+                        hmAux_Trans.get("alert_must_sync_to_edit_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(mFragHeaderListener != null) {
+                                    mFragHeaderListener.updateDrawerState(true);
+                                }
+                            }
+                        },
+                        1
+                    );
                 }
-                setIvStatus();
-                applyViewsInteraction(INTERATION_EDIT_ON_OFF);
-                btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE );
             }
         });
         //
@@ -480,6 +492,31 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         });
     }
 
+    private void toggleEditAction() {
+        if(inEdit) {
+            inEdit = !inEdit;
+        }else{
+            if(
+                ssModal.getmOption() != null
+                && ssModal.getmOption().size() > 0
+                && ssCarrier.getmOption() != null
+                && ssCarrier.getmOption().size() > 0
+            ) {
+                inEdit = !inEdit;
+            } else{
+                if (ToolBox_Con.isOnline(context)) {
+                    inEdit = !inEdit;
+                    mFragHeaderListener.fromTypeSelected(mInbound.getFrom_type());
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
+            }
+        }
+        setIvStatus();
+        applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+        btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE );
+    }
+
     private void setFromOutboundData(HMAux hmAux) {
         if(hmAux.hasConsistentValue(IO_InboundDao.FROM_SITE_CODE)) {
             ToolBox_Inf.setSSmValue(
@@ -490,6 +527,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 false,
                 false
             );
+            //
+            ivFromOutbound.setEnabled(true);
         }
         ssFromOutbound.setmValue(hmAux);
         //VERIFICAR SE ITEM ABAIXO FUNCIONA AO SELECIONAR OUBOUND
@@ -757,7 +796,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
 
-    private boolean hasHeaderChanged() {
+    public boolean hasHeaderChanged() {
         //boolean headerChanged = false;
         try {
             for (View view : properties) {
@@ -1625,8 +1664,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
         if(mFragHeaderListener != null){
-            mFragHeaderListener.removeFragItemsControlsSS(controls_ss);
-            mFragHeaderListener.removeFragItemsControlsSta(controls_sta);
+            mFragHeaderListener.removeFragHeaderControlsSS(controls_ss);
+            mFragHeaderListener.removeFragHeaderControlsSta(controls_sta);
         }
         bStatus = false;
     }
@@ -1670,6 +1709,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         transListFrag.add("alert_status_change_not_allowed_msg");
         transListFrag.add("alert_exist_confirmed_items_msg");
         transListFrag.add("alert_exist_items_to_be_done_msg");
+        transListFrag.add("alert_must_sync_to_edit_ttl");
+        transListFrag.add("alert_must_sync_to_edit_msg");
         //
         return transListFrag;
     }

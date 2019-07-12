@@ -25,5 +25,7 @@ public interface Act061_Frag_Header_Contract {
         boolean hasConfirmedItem(IO_Inbound mInbound);
 
         boolean allItemsDone(IO_Inbound mInbound);
+
+        boolean hasSyncRequired(int inbound_prefix, int inbound_code);
     }
 }

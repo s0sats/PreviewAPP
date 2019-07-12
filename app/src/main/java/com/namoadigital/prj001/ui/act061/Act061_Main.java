@@ -160,6 +160,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_from_outbound_not_found_msg");
         transList.add("alert_outbound_to_another_site_msg");
         transList.add("alert_outbound_destination_msg");
+        transList.add("alert_header_changes_will_be_lost_ttl");
+        transList.add("alert_header_changes_will_be_lost_msg");
 
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
@@ -264,7 +266,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         }
     }
 
-    private void setDrawerLocked(boolean lockState) {
+    @Override
+    public void setDrawerLocked(boolean lockState) {
         if (lockState) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -601,12 +604,12 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void removeFragItemsControlsSS(ArrayList<SearchableSpinner> controls_ss) {
+    public void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
         this.controls_ss.removeAll(controls_ss);
     }
 
     @Override
-    public void removeFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta) {
+    public void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta) {
         this.controls_sta.removeAll(controls_sta);
     }
 
@@ -868,6 +871,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
+        //
+        if (wsProcess.equalsIgnoreCase(WS_IO_Inbound_Header_Save.class.getName())) {
+            setDrawerLocked(true);
+        }
     }
 
     //TRATA MSG SESSION NOT FOUND
@@ -937,7 +944,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked(requestingAct);
+        mPresenter.onBackPressedClicked(
+            requestingAct,
+            act061_frag_header != null && act061_frag_header.hasHeaderChanged()
+        );
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

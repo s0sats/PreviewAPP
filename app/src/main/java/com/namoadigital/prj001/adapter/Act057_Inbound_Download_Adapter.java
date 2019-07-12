@@ -7,12 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
+import az.plainpie.PieView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -23,8 +19,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import az.plainpie.PieView;
 
 public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -38,6 +32,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
     private InboundDownloadFilter valueFilter;
     private boolean pendingFilter;
     private boolean processFilter;
+    private boolean waitingSyncFilter;
     private int downloadCounter;
     private boolean isOnline;
     private boolean pendencies;
@@ -129,9 +124,10 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         return mFilteredValues.size();
     }
 
-    public void updateStatusFilter(boolean pendingFilter,boolean processFilter){
+    public void updateStatusFilter(boolean pendingFilter, boolean processFilter, boolean waitingSyncFilter){
         this.pendingFilter = pendingFilter;
         this.processFilter = processFilter;
+        this.waitingSyncFilter = waitingSyncFilter;
 
     }
 
@@ -384,9 +380,12 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
                     String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
                     if (rowFields.contains(charString)
                         && (
-                            (pendingFilter && processFilter)
-                            || (!pendingFilter || (pendingFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)))
-                            && (!processFilter || (processFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)))
+                            (pendingFilter && processFilter && waitingSyncFilter)
+                            || (
+                                (pendingFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING))
+                                || (processFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))
+                                || (waitingSyncFilter && row.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))
+                            )
                         )
                     ) {
                         filteredList.add(row);

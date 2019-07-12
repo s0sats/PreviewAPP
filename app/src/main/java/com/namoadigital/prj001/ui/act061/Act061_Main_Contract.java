@@ -43,6 +43,8 @@ public interface Act061_Main_Contract {
         void callAct051();
 
         String getRequestingAct();
+
+        void setDrawerLocked(boolean lockState);
     }
 
     interface I_Presenter{
@@ -81,6 +83,6 @@ public interface Act061_Main_Contract {
 
         void processFromTransportOrderRet(String outboundJson);
 
-        void onBackPressedClicked(String requestingAct);
+        void onBackPressedClicked(String requestingAct, boolean headerInfoChanged);
     }
 }
