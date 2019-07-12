@@ -43,6 +43,7 @@ import com.namoadigital.prj001.service.WS_IO_Master_Data;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
@@ -818,9 +819,17 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         Intent mIntent = new Intent(context, Act066_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT065);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestAct);
         bundle.putBoolean(Act066_Main.LIST_PENDENCIES_KEY,true);
         mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct012() {
+        Intent mIntent = new Intent(context, Act012_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }

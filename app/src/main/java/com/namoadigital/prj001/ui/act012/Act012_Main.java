@@ -25,12 +25,18 @@ import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.ui.act042.Act042_Main;
+import com.namoadigital.prj001.ui.act055.Act055_Main;
+import com.namoadigital.prj001.ui.act057.Act057_Main;
+import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.ui.act054.Act054_Main.IS_LOCAL_PROCESS;
+import static com.namoadigital.prj001.ui.act066.Act066_Main.LIST_PENDENCIES_KEY;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -192,6 +198,35 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     @Override
+    public void callAct057(Context context) {
+        Intent mIntent = new Intent(context, Act057_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct066(Context context) {
+
+        Intent mIntent = new Intent(context, Act066_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -240,6 +275,20 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         Bundle bundle = new Bundle();
 
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
+
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct055(Context context) {
+        Intent mIntent = new Intent(context, Act055_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
+        bundle.putBoolean(IS_LOCAL_PROCESS, true);
+        mIntent.putExtras(bundle);
 
         mIntent.putExtras(bundle);
         startActivity(mIntent);
