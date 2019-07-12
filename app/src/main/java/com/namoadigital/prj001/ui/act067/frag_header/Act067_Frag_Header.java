@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act067.frag_header;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
@@ -110,6 +112,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
         void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+
+        void updateDrawerState(boolean stateOpen);
 
         void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
@@ -245,8 +249,25 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         inEdit = !inEdit;
                     } else {
                         if (ToolBox_Con.isOnline(context)) {
-                            inEdit = !inEdit;
-                            mFragHeaderListener.toTypeSelected(mOutbound.getTo_type());
+                            if(mOutbound.getSync_required() == 1){
+                                ToolBox.alertMSG_YES_NO(
+                                        context,
+                                        hmAux_Trans.get("alert_sync_data_ttl"),
+                                        hmAux_Trans.get("alert_sync_data_msg"),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if(mFragHeaderListener != null){
+                                                    mFragHeaderListener.updateDrawerState(true);
+                                                }
+                                            }
+                                        },
+                                        1
+                                );
+                            }else {
+                                inEdit = !inEdit;
+                                mFragHeaderListener.toTypeSelected(mOutbound.getTo_type());
+                            }
                         } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }
