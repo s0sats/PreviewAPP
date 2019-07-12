@@ -49,6 +49,7 @@ import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act060.Act060_Main;
 import com.namoadigital.prj001.ui.act062.Act062_Main;
 import com.namoadigital.prj001.ui.act065.Act065_Main;
+import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.ui.act067.frag_drawer.Act067_Frag_Drawer;
 import com.namoadigital.prj001.ui.act067.frag_header.Act067_Frag_Header;
 import com.namoadigital.prj001.ui.act067.frag_item.Act067_Frag_Items;
@@ -808,6 +809,18 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     public void callAct065() {
         Intent mIntent = new Intent(context, Act065_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct066() {
+        Intent mIntent = new Intent(context, Act066_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT065);
+        bundle.putBoolean(Act066_Main.LIST_PENDENCIES_KEY,true);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

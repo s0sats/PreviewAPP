@@ -134,7 +134,7 @@ public class Act065_Main extends Base_Activity implements Act065_Main_Contract.I
                 } else {
                     Bundle bundle = new Bundle();
                     //
-                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT066);
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT065);
                     bundle.putBoolean(Act066_Main.LIST_PENDENCIES_KEY,true);
                     //
                     callAct066(bundle);

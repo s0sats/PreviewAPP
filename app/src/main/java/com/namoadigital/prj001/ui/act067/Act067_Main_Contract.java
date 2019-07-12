@@ -37,6 +37,8 @@ public interface Act067_Main_Contract {
         void callAct065();
 
         void callAct014();
+
+        void callAct066();
     }
 
     interface I_Presenter{

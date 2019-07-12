@@ -478,7 +478,15 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     public void callAct067(Bundle bundle) {
         Intent mIntent = new Intent(context, Act067_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+
+        if(bundle != null){
+            if(listPendencies && requestingAct.equals(ConstantBaseApp.ACT065)){
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT066);
+            }else{
+                bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+            }
+        }
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
