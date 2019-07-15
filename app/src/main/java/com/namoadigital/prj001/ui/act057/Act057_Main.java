@@ -176,6 +176,8 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
             }
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
             listPendencies = bundle.getBoolean(LIST_PENDENCIES_KEY,false);
+            //Filtro de waitingSync só existe na listegem de pendentes.
+            filter_waiting = listPendencies;
         } else {
             bundle_zone_code = "";
             bundle_local_code = "";
@@ -355,6 +357,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
                 records,
                 filter_pending,
                 filter_process,
+                filter_waiting,
                 isOnline,
                 listPendencies
         );
@@ -391,7 +394,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     private void showStatusFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         View view = (View) LayoutInflater.from(context).inflate(R.layout.act057_filter_dialog,null);
         //
         TextView tvTitle = view.findViewById(R.id.act057_filter_dialog_tv_title);
@@ -410,11 +413,13 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         chkProcess.setChecked(filter_process);
         chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
-        //
+        //Esse ultimo stats só existe no quando lista origem do pendentes.
         chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
         chkWaitingSync.setChecked(filter_waiting);
         chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
         chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setVisibility(listPendencies ? View.VISIBLE : View.GONE );
+        chkWaitingSync.setEnabled(listPendencies );
         //
         builder
                 .setView(view)
@@ -450,7 +455,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         if(requestingAct.equals(ConstantBaseApp.ACT014)){
             iv_status_filter.setVisibility(View.GONE);
         }else {
-            if (filter_pending || filter_process) {
+            if (filter_pending || filter_process || filter_waiting) {
                 iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
             } else {
                 iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -494,6 +499,20 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     public void callAct051() {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct057() {
+        Intent mIntent = new Intent(context, Act057_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+        bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
+        //
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

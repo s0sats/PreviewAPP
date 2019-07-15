@@ -63,12 +63,13 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         this.mOnItemCheckedChangeListener = mOnItemCheckedChangeListener;
     }
 
-    public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter, boolean isOnline , boolean pendencies) {
+    public Act057_Inbound_Download_Adapter(Context context, List<IO_Inbound_Search_Record> mValues, boolean pendingFilter, boolean processFilter,boolean waitingSyncFilter, boolean isOnline , boolean pendencies) {
         this.context = context;
         this.mValues = mValues;
         this.resource = R.layout.act057_io_inbound_cell;
         this.pendingFilter = pendingFilter;
         this.processFilter = processFilter;
+        this.waitingSyncFilter = waitingSyncFilter;
         this.mFilteredValues = mValues;
         this.downloadCounter = 0;
         this.isOnline = isOnline;

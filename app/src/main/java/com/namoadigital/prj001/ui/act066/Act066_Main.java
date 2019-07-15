@@ -505,7 +505,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     }
 
     private void showStatusFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         View view = (View) LayoutInflater.from(context).inflate(R.layout.act066_filter_dialog, null);
         //
         TextView tvTitle = view.findViewById(R.id.act066_filter_dialog_tv_title);
