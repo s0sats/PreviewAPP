@@ -27,6 +27,7 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -127,6 +128,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("alert_offline_search_title");
         transList.add("alert_offline_search_msg");
         transList.add("alert_result_movement");
+        transList.add("progress_save_outbound_item_ttl");
+        transList.add("progress_save_outbound_item_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -275,7 +278,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                         if (mPresenter.hasWaitingSyncMovePendency()) {
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
-                            mPresenter.executeWsSaveItem();
+                            mPresenter.executeWsSaveInboundItem();
                         } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                             mPresenter.executeWsSaveBlindItem();
                         } else {
@@ -382,7 +385,10 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
-            if (mPresenter.hasWaitingSyncBlindPendency()){
+            if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class)
+            && mPresenter.hasWaitingSyncPickingPendency()){
+                mPresenter.executeWsSaveOutobundItem();
+            }else if (mPresenter.hasWaitingSyncBlindPendency()){
                 mPresenter.executeWsSaveBlindItem();
             }else {
                 showNewOptDialog(wsResults);
@@ -421,13 +427,18 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             if (!moves[0].isEmpty()) {
                 showResults(moves,true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
-                mPresenter.executeWsSaveItem();
+                mPresenter.executeWsSaveInboundItem();
+            } else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.executeWsSaveOutobundItem();
             } else if (mPresenter.hasWaitingSyncBlindPendency()){
                 mPresenter.executeWsSaveBlindItem();
             }
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
-            mPresenter.processItemSaveReturn(0, 0, mLink);
+            mPresenter.processInboundItemSaveReturn(0, 0, mLink);
+            progressDialog.dismiss();
+        } else if (wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())) {
+            mPresenter.processOutboundItemSaveReturn(0, 0, mLink);
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -480,14 +491,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
             if (mPresenter.hasWaitingSyncPutAwayPendency()) {
-                mPresenter.executeWsSaveItem();
-            } else {
-                if (mPresenter.hasWaitingSyncBlindPendency()){
+                mPresenter.executeWsSaveInboundItem();
+            } else if (mPresenter.hasWaitingSyncPickingPendency()){
+                    mPresenter.executeWsSaveOutobundItem();
+                } else if (mPresenter.hasWaitingSyncBlindPendency()){
                     mPresenter.executeWsSaveBlindItem();
                 }else {
                     showNewOptDialog(moveList);
                 }
-            }
         }
     }
 

@@ -268,7 +268,6 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
-//        super.processCloseACT(mLink, mRequired);
         processCloseACT(mLink, mRequired, new HMAux());
     }
 
