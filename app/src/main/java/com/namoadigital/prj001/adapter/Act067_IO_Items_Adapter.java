@@ -212,6 +212,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                                         &&
                                         (aux.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING)
                                                 || aux.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)
+                                                || aux.get(IO_Outbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)
                                         )
                         );
             } else {

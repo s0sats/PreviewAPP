@@ -128,7 +128,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        //Trad Act061
+        //Trad Act067
         transList.add("act067_title");
 
         transList.add("dialog_io_master_data_ttl");
@@ -158,6 +158,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         transList.add("alert_sync_data_msg");
         transList.add("alert_outbound_results_ttl");
         transList.add("alert_download_return_error_msg");
+        transList.add("alert_header_changes_will_be_lost_ttl");
+        transList.add("alert_header_changes_will_be_lost_msg");
 
         //Trad Frag Drawer
         transList.addAll(Act067_Frag_Drawer.getFragTranslationsVars());
@@ -467,6 +469,11 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
+    public String getRequestingAct() {
+        return requestAct;
+    }
+
+    @Override
     public void updateHeaderData(int outbound_prefix, int outbound_code, boolean newProcess) {
         //Se era um processo novo
         if (newProcess) {
@@ -529,6 +536,11 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     public void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss) {
         this.controls_ss.addAll(controls_ss);
     }
+
+    @Override
+    public void addFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta) {
+        this.controls_sta.addAll(controls_sta);
+    }
     //region DrawerFragment
 
     @Override
@@ -578,7 +590,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     }
 
     @Override
-    public void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta) {
+    public void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta) {
         this.controls_sta.removeAll(controls_sta);
     }
 
@@ -836,7 +848,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(requestAct);
+        mPresenter.onBackPressedClicked(requestAct,act067_frag_header != null && act067_frag_header.hasHeaderChanged());
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -62,7 +62,7 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
 
         void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
 
-        void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+        void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta);
 
         void callAddItemAct();
 
@@ -159,7 +159,7 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
     public void onDestroyView() {
         super.onDestroyView();
         if(mFragItemListener != null){
-            mFragItemListener.removeFragItemsControlsMk(controls_sta);
+            mFragItemListener.removeFragHeaderControlsSta(controls_sta);
         }
         //
         bStatus = false;

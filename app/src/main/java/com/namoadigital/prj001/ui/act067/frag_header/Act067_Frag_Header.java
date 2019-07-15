@@ -59,7 +59,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private ImageView ivEdit;
     private SearchableSpinner ssToType;
     private ConstraintLayout clOtherInfo;
-    private MKEditTextNM mkedtTransportOrder;
+    private MKEditTextNM mketTransportOrder;
     private TextView tvOutboundLbl;
     private TextView tvOutboundPrefixCode;
     private SearchableSpinner ssStatus;
@@ -112,13 +112,13 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 
         void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
-        void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+        void addFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta);
 
         void updateDrawerState(boolean stateOpen);
 
         void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
-        void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+        void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta);
     }
 
     public Act067_Frag_Header.onFragHeaderInteraction getFragHeaderListener() {
@@ -215,6 +215,14 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     }
 
     private void initActions() {
+        //
+        mketTransportOrder.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
+                pausedByScan = true;
+            }
+        });
+        //
         ssToType.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -521,7 +529,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             mOutbound.setEta_date(mkdtEtaDt.getmValue());
             mOutbound.setDeparture_date(mkdtDepartureDt.getmValue());
             mOutbound.setTo_type(ssToType.getmValue().get(SearchableSpinner.CODE));
-            mOutbound.setTransport_order(mkedtTransportOrder.getText().toString());
+            mOutbound.setTransport_order(mketTransportOrder.getText().toString());
             mOutbound.setFrom_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
             mOutbound.setStatus(ssStatus.getmValue().get(SearchableSpinner.CODE));
             //Reseta campos do obj se novo obj
@@ -599,8 +607,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         }
     }
 
-
-    private boolean hasHeaderChanged() {
+    public boolean hasHeaderChanged() {
         //boolean headerChanged = false;
         try {
             for (View view : properties) {
@@ -716,7 +723,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
         ssToSite = view.findViewById(R.id.act067_header_ss_to_site);
-        mkedtTransportOrder = view.findViewById(R.id.act067_header_mket_transport_order);
+        mketTransportOrder = view.findViewById(R.id.act067_header_mket_transport_order);
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
@@ -754,7 +761,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(ssPartner);
         properties.add(ssStatus);
         properties.add(etInvoice);
-        properties.add(mkedtTransportOrder);
+        properties.add(mketTransportOrder);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
         properties.add(mkdtDepartureDt);
@@ -766,11 +773,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //
         controls_ss.add(ssPickingZone);
         controls_ss.add(ssPickingLocal);
-        controls_sta.add(mkedtTransportOrder);
+        controls_sta.add(mketTransportOrder);
         //
         if (mFragHeaderListener != null) {
             mFragHeaderListener.addFragHeaderControlsSS(controls_ss);
-            mFragHeaderListener.addFragItemsControlsMk(controls_sta);
+            mFragHeaderListener.addFragItemsControlsSta(controls_sta);
         }
     }
 
@@ -1097,8 +1104,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 etOutboundId.setTag(mOutbound.getOutbound_id());
                 etOutboundDesc.setText(mOutbound.getOutbound_desc());
                 etOutboundDesc.setTag(mOutbound.getOutbound_desc());
-                mkedtTransportOrder.setText(mOutbound.getTransport_order());
-                mkedtTransportOrder.setTag(mOutbound.getTransport_order());
+                mketTransportOrder.setText(mOutbound.getTransport_order());
+                mketTransportOrder.setTag(mOutbound.getTransport_order());
                 //
                 if (mOutbound.getPicking_process() == 1) {
                     ssPickingZone.setVisibility(View.VISIBLE);
@@ -1333,6 +1340,10 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //na act067, pois se não a cada recriação do frag, novos itens são add na lista
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
+        if(mFragHeaderListener != null){
+            mFragHeaderListener.removeFragHeaderControlsSS(controls_ss);
+            mFragHeaderListener.removeFragHeaderControlsSta(controls_sta);
+        }
         bStatus = false;
     }
 
