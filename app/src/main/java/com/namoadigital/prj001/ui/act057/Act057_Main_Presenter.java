@@ -131,7 +131,7 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
                 mView.callAct061(bundle);
             }else{
                 //mView.callAct051();
-                mView.callAct057();
+                mView.rebuildBundleFromMultInboundDownload();
             }
         }else{
             mView.showAlert(
@@ -179,7 +179,21 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct056();
+    public void onBackPressedClicked(String requestingAct) {
+        switch (requestingAct) {
+            //Menu pendentes
+            case ConstantBaseApp.ACT012:
+                mView.callAct012();
+                break;
+            //Menu Historico
+            case ConstantBaseApp.ACT014:
+                mView.callAct014();
+                break;
+            case ConstantBaseApp.ACT056:
+            case ConstantBaseApp.ACT058:
+            case ConstantBaseApp.ACT059:
+            default:
+                mView.callAct056();
+        }
     }
 }

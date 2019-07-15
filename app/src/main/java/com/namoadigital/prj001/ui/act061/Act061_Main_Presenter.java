@@ -689,13 +689,12 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     public void onBackPressedClicked(final String requestingAct, boolean headerInfoChanged) {
         if(!headerInfoChanged) {
             switch (requestingAct) {
-                case ConstantBaseApp.ACT014:
-                    mView.callAct014();
-                    break;
                 //Quando o 52, retorna para tela de busca de Serial, act051
                 case ConstantBaseApp.ACT052:
                     mView.callAct051();
                     break;
+                case ConstantBaseApp.ACT012://Menu pendentes
+                case ConstantBaseApp.ACT014://Menu Historico
                 case ConstantBaseApp.ACT057:
                     mView.callAct057();
                     break;
@@ -704,6 +703,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
                 case ConstantBaseApp.ACT059:
                 default:
                     mView.callAct056();
+                    break;
             }
         } else {
             ToolBox.alertMSG_YES_NO(

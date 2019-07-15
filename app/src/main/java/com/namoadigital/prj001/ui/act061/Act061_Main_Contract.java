@@ -34,8 +34,6 @@ public interface Act061_Main_Contract {
 
         void prepareFullRefresh();
 
-        void callAct014();
-
         void setTransportOrderData(IO_From_Outbound_Search_Record io_from_outbound_search_record);
 
         void callAct057();

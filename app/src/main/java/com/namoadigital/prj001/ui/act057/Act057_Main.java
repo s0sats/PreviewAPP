@@ -11,7 +11,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,6 +27,8 @@ import com.namoadigital.prj001.model.IO_Inbound_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Search;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
@@ -154,6 +159,35 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         }
         //
         updateIvFilterState();
+    }
+
+    /**
+     * LUCHE - 15/05/2019
+     *
+     * Metodo resgata o bundle original da act e altera os dados pra remontar a tela como pendentes.
+     *
+     * Chamado quando o usuario baixa mais de uma inbound ao mesmo tempo.
+     *
+     */
+    @Override
+    public void rebuildBundleFromMultInboundDownload(){
+        Bundle bundle = getIntent().getExtras();
+        if ( bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.clear();
+        //
+        bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, new ArrayList<>());
+        bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT,0);
+        bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        getIntent().putExtras(bundle);
+        //
+        initVars();
+        //
+        initActions();
+
     }
 
     private void recoverIntentsInfo() {
@@ -464,6 +498,23 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
     }
 
     @Override
+    public void callAct012() {
+        Intent mIntent = new Intent(context, Act012_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+
+    @Override
     public void callAct056() {
         Intent mIntent = new Intent(context, Act056_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -503,19 +554,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         finish();
     }
 
-    @Override
-    public void callAct057() {
-        Intent mIntent = new Intent(context, Act057_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
-        bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
-        //
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
+
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
@@ -590,7 +629,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -31,7 +31,11 @@ public interface Act057_Main_Contract {
 
         void setOnline(boolean online);
 
-        void callAct057();
+        void callAct012();
+
+        void callAct014();
+
+        void rebuildBundleFromMultInboundDownload();
     }
 
     interface I_Presenter{
@@ -40,7 +44,7 @@ public interface Act057_Main_Contract {
 
         void processListInfo(long record_count, long record_page, ArrayList<IO_Inbound_Search_Record> records);
 
-        void onBackPressedClicked();
+        void onBackPressedClicked(String requestingAct);
 
         void processDownloadReturn(HMAux hmAux);
 

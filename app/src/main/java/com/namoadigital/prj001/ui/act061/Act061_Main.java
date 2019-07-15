@@ -33,7 +33,6 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.*;
-import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
@@ -517,14 +516,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     }
 
     @Override
-    public void callAct014() {
-        Intent mIntent = new Intent(context, Act014_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
     public void updateHeaderData(int inbound_prefix, int inbound_code, boolean newProcess) {
         //Se era um processo novo
         if (newProcess) {
@@ -695,7 +686,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+        //bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
         bundle.putBoolean(Act057_Main.LIST_PENDENCIES_KEY,true);
         //
         mIntent.putExtras(bundle);
@@ -792,17 +784,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if (act061_frag_header != null) {
             act061_frag_header.updateDataFromTransportOrder(io_from_outbound_search_record);
         }
-
-        // TODO: 02/07/2019 - VERIFICAR  Add outbound retornado pela transport order na lista de fromOutbound
-        // TODO: 02/07/2019 - Verificar liberação do campo fromOutbound após retorno do transportOrder pois hj campo fica bloqueado
     }
-
-//    @Override
-//    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-//        super.onPostCreate(savedInstanceState);
-//        mDrawerToggle.syncState();
-//
-//    }
 
     private class FCMReceiver extends BroadcastReceiver {
         @Override
