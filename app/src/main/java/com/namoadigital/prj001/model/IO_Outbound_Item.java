@@ -2,9 +2,10 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class IO_Outbound_Item {
+public class IO_Outbound_Item implements Serializable {
 
     @Expose
     private  long customer_code;

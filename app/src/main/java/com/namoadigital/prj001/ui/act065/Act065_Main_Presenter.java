@@ -23,7 +23,6 @@ import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Search;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_002;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_009;
@@ -66,7 +65,7 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
                 ).toSqlQuery()
         );
         //
-        if(hmAux != null && hmAux.hasConsistentValue(IO_Inbound_Sql_001.PENDENCY_QTY)){
+        if(hmAux != null && hmAux.hasConsistentValue(IO_Outbound_Item_Sql_002.PENDENCY_QTY)){
             return hmAux.get(IO_Outbound_Item_Sql_002.PENDENCY_QTY);
         }else{
             //Msg informando erro?
@@ -194,8 +193,8 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
             mView.setWsProcess(WS_IO_Outbound_Search.class.getName());
             //
             mView.showPD(
-                    hmAux_trans.get("dialog_inbound_search_ttl"),
-                    hmAux_trans.get("dialog_inbound_search_start")
+                    hmAux_trans.get("dialog_outbound_search_ttl"),
+                    hmAux_trans.get("dialog_outbound_search_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Outbound_Search.class);
@@ -240,8 +239,8 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
             }else{
                 mView.showAlert(
-                        hmAux_trans.get("alert_no_inbound_found_ttl"),
-                        hmAux_trans.get("alert_no_inbound_found_msg")
+                        hmAux_trans.get("alert_no_outbound_found_ttl"),
+                        hmAux_trans.get("alert_no_outbound_found_msg")
                 );
             }
 
@@ -257,13 +256,13 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
 
     private boolean hasDataToSend() {
         //Select Outbound update_required
-        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) outboundDao.query_HM(
+        ArrayList<HMAux> outboundAux = (ArrayList<HMAux>) outboundDao.query_HM(
                 new IO_Outbound_Sql_009(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
         //Poderi simplificar, mas assim acho melhor para entender
-        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile())){
+        if( (outboundAux != null && outboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile())){
             return true;
         }
         return false;

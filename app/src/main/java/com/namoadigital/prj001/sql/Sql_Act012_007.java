@@ -27,13 +27,14 @@ public class Sql_Act012_007 implements Specification {
         return sb
                 .append( "SELECT\n" +
                         "     count(1) "+PENDING_QTY+",\n " +
-                        "    '"+label_translation.get(Act012_Main.LABEL_TRANS_IO_OUTBOUND)+"' "+TYPE+" \n " +
+                        "    '"+label_translation.get(Act012_Main.LABEL_TRANS_IO_OUTBOUND)+"' "+TYPE+", \n " +
+                        "    '"+Act012_Main.LABEL_TRANS_IO_OUTBOUND+"' "+MODULE+"\n " +
                         " FROM\n" +
                         IO_OutboundDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
                         "   and s.status in (" +
-                        "                       '"+ ConstantBase.SYS_STATUS_IN_PROCESSING +"'," +
+                        "                       '"+ ConstantBase.SYS_STATUS_PROCESS +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_PENDING +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_EDIT +"'" +
                         " ); \n")

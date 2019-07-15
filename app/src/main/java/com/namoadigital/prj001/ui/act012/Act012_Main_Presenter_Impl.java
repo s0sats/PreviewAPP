@@ -218,7 +218,29 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                     mView.showMsg();
                 }
                 break;
+            case Act012_Main.LABEL_TRANS_IO_INBOUND:
+                if (!item.get(Sql_Act012_004.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct057(context);
+                } else {
+                    mView.showMsg();
+                }
+                break;
+            case Act012_Main.LABEL_TRANS_IO_MOVE:
+                if (!item.get(Sql_Act012_004.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct055(context);
+                } else {
+                    mView.showMsg();
+                }
+                break;
+            case Act012_Main.LABEL_TRANS_IO_OUTBOUND:
+                if (!item.get(Sql_Act012_004.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct066(context);
+                } else {
+                    mView.showMsg();
+                }
+                break;
         }
+
     }
 
     @Override

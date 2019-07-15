@@ -519,6 +519,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_SO_PACK_EXPRESS = "MODULE_SO_PACK_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
+    public static final String MODULE_IO = "MODULE_IO";
 
 
     //Constantes Status da SO

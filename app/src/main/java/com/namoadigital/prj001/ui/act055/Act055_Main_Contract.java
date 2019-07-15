@@ -18,6 +18,8 @@ public interface Act055_Main_Contract {
         void processSearchReturn(HMAux searchRet);
 
         void getOfflineMove(String moveKey);
+
+        ArrayList<IO_Move_Search_Record> getPendenciesList();
     }
 
     interface I_View{

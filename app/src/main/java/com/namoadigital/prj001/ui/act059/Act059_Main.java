@@ -9,10 +9,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -26,6 +31,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -274,34 +280,34 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         disableProgressDialog();
         if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frag_move_create.processTrackingResult(hmAux);
-        }else if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+        } else if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
             Gson gsonParser = new GsonBuilder().serializeNulls().create();
-            ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>  actReturnList
+            ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList
                     = gsonParser.fromJson(mLink, new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
-            }.getType() );
+            }.getType());
             showResults(actReturnList);
         }
     }
 
     private void showResults(ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList) {
         ArrayList<HMAux> resultList = new ArrayList<>();
-        for(WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList){
+        for (WS_IO_Inbound_Item_Save.InboundItemSaveActReturn result : actReturnList) {
             HMAux aux = new HMAux();
             String itemPk;
 
-            if(result.isMove()) {
-                itemPk= result.getPrefix() + "." + result.getCode();
+            if (result.isMove()) {
+                itemPk = result.getPrefix() + "." + result.getCode();
                 aux.put("title", hmAux_Trans.get("alert_result_movement"));
-            }else{
+            } else {
                 aux.put("title", hmAux_Trans.get("alert_result_in_conf"));
-                itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
+                itemPk = result.getPrefix() + "." + result.getCode() + "." + result.getItem();
             }
             aux.put("item", itemPk);
 
-            if(result.getMsg() == null){
-                aux.put("status","Ok");
-            }else{
-                aux.put("status",result.getMsg());
+            if (result.getMsg() == null) {
+                aux.put("status", "Ok");
+            } else {
+                aux.put("status", result.getMsg());
             }
 
 
@@ -329,23 +335,22 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         for (int i = 0; i < resultList.size(); i++) {
             HMAux hmAux = new HMAux();
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("item"));
-            if(resultList.get(i).hasConsistentValue("status")) {
+            if (resultList.get(i).hasConsistentValue("status")) {
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
-            }else{
+            } else {
                 hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, "OK");
             }
 
             hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
 
 
-
-            if(resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
-                            io_inbound_item.getInbound_prefix() +"."
-                            + io_inbound_item.getInbound_code() +"."
-                            + io_inbound_item.getInbound_item())){
+            if (resultList.get(i).hasConsistentValue("item") && resultList.get(i).get("item").equals(
+                    io_inbound_item.getInbound_prefix() + "."
+                            + io_inbound_item.getInbound_code() + "."
+                            + io_inbound_item.getInbound_item())) {
                 auxMove = hmAux;
-                formattedList.add(0,auxMove);
-            }else{
+                formattedList.add(0, auxMove);
+            } else {
                 formattedList.add(hmAux);
             }
         }
@@ -374,23 +379,13 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 }
                 if (finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
-                }else {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_list_title"),
-                            finalAuxMove.get("status"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
-                                }
-                            },
-                            0
-                    );
+                } else {
+                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
                 }
             }
         });
     }
+
     @Override
     public void showPD(String ttl, String msg) {
         enableProgressDialog(
@@ -524,7 +519,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
-//Caso haja a necessidade de destacar o item na lista de inbound
+        //Caso haja a necessidade de destacar o item na lista de inbound
 //        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
 //        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
 //        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));

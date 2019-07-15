@@ -27,7 +27,8 @@ public class Sql_Act012_006 implements Specification {
         return sb
                 .append( "SELECT\n" +
                         "     count(1) "+PENDING_QTY+",\n " +
-                        "    '"+label_translation.get(Act012_Main.LABEL_TRANS_IO_MOVE)+"' "+TYPE+" \n " +
+                        "    '"+label_translation.get(Act012_Main.LABEL_TRANS_IO_MOVE)+"' "+TYPE+", \n " +
+                        "    '"+Act012_Main.LABEL_TRANS_IO_MOVE+"' "+MODULE+"\n " +
                         " FROM\n" +
                         IO_MoveDao.TABLE +" s\n" +
                         " WHERE \n" +

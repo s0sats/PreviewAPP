@@ -29,6 +29,8 @@ import com.namoadigital.prj001.model.IO_Outbound_Search_Record;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Download;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Search;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act065.Act065_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -478,7 +480,15 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     public void callAct067(Bundle bundle) {
         Intent mIntent = new Intent(context, Act067_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+
+        if(bundle != null){
+            if(listPendencies && requestingAct.equals(ConstantBaseApp.ACT065)){
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT066);
+            }else{
+                bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+            }
+        }
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -487,6 +497,22 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     @Override
     public void setOnline(boolean online) {
 
+    }
+
+    @Override
+    public void callAct012() {
+        Intent mIntent = new Intent(context, Act012_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -553,6 +579,6 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 }

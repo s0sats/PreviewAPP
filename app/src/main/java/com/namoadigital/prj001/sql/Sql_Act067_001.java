@@ -30,7 +30,7 @@ public class Sql_Act067_001 implements Specification {
                         "     SELECT\n" +
                         "       ROUND(COUNT(1),2) tot,         \n" +
                         "       SUM(\n" +
-                        "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE +"' OR  i.status = '"+ConstantBaseApp.SYS_STATUS_PICKING+"' \n" +
+                        "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE +"' OR  i.status = '"+ConstantBaseApp.SYS_STATUS_PICKING_DONE+"' \n" +
                         "                  THEN 1\n" +
                         "                  ELSE 0\n" +
                         "             END\n" +
