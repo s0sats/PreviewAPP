@@ -45,6 +45,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act060.Act060_Main;
@@ -813,6 +814,14 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     @Override
     public void callAct014() {
         Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

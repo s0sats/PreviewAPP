@@ -1132,6 +1132,17 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         }
                     }
                     break;
+                case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)){
+                        return true;
+                    } else{
+                        mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
                 case ConstantBaseApp.SYS_STATUS_DONE:
                 default:
                     if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)){

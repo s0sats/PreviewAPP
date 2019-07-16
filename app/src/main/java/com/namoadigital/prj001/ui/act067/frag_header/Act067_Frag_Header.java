@@ -1296,6 +1296,17 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         }
                     }
                     break;
+                case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)){
+                        return true;
+                    } else{
+                        mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
                 case ConstantBaseApp.SYS_STATUS_DONE:
                 default:
                     if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)){
@@ -1378,7 +1389,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("local_picking_lbl");
         transListFrag.add("alert_header_save_validation_ttl");
         transListFrag.add("alert_status_change_validation_error_ttl");
-        transListFrag.add("alert_status_change_not_allowed_msg");
+        transListFrag.add("alert_zone_local_required_msg");
         transListFrag.add("alert_exist_confirmed_items_msg");
         transListFrag.add("alert_exist_items_to_be_done_msg");
         transListFrag.add("alert_status_change_not_allowed_msg");
