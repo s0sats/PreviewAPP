@@ -90,6 +90,8 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         transList.add("alert_error_on_processing_return_msg");
         transList.add("alert_no_move_found_ttl");
         transList.add("alert_no_move_found_msg");
+        transList.add("alert_offline_search_ttl");
+        transList.add("alert_offline_search_msg");
         //Traducao para itens da lista
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -209,7 +211,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
                 } else {
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("alert_offline_search_title"),
+                            hmAux_Trans.get("alert_offline_search_ttl"),
                             hmAux_Trans.get("alert_offline_search_msg"),
                             null,
                             0

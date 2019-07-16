@@ -122,6 +122,16 @@
                 app:layout_constraintTop_toTopOf="@+id/act067_header_tv_outbound"
                 app:layout_constraintHorizontal_bias="0.5"/>
 
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/act067_header_ss_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act067_header_tv_outbound"
+                />
+
             <TextView
                 android:id="@+id/act067_header_tv_outbound_id"
                 android:layout_width="0dp"
@@ -134,7 +144,7 @@
                 app:layout_constraintEnd_toEndOf="@id/act067_header_gd_end"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/act067_header_gd_start"
-                app:layout_constraintTop_toBottomOf="@id/act067_header_tv_outbound"/>
+                app:layout_constraintTop_toBottomOf="@id/act067_header_ss_status"/>
 
             <EditText
                 android:id="@+id/act067_header_et_outbound_id"

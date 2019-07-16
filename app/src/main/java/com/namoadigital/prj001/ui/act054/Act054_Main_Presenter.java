@@ -21,10 +21,12 @@ import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Search;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Search;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
@@ -59,6 +61,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     private int pending_qty;
     private int waitingSyncMovePendency;
     private int waitingSyncPutAwayPendency;
+    private int waitingSyncPickingPendency;
     private int waitingSyncBlindPendency;
 
     public Act054_Main_Presenter(Context context, Act054_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -323,6 +326,14 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                 ).toSqlQuery()
         );
 
+        HMAux resultPickingWaitingSync = io_moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ConstantBaseApp.IO_OUTBOUND
+                        )
+                ).toSqlQuery()
+        );
+
         HMAux resultBlindWaitingSync = io_moveDao.getByStringHM((
                         new IO_Blind_Move_Sql_006(
                                 ToolBox_Con.getPreference_Customer_Code(context)
@@ -335,8 +346,9 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         pending_qty = getPendencyCounterFromHmaux(resultPending);
         waitingSyncMovePendency = getPendencyCounterFromHmaux(resultMoveWaitingSync);
         waitingSyncPutAwayPendency = getPendencyCounterFromHmaux(resultInputAwayWaitingSync);
+        waitingSyncPickingPendency = getPendencyCounterFromHmaux(resultPickingWaitingSync);
         waitingSyncBlindPendency = getPendencyCounterFromHmaux(resultBlindWaitingSync);
-        pending_qty = pending_qty + waitingSyncMovePendency + waitingSyncPutAwayPendency + waitingSyncBlindPendency;
+        pending_qty = pending_qty + waitingSyncMovePendency + waitingSyncPutAwayPendency +waitingSyncPickingPendency + waitingSyncBlindPendency;
         return "(" + pending_qty + ")";
     }
 
@@ -420,7 +432,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
 
     @Override
-    public void executeWsSaveItem() {
+    public void executeWsSaveInboundItem() {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_IO_Inbound_Item_Save.class.getName());
             //
@@ -430,6 +442,27 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             );
             //
             Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void executeWsSaveOutobundItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_IO_Outbound_Item_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_save_outbound_item_ttl"),
+                    hmAux_Trans.get("progress_save_outbound_item_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
             Bundle bundle = new Bundle();
             //
             mIntent.putExtras(bundle);
@@ -455,7 +488,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void processItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
+    public void processInboundItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
         ArrayList<HMAux> resultList = new ArrayList<>();
@@ -528,6 +561,11 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
     }
 
     @Override
+    public boolean hasWaitingSyncPickingPendency() {
+        return waitingSyncPickingPendency>0;
+    }
+
+    @Override
     public boolean hasWaitingSyncPutAwayPendency() {
         return waitingSyncPutAwayPendency >0;
     }
@@ -553,6 +591,70 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_offline_save_ttl"),
                     hmAux_Trans.get("alert_offline_save_msg")
             );
+        }
+    }
+
+    @Override
+    public void processOutboundItemSaveReturn(int mPrefix, int mCode, String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        try{
+            actReturnList  = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>(){
+                    }.getType() );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(actReturnList != null && actReturnList.size() > 0){
+            boolean outboundResult = true;
+            int outboundNextIdx = 0;
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound
+            for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
+                String moveCode = "";
+                //
+                if(actReturn.isMove()){
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if(ioMove != null){
+                        moveCode = ioMove.getMove_prefix()+"."+ioMove.getMove_code();
+                    }
+                }else{
+                    moveCode = actReturn.getPrefix() +"."+actReturn.getCode();
+                }
+                if(!auxResult.containsKey(moveCode)
+                        ||(auxResult.containsKey(moveCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    auxResult.put(moveCode, actReturn.getRetStatus());
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for(Map.Entry<String, String> item : auxResult.entrySet()){
+
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put("title", hmAux_Trans.get("outbound_move_lbl") );
+                hmAux.put("label", item.getKey());
+                hmAux.put("status",item.getValue());
+                //
+                resultList.add(hmAux);
+
+
+            }
+            //
+            mView.showResult(resultList);
         }
     }
 

@@ -30,21 +30,27 @@ public interface Act054_Main_Contract {
 
         void getPendenciesList();
 
-        void executeWsSaveItem();
+        void executeWsSaveInboundItem();
 
         void saveSearchPreferences(boolean move_planned_status, boolean inbound_status, boolean outbound_status, boolean origin_status, boolean destiny_status);
 
         boolean getSearchFilterPreferences(String key_prefs, boolean default_value);
 
-        void processItemSaveReturn(int mPrefix, int mCode, String jsonRet);
+        void processInboundItemSaveReturn(int mPrefix, int mCode, String jsonRet);
 
         boolean hasWaitingSyncMovePendency();
 
         boolean hasWaitingSyncBlindPendency();
 
+        boolean hasWaitingSyncPickingPendency();
+
         boolean hasWaitingSyncPutAwayPendency();
 
         void executeWsSaveBlindItem();
+
+        void processOutboundItemSaveReturn(int mPrefix, int mCode, String jsonRet);
+
+        void executeWsSaveOutobundItem();
     }
 
     interface I_View{

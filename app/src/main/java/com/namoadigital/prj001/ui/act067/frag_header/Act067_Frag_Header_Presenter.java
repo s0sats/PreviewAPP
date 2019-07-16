@@ -5,9 +5,12 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_Outbound;
+import com.namoadigital.prj001.model.IO_Outbound_Item;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -104,5 +107,63 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
         );
         //
         return localList;
+    }
+
+    @Override
+    public boolean hasConfirmedItem(IO_Outbound mOutbound) {
+        if(mOutbound.getItems() != null && mOutbound.getItems().size() > 0 ){
+            for(IO_Outbound_Item outboundItem : mOutbound.getItems()){
+                if( outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)
+                        || outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                        || outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                ){
+                    return true;
+                }
+            }
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Verifica se todos os item foram finalizados.
+     * @param mOutbound - Obj Outbound carregado.
+     * @return - True se todos os itens estiverem finalizados.
+     */
+    @Override
+    public boolean allItemsDone(IO_Outbound mOutbound) {
+        int doneItems = 0;
+        if(mOutbound.getItems() != null && mOutbound.getItems().size() > 0 ){
+            //
+            for(IO_Outbound_Item outboundItem : mOutbound.getItems()){
+                if( outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) ){
+                    doneItems++;
+                }
+            }
+            //
+            return doneItems == mOutbound.getItems().size();
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Gera lista de hmAux baseado nos status passados.
+     *
+     * @param status - Lista com status que devem compor o mOption
+     * @return - Lista de status para spinner
+     */
+    @Override
+    public ArrayList<HMAux> generateStatusList(ArrayList<String> status) {
+        ArrayList<HMAux> statusList = new ArrayList<>();
+        for (String s : status ){
+            HMAux hmAux = new HMAux();
+            hmAux.put(SearchableSpinner.CODE, s);
+            hmAux.put(SearchableSpinner.ID, s);
+            hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get(s));
+            //
+            statusList.add(hmAux);
+        }
+        return statusList;
     }
 }

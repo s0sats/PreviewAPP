@@ -59,9 +59,10 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private ImageView ivEdit;
     private SearchableSpinner ssToType;
     private ConstraintLayout clOtherInfo;
-    private MKEditTextNM mkedtTransportOrder;
+    private MKEditTextNM mketTransportOrder;
     private TextView tvOutboundLbl;
     private TextView tvOutboundPrefixCode;
+    private SearchableSpinner ssStatus;
     private TextView tvOutboundIdLbl;
     private EditText etOutboundId;
     private TextView tvOutboundDescLbl;
@@ -111,13 +112,13 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 
         void addFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
-        void addFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+        void addFragItemsControlsSta(ArrayList<MKEditTextNM> controls_sta);
 
         void updateDrawerState(boolean stateOpen);
 
         void removeFragHeaderControlsSS(ArrayList<SearchableSpinner> controls_ss);
 
-        void removeFragItemsControlsMk(ArrayList<MKEditTextNM> controls_sta);
+        void removeFragHeaderControlsSta(ArrayList<MKEditTextNM> controls_sta);
     }
 
     public Act067_Frag_Header.onFragHeaderInteraction getFragHeaderListener() {
@@ -214,6 +215,14 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     }
 
     private void initActions() {
+        //
+        mketTransportOrder.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {
+            @Override
+            public void reportDrawbleRightClick(int i) {
+                pausedByScan = true;
+            }
+        });
+        //
         ssToType.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -293,6 +302,21 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             }
         });
         //
+        ssStatus.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            HMAux preValue = new HMAux();
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+                preValue = hmAux;
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(!validateStatusChange()){
+                    ssStatus.setmValue(preValue);
+                }
+            }
+        });
+        //
         ssPickingZone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -301,6 +325,13 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                //Se zerou zona e status
+                if(hmAux == null || hmAux.size() == 0){
+                    if(!validateStatusChange()){
+                        ssStatus.setmValue(ssStatus.getmOptionItemByCode(false,ConstantBaseApp.SYS_STATUS_PENDING));
+                        ssStatus.requestFocus();
+                    }
+                }
                 processZoneValueChange(hmAux);
             }
         });
@@ -455,11 +486,16 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     views.remove(ssPickingLocal);
                 }
                 //
+                if(mOutbound != null & mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                    views.remove(ssStatus);
+                }
+                //
                 applyEditMode(views, inEdit);
                 break;
             case INTERATION_NEW_OUTBOUND:
                 views.remove(ssToType);
                 views.remove(ssToSite);
+                views.remove(ssStatus);
                 //
                 applyEditMode(views, true);
                 break;
@@ -493,8 +529,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             mOutbound.setEta_date(mkdtEtaDt.getmValue());
             mOutbound.setDeparture_date(mkdtDepartureDt.getmValue());
             mOutbound.setTo_type(ssToType.getmValue().get(SearchableSpinner.CODE));
-            mOutbound.setTransport_order(mkedtTransportOrder.getText().toString());
+            mOutbound.setTransport_order(mketTransportOrder.getText().toString());
             mOutbound.setFrom_site_code(Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)));
+            mOutbound.setStatus(ssStatus.getmValue().get(SearchableSpinner.CODE));
             //Reseta campos do obj se novo obj
             if (bNewProcess) {
                 mOutbound.setTo_partner_code(null);
@@ -570,8 +607,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         }
     }
 
-
-    private boolean hasHeaderChanged() {
+    public boolean hasHeaderChanged() {
         //boolean headerChanged = false;
         try {
             for (View view : properties) {
@@ -687,13 +723,14 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
         ssToSite = view.findViewById(R.id.act067_header_ss_to_site);
-        mkedtTransportOrder = view.findViewById(R.id.act067_header_mket_transport_order);
+        mketTransportOrder = view.findViewById(R.id.act067_header_mket_transport_order);
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
         tvOutboundIdLbl = view.findViewById(R.id.act067_header_tv_outbound_id);
         etOutboundId = view.findViewById(R.id.act067_header_et_outbound_id);
         tvOutboundDescLbl = view.findViewById(R.id.act067_header_tv_outbound_desc);
+        ssStatus = view.findViewById(R.id.act067_header_ss_status);
         etOutboundDesc = view.findViewById(R.id.act067_header_et_outbound_desc);
         ssPickingZone = view.findViewById(R.id.act067_header_ss_zone_conf);
         ssPickingLocal = view.findViewById(R.id.act067_header_ss_local_conf);
@@ -722,8 +759,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         properties.add(ssPickingZone);
         properties.add(ssPickingLocal);
         properties.add(ssPartner);
+        properties.add(ssStatus);
         properties.add(etInvoice);
-        properties.add(mkedtTransportOrder);
+        properties.add(mketTransportOrder);
         properties.add(mkdtInvoinceDt);
         properties.add(mkdtEtaDt);
         properties.add(mkdtDepartureDt);
@@ -735,11 +773,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //
         controls_ss.add(ssPickingZone);
         controls_ss.add(ssPickingLocal);
-        controls_sta.add(mkedtTransportOrder);
+        controls_sta.add(mketTransportOrder);
         //
         if (mFragHeaderListener != null) {
             mFragHeaderListener.addFragHeaderControlsSS(controls_ss);
-            mFragHeaderListener.addFragItemsControlsMk(controls_sta);
+            mFragHeaderListener.addFragItemsControlsSta(controls_sta);
         }
     }
 
@@ -750,6 +788,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         tvOutboundLbl.setText(hmAux_Trans.get("outbound_code_lbl"));
         tvOutboundIdLbl.setText(hmAux_Trans.get("outbound_id_lbl"));
         tvOutboundDescLbl.setText(hmAux_Trans.get("outbound_desc_lbl"));
+        ssStatus.setmLabel(hmAux_Trans.get("status_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
         tvInvoiceDtLbl.setText(hmAux_Trans.get("invoice_dt_lbl"));
         ssPickingZone.setmLabel(hmAux_Trans.get("zone_picking_lbl"));
@@ -769,6 +808,10 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType.setmStyle(1);
         ssToSite.setmStyle(1);
         ssPartner.setmStyle(1);
+        ssStatus.setmShowLabel(false);
+        ssStatus.setmStyle(1);
+        ssStatus.setmEnabled(false);
+        ssStatus.setmCanClean(false);
         ssModal.setmStyle(1);
         ssCarrier.setmStyle(1);
         ssPickingZone.setmStyle(1);
@@ -817,6 +860,36 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         }
         //
         ssPickingLocal.setmOption(mPresenter.getLocalsOptions(ssPickingZone.getmValue().get(SearchableSpinner.CODE)));
+    }
+
+    private void loadStatusSS(String status){
+        ArrayList<String> statusToList = new ArrayList<>();
+        //
+        switch(status){
+            case ConstantBaseApp.SYS_STATUS_PENDING :
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+                break;
+            case ConstantBaseApp.SYS_STATUS_PROCESS :
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PENDING);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_PROCESS);
+                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+                break;
+            case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                break;
+            case ConstantBaseApp.SYS_STATUS_DONE:
+            default:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
+                break;
+        }
+        //
+        ssStatus.setmOption(
+                mPresenter.generateStatusList(
+                        statusToList
+                )
+        );
+
     }
 
     private void configMkDt() {
@@ -997,12 +1070,42 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     tvOutboundLbl.setVisibility(View.GONE);
                     tvOutboundPrefixCode.setVisibility(View.GONE);
                 }
+                if(mOutbound.getStatus() != null){
+                    loadStatusSS(mOutbound.getStatus());
+                    //
+                    ToolBox_Inf.setSSmValue(
+                            ssStatus,
+                            mOutbound.getStatus(),
+                            mOutbound.getStatus(),
+                            hmAux_Trans.get(mOutbound.getStatus()),
+                            true,
+                            false
+                    );
+                    //
+                    if( mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    ){
+                        ssStatus.setmEnabled(false);
+                    }
+                }else{
+                    if(bNewProcess) {
+                        //Inicia com status pendente
+                        ToolBox_Inf.setSSmValue(
+                                ssStatus,
+                                ConstantBaseApp.SYS_STATUS_PENDING,
+                                ConstantBaseApp.SYS_STATUS_PENDING,
+                                hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING),
+                                true,
+                                false
+                        );
+                    }
+                }
                 etOutboundId.setText(mOutbound.getOutbound_id());
                 etOutboundId.setTag(mOutbound.getOutbound_id());
                 etOutboundDesc.setText(mOutbound.getOutbound_desc());
                 etOutboundDesc.setTag(mOutbound.getOutbound_desc());
-                mkedtTransportOrder.setText(mOutbound.getTransport_order());
-                mkedtTransportOrder.setTag(mOutbound.getTransport_order());
+                mketTransportOrder.setText(mOutbound.getTransport_order());
+                mketTransportOrder.setTag(mOutbound.getTransport_order());
                 //
                 if (mOutbound.getPicking_process() == 1) {
                     ssPickingZone.setVisibility(View.VISIBLE);
@@ -1125,6 +1228,93 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ivEdit.setEnabled(enabled);
     }
 
+    private boolean validateStatusChange(){
+        HMAux ssStatusValue = ssStatus.getmValue();
+        //
+        if(!ssStatusValue.hasConsistentValue(SearchableSpinner.CODE)){
+            return false;
+        }else {
+            switch (mOutbound.getStatus()) {
+                case ConstantBaseApp.SYS_STATUS_PENDING:
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                        return true;
+                    }
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)){
+                        if(mOutbound.getPicking_process() == 0
+                                || (mOutbound.getPicking_process() == 1
+                                && ssPickingZone.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                                && ssPickingLocal.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                        )
+                        ){
+                            return true;
+                        }else{
+                            mFragHeaderListener.showFragAlert(
+                                    hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                    hmAux_Trans.get("alert_zone_local_required_msg")
+                            );
+                            //
+                            return false;
+                        }
+                    }
+                    //
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                        mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
+                    break;
+                case ConstantBaseApp.SYS_STATUS_PROCESS:
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
+                        if(!mPresenter.hasConfirmedItem(mOutbound)){
+                            return true;
+                        }else{
+                            mFragHeaderListener.showFragAlert(
+                                    hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                    hmAux_Trans.get("alert_exist_confirmed_items_msg")
+                            );
+                            //
+                            return false;
+                        }
+                    }
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_PROCESS)) {
+                        return true;
+                    }
+                    //
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                        if(mPresenter.allItemsDone(mOutbound)){
+                            return true;
+                        } else{
+                            mFragHeaderListener.showFragAlert(
+                                    hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                    hmAux_Trans.get("alert_exist_items_to_be_done_msg")
+                            );
+                            //
+                            return false;
+                        }
+                    }
+                    break;
+                case ConstantBaseApp.SYS_STATUS_DONE:
+                default:
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                        return true;
+                    } else{
+                        mFragHeaderListener.showFragAlert(
+                                hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                                hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
+
+            }
+        }
+        //
+        return false;
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -1150,6 +1340,10 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //na act067, pois se não a cada recriação do frag, novos itens são add na lista
         //e onresume que retorn o barcode se perderá
         //mFragHeaderListener.RemoveFragHeaderControlsSS(controls_ss) <- exemplo da interface.
+        if(mFragHeaderListener != null){
+            mFragHeaderListener.removeFragHeaderControlsSS(controls_ss);
+            mFragHeaderListener.removeFragHeaderControlsSta(controls_sta);
+        }
         bStatus = false;
     }
 
@@ -1162,6 +1356,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("outbound_code_lbl");
         transListFrag.add("outbound_id_lbl");
         transListFrag.add("outbound_desc_lbl");
+        transListFrag.add("status_lbl");
         transListFrag.add("invoice_lbl");
         transListFrag.add("invoice_dt_lbl");
         transListFrag.add("eta_dt_lbl");
@@ -1182,6 +1377,11 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("zone_picking_lbl");
         transListFrag.add("local_picking_lbl");
         transListFrag.add("alert_header_save_validation_ttl");
+        transListFrag.add("alert_status_change_validation_error_ttl");
+        transListFrag.add("alert_status_change_not_allowed_msg");
+        transListFrag.add("alert_exist_confirmed_items_msg");
+        transListFrag.add("alert_exist_items_to_be_done_msg");
+        transListFrag.add("alert_status_change_not_allowed_msg");
         //
         return transListFrag;
     }

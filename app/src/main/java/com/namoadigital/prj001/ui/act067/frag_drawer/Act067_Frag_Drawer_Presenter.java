@@ -5,11 +5,10 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.sql.Sql_Act067_001;
-import com.namoadigital.prj001.ui.act061.frag_drawer.Act061_Frag_Drawer_Contract;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
-public class Act067_Frag_Drawer_Presenter implements Act061_Frag_Drawer_Contract.I_Presenter {
+public class Act067_Frag_Drawer_Presenter implements Act067_Frag_Drawer_Contract.I_Presenter {
 
     private Context context;
     private Act067_Frag_Drawer_Contract.I_View mView;

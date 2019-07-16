@@ -25,7 +25,7 @@ public class Sql_Act058_001 implements Specification {
                 "           and l.site_code = m.site_code\n" +
                 "           and l.zone_code = m.planned_zone_code\n" +
                 "           and l.local_code = m.planned_local_code\n" +
-                " where m.status IN (\"" + ConstantBaseApp.SYS_STATUS_PENDING + "\",\"" + ConstantBaseApp.SO_STATUS_WAITING_SYNC + "\")\n" +
+                " where m.status IN (\"" + ConstantBaseApp.SYS_STATUS_PENDING + "\",\"" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "\")\n" +
                 "  and m.customer_code = " + customer_code + "\n" +
                 "  and m.customer_code = p.customer_code \n" +
                 "  and m.product_code = p.product_code\n" +

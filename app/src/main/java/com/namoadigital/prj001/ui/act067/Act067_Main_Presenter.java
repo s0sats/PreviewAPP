@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -35,6 +36,8 @@ import com.namoadigital.prj001.sql.IO_Outbound_Sql_002;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_010;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_011;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+
+import com.namoadigital.prj001.sql.Sql_Act067_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -73,6 +76,8 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
                         code
                 ).toSqlQuery()
         );
+        //
+        checkWaitingSyncStatusChange(ioOutbound);
         //
         return ioOutbound;
     }
@@ -469,6 +474,61 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         return hasUpdateRequired(mPrefix,mCode) || isOutboundInTokenFile(mPrefix,mCode);
     }
 
+    /**
+     * Analisa se inbound deve ser atualizado pro status wainting sync.
+     *
+     * @param ioOutbound - Inbound a ser carregada na tela.
+     */
+    private void checkWaitingSyncStatusChange(IO_Outbound ioOutbound) {
+        //Se condições atendidas, altera status da inbound.
+        if( ioOutbound != null
+                && ioOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PROCESS)
+                && ioOutbound.getDone_automatic() == 1
+                && allItemsDone(ioOutbound)
+        ){
+            ioOutbound.setStatus(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            DaoObjReturn daoObj = outboundDao.addUpdate(ioOutbound);
+            if(daoObj.hasError()){
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_error_update_inbound_to_wainting_sync_ttl"),
+                        hmAux_Trans.get("alert_error_update_inbound_to_wainting_sync_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onBackPressedClicked(mView.getRequestingAct(),false);
+                            }
+                        },
+                        0
+                );
+            }
+        }
+    }
+
+    /**
+     * Verifica se todos os item foram finalizados.
+     * @param mOutbound - Obj outbound carregado.
+     * @return - True se todos os itens estiverem finalizados.
+     */
+    private boolean allItemsDone(IO_Outbound mOutbound) {
+        HMAux hmAux = outboundDao.getByStringHM(
+                new Sql_Act067_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mOutbound.getOutbound_prefix(),
+                        mOutbound.getOutbound_code()
+                ).toSqlQuery()
+        );
+        //
+        if( hmAux != null
+                && hmAux.hasConsistentValue(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                && hmAux.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC).equals("1")
+        ){
+            return true;
+        }
+        //
+        return false;
+    }
+
     private boolean isOutboundInTokenFile(int outbound_prefix, int outbound_code) {
         boolean retToken = false;
         File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
@@ -505,22 +565,37 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void onBackPressedClicked(String requestAct) {
-        switch (requestAct){
-            case ConstantBaseApp.ACT012:
-                mView.callAct066();
-                break;
-             case ConstantBaseApp.ACT014:
-                mView.callAct066();
-                break;
-            case ConstantBaseApp.ACT066:
-                mView.callAct066();
-                break;
-            case ConstantBaseApp.ACT065:
-            default:
-                mView.callAct065();
-                break;
-        }
+    public void onBackPressedClicked(final String requestAct, boolean headerInfoChanged) {
+        if(!headerInfoChanged) {
+            switch (requestAct) {
+                case ConstantBaseApp.ACT012:
+                    mView.callAct066();
+                    break;
+                case ConstantBaseApp.ACT014:
+                    mView.callAct066();
+                    break;
+                case ConstantBaseApp.ACT066:
+                    mView.callAct066();
+                    break;
+                case ConstantBaseApp.ACT065:
+                default:
+                    mView.callAct065();
+                    break;
+            }
+        }  else {
+        ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
+                hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressedClicked(requestAct,false);
+                    }
+                },
+                1
+        );
+    }
 
     }
 

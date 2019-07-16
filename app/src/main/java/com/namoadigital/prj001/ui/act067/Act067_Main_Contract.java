@@ -34,6 +34,8 @@ public interface Act067_Main_Contract {
 
         void prepareFullRefresh();
 
+        String getRequestingAct();
+
         void callAct065();
 
         void callAct014();
@@ -48,8 +50,6 @@ public interface Act067_Main_Contract {
         IO_Outbound getOutbound(int prefix, int code);
 
         void executeWSMasterData(String type, boolean action);
-
-        void onBackPressedClicked(String requestAct);
 
         void processIOMasterDataRet(String wsReturn);
 
@@ -72,5 +72,7 @@ public interface Act067_Main_Contract {
         void processDownloadReturn(int mPrefix, int mCode, HMAux hmAux);
 
         boolean hasUpdateRequiredDbOrToken(int mPrefix, int mCode);
+
+        void onBackPressedClicked(String requestAct, boolean headerInfoChanged);
     }
 }
