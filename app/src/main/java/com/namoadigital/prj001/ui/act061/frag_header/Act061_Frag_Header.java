@@ -1051,6 +1051,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                break;
             case ConstantBaseApp.SYS_STATUS_DONE:
             default:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);

@@ -878,6 +878,9 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                break;
             case ConstantBaseApp.SYS_STATUS_DONE:
             default:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
@@ -1026,7 +1029,16 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     }
                 } else {
                     setUIForEdition();
-                    applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                    if( mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    ) {
+                        ivEdit.setVisibility(View.GONE);
+                        ivEdit.setEnabled(false);
+                        applyViewsInteraction(INTERATION_BLOCK_ALL);
+                    } else{
+                        applyViewsInteraction(INTERATION_EDIT_ON_OFF);
+                    }
                 }
                 //
                 if (mOutbound.getTo_type() != null && !mOutbound.getTo_type().isEmpty()) {
@@ -1084,6 +1096,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     //
                     if( mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                             || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
                     ){
                         ssStatus.setmEnabled(false);
                     }
@@ -1257,7 +1270,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         }
                     }
                     //
-                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    || ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)) {
                         mFragHeaderListener.showFragAlert(
                                 hmAux_Trans.get("alert_status_change_validation_error_ttl"),
                                 hmAux_Trans.get("alert_status_change_not_allowed_msg")
@@ -1283,7 +1297,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                         return true;
                     }
                     //
-                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                    if (ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    || ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)) {
                         if(mPresenter.allItemsDone(mOutbound)){
                             return true;
                         } else{

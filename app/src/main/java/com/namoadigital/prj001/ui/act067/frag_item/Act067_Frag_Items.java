@@ -326,7 +326,9 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
     }
 
     private boolean allowNewItem() {
-        return mOutbound.getAllow_new_item() == 1 && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+        return mOutbound.getAllow_new_item() == 1
+                && (!mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED));
     }
 
     public static List<String> getFragTranslationsVars() {
