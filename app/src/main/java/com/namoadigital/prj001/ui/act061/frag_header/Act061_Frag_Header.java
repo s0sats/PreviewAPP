@@ -1051,6 +1051,9 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                statusToList.add(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                break;
             case ConstantBaseApp.SYS_STATUS_DONE:
             default:
                 statusToList.add(ConstantBaseApp.SYS_STATUS_DONE);
@@ -1132,6 +1135,17 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         }
                     }
                     break;
+                case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                    if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)){
+                        return true;
+                    } else{
+                        mFragHeaderListener.showFragAlert(
+                            hmAux_Trans.get("alert_status_change_validation_error_ttl"),
+                            hmAux_Trans.get("alert_status_change_not_allowed_msg")
+                        );
+                        //
+                        return false;
+                    }
                 case ConstantBaseApp.SYS_STATUS_DONE:
                 default:
                     if(ssStatusValue.get(SearchableSpinner.CODE).equals(ConstantBaseApp.SYS_STATUS_DONE)){
@@ -1391,9 +1405,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                 } else {
                     setUIForEdition();
                     //
-                    if( mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
-                        || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
-                    ) {
+                    if(isImmutableStatus()) {
                         ivEdit.setVisibility(View.GONE);
                         ivEdit.setEnabled(false);
                         applyViewsInteraction(INTERATION_BLOCK_ALL);
@@ -1459,9 +1471,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         false
                     );
                     //
-                    if( mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
-                        || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
-                    ){
+                    if(isImmutableStatus()){
                         ssStatus.setmEnabled(false);
                     }
                 }else{
@@ -1569,8 +1579,17 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
 
     }
 
-    private void setInboundToWaintingSyncProcess() {
-        mInbound.setStatus(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+    /**
+     * LUCHE - 16/07/2019
+     *
+     * Metodo que avalia se o status é DONE, CANCELED OU WAITING SYNC
+     *
+     * @return True se for um dos status "imutaveis"
+     */
+    private boolean isImmutableStatus() {
+        return mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+            || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED);
     }
 
     private void setUIForEdition() {

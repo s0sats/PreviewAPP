@@ -247,8 +247,8 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
             //
             if (mInbound != null) {
                 //
-                if(mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
-                    filterActionPendencies = !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+                if(isImmutableStatus()){
+                    filterActionPendencies = false;
                     swActionFilter.setEnabled(false);
                 }
                 swActionFilter.setChecked(
@@ -315,9 +315,9 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
                     rvItems.scrollToPosition(serialPosition);
                 }
             }
-            //Se status diferente de done, seta evento de scroll, pois , caso contrario
+            //Se status diferente de done ou cancelled, seta evento de scroll, pois , caso contrario
             //não faz sentido.
-            if(!mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+            if(!isImmutableStatus()) {
                 rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -346,7 +346,20 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
     }
 
     private boolean allowNewItem() {
-        return mInbound.getAllow_new_item() == 1 && !mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+        return mInbound.getAllow_new_item() == 1  && !isImmutableStatus();
+    }
+
+    /**
+     * LUCHE - 16/07/2019
+     *
+     * Metodo que avalia se o status é DONE, CANCELED OU WAITING SYNC
+     *
+     * @return True se for um dos status "imutaveis"
+     */
+    private boolean isImmutableStatus() {
+        return mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+            || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            || mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED);
     }
 
     public static List<String> getFragTranslationsVars() {
