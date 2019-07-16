@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
+import az.plainpie.PieView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -30,8 +30,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import az.plainpie.PieView;
 
 public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Drawer_Contract.I_View {
     public static final String DRAWER_FIRST_LOAD = "DRAWER_FIRST_LOAD";
@@ -260,6 +258,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     }
 
     private void setViewsText() {
+        tvTransportOrderLbl.setText(hmAux_Trans.get("transport_order_lbl"));
         tvArrivalDtLbl.setText(hmAux_Trans.get("create_dt_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
@@ -524,6 +523,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     public static List<String> getFragTranslationsVars(){
         List<String> transListFrag = new ArrayList<String>();
         //
+        transListFrag.add("transport_order_lbl");
         transListFrag.add("create_dt_lbl");
         transListFrag.add("eta_dt_lbl");
         transListFrag.add("invoice_lbl");
