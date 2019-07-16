@@ -181,7 +181,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 return;
             }
             //
-            if (fcmMessage.getTitle().trim().equalsIgnoreCase("<SM_SO_UPDATE>") &&
+            if (fcmMessage.getTitle().trim().equalsIgnoreCase(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE) &&
                     fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SO)) {
 
                 checkNService_SO_Status(fcmMessage);
@@ -263,16 +263,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         } catch (JSONException e) {
-
-            String error_r = e.toString();
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         }
 
         sendFCMStatus(fcmMessage.getTitle());
     }
 
     private void handleIoFCM(FCMMessage fcmMessage) {
-        if(fcmMessage.getTitle().equals("<IO_INBOUND_UPDATE>")) {
+        if(fcmMessage.getTitle().equals(ConstantBaseApp.FCM_ACTION_IO_INBOUND_UPDATE)) {
             handleInboundFCM(fcmMessage);
         }else {
             handleOutboundFCM(fcmMessage);

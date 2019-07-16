@@ -1,29 +1,23 @@
 package com.namoadigital.prj001.ui.act027;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -37,47 +31,12 @@ import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SM_SO_FileDao;
-import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
-import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
-import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.Sync_Checklist;
-import com.namoadigital.prj001.model.TSerial_Save_Env;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_SO_Approval;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
-import com.namoadigital.prj001.receiver.WBR_SO_Search;
-import com.namoadigital.prj001.receiver.WBR_Serial_Save;
-import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
-import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.receiver.*;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
-import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
-import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
-import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Sql_012;
-import com.namoadigital.prj001.sql.SM_SO_Sql_014;
-import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
@@ -85,17 +44,14 @@ import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 
@@ -189,6 +145,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private boolean isSoSaveLinked = false;
+    //Receiver do que captura disparo do FCM
+    //LUCHE - 16/07/2019
+    private FCMReceiver fcmReceiver;
 
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
@@ -246,6 +205,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     protected void onDestroy() {
         ToolBox_Con.setApproval_Type(context, "");
+        //Para receiver que ouve o FCM
+        startStopFCMReceiver(false);
 
         super.onDestroy();
     }
@@ -728,6 +689,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         loadProductSerialIntoFragment();
         //Linha abaixo ser apenas quando o frag product_list for setado via act043
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //LUCHE - 16/07/2019
+        initFCMReceiver();
+    }
+
+    private void initFCMReceiver() {
+        fcmReceiver = new FCMReceiver();
+        //
+        startStopFCMReceiver(true);
     }
 
     //region FRG_SERIAL_EDIT
@@ -2860,4 +2829,30 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+    //region TRATIVA_FCM
+    private class FCMReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if( bundle != null
+                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE)
+                && act027_opc_ != null
+            ){
+                act027_opc_.loadDataToScreen();
+            }
+        }
+    }
+
+    private void startStopFCMReceiver(boolean start) {
+        if(start){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConstantBaseApp.WS_FCM);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        }else{
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        }
+    }
+    //endregion
 }

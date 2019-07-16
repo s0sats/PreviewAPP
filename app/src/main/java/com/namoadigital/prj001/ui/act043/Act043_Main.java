@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.ui.act043;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -28,6 +30,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -53,6 +56,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private String currentFrag = "";
     private Act043_Frag_Service_List mServiceList;
     private HMAux hmAux_TransDrawer = new HMAux();
+    //Receiver do que captura disparo do FCM
+    //LUCHE - 16/07/2019
+    private FCMReceiver fcmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,6 +252,14 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //mServiceList = new Act043_Frag_Service_List();
         //
         //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+        //LUCHE - 16/07/2019
+        initFCMReceiver();
+    }
+    //LUCHE - 16/07/2019
+    private void initFCMReceiver() {
+        fcmReceiver = new FCMReceiver();
+        //
+        startStopFCMReceiver(true);
     }
 
     private void initFrags() {
@@ -558,6 +572,46 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     private void hideKeyBoard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
+
+    //region TRATATIVA_FCM
+
+    /**
+     * LUCHE - 16/07/2019
+     */
+    private class FCMReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if( bundle != null
+                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE)
+                && act027_opc_ != null
+            ){
+                act027_opc_.loadDataToScreen();
+            }
+        }
+    }
+
+    private void startStopFCMReceiver(boolean start) {
+        if(start){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConstantBaseApp.WS_FCM);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        }else{
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Para receiver que ouve o FCM
+        startStopFCMReceiver(false);
+        //
+        super.onDestroy();
+    }
+
+    //endregion
 
     @Override
     public void onBackPressed() {

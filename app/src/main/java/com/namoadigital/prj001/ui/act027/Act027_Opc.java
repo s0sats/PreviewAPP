@@ -10,16 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -362,7 +363,7 @@ public class Act027_Opc extends BaseFragment {
             if (mSm_so != null
             && hmAux_Trans != null) {
 
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || mSm_so.getSync_required() == 1) {
+                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
                 } else {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
@@ -506,6 +507,26 @@ public class Act027_Opc extends BaseFragment {
                 changeTabColor();
             }
         }
+    }
+
+    private boolean hasSyncRequired() {
+        SM_SODao soDao = new SM_SODao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        //
+        HMAux hmAux = soDao.getByStringHM(
+                            new SM_SO_Sql_001(
+                                mSm_so.getCustomer_code(),
+                                mSm_so.getSo_prefix(),
+                                mSm_so.getSo_code()
+                            ).toSqlQuery()
+        );
+        //
+        if( hmAux != null
+            && hmAux.hasConsistentValue(SM_SODao.SO_PREFIX) && hmAux.hasConsistentValue(SM_SODao.SO_CODE)
+            && hmAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED) && hmAux.get(SM_SODao.SYNC_REQUIRED).equals("1") )
+        {
+            return true;
+        }
+        return false;
     }
 
     private String formatTrackingList(ArrayList<HMAux> tranckingAuxList) {
