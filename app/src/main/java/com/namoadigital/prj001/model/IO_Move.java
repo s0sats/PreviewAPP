@@ -38,8 +38,11 @@ public class IO_Move implements Serializable {
     private Integer inbound_code;
     @Expose
     private Integer inbound_item;
+    @Expose
     private Integer outbound_prefix;
+    @Expose
     private Integer outbound_code;
+    @Expose
     private Integer outbound_item;
     @Expose
     private String done_date;

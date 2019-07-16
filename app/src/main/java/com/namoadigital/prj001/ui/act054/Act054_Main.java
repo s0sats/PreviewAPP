@@ -103,6 +103,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("planned_move_lbl");
         transList.add("blind_move_lbl");
         transList.add("inbound_move_lbl");
+        transList.add("outbound_move_lbl");
         transList.add("outbound_lbl");
         transList.add("inbound_lbl");
         transList.add("orientation_lbl");
@@ -279,6 +280,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                             mPresenter.executeWsSaveInboundItem();
+                        }  else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                            mPresenter.executeWsSaveOutobundItem();
                         } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                             mPresenter.executeWsSaveBlindItem();
                         } else {
@@ -385,7 +388,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
-            if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class)
+            if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
             && mPresenter.hasWaitingSyncPickingPendency()){
                 mPresenter.executeWsSaveOutobundItem();
             }else if (mPresenter.hasWaitingSyncBlindPendency()){
@@ -424,6 +427,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            progressDialog.dismiss();
             if (!moves[0].isEmpty()) {
                 showResults(moves,true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
@@ -433,7 +437,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             } else if (mPresenter.hasWaitingSyncBlindPendency()){
                 mPresenter.executeWsSaveBlindItem();
             }
-            progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
             mPresenter.processInboundItemSaveReturn(0, 0, mLink);
             progressDialog.dismiss();
