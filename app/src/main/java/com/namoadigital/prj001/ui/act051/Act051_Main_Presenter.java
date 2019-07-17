@@ -3,27 +3,17 @@ package com.namoadigital.prj001.ui.act051;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_009;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_010;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_012;
-import com.namoadigital.prj001.sql.MD_Product_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -152,6 +142,16 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                 ).toSqlQuery()
         );
 
+        List<HMAux> out_conf_list = serialDao.query_HM(
+            new Sql_Act051_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context),
+                product_id,
+                serial_id,
+                tracking
+            ).toSqlQuery()
+        );
+
         List<HMAux> serial_offline_list = serialDao.query_HM(
                 new IO_Move_Order_Item_Sql_012(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -165,6 +165,7 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 
         serial_list.addAll(move_list);
         serial_list.addAll(in_conf_list);
+        serial_list.addAll(out_conf_list);
         serial_list.addAll(serial_offline_list);
         getSerialProcessRecordListFromHMaux(serial_process_records, serial_list, serial_id);
         return serial_process_records;
@@ -274,14 +275,9 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                         type = ConstantBaseApp.IO_PROCESS_MOVE;
                 }
                 record.setProcess_type(type);
-            } else if (serial_record.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
-                    && serial_record.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PENDING)) {
-                if(serial_record.hasConsistentValue(IO_Inbound_ItemDao.INBOUND_CODE)) {
-                    record.setProcess_type(ConstantBaseApp.IO_PROCESS_IN_CONF);
-                }else{
-                    record.setProcess_type(ConstantBaseApp.IO_PROCESS_OUT_CONF);
-                }
-            } else {
+            } else if (serial_record.hasConsistentValue(ConstantBaseApp.IO_PROCESS_CONF_TYPE)){
+                record.setProcess_type(serial_record.get(ConstantBaseApp.IO_PROCESS_CONF_TYPE));
+            }else{
                 record.setProcess_type(ConstantBaseApp.IO_PROCESS_MOVE);
             }
 

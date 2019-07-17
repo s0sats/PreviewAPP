@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
@@ -29,7 +26,8 @@ public class IO_Move_Order_Item_Sql_009 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "   DISTINCT " +
-                        "       s.*, m.move_type " + IO_MoveDao.MOVE_TYPE + "\n" +
+                        "       s.*, \n" +
+                        "       m.move_type " + IO_MoveDao.MOVE_TYPE + "\n" +
                         " FROM\n" +
                         "     " + MD_ProductDao.TABLE + " p\n" +
                         " INNER JOIN\n" +
@@ -39,8 +37,8 @@ public class IO_Move_Order_Item_Sql_009 implements Specification {
                         "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '1')\n" +
                         "                                   or (p.site_restriction = '1' AND p.allow_new_serial_cl = '0' AND (s.site_code is null OR s.site_code = '" + site_code + "'))\n" +
                         "                                 )\n" +
-                        "INNER JOIN\n" +
-                        "     io_move m                      on m.customer_code = s.customer_code\n" +
+                        " INNER JOIN\n" +
+                        "     " + IO_MoveDao.TABLE +" m   on m.customer_code = s.customer_code\n" +
                         "                                   and m.product_code = s.product_code\n" +
                         "                                   and m.serial_code = s.serial_code      \n" +
                         "                                   and m.status = '" + ConstantBaseApp.SYS_STATUS_PENDING+ "'\n"+
