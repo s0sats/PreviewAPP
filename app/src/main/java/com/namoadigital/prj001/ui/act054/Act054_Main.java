@@ -126,7 +126,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
         transList.add("alert_move_results_ttl");
-        transList.add("alert_offline_search_title");
+        transList.add("alert_offline_search_ttl");
         transList.add("alert_offline_search_msg");
         transList.add("alert_result_movement");
         transList.add("progress_save_outbound_item_ttl");
@@ -340,7 +340,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         } else {
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("alert_offline_search_title"),
+                    hmAux_Trans.get("alert_offline_search_ttl"),
                     hmAux_Trans.get("alert_offline_search_msg"),
                     null,
                     0
@@ -386,7 +386,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void showResult(ArrayList<HMAux> resultList) {
-
+        progressDialog.dismiss();
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
             if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
@@ -491,14 +491,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             moveList.add(mHmAux);
             //
         }
-
+        progressDialog.dismiss();
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
-            if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+            if (isMovePlanned && mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveInboundItem();
-            } else if (mPresenter.hasWaitingSyncPickingPendency()){
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncPickingPendency()){
                     mPresenter.executeWsSaveOutobundItem();
-                } else if (mPresenter.hasWaitingSyncBlindPendency()){
+                } else if (isMovePlanned && mPresenter.hasWaitingSyncBlindPendency()){
                     mPresenter.executeWsSaveBlindItem();
                 }else {
                     showNewOptDialog(moveList);
