@@ -226,7 +226,7 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             e.printStackTrace();
             io_move = null;
         }
-
+        boolean exceptionHandler = true;
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
         try {
             bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
@@ -236,11 +236,13 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
             e.printStackTrace();
             //TODO movimentação nula, algum item outrora pendete está como picking_done e isso não é legal
             Toast.makeText(context, "MOVIMENTAÇÃO NULA, FAZER ALGO A RESPEITO", Toast.LENGTH_SHORT).show();
+            exceptionHandler = false;
         }
         bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) io_move.getProduct_code());
         bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
-
-        mView.callAct058(bundle);
+        if(exceptionHandler) {
+            mView.callAct058(bundle);
+        }
     }
 
     @Override
