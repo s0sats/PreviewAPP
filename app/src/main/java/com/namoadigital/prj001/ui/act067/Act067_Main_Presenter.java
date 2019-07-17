@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -227,9 +228,15 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         }
 
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
-        bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
-        bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+        try {
+            bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
+            bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
+            bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            //TODO movimentação nula, algum item outrora pendete está como picking_done e isso não é legal
+            Toast.makeText(context, "MOVIMENTAÇÃO NULA, FAZER ALGO A RESPEITO", Toast.LENGTH_SHORT).show();
+        }
         bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) io_move.getProduct_code());
         bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
 

@@ -29,13 +29,13 @@ import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
 import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act054.Act054_Main.IS_LOCAL_PROCESS;
 import static com.namoadigital.prj001.ui.act066.Act066_Main.LIST_PENDENCIES_KEY;
 
 /**
@@ -287,7 +287,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
-        bundle.putBoolean(IS_LOCAL_PROCESS, true);
+        bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, true);
         mIntent.putExtras(bundle);
 
         mIntent.putExtras(bundle);
@@ -297,7 +297,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
 

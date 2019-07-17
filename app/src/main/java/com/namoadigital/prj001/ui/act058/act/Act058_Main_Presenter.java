@@ -312,8 +312,12 @@ class Act058_Main_Presenter implements Act058_Main_Contract.I_Presenter {
                 mView.callAct061();
                 break;
             case ConstantBaseApp.ACT054:
-            case ConstantBaseApp.ACT055:
                 mView.callAct054();
+                break;
+            case ConstantBaseApp.ACT055:
+            case ConstantBaseApp.ACT012://Menu pendentes
+            case ConstantBaseApp.ACT014://Menu Historico
+                mView.callAct055();
                 break;
             case ConstantBaseApp.ACT052:
             case ConstantBaseApp.ACT051:

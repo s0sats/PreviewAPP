@@ -45,7 +45,6 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     public static final String LABEL_TRANS_IO_INBOUND = "lbl_type_io_inbound";
     public static final String LABEL_TRANS_IO_MOVE = "lbl_type_io_move";
     public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
-    public static final String FROM_HISTORIC = "from_historic";
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
     private Namoa_Custom_Cell_2_Adapter mAdapter;

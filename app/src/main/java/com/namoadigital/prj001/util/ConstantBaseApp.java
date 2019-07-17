@@ -726,4 +726,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_RELOAD = "chat_reload";
     public static final String CHAT_ROOM_POSITION = "chat_room_position";
     public static final String CHAT_ROOM_POSITION_TOP = "chat_room_position_top";
+
+    //Paramentros de ACTs
+    public static final String IS_LOCAL_PROCESS = "isLocalProcess";
+    public static final String FROM_HISTORIC = "from_historic";
 }

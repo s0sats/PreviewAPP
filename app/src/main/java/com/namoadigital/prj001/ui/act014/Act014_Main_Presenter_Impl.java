@@ -30,7 +30,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act014.Act014_Main.FROM_HISTORIC;
 
 /**
  * Created by DANIEL.LUCHE on 24/02/2017.
@@ -220,7 +219,8 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
     private void setBundle(Bundle bundle, ArrayList<IO_Move_Search_Record> searchRecords) {
 
         setMoveListForBundle(bundle, searchRecords);
-        bundle.putBoolean(FROM_HISTORIC, true);
+        bundle.putBoolean(ConstantBaseApp.FROM_HISTORIC, true);
+        bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, true);
         bundle.putSerializable(Constant.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT014);
 
     }

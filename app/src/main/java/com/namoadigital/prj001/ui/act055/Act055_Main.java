@@ -23,14 +23,13 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act014.Act014_Main.FROM_HISTORIC;
-import static com.namoadigital.prj001.ui.act054.Act054_Main.IS_LOCAL_PROCESS;
 
 public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I_View, Act055_IO_Move_Order_List_Adapter.Act055ListListener {
 
@@ -111,7 +110,7 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     }
 
     private void setInitialView() {
-        if(isLocalProcess){
+        if(isLocalProcess && !fromHistoric){
             mMoveSearchList = mPresenter.getPendenciesList();
         }
         mAdapter = new Act055_IO_Move_Order_List_Adapter(context, mMoveSearchList, this, hmAux_Trans);
@@ -129,8 +128,8 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mMoveSearchList = (List<IO_Move_Search_Record>) bundle.getSerializable(Constant.MAIN_WS_LIST_VALUES);
-            isLocalProcess = bundle.getBoolean(IS_LOCAL_PROCESS, false);
-            fromHistoric = bundle.getBoolean(FROM_HISTORIC, false);
+            isLocalProcess = bundle.getBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, false);
+            fromHistoric = bundle.getBoolean(ConstantBaseApp.FROM_HISTORIC, false);
             requestAct = bundle.getString(Constant.MAIN_REQUESTING_ACT);
         } else {
             requestAct = Constant.ACT005;
@@ -198,25 +197,24 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
     @Override
     public void onClickListItem(IO_Move_Search_Record record) {
-        if (!fromHistoric) {
-            if (ToolBox_Con.isOnline(context) && !isLocalProcess) {
+
+        if(!fromHistoric) {
+            if (isLocalProcess) {
+                HMAux hmMove = new HMAux();
+                hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
+                hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
+                hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
+                mPresenter.processSearchReturn(hmMove);
+            }else if (ToolBox_Con.isOnline(context)) {
                 mPresenter.getDownloadedMove(record.getMove_prefix() + "." + record.getMove_code());
             } else {
-                if (isLocalProcess) {
-                    HMAux hmMove = new HMAux();
-                    hmMove.put(Constant.HMAUX_PREFIX_KEY, String.valueOf(record.getMove_prefix()));
-                    hmMove.put(Constant.HMAUX_CODE_KEY, String.valueOf(record.getMove_code()));
-                    hmMove.put(Constant.HMAUX_PROCESS_KEY, record.getMove_type());
-                    mPresenter.processSearchReturn(hmMove);
-                } else {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_offline_search_ttl"),
-                            hmAux_Trans.get("alert_offline_search_msg"),
-                            null,
-                            0
-                    );
-                }
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_offline_search_ttl"),
+                        hmAux_Trans.get("alert_offline_search_msg"),
+                        null,
+                        0
+                );
             }
         }
     }
@@ -276,6 +274,16 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     public void callAct058(Bundle bundle) {
         Intent mIntent = new Intent(context, Act058_Main.class);
         if (bundle != null) {
+            bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, isLocalProcess);
+            if(!isLocalProcess) {
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT054);
+            }else{
+                if(requestAct.equals(ConstantBaseApp.ACT054)){
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT055);
+                }else {
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestAct);
+                }
+            }
             mIntent.putExtras(bundle);
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

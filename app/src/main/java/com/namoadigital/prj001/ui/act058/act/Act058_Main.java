@@ -45,6 +45,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act054.Act054_Main;
+import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
@@ -94,6 +95,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private Integer to_class_code;
     private MD_Product_Serial serialInfo;
     private int viewMode;
+    private boolean isLocalProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,6 +276,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             product_code = bundle.getInt(MD_Product_SerialDao.PRODUCT_CODE);
             serial_code = bundle.getInt(MD_Product_SerialDao.SERIAL_CODE);
             actRequest = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT005);
+            isLocalProcess = bundle.getBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, false);
+
         } else {
             movePrefix = -1;
             moveCode = -1;
@@ -283,6 +287,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             product_code = -1;
             serial_code = -1;
             actRequest = Constant.ACT005;
+            isLocalProcess =false;
         }
     }
 
@@ -775,6 +780,18 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT058);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct055() {
+        Intent mIntent = new Intent(context, Act055_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, actRequest);
+        bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, isLocalProcess);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

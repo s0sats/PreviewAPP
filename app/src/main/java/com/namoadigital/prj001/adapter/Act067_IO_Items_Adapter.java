@@ -435,7 +435,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                     iv_picking_done.setEnabled(true);
                     iv_picking.setEnabled(true);
                 }
-            } else { 
+            } else {
                 iv_picking_done.setEnabled(false);
                 iv_picking_done.setVisibility(View.GONE);
                 iv_picking.setEnabled(false);

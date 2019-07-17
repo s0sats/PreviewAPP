@@ -31,6 +31,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,7 +42,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
 
     public static final String ZERO_PENDENCY = "(0)";
-    public static final String IS_LOCAL_PROCESS = "isLocalProcess";
     private CheckBox chkInbound;
     private CheckBox chkOutbound;
     private CheckBox chkPlannedMove;
@@ -356,7 +356,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     public void callAct055(Bundle bundle) {
         Intent mIntent = new Intent(context, Act055_Main.class);
         if (bundle != null) {
-            bundle.putBoolean(IS_LOCAL_PROCESS, isLocalProcess);
+            bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, isLocalProcess);
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT054);
             mIntent.putExtras(bundle);
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
