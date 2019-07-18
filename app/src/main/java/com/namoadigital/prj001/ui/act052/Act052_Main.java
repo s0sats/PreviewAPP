@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -19,7 +18,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act052_IO_Serial_List_Adapter;
 import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
@@ -98,6 +96,11 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("btn_create_serial");
         transList.add("dialog_process_download_ttl");
         transList.add("dialog_process_download_starting_msg");
+        //
+        transList.add("alert_inbound_not_found_ttl");
+        transList.add("alert_inbound_not_found_msg");
+        transList.add("alert_outbound_not_found_ttl");
+        transList.add("alert_outbound_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

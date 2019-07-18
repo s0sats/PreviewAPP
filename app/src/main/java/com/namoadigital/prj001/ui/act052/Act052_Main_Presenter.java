@@ -3,28 +3,13 @@ package com.namoadigital.prj001.ui.act052;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
-import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.model.IO_Inbound_Item;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Site;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Download;
-import com.namoadigital.prj001.sql.IO_Inbound_Item_Sql_011;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_011;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
-import com.namoadigital.prj001.sql.MD_Product_Sql_003;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -160,23 +145,46 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         switch (processType) {
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
                 IO_Inbound_Item inbound_item = getInboundItem(data);
-                bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
-                bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
-                bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(inbound_item.getInbound_prefix()));
-                bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(inbound_item.getInbound_code()));
-                bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound_item.getProduct_code()));
-                bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound_item.getSerial_code()));
-                try {
-                    bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(inbound_item.getSerial().get(0).getSerial_id()));
-                }catch (Exception e ){
-                    e.printStackTrace();
-                    bundle.putString(MD_Product_SerialDao.SERIAL_ID, data.getSerial_id());
+                if(inbound_item != null) {
+                    bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD,Act061_Main.INBOUND_FRAG_ITEM);
+                    bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_INBOUND);
+                    bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(inbound_item.getInbound_prefix()));
+                    bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(inbound_item.getInbound_code()));
+                    bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(inbound_item.getProduct_code()));
+                    bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(inbound_item.getSerial_code()));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
+                    mView.callAct061(bundle);
+                } else{
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_inbound_not_found_ttl"),
+                        hmAux_Trans.get("alert_inbound_not_found_msg"),
+                        null,
+                        0
+                    );
                 }
-                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
-                mView.callAct061(bundle);
                 break;
             case ConstantBaseApp.IO_PROCESS_OUT_CONF:
-
+                IO_Outbound_Item outboundItem = getOutboundItem(data);
+                //
+                if(outboundItem != null) {
+                    bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
+                    bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
+                    bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(outboundItem.getOutbound_prefix()));
+                    bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(outboundItem.getOutbound_code()));
+                    bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(outboundItem.getProduct_code()));
+                    bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(outboundItem.getSerial_code()));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT052);
+                    mView.callAct067(bundle);
+                } else{
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_outbound_not_found_ttl"),
+                        hmAux_Trans.get("alert_outbound_not_found_msg"),
+                        null,
+                        0
+                    );
+                }
                 break;
             case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
             case ConstantBaseApp.SYS_STATUS_PICKING:
@@ -244,6 +252,24 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         return item;
     }
 
+    private IO_Outbound_Item getOutboundItem(IO_Serial_Process_Record data) {
+
+        IO_Outbound_ItemDao itemDao = new IO_Outbound_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        IO_Outbound_Item item = itemDao.getByString(
+            new IO_Outbound_Item_Sql_011(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                (int) data.getProduct_code(),
+                data.getSerial_code()
+            ).toSqlQuery()
+        );
+        //
+        return item;
+    }
 
     private MD_Product getMd_product(String mProduct_id) {
         MD_ProductDao mdProductDao = new MD_ProductDao(

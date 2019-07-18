@@ -2,9 +2,20 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+
 /*
     Seleção de item de inbound para processo offline
  */
+
+/**
+ *
+ * LUCHE -17/07/2019
+ *
+ * Modificado query add filtro po status.
+ *
+ */
+
 public class IO_Inbound_Item_Sql_011 implements Specification {
     private long customer_code;
     private int product_code;
@@ -28,6 +39,10 @@ public class IO_Inbound_Item_Sql_011 implements Specification {
                         "   i.customer_code = '"+customer_code+"'\n" +
                         "   and i.product_code = '"+ product_code +"'\n" +
                         "   and i.serial_code = '"+ serial_code +"'\n" +
+                        "   and i.status not in('"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_DONE +"'\n" +
+                        "                       )\n " +
                         "; \n"
                 )
                 .toString();
