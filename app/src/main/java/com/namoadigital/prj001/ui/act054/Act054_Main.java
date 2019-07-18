@@ -280,7 +280,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                             mPresenter.executeWsSaveInboundItem();
-                        }  else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                        } else if (mPresenter.hasWaitingSyncPickingPendency()) {
                             mPresenter.executeWsSaveOutobundItem();
                         } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                             mPresenter.executeWsSaveBlindItem();
@@ -386,15 +386,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void showResult(ArrayList<HMAux> resultList) {
-        progressDialog.dismiss();
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
-            if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
-            && mPresenter.hasWaitingSyncPickingPendency()){
+            if (!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
+                    && mPresenter.hasWaitingSyncPickingPendency()) {
                 mPresenter.executeWsSaveOutobundItem();
-            }else if (mPresenter.hasWaitingSyncBlindPendency()){
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                 mPresenter.executeWsSaveBlindItem();
-            }else {
+            } else {
                 showNewOptDialog(wsResults);
             }
         } else {
@@ -430,12 +429,12 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
             progressDialog.dismiss();
             if (!moves[0].isEmpty()) {
-                showResults(moves,true);
+                showResults(moves, true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveInboundItem();
             } else if (mPresenter.hasWaitingSyncPickingPendency()) {
                 mPresenter.executeWsSaveOutobundItem();
-            } else if (mPresenter.hasWaitingSyncBlindPendency()){
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                 mPresenter.executeWsSaveBlindItem();
             }
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
@@ -446,16 +445,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-            try{
-                if(!moves[0].isEmpty()) {
+            try {
+                if (!moves[0].isEmpty()) {
                     showResults(moves, false);
                 }
-            }catch (Exception e ){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            disableProgressDialog();
+            progressDialog.dismiss();
         }
-
+        disableProgressDialog();
         //
     }
 
@@ -482,27 +481,26 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            if(isMovePlanned) {
+            if (isMovePlanned) {
                 mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
-            }else{
+            } else {
                 mHmAux.put("title", hmAux_Trans.get("blind_move_lbl"));
             }
             //
             moveList.add(mHmAux);
             //
         }
-        progressDialog.dismiss();
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
             if (isMovePlanned && mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveInboundItem();
-            } else if (isMovePlanned && mPresenter.hasWaitingSyncPickingPendency()){
-                    mPresenter.executeWsSaveOutobundItem();
-                } else if (isMovePlanned && mPresenter.hasWaitingSyncBlindPendency()){
-                    mPresenter.executeWsSaveBlindItem();
-                }else {
-                    showNewOptDialog(moveList);
-                }
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.executeWsSaveOutobundItem();
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.executeWsSaveBlindItem();
+            } else {
+                showNewOptDialog(wsResults);
+            }
         }
     }
 
@@ -590,7 +588,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         mPresenter.onBackPressedClicked(Constant.ACT051);
     }
 

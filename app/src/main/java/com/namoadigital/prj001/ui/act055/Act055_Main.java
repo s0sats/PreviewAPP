@@ -112,6 +112,9 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
     private void setInitialView() {
         if(isLocalProcess && !fromHistoric){
             mMoveSearchList = mPresenter.getPendenciesList();
+            if(mMoveSearchList.isEmpty()){
+                onBackPressed();
+            }
         }
         mAdapter = new Act055_IO_Move_Order_List_Adapter(context, mMoveSearchList, this, hmAux_Trans);
         rvMoveOrderList.setLayoutManager(new LinearLayoutManager(context));

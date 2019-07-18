@@ -153,7 +153,7 @@ public class WS_IO_Blind_Move_Save extends IntentService {
         env.setToken(token);
         env.setBlind(blindList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_receiving_data"), hmAuxRet, "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_data"), hmAuxRet, "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_IO_BLIND_SAVE,

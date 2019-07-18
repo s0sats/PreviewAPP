@@ -345,7 +345,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     e.printStackTrace();
                 }
                 disableProgressDialog();
-
             }
             if (ws_process.equals(WS_IO_Inbound_Item_Save.class.getName())) {
                 Gson gsonParser = new GsonBuilder().serializeNulls().create();
