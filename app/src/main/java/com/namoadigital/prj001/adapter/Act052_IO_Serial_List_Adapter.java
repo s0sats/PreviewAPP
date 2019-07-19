@@ -99,18 +99,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     }
 
     private void handleListItemClick(IO_Serial_Process_Record record) {
-
-        if (record.getSite_code() == null && record.getProcess_type() !=null && record.getProcess_type().equalsIgnoreCase(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
-            mListener.onClickListItem(record);
-        }else if (record.getSite_code() == null || record.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
-            if(mPresenter.isSiteInboundAutoCreation()) {
-                mListener.onClickListItem(record);
-            }else{
-                mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
-            }
-        } else {
-            mListener.onClickListItem(record);
-        }
+        mListener.onClickListItem(record);
     }
 
     @Override
@@ -238,6 +227,10 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
                 case ConstantBaseApp.IO_OUTBOUND:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                 case ConstantBaseApp.IO_PROCESS_MOVE:
+                case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+                case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+                case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
+                case ConstantBaseApp.SYS_STATUS_PICKING:
                     ivStatusIcon.setVisibility(View.VISIBLE);
                     ivStatusIcon.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
                     break;

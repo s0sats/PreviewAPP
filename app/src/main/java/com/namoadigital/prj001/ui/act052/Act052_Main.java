@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +29,6 @@ import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act064.Act064_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -101,6 +101,13 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("alert_inbound_not_found_msg");
         transList.add("alert_outbound_not_found_ttl");
         transList.add("alert_outbound_not_found_msg");
+        transList.add("alert_serial_out_site_title");
+        transList.add("alert_serial_out_site_msg");
+        transList.add("alert_serial_not_stored_ttl");
+        transList.add("alert_serial_not_stored_msg");
+        transList.add("alert_qty_records_exceeded_ttl");
+        transList.add("alert_qty_records_exceeded_msg");
+        transList.add("alert_qty_records_founded");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -198,6 +205,18 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
         tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
         tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
+        //
+        if(record_count > record_page){
+            llLimitExceeded.setVisibility(View.VISIBLE);
+            showAlert(
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" +
+                    record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
+                null
+            );
+        }else{
+            llLimitExceeded.setVisibility(View.GONE);
+        }
     }
 
     private void initFooter() {
@@ -285,32 +304,24 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     @Override
-    public void showAlertSerialOut(String title, String msg) {
+    public void showAlert(String ttl, String msg, @Nullable DialogInterface.OnClickListener listener) {
         ToolBox.alertMSG(
-                context,
-                title,
-                msg,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                       if(serial_jump) {
-                           onBackPressed();
-                       }
-                    }
-                },
-                0
+            context,
+            ttl,
+            msg,
+            listener,
+            0
         );
     }
 
-
+    @Override
+    public boolean getSerialJump() {
+        return serial_jump;
+    }
 
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
-        if(data.getSite_code() == null && !ConstantBaseApp.IO_PROCESS_IN_CONF.equals(data.getProcess_type())) {
-            mPresenter.editNonLocationSerial(data);
-        }else {
-            mPresenter.executeWsProcessDownload(data);
-        }
+        mPresenter.processListItem(data);
     }
 
     @Override

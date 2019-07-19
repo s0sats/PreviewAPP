@@ -1,11 +1,10 @@
 package com.namoadigital.prj001.ui.act052;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-
+import android.support.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 
 public interface Act052_Main_Contract {
 
@@ -26,6 +25,8 @@ public interface Act052_Main_Contract {
         boolean hasCreateSerialPermission(String mProduct_id, String mSerial_id, boolean serial_jump);
 
         void callBlindMove(String mProduct_id, String mSerial_id);
+
+        void processListItem(IO_Serial_Process_Record data);
     }
 
     interface I_View{
@@ -47,5 +48,9 @@ public interface Act052_Main_Contract {
         void callAct059(Bundle bundle);
 
         void callAct067(Bundle bundle);
+
+        void showAlert(String ttl, String msg, @Nullable DialogInterface.OnClickListener listener) ;
+
+        boolean getSerialJump();
     }
 }

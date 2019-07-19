@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act052;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -21,11 +22,27 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     private Context context;
     private Act052_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
+    private DialogInterface.OnClickListener otherSiteClickListner;
 
-    public Act052_Main_Presenter(Context context, Act052_Main_Contract.I_View mView, HMAux hmAux_Trans) {
+    public Act052_Main_Presenter(Context context, final Act052_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+    }
+
+    private DialogInterface.OnClickListener getOtherSiteClickListner(){
+        if(otherSiteClickListner == null) {
+            otherSiteClickListner = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mView.getSerialJump()) {
+                        onBackPressedClicked();
+                    }
+                }
+            };
+        }
+        //
+        return otherSiteClickListner;
     }
 
 
@@ -298,6 +315,52 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
         //
         mView.callAct053(bundle);
+    }
+
+    @Override
+    public void processListItem(IO_Serial_Process_Record data) {
+        //Nova logica - 09/07/2019
+        //Se o process é null, serial não tem vinculo com I.O e tb não esta armazenado
+        if(data.getProcess_type() == null){
+            if(isSiteInboundAutoCreation()) {
+                /**
+                 * PONTO DE PROBLEMA, NESSE CASO NÃO TEM O OBJ SERIAL ENTÃO NÃO HÁ COMO
+                 * CONTINUAR PARA EDIÇÃO O SERIAL.
+                 */
+                //Segue para tela de edição de serial
+                editNonLocationSerial(data);
+
+            }else {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_serial_not_stored_ttl"),
+                    hmAux_Trans.get("alert_serial_not_stored_msg"),
+                    getOtherSiteClickListner()
+                );
+            }
+        }else{
+            //Já que possui process, valida se existe site
+            if(data.getSite_code() != null){
+                if(data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)) ){
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_serial_out_site_title"),
+                        hmAux_Trans.get("alert_serial_out_site_msg"),
+                        getOtherSiteClickListner()
+                        );
+                } else{
+                    executeWsProcessDownload(data);
+                }
+            } else {
+                if(data.getProcess_type().equals(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
+                    executeWsProcessDownload(data);
+                }else {
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_serial_out_site_title"),
+                        hmAux_Trans.get("alert_serial_out_site_msg"),
+                        getOtherSiteClickListner()
+                    );
+                }
+            }
+        }
     }
 
     @Override
