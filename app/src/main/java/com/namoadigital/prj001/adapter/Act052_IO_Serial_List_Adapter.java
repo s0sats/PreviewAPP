@@ -7,13 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
-import com.namoadigital.prj001.ui.act052.Act052_Main_Presenter;
 import com.namoadigital.prj001.ui.act052.OnRecyclerViewClickListener;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -24,26 +23,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int VIEW_TYPE_FOOTER = 1;
+    public static final int VIEW_TYPE_ITEM = 0;
 
     private final boolean isOnline;
     private final boolean serial_jump;
     private List<IO_Serial_Process_Record> mValues;
     private Context context;
-    private Act052_Main_Presenter mPresenter;
     private OnRecyclerViewClickListener mListener;
     private HMAux hmAux_Trans;
     private String mResource_Code;
     private String mResource_Name = "act052_io_serial_list_adapter";
+    private String blindSerial;
 
-    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, boolean isOnline, boolean serial_jump, Act052_Main_Presenter mPresenter) {
+    public Act052_IO_Serial_List_Adapter(Context context, List<IO_Serial_Process_Record> mValues, OnRecyclerViewClickListener mListener, boolean isOnline, boolean serial_jump, String blindSerial) {
         this.context = context;
         this.mValues = mValues;
         this.mListener = mListener;
         this.hmAux_Trans = new HMAux();
         this.isOnline = isOnline;
         this.serial_jump = serial_jump;
-        this.mPresenter = mPresenter;
-
+        this.blindSerial = blindSerial;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 Constant.APP_MODULE,
@@ -60,6 +60,7 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
         transList.add("alert_serial_out_site_title");
         transList.add("alert_serial_out_site_msg");
         transList.add("serial_transp_order_lbl");
+        transList.add("btn_blind_serial_move");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -73,27 +74,47 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
+//        View view = LayoutInflater.from(viewGroup.getContext())
+//                .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
+//        return new ListItemViewHolder(view);
+        View view;
+        //
+        if (viewType == VIEW_TYPE_ITEM) {
+            view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.act052_main_serial_list_item, viewGroup, false);
-        return new ListItemViewHolder(view);
+            return new ListItemViewHolder(view);
+        } else {
+            view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.act052_footer_blind_item, viewGroup, false);
+            return new BlindMoveViewHolder(view);
+        }
+
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        try {
+            if (viewHolder instanceof ListItemViewHolder) {
+                ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
+                final IO_Serial_Process_Record record = mValues.get(position);
+                vh.bindData(record);
+                vh.getItemView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        handleListItemClick(record);
 
-        ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
-        final IO_Serial_Process_Record record = mValues.get(position);
-        vh.bindData(record);
-        vh.getItemView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleListItemClick(record);
-
+                    }
+                });
+                if (serial_jump) {
+                    handleListItemClick(record);
+                }
+            }else if(viewHolder instanceof BlindMoveViewHolder){
+                BlindMoveViewHolder vh = (BlindMoveViewHolder) viewHolder;
+                vh.setFullSizeLayout();
             }
-        });
-        if (serial_jump) {
-            handleListItemClick(record);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
     }
@@ -104,7 +125,30 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        if(mValues == null){
+            return 0;
+        }
+        //
+        //Se não foi passado serial, retorna tam da lista, se não add blind
+        if(blindSerial == null || blindSerial.isEmpty()){
+            return mValues.size();
+        }
+        //
+        return mValues.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        //return super.getItemViewType(position);
+        if (mValues != null) {
+            if (position == mValues.size()) {
+                return VIEW_TYPE_FOOTER;
+            } else {
+                return VIEW_TYPE_ITEM;
+            }
+        } else {
+            return VIEW_TYPE_FOOTER;
+        }
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
@@ -240,4 +284,43 @@ public class Act052_IO_Serial_List_Adapter extends RecyclerView.Adapter<Recycler
             tvStatusDesc.setText(hmAux_Trans.get(processType));
         }
     }
+
+    public class BlindMoveViewHolder extends RecyclerView.ViewHolder {
+
+        private ConstraintLayout clMain;
+        private Button btnBlindMove;
+        private View itemView;
+
+        public BlindMoveViewHolder(@NonNull View itemView) {
+            super(itemView);
+            //
+            this.itemView = itemView;
+            clMain = itemView.findViewById(R.id.act052_blind_item_cl_main);
+            btnBlindMove = itemView.findViewById(R.id.act052_blind_item_btn_blind);
+            btnBlindMove.setText(hmAux_Trans.get("btn_blind_serial_move") + " (" + blindSerial + ")");
+            btnBlindMove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mListener != null){
+                        mListener.onBlindMoveClick();
+                    }
+                }
+            });
+        }
+        //
+
+        public void setFullSizeLayout() {
+            //Se unico item na lista, reseta o layout para pegar o tam do recycle
+            if(getItemCount() == 1) {
+                ConstraintLayout.LayoutParams params =
+                        new ConstraintLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        );
+                //
+                clMain.setLayoutParams(params);
+            }
+        }
+    }
+
 }

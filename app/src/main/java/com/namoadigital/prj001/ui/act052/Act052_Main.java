@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act052;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,7 +44,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private TextView tvSerialListRecordCount;
     private RecyclerView mSerialRecyclerView;
     private Button btn_create_serial;
-    private Button btnBlindMove;
     private TextView tvEmptyState;
     private RecyclerView.LayoutManager mSerialListLayoutManager;
     private Act052_IO_Serial_List_Adapter mSerialListAdapter;
@@ -133,7 +131,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         tvSerialListRecordLimit = findViewById(R.id.act052_tv_record_limit);
         tvSerialListRecordCount = findViewById(R.id.act052_tv_record_count);
         btn_create_serial = findViewById(R.id.act052_btn_create_serial);
-        btnBlindMove = findViewById(R.id.act052_btn_blind_move);
         tvEmptyState = findViewById(R.id.act052_tv_empty_state);
         llLimitExceeded = findViewById(R.id.act052_ll_limit_exceeded);
     }
@@ -154,51 +151,25 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     private void setSerialList() {
         mSerialListLayoutManager = new LinearLayoutManager(this);
         mSerialRecyclerView.setLayoutManager(mSerialListLayoutManager);
-        btnBlindMove.setText(hmAux_Trans.get("btn_blind_serial_move") + " (" + mSerial_id + ")");
-        if(hasMoveBlind()){
-            btnBlindMove.setVisibility(View.VISIBLE);
-        }else{
-            btnBlindMove.setVisibility(View.GONE);
-        }
         if(serialListData.isEmpty()) {
-            mSerialRecyclerView.setVisibility(View.INVISIBLE);
             tvEmptyState.setText(hmAux_Trans.get("no_record_found_lbl"));
             tvEmptyState.setVisibility(View.VISIBLE);
             llLimitExceeded.setVisibility(View.GONE);
             tvSerialListSize.setVisibility(View.GONE);
-
         }else{
             tvEmptyState.setVisibility(View.GONE);
-            mSerialListAdapter = new Act052_IO_Serial_List_Adapter(this, serialListData, this, isOnline, serial_jump, mPresenter);
-            mSerialRecyclerView.setAdapter(mSerialListAdapter);
-            mSerialRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                private boolean isScrolling;
-
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
-
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    int visibleItemCount = mSerialListLayoutManager.getChildCount();
-                    int totalItemCount = mSerialListLayoutManager.getItemCount();
-                    int pastVisibleItems = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                    if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                        //End of list
-                        if(hasMoveBlind()) {
-                            btnBlindMove.setVisibility(View.VISIBLE);
-                        }
-                    }else {
-                        if (hasMoveBlind()) {
-                            btnBlindMove.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            });
         }
+        //
+        mSerialListAdapter = new Act052_IO_Serial_List_Adapter(
+            this,
+            serialListData,
+            this,
+            isOnline,
+            serial_jump,
+            hasMoveBlind() ? mSerial_id : ""
+        );
 
+        mSerialRecyclerView.setAdapter(mSerialListAdapter);
     }
 
     private void setTvSerialListSize() {
@@ -260,12 +231,6 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
                 mPresenter.createNewSerialFlow(mProduct_id, mSerial_id);
             }
         });
-        btnBlindMove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.callBlindMove(mProduct_id, mSerial_id);
-            }
-        });
     }
 
     private void recoverIntentsInfo() {
@@ -322,6 +287,11 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     @Override
     public void onClickListItem(IO_Serial_Process_Record data) {
         mPresenter.processListItem(data);
+    }
+
+    @Override
+    public void onBlindMoveClick() {
+        mPresenter.callBlindMove(mProduct_id, mSerial_id);
     }
 
     @Override
