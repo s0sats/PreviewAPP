@@ -6,17 +6,13 @@ import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
-/**
- * BARRIONUEVO - 17/06/2019
- *
- * Verifica nas tabelas de io_outbound_item e io_move e gera cabeçalho de envio da outbound
- * Retorna Array de HmAux
- *
+/*
+    Contabilizacao de Outbounds unicas pendentes de envio.
  */
-public class IO_Outbound_Sql_009 implements Specification {
+public class IO_Outbound_Sql_013 implements Specification {
     private long customer_code;
 
-    public IO_Outbound_Sql_009(long customer_code) {
+    public IO_Outbound_Sql_013(long customer_code) {
         this.customer_code = customer_code;
     }
 
@@ -25,11 +21,9 @@ public class IO_Outbound_Sql_009 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
-                        "  t.customer_code, \n" +
+                        "  DISTINCT t.customer_code, \n" +
                         "  t.outbound_prefix, \n" +
-                        "  t.outbound_code,\n" +
-                        "  --t.outbound_item,\n" +
-                        "  max(t.scn) " + IO_OutboundDao.SCN + "\n" +
+                        "  t.outbound_code\n" +
                         " FROM (\n " +
                         "        SELECT\n" +
                         "             it.customer_code, \n" +
