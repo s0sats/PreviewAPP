@@ -288,6 +288,22 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
     }
 
+    /**
+     * Metodo que atualizar args e vars de inbound
+     * @param inboundPrefix
+     * @param inboundCode
+     */
+    public void updateInboundArguments(int inboundPrefix, int inboundCode){
+        this.inboundPrefix = inboundPrefix;
+        this.inboundCode = inboundCode;
+        //
+        Bundle args = getArguments();
+        if (args != null) {
+            args.putInt(IO_InboundDao.INBOUND_PREFIX, inboundPrefix);
+            args.putInt(IO_InboundDao.INBOUND_CODE, inboundCode);
+        }
+
+    }
 
     @Override
     public void loadDataToScreen() {

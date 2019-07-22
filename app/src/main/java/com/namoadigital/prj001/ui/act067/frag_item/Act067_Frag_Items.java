@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -198,6 +197,24 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
             mOutbound = mFragItemListener.getOutboundFromAct(outboundPrefix,outboundCode);
         }
     }
+
+    /**
+     * Metodo que atualizar args e vars de inbound
+     * @param outboundPrefix
+     * @param outboundCode
+     */
+    public void updateOutboundArguments(int outboundPrefix, int outboundCode){
+        this.outboundPrefix = outboundPrefix;
+        this.outboundCode = outboundCode;
+        //
+        Bundle args = getArguments();
+        if (args != null) {
+            args.putInt(IO_OutboundDao.OUTBOUND_PREFIX,outboundPrefix);
+            args.putInt(IO_OutboundDao.OUTBOUND_CODE,outboundCode);
+        }
+
+    }
+
 
     private void iniAction() {
         mketFilter.setOnReportDrawbleRightClick(new MKEditTextNM.IMKEditTextDrawableRight() {

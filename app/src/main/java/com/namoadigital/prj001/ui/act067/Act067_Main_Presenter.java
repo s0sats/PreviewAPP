@@ -205,35 +205,51 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
     }
 
     @Override
-    public void processPickingMove(HMAux item) {
-        Bundle bundle = new Bundle();
-        IO_MoveDao ioMoveDao = new IO_MoveDao(context,
+    public void processPickingMove(String outboundStatus, HMAux item) {
+
+        if(outboundStatus.equals(ConstantBaseApp.SYS_STATUS_PENDING)){
+            mView.showAlert(
+                hmAux_Trans.get("alert_not_processing_status_ttl"),
+                hmAux_Trans.get("alert_not_processing_status_msg")
+            );
+        }else {
+
+            Bundle bundle = new Bundle();
+            IO_MoveDao ioMoveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
 
-        IO_Move io_move;
-        try {
-            io_move = ioMoveDao.getByString(
+            IO_Move io_move;
+            try {
+                io_move = ioMoveDao.getByString(
                     new IO_Move_Order_Item_Sql_014(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            item.get(IO_Outbound_ItemDao.OUTBOUND_PREFIX),
-                            item.get(IO_Outbound_ItemDao.OUTBOUND_CODE),
-                            item.get(IO_Outbound_ItemDao.OUTBOUND_ITEM)
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        item.get(IO_Outbound_ItemDao.OUTBOUND_PREFIX),
+                        item.get(IO_Outbound_ItemDao.OUTBOUND_CODE),
+                        item.get(IO_Outbound_ItemDao.OUTBOUND_ITEM)
                     ).toSqlQuery()
-            );
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            io_move = null;
+                );
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                io_move = null;
+            }
+            //
+            if(io_move != null) {
+                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
+                bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
+                bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
+                bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+                bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) io_move.getProduct_code());
+                bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
+
+                mView.callAct058(bundle);
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_picking_move_not_found_ttl"),
+                    hmAux_Trans.get("alert_picking_move_not_found_msg")
+                );
+            }
         }
-
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT067);
-        bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, io_move.getMove_type());
-        bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
-        bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
-        bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) io_move.getProduct_code());
-        bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, io_move.getSerial_code());
-
-        mView.callAct058(bundle);
     }
 
     @Override

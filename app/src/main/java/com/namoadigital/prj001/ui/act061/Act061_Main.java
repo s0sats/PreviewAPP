@@ -523,6 +523,14 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             mPrefix = inbound_prefix;
             mCode = inbound_code;
             bNewProcess = false;
+            //Atualiza prefix e codigo nos demais fragment
+            if(act061_frag_item != null) {
+                act061_frag_item.updateInboundArguments(mPrefix,mCode);
+            }
+            //
+            if(act061_frag_drawer != null) {
+                act061_frag_drawer.updateInboundArguments(mPrefix,mCode);
+            }
         }
         //Atualiza dados da inbound naAct
         loadInbound();
@@ -540,8 +548,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
 
     @Override
     public IO_Inbound getInboundFromAct(int prefix, int code) {
-        //return mInbound;
-        return mPresenter.getInbound(mPrefix, mCode);
+        return mPresenter.getInbound(prefix, code);
     }
 
     @Override

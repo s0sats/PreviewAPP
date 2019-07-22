@@ -98,18 +98,25 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
             }
         });
 
-        ss_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-                                              @Override
-                                              public void onItemPreSelected(HMAux hmAux) {
+        ss_zone.setOnItemSelectedListener( new SearchableSpinner.OnItemSelectedListener() {
+              @Override
+              public void onItemPreSelected(HMAux hmAux) {
 
-                                              }
+              }
 
-                                              @Override
-                                              public void onItemPostSelected(HMAux hmAux) {
-                                                  processZoneValueChange(hmAux);
-                                              }
+              @Override
+              public void onItemPostSelected(HMAux hmAux) {
+                  processZoneValueChange(hmAux);
+              }
                                           }
         );
+
+        ss_local.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+            @Override
+            public void onValueChanged(HMAux hmAux) {
+                processLocalValueChange(hmAux);
+            }
+        });
 
         ss_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override

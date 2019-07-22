@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
+import az.plainpie.PieView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -32,8 +32,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import az.plainpie.PieView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -292,6 +290,22 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
     }
 
+    /**
+     * Metodo que atualizar args e vars de inbound
+     * @param outboundPrefix
+     * @param outboundCode
+     */
+    public void updateOutboundArguments(int outboundPrefix, int outboundCode){
+        this.outboundPrefix = outboundPrefix;
+        this.outboundCode = outboundCode;
+        //
+        Bundle args = getArguments();
+        if (args != null) {
+            args.putInt(IO_OutboundDao.OUTBOUND_PREFIX,outboundPrefix);
+            args.putInt(IO_OutboundDao.OUTBOUND_CODE,outboundCode);
+        }
+
+    }
 
     @Override
     public void loadDataToScreen() {

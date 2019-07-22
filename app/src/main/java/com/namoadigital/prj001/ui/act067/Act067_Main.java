@@ -160,6 +160,10 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         transList.add("alert_download_return_error_msg");
         transList.add("alert_header_changes_will_be_lost_ttl");
         transList.add("alert_header_changes_will_be_lost_msg");
+        transList.add("alert_not_processing_status_ttl");
+        transList.add("alert_not_processing_status_msg");
+        transList.add("alert_picking_move_not_found_ttl");
+        transList.add("alert_picking_move_not_found_msg");
 
         //Trad Frag Drawer
         transList.addAll(Act067_Frag_Drawer.getFragTranslationsVars());
@@ -481,6 +485,14 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             mPrefix = outbound_prefix;
             mCode = outbound_code;
             bNewProcess = false;
+            //Atualiza prefix e codigo nos demais fragment
+            if(act067_frag_item != null) {
+                act067_frag_item.updateOutboundArguments(mPrefix,mCode);
+            }
+            //
+            if(act067_frag_drawer != null) {
+                act067_frag_drawer.updateOutboundArguments(mPrefix,mCode);
+            }
         }
         //Atualiza dados da inbound naAct
         loadOutbound();
@@ -606,7 +618,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     @Override
     public void callPickingCreateItemAct(HMAux item) {
-        mPresenter.processPickingMove(item);
+        mPresenter.processPickingMove(mOutbound.getStatus(), item);
     }
 
     @Override

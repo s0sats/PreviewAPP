@@ -239,6 +239,23 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
 
     }
 
+    /**
+     * Metodo que atualizar args e vars de inbound
+     * @param inboundPrefix
+     * @param inboundCode
+     */
+    public void updateInboundArguments(int inboundPrefix, int inboundCode){
+        this.inboundPrefix = inboundPrefix;
+        this.inboundCode = inboundCode;
+        //
+        Bundle args = getArguments();
+        if (args != null) {
+            args.putInt(IO_InboundDao.INBOUND_PREFIX, inboundPrefix);
+            args.putInt(IO_InboundDao.INBOUND_CODE, inboundCode);
+        }
+
+    }
+
     @Override
     public void loadDataToScreen() {
         //super.loadDataToScreen();
