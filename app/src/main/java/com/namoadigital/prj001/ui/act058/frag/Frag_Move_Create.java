@@ -811,10 +811,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 mkdate_confirm.setVisibility(View.VISIBLE);
         }
 
-        mListener.onAddOrRemoveControlSS(ss_zone, true);
-        mListener.onAddOrRemoveControlSS(ss_local, true);
-        mListener.onAddOrRemoveControl(mket_serial, true);
-        mListener.onAddOrRemoveControl(mkedit_coments, true);
+
+
     }
 
     private void setViewEnable() {
@@ -838,10 +836,15 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private void enableForm(boolean isEnable, int visibility) {
         mket_serial.setEnabled(isEnable);
-        if(isEnable && !move_type.equals(Constant.IO_OUTBOUND)) {
+        if(isEnable && !move_type.equals(Constant.IO_OUTBOUND)
+        || status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             ss_zone.setmEnabled(isEnable);
             ss_local.setmEnabled(isEnable);
         }
+        mListener.onAddOrRemoveControlSS(ss_zone, isEnable);
+        mListener.onAddOrRemoveControlSS(ss_local, isEnable);
+        mListener.onAddOrRemoveControl(mket_serial, isEnable);
+        mListener.onAddOrRemoveControl(mkedit_coments, isEnable);
         ss_reason.setmEnabled(isEnable);
         ss_class.setmEnabled(isEnable);
         iv_add_tracking.setEnabled(isEnable);

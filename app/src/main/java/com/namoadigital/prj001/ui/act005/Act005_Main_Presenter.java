@@ -2,6 +2,9 @@ package com.namoadigital.prj001.ui.act005;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
@@ -36,6 +39,14 @@ public interface Act005_Main_Presenter {
 
     void executeApSave();
 
+    void executeMoveSave();
+
+    void executeBlindMoveSave();
+
+    void executeItemInboundSave();
+
+    void executeItemOutboundSave();
+
     void executeSerialSave();
 
     String getProductInfo(Long product_code);
@@ -47,4 +58,6 @@ public interface Act005_Main_Presenter {
     void clearLocalSession();
 
     int getChatBadgeQty();
+
+    ArrayList<HMAux> processIOItemSaveReturn(String mLink, String io_item_lbl);
 }

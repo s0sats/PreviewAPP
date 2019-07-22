@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -34,12 +37,17 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
@@ -51,6 +59,10 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -61,6 +73,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -83,7 +96,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
@@ -648,6 +663,74 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
+    public ArrayList<HMAux> processIOItemSaveReturn(String jsonRet, String itemLabel) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+
+        IO_MoveDao moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        if (actReturnList != null && actReturnList.size() > 0) {
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound/outbound
+            for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
+                String moveCode = "";
+                //
+                if (actReturn.isMove()) {
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if (ioMove != null) {
+                        moveCode = ioMove.getMove_prefix() + "." + ioMove.getMove_code();
+                    }
+                } else {
+                    moveCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                }
+                if (!auxResult.containsKey(moveCode)
+                        || (auxResult.containsKey(moveCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    auxResult.put(moveCode, actReturn.getRetStatus());
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for (Map.Entry<String, String> item : auxResult.entrySet()) {
+
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put("type", itemLabel);
+                hmAux.put("item", item.getKey());
+                hmAux.put("status", item.getValue());
+                hmAux.put("final_status",  item.getKey()+ " / " +item.getValue());
+                //
+                resultList.add(hmAux);
+
+
+            }
+            //
+            return resultList;
+        }
+        return null;
+    }
+
+    @Override
     public void executeSyncProcess(int jump_validation_UR) {
 
         ArrayList<String> data_package = new ArrayList<>();
@@ -1010,6 +1093,58 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mView.setWsSoProcess(WS_AP_Save.class.getSimpleName());
         //
         Intent mIntent = new Intent(context, WBR_AP_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeMoveSave() {
+        mView.setWsSoProcess(WS_IO_Move_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeBlindMoveSave() {
+        mView.setWsSoProcess(WS_IO_Blind_Move_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Blind_Move_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeItemInboundSave() {
+        mView.setWsSoProcess(WS_IO_Inbound_Item_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeItemOutboundSave() {
+        mView.setWsSoProcess(WS_IO_Outbound_Item_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
 

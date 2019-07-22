@@ -504,7 +504,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 
     @Override
     public void handleNoConnection() {
-        progressDialog.dismiss();
         mPresenter.executeSerialProcessSearch(
                 mProduct_id,
                 mSerial_id,
