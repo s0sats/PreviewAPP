@@ -310,6 +310,7 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         iv_serial_history = serialLayout.findViewById(R.id.iv_serial_history);
         controls_ss.add(ss_zone);
         controls_ss.add(ss_local);
+        controls_ss.add(ss_reason);
     }
 
     @Override
