@@ -1315,6 +1315,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
+
         if (!wsProcess.equals("")) {
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
                 progressDialog.dismiss();
@@ -1477,9 +1478,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 }
             }
 
-            mPresenter.executeSoSaveApproval();  // 6
+            mPresenter.executeMoveSave();  // 6
 
-        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -1502,7 +1503,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             mPresenter.executeBlindMoveSave();  // 7
 
-        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getName())) {
+        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -1525,7 +1526,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             mPresenter.executeItemInboundSave();  // 8
 
-        }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getName())) {
+        }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             ArrayList<HMAux> inbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_INBOUND_ITEM");
@@ -1536,7 +1537,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             mPresenter.executeItemOutboundSave();  // 9
 
-        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getName())) {
+        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             ArrayList<HMAux> outbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_OUTBOUND_ITEM");

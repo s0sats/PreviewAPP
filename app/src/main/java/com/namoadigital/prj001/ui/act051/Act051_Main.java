@@ -530,10 +530,13 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
             if (!moves[0].isEmpty()) {
                 showResults(moves, true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+                progressDialog.dismiss();
                 mPresenter.syncInboundItem();
             } else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                progressDialog.dismiss();
                 mPresenter.syncOutobundItem();
             } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                progressDialog.dismiss();
                 mPresenter.syncBlindItem();
             }
             } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
@@ -543,6 +546,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 mPresenter.processIOItemSaveReturn(mLink, "outbound_move_lbl");
                 progressDialog.dismiss();
             } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
+                progressDialog.dismiss();
                 String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
                 try {
                     if (!moves[0].isEmpty()) {
@@ -551,7 +555,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            progressDialog.dismiss();
         }
         //ronaldo
     }
