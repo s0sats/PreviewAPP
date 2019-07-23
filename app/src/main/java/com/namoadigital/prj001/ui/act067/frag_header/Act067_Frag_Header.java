@@ -656,7 +656,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             }catch (NullPointerException e ){
                 ToolBox_Inf.registerException(e);
             }
-            msg += hmAux_Trans.get("alert_no_from_type_selected_msg") + "\n";
+            msg += hmAux_Trans.get("alert_no_to_type_selected_msg") + "\n";
             validate = false;
 
         }
@@ -673,7 +673,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     }catch (NullPointerException e ){
                         ToolBox_Inf.registerException(e);
                     }
-                    msg += hmAux_Trans.get("alert_no_from_site_selected_msg") + "\n";
+                    msg += hmAux_Trans.get("alert_no_to_site_selected_msg") + "\n";
                     validate = false;
                 }
             } else {
@@ -686,7 +686,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     }catch (NullPointerException e ){
                         ToolBox_Inf.registerException(e);
                     }
-                    msg += hmAux_Trans.get("alert_no_from_partner_selected_msg") + "\n";
+                    msg += hmAux_Trans.get("alert_no_to_partner_selected_msg") + "\n";
                     validate = false;
                 }
             }
