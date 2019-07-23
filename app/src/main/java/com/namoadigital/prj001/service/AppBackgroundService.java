@@ -69,8 +69,14 @@ public class AppBackgroundService extends Service {
         Log.d("ChatEvent"," onDestroy AppBackgroundService \n");
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
-        //
-        singletonWebSocket.destroySingletonWebSocket();
+        //LUCHE - 23/07/2019
+        //Adicionado tratativa de null antes de chamardestroySingletonWebSocket
+        //A falta da tratativa, gerava crash no app caso o usr perdesse sessão
+        //enquanto device apagado ou desligado e a ultima tela carregada fosse a
+        //act003
+        if(singletonWebSocket != null) {
+            singletonWebSocket.destroySingletonWebSocket();
+        }
     }
 
 
