@@ -5,21 +5,53 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.T_IO_Serial_Process_Response;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Search;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_001;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_009;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_009;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_010;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_012;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_002;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 
@@ -28,6 +60,9 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 
     private MD_ProductDao productDao;
     private MD_Product_SerialDao serialDao;
+    private IO_MoveDao moveDao;
+    private IO_InboundDao ioInboundDao;
+    private IO_OutboundDao ioOutboundDao;
 
     private HMAux hmAux_Trans;
     private MD_Product mdProduct;
@@ -35,15 +70,36 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     private String mProduct_id;
     private String mSerial_id;
     private String mTracking;
-    private boolean allowBlindMove =true;
+    private boolean allowBlindMove = true;
+    private int waitingSyncMovePendency;
+    private int waitingSyncPutAwayPendency;
+    private int waitingSyncPickingPendency;
+    private int waitingSyncBlindPendency;
 
     public Act051_Main_Presenter(Context context, Act051_Main_Contract.I_View mView, MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.productDao = productDao;
         this.hmAux_Trans = hmAux_Trans;
+        waitingSyncMovePendency = 0;
+        waitingSyncPutAwayPendency = 0;
+        waitingSyncPickingPendency = 0;
+        waitingSyncBlindPendency = 0;
+        this.serialDao = new MD_Product_SerialDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
 
-        this.serialDao = new MD_Product_SerialDao(context);
+        this.moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        this.ioInboundDao = new IO_InboundDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+
+        this.ioOutboundDao = new IO_OutboundDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
     }
 
     @Override
@@ -161,7 +217,6 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                         tracking
                 ).toSqlQuery()
         );
-
 
         serial_list.addAll(move_list);
         serial_list.addAll(in_conf_list);
@@ -342,6 +397,217 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
     @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
+    }
+
+    @Override
+    public void syncMovements() {
+        if (ToolBox_Con.isOnline(context)) {
+            callBroadcast(
+                    WS_IO_Move_Save.class.getName(),
+                    "dialog_save_move_ttl",
+                    "dialog_save_move_msg",
+                    new Intent(context, WBR_IO_Move_Save.class),
+                    new Bundle()
+            );
+        } else {
+            mView.handleNoConnection();
+        }
+    }
+
+    @Override
+    public void syncBlindItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            callBroadcast(
+                    WS_IO_Blind_Move_Save.class.getName(),
+                    "dialog_save_move_ttl",
+                    "dialog_save_move_msg",
+                    new Intent(context, WBR_IO_Blind_Move_Save.class),
+                    new Bundle()
+            );
+        } else {
+            mView.handleNoConnection();
+        }
+    }
+
+    @Override
+    public void syncOutobundItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            callBroadcast(
+                    WS_IO_Outbound_Item_Save.class.getName(),
+                    "progress_save_outbound_item_ttl",
+                    "progress_save_outbound_item_msg",
+                    new Intent(context, WBR_IO_Outbound_Item_Save.class),
+                    new Bundle()
+            );
+        } else {
+            mView.handleNoConnection();
+        }
+    }
+
+    @Override
+    public void syncInboundItem() {
+        if (ToolBox_Con.isOnline(context)) {
+            callBroadcast(
+                    WS_IO_Inbound_Item_Save.class.getName(),
+                    "progress_save_inbound_item_ttl",
+                    "progress_save_inbound_item_msg",
+                    new Intent(context, WBR_IO_Inbound_Item_Save.class),
+                    new Bundle()
+            );
+        } else {
+            mView.handleNoConnection();
+        }
+    }
+
+    private int getPendencyCounterFromHmaux(HMAux result) {
+        int pendencies = 0;
+        if (result != null && result.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = Integer.valueOf(result.get(IO_MoveDao.PENDING_QTY));
+            } catch (Exception e) {
+                pendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        return pendencies;
+    }
+
+    @Override
+    public boolean hasWaitingSyncMovePendency() {
+        HMAux resultMoveWaitingSync = moveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
+                        )
+                ).toSqlQuery()
+        );
+        waitingSyncMovePendency = getPendencyCounterFromHmaux(resultMoveWaitingSync);
+
+        return waitingSyncMovePendency > 0;
+    }
+
+    @Override
+    public boolean hasWaitingSyncBlindPendency() {
+        HMAux resultBlindWaitingSync = moveDao.getByStringHM((
+                        new IO_Blind_Move_Sql_006(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+        waitingSyncBlindPendency = getPendencyCounterFromHmaux(resultBlindWaitingSync);
+        return waitingSyncBlindPendency > 0;
+    }
+
+    @Override
+    public boolean hasWaitingSyncPickingPendency() {
+        ArrayList<HMAux> outboundPendency = (ArrayList<HMAux>) ioOutboundDao.query_HM(
+                new IO_Outbound_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        if(outboundPendency!= null) {
+            waitingSyncPickingPendency = outboundPendency.size();
+        }else{
+            waitingSyncPickingPendency = 0;
+        }
+        return waitingSyncPickingPendency > 0;
+    }
+
+    @Override
+    public boolean hasWaitingSyncPutAwayPendency() {
+        //Selecnio Inbound update_required
+        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) ioInboundDao.query_HM(
+                new IO_Inbound_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        if(inboundAux != null) {
+            waitingSyncPutAwayPendency = inboundAux.size();
+        }else{
+            waitingSyncPutAwayPendency = 0;
+        }
+        return waitingSyncPutAwayPendency > 0;
+    }
+
+
+    @Override
+    public void processIOItemSaveReturn(String jsonRet, String itemLabel) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        if (actReturnList != null && actReturnList.size() > 0) {
+            boolean outboundResult = true;
+            int outboundNextIdx = 0;
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound
+            for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
+                String moveCode = "";
+                //
+                if (actReturn.isMove()) {
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if (ioMove != null) {
+                        moveCode = ioMove.getMove_prefix() + "." + ioMove.getMove_code();
+                    }
+                } else {
+                    moveCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                }
+                if (!auxResult.containsKey(moveCode)
+                        || (auxResult.containsKey(moveCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    auxResult.put(moveCode, actReturn.getRetStatus());
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for (Map.Entry<String, String> item : auxResult.entrySet()) {
+
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put("title", hmAux_Trans.get(itemLabel));
+                hmAux.put("label", item.getKey());
+                hmAux.put("status", item.getValue());
+                //
+                resultList.add(hmAux);
+
+
+            }
+            //
+            mView.showResult(resultList);
+        }else{
+            //caso lista vazia segue o fluxo
+            mView.handleNoConnection();
+        }
+    }
+
+    private void callBroadcast(String serviceName, String progress_save_item_ttl, String progress_save_item_msg, Intent mIntent, Bundle bundle) {
+        mView.setWsProcess(serviceName);
+        //
+        mView.showPD(
+                hmAux_Trans.get(progress_save_item_ttl),
+                hmAux_Trans.get(progress_save_item_msg)
+        );
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private ArrayList<IO_Serial_Process_Record> processEqualCheck(ArrayList<IO_Serial_Process_Record> serial_list) {

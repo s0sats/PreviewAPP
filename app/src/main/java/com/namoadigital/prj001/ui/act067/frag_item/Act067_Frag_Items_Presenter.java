@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -39,5 +40,20 @@ public class Act067_Frag_Items_Presenter implements Act067_Frag_Items_Contract.I
                 outboundCode
             ).toSqlQuery()
         );
+    }
+
+    @Override
+    public int getSerialCodePosition(ArrayList<HMAux> itemList, String productCode, String serialCode) {
+        for(int i = 0; i < itemList.size();i++){
+            if(
+                    itemList.get(i).hasConsistentValue(IO_Outbound_ItemDao.PRODUCT_CODE)
+                            && itemList.get(i).hasConsistentValue(IO_Outbound_ItemDao.SERIAL_CODE)
+                            && itemList.get(i).get(IO_Outbound_ItemDao.PRODUCT_CODE).equals(productCode)
+                            && itemList.get(i).get(IO_Outbound_ItemDao.SERIAL_CODE).equals(serialCode)
+            ){
+                return i;
+            }
+        }
+        return 0;
     }
 }

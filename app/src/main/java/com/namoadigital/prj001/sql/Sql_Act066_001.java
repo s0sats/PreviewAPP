@@ -31,7 +31,7 @@ public class Sql_Act066_001 implements Specification {
                         "               SELECT            \n" +
                         "                 round( COUNT(1) * (i.picking_process + 1) , 2) tot,         \n" +
                         "                 SUM(\n" +
-                        "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' OR  it.status = '"+ ConstantBaseApp.SYS_STATUS_PICKING +"' \n" +
+                        "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' OR  it.status = '"+ ConstantBaseApp.SYS_STATUS_PICKING_DONE +"' \n" +
                         "                            THEN 1\n" +
                         "                            ELSE 0\n" +
                         "                       END\n" +

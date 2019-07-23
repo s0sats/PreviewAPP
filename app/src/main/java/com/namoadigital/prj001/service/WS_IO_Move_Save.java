@@ -121,6 +121,7 @@ public class WS_IO_Move_Save extends IntentService {
             for (IO_Move move : moveList) {
                 move.setToken(token);
             }
+            moveDao.addUpdate(moveList, false);
             reRun = false;
         }
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
@@ -222,20 +223,29 @@ public class WS_IO_Move_Save extends IntentService {
 
                 if(move_ret.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DENIED)) {
 
-                    ioMove.setStatus(ConstantBase.SYS_STATUS_PENDING);
-                    ioMove.setTo_zone_code(null);
-                    ioMove.setTo_local_code(null);
-                    ioMove.setReason_code(null);
-                    ioMove.setTo_class_code(null);
-                    ioMove.setDone_date(null);
-                    ioMove.setDone_user(null);
-                    ioMove.setDone_user_nick(null);
-                    ioMove.setToken(null);
-                    DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
-
-                    if (daoObjReturn.hasError()){
-                        throw new Exception(daoObjReturn.getErrorMsg());
+                    if (move_ret.getMove() != null && move_ret.getMove().isEmpty()) {
+                        for (IO_Move io_move : move_ret.getMove()) {
+                            DaoObjReturn daoObjReturn = moveDao.addUpdate(io_move);
+                            if (daoObjReturn.hasError()){
+                                throw new Exception(daoObjReturn.getErrorMsg());
+                            }
+                        }
+                    }else {
+                        ioMove.setStatus(ConstantBase.SYS_STATUS_PENDING);
+                        ioMove.setTo_zone_code(null);
+                        ioMove.setTo_local_code(null);
+                        ioMove.setReason_code(null);
+                        ioMove.setTo_class_code(null);
+                        ioMove.setDone_date(null);
+                        ioMove.setDone_user(null);
+                        ioMove.setDone_user_nick(null);
+                        ioMove.setToken(null);
+                        DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
+                        if (daoObjReturn.hasError()){
+                            throw new Exception(daoObjReturn.getErrorMsg());
+                        }
                     }
+
                 }else if(move_ret.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_ERROR)) {
 
                     ioMove.setToken(null);

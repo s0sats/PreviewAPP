@@ -55,6 +55,10 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
@@ -1475,7 +1479,75 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             mPresenter.executeSoSaveApproval();  // 6
 
-        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getName())) {
+            setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("item", fields[0]);
+                    mHmAux.put("type", "ASSETS_MOVE_PLANNED");
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
+
+            mPresenter.executeBlindMoveSave();  // 7
+
+        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getName())) {
+            setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("item", fields[0]);
+                    mHmAux.put("type", "ASSETS_MOVE");
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
+
+            mPresenter.executeItemInboundSave();  // 8
+
+        }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getName())) {
+            setWsSoProcess("");
+
+            ArrayList<HMAux> inbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_INBOUND_ITEM");
+
+            if(inbound_items != null) {
+                wsResults.addAll(inbound_items);
+            }
+
+            mPresenter.executeItemOutboundSave();  // 9
+
+        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getName())) {
+            setWsSoProcess("");
+
+            ArrayList<HMAux> outbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_OUTBOUND_ITEM");
+
+            if(outbound_items != null) {
+                wsResults.addAll(outbound_items);
+            }
+
+            mPresenter.executeSoSaveApproval();  // 10
+
+        }   else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
 
             String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -1714,6 +1786,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     break;
                 case "SO_EXPRESS":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
+                    break;
+                case "ASSETS_MOVE":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_move"));
                     break;
 
             }

@@ -263,14 +263,15 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             if(processType == null){
                 processType = "";
             }
-
+            iv_io_process_type.setVisibility(View.VISIBLE);
             switch (processType) {
                 case ConstantBaseApp.IO_INBOUND:
-                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.forward_gre));
+                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_right_bold_black_24dp));
                     break;
                 case ConstantBaseApp.IO_OUTBOUND:
-                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_thick));
+                    iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_arrow_left_bold_black_24dp));
                     break;
+                case ConstantBaseApp.IO_PROCESS_MOVE:
                 case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                     iv_io_process_type.setBackground(context.getResources().getDrawable(R.drawable.ic_swap_horiz_black_24dp));
                     break;
@@ -279,7 +280,6 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
             }
             tv_io_process_type.setText(hmAux_Trans.get(processType));
         }
-
     }
     public interface Act055ListListener {
 

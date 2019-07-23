@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act067_IO_Items_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.ui.act067.frag_drawer.Act067_Frag_Drawer;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -43,6 +44,8 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
     private Switch swActionFilter;
     private RecyclerView rvItems;
     private Act067_IO_Items_Adapter mAdapter;
+    private String productCode;
+    private String serialCode;
     //private Button btnAddItem;
 
     /**
@@ -72,13 +75,15 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
         void callSerialEdition(HMAux item);
     }
 
-    public static Act067_Frag_Items getInstance(HMAux hmAux_Trans, int outbound_prefix, int outbound_code){
+    public static Act067_Frag_Items getInstance(HMAux hmAux_Trans, int outbound_prefix, int outbound_code, String productCode, String serialCode){
         Act067_Frag_Items fragment = new Act067_Frag_Items();
         Bundle args = new Bundle();
         //
         args.putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
         args.putInt(IO_OutboundDao.OUTBOUND_PREFIX,outbound_prefix);
         args.putInt(IO_OutboundDao.OUTBOUND_CODE,outbound_code);
+        args.putString(IO_Outbound_ItemDao.PRODUCT_CODE,productCode);
+        args.putString(IO_Outbound_ItemDao.SERIAL_CODE,serialCode);
         args.putBoolean(FRAG_SWITCH_STATE, true);
         //
         fragment.setArguments(args);
@@ -113,6 +118,8 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
             hmAux_Trans =  HMAux.getHmAuxFromHashMap((HashMap<String,String>)arguments.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY));
             outboundPrefix = arguments.getInt(IO_OutboundDao.OUTBOUND_PREFIX,-1);
             outboundCode = arguments.getInt(IO_OutboundDao.OUTBOUND_CODE,-1);
+            productCode = arguments.getString(IO_Outbound_ItemDao.PRODUCT_CODE,"-1");
+            serialCode = arguments.getString(IO_Outbound_ItemDao.SERIAL_CODE,"-1");
             filterActionPendencies = arguments.getBoolean(FRAG_SWITCH_STATE,true);
         }
     }
@@ -281,7 +288,9 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
                     R.layout.act067_frag_item_cell,
                     itemList,
                     allowNewItem(),
-                    swActionFilter.isChecked()
+                    swActionFilter.isChecked(),
+                    productCode,
+                    serialCode
             );
             //
             mAdapter.setOnIoItemClickListener(new Act067_IO_Items_Adapter.OnIoItemClickListener() {
@@ -314,8 +323,16 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
                 }
             });
             //
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rvItems.setLayoutManager(new LinearLayoutManager(context));
             rvItems.setAdapter(mAdapter);
+            //Se foi passado serial, modifica cor da celula e posiciona no serial passado.
+            if(!productCode.equals("-1") && !serialCode.equals("-1")){
+                int serialPosition = mPresenter.getSerialCodePosition(itemList,productCode,serialCode);
+                if(serialPosition > 0){
+                    rvItems.scrollToPosition(serialPosition);
+                }
+            }
             rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -343,7 +360,9 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
     }
 
     private boolean allowNewItem() {
-        return mOutbound.getAllow_new_item() == 1 && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+        return mOutbound.getAllow_new_item() == 1
+                && (!mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                    && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED));
     }
 
     public static List<String> getFragTranslationsVars() {

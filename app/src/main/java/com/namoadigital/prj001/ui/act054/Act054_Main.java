@@ -31,6 +31,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,7 +42,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
 
     public static final String ZERO_PENDENCY = "(0)";
-    public static final String IS_LOCAL_PROCESS = "isLocalProcess";
     private CheckBox chkInbound;
     private CheckBox chkOutbound;
     private CheckBox chkPlannedMove;
@@ -126,7 +126,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
         transList.add("alert_move_results_ttl");
-        transList.add("alert_offline_search_title");
+        transList.add("alert_offline_search_ttl");
         transList.add("alert_offline_search_msg");
         transList.add("alert_result_movement");
         transList.add("progress_save_outbound_item_ttl");
@@ -280,7 +280,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
                             mPresenter.syncMovements();
                         } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                             mPresenter.executeWsSaveInboundItem();
-                        }  else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                        } else if (mPresenter.hasWaitingSyncPickingPendency()) {
                             mPresenter.executeWsSaveOutobundItem();
                         } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                             mPresenter.executeWsSaveBlindItem();
@@ -340,7 +340,7 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         } else {
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("alert_offline_search_title"),
+                    hmAux_Trans.get("alert_offline_search_ttl"),
                     hmAux_Trans.get("alert_offline_search_msg"),
                     null,
                     0
@@ -356,7 +356,8 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     public void callAct055(Bundle bundle) {
         Intent mIntent = new Intent(context, Act055_Main.class);
         if (bundle != null) {
-            bundle.putBoolean(IS_LOCAL_PROCESS, isLocalProcess);
+            bundle.putBoolean(ConstantBaseApp.IS_LOCAL_PROCESS, isLocalProcess);
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT054);
             mIntent.putExtras(bundle);
         }
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -385,15 +386,14 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void showResult(ArrayList<HMAux> resultList) {
-
         if (resultList.size() > 0) {
             wsResults.addAll(resultList);
-            if(!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
-            && mPresenter.hasWaitingSyncPickingPendency()){
+            if (!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
+                    && mPresenter.hasWaitingSyncPickingPendency()) {
                 mPresenter.executeWsSaveOutobundItem();
-            }else if (mPresenter.hasWaitingSyncBlindPendency()){
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                 mPresenter.executeWsSaveBlindItem();
-            }else {
+            } else {
                 showNewOptDialog(wsResults);
             }
         } else {
@@ -429,12 +429,12 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
             progressDialog.dismiss();
             if (!moves[0].isEmpty()) {
-                showResults(moves,true);
+                showResults(moves, true);
             } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveInboundItem();
             } else if (mPresenter.hasWaitingSyncPickingPendency()) {
                 mPresenter.executeWsSaveOutobundItem();
-            } else if (mPresenter.hasWaitingSyncBlindPendency()){
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
                 mPresenter.executeWsSaveBlindItem();
             }
         } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
@@ -445,16 +445,16 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             progressDialog.dismiss();
         } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
             String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-            try{
-                if(!moves[0].isEmpty()) {
+            try {
+                if (!moves[0].isEmpty()) {
                     showResults(moves, false);
                 }
-            }catch (Exception e ){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            disableProgressDialog();
+            progressDialog.dismiss();
         }
-
+        disableProgressDialog();
         //
     }
 
@@ -481,27 +481,26 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
             HMAux mHmAux = new HMAux();
             mHmAux.put("label", fields[0]);
             mHmAux.put("status", fields[1]);
-            if(isMovePlanned) {
+            if (isMovePlanned) {
                 mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
-            }else{
+            } else {
                 mHmAux.put("title", hmAux_Trans.get("blind_move_lbl"));
             }
             //
             moveList.add(mHmAux);
             //
         }
-
         if (moveList.size() > 0) {
             wsResults.addAll(moveList);
-            if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+            if (isMovePlanned && mPresenter.hasWaitingSyncPutAwayPendency()) {
                 mPresenter.executeWsSaveInboundItem();
-            } else if (mPresenter.hasWaitingSyncPickingPendency()){
-                    mPresenter.executeWsSaveOutobundItem();
-                } else if (mPresenter.hasWaitingSyncBlindPendency()){
-                    mPresenter.executeWsSaveBlindItem();
-                }else {
-                    showNewOptDialog(moveList);
-                }
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.executeWsSaveOutobundItem();
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.executeWsSaveBlindItem();
+            } else {
+                showNewOptDialog(wsResults);
+            }
         }
     }
 
@@ -589,7 +588,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         mPresenter.onBackPressedClicked(Constant.ACT051);
     }
 

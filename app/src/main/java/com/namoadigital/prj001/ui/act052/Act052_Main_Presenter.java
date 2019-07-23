@@ -146,7 +146,6 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
         }else{
             setFlowByProcessStatus(data);
 
-//            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 

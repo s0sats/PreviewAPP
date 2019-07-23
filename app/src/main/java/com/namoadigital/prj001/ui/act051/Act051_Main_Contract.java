@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act051;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 import com.namoadigital.prj001.model.MD_Product;
 
@@ -26,6 +27,23 @@ public interface Act051_Main_Contract {
 
         void onBackPressedClicked();
 
+        void syncMovements();
+
+        void syncBlindItem();
+
+        void syncOutobundItem();
+
+        void syncInboundItem();
+
+        boolean hasWaitingSyncMovePendency();
+
+        boolean hasWaitingSyncBlindPendency();
+
+        boolean hasWaitingSyncPickingPendency();
+
+        boolean hasWaitingSyncPutAwayPendency();
+
+        void processIOItemSaveReturn(String jsonRet, String itemLabel);
     }
 
     interface I_View{
@@ -41,5 +59,10 @@ public interface Act051_Main_Contract {
         void setWsProcess(String process);
 
         void callAct005(Context context);
+
+        void showResult(ArrayList<HMAux> resultList);
+
+        void handleNoConnection();
+
     }
 }

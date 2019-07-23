@@ -7,6 +7,7 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class Sql_Act012_006 implements Specification {
     public static final String PENDING_QTY = "pending_qty";
@@ -33,7 +34,8 @@ public class Sql_Act012_006 implements Specification {
                         IO_MoveDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
-                        "   and s.status = '"+ Constant.SYS_STATUS_PENDING + '\'' )
+                        "   and s.status IN ('"+ Constant.SYS_STATUS_PENDING + "\', "
+                                               + '\'' + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "\')")
                 .toString();
     }
 }

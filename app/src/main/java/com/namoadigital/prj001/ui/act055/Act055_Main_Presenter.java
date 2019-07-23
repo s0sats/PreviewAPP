@@ -75,7 +75,6 @@ public class Act055_Main_Presenter implements Act055_Main_Contract.I_Presenter {
             && searchRet.hasConsistentValue(Constant.HMAUX_PROCESS_KEY)){
 
                 Bundle bundle = new Bundle();
-                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT055);
                 bundle.putString(IO_MoveDao.MOVE_PREFIX, searchRet.get(Constant.HMAUX_PREFIX_KEY));
                 bundle.putString(IO_MoveDao.MOVE_CODE, searchRet.get(Constant.HMAUX_CODE_KEY));
 

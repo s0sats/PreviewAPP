@@ -9,27 +9,96 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
-import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.receiver.*;
-import com.namoadigital.prj001.service.*;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
+import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
+import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.ScreenStatusService;
+import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.sql.CH_Message_Sql_025;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.Sql_Act005_001;
+import com.namoadigital.prj001.sql.Sql_Act005_002;
+import com.namoadigital.prj001.sql.Sql_Act005_003;
+import com.namoadigital.prj001.sql.Sql_Act005_004;
+import com.namoadigital.prj001.sql.Sql_Act005_005;
+import com.namoadigital.prj001.sql.Sql_Act005_006;
+import com.namoadigital.prj001.sql.Sql_Act005_007;
+import com.namoadigital.prj001.sql.Sql_Act005_008;
+import com.namoadigital.prj001.sql.Sql_Act021_002;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
+import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
@@ -47,6 +116,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private EV_User_CustomerDao userCustomerDao;
     private FCMMessageDao fcmMessageDao;
     private SM_SODao soDao;
+    private IO_MoveDao assetMoveDao;
+    private IO_Inbound_ItemDao assetInboundDao;
+    private IO_Outbound_ItemDao assetOutboundDao;
     private GE_Custom_Form_ApDao customFormApDao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
@@ -75,6 +147,21 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.mdProductDao = mdProductDao;
         this.chMessageDao = chMessageDao;
         this.siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.assetMoveDao = new IO_MoveDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.assetInboundDao = new IO_Inbound_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.assetOutboundDao = new IO_Outbound_ItemDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -207,6 +294,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         );
     }
 
+    @Override
     public void getMenuItensV2(HMAux hmAux_Trans) {
         ArrayList<MenuMainNamoa> grantedMenus = new ArrayList<>();
         for (MenuMainNamoa menu : menuList) {
@@ -219,6 +307,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qtySO_Express = "";
                 String qtySerial = "";
                 String qtyBadge2 = "";
+                String qtyAssets = "";
 
 
                 //Reseta valores do badge cada vez que metodo for chamado
@@ -260,12 +349,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_IO_ASSETS:
-                         if(!isSiteLoggedIoControl()){
-                             menu.setIcon(R.drawable.ic_n_assets_inactive2);
-                         }else{
-                             menu.setIcon(R.drawable.ic_n_assets);
-                         }
+                        if (!isSiteLoggedIoControl()) {
+                            menu.setIcon(R.drawable.ic_n_assets_inactive2);
+                        } else {
+                            menu.setIcon(R.drawable.ic_n_assets);
+                        }
                         //tratar badges de pendentes.
+                        try {
+                            qtyAssets = getAssetsPendendyCount();
+                            //
+                        } catch (Exception e) {
+                            qtyAssets = "0";
+                        }
+                        menu.addInBadge1(qtyAssets);
                         break;
 
                     case Act005_Main.MENU_ID_PENDING_DATA:
@@ -321,6 +417,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qtySO);
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
+                        menu.addInBadge1(qtyAssets);
 //                        qty = String.valueOf(
 //                                Integer.parseInt(qty)
 //                                        + Integer.parseInt(qtySO)
@@ -403,6 +500,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(ToolBox_Inf.isSerialWithinTokenFile());
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
+                        menu.addInBadge1(qtyAssets);
 //                        qty = String.valueOf(
 //                                ToolBox_Inf.convertStringToInt(qty) +
 //                                        ToolBox_Inf.convertStringToInt(qtySO) +
@@ -513,6 +611,40 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mView.loadMenuV2(grantedMenus);
     }
 
+    private String getAssetsPendendyCount() {
+        HMAux movePendency = assetMoveDao.getByStringHM((
+                        new IO_Move_Order_Item_Sql_005(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
+                        )
+                ).toSqlQuery()
+        );
+        int pendencies=0;
+        if (movePendency != null && movePendency.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = Integer.valueOf(movePendency.get(IO_MoveDao.PENDING_QTY));
+            } catch (Exception e) {
+                pendencies = 0;
+                e.printStackTrace();
+            }
+        }
+
+        ArrayList<HMAux> outboundPendency = (ArrayList<HMAux>) assetOutboundDao.query_HM(
+                new IO_Outbound_Sql_013(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        ArrayList<HMAux> inboundPendency = (ArrayList<HMAux>) assetInboundDao.query_HM(
+                new IO_Inbound_Sql_013(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        pendencies = pendencies + outboundPendency.size() + inboundPendency.size();
+        return String.valueOf(pendencies);
+    }
+
     @Override
     public int getChatBadgeQty() {
         String qty = "0";
@@ -528,6 +660,74 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         return ToolBox_Inf.convertStringToInt(qty);
+    }
+
+    @Override
+    public ArrayList<HMAux> processIOItemSaveReturn(String jsonRet, String itemLabel) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+
+        IO_MoveDao moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        if (actReturnList != null && actReturnList.size() > 0) {
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound/outbound
+            for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
+                String moveCode = "";
+                //
+                if (actReturn.isMove()) {
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if (ioMove != null) {
+                        moveCode = ioMove.getMove_prefix() + "." + ioMove.getMove_code();
+                    }
+                } else {
+                    moveCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                }
+                if (!auxResult.containsKey(moveCode)
+                        || (auxResult.containsKey(moveCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    auxResult.put(moveCode, actReturn.getRetStatus());
+                }
+            }
+            //For no resumido por inbound montando msg a ser exibida
+            for (Map.Entry<String, String> item : auxResult.entrySet()) {
+
+                HMAux hmAux = new HMAux();
+                //
+                //Monta HmAux
+                hmAux.put("type", itemLabel);
+                hmAux.put("item", item.getKey());
+                hmAux.put("status", item.getValue());
+                hmAux.put("final_status",  item.getKey()+ " / " +item.getValue());
+                //
+                resultList.add(hmAux);
+
+
+            }
+            //
+            return resultList;
+        }
+        return null;
     }
 
     @Override
@@ -595,9 +795,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_IO_ASSETS:
-                    if(isSiteLoggedIoControl()) {
+                    if (isSiteLoggedIoControl()) {
                         mView.callAct051(context);
-                    }else{
+                    } else {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_site_no_io_control_ttl"),
@@ -902,6 +1102,58 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
+    public void executeMoveSave() {
+        mView.setWsSoProcess(WS_IO_Move_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Move_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeBlindMoveSave() {
+        mView.setWsSoProcess(WS_IO_Blind_Move_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Blind_Move_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeItemInboundSave() {
+        mView.setWsSoProcess(WS_IO_Inbound_Item_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Inbound_Item_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeItemOutboundSave() {
+        mView.setWsSoProcess(WS_IO_Outbound_Item_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
     public void executeSerialSave() {
         mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
         //
@@ -1111,7 +1363,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
     }
 
-    private boolean isSiteLoggedIoControl(){
+    private boolean isSiteLoggedIoControl() {
         MD_Site mdSite = siteDao.getByString(
                 new MD_Site_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -1119,7 +1371,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if(mdSite != null && mdSite.getIo_control() == 1){
+        if (mdSite != null && mdSite.getIo_control() == 1) {
             return true;
         }
         return false;

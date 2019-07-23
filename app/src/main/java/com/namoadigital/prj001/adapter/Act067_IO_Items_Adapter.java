@@ -43,6 +43,8 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     private Act067_IO_Items_Adapter.OnIoItemClickListener mOnIoItemClickListener;
     private boolean outboundAllowNewItem;
     private boolean filterActionPendencies;
+    private String productCode;
+    private String serialCode;
 
     public interface OnIoItemClickListener {
 
@@ -63,13 +65,15 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         this.mOnIoItemClickListener = mOnIoItemClickListener;
     }
 
-    public Act067_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues, boolean outboundAllowNewItem, boolean filterActionPendencies) {
+    public Act067_IO_Items_Adapter(Context context, int resource, List<HMAux> mValues, boolean outboundAllowNewItem, boolean filterActionPendencies, String productCode, String serialCode) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
         this.mFilteredValues = mValues;
         this.outboundAllowNewItem = outboundAllowNewItem;
         this.filterActionPendencies = filterActionPendencies;
+        this.productCode = productCode;
+        this.serialCode = serialCode;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -120,8 +124,20 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         try {
             if (viewHolder instanceof Act067_IO_Items_Adapter.IOInboundViewHolder) {
+
                 Act067_IO_Items_Adapter.IOInboundViewHolder holder = (Act067_IO_Items_Adapter.IOInboundViewHolder) viewHolder;
                 holder.bindData(mFilteredValues.get(position));
+                HMAux aux = mFilteredValues.get(position);
+                //
+                if(
+                        aux.hasConsistentValue(IO_Outbound_ItemDao.PRODUCT_CODE)
+                                && aux.hasConsistentValue(IO_Outbound_ItemDao.SERIAL_CODE)
+                                && aux.get(IO_Outbound_ItemDao.PRODUCT_CODE).equals(productCode)
+                                && aux.get(IO_Outbound_ItemDao.SERIAL_CODE).equals(serialCode)
+                ){
+                    holder.highlightCell();
+                }
+
             } else if (viewHolder instanceof Act067_IO_Items_Adapter.FooterVH) {
                 Act067_IO_Items_Adapter.FooterVH holder = (Act067_IO_Items_Adapter.FooterVH) viewHolder;
             }
@@ -230,6 +246,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
 
 
     public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private ConstraintLayout cl_main;
         private TextView tv_row_id;
         private TextView tv_status;
         private ImageView iv_serial;
@@ -254,6 +271,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             super(itemView);
             this.itemView = itemView;
             //
+            cl_main = itemView.findViewById(R.id.act067_frag_item_cell_cl_main);
             tv_row_id = itemView.findViewById(R.id.act067_frag_item_cell_tv_row_id);
             tv_status = itemView.findViewById(R.id.act067_frag_item_cell_tv_status);
             iv_serial = itemView.findViewById(R.id.act067_frag_item_cell_iv_serial);//image
@@ -440,6 +458,9 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         private void resetVisibility() {
+            cl_main.setBackground(
+                    context.getDrawable(R.drawable.namoa_cell_8)
+            );
             tv_brand_model_color.setVisibility(View.GONE);
             tv_brand_model_color.setVisibility(View.GONE);
             tv_brand_model_color.setVisibility(View.GONE);
@@ -478,6 +499,12 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             serialBrandModelColor += (data.get(MD_Product_SerialDao.MODEL_DESC) == null || data.get(MD_Product_SerialDao.MODEL_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.MODEL_DESC));
             serialBrandModelColor += (data.get(MD_Product_SerialDao.COLOR_DESC) == null || data.get(MD_Product_SerialDao.COLOR_DESC).isEmpty() ? "" : " | " + data.get(MD_Product_SerialDao.COLOR_DESC));
             return serialBrandModelColor;
+        }
+
+        public void highlightCell(){
+            cl_main.setBackground(
+                    context.getDrawable(R.drawable.lib_custom_cell_bg_pressed)
+            );
         }
     }
 

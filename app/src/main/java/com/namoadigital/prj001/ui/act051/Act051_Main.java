@@ -4,23 +4,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Serial_Process_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act052.Act052_Main;
@@ -53,6 +60,10 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     private boolean fragIsOnlyOne;
     private Act051_Main_Presenter mPresenter;
     private String wsProcess;
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
+    private String mProduct_id;
+    private String mSerial_id;
+    private String mTracking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +110,11 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         transList.add("alert_no_value_filled_msg");
         transList.add("alert_no_serial_found_ttl");
         transList.add("alert_no_serial_found_msg");
+        transList.add("planned_move_lbl");
+        transList.add("blind_move_lbl");
+        transList.add("inbound_move_lbl");
+        transList.add("outbound_move_lbl");
 
-//        transList.add("mket_serial_hint");
-//        transList.add("mket_tracking_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -211,15 +224,15 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //Se profile de movimentação, exibi btn
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_MOVE_REQUEST)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_MOVE_REQUEST)) {
             mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
         }
         //Se profile de inbound, exibi btn
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND)) {
             mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
         }
         //Se profile de outbound, exibi btn
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO,ConstantBaseApp.PROFILE_MENU_IO_PARAM_OUTBOUND)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_OUTBOUND)) {
             mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
         }
     }
@@ -234,16 +247,31 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     private void processLoadIOAssets(HMAux optionsInfo) {
+        mProduct_id = optionsInfo.get(PRODUCT_ID);
+        mSerial_id = optionsInfo.get(Frg_Serial_Search.SERIAL);
+        mTracking = optionsInfo.get(Frg_Serial_Search.TRACKING);
+
+
         if (optionsInfo.get(PRODUCT_ID).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
         ) {
-            mPresenter.executeSerialProcessSearch(
-                    optionsInfo.get(PRODUCT_ID),
-                    optionsInfo.get(Frg_Serial_Search.SERIAL),
-                    optionsInfo.get(Frg_Serial_Search.TRACKING)
-            );
+            if (mPresenter.hasWaitingSyncMovePendency()) {
+                mPresenter.syncMovements();
+            } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+                mPresenter.syncInboundItem();
+            } else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.syncOutobundItem();
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.syncBlindItem();
+            } else {
+                mPresenter.executeSerialProcessSearch(
+                        mProduct_id,
+                        mSerial_id,
+                        mTracking
+                );
+            }
         } else {
             ToolBox.alertMSG(
                     context,
@@ -360,6 +388,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 0
         );
     }
+
     // NFC Processing Data
     @Override
     protected void nfcData(boolean status, int id, String... value) {
@@ -437,7 +466,7 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         Intent mIntent = new Intent(context, Act052_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
-        if(bundle != null){
+        if (bundle != null) {
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);
@@ -453,6 +482,36 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     }
 
     @Override
+    public void showResult(ArrayList<HMAux> resultList) {
+        if (resultList.size() > 0) {
+            wsResults.addAll(resultList);
+            if (!wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())
+                    && mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.syncOutobundItem();
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.syncBlindItem();
+            } else {
+                showNewOptDialog(wsResults);
+            }
+        } else {
+            mPresenter.executeSerialProcessSearch(
+                    mProduct_id,
+                    mSerial_id,
+                    mTracking
+            );
+        }
+    }
+
+    @Override
+    public void handleNoConnection() {
+        mPresenter.executeSerialProcessSearch(
+                mProduct_id,
+                mSerial_id,
+                mTracking
+        );
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         processCloseACT(mLink, mRequired, new HMAux());
     }
@@ -461,11 +520,37 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(wsProcess.equals(WS_IO_Serial_Process_Search.class.getName())){
+        if (wsProcess.equals(WS_IO_Serial_Process_Search.class.getName())) {
             progressDialog.dismiss();
             //
             mPresenter.processSearchResult(mLink);
-        }else{
+        } else if (wsProcess.equals(WS_IO_Move_Save.class.getName())) {
+            String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            progressDialog.dismiss();
+            if (!moves[0].isEmpty()) {
+                showResults(moves, true);
+            } else if (mPresenter.hasWaitingSyncPutAwayPendency()) {
+                mPresenter.syncInboundItem();
+            } else if (mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.syncOutobundItem();
+            } else if (mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.syncBlindItem();
+            }
+            } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+                mPresenter.processIOItemSaveReturn(mLink, "inbound_move_lbl");
+                progressDialog.dismiss();
+            } else if (wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())) {
+                mPresenter.processIOItemSaveReturn(mLink, "outbound_move_lbl");
+                progressDialog.dismiss();
+            } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
+                String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+                try {
+                    if (!moves[0].isEmpty()) {
+                        showResults(moves, false);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             progressDialog.dismiss();
         }
         //ronaldo
@@ -539,5 +624,95 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    private void showResults(String[] moveArray, boolean isMovePlanned) {
+        ArrayList<HMAux> moveList = new ArrayList<>();
+        for (int i = 0; i < moveArray.length; i++) {
+            String fields[] = moveArray[i].split(Constant.MAIN_CONCAT_STRING_2);
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            if (isMovePlanned) {
+                mHmAux.put("title", hmAux_Trans.get("planned_move_lbl"));
+            } else {
+                mHmAux.put("title", hmAux_Trans.get("blind_move_lbl"));
+            }
+            //
+            moveList.add(mHmAux);
+            //
+        }
+        if (moveList.size() > 0) {
+            wsResults.addAll(moveList);
+            if (isMovePlanned && mPresenter.hasWaitingSyncPutAwayPendency()) {
+                mPresenter.syncInboundItem();
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncPickingPendency()) {
+                mPresenter.syncOutobundItem();
+            } else if (isMovePlanned && mPresenter.hasWaitingSyncBlindPendency()) {
+                mPresenter.syncBlindItem();
+            } else {
+                showNewOptDialog(wsResults);
+            }
+        }
+    }
+
+    private void showNewOptDialog(ArrayList<HMAux> resultList) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        List<HMAux> moveList = new ArrayList<>();
+
+        for (int i = 0; i < resultList.size(); i++) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(Generic_Results_Adapter.LABEL_TTL, resultList.get(i).get("title"));
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
+            moveList.add(hmAux);
+        }
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        moveList,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+                mPresenter.executeSerialProcessSearch(
+                        mProduct_id,
+                        mSerial_id,
+                        mTracking
+                );
+            }
+        });
     }
 }

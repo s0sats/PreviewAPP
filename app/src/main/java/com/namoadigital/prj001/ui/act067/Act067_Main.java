@@ -34,6 +34,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Site;
@@ -45,6 +46,7 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Header_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act058.act.Act058_Main;
 import com.namoadigital.prj001.ui.act060.Act060_Main;
@@ -89,6 +91,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     //Receiver do que captura disparo do FCM
     private FCMReceiver fcmReceiver;
     private String requestAct;
+    private String productCode;
+    private String serialCode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -316,6 +320,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             bNewProcess = bundle.getBoolean(ConstantBaseApp.IO_PROCESS_NEW_KEY, false);
             requestAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT056);
             fragToLoad = bundle.getString(Act067_Main.FIRST_FRAG_TO_LOAD, OUTBOUND_FRAG_HEADER);
+            productCode = bundle.getString(MD_Product_SerialDao.PRODUCT_CODE,"-1");
+            serialCode = bundle.getString(MD_Product_SerialDao.SERIAL_CODE,"-1");
         } else {
             mIoProcess = "";
             mPrefix = -1;
@@ -323,13 +329,15 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             bNewProcess = false;
             fragToLoad = OUTBOUND_FRAG_HEADER;
             requestAct = ConstantBaseApp.ACT056;
+            productCode = "-1";
+            serialCode = "-1";
         }
     }
 
     private void initFragment() {
         act067_frag_drawer = Act067_Frag_Drawer.getInstance(hmAux_Trans, mPrefix, mCode);
         act067_frag_header = Act067_Frag_Header.getInstance(hmAux_Trans, mPrefix, mCode, bNewProcess);
-        act067_frag_item = Act067_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode);
+        act067_frag_item = Act067_Frag_Items.getInstance(hmAux_Trans, mPrefix, mCode, productCode, serialCode);
         //
         setDrawer(act067_frag_drawer, OUTBOUND_FRAG_DRAWER);
         //
@@ -825,6 +833,14 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
     @Override
     public void callAct014() {
         Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct051() {
+        Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
