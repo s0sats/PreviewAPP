@@ -7,19 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.IO_MoveDao;
-import com.namoadigital.prj001.dao.IO_OutboundDao;
-import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -131,9 +123,12 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 //
                 if(
                         aux.hasConsistentValue(IO_Outbound_ItemDao.PRODUCT_CODE)
-                                && aux.hasConsistentValue(IO_Outbound_ItemDao.SERIAL_CODE)
-                                && aux.get(IO_Outbound_ItemDao.PRODUCT_CODE).equals(productCode)
-                                && aux.get(IO_Outbound_ItemDao.SERIAL_CODE).equals(serialCode)
+                        && aux.hasConsistentValue(IO_Outbound_ItemDao.SERIAL_CODE)
+                        && aux.hasConsistentValue(IO_Outbound_ItemDao.STATUS)
+                        && aux.get(IO_Outbound_ItemDao.PRODUCT_CODE).equals(productCode)
+                        && aux.get(IO_Outbound_ItemDao.SERIAL_CODE).equals(serialCode)
+                        && !aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                        && !aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
                 ){
                     holder.highlightCell();
                 }

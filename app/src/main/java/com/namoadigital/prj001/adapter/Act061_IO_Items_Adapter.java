@@ -130,8 +130,11 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 if(
                     aux.hasConsistentValue(IO_Inbound_ItemDao.PRODUCT_CODE)
                     && aux.hasConsistentValue(IO_Inbound_ItemDao.SERIAL_CODE)
+                    && aux.hasConsistentValue(IO_Inbound_ItemDao.STATUS)
                     && aux.get(IO_Inbound_ItemDao.PRODUCT_CODE).equals(productCode)
                     && aux.get(IO_Inbound_ItemDao.SERIAL_CODE).equals(serialCode)
+                    && !aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    && !aux.get(IO_Inbound_ItemDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_INCONSISTENT)
                 ){
                     holder.highlightCell();
                 }

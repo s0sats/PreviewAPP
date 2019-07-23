@@ -9,15 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -31,7 +26,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
@@ -41,7 +35,6 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
-import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create_Contract;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -253,8 +246,8 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT059;
-        mAct_Title = Constant.ACT059 + "_" + "title";
+        mAct_Info = Constant.ACT060;
+        mAct_Title = Constant.ACT060 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -519,9 +512,10 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
-        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));
+        //Caso haja a necessidade de destacar o item na lista de inbound
+//        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(serialInfo.getProduct_code()));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialInfo.getSerial_code()));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_ID, String.valueOf(serialInfo.getSerial_id()));
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT060);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
