@@ -481,6 +481,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    //LUCHE - 24/07/2019
+                                    //Add chamada do getMoveInfoFromBD, pois no caso de DENIED por inconsistencia,
+                                    //o usr não poderá mais alterar essa move.Ao atualizar os dados da move, "novo" status
+                                    //bloequeará a ação ao executar o restoreUIFields.
+                                    getMoveInfoFromBD();
+                                    //
                                     frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
                                 }
                             },
