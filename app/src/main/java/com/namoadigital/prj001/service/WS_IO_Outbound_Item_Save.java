@@ -136,7 +136,7 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
             if (headerList == null || headerList.size() == 0) {
                 String json =  actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>()) ;
                 //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), json  , "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), json  , "0");
                 return;
             }
             //
