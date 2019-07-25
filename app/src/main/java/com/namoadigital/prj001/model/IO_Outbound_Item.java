@@ -35,6 +35,8 @@ public class IO_Outbound_Item implements Serializable {
     private  String save_date;
     @Expose
     private  int update_required;
+    @Expose
+    private  int out_conf_done;
 
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private ArrayList<IO_Move> move = new ArrayList<>();
@@ -162,6 +164,14 @@ public class IO_Outbound_Item implements Serializable {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getOut_conf_done() {
+        return out_conf_done;
+    }
+
+    public void setOut_conf_done(int out_conf_done) {
+        this.out_conf_done = out_conf_done;
     }
 
     public ArrayList<MD_Product_Serial> getSerial() {

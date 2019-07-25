@@ -3,24 +3,17 @@ package com.namoadigital.prj001.ui.act060;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_Conf_TrackingDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Conf_Tracking;
-import com.namoadigital.prj001.model.IO_Move_Tracking;
-import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.IO_Outbound_Item;
-import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_006;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
@@ -152,7 +145,8 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
         item.setUpdate_required(1);
         item.setCustomer_code(customer_code);
         item.setComments(comments);
-
+        item.setOut_conf_done(1);
+        //
         DaoObjReturn daoObjReturnIoMove = outboundItemDao.addUpdate(item);
 
         if (daoObjReturnIoMove.hasError()) {

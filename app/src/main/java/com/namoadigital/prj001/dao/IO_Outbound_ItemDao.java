@@ -40,6 +40,7 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
     public static final String COMMENTS = "comments";
     public static final String SAVE_DATE = "save_date";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String OUT_CONF_DONE = "out_conf_done";
 
 
     public IO_Outbound_ItemDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -491,6 +492,11 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             }else{
                 io_outbound_item.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(OUT_CONF_DONE))){
+                io_outbound_item.setOut_conf_done(0);
+            }else{
+                io_outbound_item.setOut_conf_done(cursor.getInt(cursor.getColumnIndex(OUT_CONF_DONE)));
+            }
             //
             return io_outbound_item;
         }
@@ -528,10 +534,8 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             contentValues.put(COMMENTS, io_outbound_item.getComments());
             contentValues.put(SAVE_DATE, io_outbound_item.getSave_date());
             contentValues.put(UPDATE_REQUIRED, io_outbound_item.getUpdate_required());
-
-
-
-
+            contentValues.put(OUT_CONF_DONE, io_outbound_item.getOut_conf_done());
+            
             return contentValues;
         }
     }

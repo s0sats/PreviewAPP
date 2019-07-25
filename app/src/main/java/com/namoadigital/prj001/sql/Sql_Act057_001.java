@@ -17,13 +17,9 @@ public class Sql_Act057_001 implements Specification {
     public static final String PERC_DONE = "perc_done";
 
     private long customer_code;
-    private boolean filterPendent;
-    private boolean filterInProcess;
 
-    public Sql_Act057_001(long customer_code, boolean filterPendent, boolean filterInProcess) {
+    public Sql_Act057_001(long customer_code) {
         this.customer_code = customer_code;
-        this.filterPendent = filterPendent;
-        this.filterInProcess = filterInProcess;
     }
 
     @Override

@@ -9,13 +9,9 @@ public class Sql_Act066_001 implements Specification {
     public static final String PERC_DONE = "perc_done";
 
     private long customer_code;
-    private boolean filterPendent;
-    private boolean filterInProcess;
 
-    public Sql_Act066_001(long customer_code, boolean filterPendent, boolean filterInProcess) {
+    public Sql_Act066_001(long customer_code) {
         this.customer_code = customer_code;
-        this.filterPendent = filterPendent;
-        this.filterInProcess = filterInProcess;
     }
 
     @Override
@@ -31,13 +27,15 @@ public class Sql_Act066_001 implements Specification {
                         "               SELECT            \n" +
                         "                 round( COUNT(1) * (i.picking_process + 1) , 2) tot,         \n" +
                         "                 SUM(\n" +
-                        "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' OR  it.status = '"+ ConstantBaseApp.SYS_STATUS_PICKING_DONE +"' \n" +
+                        "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' OR (it.out_conf_done = 1 AND  it.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"')\n" +
                         "                            THEN 1\n" +
                         "                            ELSE 0\n" +
                         "                       END\n" +
                         "                 ) conf_parcial,\n" +
                         "                 SUM(\n" +
-                        "                       CASE WHEN it.status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"' AND i.picking_process = 1\n" +
+                        "                       CASE WHEN i.picking_process = 1 AND it.status in ( '"+ ConstantBaseApp.SYS_STATUS_DONE +"',\n" +
+                        "                                                                          '" +ConstantBaseApp.SYS_STATUS_PICKING_DONE +"',\n" +
+                        "                                                                          '" +ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"')\n" +
                         "                            THEN 1\n" +
                         "                            ELSE 0\n" +
                         "                       END\n" +
@@ -57,7 +55,7 @@ public class Sql_Act066_001 implements Specification {
                         IO_OutboundDao.TABLE + " i\n" +
                         "   WHERE\n" +
                         "    i.customer_code = '"+customer_code+"'\n" +
-                        "    and i.status in('"+ConstantBaseApp.SYS_STATUS_PENDING+"','"+ConstantBaseApp.SYS_STATUS_PROCESS+"')\n" +
+                        "    and i.status in('"+ConstantBaseApp.SYS_STATUS_PENDING+"','"+ConstantBaseApp.SYS_STATUS_PROCESS+"','"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
                         "  ORDER BY \n" +
                         "    i.outbound_prefix,\n" +
                         "    i.outbound_code\n"

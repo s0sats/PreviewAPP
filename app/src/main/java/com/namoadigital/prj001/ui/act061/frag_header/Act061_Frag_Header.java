@@ -1378,6 +1378,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         aux.put(IO_OutboundDao.OUTBOUND_PREFIX, String.valueOf(outbound.getOutbound_prefix()));
         aux.put(IO_OutboundDao.OUTBOUND_CODE, String.valueOf(outbound.getOutbound_code()));
         aux.put(IO_InboundDao.CARRIER_CODE, String.valueOf(outbound.getCarrier_code()));
+        aux.put(IO_InboundDao.CARRIER_ID, String.valueOf(outbound.getCarrier_id()));
+        aux.put(IO_InboundDao.CARRIER_DESC, String.valueOf(outbound.getCarrier_desc()));
         aux.put(IO_InboundDao.DRIVER, outbound.getDriver());
         aux.put(IO_InboundDao.TRUCK_NUMBER, outbound.getTruck_number());
         //

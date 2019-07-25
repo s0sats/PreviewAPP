@@ -57,6 +57,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     private Button btn_download;
     private boolean filter_pending = true;
     private boolean filter_process = true;
+    private boolean filter_waiting = true;
     private boolean isOnline = true;
     private String wsProcess;
     private String bundle_zone_code;
@@ -178,6 +179,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
             }
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT056);
             listPendencies = bundle.getBoolean(LIST_PENDENCIES_KEY, false);
+            //Filtro de waitingSync só existe na listegem de pendentes.
+            filter_waiting = listPendencies;
         } else {
             bundle_zone_code = "";
             bundle_local_code = "";
@@ -316,7 +319,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         if (requestingAct.equals(ConstantBaseApp.ACT014)) {
             iv_status_filter.setVisibility(View.GONE);
         } else {
-            if (filter_pending || filter_process) {
+            if (filter_pending || filter_process || filter_waiting) {
                 iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
             } else {
                 iv_status_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -451,6 +454,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 records,
                 filter_pending,
                 filter_process,
+                filter_waiting,
                 isOnline,
                 listPendencies
         );
@@ -537,6 +541,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         TextView tvTitle = view.findViewById(R.id.act066_filter_dialog_tv_title);
         final CheckBox chkPending = view.findViewById(R.id.act066_filter_dialog_chk_pending);
         final CheckBox chkProcess = view.findViewById(R.id.act066_filter_dialog_chk_process);
+        final CheckBox chkWaitingSync = view.findViewById(R.id.act066_filter_dialog_chk_waiting_sync);
         //
         tvTitle.setText(hmAux_Trans.get("dialog_filter_title"));
         //
@@ -549,6 +554,13 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         chkProcess.setChecked(filter_process);
         chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
+        //Esse ultimo stats só existe no quando lista origem do pendentes.
+        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
+        chkWaitingSync.setChecked(filter_waiting);
+        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setVisibility(listPendencies ? View.VISIBLE : View.GONE );
+        chkWaitingSync.setEnabled(listPendencies );
         //
         builder
                 .setView(view)
@@ -560,9 +572,10 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                             public void onClick(DialogInterface dialog, int which) {
                                 filter_pending = chkPending.isChecked();
                                 filter_process = chkProcess.isChecked();
+                                filter_waiting = chkWaitingSync.isChecked();
                                 updateIvFilterState();
-                                if (mAdapter != null) {
-                                    mAdapter.updateStatusFilter(filter_pending, filter_process);
+                                if(mAdapter != null){
+                                    mAdapter.updateStatusFilter(filter_pending,filter_process, filter_waiting );
                                     mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
                                 }
                             }

@@ -25,7 +25,7 @@ public class Sql_Act061_002 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
-                        "     IFNULL(MAX(CASE WHEN t.qtd_item_waiting = t.qtd_move_waiting AND t.qtd_item_waiting = t.qtd_item\n" +
+                        "     IFNULL(MAX(CASE WHEN t.qtd_item_waiting = t.qtd_item AND (T.put_away_process = 0 OR t.qtd_item_waiting = t.qtd_move_waiting) \n" +
                         "           THEN 1\n" +
                         "           ELSE 0\n" +
                         "      END),0) "+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"  \n" +
@@ -46,7 +46,8 @@ public class Sql_Act061_002 implements Specification {
                         "          sum(CASE WHEN m.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"') \n" +
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
-                        "                END) qtd_move_waiting \n" +
+                        "                END) qtd_move_waiting, \n" +
+                        "                i.put_away_process \n" +
                         "    FROM\n" +
                         "          io_inbound i\n" +
                         "    LEFT JOIN\n" +

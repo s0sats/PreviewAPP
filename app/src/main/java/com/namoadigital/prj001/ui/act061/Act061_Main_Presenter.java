@@ -68,7 +68,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
     private void checkWaitingSyncStatusChange(IO_Inbound ioInbound) {
         //Se condições atendidas, altera status da inbound.
         if( ioInbound != null
-            && ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PROCESS)
+            && (ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING) || ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PROCESS))
             && ioInbound.getDone_automatic() == 1
             && allItemsDone(ioInbound)
         ){

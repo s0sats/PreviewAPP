@@ -19,7 +19,7 @@ public class Sql_Act067_002 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
-                        "     IFNULL(MAX(CASE WHEN t.qtd_item_waiting = t.qtd_move_waiting AND t.qtd_item_waiting = t.qtd_item\n" +
+                        "     IFNULL(MAX(CASE WHEN t.qtd_item_waiting = t.qtd_item AND (t.picking_process = 0 OR t.qtd_item_waiting = t.qtd_move_waiting)\n" +
                         "           THEN 1\n" +
                         "           ELSE 0\n" +
                         "      END),0) "+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"  \n" +
@@ -37,10 +37,11 @@ public class Sql_Act067_002 implements Specification {
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
                         "                END)qtd_move ,   \n" +
-                        "          sum(CASE WHEN m.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"') \n" +
+                        "          sum(CASE WHEN m.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"') or i2.out_conf_done = 1 \n" +
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
-                        "                END) qtd_move_waiting \n" +
+                        "                END) qtd_move_waiting, \n" +
+                        "                i.picking_process \n" +
                         "    FROM\n" +
                         "          io_outbound i\n" +
                         "    LEFT JOIN\n" +

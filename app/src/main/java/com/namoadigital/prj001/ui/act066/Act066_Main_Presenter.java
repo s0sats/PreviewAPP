@@ -53,9 +53,7 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
         //
         ArrayList<HMAux> outbounds = (ArrayList<HMAux>) outboundDao.query_HM(
             new Sql_Act066_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                true,
-                true
+                ToolBox_Con.getPreference_Customer_Code(context)
             ).toSqlQuery()
         );
         //

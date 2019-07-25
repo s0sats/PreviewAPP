@@ -52,9 +52,7 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
         //
         ArrayList<HMAux> inbounds = (ArrayList<HMAux>) inboundDao.query_HM(
             new Sql_Act057_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                true,
-                true
+                ToolBox_Con.getPreference_Customer_Code(context)
             ).toSqlQuery()
         );
         //
