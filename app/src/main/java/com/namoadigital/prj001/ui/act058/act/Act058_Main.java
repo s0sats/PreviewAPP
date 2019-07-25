@@ -160,9 +160,6 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_offline_save_error_msg");
         transList.add("alert_result_movement");
         transList.add("alert_result_in_conf");
-        //
-        transList.add("alert_move_not_found_ttl");
-        transList.add("alert_move_not_found_msg");
 
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
@@ -213,9 +210,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             viewMode = mPresenter.getViewMode(move_type);
             serialInfo = mPresenter.getSerialInfo(product_code, serial_code);
         }
-        //
-        if(movePrefix == -1 || (movePrefix > 0 && movePlanned != null)) {
-            frag_move_create = Frag_Move_Create.newInstance(
+
+
+        frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
                 true,
@@ -234,52 +231,36 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 planned_local_code,
                 status,
                 to_class_code
-            );
+        );
 
-            setFrag(frag_move_create, FRAGMENT_MOVE);
-        }
+        setFrag(frag_move_create, FRAGMENT_MOVE);
     }
 
     private void getMoveInfoFromBD() {
         movePlanned = mPresenter.getMoveInfo(movePrefix, moveCode);
-        if(movePlanned != null) {
-            move_type = movePlanned.getMove_type();
-            viewMode = mPresenter.getViewMode(move_type);
-            serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
-            try {
-                serial_id = serialInfo.getSerial_id();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                Toast.makeText(context, hmAux_Trans.get("msg_serial_error"), Toast.LENGTH_SHORT).show();
-                onBackPressed();
-            }
-            to_local_code = movePlanned.getTo_local_code();
-            to_zone_code = movePlanned.getTo_zone_code();
-            move_prefix = movePlanned.getMove_prefix();
-            move_code = movePlanned.getMove_code();
-            reason_code = movePlanned.getReason_code();
-            planned_zone_code = movePlanned.getPlanned_zone_code();
-            outbound_prefix = movePlanned.getOutbound_prefix();
-            inbound_prefix = movePlanned.getInbound_prefix();
-            outbound_code = movePlanned.getOutbound_code();
-            inbound_code = movePlanned.getInbound_code();
-            planned_local_code = movePlanned.getPlanned_local_code();
-            status = movePlanned.getStatus();
-            to_class_code = movePlanned.getTo_class_code();
-        }else{
-            ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_move_not_found_ttl"),
-                hmAux_Trans.get("alert_move_not_found_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onBackPressed();
-                    }
-                },
-                0
-            );
+        move_type = movePlanned.getMove_type();
+        viewMode = mPresenter.getViewMode(move_type);
+        serialInfo = mPresenter.getSerialInfo(movePlanned.getProduct_code(), movePlanned.getSerial_code());
+        try{
+            serial_id = serialInfo.getSerial_id();
+        }catch (NullPointerException e ){
+            e.printStackTrace();
+           Toast.makeText(context, hmAux_Trans.get("msg_serial_error"), Toast.LENGTH_SHORT).show();
+           onBackPressed();
         }
+        to_local_code = movePlanned.getTo_local_code();
+        to_zone_code = movePlanned.getTo_zone_code();
+        move_prefix = movePlanned.getMove_prefix();
+        move_code = movePlanned.getMove_code();
+        reason_code = movePlanned.getReason_code();
+        planned_zone_code = movePlanned.getPlanned_zone_code();
+        outbound_prefix = movePlanned.getOutbound_prefix();
+        inbound_prefix = movePlanned.getInbound_prefix();
+        outbound_code = movePlanned.getOutbound_code();
+        inbound_code = movePlanned.getInbound_code();
+        planned_local_code = movePlanned.getPlanned_local_code();
+        status = movePlanned.getStatus();
+        to_class_code = movePlanned.getTo_class_code();
     }
 
     private void recoverIntentsInfo() {
@@ -798,9 +779,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act061_Main.INBOUND_FRAG_ITEM);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(movePlanned.getOutbound_prefix()));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(movePlanned.getOutbound_code()));
-        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
-        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serial_code));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
+//        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serial_code));
+//        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT058);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
