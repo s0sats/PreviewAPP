@@ -472,7 +472,7 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
 
     private void callFinishProcessing(String actReturn) {
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), actReturn, "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), actReturn, "0");
     }
 
     //region Token Methods

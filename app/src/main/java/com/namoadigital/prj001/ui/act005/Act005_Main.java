@@ -331,6 +331,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("lbl_logout");
         transList.add("lbl_schedule_data");
         transList.add("lbl_so");
+        transList.add("lbl_so_express");
+        transList.add("lbl_assets_move");
         transList.add("lbl_serial_data");
         //toolbar
         transList.add("toolbar_enable_nfc");
@@ -1477,9 +1479,29 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 }
             }
+            mPresenter.executeSoSaveApproval();
 
+        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", fields[0]);
+                    mHmAux.put("type", "S.O.");
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
+                }
+            }
             mPresenter.executeMoveSave();  // 6
-
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
@@ -1544,29 +1566,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
-            }
-
-            mPresenter.executeSoSaveApproval();  // 10
-
-        }   else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
-            setWsSoProcess("");
-
-            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-
-            if (approval.length > 0 && !approval[0].isEmpty()) {
-                for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
-                    //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "S.O.");
-                    mHmAux.put("status", fields[1]);
-                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-                    //
-                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-                        wsResults.add(mHmAux);
-                    }
-                }
             }
 
             mPresenter.getMenuItensV2(hmAux_Trans);
@@ -1788,8 +1787,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 case "SO_EXPRESS":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
                     break;
-                case "ASSETS_MOVE":
+                case "ASSETS_MOVE_PLANNED":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_move"));
+                    break;
+                case "ASSETS_INBOUND_ITEM":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_inbound"));
+                    break;
+                case "ASSETS_OUTBOUND_ITEM":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_outbound"));
                     break;
 
             }

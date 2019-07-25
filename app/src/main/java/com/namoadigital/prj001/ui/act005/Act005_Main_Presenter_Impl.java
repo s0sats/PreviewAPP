@@ -709,20 +709,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     auxResult.put(moveCode, actReturn.getRetStatus());
                 }
             }
-            //For no resumido por inbound montando msg a ser exibida
+            //For no resumido por in/outbound montando msg a ser exibida
             for (Map.Entry<String, String> item : auxResult.entrySet()) {
 
-                HMAux hmAux = new HMAux();
-                //
-                //Monta HmAux
-                hmAux.put("type", itemLabel);
-                hmAux.put("item", item.getKey());
-                hmAux.put("status", item.getValue());
-                hmAux.put("final_status",  item.getKey()+ " / " +item.getValue());
-                //
-                resultList.add(hmAux);
-
-
+                if(!item.getValue().equals("OK")) {
+                    HMAux hmAux = new HMAux();
+                    //
+                    //Monta HmAux
+                    hmAux.put("type", itemLabel);
+                    hmAux.put("item", item.getKey());
+                    hmAux.put("status", item.getValue());
+                    hmAux.put("final_status", item.getKey() + " / " + item.getValue());
+                    //
+                    resultList.add(hmAux);
+                }
             }
             //
             return resultList;
