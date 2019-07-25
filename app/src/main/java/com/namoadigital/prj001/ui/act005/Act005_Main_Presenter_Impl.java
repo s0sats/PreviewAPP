@@ -87,6 +87,9 @@ import com.namoadigital.prj001.sql.Sql_Act005_005;
 import com.namoadigital.prj001.sql.Sql_Act005_006;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
+import com.namoadigital.prj001.sql.Sql_Act012_005;
+import com.namoadigital.prj001.sql.Sql_Act012_006;
+import com.namoadigital.prj001.sql.Sql_Act012_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -96,7 +99,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -354,16 +356,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } else {
                             menu.setIcon(R.drawable.ic_n_assets);
                         }
-                        //tratar badges de pendentes.
-                        try {
-                            qtyAssets = getAssetsPendendyCount();
-                            //
-                        } catch (Exception e) {
-                            qtyAssets = "0";
-                        }
-                        menu.addInBadge1(qtyAssets);
                         break;
-
                     case Act005_Main.MENU_ID_PENDING_DATA:
                         try {
                             qty = customFormLocalDao.getByStringHM(
@@ -412,7 +405,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } else {
                             qtySO_Express = "0";
                         }
-                        //Soma Qtd de n-form ,n_service, n_form_ap e so_express
+
+                        qtyAssets = handleAssetsPendency();
+                        //Soma Qtd de n-form ,n_service, n_form_ap, so_express e assets que era io
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
                         menu.addInBadge1(qtyAP);
@@ -491,8 +486,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtySerial = "0";
                         }
-
-                        //Soma Qtd de n-form e n_service e form_ap
+                        qtyAssets = handleAssetsWaitingSync();
+                        //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
                         menu.addInBadge1(ToolBox_Inf.isSoWithinTokenFile());
@@ -611,8 +606,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mView.loadMenuV2(grantedMenus);
     }
 
-    private String getAssetsPendendyCount() {
-        HMAux movePendency = assetMoveDao.getByStringHM((
+    private String handleAssetsWaitingSync() {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getAssetsWaitingSyncCount();
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    private String getAssetsWaitingSyncCount() {
+        HMAux moveWaitingSync = assetMoveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
@@ -620,28 +626,90 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 ).toSqlQuery()
         );
         int pendencies=0;
-        if (movePendency != null && movePendency.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+        if (moveWaitingSync != null && moveWaitingSync.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
             try {
-                pendencies = Integer.valueOf(movePendency.get(IO_MoveDao.PENDING_QTY));
+                pendencies = Integer.valueOf(moveWaitingSync.get(IO_MoveDao.PENDING_QTY));
             } catch (Exception e) {
                 pendencies = 0;
                 e.printStackTrace();
             }
         }
 
-        ArrayList<HMAux> outboundPendency = (ArrayList<HMAux>) assetOutboundDao.query_HM(
+        ArrayList<HMAux> outboundWaitingSync = (ArrayList<HMAux>) assetOutboundDao.query_HM(
                 new IO_Outbound_Sql_013(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
 
-        ArrayList<HMAux> inboundPendency = (ArrayList<HMAux>) assetInboundDao.query_HM(
+        ArrayList<HMAux> inboundWaitingSync = (ArrayList<HMAux>) assetInboundDao.query_HM(
                 new IO_Inbound_Sql_013(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
 
-        pendencies = pendencies + outboundPendency.size() + inboundPendency.size();
+        pendencies = pendencies + outboundWaitingSync.size() + inboundWaitingSync.size();
+        return String.valueOf(pendencies);
+    }
+
+    private String handleAssetsPendency() {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getAssetsPendencyCount();
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    private String getAssetsPendencyCount() {
+        HMAux movePendency = assetMoveDao.getByStringHM((
+                        new Sql_Act012_006(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                hmAux_Trans
+                        )
+                ).toSqlQuery()
+        );
+        int movePendencies=0;
+        if (movePendency != null && movePendency.hasConsistentValue(Sql_Act012_006.PENDING_QTY)) {
+            try {
+                movePendencies = Integer.valueOf(movePendency.get(Sql_Act012_006.PENDING_QTY));
+            } catch (Exception e) {
+                movePendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        int inboundPendencies=0;
+        HMAux inboundPendency = assetInboundDao.getByStringHM(
+                new Sql_Act012_005(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        hmAux_Trans
+                ).toSqlQuery()
+        );
+        if (inboundPendency != null && inboundPendency.hasConsistentValue(Sql_Act012_005.PENDING_QTY)) {
+            try {
+                inboundPendencies = Integer.valueOf(inboundPendency.get(Sql_Act012_005.PENDING_QTY));
+            } catch (Exception e) {
+                inboundPendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        int outboundPendencies=0;
+        HMAux outboundPendency = assetOutboundDao.getByStringHM(
+                new Sql_Act012_007(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        hmAux_Trans
+                ).toSqlQuery()
+        );
+        if (outboundPendency != null && outboundPendency.hasConsistentValue(Sql_Act012_007.PENDING_QTY)) {
+            try {
+                outboundPendencies = Integer.valueOf(outboundPendency.get(Sql_Act012_007.PENDING_QTY));
+            } catch (Exception e) {
+                outboundPendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        int pendencies = movePendencies + inboundPendencies + outboundPendencies;
         return String.valueOf(pendencies);
     }
 
