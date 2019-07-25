@@ -333,6 +333,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("lbl_so");
         transList.add("lbl_so_express");
         transList.add("lbl_assets_move");
+        transList.add("lbl_assets_outbound");
+        transList.add("lbl_assets_inbound");
         transList.add("lbl_serial_data");
         //toolbar
         transList.add("toolbar_enable_nfc");
@@ -1505,14 +1507,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            String move_planned[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
-            if (approval.length > 0 && !approval[0].isEmpty()) {
-                for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+            if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
+                for (int i = 0; i < move_planned.length; i++) {
+                    String fields[] = move_planned[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("item", fields[0]);
+                    mHmAux.put("label", fields[0]);
                     mHmAux.put("type", "ASSETS_MOVE_PLANNED");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
@@ -1528,14 +1530,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            String approval[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            String blinds[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
-            if (approval.length > 0 && !approval[0].isEmpty()) {
-                for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+            if (blinds.length > 0 && !blinds[0].isEmpty()) {
+                for (int i = 0; i < blinds.length; i++) {
+                    String fields[] = blinds[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("item", fields[0]);
+                    mHmAux.put("label", fields[0]);
                     mHmAux.put("type", "ASSETS_MOVE");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);

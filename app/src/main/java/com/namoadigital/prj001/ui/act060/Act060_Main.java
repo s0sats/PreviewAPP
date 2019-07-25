@@ -495,7 +495,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
     @Override
     public void callLogAct(Intent logIntent) {
-
+        startActivityForResult(logIntent, Constant.REQUEST_CODE_SERIAL_LOG);
     }
 
     @Override

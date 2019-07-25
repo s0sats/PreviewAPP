@@ -785,7 +785,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     //
                     //Monta HmAux
                     hmAux.put("type", itemLabel);
-                    hmAux.put("item", item.getKey());
+                    hmAux.put("label", item.getKey());
                     hmAux.put("status", item.getValue());
                     hmAux.put("final_status", item.getKey() + " / " + item.getValue());
                     //

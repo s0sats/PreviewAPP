@@ -223,7 +223,7 @@ public class WS_IO_Move_Save extends IntentService {
 
                 if(move_ret.getRet_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DENIED)) {
 
-                    if (move_ret.getMove() != null && move_ret.getMove().isEmpty()) {
+                    if (move_ret.getMove() != null && !move_ret.getMove().isEmpty()) {
                         for (IO_Move io_move : move_ret.getMove()) {
                             DaoObjReturn daoObjReturn = moveDao.addUpdate(io_move);
                             if (daoObjReturn.hasError()){
@@ -239,7 +239,7 @@ public class WS_IO_Move_Save extends IntentService {
                         ioMove.setDone_date(null);
                         ioMove.setDone_user(null);
                         ioMove.setDone_user_nick(null);
-                        ioMove.setToken(null);
+                        ioMove.setToken("");
                         DaoObjReturn daoObjReturn = moveDao.addUpdate(ioMove);
                         if (daoObjReturn.hasError()){
                             throw new Exception(daoObjReturn.getErrorMsg());
