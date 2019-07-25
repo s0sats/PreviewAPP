@@ -314,6 +314,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
           }
         );
 
+        ss_local.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+            @Override
+            public void onValueChanged(HMAux hmAux) {
+                processLocalValueChange(hmAux);
+            }
+        });
+
         ss_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
