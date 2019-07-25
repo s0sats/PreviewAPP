@@ -235,7 +235,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     private void bindViews(View view) {
         tvOutboundId = view.findViewById(R.id.act067_drawer_tv_id);
         pvConf= view.findViewById(R.id.act067_drawer_pv_conf);
-        pvPicking = view.findViewById(R.id.act067_drawer_pv_put_away);
+        pvPicking = view.findViewById(R.id.act067_drawer_pv_picking);
         tvStatus= view.findViewById(R.id.act067_drawer_tv_status);
         tvDepartureDtLbl = view.findViewById(R.id.act067_drawer_tv_create_dt);
         tvDepartureDtVal = view.findViewById(R.id.act067_drawer_tv_create_dt_val);

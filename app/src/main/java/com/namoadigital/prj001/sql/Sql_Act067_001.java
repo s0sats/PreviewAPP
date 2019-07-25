@@ -31,15 +31,15 @@ public class Sql_Act067_001 implements Specification {
                         "       ROUND(COUNT(1),2) tot,         \n" +
                         "       SUM(\n" +
                         "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE  +"'\n" +
-                                         " OR  i.status = '"+ConstantBaseApp.SYS_STATUS_PICKING_DONE+"' \n" +
-                                         " OR  i.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' \n" +
+                                         " OR  (i.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' AND i.out_conf_done = 1 )\n" +
                         "                  THEN 1\n" +
                         "                  ELSE 0\n" +
                         "             END\n" +
                         "       ) conf_parcial,\n" +
                         "       SUM(\n" +
-                        "             CASE WHEN i.status = '"+ConstantBaseApp.SYS_STATUS_DONE +"'\n" +
-                                        " OR  i.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' \n" +
+                        "             CASE WHEN i.status in( '"+ConstantBaseApp.SYS_STATUS_DONE +"',\n" +
+                        "                                    '"+ConstantBaseApp.SYS_STATUS_PICKING_DONE+"', \n" +
+                                                            "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') \n" +
                         "                  THEN 1\n" +
                         "                  ELSE 0\n" +
                         "             END\n" +
