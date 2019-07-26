@@ -131,7 +131,6 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
         transList.add("alert_move_results_ttl");
-        transList.add("alert_move_list_title");
 
         transList.add("alert_offline_save_msg");
         transList.add("alert_offline_save_ttl");
@@ -377,36 +376,25 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 if (finalAuxMove.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_1) && finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
                 } else {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_list_title"),
-                            finalAuxMove.get("status"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    frag_move_create.restoreUIFields(
-                                            serialInfo,
-                                            viewMode,
-                                            true,
-                                            hmAux_Trans_Frag,
-                                            to_local_code,
-                                            to_zone_code,
-                                            -1,
-                                            -1,
-                                            null,
-                                            move_type,
-                                            planned_zone_code,
-                                            outbound_prefix,
-                                            -1,
-                                            outbound_code,
-                                            -1,
-                                            planned_local_code,
-                                            status,
-                                            null);
-                                }
-                            },
-                            0
-                    );
+                    frag_move_create.restoreUIFields(
+                            serialInfo,
+                            viewMode,
+                            true,
+                            hmAux_Trans_Frag,
+                            to_local_code,
+                            to_zone_code,
+                            -1,
+                            -1,
+                            null,
+                            move_type,
+                            planned_zone_code,
+                            outbound_prefix,
+                            -1,
+                            outbound_code,
+                            -1,
+                            planned_local_code,
+                            status,
+                            null);
                 }
             }
         });

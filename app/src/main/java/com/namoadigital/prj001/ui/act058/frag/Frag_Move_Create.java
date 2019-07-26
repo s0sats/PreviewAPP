@@ -1058,7 +1058,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     public static List<String> getFragTranslationsVars() {
         List<String> transList = new ArrayList<String>();
 
-        transList.add("serial_lbl");//
+        transList.add("serial_lbl");
         transList.add("inbound_lbl");
         transList.add("move_order_lbl");
         transList.add("move_to_lbl");
@@ -1068,7 +1068,6 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         transList.add("zone_lbl");
         transList.add("zone_ttl");
         transList.add("position_lbl");
-        //transList.add("position_ttl");
         transList.add("comments_hint");
         transList.add("save_lbl");
         transList.add("site_reason_lbl");
@@ -1078,6 +1077,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         transList.add("alert_tracking_already_listed_msg");
         transList.add("alert_update_move_ttl");
         transList.add("alert_update_move_confirm");
+        transList.add("alert_tracking_unavailable_ttl");
+        transList.add("alert_tracking_unavailable_msg");
 
         return transList;
     }

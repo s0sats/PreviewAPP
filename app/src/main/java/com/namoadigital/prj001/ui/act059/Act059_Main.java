@@ -132,7 +132,6 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
         transList.add("alert_move_results_ttl");
-        transList.add("alert_move_list_title");
 
         transList.add("alert_offline_save_msg");
         transList.add("alert_offline_save_ttl");
@@ -140,6 +139,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         transList.add("progress_tracking_search_msg");
         transList.add("alert_result_in_conf");
         transList.add("alert_result_movement");
+        transList.add("alert_offline_save_error_ttl");
+        transList.add("alert_offline_save_error_msg");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 

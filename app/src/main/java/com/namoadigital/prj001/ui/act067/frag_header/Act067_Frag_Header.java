@@ -63,6 +63,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private TextView tvOutboundLbl;
     private TextView tvOutboundPrefixCode;
     private SearchableSpinner ssStatus;
+    private TextView tvTransportOrder;
     private TextView tvOutboundIdLbl;
     private EditText etOutboundId;
     private TextView tvOutboundDescLbl;
@@ -727,6 +728,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssPartner = view.findViewById(R.id.act067_header_ss_partner);
         tvOutboundLbl = view.findViewById(R.id.act067_header_tv_outbound);
         tvOutboundPrefixCode = view.findViewById(R.id.act067_header_tv_outbound_code);
+        tvTransportOrder = view.findViewById(R.id.act067_header_tv_transport_order);
         tvOutboundIdLbl = view.findViewById(R.id.act067_header_tv_outbound_id);
         etOutboundId = view.findViewById(R.id.act067_header_et_outbound_id);
         tvOutboundDescLbl = view.findViewById(R.id.act067_header_tv_outbound_desc);
@@ -785,6 +787,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         ssToType.setmLabel(hmAux_Trans.get("to_type_lbl"));
         ssToSite.setmLabel(hmAux_Trans.get("to_site_lbl"));
         ssPartner.setmLabel(hmAux_Trans.get("partner_lbl"));
+        tvTransportOrder.setText(hmAux_Trans.get("transport_order_lbl"));
         tvOutboundLbl.setText(hmAux_Trans.get("outbound_code_lbl"));
         tvOutboundIdLbl.setText(hmAux_Trans.get("outbound_id_lbl"));
         tvOutboundDescLbl.setText(hmAux_Trans.get("outbound_desc_lbl"));
@@ -1379,6 +1382,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         transListFrag.add("to_type_lbl");
         transListFrag.add("to_site_lbl");
         transListFrag.add("from_outbound_lbl");
+        transListFrag.add("transport_order_lbl");
         transListFrag.add("outbound_code_lbl");
         transListFrag.add("outbound_id_lbl");
         transListFrag.add("outbound_desc_lbl");

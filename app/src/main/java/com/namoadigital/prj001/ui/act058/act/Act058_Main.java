@@ -145,11 +145,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("act058_title");
         transList.add("dialog_save_move_ttl");
         transList.add("dialog_save_move_msg");
-        //transList.add("alert_results_ttl");
         transList.add("alert_move_results_ttl");
-        transList.add("alert_move_list_title");
+        transList.add("alert_move_list_ttl");
         transList.add("alert_move_ttl");
-        transList.add("msg_move_save_ok");
         transList.add("msg_serial_error");
 
         transList.add("alert_offline_save_msg");
@@ -160,6 +158,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_offline_save_error_msg");
         transList.add("alert_result_movement");
         transList.add("alert_result_in_conf");
+        transList.add("alert_result_out_conf");
 
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
@@ -376,7 +375,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 itemPk= result.getPrefix() + "." + result.getCode();
                 aux.put("title", hmAux_Trans.get("alert_result_movement"));
             }else{
-                aux.put("title", hmAux_Trans.get("alert_result_in_conf"));
+                aux.put("title", hmAux_Trans.get("alert_result_out_conf"));
                 itemPk= result.getPrefix() + "." + result.getCode() +"."+ result.getItem();
             }
             aux.put("item", itemPk);
@@ -445,7 +444,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_move_ttl"),
-                            hmAux_Trans.get("msg_move_save_ok"),
+                            hmAux_Trans.get("sys_alert_btn_ok"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -457,7 +456,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 } else {
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("alert_move_list_title"),
+                            hmAux_Trans.get("alert_move_list_ttl"),
                             resultList.get(0).get("status"),
                             new DialogInterface.OnClickListener() {
                                 @Override

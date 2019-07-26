@@ -382,13 +382,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             //
             context.sendBroadcast(mIntent);
         }else{
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_offline_search_title"),
-                    hmAux_Trans.get("alert_offline_search_msg"),
-                    null,
-                    0
-            );
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
 
     }
@@ -587,10 +581,7 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
             //
             context.sendBroadcast(mIntent);
         } else {
-            mView.showMsg(
-                    hmAux_Trans.get("alert_offline_save_ttl"),
-                    hmAux_Trans.get("alert_offline_save_msg")
-            );
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 

@@ -126,7 +126,7 @@ public class Act057_Main extends Base_Activity implements Act057_Main_Contract.I
         transList.add("alert_download_return_error_msg");
         transList.add("alert_inbound_different_to_site_ttl");
         transList.add("alert_inbound_different_to_site_msg");
-        //
+       //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
