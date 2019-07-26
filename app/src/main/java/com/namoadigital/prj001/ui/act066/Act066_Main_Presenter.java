@@ -129,7 +129,7 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
 
                 mView.callAct067(bundle);
             }else{
-                mView.callAct065();
+                mView.rebuildBundleFromMultOutboundDownload();
             }
         }else{
             mView.showAlert(

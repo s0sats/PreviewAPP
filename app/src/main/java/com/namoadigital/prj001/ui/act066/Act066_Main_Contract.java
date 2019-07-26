@@ -17,6 +17,8 @@ public interface Act066_Main_Contract {
 
         void showQtyExceededMsg();
 
+        void rebuildBundleFromMultOutboundDownload();
+
         void loadOutboundList(ArrayList<IO_Outbound_Search_Record> records);
 
         void setWsProcess(String wsProcess);
