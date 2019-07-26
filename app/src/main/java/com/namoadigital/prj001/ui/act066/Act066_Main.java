@@ -113,7 +113,6 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         transList.add("alert_no_outbound_selected_ttl");
         transList.add("alert_no_outbound_selected_msg");
         transList.add("no_record_found_lbl");
-        transList.add("records_found_lbl");
         transList.add("records_display_limit_lbl");
         transList.add("records_lbl");
         transList.add("showing_lbl");
@@ -124,6 +123,8 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         transList.add("alert_download_return_error_msg");
         transList.add("alert_outbound_different_to_site_ttl");
         transList.add("alert_outbound_different_to_site_msg");
+        transList.add("sys_alert_btn_cancel");
+        transList.add("sys_alert_btn_ok");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -210,7 +211,6 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
 
     private void setupViews() {
         tv_no_records.setText(hmAux_Trans.get("no_record_found_lbl"));
-        //tv_records.setText(hmAux_Trans.get("records_found_lbl"));
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         btn_download.setText(hmAux_Trans.get("download_lbl"));
         btn_download.setEnabled(false);
@@ -563,20 +563,20 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         //
         tvTitle.setText(hmAux_Trans.get("dialog_filter_title"));
         //
-        chkPending.setText(hmAux_Trans.get(Constant.SYS_STATUS_PENDING));
+        chkPending.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING));
         chkPending.setChecked(filter_pending);
-        chkPending.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PENDING))));
-        chkPending.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PENDING))));
+        chkPending.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
+        chkPending.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
         //
-        chkProcess.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
+        chkProcess.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PROCESS));
         chkProcess.setChecked(filter_process);
-        chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
-        chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
+        chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
+        chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
         //Esse ultimo stats só existe no quando lista origem do pendentes.
-        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
+        chkWaitingSync.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
         chkWaitingSync.setChecked(filter_waiting);
-        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
-        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
         chkWaitingSync.setVisibility(listPendencies ? View.VISIBLE : View.GONE );
         chkWaitingSync.setEnabled(listPendencies );
         //
