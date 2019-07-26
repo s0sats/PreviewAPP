@@ -266,7 +266,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         tvDepartureDtLbl.setText(hmAux_Trans.get("create_dt_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
-        tvFromLbl.setText(hmAux_Trans.get("from_lbl"));
+        tvFromLbl.setText(hmAux_Trans.get("to_lbl"));
         tvModalLbl.setText(hmAux_Trans.get("modal_lbl"));
         tvCommentsLbl.setText(hmAux_Trans.get("comments_lbl"));
         tvPosition.setText(hmAux_Trans.get("position_lbl"));
@@ -544,7 +544,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         transListFrag.add("create_dt_lbl");
         transListFrag.add("eta_dt_lbl");
         transListFrag.add("invoice_lbl");
-        transListFrag.add("from_lbl");
+        transListFrag.add("to_lbl");
         transListFrag.add("modal_lbl");
         transListFrag.add("comments_lbl");
         transListFrag.add("position_lbl");

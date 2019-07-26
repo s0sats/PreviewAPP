@@ -1378,7 +1378,6 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         //
         transListFrag.add("to_type_lbl");
         transListFrag.add("to_site_lbl");
-        transListFrag.add("from_outbound_lbl");
         transListFrag.add("outbound_code_lbl");
         transListFrag.add("outbound_id_lbl");
         transListFrag.add("outbound_desc_lbl");

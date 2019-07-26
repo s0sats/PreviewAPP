@@ -150,16 +150,12 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         transList.add("outbound_lbl");
         transList.add("alert_header_save_ttl");
         transList.add("alert_header_save_only_online_msg");
-        transList.add("alert_from_outbound_error_ttl");
-        transList.add("alert_from_outbound_error_msg");
         //
         transList.add("dialog_outbound_download_ttl");
         transList.add("dialog_outbound_download_start");
         transList.add("alert_download_return_ttl");
-        transList.add("alert_download_return_msg");
+//        transList.add("alert_download_return_msg");
         transList.add("alert_sync_ok_refresh_is_needed_msg");
-        transList.add("alert_sync_data_ttl");
-        transList.add("alert_sync_data_msg");
         transList.add("alert_outbound_results_ttl");
         transList.add("alert_download_return_error_msg");
         transList.add("alert_header_changes_will_be_lost_ttl");

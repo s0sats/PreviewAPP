@@ -91,7 +91,7 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
         transList.add("create_date_lbl");
         transList.add("eta_date_lbl");
         transList.add("invoice_lbl");
-        transList.add("from_lbl");
+        transList.add("to_lbl");
         transList.add("modal_lbl");
         transList.add("comment_lbl");
         //
@@ -308,7 +308,7 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
             tv_to.setVisibility(View.GONE);
             tv_to_val.setVisibility(View.GONE);
             if(data.getTo() != null && data.getTo().trim().length() > 0) {
-                tv_to.setText(hmAux_Trans.get("from_lbl"));
+                tv_to.setText(hmAux_Trans.get("to_lbl"));
                 tv_to_val.setText(data.getTo());
                 //
                 tv_to.setVisibility(View.VISIBLE);
