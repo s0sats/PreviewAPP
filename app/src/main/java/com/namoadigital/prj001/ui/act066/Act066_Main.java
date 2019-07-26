@@ -339,10 +339,6 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
             progressDialog.dismiss();
             //
             mPresenter.processDownloadReturn(hmAux);
-//        }else if(wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())){
-//            progressDialog.dismiss();
-//            //
-//            mPresenter.processOutboundItemReturn(mLink);
         } else {
             progressDialog.dismiss();
         }
@@ -445,6 +441,27 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
                 hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" +
                         bundle_record_count + " " + hmAux_Trans.get("alert_qty_records_founded")
         );
+    }
+
+    @Override
+    public void rebuildBundleFromMultOutboundDownload() {
+        Bundle bundle = getIntent().getExtras();
+        if ( bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.clear();
+        //
+        bundle.putSerializable(Constant.MAIN_WS_LIST_VALUES, new ArrayList<>());
+        bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT,0);
+        bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE,0);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        bundle.putBoolean(LIST_PENDENCIES_KEY, true);
+        getIntent().putExtras(bundle);
+        //
+        initVars();
+        //
+        initActions();
+
     }
 
     @Override
