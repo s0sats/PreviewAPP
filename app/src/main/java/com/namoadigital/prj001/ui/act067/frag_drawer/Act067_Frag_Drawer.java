@@ -448,14 +448,14 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
                 pvPicking.setPercentage(
                         percents.hasConsistentValue(Sql_Act067_001.PICKING_PERC) ? Float.parseFloat(percents.get(Sql_Act067_001.PICKING_PERC)) : 0
                 );
-                //
-                pvPicking.setVisibility(mOutbound.getPicking_process() == 1 ? View.VISIBLE : View.GONE);
             }catch (Exception e){
                 e.printStackTrace();
                 //
                 pvConf.setPercentage(0);
                 pvPicking.setPercentage(0);
             }
+            //
+            pvPicking.setVisibility(mOutbound.getPicking_process() == 1 ? View.VISIBLE : View.GONE);
         }else{
             pvConf.setPercentage(0);
             pvPicking.setPercentage(0);

@@ -431,6 +431,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
             tv_records.setVisibility(View.GONE);
             cl_no_result.setVisibility(View.VISIBLE);
             tv_no_records.setVisibility(View.VISIBLE);
+            cl_result.setVisibility(View.GONE);
         }
     }
 

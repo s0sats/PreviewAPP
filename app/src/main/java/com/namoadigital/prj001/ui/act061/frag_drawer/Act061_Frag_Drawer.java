@@ -446,14 +446,14 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                 pvPutAway.setPercentage(
                     percents.hasConsistentValue(Sql_Act061_001.PUT_AWAY_PERC) ? Float.parseFloat(percents.get(Sql_Act061_001.PUT_AWAY_PERC)) : 0
                 );
-                //
-                pvPutAway.setVisibility(mInbound.getPut_away_process() == 1 ? View.VISIBLE : View.GONE);
             }catch (Exception e){
                 e.printStackTrace();
                 //
                 pvConf.setPercentage(0);
                 pvPutAway.setPercentage(0);
             }
+            //
+            pvPutAway.setVisibility(mInbound.getPut_away_process() == 1 ? View.VISIBLE : View.GONE);
         }else{
             pvConf.setPercentage(0);
             pvPutAway.setPercentage(0);

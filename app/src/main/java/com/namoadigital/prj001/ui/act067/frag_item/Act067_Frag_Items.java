@@ -265,8 +265,9 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
             //
             if (mOutbound != null) {
                 //
-                if(mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
-                    filterActionPendencies = !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE);
+                if(isImmutableStatus()){
+                    filterActionPendencies = false;
+                    swActionFilter.setEnabled(false);
                 }
                 swActionFilter.setChecked(
                         filterActionPendencies
@@ -333,20 +334,24 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
                     rvItems.scrollToPosition(serialPosition);
                 }
             }
-            rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                    //
-                    if(newState ==  RecyclerView.SCROLL_STATE_IDLE){
-                        mketFilter.setEnabled(true);
-                        swActionFilter.setEnabled(true);
-                    }else{
-                        mketFilter.setEnabled(false);
-                        swActionFilter.setEnabled(false);
+            //Se status diferente de done ou cancelled, seta evento de scroll, pois , caso contrario
+            //não faz sentido.
+            if(!isImmutableStatus()) {
+                rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        //
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            mketFilter.setEnabled(true);
+                            swActionFilter.setEnabled(true);
+                        } else {
+                            mketFilter.setEnabled(false);
+                            swActionFilter.setEnabled(false);
+                        }
                     }
-                }
-            });
+                });
+            }
 
         }
     }
@@ -359,10 +364,21 @@ public class Act067_Frag_Items extends BaseFragment implements Act067_Frag_Items
         }
     }
 
+    /**
+     * LUCHE - 16/07/2019
+     *
+     * Metodo que avalia se o status é DONE, CANCELED OU WAITING SYNC
+     *
+     * @return True se for um dos status "imutaveis"
+     */
+    private boolean isImmutableStatus() {
+        return mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            || mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED);
+    }
+
     private boolean allowNewItem() {
-        return mOutbound.getAllow_new_item() == 1
-                && (!mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
-                    && !mOutbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_CANCELLED));
+        return mOutbound.getAllow_new_item() == 1 && !isImmutableStatus();
     }
 
     public static List<String> getFragTranslationsVars() {
