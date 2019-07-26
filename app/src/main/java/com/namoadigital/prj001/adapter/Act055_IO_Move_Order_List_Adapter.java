@@ -56,12 +56,9 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         List<String> transList = new ArrayList<>();
         transList.add("product_lbl");
         transList.add("serial_lbl");
-        transList.add("serial_code_lbl");
         transList.add("move_order_lbl");
         transList.add("inbound_lbl");
         transList.add("outbound_lbl");
-        transList.add("inbound_not_found");
-        transList.add("outbound_not_found");
         transList.add("current_position_lbl");
         transList.add("suggested_position_lbl");
         transList.add("serial_transport_order_lbl");

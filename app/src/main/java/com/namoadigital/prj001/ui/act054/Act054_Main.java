@@ -92,7 +92,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act054_title");
-        transList.add("btn_check_exists");
         //
         transList.add("user_zone_lbl");
         transList.add("user_zone_hint");
