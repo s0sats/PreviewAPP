@@ -119,6 +119,13 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
                     mView.callAct067(bundle);
                     break;
+                //LUCHE - 29/07/2019
+                //Criado novo processo , pois quando o process type for null e o site inbound auto create,
+                //o server retornara o serial para possibilitar a edição do mesmo
+                case MD_Product_SerialDao.SERIAL_CODE:
+                    //Segue para tela de edição de serial
+                    editNonLocationSerial(hmAuxRet);
+                    break;
             }
         }
     }
@@ -145,7 +152,6 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             //
         }else{
             setFlowByProcessStatus(data);
-
         }
     }
 
@@ -320,15 +326,12 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     public void processListItem(IO_Serial_Process_Record data) {
         //Nova logica - 09/07/2019
         //Se o process é null, serial não tem vinculo com I.O e tb não esta armazenado
+        //luche 29/07/2019
+        //Nesse caso do process type null, se o site for auto create, será chama o mesmo WS
+        //que os demais casos e server retornará o Serial para que o user possa editá-lo
         if(data.getProcess_type() == null){
             if(isSiteInboundAutoCreation()) {
-                /**
-                 * PONTO DE PROBLEMA, NESSE CASO NÃO TEM O OBJ SERIAL ENTÃO NÃO HÁ COMO
-                 * CONTINUAR PARA EDIÇÃO O SERIAL.
-                 */
-                //Segue para tela de edição de serial
-                editNonLocationSerial(data);
-
+                executeWsProcessDownload(data);
             }else {
                 mView.showAlert(
                     hmAux_Trans.get("alert_serial_not_stored_ttl"),
@@ -363,16 +366,47 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void editNonLocationSerial(IO_Serial_Process_Record record) {
+    public void editNonLocationSerial(HMAux serialAux) {
         Bundle bundle = new Bundle();
-        MD_Product_Serial serial = getSerial(record);
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(record.getProduct_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID,record.getSerial_id());
-        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
-        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+        MD_Product_Serial serial = getSerial(serialAux);
+        if(serial != null) {
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(serial.getProduct_code()));
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial.getSerial_id());
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial);
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT052);
+            bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, false);
+            mView.callAct053(bundle);
+        } else {
+            mView.showAlert(
+                hmAux_Trans.get("alert_serial_not_found_ttl"),
+                hmAux_Trans.get("alert_serial_not_found_msg"),
+                null
+            );
+        }
+
+    }
+
+    /**
+     * Segunda assinatura do metodo que busca o serial na base offline;
+     * @param serialAux
+     * @return
+     */
+    private MD_Product_Serial getSerial(HMAux serialAux) {
+        MD_Product_Serial serial = null;
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        try {
+            serial = serialDao.getByString(
+                new MD_Product_Serial_Sql_009(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Long.parseLong(serialAux.get(MD_Product_SerialDao.PRODUCT_CODE)),
+                    ToolBox_Inf.convertStringToInt(serialAux.get(MD_Product_SerialDao.SERIAL_CODE))
+                ).toSqlQuery()
+            );
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
         //
-        mView.callAct053(bundle);
+        return serial;
     }
 
 

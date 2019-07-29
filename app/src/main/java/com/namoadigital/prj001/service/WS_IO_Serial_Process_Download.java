@@ -15,14 +15,7 @@ import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.IO_Inbound;
-import com.namoadigital.prj001.model.IO_Inbound_Item;
-import com.namoadigital.prj001.model.IO_Move;
-import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
-import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
-import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -179,7 +172,31 @@ public class WS_IO_Serial_Process_Download extends IntentService {
                     }
                     break;
             }
+        } else{
+            //LUCHE - 29/07/2019
+            //Criado novo processo , pois quando o process type for null e o site inbound auto create,
+            //o server retornara o serial para possibilitar a edição do mesmo
+            if(rec.getSerial() != null && rec.getSerial().size() > 0) {
+                processSerialDownload(rec.getSerial());
+            }else{
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_empty_list"), "", "0");
+            }
         }
+    }
+
+    /**
+     * LUCHE - 29/07/2019
+     * Processa retorno de download de serial.
+     * @param serial
+     */
+
+    private void processSerialDownload(ArrayList<MD_Product_Serial> serial) {
+        HMAux hmAuxRet = new HMAux();
+        hmAuxRet.put(Constant.HMAUX_PROCESS_KEY,MD_Product_SerialDao.SERIAL_CODE);
+        hmAuxRet.put(MD_Product_SerialDao.PRODUCT_CODE, product_code);
+        hmAuxRet.put(MD_Product_SerialDao.SERIAL_CODE, serial_code);
+        serialDao.addUpdateTmp(serial,false);
+        sendCloseAct(hmAuxRet);
     }
 
     private void processInConfResponse(String process_type, ArrayList<IO_Inbound> inbound) {

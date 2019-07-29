@@ -18,7 +18,7 @@ public interface Act052_Main_Contract {
 
         void createNewSerialFlow(String mProduct_id, String mSerial_id);
 
-        void editNonLocationSerial(IO_Serial_Process_Record record);
+        void editNonLocationSerial(HMAux serialAux);
 
         boolean isSiteInboundAutoCreation();
 

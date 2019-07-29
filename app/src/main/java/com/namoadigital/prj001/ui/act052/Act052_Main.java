@@ -106,6 +106,10 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("alert_qty_records_exceeded_ttl");
         transList.add("alert_qty_records_exceeded_msg");
         transList.add("alert_qty_records_founded");
+        transList.add("alert_serial_not_stored_ttl");
+        transList.add("alert_serial_not_stored_msg");
+        transList.add("alert_serial_not_found_ttl");
+        transList.add("alert_serial_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

@@ -12,6 +12,7 @@ public class T_IO_Serial_Process_Download_Rec{
     private ArrayList<T_IO_Serial_Process_Download_Move> move;
     private ArrayList<IO_Inbound> inbound;
     private ArrayList<IO_Outbound> outbound;
+    private ArrayList<MD_Product_Serial> serial;
 
     public String getApp() {
         return app;
@@ -75,5 +76,13 @@ public class T_IO_Serial_Process_Download_Rec{
 
     public void setInbound(ArrayList<IO_Inbound> inbound) {
         this.inbound = inbound;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
     }
 }

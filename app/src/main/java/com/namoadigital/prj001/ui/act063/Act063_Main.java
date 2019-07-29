@@ -108,7 +108,6 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         transList.add("alert_qty_records_exceeded_ttl");
         transList.add("alert_qty_records_exceeded_msg");
         transList.add("alert_qty_records_founded");
-        transList.add("alert_nfc_timeout");
         transList.add("records_display_limit_lbl");
         transList.add("records_found_lbl");
         transList.add("btn_create_serial");

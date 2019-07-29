@@ -186,7 +186,7 @@ public class WS_IO_Outbound_Item_Add extends IntentService {
             );
             //
             if (ioOutbound == null) {
-                throw new Exception("Origin outbound not found");
+                throw new Exception(hmAux_Trans.get("msg_origin_outbound_not_found"));
             }
             //
             header.setCustomer_code(outboundItem.getCustomer_code());
@@ -300,7 +300,7 @@ public class WS_IO_Outbound_Item_Add extends IntentService {
                                 throw new Exception(daoObjReturn.getErrorMsg());
                             }
                         } else {
-                            throw new Exception("Outbound Item not found");
+                            throw new Exception(hmAux_Trans.get("msg_outbound_item_not_found"));
                         }
 
 
@@ -364,6 +364,8 @@ public class WS_IO_Outbound_Item_Add extends IntentService {
         translist.add("msg_processing_data");
         translist.add("msg_save_ok");
         translist.add("msg_no_item_to_add");
+        translist.add("msg_outbound_item_not_found");
+        translist.add("msg_origin_outbound_not_found");
 
 
         mResource_Code = ToolBox_Inf.getResourceCode(

@@ -156,9 +156,9 @@ public class Act057_Main_Presenter implements Act057_Main_Contract.I_Presenter{
             record.setComments(hmAux.get(IO_InboundDao.COMMENTS));
             record.setPerc_done(Float.valueOf(hmAux.get(Sql_Act057_001.PERC_DONE)));
             if(hmAux.get(IO_InboundDao.FROM_TYPE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
-                record.setFrom(hmAux.get(IO_InboundDao.FROM_PARTNER_ID));
+                record.setFrom(hmAux.get(IO_InboundDao.FROM_PARTNER_DESC));
             }else{
-                record.setFrom(hmAux.get(IO_InboundDao.FROM_SITE_ID));
+                record.setFrom(hmAux.get(IO_InboundDao.FROM_SITE_DESC));
             }
             record.setModal(hmAux.get(IO_InboundDao.MODAL_DESC));
             //

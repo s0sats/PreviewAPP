@@ -263,7 +263,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     }
 
     private void setViewsText() {
-        tvDepartureDtLbl.setText(hmAux_Trans.get("create_dt_lbl"));
+        tvDepartureDtLbl.setText(hmAux_Trans.get("departure_dt_lbl"));
         tvEtaDtLbl.setText(hmAux_Trans.get("eta_dt_lbl"));
         tvInvoiceLbl.setText(hmAux_Trans.get("invoice_lbl"));
         tvFromLbl.setText(hmAux_Trans.get("to_lbl"));
@@ -541,7 +541,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     public static List<String> getFragTranslationsVars(){
         List<String> transListFrag = new ArrayList<String>();
         //
-        transListFrag.add("create_dt_lbl");
+        transListFrag.add("departure_dt_lbl");
         transListFrag.add("eta_dt_lbl");
         transListFrag.add("invoice_lbl");
         transListFrag.add("to_lbl");

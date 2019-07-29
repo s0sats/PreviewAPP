@@ -155,13 +155,13 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
             record.setComments(hmAux.get(IO_OutboundDao.COMMENTS));
             record.setPerc_done(Float.valueOf(hmAux.get(Sql_Act066_001.PERC_DONE)));
 
-            record.setModal(hmAux.get(IO_OutboundDao.MODAL_CODE));
+            record.setModal(hmAux.get(IO_OutboundDao.MODAL_DESC));
             //
 
             if(hmAux.get(IO_OutboundDao.TO_TYPE).equals(ConstantBaseApp.IO_HEADER_TYPE_PARTNER)) {
-                record.setTo(hmAux.get(IO_OutboundDao.TO_PARTNER_ID));
+                record.setTo(hmAux.get(IO_OutboundDao.TO_PARTNER_DESC));
             }else{
-                record.setTo(hmAux.get(IO_OutboundDao.TO_SITE_ID));
+                record.setTo(hmAux.get(IO_OutboundDao.TO_SITE_DESC));
             }
 
             if( hmAux.hasConsistentValue(IO_OutboundDao.FROM_SITE_CODE)
