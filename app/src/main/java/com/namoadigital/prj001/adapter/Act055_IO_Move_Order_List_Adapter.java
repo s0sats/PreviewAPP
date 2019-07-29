@@ -65,9 +65,8 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
         transList.add("current_position_lbl");
         transList.add("suggested_position_lbl");
         transList.add("serial_transport_order_lbl");
-        transList.add(ConstantBaseApp.IO_INBOUND);
-        transList.add(ConstantBaseApp.IO_OUTBOUND);
-        transList.add(ConstantBaseApp.IO_PROCESS_MOVE_PLANNED);
+        transList.add("alert_serial_out_site_ttl");
+        transList.add("alert_serial_out_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -108,7 +107,7 @@ public class Act055_IO_Move_Order_List_Adapter extends RecyclerView.Adapter<Recy
 
     private void handleListItemClick(IO_Move_Search_Record record) {
         if (!record.getSite_code().equals(ToolBox_Con.getPreference_Site_Code(context))) {
-            mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_title"), hmAux_Trans.get("alert_serial_out_site_msg"));
+            mListener.showAlertSerialOut(hmAux_Trans.get("alert_serial_out_site_ttl"), hmAux_Trans.get("alert_serial_out_site_msg"));
         } else {
             mListener.onClickListItem(record);
         }

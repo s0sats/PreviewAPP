@@ -224,7 +224,7 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT066;
-        mAct_Title = Constant.ACT066 + "_" + "title";
+        mAct_Title = Constant.ACT066 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -611,5 +611,11 @@ public class Act066_Main extends Base_Activity implements Act066_Main_Contract.I
     public void onBackPressed() {
 //        super.onBackPressed();
         mPresenter.onBackPressedClicked(requestingAct);
+    }
+
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 }

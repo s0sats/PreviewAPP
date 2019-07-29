@@ -59,7 +59,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String ioProcess;
-    private boolean isIoProcess= false;
+    private boolean isIoProcess = false;
     private String ioPrefix;
     private String ioCode;
     private boolean itemSavedOk = true;
@@ -103,57 +103,60 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     }
 
     private void loadTranslation() {
-            List<String> transList = new ArrayList<>();
-            //
-            transList.add("act053_title");
-            transList.add("progress_tracking_search_ttl");
-            transList.add("progress_tracking_search_msg");
-            transList.add("alert_save_serial_return_ttl");
-            transList.add("alert_no_serial_return_msg");
-            transList.add("alert_save_serial_ok_msg");
-            transList.add("alert_save_serial_error_msg");
-            transList.add("dialog_serial_search_ttl");
-            transList.add("dialog_serial_search_start");
-            transList.add("alert_product_not_found_title");
-            transList.add("alert_product_not_found_msg");
-            transList.add("progress_serial_search_ttl");
-            transList.add("progress_serial_search_msg");
-            transList.add("dialog_result_product_lbl");
-            transList.add("dialog_result_serial_lbl");
-            transList.add("dialog_result_msg_lbl");
-            transList.add("dialog_results_ttl");
-            transList.add("btn_create");
-            //
-            transList.add("alert_address_suggestion_fails_ttl");
-            transList.add("alert_address_suggestion_fails_msg");
-            transList.add("item_lbl");
-            transList.add("serial_lbl");
-            transList.add("outbound_lbl");
-            transList.add("message_lbl");
-            transList.add("alert_add_item_empty_return_ttl");
-            transList.add("alert_add_item_empty_return_msg");
-            transList.add("alert_add_item_error_on_return_ttl");
-            transList.add("alert_add_item_error_on_return_msg");
-            transList.add("alert_add_item_results_ttl");
-            transList.add("alert_leave_add_item_ttl");
-            transList.add("alert_not_save_item_will_be_lost_msg");
-            //
-            hmAux_Trans = ToolBox_Inf.setLanguage(
-                    context,
-                    mModule_Code,
-                    mResource_Code,
-                    ToolBox_Con.getPreference_Translate_Code(context),
-                    transList
-            );
-            //
-            hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
-                    context,
-                    mModule_Code,
-                    mResource_Code_Frag,
-                    ToolBox_Con.getPreference_Translate_Code(context),
-                    //transListFrag
-                    Frg_Serial_Edit.getFragTranslationsVars()
-            );
+        List<String> transList = new ArrayList<>();
+        //
+        transList.add("act053_title");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_save_serial_return_ttl");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_save_serial_ok_msg");
+        transList.add("alert_save_serial_error_msg");
+        transList.add("dialog_serial_search_ttl");
+        transList.add("dialog_serial_search_start");
+        transList.add("alert_product_not_found_title");
+        transList.add("alert_product_not_found_msg");
+        transList.add("progress_serial_search_ttl");
+        transList.add("progress_serial_search_msg");
+        transList.add("dialog_result_product_lbl");
+        transList.add("dialog_result_serial_lbl");
+        transList.add("dialog_result_msg_lbl");
+        transList.add("dialog_results_ttl");
+        transList.add("btn_create");
+        //
+        transList.add("alert_address_suggestion_fails_ttl");
+        transList.add("alert_address_suggestion_fails_msg");
+        transList.add("item_lbl");
+        transList.add("serial_lbl");
+        transList.add("inbound_lbl");
+        transList.add("outbound_lbl");
+        transList.add("message_lbl");
+        transList.add("alert_add_item_empty_return_ttl");
+        transList.add("alert_add_item_empty_return_msg");
+        transList.add("alert_add_item_error_on_return_ttl");
+        transList.add("alert_add_item_error_on_return_msg");
+        transList.add("alert_add_item_results_ttl");
+        transList.add("alert_leave_add_item_ttl");
+        transList.add("alert_not_save_item_will_be_lost_msg");
+        transList.add("alert_error_item_save_ttl");
+        transList.add("alert_error_item_save_msg");
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+        //
+        hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code_Frag,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                //transListFrag
+                Frg_Serial_Edit.getFragTranslationsVars()
+        );
     }
 
     private void initVars() {
@@ -485,7 +488,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
 
     @Override
     public void refreshUI() {
-        if(frgSerialEdit != null){
+        if (frgSerialEdit != null) {
             frgSerialEdit.refreshUi();
         }
     }

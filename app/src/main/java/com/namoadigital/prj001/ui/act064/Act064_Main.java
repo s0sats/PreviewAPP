@@ -354,4 +354,10 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         mPresenter.onBackPressed();
     }
 
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
+
 }
