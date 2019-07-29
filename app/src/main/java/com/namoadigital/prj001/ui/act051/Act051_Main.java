@@ -114,6 +114,17 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         transList.add("blind_move_lbl");
         transList.add("inbound_move_lbl");
         transList.add("outbound_move_lbl");
+        transList.add("alert_local_product_not_found_ttl");
+        transList.add("alert_local_product_not_found_msg");
+        transList.add("alert_move_results_ttl");
+        transList.add("dialog_save_move_ttl");
+        transList.add("dialog_save_move_msg");
+        transList.add("progress_save_outbound_item_ttl");
+        transList.add("progress_save_outbound_item_msg");
+        transList.add("progress_save_inbound_item_ttl");
+        transList.add("progress_save_inbound_item_msg");
+
+
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
