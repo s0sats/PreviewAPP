@@ -100,8 +100,6 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         List<String> transList = new ArrayList<String>();
         transList.add("act062_title");
         transList.add("btn_check_exists");
-        transList.add("alert_no_value_filled_ttl");
-        transList.add("alert_no_value_filled_msg");
         transList.add("alert_no_serial_found_ttl");
         transList.add("alert_no_serial_found_msg");
         transList.add("dialog_serial_search_ttl");

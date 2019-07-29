@@ -116,26 +116,7 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
     public boolean hasConfirmedItem(IO_Outbound mOutbound) {
         if(mOutbound.getItems() != null && mOutbound.getItems().size() > 0 ){
             for(IO_Outbound_Item outboundItem : mOutbound.getItems()){
-                /*
-                Regra de alteração de status de outbound.
-                Caso não haja movimentação, é possível voltar o status da outbound para o status pendente
-                 */
-                if(outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)){
-                    IO_MoveDao moveDao = new IO_MoveDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-                    IO_Move item = moveDao.getByString(
-                            new IO_Move_Order_Item_Sql_011(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    (int) outboundItem.getProduct_code(),
-                                    (int) outboundItem.getSerial_code()
-                            ).toSqlQuery()
-                    );
-                    if(item != null && item.getMove_code() >0){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
-                if(outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                if(  outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
                         || outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 ){
                     return true;
