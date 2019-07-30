@@ -495,7 +495,6 @@ public class WS_IO_Inbound_Item_Save extends IntentService {
 
         translist.add("msg_loading_itens_from_token");
         translist.add("msg_preparing_items_data");
-        translist.add("msg_no_items_to_update");
         translist.add("msg_token_file_error");
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
