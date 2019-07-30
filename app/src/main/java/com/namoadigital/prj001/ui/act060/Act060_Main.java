@@ -254,8 +254,8 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT059;
-        mAct_Title = Constant.ACT059 + "_" + "title";
+        mAct_Info = Constant.ACT060;
+        mAct_Title = Constant.ACT060 + ConstantBaseApp.title_lbl;
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -325,7 +325,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         //trad
-        tv_title.setText(hmAux_Trans.get("alert_move_results_ttl"));
+        tv_title.setText(hmAux_Trans.get("alert_item_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         List<HMAux> formattedList = new ArrayList<>();

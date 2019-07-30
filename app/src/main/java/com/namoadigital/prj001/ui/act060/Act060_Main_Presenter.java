@@ -177,8 +177,8 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
                 mView.setWs_process(WS_IO_Outbound_Item_Save.class.getName());
                 //
                 mView.showPD(
-                        hmAux_trans.get("dialog_save_move_ttl"),
-                        hmAux_trans.get("dialog_save_move_msg")
+                        hmAux_trans.get("dialog_save_item_ttl"),
+                        hmAux_trans.get("dialog_save_item_msg")
                 );
                 //
                 Intent mIntent = new Intent(context, WBR_IO_Outbound_Item_Save.class);
