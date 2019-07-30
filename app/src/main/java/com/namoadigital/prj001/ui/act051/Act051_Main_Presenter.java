@@ -544,7 +544,11 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    auxResult.put(moveCode, actReturn.getRetStatus());
+                    String msg = actReturn.getRetStatus() ;
+                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
+                        msg+= "\n" + actReturn.getMsg();
+                    }
+                    auxResult.put(moveCode, msg);
                 }
             }
             //For no resumido por inbound montando msg a ser exibida

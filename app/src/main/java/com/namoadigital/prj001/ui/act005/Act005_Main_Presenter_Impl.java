@@ -683,11 +683,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public ArrayList<HMAux> processIOItemSaveReturn(String jsonRet, String itemLabel) {
+    public ArrayList<HMAux> processOutboundItemSaveReturn(String jsonRet, String itemLabel) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
         ArrayList<HMAux> resultList = new ArrayList<>();
-
+        List<String> itemTypeList = new ArrayList<>();
+        //inicializa indice para rastrear o tipo do item.
+        int indexOfItems =0;
         IO_MoveDao moveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
@@ -705,8 +707,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //Monta lista por inbound/outbound
             for (WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn actReturn : actReturnList) {
                 String moveCode = "";
+                String itemType = "";
                 //
                 if (actReturn.isMove()) {
+                    itemType = "ASSETS_MOVE";
                     IO_Move ioMove =
                             moveDao.getByString(
                                     new IO_Move_Order_Item_Sql_001(
@@ -719,6 +723,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         moveCode = ioMove.getMove_prefix() + "." + ioMove.getMove_code();
                     }
                 } else {
+                    itemType = itemLabel;
                     moveCode = actReturn.getPrefix() + "." + actReturn.getCode();
                 }
                 if (!auxResult.containsKey(moveCode)
@@ -726,7 +731,93 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    auxResult.put(moveCode, actReturn.getRetStatus());
+                    String msg = actReturn.getRetStatus() ;
+                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
+                        msg+= "\n" + actReturn.getMsg();
+                    }
+                    auxResult.put(moveCode, msg);
+                    itemTypeList.add(itemType);
+                }
+            }
+            //inicializa indice para montagem de extrato
+            indexOfItems = 0;
+            //For no resumido por in/outbound montando msg a ser exibida
+            for (Map.Entry<String, String> item : auxResult.entrySet()) {
+
+                if(!item.getValue().equals("OK")) {
+                    HMAux hmAux = new HMAux();
+                    //
+                    //Monta HmAux
+                    hmAux.put("type", itemTypeList.get(indexOfItems));
+                    hmAux.put("label", item.getKey());
+                    hmAux.put("status", item.getValue());
+                    hmAux.put("final_status", item.getKey() + " / " + item.getValue());
+                    //
+                    indexOfItems++;
+                    resultList.add(hmAux);
+                }
+            }
+            //
+            return resultList;
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<HMAux> processInboundItemSaveReturn(String jsonRet, String itemLabel) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        List<String> itemTypeList = new ArrayList<>();
+        //inicializa indice para rastrear o tipo do item.
+        int indexOfItems =0;
+        IO_MoveDao moveDao = new IO_MoveDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM);
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        //
+        if (actReturnList != null && actReturnList.size() > 0) {
+            HMAux auxResult = new HMAux();
+            //Monta lista por inbound/outbound
+            for (WS_IO_Inbound_Item_Save.InboundItemSaveActReturn actReturn : actReturnList) {
+                String moveCode = "";
+                String itemType = "";
+                //
+                if (actReturn.isMove()) {
+                    itemType = "ASSETS_MOVE";
+                    IO_Move ioMove =
+                            moveDao.getByString(
+                                    new IO_Move_Order_Item_Sql_001(
+                                            actReturn.getCustomer_code(),
+                                            actReturn.getPrefix(),
+                                            actReturn.getCode()
+                                    ).toSqlQuery()
+                            );
+                    if (ioMove != null) {
+                        moveCode = ioMove.getMove_prefix() + "." + ioMove.getMove_code();
+                    }
+                } else {
+                    itemType = itemLabel;
+                    moveCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                }
+                if (!auxResult.containsKey(moveCode)
+                        || (auxResult.containsKey(moveCode)
+                        && !actReturn.getRetStatus().equals("OK")
+                )
+                ) {
+                    String msg = actReturn.getRetStatus() ;
+                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
+                        msg+= "\n" + actReturn.getMsg();
+                    }
+                    auxResult.put(moveCode, msg);
+                    itemTypeList.add(itemType);
                 }
             }
             //For no resumido por in/outbound montando msg a ser exibida
@@ -736,11 +827,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     HMAux hmAux = new HMAux();
                     //
                     //Monta HmAux
-                    hmAux.put("type", itemLabel);
+                    hmAux.put("type", itemTypeList.get(indexOfItems));
                     hmAux.put("label", item.getKey());
                     hmAux.put("status", item.getValue());
                     hmAux.put("final_status", item.getKey() + " / " + item.getValue());
                     //
+                    indexOfItems++;
                     resultList.add(hmAux);
                 }
             }
@@ -749,6 +841,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return null;
     }
+
 
     @Override
     public void executeSyncProcess(int jump_validation_UR) {

@@ -328,7 +328,7 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
                 )
                 ) {
                     String msg = actReturn.getRetStatus() ;
-                    if(actReturn.getMsg() != null && actReturn.getMsg().isEmpty()){
+                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
                         msg+= "\n" + actReturn.getMsg();
                     }
                     auxResult.put(outboundCode, msg);

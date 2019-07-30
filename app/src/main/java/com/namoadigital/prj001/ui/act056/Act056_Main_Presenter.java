@@ -329,7 +329,7 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
                         )
                 ) {
                     String msg = actReturn.getRetStatus() ;
-                    if(actReturn.getMsg() != null && actReturn.getMsg().isEmpty()){
+                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
                         msg+= "\n" + actReturn.getMsg();
                     }
 
