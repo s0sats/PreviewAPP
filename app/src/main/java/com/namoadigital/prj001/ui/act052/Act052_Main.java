@@ -88,6 +88,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
         transList.add("act052_title");
         transList.add("btn_blind_serial_move");
         transList.add("no_record_found_lbl");
+        transList.add("showing_lbl");
         transList.add("records_lbl");
         transList.add("records_found_lbl");
         transList.add("records_display_limit_lbl");
@@ -177,7 +178,7 @@ public class Act052_Main extends Base_Activity implements Act052_Main_Contract.I
     }
 
     private void setTvSerialListSize() {
-        tvSerialListSize.setText(hmAux_Trans.get("records_found_lbl") + " " + serialListData.size());
+        tvSerialListSize.setText(hmAux_Trans.get("showing_lbl") + " " + serialListData.size() + " " + hmAux_Trans.get("records_lbl"));
         tvSerialListRecordLimit.setText(hmAux_Trans.get("records_display_limit_lbl") + " " + record_page);
         tvSerialListRecordCount.setText(hmAux_Trans.get("records_found_lbl") + " " + record_count);
         //
