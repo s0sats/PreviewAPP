@@ -339,30 +339,71 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                     getOtherSiteClickListner()
                 );
             }
-        }else{
-            //Já que possui process, valida se existe site
-            if(data.getSite_code() != null){
-                if(data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)) ){
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_serial_out_site_title"),
-                        hmAux_Trans.get("alert_serial_out_site_msg"),
-                        getOtherSiteClickListner()
+        }else {
+            if(hasProcessProfile(data.getProcess_type())){
+                //Já que possui process, valida se existe site
+                if (data.getSite_code() != null) {
+                    if (data.getSite_code() != Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))) {
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_serial_out_site_title"),
+                            hmAux_Trans.get("alert_serial_out_site_msg"),
+                            getOtherSiteClickListner()
                         );
-                } else{
-                    executeWsProcessDownload(data);
+                    } else {
+                        executeWsProcessDownload(data);
+                    }
+                } else {
+                    if (data.getProcess_type().equals(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
+                        executeWsProcessDownload(data);
+                    } else {
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_serial_out_site_title"),
+                            hmAux_Trans.get("alert_serial_out_site_msg"),
+                            getOtherSiteClickListner()
+                        );
+                    }
                 }
-            } else {
-                if(data.getProcess_type().equals(ConstantBaseApp.IO_PROCESS_IN_CONF)) {
-                    executeWsProcessDownload(data);
-                }else {
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_serial_out_site_title"),
-                        hmAux_Trans.get("alert_serial_out_site_msg"),
-                        getOtherSiteClickListner()
-                    );
-                }
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_process_profile_denied_ttl"),
+                    hmAux_Trans.get("alert_process_profile_denied_msg"),
+                   null
+                );
             }
         }
+    }
+
+    /**
+     * LUCHE - 30/07/2019
+     *
+     * Metodo que valida se o usuario possui profile para executar o processo selecionado
+     *
+     * @param process_type - Processo
+     * @return Verdadeiro se o usuario tiver acesso ao profile de execução.
+     */
+    private boolean hasProcessProfile(String process_type) {
+        boolean accessGrant = false;
+        //
+        switch(process_type){
+            case ConstantBaseApp.IO_PROCESS_IN_CONF:
+                accessGrant = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_INBOUND);
+                break;
+            case ConstantBaseApp.IO_INBOUND:
+            case ConstantBaseApp.IO_OUTBOUND:
+            case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+            case ConstantBaseApp.IO_PROCESS_MOVE:
+            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+            case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
+            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
+            case ConstantBaseApp.SYS_STATUS_PICKING:
+                accessGrant = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_MOVE_REQUEST);
+                break;
+            case ConstantBaseApp.IO_PROCESS_OUT_CONF:
+                accessGrant = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_IO, ConstantBaseApp.PROFILE_MENU_IO_PARAM_OUTBOUND);
+                break;
+        }
+        //
+        return accessGrant;
     }
 
     @Override
