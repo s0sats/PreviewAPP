@@ -96,15 +96,10 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act063_title");
-        transList.add("search_prod_hint");
-        transList.add("search_serial_hint");
-        transList.add("progress_nfc_ttl");
-        transList.add("progress_nfc_msg");
         transList.add("showing_lbl");
         transList.add("records_lbl");
 
         transList.add("no_record_found_lbl");
-        transList.add("alert_nfc_return");
         transList.add("alert_qty_records_exceeded_ttl");
         transList.add("alert_qty_records_exceeded_msg");
         transList.add("alert_qty_records_founded");

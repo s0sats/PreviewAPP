@@ -177,9 +177,7 @@ public class Act061_Frag_Items extends BaseFragment implements Act061_Frag_Items
         loadInbound();
         //
         mPresenter = new Act061_Frag_Items_Presenter(
-            context,
-            this,
-            hmAux_Trans
+            context
         );
         //
     }

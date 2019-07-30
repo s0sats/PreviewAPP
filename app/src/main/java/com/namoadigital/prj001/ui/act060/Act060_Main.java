@@ -138,6 +138,8 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         transList.add("progress_tracking_search_msg");
         transList.add("alert_result_out_conf");
         transList.add("alert_result_movement");
+        transList.add("alert_offline_save_error_ttl");
+        transList.add("alert_offline_save_error_msg");
 
         transList.addAll(Frag_Move_Create.getFragTranslationsVars());
 

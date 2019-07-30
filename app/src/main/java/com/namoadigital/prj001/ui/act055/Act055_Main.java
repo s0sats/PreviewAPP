@@ -355,4 +355,10 @@ public class Act055_Main extends Base_Activity implements Act055_Main_Contract.I
 
         finish();
     }
+
+    @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
 }

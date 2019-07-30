@@ -13,14 +13,10 @@ import java.util.ArrayList;
 public class Act061_Frag_Items_Presenter implements Act061_Frag_Items_Contract.I_Presenter  {
 
     private Context context;
-    private Act061_Frag_Items_Contract.I_View mView;
-    private HMAux hmAux_trans;
     private IO_Inbound_ItemDao itemDao;
 
-    public Act061_Frag_Items_Presenter(Context context, Act061_Frag_Items_Contract.I_View mView, HMAux hmAux_trans) {
+    public Act061_Frag_Items_Presenter(Context context) {
         this.context = context;
-        this.mView = mView;
-        this.hmAux_trans = hmAux_trans;
         this.itemDao = new IO_Inbound_ItemDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

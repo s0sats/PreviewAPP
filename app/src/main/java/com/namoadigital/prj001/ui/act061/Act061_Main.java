@@ -139,20 +139,21 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_header_save_only_online_msg");
         transList.add("alert_from_outbound_error_ttl");
         transList.add("alert_from_outbound_error_msg");
-        //
+        transList.add("alert_error_update_inbound_to_wainting_sync_ttl");
+        transList.add("alert_error_update_inbound_to_wainting_sync_msg");
+//
         transList.add("dialog_inbound_download_ttl");
         transList.add("dialog_inbound_download_start");
         transList.add("alert_download_return_ttl");
-        transList.add("alert_download_return_msg");
+
         transList.add("alert_sync_ok_refresh_is_needed_msg");
-        transList.add("alert_sync_data_ttl");
-        transList.add("alert_sync_data_msg");
         transList.add("alert_inbound_results_ttl");
         transList.add("alert_download_return_error_msg");
-        //
+//
         transList.add("dialog_transport_order_search_ttl");
-        transList.add("dialog_transport_order_search_msg");
+        transList.add("dialog_transport_order_search_start");
         transList.add("alert_transport_order_return_ttl");
+        transList.add("alert_on_processing_return_msg");
         transList.add("alert_outbound_not_found_msg");
         transList.add("alert_x_outbound_founded_msg");
         transList.add("alert_from_outbound_ttl");
@@ -161,7 +162,6 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_outbound_destination_msg");
         transList.add("alert_header_changes_will_be_lost_ttl");
         transList.add("alert_header_changes_will_be_lost_msg");
-
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header

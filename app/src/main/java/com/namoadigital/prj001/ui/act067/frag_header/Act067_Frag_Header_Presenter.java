@@ -3,10 +3,13 @@ package com.namoadigital.prj001.ui.act067.frag_header;
 import android.content.Context;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_011;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
@@ -113,8 +116,7 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
     public boolean hasConfirmedItem(IO_Outbound mOutbound) {
         if(mOutbound.getItems() != null && mOutbound.getItems().size() > 0 ){
             for(IO_Outbound_Item outboundItem : mOutbound.getItems()){
-                if( outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE)
-                        || outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                if(  outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
                         || outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 ){
                     return true;
