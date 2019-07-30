@@ -148,7 +148,7 @@ public class Act066_Main_Presenter implements Act066_Main_Contract.I_Presenter{
             record.setOutbound_code(Integer.parseInt(hmAux.get(IO_OutboundDao.OUTBOUND_CODE)));
             record.setOutbound_id(hmAux.get(IO_OutboundDao.OUTBOUND_ID));
             record.setOutbound_desc(hmAux.get(IO_OutboundDao.OUTBOUND_DESC));
-            record.setCreate_date(hmAux.get(IO_OutboundDao.OUTBOUND_DESC));
+            record.setCreate_date(null);
             record.setEta_date(hmAux.get(IO_OutboundDao.ETA_DATE));
             record.setInvoice_number(hmAux.get(IO_OutboundDao.INVOICE_NUMBER));
             record.setStatus(hmAux.get(IO_OutboundDao.STATUS));

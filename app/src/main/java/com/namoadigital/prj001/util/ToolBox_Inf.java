@@ -5513,4 +5513,58 @@ public class ToolBox_Inf {
         return existisFile;
     }
 
+    /**
+     * LUCHE - 30/07/2019
+     *
+     * Retorna qtd de inbounds no arquivo de token
+     * @return
+     */
+    public static int countInboundsInTokenFile() {
+        try {
+            Gson gsonRec = new GsonBuilder().serializeNulls().create();
+            File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+            if(inboundToken.length > 0) {
+                //
+                T_IO_Inbound_Item_Env inboundList =
+                    gsonRec.fromJson(
+                        ToolBox_Inf.getContents(inboundToken[0]),
+                        T_IO_Inbound_Item_Env.class
+                    );
+                return inboundList.getInbound().size();
+            }else{
+                return 0;
+            }
+            //
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0;
+        }
+    }
+    /**
+     * LUCHE - 30/07/2019
+     *
+     * Retorna qtd de outbound no arquivo de token
+     * @return
+     */
+    public static int countOutboundsInTokenFile() {
+        try {
+            Gson gsonRec = new GsonBuilder().serializeNulls().create();
+            File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX);
+            if(outboundToken.length > 0) {
+                T_IO_Outbound_Item_Env outboundList =
+                    gsonRec.fromJson(
+                        ToolBox_Inf.getContents(outboundToken[0]),
+                        T_IO_Outbound_Item_Env.class
+                    );
+                //
+                return outboundList.getOutbound().size();
+            }else{
+                return 0;
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0;
+        }
+    }
+
 }

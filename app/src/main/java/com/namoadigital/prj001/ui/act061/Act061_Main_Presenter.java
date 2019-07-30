@@ -69,6 +69,7 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
         //Se condições atendidas, altera status da inbound.
         if( ioInbound != null
             && (ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PENDING) || ioInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_PROCESS))
+            && ioInbound.getItems() != null && ioInbound.getItems().size() > 0
             && ioInbound.getDone_automatic() == 1
             && allItemsDone(ioInbound)
         ){
