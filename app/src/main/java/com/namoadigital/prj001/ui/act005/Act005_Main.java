@@ -1553,7 +1553,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> inbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_INBOUND_ITEM");
+            ArrayList<HMAux> inbound_items = mPresenter.processInboundItemSaveReturn(mLink, "ASSETS_INBOUND_ITEM");
 
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
@@ -1564,7 +1564,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> outbound_items = mPresenter.processIOItemSaveReturn(mLink, "ASSETS_OUTBOUND_ITEM");
+            ArrayList<HMAux> outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, "ASSETS_OUTBOUND_ITEM");
 
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
@@ -1790,6 +1790,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
                     break;
                 case "ASSETS_MOVE_PLANNED":
+                case "ASSETS_MOVE":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_move"));
                     break;
                 case "ASSETS_INBOUND_ITEM":

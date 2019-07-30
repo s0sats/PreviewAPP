@@ -59,5 +59,7 @@ public interface Act005_Main_Presenter {
 
     int getChatBadgeQty();
 
-    ArrayList<HMAux> processIOItemSaveReturn(String mLink, String io_item_lbl);
+    ArrayList<HMAux> processOutboundItemSaveReturn(String mLink, String io_item_lbl);
+
+    ArrayList<HMAux> processInboundItemSaveReturn(String mLink, String io_item_lbl);
 }
