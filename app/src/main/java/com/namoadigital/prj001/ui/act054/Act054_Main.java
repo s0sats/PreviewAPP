@@ -47,7 +47,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
     private CheckBox chkPlannedMove;
     private CheckBox chkIoOrigins;
     private CheckBox chkIoDestiny;
-    private LinearLayout llIoZone;
     private SearchableSpinner ssIoZone;
     private TextView tvIoOrientationLbl;
     private Button btnSearchMoveOrder;
@@ -212,7 +211,6 @@ public class Act054_Main extends Base_Activity implements Act054_Main_Contract.I
         chkInbound = findViewById(R.id.act054_cb_inbound);
         chkOutbound = findViewById(R.id.act054_cb_outbound);
         chkPlannedMove = findViewById(R.id.act054_cb_planned_move);
-        llIoZone = findViewById(R.id.act054_ll_io_zone);
         ssIoZone = findViewById(R.id.act054_ss_io_zone);
         tvIoOrientationLbl = findViewById(R.id.act054_tv_io_orientation_lbl);
         chkIoOrigins = findViewById(R.id.act054_cb_io_origins);

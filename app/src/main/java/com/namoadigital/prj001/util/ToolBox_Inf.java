@@ -31,6 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1677,6 +1678,11 @@ public class ToolBox_Inf {
 
         ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
         ImageView iv_ocrvin = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_ocrvin_footer);
+        //
+        TextView tv_offline_lbl = (TextView) customView.findViewById(R.id.footer_dialog_tv_offline_lbl);
+        Switch sw_offline = (Switch) customView.findViewById(R.id.footer_dialog_sw_offline);
+        LinearLayout ll_offline_mode = (LinearLayout) customView.findViewById(R.id.footer_dialog_ll_offline_mode);
+
         //
         LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
         TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
