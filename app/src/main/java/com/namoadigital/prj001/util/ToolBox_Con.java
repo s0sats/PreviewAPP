@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -1131,6 +1132,24 @@ public class ToolBox_Con {
     }
 
     public static boolean isOnline(Context context) {
+        return isOnline(context,false);
+    }
+
+    /**
+     * LUCHE - 31/07/2019
+     *
+     * Nova implementação do metodo isOnline que agora também validará se o
+     * @param context
+     * @param ignoreOfflineMode
+     * @return
+     */
+    public static boolean isOnline(Context context, boolean ignoreOfflineMode) {
+        if(!ignoreOfflineMode){
+            if(ToolBox.getPreference_Offline_Mode(context)){
+               return false;
+            }
+        }
+        //
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         int netType = 0;

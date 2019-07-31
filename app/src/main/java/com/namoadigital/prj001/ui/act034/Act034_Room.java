@@ -280,7 +280,7 @@ public class Act034_Room extends BaseFragment {
                 @Override
                 public void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path) {
                     if (!room_type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SYS)) {
-                        if (ToolBox_Con.isOnline(context)) {
+                        if (ToolBox_Con.isOnline(context,true)) {
                             mRoom_Code = room_code;
                             mRoom_Type = room_type;
                             mRoom_Desc = room_desc;
