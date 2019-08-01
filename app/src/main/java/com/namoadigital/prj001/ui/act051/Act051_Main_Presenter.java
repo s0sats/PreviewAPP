@@ -290,10 +290,12 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
                 String type;
                 switch (serial_record.get(IO_MoveDao.MOVE_TYPE)) {
                     case ConstantBaseApp.IO_INBOUND:
-                        type = ConstantBaseApp.SYS_STATUS_PUT_AWAY;
+                        //type = ConstantBaseApp.SYS_STATUS_PUT_AWAY;
+                        type = ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY;
                         break;
                     case ConstantBaseApp.IO_OUTBOUND:
-                        type = ConstantBaseApp.SYS_STATUS_PICKING;
+                        //type = ConstantBaseApp.SYS_STATUS_PICKING;
+                        type = ConstantBaseApp.IO_PROCESS_OUT_PICKING;
                         break;
                     case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
                         type = ConstantBaseApp.IO_PROCESS_MOVE_PLANNED;
