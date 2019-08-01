@@ -277,6 +277,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_IMEI = "footer_imei";
     public static final String FOOTER_SITE_NOT_FOUND = "footer_site_not_found";
     public static final String FOOTER_OPERATION_NOT_FOUND = "footer_operation_not_found";
+    public static final String FOOTER_OFFLINE_MODE_LBL = "footer_offline_mode_lbl";
 
     /**
      * Sync WS

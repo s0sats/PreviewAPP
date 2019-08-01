@@ -147,7 +147,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void nfcData(boolean bStatus, String sMessage) {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context, true)) {
 
             if (bStatus) {
                 enableProgressDialog(

@@ -1110,6 +1110,11 @@ public class ToolBox_Con {
                 ""
         ).apply();
         //
+        sharedPreferences.edit().putBoolean(
+                Constant.PREFERENCES_OFFLINE_MODE,
+                false
+        ).apply();
+        //
         sharedPreferences.edit().putString(
                 "SERVICE",
                 "NO_SERVICE"
