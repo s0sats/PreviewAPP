@@ -234,7 +234,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         //
         setData(mRoom_code, offSet);
         //Se sem conectividade ou socket não setado, não tenta enviar msg
-        if (ToolBox_Con.isOnline(context) && SingletonWebSocket.isSocketSetted()) {
+        if (ToolBox_Con.isOnline(context,true) && SingletonWebSocket.isSocketSetted()) {
             enviarMensagemServer(mRoom_code, message, chMessage);
         }
 
@@ -322,7 +322,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (ToolBox_Con.isOnline(context)) {
+                            if (ToolBox_Con.isOnline(context,true)) {
                                 mView.executeApSyncWsViaInfo(hmAux);
                             } else {
                                 ToolBox_Inf.showNoConnectionDialog(context);

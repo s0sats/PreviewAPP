@@ -562,7 +562,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             @Override
             public void showInfo(HMAux hmAux) {
 
-                if (ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context,true)) {
 
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                     if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
@@ -721,7 +721,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             startActivity(intent);
         } else {
 
-            if (!ToolBox_Con.isOnline(context)) {
+            if (!ToolBox_Con.isOnline(context,true)) {
                 ToolBox_Inf.showNoConnectionDialog(context);
                 //
                 return;
@@ -792,7 +792,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processingJoinAP(int selected) {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context,true)) {
             switch (selected) {
                 case R.id.act035_join_ap_dialog_rb_join:
                     executeApSyncWs("join");
@@ -1078,7 +1078,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    if (ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context,true)) {
 
                         HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
 
@@ -1105,7 +1105,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void callRoomInfo(CH_Room mRoom) {
         if (!mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
-            if (ToolBox_Con.isOnline(context)) {
+            if (ToolBox_Con.isOnline(context,true)) {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                 startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
             } else {
@@ -1872,7 +1872,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 @Override
                 public void onClick(View v) {
 
-                    if (ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context,true)) {
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                         startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(mCustomer_code));
                     } else {
