@@ -1324,7 +1324,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSupport(String support_msg) {
 
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context,true)) {
             mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
             mView.showPD();
