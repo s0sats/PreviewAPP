@@ -219,18 +219,26 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
                 break;
             case ConstantBaseApp.IO_PROCESS_MOVE:
                 MD_Product_Serial serial = getSerial(data);
-                bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) serial.getProduct_code());
-                bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, (int) serial.getSerial_code());
-                try {
-                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, (int) serial.getClass_code());
-                }catch (Exception e ){
-                    e.printStackTrace();
-                    bundle.putInt(MD_Product_SerialDao.CLASS_CODE, -1);
+                if(serial != null) {
+                    bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, (int) serial.getProduct_code());
+                    bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, (int) serial.getSerial_code());
+                    try {
+                        bundle.putInt(MD_Product_SerialDao.CLASS_CODE, (int) serial.getClass_code());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        bundle.putInt(MD_Product_SerialDao.CLASS_CODE, -1);
+                    }
+                    bundle.putInt(IO_Blind_MoveDao.ZONE_CODE, -1);
+                    bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE, -1);
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT052);
+                    mView.callAct058(bundle);
+                }else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_serial_not_found_ttl"),
+                        hmAux_Trans.get("alert_serial_not_found_msg"),
+                        null
+                    );
                 }
-                bundle.putInt(IO_Blind_MoveDao.ZONE_CODE,-1 );
-                bundle.putInt(IO_Blind_MoveDao.LOCAL_CODE,-1 );
-                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
-                mView.callAct058(bundle);
                 break;
             default:
 

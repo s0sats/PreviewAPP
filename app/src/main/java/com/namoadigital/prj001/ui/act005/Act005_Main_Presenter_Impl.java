@@ -1099,7 +1099,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     //
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //
-                    if (ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context,true)) {
                         executeLogout(logoutList);
                     } else {
                         if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
