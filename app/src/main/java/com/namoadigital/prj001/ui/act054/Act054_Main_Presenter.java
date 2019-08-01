@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -469,16 +468,16 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
 
     @Override
     public void saveSearchPreferences(boolean move_planned_status, boolean inbound_status, boolean outbound_status, boolean origin_status, boolean destiny_status) {
-        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.MOVE_PLANNED_TYPE_SEARCH, move_planned_status);
-        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.INBOUND_TYPE_SEARCH, inbound_status);
-        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.OUTBOUND_TYPE_SEARCH,  outbound_status);
-        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.ORIGIN_ORIENTATION_SEARCH,  origin_status);
-        ToolBox_Con.setPreference_Act054(context,Act054_Main_Contract.DESTINY_ORIENTATION_SEARCH, destiny_status);
+        ToolBox_Con.setBooleanPreference(context,Act054_Main_Contract.MOVE_PLANNED_TYPE_SEARCH, move_planned_status);
+        ToolBox_Con.setBooleanPreference(context,Act054_Main_Contract.INBOUND_TYPE_SEARCH, inbound_status);
+        ToolBox_Con.setBooleanPreference(context,Act054_Main_Contract.OUTBOUND_TYPE_SEARCH,  outbound_status);
+        ToolBox_Con.setBooleanPreference(context,Act054_Main_Contract.ORIGIN_ORIENTATION_SEARCH,  origin_status);
+        ToolBox_Con.setBooleanPreference(context,Act054_Main_Contract.DESTINY_ORIENTATION_SEARCH, destiny_status);
     }
 
     @Override
     public boolean getSearchFilterPreferences(String key_prefs, boolean default_value) {
-        return ToolBox_Con.getPreference_Act054(context, key_prefs, default_value);
+        return ToolBox_Con.getBooleanPreferencesByKey(context, key_prefs, default_value);
     }
 
     @Override

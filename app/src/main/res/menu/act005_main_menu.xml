@@ -4,6 +4,15 @@
     tools:context=".ui.act005.Act005_Main">
 
     <item
+        android:id="@+id/act05_namoa_offline"
+        android:icon="@drawable/ic_signal_wifi_off_black_24dp"
+        android:iconTint="@color/padrao_WHITE"
+        android:orderInCategory="1"
+        android:title="@string/app_name"
+        app:showAsAction="always" />
+
+
+    <item
         android:id="@+id/act05_namoa_logo"
         android:orderInCategory="1"
         android:title="@string/app_name"

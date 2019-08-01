@@ -224,7 +224,7 @@ public class ToolBox_Con {
 
     //region Act054
     //
-    public static void setPreference_Act054(Context context, String pref_key, boolean pref_value) {
+    public static void setBooleanPreference(Context context, String pref_key, boolean pref_value) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit().putBoolean(
@@ -233,7 +233,7 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    public static boolean getPreference_Act054(Context context, String pref_key, boolean default_value) {
+    public static boolean getBooleanPreferencesByKey(Context context, String pref_key, boolean default_value) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
