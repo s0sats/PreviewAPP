@@ -211,11 +211,22 @@ public class Act052_Main_Presenter implements Act052_Main_Contract.I_Presenter {
             case ConstantBaseApp.SYS_STATUS_PUT_AWAY:
             case ConstantBaseApp.SYS_STATUS_PICKING:
             case ConstantBaseApp.IO_PROCESS_MOVE_PLANNED:
+            case ConstantBaseApp.IO_PROCESS_IN_PUT_AWAY:
+            case ConstantBaseApp.IO_PROCESS_OUT_PICKING:
                 IO_Move io_move = getMove(data);
-                bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
-                bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
-                bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,Constant.ACT052);
-                mView.callAct058(bundle);
+                //
+                if(io_move != null) {
+                    bundle.putString(IO_MoveDao.MOVE_PREFIX, String.valueOf(io_move.getMove_prefix()));
+                    bundle.putString(IO_MoveDao.MOVE_CODE, String.valueOf(io_move.getMove_code()));
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, Constant.ACT052);
+                    mView.callAct058(bundle);
+                } else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_move_not_found_ttl"),
+                        hmAux_Trans.get("alert_move_not_found_msg"),
+                        null
+                    );
+                }
                 break;
             case ConstantBaseApp.IO_PROCESS_MOVE:
                 MD_Product_Serial serial = getSerial(data);
