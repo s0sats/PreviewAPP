@@ -72,7 +72,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //Se for != null, verifica se precisa chamar o WS de customer ou não
         if (mBundle != null) {
             if (mBundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1) {
-                if (ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context, true)) {
                     //Seta variavel que define ação do metodo processCloseACT
                     wsProcess = PROCESS_WS_GET_CUSTOMER;
                     showPD(
@@ -151,7 +151,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     private void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
-        if (ToolBox_Con.isOnline(context) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
+        if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
             ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
             ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
 
@@ -282,7 +282,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processSync() {
         //super.processSync();
 
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context, true)) {
             //Seta variavel que define ação do metodo processCloseACT.
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
