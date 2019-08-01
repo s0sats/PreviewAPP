@@ -205,7 +205,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             //Apaga Sessões locais
             mPresenter.killAllSessions();
             //
-            if (ToolBox_Con.isOnline(context)) {
+            if (ToolBox_Con.isOnline(context, true)) {
                 mPresenter.executeLogoutProcess();
             } else {
                 progressDialog.dismiss();

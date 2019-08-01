@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -1668,7 +1669,7 @@ public class ToolBox_Inf {
         return results;
     }
 
-    public static void buildFooterDialog(Context context) {
+    public static void buildFooterDialog(final Context context) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
 
@@ -1717,6 +1718,8 @@ public class ToolBox_Inf {
             // Fazer Analise
         }
         //
+        tv_offline_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OFFLINE_MODE_LBL));
+
         tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
 
@@ -1760,6 +1763,20 @@ public class ToolBox_Inf {
             }
         });
 
+        sw_offline.setChecked(ToolBox.getPreference_Offline_Mode(context));
+
+        sw_offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ToolBox.setPreference_Offline_Mode(context, isChecked);
+                if(context instanceof Base_Activity){
+                    ((Base_Activity) context).refreshOfflineModeUI();
+                } else if(context instanceof Base_Activity_Frag){
+                    ((Base_Activity_Frag) context).refreshOfflineModeUI();
+                }
+            }
+        });
+
     }
 
     private static Bitmap getCustomerImage(String path) {
@@ -1779,6 +1796,7 @@ public class ToolBox_Inf {
 
         List<String> transList = new ArrayList<>();
         transList.add("lbl_external_site");
+        transList.add("footer_dialog_offline_mode_lbl");
         transList.add("footer_dialog_customer_lbl");
         transList.add("footer_dialog_site_lbl");
         transList.add("footer_dialog_zone_lbl");
@@ -1855,6 +1873,7 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME,new Exception(sError));
         }
         //
+        hmAux.put(Constant.FOOTER_OFFLINE_MODE_LBL, HmTrans.get("footer_dialog_offline_mode_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER_LBL, HmTrans.get("footer_dialog_customer_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
         hmAux.put(Constant.FOOTER_SITE_LBL, HmTrans.get("footer_dialog_site_lbl"));
