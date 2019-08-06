@@ -568,7 +568,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private boolean triggerTransporOrderSearch() {
-        return bNewProcess && mFragHeaderListener != null;
+        return bNewProcess && mFragHeaderListener != null && !mketTransportOrder.getText().toString().trim().isEmpty();
     }
 
     private boolean validateDates() {
