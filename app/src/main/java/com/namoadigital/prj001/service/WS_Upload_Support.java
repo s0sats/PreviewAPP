@@ -53,7 +53,8 @@ public class WS_Upload_Support extends IntentService {
 
 
             String support_msg =  bundle.getString(Constant.WS_SUPPORT_MSG,"");
-            processUploadSupport(support_msg);
+            String support_contact =  bundle.getString(Constant.WS_SUPPORT_CONTACT,"");
+            processUploadSupport(support_msg, support_contact);
 
         }catch (Exception e){
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
@@ -74,7 +75,7 @@ public class WS_Upload_Support extends IntentService {
 
     }
 
-    private void processUploadSupport(String support_msg) throws IOException {
+    private void processUploadSupport(String support_msg, String support_contact) throws IOException {
         loadTranslation();
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_data") , "", "0");
@@ -107,6 +108,7 @@ public class WS_Upload_Support extends IntentService {
         env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         env.setCustomer_desc(ToolBox_Con.getPreference_Customer_Code_NAME(getApplicationContext()));
         env.setSupport_msg(support_msg);
+        env.setSupport_contact(support_contact);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_waiting_answer"), "", "0");
 

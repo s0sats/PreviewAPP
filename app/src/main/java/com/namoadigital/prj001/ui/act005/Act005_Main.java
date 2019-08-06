@@ -346,6 +346,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_cancel_nfc_msg");
         transList.add("alert_support_ttl");
         transList.add("alert_support_msg");
+        transList.add("alert_support_contact");
 
         transList.add("progress_enable_nfc_ttl");
         transList.add("progress_enable_nfc_msg");
@@ -363,7 +364,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //alert support
         transList.add("support_dialog_ttl");
         transList.add("alert_support_hint");
+        transList.add("alert_support_contact_hint");
         transList.add("alert_support_empty_msg");
+        transList.add("alert_support_empty_contact");
         //
         transList.add("lbl_change_zone");
         transList.add("drawer_change_zone_one_zone_alert_ttl");

@@ -15,6 +15,7 @@ public class TUpload_Support_Env extends Main_Header_Env {
     private String user_nick;
     private int support;
     private String support_msg;
+    private String support_contact;
 
     public String getDevice_code() {
         return device_code;
@@ -78,5 +79,13 @@ public class TUpload_Support_Env extends Main_Header_Env {
 
     public void setSupport_msg(String support_msg) {
         this.support_msg = support_msg;
+    }
+
+    public String getSupport_contact() {
+        return support_contact;
+    }
+
+    public void setSupport_contact(String support_contact) {
+        this.support_contact = support_contact;
     }
 }

@@ -985,9 +985,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
          * Ini Vars
          */
         TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
+        TextView tv_contact = (TextView) view.findViewById(R.id.act005_dialog_support_tv_contect);
         tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
+        tv_contact.setText(hmAux_Trans.get("alert_support_contact"));
         final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
+        final MKEditTextNM et_support_contact = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_contact);
         et_support_msg.setHint(hmAux_Trans.get("alert_support_hint"));
+        et_support_contact.setHint(hmAux_Trans.get("alert_support_contact_hint"));
 
         builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
         builder.setView(view);
@@ -1005,9 +1009,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     @Override
                     public void onClick(View v) {
                         if (et_support_msg.getText().toString().trim().length() > 0) {
-                            executeSupport(et_support_msg.getText().toString().trim());
-                            //
-                            dialog.dismiss();
+                            if(et_support_contact.getText().toString().trim().length() > 0) {
+                                executeSupport(et_support_msg.getText().toString().trim(), et_support_contact.getText().toString().trim());
+                                //
+                                dialog.dismiss();
+                            }else{
+                                et_support_contact.setText("");
+                                et_support_contact.findFocus();
+                                //
+                                Toast.makeText(
+                                        context,
+                                        hmAux_Trans.get("alert_support_empty_contact"),
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            }
                         } else {
                             et_support_msg.setText("");
                             et_support_msg.findFocus();
@@ -1322,7 +1337,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void executeSupport(String support_msg) {
+    public void executeSupport(String support_msg, String support_contact) {
 
         if (ToolBox_Con.isOnline(context,true)) {
             mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
@@ -1332,6 +1347,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Upload_Support.class);
             Bundle bundle = new Bundle();
             bundle.putString(Constant.WS_SUPPORT_MSG, support_msg);
+            bundle.putString(Constant.WS_SUPPORT_CONTACT, support_contact);
 
             mIntent.putExtras(bundle);
             //

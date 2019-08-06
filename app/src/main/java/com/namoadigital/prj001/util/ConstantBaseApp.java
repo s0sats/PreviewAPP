@@ -331,6 +331,7 @@ public class ConstantBaseApp extends ConstantBase {
      * WS Support
      */
     public static final String WS_SUPPORT_MSG = "supportmsg";
+    public static final String WS_SUPPORT_CONTACT = "support_contact";
 
     /**
      * WS Serial Search
