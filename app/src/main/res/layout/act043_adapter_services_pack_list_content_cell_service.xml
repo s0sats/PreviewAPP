@@ -11,13 +11,15 @@
         android:layout_height="wrap_content"
         android:background="@drawable/namoa_cell_9_states"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            android:orientation="horizontal"
+            android:background="@color/fieldset_background"
+            android:padding="10dp"
+        >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,14 +71,17 @@
                     style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:progressBackgroundTint="@color/namoa_color_gray3_lib"
-                    android:progressTint="@color/lib_custom_cell_font_color" />
+                    android:progressBackgroundTint="@color/namoa_color_light_blue_alpha"
+                    android:progressTint="@color/lib_custom_cell_font_color"
+                />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="10dp"
-                    android:background="#4D000000" />
+                    android:background="#4D000000"
+                    android:visibility="gone"
+                />
 
 
             </LinearLayout>

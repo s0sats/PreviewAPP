@@ -9,12 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.view.WindowManager;
+import android.widget.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -25,13 +21,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SO_Save_Return;
-import com.namoadigital.prj001.model.TSO_SO_Service;
-import com.namoadigital.prj001.model.TSO_SO_Service_Env;
-import com.namoadigital.prj001.model.TSO_SO_Service_Item;
-import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
-import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -70,8 +60,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         void progressAction(String title, String message, String action);
 
     }
-
-
 
     private IAct043_Frag_Service_List delegate;
 
@@ -151,10 +139,15 @@ public class Act043_Frag_Service_List extends BaseFragment {
         tv_title.setText(String.valueOf(mSO_Service.getSo_prefix()) + "." + String.valueOf(mSO_Service.getSo_code()));
         //
         mk_desc = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_mket_search_services_packs);
+        mk_desc.setHint(hmAux_Trans.get("service_or_pack_filter_hint"));
+        mk_desc.requestFocus();
+        //
         lv_services_packs = (ListView) view.findViewById(R.id.act043_frag_service_lv_services);
         //
         btn_save = (Button) view.findViewById(R.id.act043_frag_service_btn_save);
         btn_save.setText(hmAux_Trans.get("btn_save_service"));
+        //
+        hideKeyBoard();
     }
 
     private void iniAction() {
@@ -219,6 +212,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void hideKeyBoard() {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void showSercice_Pack_Details(final HMAux item) {
@@ -379,9 +376,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (data != null) {
+                //LUCHE - 06/08/2019
+                //Antigamente usava 2 layout com recurso diferente mas o mesmo layout no xml
+                //Modificado para usar o mesmo layout, pois o segundo foi alterado para um segunda opção.
                 mAdapter = new Act043_Adapter_Services_Packs_List(
                         context,
-                        R.layout.act043_adapter_services_pack_list_content_cell_service,
+                        //R.layout.act043_adapter_services_pack_list_content_cell_service,
+                        R.layout.act043_adapter_services_pack_list_content_cell_pack,
                         R.layout.act043_adapter_services_pack_list_content_cell_pack,
                         hmAux_Trans,
                         data

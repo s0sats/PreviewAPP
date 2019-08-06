@@ -125,6 +125,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("alert_so_status");
         transList.add("alert_no_service_found_ttl");
         transList.add("alert_no_service_found_msg");
+        transList.add("service_or_pack_filter_hint");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
