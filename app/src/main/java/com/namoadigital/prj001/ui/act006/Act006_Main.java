@@ -473,6 +473,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         progressDialog.dismiss();
     }
 
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //implementar dialog confirmando busca offline
+        progressDialog.dismiss();
+    }
+
     // Hugo
     //TRATA SESSION_NOT_FOUND
     @Override

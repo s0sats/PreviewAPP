@@ -132,17 +132,21 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
-            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
-            //
-            if (serial_list.size() > 0) {
-                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+            offlineSerialSearch(product_id, serial_id, tracking);
+        }
+    }
+
+    private void offlineSerialSearch(String product_id, String serial_id, String tracking) {
+        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+        //
+        if (serial_list.size() > 0) {
+            defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+        } else {
+            if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
+                // mudar mensagem
+                ToolBox_Inf.showNoConnectionDialog(context);
             } else {
-                if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-                    // mudar mensagem
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                } else {
-                    defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
-                }
+                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
             }
         }
     }
