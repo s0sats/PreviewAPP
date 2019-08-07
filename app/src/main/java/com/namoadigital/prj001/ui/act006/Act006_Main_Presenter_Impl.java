@@ -132,12 +132,12 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
-            offlineSerialSearch(product_id, serial_id, tracking);
+            offlineSerialSearch();
         }
     }
-
-    private void offlineSerialSearch(String product_id, String serial_id, String tracking) {
-        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+    @Override
+    public void offlineSerialSearch() {
+        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking);
         //
         if (serial_list.size() > 0) {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
