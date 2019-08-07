@@ -193,8 +193,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 handleIoFCM(fcmMessage);
             } else {
                 //
+                //LUCHE - 07/08/2019
+                //Após reclamação de usr verzani de que tinha muitas msg de Atualizar o app namoa no menu notificação
+                //foi solicitado o "ajuste"(GAB***R*a) para inserir as msgs desse tipo com o status de "já lida"
+                //Se FCM for modulo CHECKLIST e tipo WARNING, DEVE ser a msg de atualização deversão.
+                if(!fcmMessage.getModule().isEmpty()
+                    && fcmMessage.getModule().equals(ConstantBaseApp.FCM_MODULE_CHECKLIST)
+                    && !fcmMessage.getType().isEmpty()
+                    && fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_WARNING)
+                ){
+                    //Seta mensagem como lida
+                    fcmMessage.setStatus("1");
+                }
+                //
                 fcmMessageDao.addUpdate(fcmMessage);
-                long fcmmessage_code = Long.parseLong(
+                int fcmmessage_code = Integer.parseInt(
                         fcmMessageDao.getByStringHM(
                                 new FCMMessage_Sql_002().toSqlQuery()
                         ).get(FCMMessage_Sql_002.FCMMESSAGE_CODE)
