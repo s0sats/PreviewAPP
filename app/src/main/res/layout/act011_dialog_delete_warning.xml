@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/namoa_color_danger_red_alpha">
+
+    <TextView
+        android:id="@+id/act011_dialog_tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="2dp"
+        android:text="Titulo Exclusao - trad"
+        android:textColor="@color/namoa_color_warning_red"
+        android:textSize="@dimen/font_size_title_md"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/act011_dialog_iv_error"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/act011_dialog_tv_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Mensagem de Delete - trad"
+        android:textColor="@color/namoa_color_warning_red"
+        app:layout_constraintEnd_toEndOf="@+id/act011_dialog_tv_title"
+        app:layout_constraintStart_toStartOf="@+id/act011_dialog_iv_error"
+        app:layout_constraintTop_toBottomOf="@+id/act011_dialog_tv_title" />
+
+
+    <ImageView
+        android:id="@+id/act011_dialog_iv_trash_bin"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_trash"
+        android:tint="@color/namoa_color_warning_red"
+        app:layout_constraintEnd_toEndOf="@+id/act011_dialog_tv_msg"
+        app:layout_constraintStart_toStartOf="@+id/act011_dialog_tv_title"
+        app:layout_constraintTop_toBottomOf="@+id/act011_dialog_tv_msg" />
+
+    <TextView
+        android:id="@+id/act011_dialog_btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        android:text="OK - trad"
+        android:textColor="@color/namoa_color_warning_red"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/act011_dialog_btn_cancel"
+        app:layout_constraintTop_toTopOf="@+id/act011_dialog_btn_cancel" />
+
+    <TextView
+        android:id="@+id/act011_dialog_btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        android:text="Cancel - trad"
+        android:textColor="@color/namoa_color_warning_red"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/act011_dialog_btn_ok"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act011_dialog_iv_trash_bin" />
+
+    <ImageView
+        android:id="@+id/act011_dialog_iv_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/act011_dialog_tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/act011_dialog_tv_title"
+        app:srcCompat="@drawable/ic_error_black_24dp" />
+
+
+</android.support.constraint.ConstraintLayout>
