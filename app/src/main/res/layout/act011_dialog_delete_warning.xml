@@ -26,7 +26,6 @@
         android:id="@+id/act011_dialog_tv_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Mensagem de Delete - trad"
         android:textColor="@color/namoa_color_warning_red"
@@ -39,20 +38,23 @@
         android:id="@+id/act011_dialog_iv_trash_bin"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_trash"
         android:tint="@color/namoa_color_warning_red"
         app:layout_constraintEnd_toEndOf="@+id/act011_dialog_tv_msg"
-        app:layout_constraintStart_toStartOf="@+id/act011_dialog_tv_title"
+        app:layout_constraintStart_toStartOf="@+id/act011_dialog_tv_msg"
         app:layout_constraintTop_toBottomOf="@+id/act011_dialog_tv_msg" />
 
     <TextView
         android:id="@+id/act011_dialog_btn_ok"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:gravity="right"
         android:padding="8dp"
-        android:text="OK - trad"
+        android:text="Ok - trad"
         android:textColor="@color/namoa_color_warning_red"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -60,11 +62,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/act011_dialog_btn_cancel"
-        app:layout_constraintTop_toTopOf="@+id/act011_dialog_btn_cancel" />
+        app:layout_constraintTop_toTopOf="@+id/act011_dialog_btn_cancel"
+        app:layout_constraintWidth_max="200dp" />
 
     <TextView
         android:id="@+id/act011_dialog_btn_cancel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -75,6 +78,7 @@
         android:textColor="@color/namoa_color_warning_red"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintWidth_max="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/act011_dialog_btn_ok"
         app:layout_constraintHorizontal_bias="0.5"

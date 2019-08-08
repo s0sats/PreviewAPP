@@ -504,11 +504,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         iv_error.setImageDrawable(drawable_ic);
                         tv_title.setText(hmAux_Trans.get("dialog_confirm_delete_ttl"));
                         tv_msg.setText(hmAux_Trans.get("dialog_confirm_delete_msg"));
-//                        btn_ok.setText(hmAux_Trans.get("dialog_confirm_delete_comfirmation"));
-//                        btn_cancel.setText(hmAux_Trans.get("dialog_confirm_delete_abort"));
-
-                        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_yes"));
-                        btn_cancel.setText(hmAux_Trans.get("sys_alert_btn_no"));
+                        btn_ok.setText(hmAux_Trans.get("dialog_confirm_delete_comfirmation"));
+                        btn_cancel.setText(hmAux_Trans.get("dialog_confirm_delete_abort"));
 
                         builder.setView(view);
                         builder.setCancelable(false);
