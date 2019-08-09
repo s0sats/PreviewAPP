@@ -35,7 +35,8 @@ public class Sql_Act014_001 implements Specification {
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    = '"+ Constant.SYS_STATUS_SENT +"' ;")
+                        "    IN ('"+ Constant.SYS_STATUS_SENT +"', "+
+                        "     '"+ Constant.SYS_STATUS_DELETED +"') ;")
                 //.append(SENT_QTY+"#"+TYPE)
                 .toString();
     }

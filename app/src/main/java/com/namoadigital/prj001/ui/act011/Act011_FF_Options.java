@@ -257,6 +257,12 @@ public class Act011_FF_Options extends Fragment {
                 ff_options_ll_auto.setVisibility(View.GONE);
 
                 break;
+            case Constant.SYS_STATUS_DELETED:
+                ff_options_ll_e.setVisibility(View.GONE);
+                ff_options_ll_s.setVisibility(View.GONE);
+                ff_options_ll_f.setVisibility(View.GONE);
+                ff_options_ll_auto.setVisibility(View.GONE);
+                break;
             case Constant.SYS_STATUS_FINALIZED:
                 ff_options_ll_e.setVisibility(View.VISIBLE);
                 ff_options_ll_s.setVisibility(View.GONE);
@@ -287,7 +293,9 @@ public class Act011_FF_Options extends Fragment {
             ff_options_ll_a.setVisibility(View.GONE);
         }
 
-        if (data_serv == null) {
+        if (data_serv == null
+            && !status.toUpperCase().equals(Constant.SYS_STATUS_SENT)
+            && !status.toUpperCase().equals(Constant.SYS_STATUS_DELETED)) {
             ff_options_ll_e.setVisibility(View.VISIBLE);
         } else {
             ff_options_ll_e.setVisibility(View.GONE);
