@@ -184,6 +184,9 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         LinearLayout ll_so_desc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_desc);
         TextView tv_so_desc_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_desc);
         //
+        LinearLayout ll_date = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_date);
+
+        //
         LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_priority);
         TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_lbl);
         TextView tv_priority_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_val);
@@ -264,6 +267,9 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         } else {
             ll_so_desc.setVisibility(View.GONE);
         }
+        //
+        //data eh apenas para Ordem Expressa
+        ll_date.setVisibility(View.GONE);
         //
         tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
         tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
@@ -397,6 +403,10 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         LinearLayout ll_so_desc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_desc);
         TextView tv_so_desc_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_desc);
         //
+        LinearLayout ll_date = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_date);
+        TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_date_lbl);
+        TextView tv_date_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_date_val);
+        //
         LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_priority);
         TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_lbl);
         TextView tv_priority_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_val);
@@ -479,6 +489,14 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         } else {
             ll_so_desc.setVisibility(View.GONE);
         }
+        //
+        ll_date.setVisibility(View.VISIBLE);
+        tv_date_lbl.setText(hmAux_Trans.get("date_lbl"));
+
+        tv_date_val.setText(ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(so_express.get(SM_SODao.LOG_DATE)),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        ));
         //
         tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
         tv_priority_val.setText(so_express.get(SM_SODao.PRIORITY_DESC));
@@ -607,6 +625,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         translateList.add("site_lbl");
         translateList.add("operation_lbl");
         translateList.add("contract_lbl");
+        translateList.add("date_lbl");
         translateList.add("priority_lbl");
         translateList.add("status_lbl");
         translateList.add("client_lbl");

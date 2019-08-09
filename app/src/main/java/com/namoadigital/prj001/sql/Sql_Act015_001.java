@@ -25,7 +25,7 @@ public class Sql_Act015_001 implements Specification {
 
     @Override
     public String toSqlQuery() {
-        StringBuilder sb = new StringBuilder();
+     StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
                         "  l.customer_code,\n" +
@@ -72,7 +72,7 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"'\n " +
-                        "      AND l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"'\n" +
+                        "      AND l.custom_form_status in ('"+ Constant.SYS_STATUS_SENT+"', '" + Constant.SYS_STATUS_DELETED+"')\n"+
                         "  ORDER BY" +
                         "    d.date_end desc,\n" +
                         "    l.custom_form_type,\n " +

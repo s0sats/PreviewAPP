@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act006;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -141,6 +142,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        //
+        transList.add("alert_turn_offline_mode_on_ttl");
+        transList.add("alert_turn_offline_mode_on_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -289,6 +293,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
                 ) {
+
             mPresenter.executeSerialSearch(
                     optionsInfo.get(PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
@@ -471,6 +476,26 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         super.processCustom_error(mLink, mRequired);
 
         progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //implementar dialog confirmando busca offline
+        progressDialog.dismiss();
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_turn_offline_mode_on_ttl"),
+                hmAux_Trans.get("alert_turn_offline_mode_on_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToolBox.setPreference_Offline_Mode(context, true);
+                        mPresenter.offlineSerialSearch();
+                    }
+                },
+                1
+        );
     }
 
     // Hugo

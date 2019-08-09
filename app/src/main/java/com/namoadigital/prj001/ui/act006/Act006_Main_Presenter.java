@@ -21,6 +21,8 @@ public interface Act006_Main_Presenter {
 
     void executeSerialSearch(String product_id, String serial_id, String tracking);
 
+    void offlineSerialSearch();
+
     void extractSearchResult(String result);
 
     void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);

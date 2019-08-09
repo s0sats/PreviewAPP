@@ -6,6 +6,8 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 /**
  * Created by neomatrix on 1/16/18.
  */
@@ -39,7 +41,11 @@ public class ScreenStatusService extends Service {
     @Override
     public void onDestroy() {
 
-        unregisterReceiver(mScreenStateReceiver);
+        try {
+            unregisterReceiver(mScreenStateReceiver);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
 
         isRunning = false;
 

@@ -4618,6 +4618,7 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_SENT:
                 return R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_DELETED:
                 return R.color.namoa_status_cancelled;
             case Constant.SYS_STATUS_INCONSISTENT:
                 return R.color.namoa_status_inconsistent;

@@ -266,7 +266,8 @@ public class Act011_FF extends Fragment {
             }
 
             if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT) ||
+                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                     ) {
                 ll_check.setVisibility(View.GONE);
                 tv_check_new.setVisibility(View.GONE);

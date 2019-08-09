@@ -372,7 +372,19 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                         context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SCHEDULE))
                 );
                 break;
-
+            case Constant.SYS_STATUS_DELETED:
+               tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                                ToolBox_Inf.millisecondsToString(
+                                        ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
+                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                )
+                );
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DELETED));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DELETED))
+                );
+                break;
             default:
                 //llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
                 //llBackground.setBackground(llDrawable);

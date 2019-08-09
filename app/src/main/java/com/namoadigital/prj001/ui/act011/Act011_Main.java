@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +21,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
-import com.namoa_digital.namoa_library.ctls.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
+import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
+import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.ctls.LabelFF;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
+import com.namoa_digital.namoa_library.ctls.PhotoFF;
+import com.namoa_digital.namoa_library.ctls.PictureFF;
+import com.namoa_digital.namoa_library.ctls.RatingBarFF;
+import com.namoa_digital.namoa_library.ctls.RatingImageFF;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -30,8 +54,27 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -39,7 +82,11 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_016;
+import com.namoadigital.prj001.sql.GE_File_Sql_003;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
@@ -48,12 +95,17 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 
@@ -254,6 +306,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_data_not_sent_ttl");
         transList.add("alert_resend_data_by_menu_msg");
 
+        transList.add("dialog_confirm_delete_ttl");
+        transList.add("dialog_confirm_delete_msg");
+        transList.add("dialog_confirm_delete_comfirmation");
+        transList.add("dialog_confirm_delete_abort");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -427,9 +484,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                        deleteFormLocal();
+                        showConfirmDeleteDialog();
                     }
                 };
                 //
@@ -440,6 +495,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         listener,
                         1
                 );
+
+
+
             }
 
             @Override
@@ -580,6 +638,50 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         );
 
     }
+
+    private void showConfirmDeleteDialog() {
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act011_dialog_delete_warning, null);
+
+        Drawable drawable_ic = null;
+        TextView tv_title = view.findViewById(R.id.act011_dialog_tv_title);
+        TextView tv_msg = view.findViewById(R.id.act011_dialog_tv_msg );
+        TextView btn_ok = view.findViewById(R.id.act011_dialog_btn_ok);
+        TextView btn_cancel = view.findViewById(R.id.act011_dialog_btn_cancel);
+        ImageView iv_error = view.findViewById(R.id.act011_dialog_iv_error);
+
+
+        drawable_ic = context.getResources().getDrawable(R.drawable.ic_error_black_24dp);
+        drawable_ic.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
+        iv_error.setImageDrawable(drawable_ic);
+        tv_title.setText(hmAux_Trans.get("dialog_confirm_delete_ttl"));
+        tv_msg.setText(hmAux_Trans.get("dialog_confirm_delete_msg"));
+        btn_ok.setText(hmAux_Trans.get("dialog_confirm_delete_comfirmation"));
+        btn_cancel.setText(hmAux_Trans.get("dialog_confirm_delete_abort"));
+
+        builder.setView(view);
+        builder.setCancelable(false);
+        final android.support.v7.app.AlertDialog show = builder.show();
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                deleteFormLocal();
+            }
+        });
+    }
+
     //Implments PhotoInterface
     private void saveV2(boolean fieldsValidation) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -828,12 +930,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 );
 
-        GE_Custom_Form_Field_LocalDao formFieldLocalDao =
-                new GE_Custom_Form_Field_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
+//        GE_Custom_Form_Field_LocalDao formFieldLocalDao =
+//                new GE_Custom_Form_Field_LocalDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
 
         GE_Custom_Form_DataDao formDataDao =
                 new GE_Custom_Form_DataDao(
@@ -842,59 +944,40 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 );
         //
-        GE_Custom_Form_Data_FieldDao formDataFieldDao =
-                new GE_Custom_Form_Data_FieldDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-        //LUCHE 27/05/2019
-        //Modificado ordem do delete para primeiro deletar o item e somente depois o "cabeçalho"
-        //Modificado query que deleta a tabela cabeçalho para faze-lo apenas se ele não existir na fields
+//        GE_Custom_Form_Data_FieldDao formDataFieldDao =
+//                new GE_Custom_Form_Data_FieldDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+        //BARRIONUEVO 08/08/2019
+        //Query modificada para alterar status de form em vez de excluir fisicamente.
         //
-        formFieldLocalDao.remove(
-                new GE_Custom_Form_Field_Local_Sql_004(
-                        String.valueOf(formData.getCustomer_code()),
-                        String.valueOf(formData.getCustom_form_type()),
-                        String.valueOf(formData.getCustom_form_code()),
-                        String.valueOf(formData.getCustom_form_version()),
-                        String.valueOf(formData.getCustom_form_data())
-                ).toSqlQuery()
-        );
-        //
-        formLocalDao.remove(
-            new GE_Custom_Form_Local_Sql_007(
+        formLocalDao.addUpdate(
+            new GE_Custom_Form_Local_Sql_016(
                 String.valueOf(formData.getCustomer_code()),
                 String.valueOf(formData.getCustom_form_type()),
                 String.valueOf(formData.getCustom_form_code()),
                 String.valueOf(formData.getCustom_form_version()),
-                String.valueOf(formData.getCustom_form_data())
+                String.valueOf(formData.getCustom_form_data()),
+                    ConstantBase.SYS_STATUS_DELETED,
+                    ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
             ).toSqlQuery()
         );
         //
-        formDataFieldDao.remove(
-            new GE_Custom_Form_Data_Field_Sql_002(
-                String.valueOf(formData.getCustomer_code()),
-                String.valueOf(formData.getCustom_form_type()),
-                String.valueOf(formData.getCustom_form_code()),
-                String.valueOf(formData.getCustom_form_version()),
-                String.valueOf(formData.getCustom_form_data())
-            ).toSqlQuery()
-        );
-        //
-        formDataDao.remove(
-                new GE_Custom_Form_Data_Sql_002(
+        formDataDao.addUpdate(
+                new GE_Custom_Form_Data_Sql_005(
                         String.valueOf(formData.getCustomer_code()),
                         String.valueOf(formData.getCustom_form_type()),
                         String.valueOf(formData.getCustom_form_code()),
                         String.valueOf(formData.getCustom_form_version()),
-                        String.valueOf(formData.getCustom_form_data())
+                        String.valueOf(formData.getCustom_form_data()),
+                        ConstantBase.SYS_STATUS_DELETED,
+                        ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
                 ).toSqlQuery()
         );
         //
-
         callAct005(context);
-
     }
 
     private void recoverGetIntents() {
@@ -1280,7 +1363,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
@@ -1315,7 +1399,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             comboBoxFF.setmEnabled(false);
         } else {
@@ -1363,8 +1448,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
-                ) {
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        ) {
             checkBoxFF.setmEnabled(false);
         } else {
             checkBoxFF.setmEnabled(true);
@@ -1399,7 +1485,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingImageFF.setmEnabled(false);
         } else {
@@ -1433,7 +1520,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingBarFF.setmEnabled(false);
         } else {
@@ -1468,7 +1556,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             pictureFF.setmEnabled(false);
         } else {
@@ -1507,7 +1596,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             photoFF.setmEnabled(false);
         } else {
@@ -1562,15 +1652,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                     numberOfErrors += 1;
                 }
-
-                customFFs.get(i).setValidationBackGroundDots();
+                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                    customFFs.get(i).setValidationBackGroundDots();
+                }
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
                     if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
-
-                    customFFs.get(i).setValidationBackGroundDots();
+                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                        customFFs.get(i).setValidationBackGroundDots();
+                    }
                 } else {
                 }
             }
