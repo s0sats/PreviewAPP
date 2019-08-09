@@ -2,7 +2,6 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
 
 public class GE_Custom_Form_Local_Sql_016 implements Specification {
 
@@ -31,7 +30,6 @@ public class GE_Custom_Form_Local_Sql_016 implements Specification {
         return sb
                 .append(" UPDATE " + GE_Custom_Form_LocalDao.TABLE + " set\n" +
                         "   custom_form_status = '" + custom_form_status + "'\n" +
-//                        "   date_end = '" + date_end + "'\n" +
                         " WHERE\n" +
                         "   customer_code = " + customer_code + "\n" +
                         " and custom_form_type = " + custom_form_type + "\n" +
