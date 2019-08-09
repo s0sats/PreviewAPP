@@ -572,6 +572,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
     public static final String FCM_ACTION_IO_OUTBOUND_UPDATE = "<IO_OUTBOUND_UPDATE>";
     public static final String FCM_ACTION_SM_SO_UPDATE = "<SM_SO_UPDATE>";
+    public static final String FCM_MODULE_CHECKLIST = "CHECKLIST";
+    public static final String FCM_TYPE_WARNING = "WARNING";
 
 
 
