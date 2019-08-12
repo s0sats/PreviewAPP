@@ -15,10 +15,13 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -90,6 +93,7 @@ public class Act027_Opc extends BaseFragment {
 
     private TextView tv_serial_label;
     private TextView tv_serial_value;
+    private TextView tv_serial_brand_model_color;
 
     private TextView tv_product_title;
     private TextView tv_services_title;
@@ -191,7 +195,8 @@ public class Act027_Opc extends BaseFragment {
 
         tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
-
+        //LUCHE - 12/08/2019
+        tv_serial_brand_model_color = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color);
 
         ll_product = (LinearLayout) view.findViewById(R.id.act027_opc_ll_product);
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
@@ -429,6 +434,8 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
                 tv_serial_value.setText(mSm_so.getSerial_id());
+                //LUCHE - 12/08/2019
+                setSerialBrandModelColor();
                 //
                 if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
                         mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) ||
@@ -505,6 +512,32 @@ public class Act027_Opc extends BaseFragment {
                 tv_service_edition_title.setText(hmAux_Trans.get("service_edition_ll_lbl"));
 
                 changeTabColor();
+            }
+        }
+    }
+
+    private void setSerialBrandModelColor() {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        //
+        MD_Product_Serial serial = serialDao.getByString(
+                    new MD_Product_Serial_Sql_009(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getProduct_code(),
+                        mSm_so.getSerial_code()
+                    ).toSqlQuery()
+        );
+        //
+        tv_serial_brand_model_color.setVisibility(View.GONE);
+        if(serial != null && serial.getSerial_code() > 0){
+            if(serial.getBrand_code() != null || serial.getModel_code() != null || serial.getColor_code() != null) {
+                tv_serial_brand_model_color.setVisibility(View.VISIBLE);
+                tv_serial_brand_model_color.setText(
+                    ToolBox_Inf.formatSerialBrandModelColor(
+                        serial.getBrand_desc(),
+                        serial.getModel_desc(),
+                        serial.getColor_desc()
+                    )
+                );
             }
         }
     }

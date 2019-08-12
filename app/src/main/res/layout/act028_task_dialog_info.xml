@@ -102,6 +102,17 @@
                 android:textSize="@dimen/font_size_title_md" />
 
             <TextView
+                    android:id="@+id/act028_dialog_info_tv_serial_brand_model_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:text="Trad | Trad | Trad"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:textStyle="bold"
+                    android:gravity="center"
+            />
+
+            <TextView
                 android:id="@+id/act028_dialog_info_tv_tracking_lbl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

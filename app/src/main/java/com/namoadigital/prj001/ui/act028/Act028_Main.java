@@ -15,57 +15,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
-import com.namoadigital.prj001.dao.MD_PartnerDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
-import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
-import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
-import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
-import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.SM_SO_Service;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.model.Sync_Checklist;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
-import com.namoadigital.prj001.receiver.WBR_Serial_Save;
-import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.receiver.*;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
-import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Sql_002;
-import com.namoadigital.prj001.sql.SM_SO_Sql_009;
-import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
+import com.namoadigital.prj001.sql.*;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -74,11 +39,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by neomatrix on 18/08/17.
@@ -1494,11 +1455,23 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         //
         TextView tv_serial_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_serial_id_lbl);
         TextView tv_serial_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_serial_id_val);
+        TextView tv_serial_brand_model_color = (TextView) view.findViewById(R.id.act028_dialog_info_tv_serial_brand_model_color);
         //
         TextView tv_tracking_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_lbl);
         TextView tv_tracking_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_val);
         //
-        ArrayList<HMAux> tracking_list = (ArrayList<HMAux>)
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        //
+        MD_Product_Serial serial = serialDao.getByString(
+            new MD_Product_Serial_Sql_009(
+                Long.parseLong(mSoAux.get(SM_SODao.CUSTOMER_CODE)),
+                Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE)),
+                Integer.parseInt(mSoAux.get(SM_SODao.SERIAL_CODE))
+            ).toSqlQuery()
+        );
+        //
+        //
+        /*ArrayList<HMAux> tracking_list = (ArrayList<HMAux>)
                 new MD_Product_Serial_TrackingDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -1510,7 +1483,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                                 Long.parseLong(mSoAux.get(SM_SODao.SERIAL_CODE))
 
                         ).toSqlQuery()
-                );
+                );*/
         //
         tv_so_lbl.setText(hmAux_Trans.get("dialog_so_lbl"));
         //
@@ -1526,19 +1499,33 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
         tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
         //
-        if (tracking_list != null && tracking_list.size() > 0) {
-            tv_tracking_lbl.setText(hmAux_Trans.get("dialog_tracking_lbl"));
-            //
-            String trackingList = "";
-            for (int i = 0; i < tracking_list.size(); i++) {
-                trackingList += " º " + tracking_list.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
-                if (i < tracking_list.size()) {
-                    trackingList += "\n";
-                }
+        if(serial != null) {
+            String brandModelColor = ToolBox_Inf.formatSerialBrandModelColor(serial);
+            tv_serial_brand_model_color.setVisibility(View.GONE);
+            if (brandModelColor != null && !brandModelColor.isEmpty()) {
+                tv_serial_brand_model_color.setText(brandModelColor);
+                tv_serial_brand_model_color.setVisibility(View.VISIBLE);
             }
             //
-            tv_tracking_val.setText(trackingList);
-        } else {
+            ArrayList<MD_Product_Serial_Tracking> tracking_list = serial.getTracking_list();
+            if (tracking_list != null && tracking_list.size() > 0) {
+                tv_tracking_lbl.setText(hmAux_Trans.get("dialog_tracking_lbl"));
+                //
+                String trackingList = "";
+                for (int i = 0; i < tracking_list.size(); i++) {
+                    trackingList += " º " + tracking_list.get(i).getTracking();
+                    if (i < tracking_list.size()) {
+                        trackingList += "\n";
+                    }
+                }
+                //
+                tv_tracking_val.setText(trackingList);
+            } else {
+                tv_tracking_lbl.setVisibility(View.GONE);
+                tv_tracking_val.setVisibility(View.GONE);
+            }
+        }else{
+            tv_serial_brand_model_color.setVisibility(View.GONE);
             tv_tracking_lbl.setVisibility(View.GONE);
             tv_tracking_val.setVisibility(View.GONE);
         }

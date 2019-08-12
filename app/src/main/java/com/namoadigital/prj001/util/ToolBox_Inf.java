@@ -5591,4 +5591,37 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * LUCHE - 12/08/2019
+     * @param brandDesc - Descrição da Marca
+     * @param modelDesc - Descrição do Modelo
+     * @param colorDesc - Descrição da Cor
+     * @return - String formatada ou vazia, caso todos itens nulos
+     */
+    public static String formatSerialBrandModelColor(String brandDesc, String modelDesc, String colorDesc ) {
+        String serialBrandModelColor = brandDesc == null || brandDesc.isEmpty()? "" : brandDesc;
+        serialBrandModelColor = serialBrandModelColor + (modelDesc == null || modelDesc.isEmpty()? "" : " | " + modelDesc);
+        serialBrandModelColor = serialBrandModelColor + (colorDesc == null || colorDesc.isEmpty()? "" : " | " + colorDesc);
+        return serialBrandModelColor;
+    }
+
+    /**
+     * LUCHE - 12/08/2019
+     * @param mdProductSerial - Obj serial
+     * @return String formatada ou vazia, caso todos itens nulos ou caso serial null.
+     */
+    public static String formatSerialBrandModelColor(MD_Product_Serial mdProductSerial) {
+        try {
+            String serialBrandModelColor = mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? "" : mdProductSerial.getBrand_desc();
+            serialBrandModelColor = serialBrandModelColor + (mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? "" : " | " + mdProductSerial.getModel_desc());
+            serialBrandModelColor = serialBrandModelColor + (mdProductSerial.getColor_desc() == null || mdProductSerial.getColor_desc().isEmpty() ? "" : " | " + mdProductSerial.getColor_desc());
+            return serialBrandModelColor;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+
+
 }
