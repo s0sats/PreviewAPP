@@ -562,7 +562,9 @@
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
-                            app:mOCR="false" />
+                            app:mOCR="false"
+                            android:maxLength="100"
+                        />
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                             android:id="@+id/frg_serial_edit_et_info2"
@@ -577,7 +579,9 @@
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
-                            app:mOCR="false" />
+                            app:mOCR="false"
+                            android:maxLength="100"
+                        />
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                             android:id="@+id/frg_serial_edit_et_info3"
@@ -591,7 +595,9 @@
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
-                            app:mOCR="false" />
+                            app:mOCR="false"
+                            android:maxLength="100"
+                        />
                     </LinearLayout>
 
                     <LinearLayout

@@ -28,12 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -1763,19 +1758,22 @@ public class ToolBox_Inf {
             }
         });
 
-        sw_offline.setChecked(ToolBox.getPreference_Offline_Mode(context));
+//        LUCHE - 12/08/2019
+//        Comentado função de modo offline até que seja definido em conjunto como ele deverá funcionar
 
-        sw_offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ToolBox.setPreference_Offline_Mode(context, isChecked);
-                if(context instanceof Base_Activity){
-                    ((Base_Activity) context).refreshOfflineModeUI();
-                } else if(context instanceof Base_Activity_Frag){
-                    ((Base_Activity_Frag) context).refreshOfflineModeUI();
-                }
-            }
-        });
+//        sw_offline.setChecked(ToolBox.getPreference_Offline_Mode(context));
+//
+//        sw_offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                ToolBox.setPreference_Offline_Mode(context, isChecked);
+//                if(context instanceof Base_Activity){
+//                    ((Base_Activity) context).refreshOfflineModeUI();
+//                } else if(context instanceof Base_Activity_Frag){
+//                    ((Base_Activity_Frag) context).refreshOfflineModeUI();
+//                }
+//            }
+//        });
 
     }
 
