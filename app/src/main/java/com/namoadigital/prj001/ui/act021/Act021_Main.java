@@ -206,16 +206,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                         processLoadSO(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        processPendencies(optionsInfo);
+                        processSyncro(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
                         processExpress(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_04:
-                        processSyncro(optionsInfo);
+                        processServiceList(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_05:
-                        processServiceList(optionsInfo);
+                        processPendencies(optionsInfo);
                         break;
                     default:
                         break;
@@ -226,12 +226,12 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies_so"));
+        mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_pendencies_so"));
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_so_express"));
-        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_sync_so"));
-        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
-        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_so_next_orders"));
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_so"));
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
+        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_so_next_orders"));
 
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,
@@ -424,7 +424,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                         (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
                         pendencies_qty + ")";
 
-        mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
+        mFrgSerialSearch.setBtn_Option_05_Label(btn_text);
     }
 
     @Override
@@ -450,10 +450,10 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             syncs_qty = qty;
             String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
 
-            mFrgSerialSearch.setBtn_Option_04_Label(btn_text);
-            mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
+            mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
         } else {
-            mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         }
     }
 
