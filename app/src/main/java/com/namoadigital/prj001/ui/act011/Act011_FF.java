@@ -264,10 +264,11 @@ public class Act011_FF extends Fragment {
                 ll_nex.setVisibility(View.GONE);
                 ll_pre.setVisibility(View.GONE);
             }
-
+            //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+            //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
             if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT) ||
-                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//                 || formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                     ) {
                 ll_check.setVisibility(View.GONE);
                 tv_check_new.setVisibility(View.GONE);
