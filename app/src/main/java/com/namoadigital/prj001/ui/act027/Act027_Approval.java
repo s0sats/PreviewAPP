@@ -82,7 +82,7 @@ public class Act027_Approval extends BaseFragment {
 
     private TextView tv_client_approval_quality_date_lbl;
     private TextView tv_client_approval_quality_date_value;
-
+    private LinearLayout ll_client_approval_date;
     private TextView tv_client_approval_date_lbl;
     private TextView tv_client_approval_date_value;
     //LUCHE - 13/08/2019
@@ -277,6 +277,7 @@ public class Act027_Approval extends BaseFragment {
         tv_client_approval_quality_date_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_client_approval_quality_date_lbl);
         tv_client_approval_quality_date_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_client_approval_quality_date_value);
 
+        ll_client_approval_date = view.findViewById(R.id.act027_approval_content_ll_cliente_approval_date);
         tv_client_approval_date_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_client_approval_date_lbl);
         tv_client_approval_date_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_client_approval_date_value);
         //
@@ -484,8 +485,6 @@ public class Act027_Approval extends BaseFragment {
         tv_name_lbl.setVisibility(View.GONE);
         mk_name_value.setVisibility(View.GONE);
         tv_name_value.setVisibility(View.GONE);
-        tv_client_approval_date_lbl.setVisibility(View.GONE);
-        tv_client_approval_date_value.setVisibility(View.GONE);
 
         rg_opc.setVisibility(View.GONE);
 
@@ -496,6 +495,7 @@ public class Act027_Approval extends BaseFragment {
 
         iv_signature.setVisibility(View.GONE);
         ll_external_approval_data.setVisibility(View.GONE);
+        ll_client_approval_date.setVisibility(View.GONE);
 
         // Fechado
         if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
@@ -538,8 +538,8 @@ public class Act027_Approval extends BaseFragment {
                 ll_final_data.setVisibility(View.VISIBLE);
                 tv_client_approval_user_nick_value.setText(mSm_so.getClient_approval_user_nick());
                 tv_client_approval_user_nick_value.setEnabled(false);
-                tv_client_approval_date_lbl.setVisibility(View.VISIBLE);
-                tv_client_approval_date_value.setVisibility(View.VISIBLE);
+                //Exibe data
+                ll_client_approval_date.setVisibility(View.VISIBLE);
                 tv_client_approval_date_value.setText(
 
                         ToolBox_Inf.millisecondsToString(
@@ -565,8 +565,7 @@ public class Act027_Approval extends BaseFragment {
                 ll_final_data.setVisibility(View.GONE);
 //                tv_client_approval_user_nick_lbl.setVisibility(View.GONE);
 //                tv_client_approval_user_nick_value.setVisibility(View.GONE);
-                tv_client_approval_date_lbl.setVisibility(View.VISIBLE);
-                tv_client_approval_date_value.setVisibility(View.VISIBLE);
+                ll_client_approval_date.setVisibility(View.VISIBLE);
                 tv_client_approval_date_value.setText(
 
                         ToolBox_Inf.millisecondsToString(
@@ -577,7 +576,7 @@ public class Act027_Approval extends BaseFragment {
                 tv_client_approval_date_value.setEnabled(false);
                 //LUCHE - 13/08/2019
                 //Add trativa de exibição de dados do aprovado externo.(via email)
-                if(mSm_so.getClient_approval_image_url() == null) {
+                if(mSm_so.getClient_approval_image() == null) {
                     ll_external_approval_data.setVisibility(View.VISIBLE);
                     //
                     tv_client_external_approval_email_val.setText(mSm_so.getClient_email());

@@ -210,27 +210,6 @@
                 android:text="N.Hugo Android"
                 android:textColor="@color/lib_custom_cell_font_color" />
 
-
-            <TextView
-                    android:id="@+id/act027_approval_content_tv_client_approval_date_lbl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:padding="2dp"
-                    android:text="Client Approval Date"
-                    android:textStyle="bold" />
-
-            <TextView
-                    android:id="@+id/act027_approval_content_tv_client_approval_date_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:enabled="false"
-                    android:padding="2dp"
-                    android:text="Date"
-                    android:textColor="@color/lib_custom_cell_font_color" />
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -284,6 +263,34 @@
                     android:padding="2dp"
                     android:text="Email@client.trad.com  - Trad"
                     android:textColor="@color/lib_custom_cell_font_color" />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/act027_approval_content_ll_cliente_approval_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <TextView
+                    android:id="@+id/act027_approval_content_tv_client_approval_date_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="2dp"
+                    android:text="Client Approval Date"
+                    android:textStyle="bold" />
+
+            <TextView
+                    android:id="@+id/act027_approval_content_tv_client_approval_date_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:enabled="false"
+                    android:padding="2dp"
+                    android:text="Date"
+                    android:textColor="@color/lib_custom_cell_font_color" />
+
+
 
         </LinearLayout>
 
