@@ -303,6 +303,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("quality_approval_user_nick_lbl");
         transList.add("quality_approval_date_lbl");
 
+        transList.add("client_external_approval_email_lbl");
+
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
         transList.add("alert_no_connection_msg");
