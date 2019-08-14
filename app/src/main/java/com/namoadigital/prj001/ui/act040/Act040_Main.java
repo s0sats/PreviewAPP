@@ -499,8 +499,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                                 new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
-                                                        mket_serial.getText().clear();
-                                                        mket_barcode.getText().clear();
+                                                        automationCleanForm();
                                                     }
                                                 },
                                                 false
