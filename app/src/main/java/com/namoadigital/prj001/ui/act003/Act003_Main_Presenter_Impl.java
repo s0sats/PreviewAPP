@@ -1,10 +1,8 @@
 package com.namoadigital.prj001.ui.act003;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -105,8 +103,10 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
                         }
                     }else{
-
-                        if(isMyServiceRunning(AppBackgroundService.class)){
+                        //L.BARRIONUEVO - 13/08/2019
+                        //Adicionado trataiva pois, caso o usr tenha colocado o app na lista de
+                        //apps de restrição no uso de bateria, o serviço start_tick não sobe automaticamente
+                        if(ToolBox_Inf.isMyServiceRunning(context, AppBackgroundService.class)){
                             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                             singletonWebSocket.attemptSendLogin();
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
@@ -159,16 +159,6 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
         ToolBox_Con.setPreference_Site_Code(context, item.get(MD_SiteDao.SITE_CODE));
         //mView.callAct004(context);
         mView.callAct033(context);
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
