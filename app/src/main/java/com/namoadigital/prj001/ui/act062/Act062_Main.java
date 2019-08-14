@@ -337,6 +337,12 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
 
     }
 
+    //LUCHE - 14/08/2019
+    @Override
+    public String getRequestingActProcess() {
+        return requestingActProcess;
+    }
+
     // NFC Processing Data
     @Override
     protected void nfcData(boolean status, int id, String... value) {

@@ -135,13 +135,19 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
                 if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
                     bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
                     bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                    if(hasInboundAttach(serial_list.get(0))) {
+                    //Se ioProcess for Inbound continua, se não(outbound), verifica se serial esta vinculado
+                    //a inbound
+                    if(mView.getRequestingActProcess().equals(ConstantBaseApp.IO_INBOUND)) {
                         mView.callAct063(bundle);
                     }else{
-                        mView.showMsg(
+                        if (hasNotInboundAttach(serial_list.get(0))) {
+                            mView.callAct063(bundle);
+                        } else {
+                            mView.showMsg(
                                 hmAux_Trans.get("alert_serial_without_inbound_ttl"),
                                 hmAux_Trans.get("alert_serial_without_inbound_msg")
-                        );
+                            );
+                        }
                     }
                     return;
                 } else {
@@ -155,7 +161,13 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
         }
     }
 
-    private boolean hasInboundAttach(MD_Product_Serial md_product_serial) {
+    /**
+     * Metodo que valida se o serial esta vinculado a um inbound.
+     * Usado para validar se o Serial pode ser adicionado em uma outbound
+     * @param md_product_serial
+     * @return
+     */
+    private boolean hasNotInboundAttach(MD_Product_Serial md_product_serial) {
         return md_product_serial.getInbound_prefix() == null || md_product_serial.getInbound_prefix()  == 0  ? false : true;
     }
 

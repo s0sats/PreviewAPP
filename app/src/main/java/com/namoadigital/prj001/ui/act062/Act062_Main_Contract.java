@@ -25,6 +25,8 @@ public interface Act062_Main_Contract {
         void callAct067();
 
         void callAct051();
+
+        String getRequestingActProcess();
     }
 
     interface I_Presenter{
