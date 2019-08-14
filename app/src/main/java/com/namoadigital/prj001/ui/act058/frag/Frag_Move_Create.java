@@ -674,7 +674,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 zone_position = MessageFormat.format("{0} | {1}", zone_position, mdProductSerial.getLocal_id());
             }
         }
-        if(zone_position.isEmpty()){
+        if(zone_position == null || zone_position.isEmpty()){
             tv_zone_position.setVisibility(View.GONE);
         }else{
             tv_zone_position.setVisibility(View.VISIBLE);

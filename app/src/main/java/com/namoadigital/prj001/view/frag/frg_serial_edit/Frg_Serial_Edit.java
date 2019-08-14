@@ -2309,7 +2309,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setSite_reason_code(ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
         //
         mdProductSerial.setZone_code(ToolBox_Inf.mIntegerParse(ss_site_zone.getmValue().get(SearchableSpinner.CODE)));
-        mdProductSerial.setZone_id(ss_site_zone.getmValue().get(SearchableSpinner.CODE));
+        mdProductSerial.setZone_id(ss_site_zone.getmValue().get(SearchableSpinner.ID));
         mdProductSerial.setZone_desc(ss_site_zone.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
         mdProductSerial.setLocal_code(ToolBox_Inf.mIntegerParse(ss_site_zone_local.getmValue().get(SearchableSpinner.CODE)));
