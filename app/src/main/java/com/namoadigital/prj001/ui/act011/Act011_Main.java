@@ -1361,10 +1361,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         mkEditTextNMFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
@@ -1397,10 +1398,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         comboBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             comboBoxFF.setmEnabled(false);
         } else {
@@ -1446,10 +1448,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
         ) {
             checkBoxFF.setmEnabled(false);
         } else {
@@ -1483,10 +1486,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingImageFF.setmEnabled(false);
         } else {
@@ -1518,10 +1522,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingBarFF.setmEnabled(false);
         } else {
@@ -1554,10 +1559,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             pictureFF.setmEnabled(false);
         } else {
@@ -1594,10 +1600,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             photoFF.setmValue("p_" + prefix + cf.get("custom_form_seq") + ".jpg");
         }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)  ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             photoFF.setmEnabled(false);
         } else {
@@ -1647,22 +1654,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         int ipage = Integer.parseInt(sPage);
         //
         for (int i = 0; i < customFFs.size(); i++) {
-
+            //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+            //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
             if (ipage == -1) {
                 if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                     numberOfErrors += 1;
                 }
-                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+//                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
                     customFFs.get(i).setValidationBackGroundDots();
-                }
+//                }
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
                     if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
-                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+//                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
                         customFFs.get(i).setValidationBackGroundDots();
-                    }
+//                    }
                 } else {
                 }
             }

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act003;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -104,6 +105,34 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
                         }
                     }else{
+
+                        if(isMyServiceRunning(AppBackgroundService.class)){
+                            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                            singletonWebSocket.attemptSendLogin();
+                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
+                        }else{
+                            HMAux msgAux = messageDao.getByStringHM(
+                                    new CH_Message_Sql_004().toSqlQuery()
+                            );
+                            //
+                            if (msgAux.size() > 0) {
+                                ToolBox_Con.setPreference_Chat_Msg_Code(
+                                        context,
+                                        Long.parseLong(msgAux.get(CH_MessageDao.TMP))
+                                );
+                                //
+                                ToolBox_Con.setPreference_Chat_Msg_Token(
+                                        context,
+                                        Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
+                                );
+                            }
+                            Intent chatIntent = new Intent(context, AppBackgroundService.class);
+                            chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+                            context.startService(chatIntent);
+
+                            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
+                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
+                        }
                         //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Usr com preferencias setadas, não faz nada \n", log_file);
                         Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Usr com preferencias setadas, não faz nada \n");
                     }
@@ -130,6 +159,16 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
         ToolBox_Con.setPreference_Site_Code(context, item.get(MD_SiteDao.SITE_CODE));
         //mView.callAct004(context);
         mView.callAct033(context);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
