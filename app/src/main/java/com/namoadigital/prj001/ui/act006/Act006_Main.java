@@ -483,19 +483,24 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         super.processError_1(mLink, mRequired);
         //implementar dialog confirmando busca offline
         progressDialog.dismiss();
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_turn_offline_mode_on_ttl"),
-                hmAux_Trans.get("alert_turn_offline_mode_on_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ToolBox.setPreference_Offline_Mode(context, true);
-                        mPresenter.offlineSerialSearch();
-                    }
-                },
-                1
-        );
+        /*
+            14/08/2019 -  Inicio do fluxo offline para N-Form, ao nao conseguir realizar a pesquisa
+            de serial devido mah conexao, exibi um dialog perguntando se o user gostaria de ligar o
+            modo of-line
+         */
+//        ToolBox.alertMSG(
+//                context,
+//                hmAux_Trans.get("alert_turn_offline_mode_on_ttl"),
+//                hmAux_Trans.get("alert_turn_offline_mode_on_msg"),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        ToolBox.setPreference_Offline_Mode(context, true);
+//                        mPresenter.offlineSerialSearch();
+//                    }
+//                },
+//                1
+//        );
     }
 
     // Hugo
