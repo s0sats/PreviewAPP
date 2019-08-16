@@ -2553,6 +2553,7 @@ public class ToolBox_Inf {
             transList.add("ws_exception_server_connection_failed");
             transList.add("generic_error_lbl");
             transList.add("ws_exception_connection_error");
+            transList.add("ws_exception_server_not_found");
 
             hmAux_Trans = setLanguage(
                     context,
@@ -2588,6 +2589,10 @@ public class ToolBox_Inf {
 
         hmAux_Trans.put("ws_exception_server_connection_failed",
                 (!hmAux_Trans.containsKey("ws_exception_server_connection_failed") || hmAux_Trans.get("ws_exception_server_connection_failed").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_connection_failed) : hmAux_Trans.get("ws_exception_server_connection_failed"))
+        );
+
+        hmAux_Trans.put("ws_exception_server_not_found",
+            (!hmAux_Trans.containsKey("ws_exception_server_not_found") || hmAux_Trans.get("ws_exception_server_not_found").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_not_found) : hmAux_Trans.get("ws_exception_server_not_found"))
         );
 
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
