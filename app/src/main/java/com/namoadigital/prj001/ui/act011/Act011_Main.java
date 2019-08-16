@@ -76,7 +76,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -193,15 +192,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String mSite_Code;
     private Integer mOperation_Code;
 
-    private String wsSoProcess = "";
+    private String wsProcess = "";
     private ArrayList<HMAux> wsResults = new ArrayList<>();
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
     private boolean finalizeNewFlow = false;
 
-
-    public void setWsSoProcess(String wsSoProcess) {
-        this.wsSoProcess = wsSoProcess;
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
     }
 
     @Override
@@ -1945,7 +1944,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                             hmAux_Trans.get("sys_alert_btn_ok")
                                     );
 
-                                    executeSerialSave();
+                                    mPresenter.executeSerialSave();
                                     //executeSaveProcess();
 
                                 } else {
@@ -2728,8 +2727,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
-        if( wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
-           || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+        if( wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+           || wsProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
         ){
             ToolBox.alertMSG(
                 context,
@@ -2785,24 +2784,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         progressDialog.dismiss();
     }
 
-    private void executeSerialSave() {
-        setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-        //
-        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
+
 
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-            setWsSoProcess("");
+        if (wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+            setWsProcess("");
             //
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
@@ -2823,7 +2812,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 }
             }
 
-            executeSaveProcess();
+            mPresenter.executeSaveProcess();
         }
     }
 
@@ -2843,27 +2832,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
-    private void executeSaveProcess() {
-        setWsSoProcess(WS_Save.class.getSimpleName());
-        //
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-    }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-        if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
-            setWsSoProcess("");
+        if (wsProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            setWsProcess("");
             if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
