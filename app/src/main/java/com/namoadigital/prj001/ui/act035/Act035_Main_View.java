@@ -29,4 +29,6 @@ public interface Act035_Main_View {
 
     void executeApSyncWsViaInfo(HMAux hmAux);
 
+    void showAlert(String ttl, String msg);
+
 }

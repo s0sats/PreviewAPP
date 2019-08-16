@@ -272,8 +272,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_room_obj_error_msg");
         transList.add("alert_download_ap_ttl");
         transList.add("alert_download_ap_msg");
-        transList.add("alert_no_pdf_tll");
-        transList.add("alert_no_pdf_msg");
+        transList.add("alert_pdf_not_found_tll");
+        transList.add("alert_pdf_not_found_msg");
+        transList.add("alert_starting_pdf_download_tll");
+        transList.add("alert_starting_pdf_download_msg");
         transList.add("progress_join_ttl");
         transList.add("progress_join_msg");
         transList.add("progress_download_ap_ttl");
@@ -752,8 +754,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
             showPDPDF(
-                    hmAux_Trans.get("alert_no_pdf_tll"),
-                    hmAux_Trans.get("alert_no_pdf_msg"),
+                    hmAux_Trans.get("alert_starting_pdf_download_tll"),
+                    hmAux_Trans.get("alert_starting_pdf_download_msg"),
                     false
             );
         }
@@ -810,6 +812,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private class pdfDownload extends AsyncTask<String, String, String> {
 
+        public static final String NOK = "NOK";
+
         @Override
         protected String doInBackground(String... strings) {
 
@@ -819,14 +823,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     ToolBox_Inf.deleteDownloadFileInf(Constant.CACHE_PATH + "/" +
                             strings[0] + ".tmp");
-                    //
-                    ToolBox_Inf.downloadImagePDF(
-                            strings[1],
-                            Constant.CACHE_PATH + "/" +
-                                    strings[0] + ".tmp"
-                    );
-                    //
-                    ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
+                    /*
+                        15/08/2019 - BARRIONUEVO
+                        Tratativa para caso o campo esteja null ou vazio
+                     */
+                    if(strings[1] == null || "".equals(strings[1])){
+                        return NOK;
+                    }else {
+                        ToolBox_Inf.downloadImagePDF(
+                                strings[1],
+                                Constant.CACHE_PATH + "/" +
+                                        strings[0] + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -840,8 +851,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             super.onPostExecute(s);
             //
             disablePD();
-            //
-            openPDF(pk_pdf, custom_form_url_pdf);
+            //Quando em Roma, haja como romano.
+            if(NOK.equals(s)){
+                showAlert(hmAux_Trans.get("alert_pdf_not_found_tll"), hmAux_Trans.get("alert_pdf_not_found_msg"));
+            }else {
+                openPDF(pk_pdf, custom_form_url_pdf);
+            }
         }
     }
 
@@ -2571,6 +2586,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg) {
+        ToolBox.alertMSG(context, ttl, msg, null, 0);
     }
 
     public void executeApSyncWs(String type) {
