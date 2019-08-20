@@ -78,7 +78,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 //Var com o nome do import da lib
-def namoaLibVersion = "com.namoa_digital:library:1.0.14"
+def namoaLibVersion = "com.namoa_digital:library:1.0.15"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

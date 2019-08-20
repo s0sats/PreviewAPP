@@ -111,7 +111,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == VIEW_TYPE_ITEM) {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(resource, viewGroup, false);
-            return new Act067_IO_Items_Adapter.IOInboundViewHolder(view);
+            return new Act067_IO_Items_Adapter.IOOutboundViewHolder(view);
         } else {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.act067_frag_item_cell_footer, viewGroup, false);
@@ -123,9 +123,9 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         try {
-            if (viewHolder instanceof Act067_IO_Items_Adapter.IOInboundViewHolder) {
+            if (viewHolder instanceof Act067_IO_Items_Adapter.IOOutboundViewHolder) {
 
-                Act067_IO_Items_Adapter.IOInboundViewHolder holder = (Act067_IO_Items_Adapter.IOInboundViewHolder) viewHolder;
+                Act067_IO_Items_Adapter.IOOutboundViewHolder holder = (Act067_IO_Items_Adapter.IOOutboundViewHolder) viewHolder;
                 holder.bindData(mFilteredValues.get(position));
                 HMAux aux = mFilteredValues.get(position);
                 //
@@ -245,7 +245,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    public class IOInboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class IOOutboundViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ConstraintLayout cl_main;
         private TextView tv_row_id;
         private TextView tv_status;
@@ -267,7 +267,7 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         private TextView tv_conf_dt_val;
         private View itemView;
 
-        public IOInboundViewHolder(@NonNull View itemView) {
+        public IOOutboundViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
             //
@@ -324,17 +324,23 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
                 tv_brand_model_color.setVisibility(View.VISIBLE);
             }
             //
-            if (
-                    (item.hasConsistentValue(IO_OutboundDao.ZONE_ID_PICKING) && !item.get(IO_OutboundDao.ZONE_ID_PICKING).isEmpty())
-                            || (item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty())
+            if ( item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING) &&
+                    ((item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty())
+                            || (item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty()))
             ) {
-                String suggestedPosition = item.hasConsistentValue(IO_OutboundDao.ZONE_ID_PICKING) && !item.get(IO_OutboundDao.ZONE_ID_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_ID_PICKING) : "";
+                String suggestedPosition = item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_DESC_PICKING) : "";
                 suggestedPosition += item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty() ? (!suggestedPosition.isEmpty() ? " | " : "") + item.get(IO_OutboundDao.LOCAL_ID_PICKING) : "";
                 tv_suggestion_val.setText(suggestedPosition);
-                tv_sugestion_lbl.setVisibility(View.VISIBLE);
-                tv_suggestion_val.setVisibility(View.VISIBLE);
+                if(suggestedPosition != null && !suggestedPosition.isEmpty()) {
+                    tv_sugestion_lbl.setVisibility(View.VISIBLE);
+                    tv_suggestion_val.setVisibility(View.VISIBLE);
+                }else{
+                    tv_sugestion_lbl.setVisibility(View.GONE);
+                    tv_suggestion_val.setVisibility(View.GONE);
+                }
+
             }
-            //Seta dados do realizado.Info depende do status do item e tipo de inbound
+            //Seta dados do realizado.Info depende do status do item e tipo de outbound
             setRealized(item);
 
             //
@@ -379,23 +385,42 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
             if (item.hasConsistentValue(IO_OutboundDao.PICKING_PROCESS)
                     && item.get(IO_OutboundDao.PICKING_PROCESS).equals("1")
                     && item.hasConsistentValue(IO_OutboundDao.STATUS)
-                    && (item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE) || item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))
+                    && (item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_DONE) || item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC) || item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE))
                     && item.hasConsistentValue(IO_MoveDao.TO_ZONE_DESC)
                     && item.hasConsistentValue(IO_MoveDao.TO_LOCAL_ID)
             ) {
                 realized = item.hasConsistentValue(IO_MoveDao.TO_ZONE_DESC) && !item.get(IO_MoveDao.TO_ZONE_DESC).isEmpty() ? item.get(IO_MoveDao.TO_ZONE_DESC) : "";
                 realized += item.hasConsistentValue(IO_MoveDao.TO_LOCAL_ID) && !item.get(IO_MoveDao.TO_LOCAL_ID).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_MoveDao.TO_LOCAL_ID) : "";
                 tv_realized_val.setText(realized);
-                tv_realized_lbl.setVisibility(View.VISIBLE);
-                tv_realized_val.setVisibility(View.VISIBLE);
-
-            } else {
-                if (item.hasConsistentValue(IO_OutboundDao.ZONE_CODE_PICKING) && !item.get(IO_OutboundDao.ZONE_CODE_PICKING).isEmpty()) {
+                if(realized != null && !realized.isEmpty()) {
+                    tv_realized_lbl.setVisibility(View.VISIBLE);
+                    tv_realized_val.setVisibility(View.VISIBLE);
+                }else{
                     realized = item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_DESC_PICKING) : "";
                     realized += item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_OutboundDao.LOCAL_ID_PICKING) : "";
                     tv_realized_val.setText(realized);
-                    tv_realized_lbl.setVisibility(View.VISIBLE);
-                    tv_realized_val.setVisibility(View.VISIBLE);
+                    if(realized != null && !realized.isEmpty()) {
+                        tv_realized_lbl.setVisibility(View.VISIBLE);
+                        tv_realized_val.setVisibility(View.VISIBLE);
+                    }else {
+                        tv_realized_lbl.setVisibility(View.GONE);
+                        tv_realized_val.setVisibility(View.GONE);
+                    }
+                }
+
+            } else {
+                if (item.get(IO_OutboundDao.STATUS).equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE) &&
+                        item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty()) {
+                    realized = item.hasConsistentValue(IO_OutboundDao.ZONE_DESC_PICKING) && !item.get(IO_OutboundDao.ZONE_DESC_PICKING).isEmpty() ? item.get(IO_OutboundDao.ZONE_DESC_PICKING) : "";
+                    realized += item.hasConsistentValue(IO_OutboundDao.LOCAL_ID_PICKING) && !item.get(IO_OutboundDao.LOCAL_ID_PICKING).isEmpty() ? (!realized.isEmpty() ? " | " : "") + item.get(IO_OutboundDao.LOCAL_ID_PICKING) : "";
+                    tv_realized_val.setText(realized);
+                    if(realized != null && !realized.isEmpty()) {
+                        tv_realized_lbl.setVisibility(View.VISIBLE);
+                        tv_realized_val.setVisibility(View.VISIBLE);
+                    }else{
+                        tv_realized_lbl.setVisibility(View.GONE);
+                        tv_realized_val.setVisibility(View.GONE);
+                    }
                 }
             }
         }

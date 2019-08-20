@@ -34,6 +34,7 @@ public class IO_Outbound_Item_Sql_003 implements Specification {
                         "       s.model_desc, \n" +
                         "       s.color_desc," +
                         //"       z.zone_id || \" - \" || z.zone_desc "+IO_Outbound_ItemDao.PLANNED_ZONE_ID+",  \n" +
+                        "       z.zone_desc "+ IO_OutboundDao.ZONE_DESC_PICKING +",  \n" +
                         "       z.zone_id "+ IO_OutboundDao.ZONE_ID_PICKING +",  \n" +
                         "       l.local_id "+IO_OutboundDao.LOCAL_ID_PICKING +"\n," +
                         "       z2.zone_desc "+ IO_MoveDao.TO_ZONE_DESC +",  \n" +
