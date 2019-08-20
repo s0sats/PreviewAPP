@@ -148,6 +148,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         transList.add("alert_move_results_ttl");
         transList.add("alert_move_list_ttl");
         transList.add("alert_move_ttl");
+        transList.add("alert_move_ok_msg");
         transList.add("msg_serial_error");
 
         transList.add("alert_offline_save_msg");
@@ -444,7 +445,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_move_ttl"),
-                            hmAux_Trans.get("sys_alert_btn_ok"),
+                            hmAux_Trans.get("alert_move_ok_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
