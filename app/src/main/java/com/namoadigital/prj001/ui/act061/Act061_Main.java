@@ -197,16 +197,19 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
+                //
+                ToolBox_Inf.hideSoftKeyboard(Act061_Main.this);
+                //
                 act061_frag_drawer.loadDataToScreen();
-
+                //
                 ActivityCompat.invalidateOptionsMenu(Act061_Main.this);
-
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                //
+                ToolBox_Inf.hideSoftKeyboard(Act061_Main.this);
                 //
                 act061_frag_drawer.loadDataToScreen();
                 //

@@ -15,15 +15,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -127,6 +122,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         //
         loadTranslation();
         //
+        //ToolBox_Inf.hideSoftKeyboard(Act067_Main.this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
@@ -200,9 +196,11 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
+                //
+                ToolBox_Inf.hideSoftKeyboard(Act067_Main.this);
+                //
                 act067_frag_drawer.loadDataToScreen();
-
+                //
                 ActivityCompat.invalidateOptionsMenu(Act067_Main.this);
 
             }
@@ -210,6 +208,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                //
+                ToolBox_Inf.hideSoftKeyboard(Act067_Main.this);
                 //
                 act067_frag_drawer.loadDataToScreen();
                 //
