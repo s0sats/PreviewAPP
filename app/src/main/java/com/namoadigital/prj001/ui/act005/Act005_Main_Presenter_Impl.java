@@ -551,7 +551,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         HMAux moveWaitingSync = assetMoveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
+                                0
                         )
                 ).toSqlQuery()
         );

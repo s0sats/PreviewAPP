@@ -436,49 +436,49 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             }
         }
 
-        if (resultList.size() == 1) {
-            if (resultList.get(0).get("item").equals(movePrefix + "." + moveCode)
-            ||  resultList.get(0).get("item").equals(String.valueOf(blind_tmp)) ) {
-                if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
-
-                    //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_ttl"),
-                            hmAux_Trans.get("alert_move_ok_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    onBackPressed();
-                                }
-                            },
-                            0
-                    );
-                } else {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_move_list_ttl"),
-                            resultList.get(0).get("status"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //LUCHE - 24/07/2019
-                                    //Add chamada do getMoveInfoFromBD, pois no caso de DENIED por inconsistencia,
-                                    //o usr não poderá mais alterar essa move.Ao atualizar os dados da move, "novo" status
-                                    //bloequeará a ação ao executar o restoreUIFields.
-                                    getMoveInfoFromBD();
-                                    //
-                                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
-                                }
-                            },
-                            0
-                    );
-                }
-                progressDialog.dismiss();
-            }
-        } else {
+//        if (resultList.size() == 1) {
+//            if (resultList.get(0).get("item").equals(movePrefix + "." + moveCode)
+//            ||  resultList.get(0).get("item").equals(String.valueOf(blind_tmp)) ) {
+//                if (resultList.get(0).get("status").equalsIgnoreCase("Ok")) {
+//
+//                    //
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_move_ttl"),
+//                            hmAux_Trans.get("alert_move_ok_msg"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    onBackPressed();
+//                                }
+//                            },
+//                            0
+//                    );
+//                } else {
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_move_list_ttl"),
+//                            resultList.get(0).get("status"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    //LUCHE - 24/07/2019
+//                                    //Add chamada do getMoveInfoFromBD, pois no caso de DENIED por inconsistencia,
+//                                    //o usr não poderá mais alterar essa move.Ao atualizar os dados da move, "novo" status
+//                                    //bloequeará a ação ao executar o restoreUIFields.
+//                                    getMoveInfoFromBD();
+//                                    //
+//                                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
+//                                }
+//                            },
+//                            0
+//                    );
+//                }
+//                progressDialog.dismiss();
+//            }
+//        } else {
             showNewOptDialog(resultList);
-        }
+//        }
     }
 
     private void showNewOptDialog(ArrayList<HMAux> resultList) {

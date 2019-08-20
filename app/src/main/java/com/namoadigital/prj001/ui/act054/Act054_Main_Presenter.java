@@ -312,7 +312,8 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         HMAux resultMoveWaitingSync = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
+                                0
                         )
                 ).toSqlQuery()
         );
@@ -320,7 +321,8 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         HMAux resultInputAwayWaitingSync = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                ConstantBaseApp.IO_INBOUND
+                                ConstantBaseApp.IO_INBOUND,
+                                1
                         )
                 ).toSqlQuery()
         );
@@ -328,7 +330,8 @@ public class Act054_Main_Presenter implements Act054_Main_Contract.I_Presenter {
         HMAux resultPickingWaitingSync = io_moveDao.getByStringHM((
                         new IO_Move_Order_Item_Sql_005(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                ConstantBaseApp.IO_OUTBOUND
+                                ConstantBaseApp.IO_OUTBOUND,
+                                1
                         )
                 ).toSqlQuery()
         );

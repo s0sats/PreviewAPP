@@ -9,10 +9,12 @@ import static com.namoadigital.prj001.dao.IO_MoveDao.PENDING_QTY;
 public class IO_Move_Order_Item_Sql_005 implements Specification {
     private long customer_code;
     private String move_type;
+    private  int update_required;
 
-    public IO_Move_Order_Item_Sql_005(long customer_code, String move_type) {
+    public IO_Move_Order_Item_Sql_005(long customer_code, String move_type, int update_required) {
         this.customer_code = customer_code;
         this.move_type = move_type;
+        this.update_required = update_required;
     }
 
     @Override
@@ -26,6 +28,7 @@ public class IO_Move_Order_Item_Sql_005 implements Specification {
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
                         "   and move_type = '"+ move_type+ "'\n" +
+                        "   and update_required = '"+ update_required+ "'\n" +
                         "   and status = '"+ Constant.SYS_STATUS_WAITING_SYNC +'\'' )
                 .toString();
     }
