@@ -1,164 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act054.Act054_Main"
-    tools:showIn="@layout/act054_main"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    tools:showIn="@layout/act054_main">
 
-    <CheckBox
-        android:id="@+id/act054_cb_inbound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Inbound - trad"
-        android:checked="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <CheckBox
-        android:id="@+id/act054_cb_outbound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Outbound - trad"
-        android:checked="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/act054_cb_inbound"
-        app:layout_constraintTop_toBottomOf="@+id/act054_cb_inbound" />
-
-    <CheckBox
-        android:id="@+id/act054_cb_planned_move"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Movimentação Planejada - trad"
-        android:checked="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/act054_cb_outbound"
-        app:layout_constraintTop_toBottomOf="@+id/act054_cb_outbound" />
-
-
-    <LinearLayout
-        android:id="@+id/act054_ll_io_zone"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_back"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/act054_cb_planned_move"
-        app:layout_constraintTop_toBottomOf="@+id/act054_cb_planned_move" >
-
-        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-            android:id="@+id/act054_ss_io_zone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Zona"/>
-
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/act054_tv_io_orientation_lbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Orientação - trad"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/act054_ll_io_zone"
-        app:layout_constraintTop_toBottomOf="@+id/act054_ll_io_zone" />
-
-    <CheckBox
-        android:id="@+id/act054_cb_io_origins"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:text="Origem - trad"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintStart_toStartOf="@+id/act054_tv_io_orientation_lbl"
-        app:layout_constraintTop_toBottomOf="@+id/act054_tv_io_orientation_lbl" />
-
-    <CheckBox
-        android:id="@+id/act054_cb_io_destiny"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:text="Destino - trad"
-        app:layout_constraintBottom_toBottomOf="@+id/act054_cb_io_origins"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toTopOf="@+id/act054_cb_io_origins" />
-
-    <Button
-        android:id="@+id/act054_search_btn_move_order"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/namoa_cell_3_states"
-        android:gravity="left"
-        android:padding="20dp"
-        android:text="Busca Ordem de movimentação - trad"
-        android:textColor="@color/padrao_WHITE"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@+id/include2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act054_cb_io_origins" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/act054_btn_move_order_pendency"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/namoa_cell_2_states"
-        android:gravity="left"
-        android:padding="20dp"
-        android:text="Pendentes(0/0) - trad"
-        android:textColor="@color/padrao_WHITE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act054_search_btn_move_order" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context=".ui.act054.Act054_Main"
+            tools:showIn="@layout/act054_main">
 
+            <CheckBox
+                android:id="@+id/act054_cb_inbound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:text="Inbound - trad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/act054_cb_outbound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:text="Outbound - trad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act054_cb_inbound"
+                app:layout_constraintTop_toBottomOf="@+id/act054_cb_inbound" />
+
+            <CheckBox
+                android:id="@+id/act054_cb_planned_move"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:text="Movimentação Planejada - trad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/act054_cb_outbound"
+                app:layout_constraintTop_toBottomOf="@+id/act054_cb_outbound" />
+
+
+            <LinearLayout
+                android:id="@+id/act054_ll_io_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/border_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/act054_cb_planned_move"
+                app:layout_constraintTop_toBottomOf="@+id/act054_cb_planned_move">
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act054_ss_io_zone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Zona" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/act054_tv_io_orientation_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="Orientação - trad"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/act054_ll_io_zone"
+                app:layout_constraintTop_toBottomOf="@+id/act054_ll_io_zone" />
+
+            <CheckBox
+                android:id="@+id/act054_cb_io_origins"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:text="Origem - trad"
+                app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                app:layout_constraintStart_toStartOf="@+id/act054_tv_io_orientation_lbl"
+                app:layout_constraintTop_toBottomOf="@+id/act054_tv_io_orientation_lbl" />
+
+            <CheckBox
+                android:id="@+id/act054_cb_io_destiny"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:text="Destino - trad"
+                app:layout_constraintBottom_toBottomOf="@+id/act054_cb_io_origins"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline5"
+                app:layout_constraintTop_toTopOf="@+id/act054_cb_io_origins"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/act054_search_btn_move_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/namoa_cell_3_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Busca Ordem de movimentação - trad"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act054_cb_io_origins" />
+
+            <Button
+                android:id="@+id/act054_btn_move_order_pendency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Pendentes(0/0) - trad"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act054_search_btn_move_order" />
+
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".5" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
     <include
+        android:id="@+id/include2"
+        layout="@layout/footer_base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/footer_base"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/act054_btn_move_order_pendency"
         app:layout_constraintVertical_bias="1.0" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5" />
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

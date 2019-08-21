@@ -268,6 +268,12 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     }
 
     @Override
+    protected void footerCreateDialog() {
+//        super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         processCloseACT(mLink, mRequired, new HMAux());
     }
