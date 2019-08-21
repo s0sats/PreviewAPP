@@ -77,7 +77,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private IO_Blind_Move blind_move;
     private int product_code;
     private int serial_code;
-    private int blind_tmp;
+    private int blind_tmp =0;
     private String serial_id;
 
     private Integer to_local_code;
@@ -504,7 +504,9 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
             hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, resultList.get(i).get("item"));
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, resultList.get(i).get("status"));
             moveList.add(hmAux);
-            if (resultList.get(i).get("item").equals(movePrefix + "." + moveCode)) {
+            if (resultList.get(i).get("item").equals(movePrefix + "." + moveCode)
+                    || (resultList.get(i).get("item").equals(String.valueOf(blind_tmp)))
+            ) {
                 auxMove.putAll(resultList.get(i));
                 break;
             }
@@ -539,28 +541,29 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                     //
                     onBackPressed();
                     //atualizar a tela com os dados do move
-                }else{
-                    getMoveInfoFromBD();
-                    frag_move_create.restoreUIFields(serialInfo,
-                            viewMode,
-                            true,
-                            hmAux_Trans_Frag,
-                            to_local_code,
-                            to_zone_code,
-                            move_prefix,
-                            move_code,
-                            reason_code,
-                            move_type,
-                            planned_zone_code,
-                            outbound_prefix,
-                            inbound_prefix,
-                            outbound_code,
-                            inbound_code,
-                            planned_local_code,
-                            status,
-                            to_class_code);
+                }else {
+                    if (movePrefix > 0) {
+                        getMoveInfoFromBD();
+                        frag_move_create.restoreUIFields(serialInfo,
+                                viewMode,
+                                true,
+                                hmAux_Trans_Frag,
+                                to_local_code,
+                                to_zone_code,
+                                move_prefix,
+                                move_code,
+                                reason_code,
+                                move_type,
+                                planned_zone_code,
+                                outbound_prefix,
+                                inbound_prefix,
+                                outbound_code,
+                                inbound_code,
+                                planned_local_code,
+                                status,
+                                to_class_code);
+                    }
                 }
-
             }
         });
     }
