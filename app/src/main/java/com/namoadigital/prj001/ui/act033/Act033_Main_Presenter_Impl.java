@@ -44,7 +44,9 @@ public class Act033_Main_Presenter_Impl implements Act033_Main_Presenter {
      */
     @Override
     public void accessToSoModule(int back_action) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+        if ( ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+             || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+        ) {
             getZones();
         }else{
            if(back_action == 1){
