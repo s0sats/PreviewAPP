@@ -46,9 +46,6 @@ public class WS_Save extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "WS_Save";
     private String mSEND = "";
-    private boolean mResend = false;
-
-
 
     public WS_Save() {
         super("WS_Save");
@@ -60,8 +57,6 @@ public class WS_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
-
 
             formDataDao = new GE_Custom_Form_DataDao(
                     getApplicationContext(),
@@ -112,9 +107,6 @@ public class WS_Save extends IntentService {
 
         if(processPendingToken(1) == 0){
             processNewToken(0);
-            mResend =false;
-        }else{
-            mResend =true;
         }
         //Verifica se existem dados a serem enviado
         //Se não existir, cancela a chamada do WS
@@ -168,7 +160,7 @@ public class WS_Save extends IntentService {
             return;
         }
         //Apos processar validation, processa o retorno do SAve
-        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url(), jumpValidation, jumpOD);
+        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url());
 
     }
 
@@ -253,11 +245,11 @@ public class WS_Save extends IntentService {
 
     }
 
-    private boolean checkSaveReturn(String save, String error_msg, String link_url, int jumpValidation, int jumpOD) throws Exception{
+    private boolean checkSaveReturn(String save, String error_msg, String link_url) {
         HMAux hmAuxRet = new HMAux();
         switch (save){
             case "OK":
-            case "OK_DUP":
+            case"OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 GE_Custom_Form_LocalDao formLocalDao =
                         new GE_Custom_Form_LocalDao(
@@ -287,16 +279,11 @@ public class WS_Save extends IntentService {
                 formDataDao.addUpdate(form_datas,false);
 
                 //Dispara msg para fechar dialog
-                if(mResend){
-                    processWS_Save(jumpValidation, jumpOD);
-                    mResend =false;
-                    return  true;
-                }else {
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
-                    //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
-                    //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
-                    return true;
-                }
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
+                //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
+                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
+                return true;
+
             case "ERROR_TOKEN_EXCEPTION":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
                 //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_token_excep"));

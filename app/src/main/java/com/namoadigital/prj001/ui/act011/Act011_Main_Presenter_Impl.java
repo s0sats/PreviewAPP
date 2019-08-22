@@ -9,13 +9,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.WBR_Save;
-import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.service.WS_Save;
-import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.*;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -556,33 +551,5 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 product_code,
                 serial_id).toSqlQuery());
         return result;
-    }
-    @Override
-    public void executeSaveProcess() {
-        mView.setWsProcess(WS_Save.class.getSimpleName());
-        //
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
-
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-    }
-
-    @Override
-    public void executeSerialSave() {
-        mView.setWsProcess(WS_Serial_Save.class.getSimpleName());
-        //
-        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 }

@@ -31,7 +31,5 @@ public interface Act011_Main_View {
 
     void callAct006(Context context);
 
-    void setWsProcess(String wsProcess);
-
     boolean allowFinalizeWithNewBtn();
 }
