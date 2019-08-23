@@ -22,6 +22,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -199,6 +200,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
     private boolean finalizeNewFlow = false;
+    private boolean canSave;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -209,7 +211,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act011_main);
-
+        Log.d("Lifecycle", "onCreate");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -364,6 +366,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     @Override
                     public void openDrawer() {
                         mDrawerLayout.openDrawer(GravityCompat.START);
+                        saveV2(false);
                     }
 
                     @Override
@@ -375,6 +378,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     public void previosTab() {
                         if ((index - 1) >= 1) {
                             tabSelectedAction(index - 1);
+                            saveV2(false);
                         }
                     }
 
@@ -382,6 +386,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     public void nextTab() {
                         if ((index + 1) <= pager.getAdapter().getCount()) {
                             tabSelectedAction(index + 1);
+                            saveV2(false);
                         }
                     }
 
@@ -406,7 +411,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void initVars() {
         fm = getSupportFragmentManager();
-
+        canSave = true;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -619,7 +624,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         onPhotoClick = new CustomFF.ICustomFFPhoto() {
             @Override
             public void OnPhotoClick(String s) {
-                saveV2(false);
+//                saveV2(false);
             }
         };
         //
@@ -682,6 +687,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 show.dismiss();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 deleteFormLocal();
+                canSave = false;
             }
         });
     }
@@ -1297,6 +1303,41 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         labelFF.setmType(cf.get("custom_form_data_type"));
 
         return labelFF;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("Lifecycle", "onPause");
+        if(canSave) {
+            Log.d("Lifecycle", "onPause - Salvo");
+            saveV2(false);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("Lifecycle", "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Lifecycle", "onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Lifecycle", "onStop");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Lifecycle", "onDestroy");
     }
 
     private CustomFF cfg_Char(HMAux cf) {
