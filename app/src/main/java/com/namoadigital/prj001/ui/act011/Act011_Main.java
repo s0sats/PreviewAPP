@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -115,7 +116,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act011_Main extends Base_Activity implements Act011_Main_View {
+public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
 
@@ -366,7 +367,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     @Override
                     public void openDrawer() {
                         mDrawerLayout.openDrawer(GravityCompat.START);
-                        saveV2(false);
                     }
 
                     @Override
@@ -378,7 +378,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     public void previosTab() {
                         if ((index - 1) >= 1) {
                             tabSelectedAction(index - 1);
-                            saveV2(false);
                         }
                     }
 
@@ -386,7 +385,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     public void nextTab() {
                         if ((index + 1) <= pager.getAdapter().getCount()) {
                             tabSelectedAction(index + 1);
-                            saveV2(false);
                         }
                     }
 
@@ -712,7 +710,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mPresenter.saveData(formData, fieldsValidation);
 
         bNew = false;
-
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
@@ -1224,6 +1221,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 @Override
                 public void onPageSelected(int position) {
+                    saveV2(false);
                     act011_ff_options.setFOpc(position + 1);
                     //
                     index_old = index;
@@ -1308,36 +1306,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("Lifecycle", "onPause");
         if(canSave) {
-            Log.d("Lifecycle", "onPause - Salvo");
             saveV2(false);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("Lifecycle", "onStart");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("Lifecycle", "onResume");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("Lifecycle", "onStop");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("Lifecycle", "onDestroy");
     }
 
     private CustomFF cfg_Char(HMAux cf) {
