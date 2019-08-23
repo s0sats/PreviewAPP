@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -310,6 +311,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_confirm_delete_msg");
         transList.add("dialog_confirm_delete_comfirmation");
         transList.add("dialog_confirm_delete_abort");
+
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2524,8 +2528,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                        startActivity(intent);
+                        /*
+                            23/08/2019 - BARRIONUEVO
+                            Trata devices sem suporte a pdf
+                        */
+                        try {
+                            startActivity(intent);
+                        }catch (ActivityNotFoundException e){
+                            ToolBox_Inf.registerException(e);
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
+                                    hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
+                                    null,
+                                    0
+                            );
+                        }
                     }
                 }
             });
