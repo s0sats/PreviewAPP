@@ -1287,6 +1287,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             act011_ff_options.translaTab(hmAux_Trans);
 
             returnValidCheck(String.valueOf(index_old));
+            if(bNew){
+                saveV2(false);
+                this.bNew = false;
+            }
         }
     }
 
