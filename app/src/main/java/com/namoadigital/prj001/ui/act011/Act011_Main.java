@@ -12,7 +12,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -1289,9 +1288,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             returnValidCheck(String.valueOf(index_old));
             if(bNew){
                 saveV2(false);
-                this.bNew = false;
             }
         }
+
     }
 
     private CustomFF cfg_Label(HMAux cf) {
@@ -2067,8 +2066,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
                 // modificar para incluir a remossao do custom_form_local.
                 //mPresenter.saveData(formData, false);
-                if (bNew) {
-                    mPresenter.deleteFormLocal(formLocal);
+                if (bNew || hasAnyValueChanged()) {
+//                    mPresenter.deleteFormLocal(formLocal);
+
                 }
                 //
                 callAct005(Act011_Main.this);
@@ -2082,6 +2082,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 listener,
                 1
         );
+    }
+
+    private boolean hasAnyValueChanged() {
+        for (CustomFF customFF : customFFs) {
+            if(customFF != null && !customFF.getmValue().isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void exitAlertNServ() {

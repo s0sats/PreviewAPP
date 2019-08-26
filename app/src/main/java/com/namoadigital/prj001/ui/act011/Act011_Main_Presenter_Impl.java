@@ -105,6 +105,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 bNew = false;
 
                 index = -1;
+
             }
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
@@ -237,6 +238,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     serial_id
             );
 
+
             if (bAgendado) {
                 if (serial_id == null || serial_id.isEmpty()) {
                     formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
@@ -278,6 +280,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             String.valueOf(customFormLocal.getCustom_form_version())
                     ).toSqlQuery().toString()
             );
+
+            if(s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)){
+                mView.showMsg(
+                        "Formulario pendete",
+                        "Voce ja havia um formulario pendente para este serial desde: " + formData.getDate_start(),
+                        0);
+            }
 
             mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
         }
