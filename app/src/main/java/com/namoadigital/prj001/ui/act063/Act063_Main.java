@@ -111,6 +111,9 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
         transList.add("alert_serial_without_inbound_ttl");
         transList.add("alert_serial_without_inbound_msg");
         //
+        transList.add("alert_serial_no_control_io_ttl");
+        transList.add("alert_serial_no_control_io_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -283,8 +286,14 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-
-                mPresenter.processItemClick(productSerial);
+                if(mPresenter.checkProductControlIO(productSerial)) {
+                    mPresenter.processItemClick(productSerial);
+                } else{
+                    showMsg(
+                        hmAux_Trans.get("alert_serial_no_control_io_ttl"),
+                        hmAux_Trans.get("alert_serial_no_control_io_msg")
+                    );
+                }
 
             }
         });

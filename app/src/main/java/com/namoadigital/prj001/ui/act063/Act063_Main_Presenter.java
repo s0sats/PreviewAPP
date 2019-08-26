@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act063;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -172,6 +171,16 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
                     )
             );
 
+    }
+
+    /**
+     * Metodo valida se o produto controla_io
+     * @param productSerial - Serial selecionado
+     * @return - Verdadeiro se produto controla io
+     */
+    @Override
+    public boolean checkProductControlIO(MD_Product_Serial productSerial) {
+        return productSerial.getProduct_io_control() != null && productSerial.getProduct_io_control() == 1;
     }
 
     @Override

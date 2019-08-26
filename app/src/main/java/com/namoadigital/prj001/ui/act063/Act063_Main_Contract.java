@@ -37,5 +37,7 @@ public interface Act063_Main_Contract {
         void onBackPressedClicked();
 
         void processItemClick(MD_Product_Serial productSerial);
+
+        boolean checkProductControlIO(MD_Product_Serial productSerial);
     }
 }
