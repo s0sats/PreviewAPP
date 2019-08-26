@@ -77,16 +77,21 @@ public class Act063_Main_Presenter implements Act063_Main_Contract.I_Presenter {
 
     @Override
     public void processItemClick(MD_Product_Serial productSerial) {
-
-        switch (ioProcess){
-            case ConstantBaseApp.IO_OUTBOUND:
-                handleOutboundProcess(productSerial);
-                break;
-            case ConstantBaseApp.IO_INBOUND:
-                handleInboundProcess(productSerial);
-                break;
+        if(checkProductControlIO(productSerial)) {
+            switch (ioProcess){
+                case ConstantBaseApp.IO_OUTBOUND:
+                    handleOutboundProcess(productSerial);
+                    break;
+                case ConstantBaseApp.IO_INBOUND:
+                    handleInboundProcess(productSerial);
+                    break;
+            }
+        } else{
+            mView.showMsg(
+                hmAux_Trans.get("alert_serial_no_control_io_ttl"),
+                hmAux_Trans.get("alert_serial_no_control_io_msg")
+            );
         }
-
 
     }
 

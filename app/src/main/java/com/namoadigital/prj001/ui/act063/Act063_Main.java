@@ -286,22 +286,25 @@ public class Act063_Main extends Base_Activity implements Act063_Main_Contract.I
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-                if(mPresenter.checkProductControlIO(productSerial)) {
                     mPresenter.processItemClick(productSerial);
-                } else{
-                    showMsg(
-                        hmAux_Trans.get("alert_serial_no_control_io_ttl"),
-                        hmAux_Trans.get("alert_serial_no_control_io_msg")
-                    );
-                }
-
             }
         });
         //
         btn_create_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(fragSerial_ID), true);
+                //LUCHE - 26/08/2019
+                //Adicionado validação de produto controla io
+                //Se não possui, impede a criação
+                MD_Product_Serial newSerial = md_product.createNewSerialForThisProduct(fragSerial_ID);
+                if(mPresenter.checkProductControlIO(newSerial)) {
+                    mPresenter.defineFlow(newSerial, true);
+                } else{
+                    showMsg(
+                        hmAux_Trans.get("alert_serial_no_control_io_ttl"),
+                        hmAux_Trans.get("alert_serial_no_control_io_msg")
+                    );
+                }
             }
         });
     }
