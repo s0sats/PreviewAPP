@@ -46,6 +46,7 @@ public class WS_Save extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "WS_Save";
     private String mSEND = "";
+    private boolean mResend = false;
 
     public WS_Save() {
         super("WS_Save");
@@ -70,7 +71,6 @@ public class WS_Save extends IntentService {
                             Constant.DB_VERSION_CUSTOM
                     );
             //
-            token = ToolBox_Inf.getToken(getApplicationContext());
             form_datas = new ArrayList<>() ;
             form_data_fields = new ArrayList<>();
             //
@@ -107,6 +107,9 @@ public class WS_Save extends IntentService {
 
         if(processPendingToken(1) == 0){
             processNewToken(0);
+            mResend =false;
+        }else{
+            mResend =true;
         }
         //Verifica se existem dados a serem enviado
         //Se não existir, cancela a chamada do WS
@@ -160,7 +163,7 @@ public class WS_Save extends IntentService {
             return;
         }
         //Apos processar validation, processa o retorno do SAve
-        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url());
+        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url(), jumpValidation, jumpOD);
 
     }
 
@@ -223,7 +226,7 @@ public class WS_Save extends IntentService {
                                 pending
                         ).toSqlQuery()
                 );
-
+        token = ToolBox_Inf.getToken(getApplicationContext());
         if(form_datas.size() > 0){
             //Atualiza valor do token em todos os cabeçalhos
             for ( GE_Custom_Form_Data form_data:form_datas ) {
@@ -245,7 +248,7 @@ public class WS_Save extends IntentService {
 
     }
 
-    private boolean checkSaveReturn(String save, String error_msg, String link_url) {
+    private boolean checkSaveReturn(String save, String error_msg, String link_url, int jumpValidation, int jumpOD) throws Exception{
         HMAux hmAuxRet = new HMAux();
         switch (save){
             case "OK":
@@ -278,11 +281,19 @@ public class WS_Save extends IntentService {
                 formLocalDao.addUpdate(formLocals,false);
                 formDataDao.addUpdate(form_datas,false);
 
-                //Dispara msg para fechar dialog
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
-                //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
-                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
-                return true;
+                /*27-08-2019 BARRIONUEVO
+                   Controle de reprocessamento de n-form ao enviar registros com tokens
+                 */
+                if(mResend){
+                    processWS_Save(jumpValidation, jumpOD);
+                    mResend = false;
+                    return  true;
+                }else {
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
+                    //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
+                    //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
+                    return true;
+                }
 
             case "ERROR_TOKEN_EXCEPTION":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
