@@ -82,7 +82,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
             //
             initActions();
             //
-            cleanNotification();
+            //cleanNotification();
             //
             ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
         }
@@ -147,9 +147,9 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
         recuperaGetIntents();
 
-        if (sAction.equalsIgnoreCase("NOTIFICATION")) {
-            mPresenter.modifyDBRead(fcmmessage_code);
-        }
+//        if (sAction.equalsIgnoreCase("NOTIFICATION")) {
+//            mPresenter.modifyDBRead(fcmmessage_code);
+//        }
 
         mPresenter.setData(fcmmessage_code);
     }
