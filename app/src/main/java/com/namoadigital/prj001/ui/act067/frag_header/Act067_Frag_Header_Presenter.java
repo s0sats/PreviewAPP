@@ -1,17 +1,17 @@
 package com.namoadigital.prj001.ui.act067.frag_header;
 
 import android.content.Context;
+
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
-import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_011;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.Sql_Act067_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -26,6 +26,7 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
     private HMAux hmAux_Trans;
     private MD_Site_ZoneDao zoneDao;
     private MD_Site_Zone_LocalDao localDao;
+    private IO_OutboundDao outboundDao;
 
     public Act067_Frag_Header_Presenter(Context context, Act067_Frag_Header_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -33,6 +34,7 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
         this.hmAux_Trans = hmAux_Trans;
         this.zoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.localDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.outboundDao = new IO_OutboundDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
     }
 
     @Override
@@ -129,26 +131,28 @@ public class Act067_Frag_Header_Presenter implements Act067_Frag_Header_Contract
 
     /**
      * Verifica se todos os item foram finalizados.
-     * @param mOutbound - Obj Outbound carregado.
+     * @param mOutbound - Obj outbound carregado.
      * @return - True se todos os itens estiverem finalizados.
      */
     @Override
     public boolean allItemsDone(IO_Outbound mOutbound) {
-        int doneItems = 0;
-        if(mOutbound.getItems() != null && mOutbound.getItems().size() > 0 ){
-            //
-            for(IO_Outbound_Item outboundItem : mOutbound.getItems()){
-                if( outboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) ){
-                    doneItems++;
-                }
-            }
-            //
-            return doneItems == mOutbound.getItems().size();
+        HMAux hmAux = outboundDao.getByStringHM(
+            new Sql_Act067_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mOutbound.getOutbound_prefix(),
+                mOutbound.getOutbound_code()
+            ).toSqlQuery()
+        );
+        //
+        if( hmAux != null
+            && hmAux.hasConsistentValue(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            && hmAux.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC).equals("1")
+        ){
+            return true;
         }
         //
         return false;
     }
-
     /**
      * Gera lista de hmAux baseado nos status passados.
      *
