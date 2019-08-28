@@ -59,6 +59,7 @@ public class Sql_Act061_002 implements Specification {
                         "                       and m.inbound_prefix = i2.inbound_prefix\n" +
                         "                       and m.inbound_code = i2.inbound_code \n" +
                         "                       and m.inbound_item = i2.inbound_item\n" +
+                        "                       and m.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED + "','"+ConstantBaseApp.SYS_STATUS_INCONSISTENT+"') \n" +
                         "                                                          \n" +
                         "    WHERE\n" +
                         "         i.customer_code = "+customer_code+"\n" +
