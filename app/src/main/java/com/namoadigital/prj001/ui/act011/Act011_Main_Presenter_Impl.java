@@ -66,7 +66,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
-
+        boolean hasNformPending = false;
         boolean bNew = false;
         bAgendado = false;
         //LUCHE - 14/03/2019
@@ -105,6 +105,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 bNew = false;
 
                 index = -1;
+
             }
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
@@ -116,7 +117,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             String.valueOf(customFormLocal.getCustom_form_data())
                     ).toSqlQuery().toString().toLowerCase()
             );
-
+            if(s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)){
+                hasNformPending = true;
+            }
         } else {
             bNew = true;
 
@@ -213,6 +216,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 );
 
             }
+
         }
         //Verifica se houve erro ao inserir tabela form_local.
         if(daoObjReturn.hasError()) {
@@ -236,6 +240,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     so_operation_code,
                     serial_id
             );
+
 
             if (bAgendado) {
                 if (serial_id == null || serial_id.isEmpty()) {
@@ -278,7 +283,17 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             String.valueOf(customFormLocal.getCustom_form_version())
                     ).toSqlQuery().toString()
             );
-
+            if(hasNformPending){
+                mView.showMsg(
+                        hmAux_Trans.get("alert_nform_already_started_ttl"),
+                        hmAux_Trans.get("alert_nform_already_started_msg") + " " +
+                                ToolBox_Inf.millisecondsToString(
+                                        ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
+                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                ),
+                        0
+                );
+            }
             mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
         }
     }

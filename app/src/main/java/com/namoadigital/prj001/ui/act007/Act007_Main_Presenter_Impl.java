@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act007;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -428,9 +429,22 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                     "application/pdf"
             );
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-            context.startActivity(intent);
-
+            /*
+                23/08/2019 - BARRIONUEVO
+                Trata devices sem suporte a pdf
+            */
+            try {
+                context.startActivity(intent);
+            }catch (ActivityNotFoundException e){
+                ToolBox_Inf.registerException(e);
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_trans.get("alert_starting_pdf_not_supported_ttl"),
+                        hmAux_trans.get("alert_starting_pdf_not_supported_msg"),
+                        null,
+                        0
+                );
+            }
 
         }else{
             ToolBox.alertMSG(

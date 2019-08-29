@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -113,7 +115,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act011_Main extends Base_Activity implements Act011_Main_View {
+public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
 
@@ -198,6 +200,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     //Implments PhotoInterface
     private CustomFF.ICustomFFPhoto onPhotoClick;
     private boolean finalizeNewFlow = false;
+    private boolean canSave;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -208,7 +211,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act011_main);
-
+        Log.d("Lifecycle", "onCreate");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -311,6 +314,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_confirm_delete_comfirmation");
         transList.add("dialog_confirm_delete_abort");
 
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
+
+        transList.add("alert_nform_already_started_ttl");
+        transList.add("alert_nform_already_started_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -402,7 +411,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void initVars() {
         fm = getSupportFragmentManager();
-
+        canSave = true;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -615,7 +624,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         onPhotoClick = new CustomFF.ICustomFFPhoto() {
             @Override
             public void OnPhotoClick(String s) {
-                saveV2(false);
+//                saveV2(false);
             }
         };
         //
@@ -678,6 +687,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 show.dismiss();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 deleteFormLocal();
+                canSave = false;
             }
         });
     }
@@ -702,7 +712,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mPresenter.saveData(formData, fieldsValidation);
 
         bNew = false;
-
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
@@ -1214,6 +1223,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 @Override
                 public void onPageSelected(int position) {
+                    saveV2(false);
                     act011_ff_options.setFOpc(position + 1);
                     //
                     index_old = index;
@@ -1279,7 +1289,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             act011_ff_options.translaTab(hmAux_Trans);
 
             returnValidCheck(String.valueOf(index_old));
+            if(bNew){
+                saveV2(false);
+            }
         }
+
     }
 
     private CustomFF cfg_Label(HMAux cf) {
@@ -1293,6 +1307,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         labelFF.setmType(cf.get("custom_form_data_type"));
 
         return labelFF;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(canSave) {
+            saveV2(false);
+        }
     }
 
     private CustomFF cfg_Char(HMAux cf) {
@@ -2047,8 +2069,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 // modificar para incluir a remossao do custom_form_local.
                 //mPresenter.saveData(formData, false);
-                if (bNew) {
-                    mPresenter.deleteFormLocal(formLocal);
+                if (bNew || hasAnyValueChanged()) {
+//                    mPresenter.deleteFormLocal(formLocal);
+
                 }
                 //
                 callAct005(Act011_Main.this);
@@ -2062,6 +2085,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 listener,
                 1
         );
+    }
+
+    private boolean hasAnyValueChanged() {
+        for (CustomFF customFF : customFFs) {
+            if(customFF != null && !customFF.getmValue().isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void exitAlertNServ() {
@@ -2524,8 +2556,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                        startActivity(intent);
+                        /*
+                            23/08/2019 - BARRIONUEVO
+                            Trata devices sem suporte a pdf
+                        */
+                        try {
+                            startActivity(intent);
+                        }catch (ActivityNotFoundException e){
+                            ToolBox_Inf.registerException(e);
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
+                                    hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
+                                    null,
+                                    0
+                            );
+                        }
                     }
                 }
             });

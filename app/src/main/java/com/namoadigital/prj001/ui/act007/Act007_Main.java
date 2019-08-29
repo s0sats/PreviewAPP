@@ -111,6 +111,9 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         transList.add("dialog_download_form_pdf_ttl");
         transList.add("dialog_download_form_pdf_msg");
         //
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

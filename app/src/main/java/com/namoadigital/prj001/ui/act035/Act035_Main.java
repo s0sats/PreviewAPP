@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -276,6 +277,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_pdf_not_found_msg");
         transList.add("alert_starting_pdf_download_tll");
         transList.add("alert_starting_pdf_download_msg");
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
         transList.add("progress_join_ttl");
         transList.add("progress_join_msg");
         transList.add("progress_download_ap_ttl");
@@ -719,8 +722,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             ".pdf")),
                     "application/pdf");
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-            startActivity(intent);
+            /*
+                23/08/2019 - BARRIONUEVO
+                Trata devices sem suporte a pdf
+            */
+            try {
+                startActivity(intent);
+            }catch (ActivityNotFoundException e){
+                ToolBox_Inf.registerException(e);
+                showAlert(hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"), hmAux_Trans.get("alert_starting_pdf_not_supported_msg"));
+            }
         } else {
 
             if (!ToolBox_Con.isOnline(context,true)) {
@@ -737,27 +748,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 repeatTry++;
             }
 
-            mPdfDownload =
+            mPdfDownload =new pdfDownload();
 
-                    new pdfDownload();
+            /*
+            23/08/2019 - BARRIONUEVO
+            Tratativa para caso o campo esteja null ou vazio
+            */
+            if(pk_fields[1] == null || "".equals(pk_fields[1])){
+                showAlert(hmAux_Trans.get("alert_pdf_not_found_tll"), hmAux_Trans.get("alert_pdf_not_found_msg"));
+            }else {
+                mPdfDownload.execute(
+                        "form_ap_" +
+                                pk_fields[0] + "_" +
+                                pk_fields[1] + "_" +
+                                pk_fields[2] + "_" +
+                                pk_fields[3] + "_" +
+                                pk_fields[4],
+                        custom_form_url
+                );
 
 
-            mPdfDownload.execute(
-                    "form_ap_" +
-                            pk_fields[0] + "_" +
-                            pk_fields[1] + "_" +
-                            pk_fields[2] + "_" +
-                            pk_fields[3] + "_" +
-                            pk_fields[4],
-                    custom_form_url
-            );
-
-
-            showPDPDF(
-                    hmAux_Trans.get("alert_starting_pdf_download_tll"),
-                    hmAux_Trans.get("alert_starting_pdf_download_msg"),
-                    false
-            );
+                showPDPDF(
+                        hmAux_Trans.get("alert_starting_pdf_download_tll"),
+                        hmAux_Trans.get("alert_starting_pdf_download_msg"),
+                        false
+                );
+            }
         }
     }
 
@@ -823,21 +839,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     ToolBox_Inf.deleteDownloadFileInf(Constant.CACHE_PATH + "/" +
                             strings[0] + ".tmp");
-                    /*
-                        15/08/2019 - BARRIONUEVO
-                        Tratativa para caso o campo esteja null ou vazio
-                     */
-                    if(strings[1] == null || "".equals(strings[1])){
-                        return NOK;
-                    }else {
-                        ToolBox_Inf.downloadImagePDF(
-                                strings[1],
-                                Constant.CACHE_PATH + "/" +
-                                        strings[0] + ".tmp"
-                        );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
-                    }
+
+                    ToolBox_Inf.downloadImagePDF(
+                            strings[1],
+                            Constant.CACHE_PATH + "/" +
+                                    strings[0] + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -851,12 +860,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             super.onPostExecute(s);
             //
             disablePD();
-            //Quando em Roma, haja como romano.
-            if(NOK.equals(s)){
-                showAlert(hmAux_Trans.get("alert_pdf_not_found_tll"), hmAux_Trans.get("alert_pdf_not_found_msg"));
-            }else {
-                openPDF(pk_pdf, custom_form_url_pdf);
-            }
+            openPDF(pk_pdf, custom_form_url_pdf);
+
         }
     }
 

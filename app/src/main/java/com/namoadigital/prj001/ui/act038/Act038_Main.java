@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act038;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -252,6 +253,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_partial_ap_detected_msg");
         transList.add("alert_form_ap_pdf_download_error_msg");
         transList.add("alert_invalid_date_msg");
+        //
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1934,8 +1938,22 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                             ".pdf")),
                     "application/pdf");
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-            startActivity(intent);
+            /*
+                23/08/2019 - BARRIONUEVO
+                Trata devices sem suporte a pdf
+            */
+            try {
+                startActivity(intent);
+            }catch (ActivityNotFoundException e){
+                ToolBox_Inf.registerException(e);
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
+                        hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
+                        null,
+                        0
+                );
+            }
         } else {
 
             if (!ToolBox_Con.isOnline(context)) {

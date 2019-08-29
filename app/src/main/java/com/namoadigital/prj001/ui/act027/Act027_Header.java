@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act027;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
@@ -604,8 +606,21 @@ public class Act027_Header extends BaseFragment {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + localUrl)), "application/pdf");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                startActivity(intent);
+                /*
+                    23/08/2019 - BARRIONUEVO
+                    Trata devices sem suporte a pdf
+                */
+                try {
+                    startActivity(intent);
+                }catch (ActivityNotFoundException e){
+                    ToolBox_Inf.registerException(e);
+                    ToolBox.alertMSG(context,
+                            hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
+                            hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
+                            null,
+                            0
+                    );
+                }
             }
         };
         //
