@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -151,7 +152,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         private CheckBox chkDownload;
         private ImageView iv_offline;
         private TextView tv_status;
-        private PieView pv_done;
+        private View pv_done;
         private TextView tv_inbound_id;
         private TextView tv_inbound_id_val;
         private TextView tv_inbound_desc;
@@ -171,6 +172,8 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
         private TextView tv_comment;
         private TextView tv_comment_val;
         private View itemView;
+        private TextView tv_progress;
+        private ProgressBar pb_progress;
 
         public InboundDownloadViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -231,14 +234,11 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             tv_comment_val = itemView.findViewById(R.id.act057_io_inbound_cell_tv_comment_val);
         }
 
-        private void configPvUI(PieView pv_done) {
-            pv_done.setInnerText("\u2713");
-            //pv_done.setTextColor(context.getResources().getColor(R.color.namoa_status_done));
-            pv_done.setTextColor(context.getResources().getColor(R.color.font_normal));
-            pv_done.setPercentageBackgroundColor(context.getResources().getColor(R.color.namoa_status_done));
-            //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-            pv_done.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
-            pv_done.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
+        private void configPvUI(View pv_done) {
+            tv_progress = pv_done.findViewById(R.id.progress_text_widget_tv_value);
+            pb_progress = pv_done.findViewById(R.id.progress_text_widget_progress);
+            tv_progress.setTextColor(context.getResources().getColor(R.color.font_normal));
+
         }
 
         public View getItemView() {
@@ -255,7 +255,12 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             chkDownload.setChecked(data.isToDownload());
             tv_status.setText(hmAux_Trans.get(data.getStatus()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(data.getStatus())));
-            pv_done.setPercentage(data.getPerc_done() != null ?  data.getPerc_done() : 0.0f);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                pb_progress.setProgress(data.getPerc_done() != null ?  data.getPerc_done().intValue() : 0, true);
+            }else{
+                pb_progress.setProgress(data.getPerc_done() != null ?  data.getPerc_done().intValue() : 0);
+            }
+            tv_progress.setText(data.getPerc_done().intValue() + "%");
             //pv_done.setInnerText("✓");
             tv_inbound_id.setVisibility(View.GONE);
             tv_inbound_id_val.setVisibility(View.GONE);

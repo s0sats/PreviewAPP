@@ -120,16 +120,17 @@
             app:layout_constraintStart_toEndOf="@+id/act057_io_inbound_cell_tv_desc"
             app:layout_constraintTop_toTopOf="@+id/act057_io_inbound_cell_tv_desc" />
 
-        <az.plainpie.PieView
+        <include
             android:id="@+id/act057_io_inbound_cell_pv_done"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="@id/act057_io_inbound_cell_guide_end"
-            app:layout_constraintTop_toTopOf="parent"
-            app:percentage="50"
-            app:percentage_size="12"
-            />
+            layout="@layout/progress_text_widget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/act057_io_inbound_cell_tv_status"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
                 android:id="@+id/act057_io_inbound_cell_tv_transpor_order"
