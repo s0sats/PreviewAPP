@@ -317,6 +317,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_starting_pdf_not_supported_ttl");
         transList.add("alert_starting_pdf_not_supported_msg");
 
+        transList.add("alert_nform_already_started_ttl");
+        transList.add("alert_nform_already_started_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

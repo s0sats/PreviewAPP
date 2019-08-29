@@ -285,9 +285,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
             if(hasNformPending){
                 mView.showMsg(
-                        "Formulario pendete",
-                        "Voce ja havia um formulario pendente para este serial desde: " + formData.getDate_start(),
-                        0);
+                        hmAux_Trans.get("alert_nform_already_started_ttl"),
+                        hmAux_Trans.get("alert_nform_already_started_msg") + " " +
+                                ToolBox_Inf.millisecondsToString(
+                                        ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
+                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                ),
+                        0
+                );
             }
             mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
         }
