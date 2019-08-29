@@ -586,16 +586,12 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
         if(!headerInfoChanged) {
             switch (requestAct) {
                 case ConstantBaseApp.ACT012:
-                    mView.callAct066();
-                    break;
                 case ConstantBaseApp.ACT014:
+                case ConstantBaseApp.ACT066:
                     mView.callAct066();
                     break;
                 case ConstantBaseApp.ACT052:
                     mView.callAct051();
-                    break;
-                case ConstantBaseApp.ACT066:
-                    mView.callAct066();
                     break;
                 case ConstantBaseApp.ACT065:
                 default:
