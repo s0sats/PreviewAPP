@@ -97,6 +97,7 @@ public class WS_Save extends IntentService {
     }
 
     private void processWS_Save(int jumpValidation, int jumpOD) throws Exception {
+
         //Seleciona traduções
         loadTranslation();
 
@@ -285,8 +286,8 @@ public class WS_Save extends IntentService {
                    Controle de reprocessamento de n-form ao enviar registros com tokens
                  */
                 if(mResend){
-                    processWS_Save(jumpValidation, jumpOD);
                     mResend = false;
+                    processWS_Save(jumpValidation, jumpOD);
                     return  true;
                 }else {
                     ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");

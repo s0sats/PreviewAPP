@@ -2891,6 +2891,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void executeSaveProcess() {
         setWsSoProcess(WS_Save.class.getSimpleName());
+        canSave = false;
         //
         Intent mIntent = new Intent(context, WBR_Save.class);
         Bundle bundle = new Bundle();
