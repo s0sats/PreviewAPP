@@ -391,7 +391,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //
         Notification.Builder builder = new Notification.Builder(context);
         builder.setSmallIcon(R.mipmap.ic_namoa);
-        builder.setAutoCancel(true);
+        builder.setAutoCancel(false);
         builder.setContentTitle(title);
         builder.setContentIntent(pi);
         if (fcmmessage_qty > 1) {
