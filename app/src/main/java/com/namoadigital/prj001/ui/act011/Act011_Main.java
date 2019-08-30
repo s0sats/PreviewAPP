@@ -319,7 +319,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         transList.add("alert_nform_already_started_ttl");
         transList.add("alert_nform_already_started_msg");
-
+        //
+        transList.add("alert_exit_confirmation_ttl");
+        transList.add("alert_exit_confirmation_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -2030,6 +2033,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void flowControl() {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
+        /*
+            30-08-2019 Barrionuevo
+            Garante que o onPause nao salvarah nada em cima do ultimo save enviado para o servico
+         */
+        canSave = false;
         if (mSo_Prefix == null || mSo_Code == null) {
             if(finalizeNewFlow) {
                 if(mPresenter.checkNFormExists(formLocal)){
@@ -2059,9 +2067,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     public void exitAlert() {
-
-        String alertTitle = hmAux_Trans.get("exit_alert_ttl");
-        String alertMsg = hmAux_Trans.get("exit_alert_msg");
+             /*
+                30-08-2019  BARRIONUEVO
+                Agora ao sair o usuario nao perdera os dados, logo a mensagem de aviso mudou
+             */
+        String alertTitle = hmAux_Trans.get("alert_exit_confirmation_ttl");
+        String alertMsg = hmAux_Trans.get("alert_exit_confirmation_msg");
         //
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -2891,7 +2902,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void executeSaveProcess() {
         setWsSoProcess(WS_Save.class.getSimpleName());
-        canSave = false;
         //
         Intent mIntent = new Intent(context, WBR_Save.class);
         Bundle bundle = new Bundle();
