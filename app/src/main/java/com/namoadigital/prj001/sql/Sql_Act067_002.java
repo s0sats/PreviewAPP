@@ -3,6 +3,18 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ *
+ * LUCHE - 29/08/2019
+ *
+ * Modificado query, adicionando regras do status do item
+ * no calculo dos campos de move e , no left join com a move,
+ * adicionado filtro de status excluindo os status cancelled e
+ * inconsistente
+ *
+ *
+ */
+
 public class Sql_Act067_002 implements Specification {
     private long customer_code;
     private int outbound_prefix;
@@ -33,11 +45,14 @@ public class Sql_Act067_002 implements Specification {
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
                         "                END) qtd_item_waiting,\n" +
-                        "          sum(CASE WHEN m.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED + "','"+ConstantBaseApp.SYS_STATUS_INCONSISTENT+"') \n" +
+                        "          sum(CASE WHEN (i2.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"') and  m.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED + "','"+ConstantBaseApp.SYS_STATUS_INCONSISTENT+"')) \n" +
+                        "                         OR (i2.status = '"+ConstantBaseApp.SYS_STATUS_DONE+"' AND m.status is null)\n" +
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
                         "                END)qtd_move ,   \n" +
-                        "          sum(CASE WHEN m.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"') or i2.out_conf_done = 1 \n" +
+                        "          sum(CASE WHEN (i2.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED + "','"+ConstantBaseApp.SYS_STATUS_INCONSISTENT+"') and m.status in ('"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "','"+ConstantBaseApp.SYS_STATUS_DONE+"'))" +
+                        "                         OR (i2.status = '"+ConstantBaseApp.SYS_STATUS_DONE+"' AND m.status is null)\n" +
+                        "                         OR i2.out_conf_done = 1 \n" +
                         "                   THEN 1\n" +
                         "                   ELSE 0\n" +
                         "                END) qtd_move_waiting, \n" +
@@ -53,7 +68,7 @@ public class Sql_Act067_002 implements Specification {
                         "                       and m.outbound_prefix = i2.outbound_prefix\n" +
                         "                       and m.outbound_code = i2.outbound_code \n" +
                         "                       and m.outbound_item = i2.outbound_item\n" +
-                        "                                                          \n" +
+                        "                       and m.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED + "','"+ConstantBaseApp.SYS_STATUS_INCONSISTENT+"')\n" +
                         "    WHERE\n" +
                         "         i.customer_code = "+customer_code+"\n" +
                         "         and i.outbound_prefix = "+outbound_prefix+"\n" +
