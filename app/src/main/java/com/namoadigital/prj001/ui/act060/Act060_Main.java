@@ -381,7 +381,9 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                if (finalAuxMove.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_1) && finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
+                if (finalAuxMove == null
+                        ||  !finalAuxMove.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_1)
+                        ||  finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
                 } else {
                     frag_move_create.restoreUIFields(
