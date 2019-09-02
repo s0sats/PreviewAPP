@@ -826,7 +826,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         if (status != null
                 && (status.equals(ConstantBaseApp.SYS_STATUS_PENDING)
-                || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY))) {
+                || status.equals(ConstantBaseApp.SYS_STATUS_PUT_AWAY)
+                || status.equals(ConstantBaseApp.SYS_STATUS_PICKING)
+                || status.equals(ConstantBaseApp.SYS_STATUS_PICKING_DONE))
+        ) {
             enableForm(true, View.VISIBLE);
         } else {
             enableForm(false, View.GONE);
@@ -856,6 +859,8 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         ss_class.setmEnabled(isEnable);
         iv_add_tracking.setEnabled(isEnable);
         chk_change_zone.setEnabled(isEnable);
+        mkedit_coments.setEnabled(isEnable);
+        mkdate_confirm.setmEnabled(isEnable);
         btn_save.setVisibility(visibility);
     }
 

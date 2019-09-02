@@ -82,6 +82,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     private String move_type;
     private Integer inbound_prefix;
     private Integer inbound_code;
+    private Integer to_class_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,27 +205,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
         mPresenter = new Act060_Main_Presenter(context, this, hmAux_Trans);
 
-        io_outbound_item = mPresenter.getOutboudItem(io_prefix, io_code, io_item);
-        io_outbound = mPresenter.getOutbound(io_prefix, io_code);
-        to_local_code = io_outbound.getLocal_code_picking();
-        to_zone_code = io_outbound.getZone_code_picking();
-        outbound_prefix = io_outbound_item.getOutbound_prefix();
-        outbound_code = io_outbound_item.getOutbound_code();
-        inbound_prefix = io_outbound_item.getInbound_prefix();
-        inbound_code = io_outbound_item.getInbound_code();
-
-        status = ConstantBaseApp.SYS_STATUS_PENDING;
-        //has_put_away == 1 trava spinners
-        if (has_picking == 0) {
-            planned_zone_code = io_outbound.getLocal_code_picking();
-            planned_local_code = io_outbound.getZone_code_picking();
-        } else {
-            planned_zone_code = -1;
-            planned_local_code = -1;
-        }
-        move_type = ConstantBaseApp.IO_PROCESS_OUT_CONF;
-        viewMode = mPresenter.getViewMode(move_type, has_picking);
-        serialInfo = mPresenter.getSerialInfo(io_outbound_item.getProduct_code(), (int) io_outbound_item.getSerial_code());
+        getOutConFromBD();
 
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
@@ -248,6 +229,30 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
+    }
+
+    private void getOutConFromBD() {
+        io_outbound_item = mPresenter.getOutboudItem(io_prefix, io_code, io_item);
+        io_outbound = mPresenter.getOutbound(io_prefix, io_code);
+        to_local_code = io_outbound.getLocal_code_picking();
+        to_zone_code = io_outbound.getZone_code_picking();
+        outbound_prefix = io_outbound_item.getOutbound_prefix();
+        outbound_code = io_outbound_item.getOutbound_code();
+        inbound_prefix = io_outbound_item.getInbound_prefix();
+        inbound_code = io_outbound_item.getInbound_code();
+        status = io_outbound_item.getStatus();
+
+        //has_put_away == 1 trava spinners
+        if (has_picking == 0) {
+            planned_zone_code = io_outbound.getLocal_code_picking();
+            planned_local_code = io_outbound.getZone_code_picking();
+        } else {
+            planned_zone_code = -1;
+            planned_local_code = -1;
+        }
+        move_type = ConstantBaseApp.IO_PROCESS_OUT_CONF;
+        viewMode = mPresenter.getViewMode(move_type, has_picking);
+        serialInfo = mPresenter.getSerialInfo(io_outbound_item.getProduct_code(), (int) io_outbound_item.getSerial_code());
     }
 
     private void iniUIFooter() {
@@ -386,6 +391,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                         ||  finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
                 } else {
+                    getOutConFromBD();
                     frag_move_create.restoreUIFields(
                             serialInfo,
                             viewMode,
@@ -404,7 +410,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                             -1,
                             planned_local_code,
                             status,
-                            null);
+                            io_outbound_item.getSerial().get(0).getClass_code());
                 }
             }
         });
@@ -422,7 +428,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
 
     @Override
     public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
-
+        this.to_class_code = to_class_code;
         mPresenter.executeOutConfPersistence(customer_code,
                 io_prefix,
                 io_code,

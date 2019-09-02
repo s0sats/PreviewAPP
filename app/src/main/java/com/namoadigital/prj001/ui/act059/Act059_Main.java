@@ -193,29 +193,16 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
         mPresenter = new Act059_Main_Presenter(context, this, hmAux_Trans);
 
-        io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-        to_local_code = io_inbound_item.getLocal_code();
-        to_zone_code = io_inbound_item.getZone_code();
+        getInConfFromBD();
+
         move_prefix = -1;
         move_code = -1;
         reason_code = null;
         outbound_prefix = null;
-        inbound_prefix = io_inbound_item.getInbound_prefix();
         outbound_code = null;
-        inbound_code = io_inbound_item.getInbound_code();
-        status = ConstantBaseApp.SYS_STATUS_PENDING;
-        //has_put_away == 1 trava spinners
-        if (has_put_away == 0) {
-            planned_zone_code = io_inbound_item.getPlanned_zone_code();
-            planned_local_code = io_inbound_item.getPlanned_local_code();
-        } else {
-            planned_zone_code = zone_code_conf;
-            planned_local_code = local_code_conf;
-        }
         to_class_code = null;
-        move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
-        viewMode = mPresenter.getViewMode(move_type, has_put_away);
-        serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(), (int) io_inbound_item.getSerial_code());
+        //has_put_away == 1 trava spinners
+
 
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
@@ -239,6 +226,27 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
+    }
+
+    private void getInConfFromBD() {
+        io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
+        to_local_code = io_inbound_item.getLocal_code();
+        to_zone_code = io_inbound_item.getZone_code();
+        inbound_prefix = io_inbound_item.getInbound_prefix();
+        inbound_code = io_inbound_item.getInbound_code();
+        status = io_inbound_item.getStatus();
+
+        if (has_put_away == 0) {
+            planned_zone_code = io_inbound_item.getPlanned_zone_code();
+            planned_local_code = io_inbound_item.getPlanned_local_code();
+        } else {
+            planned_zone_code = zone_code_conf;
+            planned_local_code = local_code_conf;
+        }
+
+        move_type = ConstantBaseApp.IO_PROCESS_IN_CONF;
+        viewMode = mPresenter.getViewMode(move_type, has_put_away);
+        serialInfo = mPresenter.getSerialInfo(io_inbound_item.getProduct_code(), (int) io_inbound_item.getSerial_code());
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
@@ -389,6 +397,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                         ||  finalAuxMove.get(Generic_Results_Adapter.VALUE_ITEM_1).equalsIgnoreCase("OK")) {
                     onBackPressed();
                 } else {
+                    getInConfFromBD();
                     frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
                 }
             }

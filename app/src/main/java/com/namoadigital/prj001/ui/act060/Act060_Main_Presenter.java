@@ -146,6 +146,7 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
         item.setCustomer_code(customer_code);
         item.setComments(comments);
         item.setOut_conf_done(1);
+
         //
         DaoObjReturn daoObjReturnIoMove = outboundItemDao.addUpdate(item);
 
