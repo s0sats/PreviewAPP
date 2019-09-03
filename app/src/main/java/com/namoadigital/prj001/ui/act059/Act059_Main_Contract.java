@@ -34,6 +34,6 @@ public interface Act059_Main_Contract {
 
         void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
 
-        void executeInConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Inbound_Item item, List<IO_Move_Tracking> trackingFromMove);
+        void executeInConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Inbound_Item item, List<IO_Move_Tracking> trackingFromMove);
     }
 }

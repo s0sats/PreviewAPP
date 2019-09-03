@@ -32,6 +32,8 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
     public static final String OUTBOUND_ITEM = "outbound_item";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_CODE = "serial_code";
+    public static final String CLASS_CODE = "class_code";
+    public static final String CLASS_ID = "class_id";
     public static final String CONF_DATE = "conf_date";
     public static final String STATUS = "status";
     public static final String INBOUND_PREFIX = "inbound_prefix";
@@ -456,6 +458,18 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             io_outbound_item.setOutbound_item(cursor.getInt(cursor.getColumnIndex(OUTBOUND_ITEM)));
             io_outbound_item.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
             io_outbound_item.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
+            io_outbound_item.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
+            io_outbound_item.setClass_id(cursor.getString(cursor.getColumnIndex(CLASS_ID)));
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_CODE))) {
+                io_outbound_item.setClass_code(null);
+            } else {
+                io_outbound_item.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_ID))) {
+                io_outbound_item.setClass_id(null);
+            } else {
+                io_outbound_item.setClass_id(cursor.getString(cursor.getColumnIndex(CLASS_ID)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(CONF_DATE))) {
                 io_outbound_item.setConf_date(null);
             } else {
@@ -527,6 +541,12 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
             contentValues.put(CONF_DATE, io_outbound_item.getConf_date());
             if (io_outbound_item.getStatus() != null) {
                 contentValues.put(STATUS, io_outbound_item.getStatus());
+            }
+            if (io_outbound_item.getClass_code() != null) {
+                contentValues.put(CLASS_CODE, io_outbound_item.getClass_code());
+            }
+            if (io_outbound_item.getClass_id() != null) {
+                contentValues.put(CLASS_ID, io_outbound_item.getClass_id());
             }
             contentValues.put(INBOUND_PREFIX, io_outbound_item.getInbound_prefix());
             contentValues.put(INBOUND_CODE, io_outbound_item.getInbound_code());

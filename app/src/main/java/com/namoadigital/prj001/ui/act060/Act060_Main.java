@@ -31,7 +31,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
@@ -41,7 +40,6 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
-import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create_Contract;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -83,6 +81,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     private Integer inbound_prefix;
     private Integer inbound_code;
     private Integer to_class_code;
+    private String class_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +209,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
-                true,
+                false,
                 hmAux_Trans_Frag,
                 to_local_code,
                 to_zone_code,
@@ -395,22 +394,23 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                     frag_move_create.restoreUIFields(
                             serialInfo,
                             viewMode,
-                            true,
+                            false,
                             hmAux_Trans_Frag,
-                            to_local_code,
-                            to_zone_code,
+                            io_outbound.getLocal_code_picking(),
+                            io_outbound.getZone_code_picking(),
                             -1,
                             -1,
                             null,
                             move_type,
                             planned_zone_code,
                             outbound_prefix,
-                            -1,
+                            io_outbound_item.getInbound_prefix(),
                             outbound_code,
-                            -1,
+                            io_outbound_item.getInbound_code(),
                             planned_local_code,
-                            status,
-                            io_outbound_item.getSerial().get(0).getClass_code());
+                            io_outbound_item.getStatus(),
+                            io_outbound_item.getClass_code(),
+                            io_outbound_item.getConf_date());
                 }
             }
         });
@@ -427,9 +427,11 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     }
 
     @Override
-    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
+    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
         this.to_class_code = to_class_code;
-        mPresenter.executeOutConfPersistence(customer_code,
+        this.class_id = classId;
+        mPresenter.executeOutConfPersistence(
+                customer_code,
                 io_prefix,
                 io_code,
                 to_zone_code,
@@ -439,12 +441,14 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 null,
                 null,
                 to_class_code,
+                classId,
                 reason_code,
                 comments,
                 done_date,
                 serial,
                 io_outbound_item,
-                trackingFromMove);
+                trackingFromMove
+        );
     }
 
     @Override

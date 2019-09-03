@@ -31,7 +31,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -68,18 +67,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
     private Integer zone_code_conf;
     private Integer local_code_conf;
     private MD_Product_Serial serialInfo;
-    private Integer to_local_code;
-    private Integer to_zone_code;
-    private int move_prefix;
-    private int move_code;
-    private Integer reason_code;
     private Integer planned_zone_code;
-    private Integer outbound_prefix;
-    private Integer inbound_prefix;
-    private Integer outbound_code;
-    private Integer inbound_code;
-    private Integer planned_local_code;
-    private String status;
+   private Integer planned_local_code;
     private Integer to_class_code;
     int viewMode;
 
@@ -195,11 +184,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
         getInConfFromBD();
 
-        move_prefix = -1;
-        move_code = -1;
-        reason_code = null;
-        outbound_prefix = null;
-        outbound_code = null;
+
+
         to_class_code = null;
         //has_put_away == 1 trava spinners
 
@@ -207,21 +193,21 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
-                true,
+                false,
                 hmAux_Trans_Frag,
-                to_local_code,
-                to_zone_code,
-                move_prefix,
-                move_code,
-                reason_code,
+                io_inbound_item.getLocal_code(),
+                io_inbound_item.getZone_code(),
+                -1,
+                -1,
+                null,
                 move_type,
                 planned_zone_code,
-                outbound_prefix,
-                inbound_prefix,
-                outbound_code,
-                inbound_code,
+                null,
+                io_inbound_item.getInbound_prefix(),
+                null,
+                io_inbound_item.getInbound_code(),
                 planned_local_code,
-                status,
+                io_inbound_item.getStatus(),
                 to_class_code
         );
 
@@ -230,11 +216,6 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
     private void getInConfFromBD() {
         io_inbound_item = mPresenter.getInboudItem(io_prefix, io_code, io_item);
-        to_local_code = io_inbound_item.getLocal_code();
-        to_zone_code = io_inbound_item.getZone_code();
-        inbound_prefix = io_inbound_item.getInbound_prefix();
-        inbound_code = io_inbound_item.getInbound_code();
-        status = io_inbound_item.getStatus();
 
         if (has_put_away == 0) {
             planned_zone_code = io_inbound_item.getPlanned_zone_code();
@@ -398,7 +379,26 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                     onBackPressed();
                 } else {
                     getInConfFromBD();
-                    frag_move_create.restoreUIFields(serialInfo, viewMode, true, hmAux_Trans_Frag, to_local_code, to_zone_code, move_prefix, move_code, reason_code, move_type, planned_zone_code, outbound_prefix, inbound_prefix, outbound_code, inbound_code, planned_local_code, status, to_class_code);
+                    frag_move_create.restoreUIFields(
+                            serialInfo,
+                            viewMode,
+                            false,
+                            hmAux_Trans_Frag,
+                            io_inbound_item.getLocal_code(),
+                            io_inbound_item.getZone_code(),
+                            -1,
+                            -1,
+                            null,
+                            move_type,
+                            planned_zone_code,
+                            null,
+                            io_inbound_item.getInbound_prefix(),
+                            null,
+                            io_inbound_item.getInbound_code(),
+                            planned_local_code,
+                            io_inbound_item.getStatus(),
+                            io_inbound_item.getClass_code(),
+                            io_inbound_item.getConf_date());
                 }
             }
         });
@@ -416,7 +416,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
 
     @Override
-    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
+    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
         HMAux zoneInfo = frag_move_create.getZoneInfo();
         HMAux localInfo = frag_move_create.getLocalInfo();
 
@@ -436,6 +436,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
             localInfo.put(SearchableSpinner.DESCRIPTION, "");
         }
 
+
+
         mPresenter.executeInConfPersistence(customer_code,
                 io_prefix,
                 io_code,
@@ -446,6 +448,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 localInfo.get(SearchableSpinner.ID),
                 localInfo.get(SearchableSpinner.DESCRIPTION),
                 to_class_code,
+                classId,
                 reason_code,
                 comments,
                 done_date,

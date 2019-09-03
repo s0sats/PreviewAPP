@@ -127,7 +127,7 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
     }
 
     @Override
-    public void executeInConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Inbound_Item item, List<IO_Move_Tracking> trackingFromMove) {
+    public void executeInConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Inbound_Item item, List<IO_Move_Tracking> trackingFromMove) {
         item.setCustomer_code(customer_code);
         item.setInbound_prefix(io_prefix);
         item.setInbound_code(io_code);
@@ -136,6 +136,7 @@ public class Act059_Main_Presenter implements Act059_Main_Contract.I_Presenter  
         item.setZone_desc(to_zone_desc);
         item.setLocal_code(to_local_code);
         item.setClass_code(to_class_code);
+        item.setClass_id(classId);
         item.setConf_date(done_date);
         item.setProduct_code(serial.getProduct_code());
         item.setSerial_code((int) serial.getSerial_code());

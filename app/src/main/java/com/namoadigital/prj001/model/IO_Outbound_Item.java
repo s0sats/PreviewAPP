@@ -20,6 +20,10 @@ public class IO_Outbound_Item implements Serializable {
     @Expose
     private  long serial_code;
     @Expose
+    private Integer class_code;
+    @Expose
+    private String class_id;
+    @Expose
     private  String conf_date;
     @Expose
     private  String status;
@@ -100,6 +104,22 @@ public class IO_Outbound_Item implements Serializable {
 
     public void setSerial_code(long serial_code) {
         this.serial_code = serial_code;
+    }
+
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
+    }
+
+    public String getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(String class_id) {
+        this.class_id = class_id;
     }
 
     public String getConf_date() {

@@ -561,7 +561,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                                 inbound_code,
                                 planned_local_code,
                                 status,
-                                to_class_code);
+                                to_class_code,
+                                null);
                     }
                 }
             }
@@ -665,7 +666,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                                      Integer to_zone_code,
                                      Integer to_local_code,
                                      Integer to_class_code,
-                                     Integer reason_code,
+                                     String classId, Integer reason_code,
                                      String comments,
                                      String done_date,
                                      MD_Product_Serial serial,

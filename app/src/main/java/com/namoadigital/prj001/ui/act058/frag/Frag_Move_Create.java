@@ -126,6 +126,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     private boolean trackingListChanged;
     private Button btn_save;
     private List<IO_Move_Tracking> trackingFromMove =new ArrayList<>();
+    private String conf_date;
 
 
     public Frag_Move_Create() {
@@ -337,6 +338,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
     private void persistIoMoveChanges() {
         Integer classCode = null;
+        String classId = null;
         Integer reasonCode = null;
         Integer zoneCode = null;
         if(ss_zone.getVisibility() == View.VISIBLE) {
@@ -345,6 +347,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
 
         if (ss_class.getmValue() != null && ss_class.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             classCode = Integer.valueOf(ss_class.getmValue().get(SearchableSpinner.CODE));
+            classId = ss_class.getmValue().get(SearchableSpinner.ID);
         }
 
         if (ss_reason.getmValue() != null && ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -362,24 +365,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
             case ConstantBaseApp.IO_PROCESS_MOVE:
             case ConstantBaseApp.IO_INBOUND:
             case ConstantBaseApp.IO_OUTBOUND:
-                mListener.persistIoMovePlanned(
-                        ToolBox_Con.getPreference_Customer_Code(getContext()),
-                        Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
-                        Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
-                        classCode,
-                        reasonCode,
-                        mkedit_coments.getText().toString().trim(),
-                        mkdate_confirm.getmValue(),
-                        mdProductSerial,
-                        trackingFromMove
-                );
-                break;
             case ConstantBaseApp.IO_PROCESS_IN_CONF:
                 mListener.persistIoMovePlanned(
                         ToolBox_Con.getPreference_Customer_Code(getContext()),
                         Integer.valueOf(ss_zone.getmValue().get(SearchableSpinner.CODE)),
                         Integer.valueOf(ss_local.getmValue().get(SearchableSpinner.CODE)),
                         classCode,
+                        classId,
                         reasonCode,
                         mkedit_coments.getText().toString().trim(),
                         mkdate_confirm.getmValue(),
@@ -393,6 +385,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                         null,
                         null,
                         classCode,
+                        classId,
                         null,
                         mkedit_coments.getText().toString().trim(),
                         mkdate_confirm.getmValue(),
@@ -745,7 +738,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
 
         //Insere lista de tracking vindo do banco.
-        if (to_class_code != null && status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
+        if (status.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)) {
             trackingFromMove.clear();
             trackingFromMove = mPresenter.getTrackingFromMove();
             for (int i = 0; i < trackingFromMove.size(); i++) {
@@ -986,9 +979,11 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setMkdate() {
-        String defaultDateTime = ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE);
+        if(conf_date == null) {
+            conf_date = ToolBox.sDTFormat_Agora(DATE_FORMAT_MKDATE);
+        }
         mkdate_confirm.setmLabel(hmAux_Trans.get("confirm_date_lbl"));
-        mkdate_confirm.setmValue(defaultDateTime, true);
+        mkdate_confirm.setmValue(conf_date, true);
         mkdate_confirm.setmRequired(true);
     }
 
@@ -1088,7 +1083,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         return transList;
     }
 
-    public void restoreUIFields(MD_Product_Serial serialInfo, int viewMode, boolean fromMove, HMAux hmAux_Trans_Frag, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code, Integer outbound_prefix, Integer inbound_prefix, Integer outbound_code, Integer inbound_code, Integer planned_local_code, String status, Integer to_class_code) {
+    public void restoreUIFields(MD_Product_Serial serialInfo, int viewMode, boolean fromMove, HMAux hmAux_Trans_Frag, Integer to_local_code, Integer to_zone_code, int move_prefix, int move_code, Integer reason_code, String move_type, Integer planned_zone_code, Integer outbound_prefix, Integer inbound_prefix, Integer outbound_code, Integer inbound_code, Integer planned_local_code, String status, Integer to_class_code, String conf_date) {
         this.fromMove = fromMove;
         this.view_param = viewMode;
         mdProductSerial = serialInfo;
@@ -1107,6 +1102,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         this.planned_local_code = planned_local_code;
         this.status = status;
         this.to_class_code = to_class_code;
+        this.conf_date = conf_date;
         initializeViews();
     }
 
@@ -1124,6 +1120,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                                   Integer to_zone_code,
                                   Integer to_local_code,
                                   Integer to_class_code,
+                                  String classId,
                                   Integer reason_code,
                                   String comments,
                                   String done_date,
