@@ -243,7 +243,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
             pv_done.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
             pv_done.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
-
+            pv_done.setPieInnerPadding((int) ToolBox.convertPixelsToDpIndeed(context,5));
 //            tv_progress = pv_done.findViewById(R.id.progress_text_widget_tv_value);
 //            pb_progress = pv_done.findViewById(R.id.progress_text_widget_progress);
 //            tv_progress.setTextColor(context.getResources().getColor(R.color.font_normal));
