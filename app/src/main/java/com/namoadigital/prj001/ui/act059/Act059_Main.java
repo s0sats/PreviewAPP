@@ -31,8 +31,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Inbound_Item;
-import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
@@ -49,7 +49,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
+public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener, Frag_Move_Create.OnFragmentInteractionConfListener {
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
     private String mResource_Code_Frag;
@@ -183,13 +183,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
         mPresenter = new Act059_Main_Presenter(context, this, hmAux_Trans);
 
         getInConfFromBD();
-
-
-
-        to_class_code = null;
         //has_put_away == 1 trava spinners
-
-
         frag_move_create = Frag_Move_Create.newInstance(
                 serialInfo,
                 viewMode,
@@ -206,9 +200,11 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 io_inbound_item.getInbound_prefix(),
                 null,
                 io_inbound_item.getInbound_code(),
+                null,
+                io_inbound_item.getInbound_item(),
                 planned_local_code,
                 io_inbound_item.getStatus(),
-                to_class_code
+                io_inbound_item.getClass_code()
         );
 
         setFrag(frag_move_create, FRAGMENT_MOVE);
@@ -395,6 +391,8 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                             io_inbound_item.getInbound_prefix(),
                             null,
                             io_inbound_item.getInbound_code(),
+                            null,
+                            io_inbound_item.getInbound_item(),
                             planned_local_code,
                             io_inbound_item.getStatus(),
                             io_inbound_item.getClass_code(),
@@ -416,7 +414,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
 
 
     @Override
-    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
+    public void persistIoConfPlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Conf_Tracking> trackingFromConf) {
         HMAux zoneInfo = frag_move_create.getZoneInfo();
         HMAux localInfo = frag_move_create.getLocalInfo();
 
@@ -454,7 +452,7 @@ public class Act059_Main extends Base_Activity_Frag implements Act059_Main_Contr
                 done_date,
                 serial,
                 io_inbound_item,
-                trackingFromMove);
+                trackingFromConf);
     }
 
     @Override

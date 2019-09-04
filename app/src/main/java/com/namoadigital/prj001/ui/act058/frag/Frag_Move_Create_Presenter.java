@@ -4,17 +4,20 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.IO_Conf_TrackingDao;
 import com.namoadigital.prj001.dao.IO_Move_ReasonDao;
 import com.namoadigital.prj001.dao.IO_Move_TrackingDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Move_Reason;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
+import com.namoadigital.prj001.sql.IO_Conf_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Reason_Sql_SS;
 import com.namoadigital.prj001.sql.IO_Move_Tracking_Sql_001;
@@ -39,6 +42,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     private MD_Site_Zone_LocalDao siteZoneLocalDao;
     private IO_Move_ReasonDao ioMoveReasonDao;
     private IO_Move_TrackingDao ioMoveTrackingDao;
+    private IO_Conf_TrackingDao ioConfTrackingDao;
     private Context context;
     private Integer to_local_code;
     private Integer to_zone_code;
@@ -55,6 +59,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         this.siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.ioMoveReasonDao = new IO_Move_ReasonDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.ioConfTrackingDao = new IO_Conf_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.context = context;
         this.to_local_code = to_local_code;
         this.to_zone_code = to_zone_code;
@@ -153,6 +158,7 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     public List<IO_Move_Tracking> getTrackingFromMove() {
 
         ioMoveTrackingDao = new IO_Move_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+
         List<IO_Move_Tracking> move_tracking = ioMoveTrackingDao.query(
                 new IO_Move_Tracking_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -240,6 +246,14 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
     }
 
     @Override
+    public boolean removeTrackingFromConf(IO_Conf_Tracking io_conf_tracking) {
+
+        DaoObjReturn daoObjReturn = ioConfTrackingDao.delete(io_conf_tracking);
+        return !daoObjReturn.hasError();
+
+    }
+
+    @Override
     public String getZoneDesc(int zone_code) {
 
         MD_Site_Zone md_site_zone = getMd_site_zone(zone_code);
@@ -293,5 +307,21 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
                 Constant.PROFILE_MENU_IO,
                 Constant.PROFILE_MENU_IO_PARAM_BYPASS_CONFIRM_SERIAL
         );
+    }
+
+    @Override
+    public List<IO_Conf_Tracking> getTrackingFromConf(Integer prefix, Integer code, Integer item, String type) {
+
+
+        List<IO_Conf_Tracking> move_tracking = ioConfTrackingDao.query(
+                new IO_Conf_Tracking_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        prefix,
+                        code,
+                        item,
+                        type
+                ).toSqlQuery()
+        );
+        return move_tracking;
     }
 }

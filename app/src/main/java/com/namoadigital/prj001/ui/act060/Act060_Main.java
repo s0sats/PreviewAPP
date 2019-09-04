@@ -31,7 +31,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
-import com.namoadigital.prj001.model.IO_Move_Tracking;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Fragmento de Edição de Picking
-public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
+public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener, Frag_Move_Create.OnFragmentInteractionConfListener {
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
     private String mResource_Code_Frag;
@@ -82,6 +82,8 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     private Integer inbound_code;
     private Integer to_class_code;
     private String class_id;
+    private Integer outbound_item;
+    private Integer inbound_item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,6 +224,8 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 inbound_prefix,
                 outbound_code,
                 inbound_code,
+                outbound_item,
+                inbound_item,
                 planned_local_code,
                 status,
                 serialInfo.getClass_code()
@@ -237,8 +241,11 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         to_zone_code = io_outbound.getZone_code_picking();
         outbound_prefix = io_outbound_item.getOutbound_prefix();
         outbound_code = io_outbound_item.getOutbound_code();
+        outbound_item = io_outbound_item.getOutbound_item();
         inbound_prefix = io_outbound_item.getInbound_prefix();
         inbound_code = io_outbound_item.getInbound_code();
+        inbound_item = io_outbound_item.getInbound_item();
+
         status = io_outbound_item.getStatus();
 
         //has_put_away == 1 trava spinners
@@ -403,10 +410,12 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                             null,
                             move_type,
                             planned_zone_code,
-                            outbound_prefix,
+                            io_outbound_item.getOutbound_prefix(),
                             io_outbound_item.getInbound_prefix(),
-                            outbound_code,
+                            io_outbound_item.getOutbound_code(),
                             io_outbound_item.getInbound_code(),
+                            io_outbound_item.getOutbound_item(),
+                            io_outbound_item.getInbound_item(),
                             planned_local_code,
                             io_outbound_item.getStatus(),
                             io_outbound_item.getClass_code(),
@@ -423,31 +432,6 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
                 msg,
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
-        );
-    }
-
-    @Override
-    public void persistIoMovePlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Move_Tracking> trackingFromMove) {
-        this.to_class_code = to_class_code;
-        this.class_id = classId;
-        mPresenter.executeOutConfPersistence(
-                customer_code,
-                io_prefix,
-                io_code,
-                to_zone_code,
-                null,
-                null,
-                to_local_code,
-                null,
-                null,
-                to_class_code,
-                classId,
-                reason_code,
-                comments,
-                done_date,
-                serial,
-                io_outbound_item,
-                trackingFromMove
         );
     }
 
@@ -606,4 +590,28 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
         return true;
     }
 
+    @Override
+    public void persistIoConfPlanned(long customer_code, Integer to_zone_code, Integer to_local_code, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, List<IO_Conf_Tracking> trackingFromConf) {
+        this.to_class_code = to_class_code;
+        this.class_id = classId;
+        mPresenter.executeOutConfPersistence(
+                customer_code,
+                io_prefix,
+                io_code,
+                to_zone_code,
+                null,
+                null,
+                to_local_code,
+                null,
+                null,
+                to_class_code,
+                classId,
+                reason_code,
+                comments,
+                done_date,
+                serial,
+                io_outbound_item,
+                trackingFromConf
+        );
+    }
 }

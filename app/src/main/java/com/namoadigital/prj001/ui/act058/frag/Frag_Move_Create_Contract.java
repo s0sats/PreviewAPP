@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act058.frag;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Move_Tracking;
 import com.namoadigital.prj001.model.MD_Class;
 
@@ -26,9 +27,13 @@ public interface Frag_Move_Create_Contract {
 
         List<IO_Move_Tracking> getTrackingFromMove();
 
+        List<IO_Conf_Tracking> getTrackingFromConf(Integer prefix, Integer code, Integer item, String type);
+
         void setDefaultZone(SearchableSpinner ss_zone);
 
         boolean removeTrackingFromMove(IO_Move_Tracking io_move_tracking);
+
+        boolean removeTrackingFromConf(IO_Conf_Tracking io_move_tracking);
 
         String getZoneDesc(int zone_code);
 

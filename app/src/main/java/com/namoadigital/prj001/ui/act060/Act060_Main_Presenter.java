@@ -133,7 +133,7 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
     }
 
     @Override
-    public void executeOutConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Outbound_Item item, List<IO_Move_Tracking> trackingFromMove) {
+    public void executeOutConfPersistence(long customer_code, Integer io_prefix, Integer io_code, Integer to_zone_code, String to_zone_id, String to_zone_desc, Integer to_local_code, String to_local_id, String to_local_desc, Integer to_class_code, String classId, Integer reason_code, String comments, String done_date, MD_Product_Serial serial, IO_Outbound_Item item, List<IO_Conf_Tracking> trackingFromConf) {
         item.setCustomer_code(customer_code);
         item.setOutbound_prefix(io_prefix);
         item.setOutbound_code(io_code);
@@ -163,7 +163,7 @@ public class Act060_Main_Presenter implements Act060_Main_Contract.I_Presenter  
 
             DaoObjReturn objReturn = new DaoObjReturn();
 
-            for (IO_Move_Tracking tracking : trackingFromMove) {
+            for (IO_Conf_Tracking tracking : trackingFromConf) {
                 IO_Conf_Tracking item_tracking = new IO_Conf_Tracking();
                 item_tracking.setCustomer_code(tracking.getCustomer_code());
                 item_tracking.setPrefix(item.getOutbound_prefix());
