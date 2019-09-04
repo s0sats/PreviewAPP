@@ -44,7 +44,9 @@ public class IO_Outbound_Item implements Serializable {
 
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private ArrayList<IO_Move> move = new ArrayList<>();
-
+    //Somente para envio dos tracking quando out_conf\/
+    @Expose
+    private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
     public void IO_Outbound_Item(){
         this.customer_code = -1;
         this.outbound_prefix = -1;
@@ -208,5 +210,13 @@ public class IO_Outbound_Item implements Serializable {
 
     public void setMove(ArrayList<IO_Move> move) {
         this.move = move;
+    }
+
+    public ArrayList<IO_Conf_Tracking> getTracking_list() {
+        return tracking_list;
+    }
+
+    public void setTracking_list(ArrayList<IO_Conf_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

@@ -11,9 +11,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Conf_Tracking;
 import com.namoadigital.prj001.model.IO_Outbound;
 import com.namoadigital.prj001.model.IO_Outbound_Item;
+import com.namoadigital.prj001.sql.IO_Conf_Tracking_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -364,6 +367,26 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
                 io_outbound_item = toIO_Outbound_ItemMapper.map(cursor);
             }
 
+            //Seleciona tracking dos out_confs
+            if(io_outbound_item != null){
+                IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                io_outbound_item.setTracking_list(
+                        (ArrayList<IO_Conf_Tracking>) confTrackingDao.query(
+                                new IO_Conf_Tracking_Sql_001(
+                                        io_outbound_item.getCustomer_code(),
+                                        io_outbound_item.getOutbound_prefix(),
+                                        io_outbound_item.getOutbound_code(),
+                                        io_outbound_item.getOutbound_item(),
+                                        ConstantBaseApp.IO_OUTBOUND
+                                ).toSqlQuery()
+                        )
+                );
+            }
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
@@ -409,9 +432,28 @@ public class IO_Outbound_ItemDao extends BaseDao implements DaoWithReturn<IO_Out
 
             while (cursor.moveToNext()) {
                 IO_Outbound_Item uAux = toIO_Outbound_ItemMapper.map(cursor);
+                //Seleciona tracking dos out_confs
+                if(uAux != null){
+                    IO_Conf_TrackingDao confTrackingDao = new IO_Conf_TrackingDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    uAux.setTracking_list(
+                            (ArrayList<IO_Conf_Tracking>) confTrackingDao.query(
+                                    new IO_Conf_Tracking_Sql_001(
+                                            uAux.getCustomer_code(),
+                                            uAux.getOutbound_prefix(),
+                                            uAux.getOutbound_code(),
+                                            uAux.getOutbound_item(),
+                                            ConstantBaseApp.IO_OUTBOUND
+                                    ).toSqlQuery()
+                            )
+                    );
+                }
                 io_outbound_items.add(uAux);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
