@@ -29,7 +29,8 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
-public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View {
+public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View, On_Frg_Serial_Search {
 
     private Act046_Main_Contract.I_Presenter mPresenter;
     private FragmentManager fm;
@@ -489,5 +490,10 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    public boolean hasHideSerialInfoChk() {
+        return false;
     }
 }

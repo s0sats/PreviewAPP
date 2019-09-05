@@ -35,6 +35,7 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -436,16 +437,12 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         if(formXProductExist && formXOperationExists && formXSiteExists){
             Bundle bundle = new Bundle();
             bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
-            //bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(MD_ProductDao.PRODUCT_DESC, tProductSerial.getProduct_desc());
-            //bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(MD_ProductDao.PRODUCT_ID, tProductSerial.getProduct_id());
-            //bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
             bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
-            //bundle.putString(Constant.ACT008_SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
             bundle.putString(MD_SiteDao.SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
-            //bundle.putString(Constant.ACT008_SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+
 
             mView.callAct009(context, bundle);
         } else {
@@ -492,6 +489,10 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     // New
 
+    @Override
+    public boolean getChkForHideSerialInfoPreference() {
+        return ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false);
+    }
 
     @Override
     public void onBackPressedClicked() {

@@ -25,14 +25,15 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
-public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_Main_Contract.I_View {
+public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_Main_Contract.I_View, On_Frg_Serial_Search {
 
     private FragmentManager fm;
     private Frg_Serial_Search mFrgSerialSearch;
@@ -515,6 +516,11 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
 
         //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
         progressDialog.dismiss();
+    }
+
+    @Override
+    public boolean hasHideSerialInfoChk() {
+        return false;
     }
     //endregion
 }

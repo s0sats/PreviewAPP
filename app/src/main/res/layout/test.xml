@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/test_frg_search"
-        android:name="com.namoadigital.prj001.view.frag.Frg_Serial_Search"
+        android:name="com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout="@layout/frg_serial_search" />

@@ -157,6 +157,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
+            <CheckBox
+                android:id="@+id/frg_serial_search_chk_hide_serial_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ocultar Detalhes do Serial"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                />
+
+
             <Button
                 android:id="@+id/frg_serial_search_btn_option_01"
                 android:layout_width="match_parent"

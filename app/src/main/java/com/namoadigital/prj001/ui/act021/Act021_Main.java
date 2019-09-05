@@ -34,18 +34,19 @@ import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 /**
  * Created by d.luche on 21/06/2017.
  */
 
-public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_Main_View {
+public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_Main_View, On_Frg_Serial_Search {
 
     public static final String NEW_OPT_ID = "new_opt_id";
     public static final String NEW_OPT_LABEL = "new_opt_label";
@@ -872,5 +873,10 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean hasHideSerialInfoChk() {
+        return false;
     }
 }

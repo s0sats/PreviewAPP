@@ -648,7 +648,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 mPresenter.prepareAct009();
                 resetCtrlVars();
             }else{
-                mPresenter.prepareAct008();
+                if(mPresenter.getChkForHideSerialInfoPreference()){
+                    mPresenter.prepareAct009();
+                }else {
+                    mPresenter.prepareAct008();
+                }
                 resetCtrlVars();
             }
         } else {

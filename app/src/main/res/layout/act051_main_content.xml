@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/act051_frg_serial_search"
-        android:name="com.namoadigital.prj001.view.frag.Frg_Serial_Search"
+        android:name="com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"

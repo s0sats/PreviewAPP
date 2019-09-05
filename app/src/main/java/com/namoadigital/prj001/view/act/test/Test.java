@@ -16,12 +16,13 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Test extends Base_Activity_Frag_NFC_Geral {
+public class Test extends Base_Activity_Frag_NFC_Geral implements On_Frg_Serial_Search {
 
     private FragmentManager fm;
     private Frg_Serial_Search frgSearch;
@@ -206,5 +207,10 @@ public class Test extends Base_Activity_Frag_NFC_Geral {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean hasHideSerialInfoChk() {
+        return false;
     }
 }

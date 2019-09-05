@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.view.frag;
+package com.namoadigital.prj001.view.frag.frg_serial_search;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +43,8 @@ public class Frg_Serial_Search extends Fragment {
     public static final String SERIAL = "serial";
     public static final String TRACKING = "tracking";
 
+    public static final String HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
+
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
     private ImageView iv_product_change;
@@ -61,6 +64,8 @@ public class Frg_Serial_Search extends Fragment {
 
     private boolean bTokenPendenciesCheck = true;
 
+    private CheckBox chk_hide_serial_info;
+
     private Button btn_option_01;
     private Button btn_option_02;
     private Button btn_option_03;
@@ -72,6 +77,9 @@ public class Frg_Serial_Search extends Fragment {
 
     private ButtonNFC btn_nfc_reader;
 
+    private Frg_Serial_Search_Presenter mPresenter ;
+    private On_Frg_Serial_Search mFragListener;
+
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
         btn_nfc_reader.setOnClickListener(clickListener);
@@ -79,6 +87,15 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setbTokenPendenciesCheck(boolean bTokenPendenciesCheck) {
         this.bTokenPendenciesCheck = bTokenPendenciesCheck;
+    }
+
+    public void handleChkForHideSerialInfo(boolean status){
+        chk_hide_serial_info.setChecked(status);
+        chk_hide_serial_info.setVisibility(View.VISIBLE);
+    }
+
+    public void allowChkForHideSerialInfo(boolean status){
+        chk_hide_serial_info.setEnabled(status);
     }
 
     public boolean isbTokenPendenciesCheck() {
@@ -110,11 +127,20 @@ public class Frg_Serial_Search extends Fragment {
     private View.OnClickListener clickListener;
     private boolean supportNFC;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //
+        if (context instanceof On_Frg_Serial_Search) {
+            mFragListener = (On_Frg_Serial_Search) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frg_serial_search, container, false);
-
+        mPresenter = new Frg_Serial_Search_Presenter(getContext());
         iniVar(view);
         iniAction();
 
@@ -175,6 +201,15 @@ public class Frg_Serial_Search extends Fragment {
         ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_tracking);
         mket_tracking = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_tracking);
         controls_sta.add(mket_tracking);
+        //
+        chk_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
+        if(mFragListener.hasHideSerialInfoChk()) {
+            chk_hide_serial_info.setVisibility(View.VISIBLE);
+            chk_hide_serial_info.setChecked(mPresenter.getChkForHideSerialInfoPreference());
+            chk_hide_serial_info.setEnabled(mPresenter.getProfileForHideSerialInfo());
+        }else{
+            chk_hide_serial_info.setVisibility(View.GONE);
+        }
         //
         btn_option_01 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_01);
         btn_option_02 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_02);
@@ -298,6 +333,7 @@ public class Frg_Serial_Search extends Fragment {
                             0
                     );
                 } else {
+                    mPresenter.setChkForHideSerialInfoPreference(chk_hide_serial_info.isChecked());
                     if (delegate != null) {
                         delegate.onSearchClick(
                                 btnAction,

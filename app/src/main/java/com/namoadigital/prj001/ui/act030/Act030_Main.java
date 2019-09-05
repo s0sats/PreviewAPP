@@ -24,18 +24,19 @@ import com.namoadigital.prj001.ui.act045.Act045_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.frag.Frg_Serial_Search.PRODUCT_ID;
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 /**
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_Main_View {
+public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_Main_View, On_Frg_Serial_Search {
 
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
@@ -569,5 +570,10 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
+    }
+
+    @Override
+    public boolean hasHideSerialInfoChk() {
+        return false;
     }
 }

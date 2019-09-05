@@ -11,6 +11,8 @@ public interface Act020_Main_Presenter {
 
     void getProductSerialList(String ws_result);
 
+    boolean getChkForHideSerialInfoPreference();
+
     void onBackPressedClicked();
 
     //void executeSerialSearch(String product_id, String serial, String tracking);
