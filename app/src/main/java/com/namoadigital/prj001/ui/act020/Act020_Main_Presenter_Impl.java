@@ -215,7 +215,9 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    prepareAct008();
+                                    if(!ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)) {
+                                        prepareAct008();
+                                    }
                                 }
                             },
                             1
@@ -225,7 +227,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             }
         } else {
             //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-            if(no_serial){
+            if(no_serial || ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
                 prepareAct009();
             }else{
                 prepareAct008();
@@ -439,7 +441,13 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(MD_ProductDao.PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(MD_ProductDao.PRODUCT_ID, tProductSerial.getProduct_id());
-            bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id(): "");
+
+            if(ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
+                bundle.putString(MD_Product_SerialDao.SERIAL_ID, tProductSerial.getSerial_id());
+            }else {
+                bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id() : "");
+            }
+
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
             bundle.putString(MD_SiteDao.SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
 

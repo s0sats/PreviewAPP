@@ -24,6 +24,7 @@ import com.namoadigital.prj001.sql.Sql_Act017_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -257,21 +258,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         final Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-        //bundle.putString(Constant.ACT007_PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
         bundle.putString(MD_ProductDao.PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
-        //bundle.putString(Constant.ACT008_PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
         bundle.putString(MD_ProductDao.PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-        //bundle.putString(Constant.ACT008_PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
-        //bundle.putString(Constant.ACT008_SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
-        //bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        //bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
-        //bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
-        //bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
+
         // DIFERENTE VERIFICAR
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
@@ -283,7 +277,11 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             mView.callAct011(context, bundle);
         } else if (hasSerial) {
             bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-            mView.callAct008(context, bundle);
+            if(ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
+                mView.callAct011(context, bundle);
+            }else {
+                mView.callAct008(context, bundle);
+            }
         } else {
             if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
                     && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")

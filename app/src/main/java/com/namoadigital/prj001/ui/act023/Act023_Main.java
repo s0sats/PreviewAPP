@@ -38,9 +38,11 @@ import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act050.Act050_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,6 +183,24 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //
         mPresenter.getProductInfo();
         //
+        /*Tratamento para pular o fragmento de serial visando melhor fluidez na navegacao
+                O correto era tratar antes da chamada dessa ACT, porem eh nesta ACT onde estah a chamada
+                do servico de OS.
+        */
+        if(!bundle_new_serial &&
+                ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false) &&
+                !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
+
+            if(ToolBox_Con.isOnline(context)) {
+                mPresenter.executeSoDownload(mdProduct.getProduct_code(),bundle_serial_id);
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }else{
+            if(ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
+                mPresenter.onBackPressedClicked();
+            }
+        }
         initFrag();
     }
 

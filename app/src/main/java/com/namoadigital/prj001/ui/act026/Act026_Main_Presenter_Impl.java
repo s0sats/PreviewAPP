@@ -8,6 +8,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.util.List;
 
@@ -116,7 +117,8 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
             mView.callAct012(context);
         }else if (requesting_act.equals(Constant.ACT021)){
             mView.callAct021(context);
-        }else if (requesting_act.equals(Constant.ACT023)){
+        }else if (requesting_act.equals(Constant.ACT023)
+                && !ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
             mView.callAct023(context);
         }else if (requesting_act.equals(Constant.ACT005)){
             mView.callAct005(context);

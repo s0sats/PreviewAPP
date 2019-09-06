@@ -26,6 +26,6 @@ public class Frg_Serial_Search_Presenter implements Frg_Serial_Search_Contract.P
 
     @Override
     public boolean getProfileForHideSerialInfo() {
-        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, Frg_Serial_Search.HIDE_SERIAL_INFO);
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, Frg_Serial_Search.HIDE_SERIAL_INFO);
     }
 }

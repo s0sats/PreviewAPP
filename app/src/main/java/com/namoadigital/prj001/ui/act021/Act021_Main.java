@@ -877,6 +877,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public boolean hasHideSerialInfoChk() {
-        return false;
+        return true;
     }
 }
