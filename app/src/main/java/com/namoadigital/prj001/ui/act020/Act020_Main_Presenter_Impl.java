@@ -227,12 +227,16 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             }
         } else {
             //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-            if(no_serial || ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
-                prepareAct009();
+            if((no_serial || ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false))
+            && !mView.isSerial_creation()){
+                if(bundleForNFormFinishPlusNew == null ||bundleForNFormFinishPlusNew.isEmpty()) {
+                    prepareAct009();
+                }else{
+                    prepareAct011();
+                }
             }else{
                 prepareAct008();
             }
-
         }
         /**
          *  O TRECHO DE CODIGO ABAIXO, FOI COMENTADO EM 20/10/2017 POR DANIEL LUCHE
@@ -396,16 +400,16 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
         //bundle for NForm loop creation process
         if((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
-        && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty())
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
-        bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
-        bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundleForNFormFinishPlusNew.getString(MD_Product_SerialDao.SERIAL_ID));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+        && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty()) {
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
+            bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+        }
         //
         mView.callAct008(context,bundle);
     }
@@ -470,6 +474,42 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             );
         }
     }
+
+
+    @Override
+    public void prepareAct011() {
+
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),tProductSerial.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+        );
+        //
+        if(formXProductExist && formXOperationExists && formXSiteExists){
+            Bundle bundle = this.bundleForNFormFinishPlusNew;
+            bundle.remove(MD_Product_SerialDao.SERIAL_ID);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID,tProductSerial.getSerial_id());
+            mView.callAct011(context, bundle);
+        } else {
+
+            String msg = hmAux_Trans.get("alert_no_form_lbl");
+            msg += "\n";
+            msg = !formXProductExist ? msg + hmAux_Trans.get("alert_no_form_for_product_msg") + "\n" : msg;
+            msg = !formXOperationExists ? msg + hmAux_Trans.get("alert_no_form_for_operation_msg") + "\n" : msg;
+            msg = !formXSiteExists ? msg + hmAux_Trans.get("alert_no_form_for_site_msg") + "\n" : msg;
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_no_form_ttl"),
+                    msg,
+                    null,
+                    0
+            );
+        }
+    }
+
 
     @Override
     public void startDownloadServices() {

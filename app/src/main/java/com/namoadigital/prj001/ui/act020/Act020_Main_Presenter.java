@@ -25,6 +25,8 @@ public interface Act020_Main_Presenter {
 
     void prepareAct009();
 
+    void prepareAct011();
+
     void startDownloadServices();
 
     String searchProductInfo(String product_code,String product_id);

@@ -536,7 +536,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
         bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
         bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
-        buildBundleFOrNforFinishPlusNew(bundle);
+        buildBundleForNformFinishPlusNew(bundle);
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
@@ -569,6 +569,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -649,7 +650,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 resetCtrlVars();
             }else{
                 if(mPresenter.getChkForHideSerialInfoPreference()){
-                    mPresenter.prepareAct009();
+                    if(customFormCodeDesc.isEmpty()) {
+                        mPresenter.prepareAct009();
+                    }else{
+                        mPresenter.prepareAct011();
+                    }
                 }else {
                     mPresenter.prepareAct008();
                 }
@@ -726,7 +731,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //super.processNotification_close(mValue, mActivity);
     }
 
-    private void buildBundleFOrNforFinishPlusNew(Bundle bundle) {
+    private void buildBundleForNformFinishPlusNew(Bundle bundle) {
         bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
         bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
         bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
