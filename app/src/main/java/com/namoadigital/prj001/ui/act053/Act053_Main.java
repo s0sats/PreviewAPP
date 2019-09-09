@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act061.Act061_Main;
+import com.namoadigital.prj001.ui.act062.Act062_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -56,6 +58,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private String wsProcess;
     private FragmentManager fm;
     private Frg_Serial_Edit frgSerialEdit;
+    private LinearLayout contentMain;
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private String ioProcess;
@@ -169,10 +172,18 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                 bundle_product_code
         );
         //
+        contentMain = findViewById(R.id.content_main);
+
         mPresenter.getProductInfo(bundle_product_code);
         //
         initFrag();
-
+        //
+        if(ToolBox_Con.hasHideSerialInfo(context) && !bundle_new_serial){
+            contentMain.setVisibility(View.INVISIBLE);
+            checkFlow();
+        }else{
+            contentMain.setVisibility(View.VISIBLE);
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -580,10 +591,30 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                     itemSavedOk = true;
                     //
                     onBackPressed();
+                }else{
+                    if(ToolBox_Con.hasHideSerialInfo(context)) {
+                        callAct062();
+                    }
                 }
 
             }
         });
+    }
+
+    private void callAct062() {
+        Intent mIntent = new Intent(context, Act062_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle == null) {
+            bundle = new Bundle();
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requesting_act);
+            bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, ioProcess);
+            bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY,ioPrefix);
+            bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY,ioCode);
+        }
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

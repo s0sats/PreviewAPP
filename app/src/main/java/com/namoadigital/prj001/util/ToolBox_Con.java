@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -231,6 +232,16 @@ public class ToolBox_Con {
                 pref_key,
                 pref_value
         ).apply();
+    }
+
+    public static boolean hasHideSerialInfo(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getBoolean(
+                ConstantBaseApp.HIDE_SERIAL_INFO,
+                false
+        );
     }
 
     public static boolean getBooleanPreferencesByKey(Context context, String pref_key, boolean default_value) {

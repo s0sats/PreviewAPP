@@ -277,7 +277,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             mView.callAct011(context, bundle);
         } else if (hasSerial) {
             bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-            if(ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
+            if(ToolBox_Con.hasHideSerialInfo(context)){
                 mView.callAct011(context, bundle);
             }else {
                 mView.callAct008(context, bundle);

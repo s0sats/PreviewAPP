@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -71,6 +72,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     private HMAux hmAux_Trans_Frag;
     private String soFlow = "";
     private boolean bundle_new_serial = false;
+    private LinearLayout contentMain;
 
 
     @Override
@@ -181,6 +183,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 new MD_Product_Serial_TrackingDao(context)
         );
         //
+        contentMain = findViewById(R.id.content_main);
         mPresenter.getProductInfo();
         //
         /*Tratamento para pular o fragmento de serial visando melhor fluidez na navegacao
@@ -188,15 +191,23 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 do servico de OS.
         */
         if(!bundle_new_serial &&
-                ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false) &&
+                ToolBox_Con.hasHideSerialInfo(context) &&
                 !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
-
+            contentMain.setVisibility(View.INVISIBLE);
             if(ToolBox_Con.isOnline(context)) {
                 mPresenter.executeSoDownload(mdProduct.getProduct_code(),bundle_serial_id);
             }else{
-                ToolBox_Inf.showNoConnectionDialog(context);
+                ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(ToolBox_Con.hasHideSerialInfo(context)){
+                            onBackPressed();
+                        }
+                    }
+                });
             }
         }else{
+            contentMain.setVisibility(View.VISIBLE);
             if(ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
                 mPresenter.onBackPressedClicked();
             }

@@ -43,8 +43,6 @@ public class Frg_Serial_Search extends Fragment {
     public static final String SERIAL = "serial";
     public static final String TRACKING = "tracking";
 
-    public static final String HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
-
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
     private ImageView iv_product_change;

@@ -518,9 +518,9 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
         progressDialog.dismiss();
     }
 
+    //endregion
     @Override
     public boolean hasHideSerialInfoChk() {
-        return false;
+        return true;
     }
-    //endregion
 }

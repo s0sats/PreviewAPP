@@ -1632,6 +1632,49 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void showNoConnectionDialogWithInteraction(Context act_context, DialogInterface.OnClickListener listener) {
+        String title = "";
+        String msg = "";
+
+        //Se possui variavel translate code, busca tradução
+        if (!ToolBox_Con.getPreference_Translate_Code(act_context).equals("")) {
+            String mModule = "SYS";
+            String mResource_name = "SYS_APP";
+            //
+            List<String> transList = new ArrayList<>();
+            transList.add("alert_no_conection_ttl");
+            transList.add("alert_no_conection_msg");
+
+            HMAux hmTrans = setLanguage(
+                    act_context,
+                    mModule,
+                    getResourceCode(
+                            act_context,
+                            mModule,
+                            mResource_name
+                    ),
+                    ToolBox_Con.getPreference_Translate_Code(act_context),
+                    transList
+            );
+
+            title = hmTrans.get("alert_no_conection_ttl");
+            msg = hmTrans.get("alert_no_conection_msg");
+        } else {
+            //Se não busca do arquivo de Strings
+            title = act_context.getString(R.string.generic_no_connection_ttl);
+            msg = act_context.getString(R.string.generic_no_connection_msg);
+        }
+
+        //Chama caixa de dialogo
+        ToolBox.alertMSG(
+                act_context,
+                title,
+                msg,
+                listener,
+                0
+        );
+    }
+
     /**
      * Metodo retorna o site do serviço tem restrição de execução.
      * A restrição de execução se dá caso o serviço possua um site e esse site seja diferente do

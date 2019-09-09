@@ -118,7 +118,7 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
         }else if (requesting_act.equals(Constant.ACT021)){
             mView.callAct021(context);
         }else if (requesting_act.equals(Constant.ACT023)
-                && !ToolBox_Con.getBooleanPreferencesByKey(context, Frg_Serial_Search.HIDE_SERIAL_INFO, false)){
+                && !ToolBox_Con.hasHideSerialInfo(context)){
             mView.callAct023(context);
         }else if (requesting_act.equals(Constant.ACT005)){
             mView.callAct005(context);
