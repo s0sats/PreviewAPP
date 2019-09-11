@@ -20,6 +20,10 @@ public class IO_Outbound_Item implements Serializable {
     @Expose
     private  long serial_code;
     @Expose
+    private Integer class_code;
+    @Expose
+    private String class_id;
+    @Expose
     private  String conf_date;
     @Expose
     private  String status;
@@ -40,7 +44,9 @@ public class IO_Outbound_Item implements Serializable {
 
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     private ArrayList<IO_Move> move = new ArrayList<>();
-
+    //Somente para envio dos tracking quando out_conf\/
+    @Expose
+    private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
     public void IO_Outbound_Item(){
         this.customer_code = -1;
         this.outbound_prefix = -1;
@@ -100,6 +106,22 @@ public class IO_Outbound_Item implements Serializable {
 
     public void setSerial_code(long serial_code) {
         this.serial_code = serial_code;
+    }
+
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
+    }
+
+    public String getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(String class_id) {
+        this.class_id = class_id;
     }
 
     public String getConf_date() {
@@ -188,5 +210,13 @@ public class IO_Outbound_Item implements Serializable {
 
     public void setMove(ArrayList<IO_Move> move) {
         this.move = move;
+    }
+
+    public ArrayList<IO_Conf_Tracking> getTracking_list() {
+        return tracking_list;
+    }
+
+    public void setTracking_list(ArrayList<IO_Conf_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

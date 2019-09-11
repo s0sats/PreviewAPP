@@ -11,16 +11,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Services_Adapter;
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
@@ -35,7 +40,10 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.SM_SO_Sql_016;
+import com.namoadigital.prj001.sql.SM_SO_Sql_023;
 import com.namoadigital.prj001.sql.Sql_Act027_002;
 import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
@@ -46,6 +54,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -68,6 +77,9 @@ public class Act027_Services extends BaseFragment {
     private String lastServiceUpdated = "";
     private int original_update_required;
     private Act027_Main mMain;
+    private ImageView iv_product_serial_id;
+    private TextView tv_product_serial_id;
+    private TextView tv_product_serial_infos;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -160,6 +172,9 @@ public class Act027_Services extends BaseFragment {
         );
         //
         tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
+        iv_product_serial_id =  view.findViewById(R.id.iv_product_serial_id);
+        tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
+        tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
     }
@@ -203,10 +218,60 @@ public class Act027_Services extends BaseFragment {
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
+                setSerialINfo();
             } else {
                 recoveryDelegate.callAct005();
             }
         }
+    }
+
+    private void setSerialINfo() {
+
+        HMAux product_serial_content = sm_so_serviceDao.getByStringHM(
+                new SM_SO_Sql_023(
+                        mSm_so.getCustomer_code(),
+                        String.valueOf(mSm_so.getProduct_code()),
+                        mSm_so.getSerial_id()
+                ).toSqlQuery()
+        );
+
+        try {
+            if (product_serial_content.hasConsistentValue(SM_SODao.SERIAL_ID)) {
+                tv_product_serial_id.setText(product_serial_content.get(SM_SODao.SERIAL_ID));
+            }
+            String serial_bmd = "";
+            if (product_serial_content.hasConsistentValue(MD_BrandDao.BRAND_DESC)
+                    && !product_serial_content.get(MD_BrandDao.BRAND_DESC).isEmpty()) {
+                serial_bmd = product_serial_content.get(MD_BrandDao.BRAND_DESC);
+            }
+            if (product_serial_content.hasConsistentValue(MD_Brand_ModelDao.MODEL_DESC)
+                    && !product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC).isEmpty()) {
+                if(serial_bmd.isEmpty()){
+                    serial_bmd = product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC);
+                }else {
+                    serial_bmd = serial_bmd + " | " + product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC);
+                }
+            }
+            if (product_serial_content.hasConsistentValue(MD_Brand_ColorDao.COLOR_DESC)
+                    && !product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC).isEmpty()) {
+                if(serial_bmd.isEmpty()){
+                    serial_bmd = product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC);
+                }else {
+                    serial_bmd = serial_bmd + " | " + product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC);
+                }
+            }
+            tv_product_serial_infos.setText(serial_bmd);
+            tv_product_serial_infos.setVisibility(View.VISIBLE);
+            if(serial_bmd.isEmpty()){
+                tv_product_serial_infos.setVisibility(View.GONE);
+            }
+        }catch (NullPointerException e){
+            tv_product_serial_infos.setText("");
+            tv_product_serial_infos.setVisibility(View.GONE);
+        }
+//        Glide.with(context)
+//                .load("url")
+//                .into(iv_product_serial_id);
     }
 
     public void setServiceAdapter(boolean isChecked) {

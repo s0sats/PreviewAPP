@@ -44,11 +44,15 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String SERIAL_MIN_LENGTH = "serial_min_length";
     public static final String SERIAL_MAX_LENGTH = "serial_max_length";
     public static final String SITE_RESTRICTION = "site_restriction";
+    public static final String PRODUCT_ICON_NAME = "product_icon_name";
+    public static final String PRODUCT_ICON_URL = "product_icon_url";
+    public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
             SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE, LOCAL_CONTROL, IO_CONTROL,
-            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH, SITE_RESTRICTION
+            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH, SITE_RESTRICTION, PRODUCT_ICON_NAME,
+            PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL
     };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -341,6 +345,20 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             }
             md_product.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
 
+            if (cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_NAME))) {
+                md_product.setProduct_icon_name(null);
+            } else {
+                md_product.setProduct_icon_name(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_NAME)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_URL))) {
+                md_product.setProduct_icon_url(null);
+            } else {
+                md_product.setProduct_icon_url(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL)));
+            }
+
+            md_product.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
+
             return md_product;
         }
     }
@@ -395,7 +413,11 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             if (md_product.getSite_restriction() > -1) {
                 contentValues.put(SITE_RESTRICTION, md_product.getSite_restriction());
             }
-
+            contentValues.put(PRODUCT_ICON_NAME, md_product.getProduct_icon_name());
+            contentValues.put(PRODUCT_ICON_URL, md_product.getProduct_icon_url());
+            if (md_product.getProduct_icon_url_local() != null) {
+                contentValues.put(PRODUCT_ICON_URL_LOCAL, md_product.getProduct_icon_url_local());
+            }
             return contentValues;
         }
     }

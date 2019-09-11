@@ -253,6 +253,60 @@ public class IO_Conf_TrackingDao extends BaseDao implements DaoWithReturn<IO_Con
         return daoObjReturn;
     }
 
+    public DaoObjReturn delete(IO_Conf_Tracking io_conf_tracking){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+
+
+        try{
+            openDB();
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(io_conf_tracking.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PREFIX).append(" = '").append(io_conf_tracking.getPrefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CODE).append(" = '").append(io_conf_tracking.getCode()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(ITEM).append(" = '").append(io_conf_tracking.getItem()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TYPE).append(" = '").append(io_conf_tracking.getType()).append("'");
+            //Tenta remoer e armazena retorno
+            addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
+
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+
+        closeDB();
+
+        //
+        return daoObjReturn;
+    }
+
+
     @Override
     public IO_Conf_Tracking getByString(String sQuery) {
         IO_Conf_Tracking io_conf_tracking = null;

@@ -31,6 +31,9 @@ public class MD_Product implements Serializable {
     private Integer serial_min_length;
     private Integer serial_max_length;
     private int site_restriction;
+    private String product_icon_name;
+    private String product_icon_url;
+    private String product_icon_url_local;
 
     public long getCustomer_code() {
         return customer_code;
@@ -190,6 +193,30 @@ public class MD_Product implements Serializable {
 
     public void setSite_restriction(int site_restriction) {
         this.site_restriction = site_restriction;
+    }
+
+    public String getProduct_icon_name() {
+        return product_icon_name;
+    }
+
+    public void setProduct_icon_name(String product_icon_name) {
+        this.product_icon_name = product_icon_name;
+    }
+
+    public String getProduct_icon_url() {
+        return product_icon_url;
+    }
+
+    public void setProduct_icon_url(String product_icon_url) {
+        this.product_icon_url = product_icon_url;
+    }
+
+    public String getProduct_icon_url_local() {
+        return product_icon_url_local;
+    }
+
+    public void setProduct_icon_url_local(String product_icon_url_local) {
+        this.product_icon_url_local = product_icon_url_local;
     }
 
     public MD_Product_Serial createNewSerialForThisProduct(String serial_id){
