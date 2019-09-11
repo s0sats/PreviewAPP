@@ -195,6 +195,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
             contentMain.setVisibility(View.INVISIBLE);
             if(ToolBox_Con.isOnline(context)) {
+                mPresenter.updateSerialData(mdProductSerial);
                 mPresenter.executeSoDownload(mdProduct.getProduct_code(),bundle_serial_id);
             }else{
                 ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {

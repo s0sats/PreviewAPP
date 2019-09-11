@@ -3,9 +3,11 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -34,15 +36,19 @@ public class SM_SO_Sql_023 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      S.*\n," +
+                        "      S.*,\n" +
                         MD_BrandDao.BRAND_DESC+" ,\n" +
                         MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
-                        MD_Brand_ColorDao.COLOR_DESC+" \n" +
+                        MD_Brand_ColorDao.COLOR_DESC+" ,\n" +
+                        MD_ProductDao.PRODUCT_ICON_URL_LOCAL +" \n" +
                         " FROM\n" + SM_SODao.TABLE + " S\n" +
-                        "  LEFT JOIN\n" +
+                        "  INNER JOIN\n" +
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
                         "                             and ps.product_code = s.product_code \n" +
                         "                             and ps.serial_code = s.serial_code\n" +
+                        "  INNER JOIN\n" +
+                        MD_ProductDao.TABLE +"        p on p.customer_code = s.customer_code\n" +
+                        "                             and p.product_code = s.product_code \n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                         filter +";").toString();
