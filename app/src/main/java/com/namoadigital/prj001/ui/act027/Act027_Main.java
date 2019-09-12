@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -722,7 +724,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //controls_frags.add(act027_serial_);
         //
         if (request_set_frag.trim().length() == 0) {
-            setFrag(act027_services_, "SERVICES");
+            setFrag(act027_services_, SELECTION_SERVICES);
         } else {
             act027_opc_.perfomClickInOption(request_set_frag);
         }
@@ -2008,12 +2010,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //endregion
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
-        if (fm.findFragmentByTag(sTag) == null) {
+        Fragment fragmentByTag = fm.findFragmentByTag(sTag);
+        Log.i("FRAGMENT_NAV", "[SetFrag] Class: " +type.getClass().getName()+ " Tag: "+ sTag);
+        if (fragmentByTag == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act027_main_ll, type, sTag);
             ft.commit();
             setCurrentFrag(sTag);
         } else {
+            setCurrentFrag(fragmentByTag.getTag());
             //type.loadDataToScreen();
         }
     }
@@ -2021,42 +2026,38 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     public void onBackPressed() {
 
-        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)) {
-
-            if (act027_product_edit_.getEventStatus().equalsIgnoreCase(
-                    Act027_Product_Edit.EVENT_EDIT_MODE)
-                    ) {
-
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_event_lose_data_ttl"),
-                        hmAux_Trans.get("alert_event_lose_data_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                act027_product_edit_.removeEventPhotosOnLeave();
-                                //
-                                setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
-                                //
-                                setEventEditOpenStatus(false);
-                            }
-                        },
-                        1
-                );
-
-                return;
-            }
-        }
 
         switch (currentFrag) {
             case SELECTION_PRODUCT_SELECTION:
+                if (act027_product_edit_.getEventStatus().equalsIgnoreCase(
+                        Act027_Product_Edit.EVENT_EDIT_MODE)
+                ) {
+
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_event_lose_data_ttl"),
+                            hmAux_Trans.get("alert_event_lose_data_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    act027_product_edit_.removeEventPhotosOnLeave();
+                                    //
+                                    setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
+                                    //
+                                    setEventEditOpenStatus(false);
+                                }
+                            },
+                            1
+                    );
+
+                    return;
+                }
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
             case SELECTION_PRODUCT_EDIT:
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
-            case SELECTION_PRODUCT_LIST:
-            default:
+            case SELECTION_SERVICES:
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_so_exit_title"),
@@ -2077,10 +2078,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
                 );
                 break;
-
+            default:
+                act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERVICES);
 
         }
-
     }
 
     @Override
