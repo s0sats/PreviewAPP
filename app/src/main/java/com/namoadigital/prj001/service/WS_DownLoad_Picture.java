@@ -29,6 +29,8 @@ import com.namoadigital.prj001.sql.MD_All_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_005;
+import com.namoadigital.prj001.sql.MD_Product_Sql_007;
+import com.namoadigital.prj001.sql.MD_Product_Sql_008;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_004;
@@ -80,6 +82,7 @@ public class WS_DownLoad_Picture extends IntentService {
             ArrayList<HMAux> product_sketch_list = new ArrayList<>();
             MD_All_ProductDao allProductDao = null;
             ArrayList<HMAux> all_product_sketch_list = new ArrayList<>();
+            ArrayList<HMAux> product_icon_list = new ArrayList<>();
             //
             GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
                     getApplicationContext(),
@@ -125,6 +128,12 @@ public class WS_DownLoad_Picture extends IntentService {
             all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
                     new MD_All_Product_Sql_004(
                             customer_code
+                    ).toSqlQuery()
+            );
+
+            product_icon_list = (ArrayList<HMAux>) productDao.query_HM(
+                    new MD_Product_Sql_007(
+                        customer_code
                     ).toSqlQuery()
             );
             /**
@@ -234,6 +243,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     && event_file_list.size() == 0
                     && roomImgList.size() == 0
                     && messageImgList.size() == 0
+                    && product_icon_list.size() == 0
                     ) {
                 return;
             }
@@ -551,6 +561,35 @@ public class WS_DownLoad_Picture extends IntentService {
                     }
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
+                }
+            }
+
+            for (HMAux hmAux : product_icon_list) {
+                String file_address = "";
+                try {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), Constant.CACHE_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                        //
+                        file_address = Constant.CACHE_PATH + "/" + hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase() + ".tmp";
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(MD_ProductDao.PRODUCT_ICON_URL),
+                                file_address
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), "");
+                    }
+
+                    //Atualiza campo com url local
+                    productDao.addUpdate(
+                            new MD_Product_Sql_008(
+                                    customer_code,
+                                    hmAux.get(MD_ProductDao.PRODUCT_CODE),
+                                    hmAux.get(MD_ProductDao.PRODUCT_ICON_URL)
+                            ).toSqlQuery()
+                    );
                 } catch (Exception e) {
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }

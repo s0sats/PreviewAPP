@@ -7,10 +7,12 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+/*
+    12/09/2019 BARRIONUEVO
+    Query que busca os dados do card de produto/serial da lista de servicos da OS
+*/
 public class SM_SO_Sql_023 implements Specification {
 
     private long customer_code;
@@ -40,7 +42,7 @@ public class SM_SO_Sql_023 implements Specification {
                         MD_BrandDao.BRAND_DESC+" ,\n" +
                         MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
                         MD_Brand_ColorDao.COLOR_DESC+" ,\n" +
-                        MD_ProductDao.PRODUCT_ICON_URL_LOCAL +" \n" +
+                        MD_ProductDao.PRODUCT_ICON_NAME +" \n" +
                         " FROM\n" + SM_SODao.TABLE + " S\n" +
                         "  INNER JOIN\n" +
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
