@@ -73,6 +73,10 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         iniUIFooter();
         //
         initActions();
+        //
+        if(ToolBox_Con.hasHideSerialInfo(context)){
+            callAct040(context);
+        }
     }
 
     private void iniSetup() {
