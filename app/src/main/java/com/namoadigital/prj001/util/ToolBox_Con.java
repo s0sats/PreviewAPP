@@ -238,9 +238,17 @@ public class ToolBox_Con {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
+        /*
+            Caso usuario tenha o perfil do HIDE_SERIAL_INFO, o checkbox sempre deverah estar checado
+            e desabilitado.
+         */
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.HIDE_SERIAL_INFO)){
+            return true;
+        }
+
         return sharedPreferences.getBoolean(
                 ConstantBaseApp.HIDE_SERIAL_INFO,
-                false
+                true
         );
     }
 

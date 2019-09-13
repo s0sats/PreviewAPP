@@ -896,7 +896,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_SERVICE:
-                    mView.callAct021(context);
+                    if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
+                        mView.callAct040(context);
+                    }else {
+                        mView.callAct021(context);
+                    }
                     break;
 
                 case Act005_Main.MENU_ID_SCHEDULE_DATA:

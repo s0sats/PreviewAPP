@@ -42,6 +42,7 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act040_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -582,7 +583,11 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     serial_id
             );
         }else {
-            mView.callAct021(context);
+            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
+                mView.callAct005(context);
+            }else {
+                mView.callAct021(context);
+            }
         }
 
     }

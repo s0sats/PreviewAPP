@@ -53,4 +53,6 @@ public interface Act040_Main_View {
     boolean isConnectionStatusAlter();
 
     void exitProcessMsg(boolean successMsg);
+
+    void callAct005(Context context);
 }
