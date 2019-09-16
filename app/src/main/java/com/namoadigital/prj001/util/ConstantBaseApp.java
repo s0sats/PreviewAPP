@@ -501,6 +501,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_PROFILE = "PROFILE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_BARCODE = "SERIAL_BARCODE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_OCR_VIN = "SERIAL_OCR_VIN";
+    public static final String PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF = "SERIAL_OCR_MOSOLF";
 
      //Profiles IO
     public static final String PROFILE_MENU_IO = "PRJ001_IO";

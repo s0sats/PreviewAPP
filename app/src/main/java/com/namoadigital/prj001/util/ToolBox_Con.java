@@ -248,7 +248,7 @@ public class ToolBox_Con {
 
         return sharedPreferences.getBoolean(
                 ConstantBaseApp.HIDE_SERIAL_INFO,
-                true
+                false
         );
     }
 
