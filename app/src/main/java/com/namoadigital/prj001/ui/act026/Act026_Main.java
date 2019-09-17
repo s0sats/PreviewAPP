@@ -287,7 +287,14 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        mPresenter.onBackPressedClicked();
+                                /*
+                                    17/09/2019 BARRIONUEVO
+                                    Mesmo quando o usuario seleciona para ocultar os dados do serial
+                                    ele será direcionado para o fragmento do serial para edição
+                                    caso o serial nao possua segmento ou categoria.
+                                 */
+//                                        mPresenter.onBackPressedClicked();
+                                        callAct023(context);
                                     }
                                 },
                                 0
@@ -368,6 +375,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
+        bundle.putBoolean(Constant.HIDE_SERIAL_INFO, false);
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
