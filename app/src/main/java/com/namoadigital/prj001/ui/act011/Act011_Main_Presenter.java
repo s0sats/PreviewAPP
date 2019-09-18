@@ -29,4 +29,5 @@ public interface Act011_Main_Presenter {
 
     MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id);
 
+    String getProductIcon(long product_code);
 }

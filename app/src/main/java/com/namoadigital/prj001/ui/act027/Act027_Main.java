@@ -2316,6 +2316,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     @Override
+    public void onProductSerialSelected() {
+        act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERIAL);
+    }
+
+    @Override
     public void callAct005() {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

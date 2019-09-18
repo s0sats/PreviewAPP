@@ -619,6 +619,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 new GE_Custom_Form_BlobDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 hmAux_Trans
         );
 
@@ -3042,5 +3043,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+    }
+
+    public MD_Product_Serial getSerialInfo(){
+        return mPresenter.getSerialInfo(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.parseInt(product_code),
+                serial_id);
+    }
+
+    public String getProduct_icon(long product_code){
+        return mPresenter.getProductIcon(product_code);
     }
 }

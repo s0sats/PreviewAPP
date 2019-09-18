@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -43,9 +43,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
-import com.namoadigital.prj001.sql.SM_SO_Sql_016;
 import com.namoadigital.prj001.sql.SM_SO_Sql_023;
 import com.namoadigital.prj001.sql.Sql_Act027_002;
 import com.namoadigital.prj001.sql.Sql_Act027_003;
@@ -59,7 +57,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -85,6 +82,7 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
+    private CardView cv_product_serial_card;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -92,6 +90,7 @@ public class Act027_Services extends BaseFragment {
 
     public interface IAct027_Services {
         void onServiceSelected(HMAux sService);
+        void onProductSerialSelected();
     }
 
     private IAct027_Services delegate;
@@ -177,6 +176,7 @@ public class Act027_Services extends BaseFragment {
         );
         //
         tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
+        cv_product_serial_card =  view.findViewById(R.id.cv_product_serial_card);
         iv_product_serial_id =  view.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
@@ -187,6 +187,12 @@ public class Act027_Services extends BaseFragment {
     private void iniAction() {
 
         sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+        cv_product_serial_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegate.onProductSerialSelected();
+            }
+        });
     }
 
     private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
@@ -223,14 +229,14 @@ public class Act027_Services extends BaseFragment {
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
-                setSerialINfo();
+                setSerialInfo();
             } else {
                 recoveryDelegate.callAct005();
             }
         }
     }
 
-    private void setSerialINfo() {
+    private void setSerialInfo() {
 
         HMAux product_serial_content = sm_so_serviceDao.getByStringHM(
                 new SM_SO_Sql_023(

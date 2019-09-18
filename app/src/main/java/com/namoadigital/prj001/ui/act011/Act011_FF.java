@@ -1,13 +1,17 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,8 +20,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -46,6 +53,10 @@ public class Act011_FF extends Fragment {
     private transient TextView tv_check_new;
     private transient TextView tv_drawer;
     private transient TextView tv_check;
+    private ImageView iv_product_serial_id;
+    private TextView tv_product_serial_id;
+    private TextView tv_product_serial_infos;
+    private CardView cv_product_serial_card;
     private HMAux hmAux_Trans;
 
     private String formStatus = "";
@@ -159,12 +170,17 @@ public class Act011_FF extends Fragment {
         tv_drawer = (TextView) view.findViewById(R.id.act011_ff_tv_drawer);
         tv_check = (TextView) view.findViewById(R.id.act011_ff_tv_check);
         tv_check_new = (TextView) view.findViewById(R.id.act011_ff_tv_check_new);
+        iv_product_serial_id = view.findViewById(R.id.iv_product_serial_id);
+        tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
+        tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
+        cv_product_serial_card = view.findViewById(R.id.cv_product_serial_card);
         //
         tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
         tv_check.setText(hmAux_Trans.get("btn_check"));
         tv_check_new.setText(hmAux_Trans.get("btn_check_new"));
         //
         loadControls(ll_controls);
+        setSerialInfo();
     }
 
     private void iniActions() {
@@ -277,6 +293,76 @@ public class Act011_FF extends Fragment {
                 if(mAct != null && mAct.allowFinalizeWithNewBtn()){
                     tv_check_new.setVisibility(View.VISIBLE);
                 }
+            }
+        }
+    }
+
+    private void setSerialInfo() {
+
+        if (mAct != null) {
+            MD_Product_Serial serialInfo = mAct.getSerialInfo();
+            long product_code =0;
+            String serial_id="";
+            try {
+                serial_id = serialInfo.getSerial_id();
+                tv_product_serial_id.setText(serial_id);
+
+                String serial_bmd = "";
+                if (serialInfo.getBrand_desc()!= null) {
+                    serial_bmd = serialInfo.getBrand_desc();
+                }
+                if (serialInfo.getModel_desc() != null) {
+                    if (serial_bmd.isEmpty()) {
+                        serial_bmd = serialInfo.getModel_desc();
+                    } else {
+                        serial_bmd = serial_bmd + " | " + serialInfo.getModel_desc();
+                    }
+                }
+                if (serialInfo.getColor_desc() != null) {
+                    if (serial_bmd.isEmpty()) {
+                        serial_bmd = serialInfo.getColor_desc();
+                    } else {
+                        serial_bmd = serial_bmd + " | " + serialInfo.getColor_desc();
+                    }
+                }
+                tv_product_serial_infos.setText(serial_bmd);
+                tv_product_serial_infos.setVisibility(View.VISIBLE);
+                if (serial_bmd.isEmpty()) {
+                    tv_product_serial_infos.setVisibility(View.GONE);
+                }
+                product_code = serialInfo.getProduct_code();
+            } catch (NullPointerException e) {
+                tv_product_serial_id.setText("NO SERIAL - TRAD");
+                tv_product_serial_infos.setText("");
+                tv_product_serial_infos.setVisibility(View.GONE);
+                product_code =0;
+            }
+            if(product_code > 0) {
+                String product_icon_name = mAct.getProduct_icon(product_code);
+                if (product_icon_name != null && !product_icon_name.isEmpty()) {
+
+                    if (ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)) {
+                        File imgFile = new File(Constant.CACHE_PATH + "/" + product_icon_name);
+                        if (imgFile.exists()) {
+                            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                            iv_product_serial_id.setImageBitmap(myBitmap);
+                        }
+                    }
+                } else {
+                    iv_product_serial_id.setVisibility(View.GONE);
+                    if(serial_id == null || serial_id.isEmpty()) {
+                        tv_product_serial_id.setVisibility(View.GONE);
+                    }
+                    tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+                    tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+                }
+            }else{
+                iv_product_serial_id.setVisibility(View.GONE);
+                if(serial_id == null || serial_id.isEmpty()) {
+                    cv_product_serial_card.setVisibility(View.GONE);
+                }
+                tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+                tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
             }
         }
     }

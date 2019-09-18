@@ -42,13 +42,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao;
 
     private MD_Product_SerialDao md_product_serialDao;
+    private MD_ProductDao md_productDao;
 
     private HMAux hmAux_Trans;
 
     private boolean bAgendado;
 
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, HMAux hmAux_Trans) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -61,6 +62,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.custom_form_blobDao = custom_form_blobDao;
         this.custom_form_blob_localDao = custom_form_blob_localDao;
         this.md_product_serialDao = md_product_serialDao;
+        this.md_productDao = md_productDao;
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -566,5 +568,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 product_code,
                 serial_id).toSqlQuery());
         return result;
+    }
+
+    @Override
+    public String getProductIcon(long product_code) {
+        MD_Product result = md_productDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code
+                ).toSqlQuery()
+        );
+        return result.getProduct_icon_name();
     }
 }
