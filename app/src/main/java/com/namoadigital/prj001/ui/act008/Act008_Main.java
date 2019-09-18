@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
@@ -79,6 +81,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private boolean forceCheckSerial = false;
     private String scheduled_site;
     private View vNFormSelected;
+    private LinearLayout contentMain;
 
     private String productCode;
     private String productDesc;
@@ -95,6 +98,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         setContentView(R.layout.act008_main);
 
         vNFormSelected = findViewById(R.id.act008_nform_in_progress);
+        contentMain = findViewById(R.id.content_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -225,6 +229,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mPresenter.getProductInfo(bundle);
         //
         initFrag();
+        contentMain.setVisibility(View.VISIBLE);
+        if(!bundle_new_serial &&
+                ToolBox_Con.hasHideSerialInfo(context)) {
+            contentMain.setVisibility(View.INVISIBLE);
+            if (ToolBox_Con.isOnline(context)) {
+
+                //Salva os dados do serial no banco local.
+                mPresenter.updateSerialData(mdProductSerial);
+                //
+                mPresenter.checkFlow();
+            }
+        }
 
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);

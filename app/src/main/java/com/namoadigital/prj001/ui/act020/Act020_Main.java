@@ -569,7 +569,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -649,15 +648,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 mPresenter.prepareAct009();
                 resetCtrlVars();
             }else{
-                if(mPresenter.getChkForHideSerialInfoPreference()){
-                    if(customFormCodeDesc.isEmpty()) {
-                        mPresenter.prepareAct009();
-                    }else{
-                        mPresenter.prepareAct011();
-                    }
-                }else {
-                    mPresenter.prepareAct008();
-                }
+                mPresenter.prepareAct008();
                 resetCtrlVars();
             }
         } else {

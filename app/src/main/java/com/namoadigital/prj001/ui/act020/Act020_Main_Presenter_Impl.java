@@ -215,9 +215,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if(!ToolBox_Con.hasHideSerialInfo(context)) {
-                                        prepareAct008();
-                                    }
+                                    prepareAct008();
                                 }
                             },
                             1
@@ -227,16 +225,12 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             }
         } else {
             //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-            if((no_serial || ToolBox_Con.hasHideSerialInfo(context))
-            && !mView.isSerial_creation()){
-                if(bundleForNFormFinishPlusNew == null ||bundleForNFormFinishPlusNew.isEmpty()) {
-                    prepareAct009();
-                }else{
-                    prepareAct011();
-                }
+            if(no_serial){
+                prepareAct009();
             }else{
                 prepareAct008();
             }
+
         }
         /**
          *  O TRECHO DE CODIGO ABAIXO, FOI COMENTADO EM 20/10/2017 POR DANIEL LUCHE
@@ -536,11 +530,6 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     // New
-
-    @Override
-    public boolean getChkForHideSerialInfoPreference() {
-        return ToolBox_Con.hasHideSerialInfo(context);
-    }
 
     @Override
     public void onBackPressedClicked() {
