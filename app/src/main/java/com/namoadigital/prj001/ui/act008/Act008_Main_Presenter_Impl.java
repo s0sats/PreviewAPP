@@ -8,12 +8,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Sync_Checklist;
@@ -32,7 +34,7 @@ import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act008_002;
+import com.namoadigital.prj001.sql.Sql_Act008_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -54,6 +56,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private Act008_Main_View mView;
     private Sync_ChecklistDao syncChecklistDao;
     private MD_ProductDao mdProductDao;
+    private GE_Custom_Form_LocalDao geCustomFormLocalDao;
     private Long product_code;
     private boolean downloadStarted = false;
     private HMAux hmAux_Trans;
@@ -64,11 +67,12 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
         this.mdProductDao = mdProductDao;
+        this.geCustomFormLocalDao = geCustomFormLocalDao;
         this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
         this.formOperationDao = formOperationDao;
@@ -89,9 +93,9 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             //se não veio serial, seta serial_id GAMBIS
             serial_id = !serial_id.equals("") ? serial_id :Constant.KEY_NO_SERIAL;
             //
-            md_product =
-                    mdProductDao.getByString(
-                            new Sql_Act008_002(
+            GE_Custom_Form_Local geCustomFormLocal =
+                    geCustomFormLocalDao.getByString(
+                            new Sql_Act008_003(
                                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                     bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
                                     bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
@@ -100,6 +104,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                             ).toSqlQuery()
                     );
             //
+            md_product  = createMdProduct(geCustomFormLocal);
             if(ToolBox_Inf.isValidProduct(md_product)){
                 MD_Product_Serial scheduledSerial = getSerialInfo(
                                                         product_code,
@@ -121,7 +126,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                                     product_code
                             ).toSqlQuery()
                     );
-
         }
         //
         if (ToolBox_Inf.isValidProduct(md_product)) {
@@ -134,6 +138,33 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 //                    hmAux_Trans.get("alert_product_not_found_msg")
 //            );
         }
+    }
+
+    private MD_Product createMdProduct(GE_Custom_Form_Local geCustomFormLocal) {
+        MD_Product product = new MD_Product();
+        product.setCustomer_code(geCustomFormLocal.getCustomer_code());
+        product.setProduct_code(geCustomFormLocal.getCustom_product_code());
+        product.setProduct_id(geCustomFormLocal.getCustom_product_id());
+        product.setProduct_desc(geCustomFormLocal.getCustom_product_desc());
+        product.setRequire_serial(geCustomFormLocal.getRequire_serial());
+        product.setAllow_new_serial_cl(geCustomFormLocal.getAllow_new_serial_cl());
+        product.setUn("TST");
+        product.setSketch_code(0);
+        product.setSketch_url("");
+        product.setSketch_url_local("");
+        product.setSketch_lines(0);
+        product.setSketch_columns(0);
+        product.setSketch_color("#FFFFFF");
+        product.setFlag_offline(1);
+        product.setLocal_control(geCustomFormLocal.getLocal_control());
+        product.setIo_control(geCustomFormLocal.getIo_control());
+        product.setSerial_rule(geCustomFormLocal.getSerial_rule());
+        product.setSerial_min_length(geCustomFormLocal.getSerial_min_length());
+        product.setSerial_max_length(geCustomFormLocal.getSerial_max_length());
+        product.setSite_restriction(geCustomFormLocal.getSite_restriction());
+        product.setProduct_icon_name(null);
+        product.setProduct_icon_url(null);
+        return product;
     }
 
     @Override

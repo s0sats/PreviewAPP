@@ -213,6 +213,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
                 bundle_product_code,
                 hmAux_Trans,
                 new GE_Custom_Form_OperationDao(
