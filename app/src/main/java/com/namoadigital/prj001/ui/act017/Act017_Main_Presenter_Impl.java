@@ -24,7 +24,6 @@ import com.namoadigital.prj001.sql.Sql_Act017_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -277,11 +276,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             mView.callAct011(context, bundle);
         } else if (hasSerial) {
             bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-            if(ToolBox_Con.hasHideSerialInfo(context)){
-                mView.callAct011(context, bundle);
-            }else {
-                mView.callAct008(context, bundle);
-            }
+            mView.callAct008(context, bundle);
         } else {
             if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
                     && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
