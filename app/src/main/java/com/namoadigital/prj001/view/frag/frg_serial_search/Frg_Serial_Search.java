@@ -214,7 +214,7 @@ public class Frg_Serial_Search extends Fragment {
                 Caso haja o perfil, desabilita a opcao e mantem sempre como verdadeiro a premissa
                 de ocultar os dados do serial
              */
-            chk_hide_serial_info.setEnabled(!mPresenter.getProfileForHideSerialInfo());
+            chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
         }else{
             chk_hide_serial_info.setVisibility(View.GONE);
         }

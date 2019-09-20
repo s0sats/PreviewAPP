@@ -8,5 +8,7 @@ public interface Frg_Serial_Search_Contract {
         boolean getChkForHideSerialInfoPreference();
 
         boolean getProfileForHideSerialInfo();
+
+        boolean getProfileForceNotShowSerialInfo();
     }
 }

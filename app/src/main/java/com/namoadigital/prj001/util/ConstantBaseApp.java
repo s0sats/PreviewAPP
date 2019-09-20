@@ -100,6 +100,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRG_FAVORITE_LIST = "act050_frag_favorite";
 
     public static final String HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
+    public static final String FORCE_NOT_SHOW_SERIAL_INFO = "FORCE_NOT_SHOW_SERIAL_INFO";
     public static final String FRAG_SEARCH_PRODUCT_ID_RECOVER = "frag_search_product_id_recover";
     public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
     public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
