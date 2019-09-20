@@ -43,7 +43,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
-import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +195,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 do servico de OS.
         */
         if(!bundle_new_serial &&
-                ToolBox_Con.hasHideSerialInfo(context) && hide_serial_info &&
+                ToolBox_Con.hasForceNotShowSerialInfo(context) && hide_serial_info &&
                 !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
             contentMain.setVisibility(View.INVISIBLE);
             if(ToolBox_Con.isOnline(context)) {
@@ -206,7 +205,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(ToolBox_Con.hasHideSerialInfo(context)){
+                        if(ToolBox_Con.hasForceNotShowSerialInfo(context)){
                             onBackPressed();
                         }
                     }

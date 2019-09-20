@@ -207,14 +207,21 @@ public class Frg_Serial_Search extends Fragment {
         //
         chk_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
         if(mFragListener.hasHideSerialInfoChk()) {
-            chk_hide_serial_info.setVisibility(View.VISIBLE);
-            chk_hide_serial_info.setChecked(mPresenter.getChkForHideSerialInfoPreference());
+            if(!mPresenter.getProfileForHideSerialInfo()
+            && !mPresenter.getProfileForceNotShowSerialInfo()) {
+                chk_hide_serial_info.setVisibility(View.GONE);
+            }else {
+                if(mPresenter.getProfileForHideSerialInfo()){
+                    chk_hide_serial_info.setVisibility(View.VISIBLE);
+                }
+            }
             /*
                 13/09/2019 BARRIONUEVO
                 Caso haja o perfil, desabilita a opcao e mantem sempre como verdadeiro a premissa
                 de ocultar os dados do serial
-             */
+            */
             chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
+            chk_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
         }else{
             chk_hide_serial_info.setVisibility(View.GONE);
         }
@@ -341,7 +348,9 @@ public class Frg_Serial_Search extends Fragment {
                             0
                     );
                 } else {
-                    mPresenter.setChkForHideSerialInfoPreference(chk_hide_serial_info.isChecked());
+                    if(mFragListener.hasHideSerialInfoChk()) {
+                        mPresenter.setChkForHideSerialInfoPreference(chk_hide_serial_info.isChecked());
+                    }
                     if (delegate != null) {
                         delegate.onSearchClick(
                                 btnAction,

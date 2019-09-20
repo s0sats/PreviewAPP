@@ -66,6 +66,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
     private String ioPrefix;
     private String ioCode;
     private boolean itemSavedOk = true;
+    private boolean avoid_serial_hide;
 
 
     @Override
@@ -178,7 +179,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         //
         initFrag();
         //
-        if(ToolBox_Con.hasHideSerialInfo(context) && !bundle_new_serial){
+        if(ToolBox_Con.hasForceNotShowSerialInfo(context) && !bundle_new_serial && !avoid_serial_hide){
             contentMain.setVisibility(View.INVISIBLE);
             checkFlow();
         }else{
@@ -193,6 +194,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
             requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT051);
+            avoid_serial_hide = bundle.getBoolean(ConstantBaseApp.AVOID_SERIAL_HIDE, false);
             //
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                 mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
@@ -211,6 +213,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             isIoProcess = false;
             ioPrefix ="-1";
             ioCode = "-1";
+            avoid_serial_hide =false;
         }
     }
 
@@ -592,7 +595,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                     //
                     onBackPressed();
                 }else{
-                    if(ToolBox_Con.hasHideSerialInfo(context)) {
+                    if(ToolBox_Con.hasForceNotShowSerialInfo(context)) {
                         callAct062();
                     }
                 }

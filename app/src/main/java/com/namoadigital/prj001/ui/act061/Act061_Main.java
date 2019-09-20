@@ -752,6 +752,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT061);
             bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(mPrefix));
             bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(mCode));
+            bundle.putBoolean(ConstantBaseApp.AVOID_SERIAL_HIDE, true);
 
             mIntent.putExtras(bundle);
             //

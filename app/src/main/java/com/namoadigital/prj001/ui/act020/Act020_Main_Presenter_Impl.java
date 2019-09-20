@@ -35,7 +35,6 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -440,7 +439,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             bundle.putString(MD_ProductDao.PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(MD_ProductDao.PRODUCT_ID, tProductSerial.getProduct_id());
 
-            if(ToolBox_Con.hasHideSerialInfo(context)){
+            if(ToolBox_Con.hasForceNotShowSerialInfo(context)){
                 bundle.putString(MD_Product_SerialDao.SERIAL_ID, tProductSerial.getSerial_id());
             }else {
                 bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id() : "");

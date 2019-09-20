@@ -47,7 +47,6 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
@@ -235,7 +234,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         initFrag();
         contentMain.setVisibility(View.VISIBLE);
         if(!bundle_new_serial &&
-                ToolBox_Con.hasHideSerialInfo(context)) {
+                ToolBox_Con.hasForceNotShowSerialInfo(context)) {
             contentMain.setVisibility(View.INVISIBLE);
             if (ToolBox_Con.isOnline(context)) {
 
