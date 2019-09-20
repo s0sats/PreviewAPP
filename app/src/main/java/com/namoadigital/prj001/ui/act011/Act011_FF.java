@@ -180,7 +180,12 @@ public class Act011_FF extends Fragment {
         tv_check_new.setText(hmAux_Trans.get("btn_check_new"));
         //
         loadControls(ll_controls);
-        setSerialInfo();
+        if(tabIndex == 1) {
+            cv_product_serial_card.setVisibility(View.VISIBLE);
+            setSerialInfo();
+        }else{
+            cv_product_serial_card.setVisibility(View.GONE);
+        }
     }
 
     private void iniActions() {
