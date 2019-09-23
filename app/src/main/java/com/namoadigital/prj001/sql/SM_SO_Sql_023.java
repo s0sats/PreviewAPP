@@ -44,11 +44,11 @@ public class SM_SO_Sql_023 implements Specification {
                         MD_Brand_ColorDao.COLOR_DESC+" ,\n" +
                         MD_ProductDao.PRODUCT_ICON_NAME +" \n" +
                         " FROM\n" + SM_SODao.TABLE + " S\n" +
-                        "  INNER JOIN\n" +
+                        "  LEFT JOIN\n" +
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
                         "                             and ps.product_code = s.product_code \n" +
                         "                             and ps.serial_code = s.serial_code\n" +
-                        "  INNER JOIN\n" +
+                        "  LEFT JOIN\n" +
                         MD_ProductDao.TABLE +"        p on p.customer_code = s.customer_code\n" +
                         "                             and p.product_code = s.product_code \n" +
                         " WHERE\n" +

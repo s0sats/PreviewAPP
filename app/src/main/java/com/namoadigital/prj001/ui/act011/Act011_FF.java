@@ -335,35 +335,26 @@ public class Act011_FF extends Fragment {
                 if (serial_bmd.isEmpty()) {
                     tv_product_serial_infos.setVisibility(View.GONE);
                 }
-                product_code = serialInfo.getProduct_code();
             } catch (NullPointerException e) {
-                tv_product_serial_id.setText("NO SERIAL - TRAD");
+                tv_product_serial_id.setText(hmAux_Trans.get("lbl_no_serial_placeholder"));
                 tv_product_serial_infos.setText("");
                 tv_product_serial_infos.setVisibility(View.GONE);
-                product_code =0;
             }
-            if(product_code > 0) {
-                String product_icon_name = mAct.getProduct_icon(product_code);
-                if (product_icon_name != null && !product_icon_name.isEmpty()) {
 
-                    if (ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)) {
-                        File imgFile = new File(Constant.CACHE_PATH + "/" + product_icon_name);
-                        if (imgFile.exists()) {
-                            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                            iv_product_serial_id.setImageBitmap(myBitmap);
-                        }
+            String product_icon_name = mAct.getProduct_icon();
+            if (product_icon_name != null && !product_icon_name.isEmpty()) {
+
+                if (ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)) {
+                    File imgFile = new File(Constant.CACHE_PATH + "/" + product_icon_name);
+                    if (imgFile.exists()) {
+                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        iv_product_serial_id.setImageBitmap(myBitmap);
                     }
-                } else {
-                    iv_product_serial_id.setVisibility(View.GONE);
-                    if(serial_id == null || serial_id.isEmpty()) {
-                        tv_product_serial_id.setVisibility(View.GONE);
-                    }
-                    tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-                    tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 }
-            }else{
+            } else {
                 iv_product_serial_id.setVisibility(View.GONE);
                 if(serial_id == null || serial_id.isEmpty()) {
+                    tv_product_serial_id.setVisibility(View.GONE);
                     cv_product_serial_card.setVisibility(View.GONE);
                 }
                 tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);

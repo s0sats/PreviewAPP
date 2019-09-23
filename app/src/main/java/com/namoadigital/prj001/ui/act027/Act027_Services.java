@@ -276,25 +276,29 @@ public class Act027_Services extends BaseFragment {
             if(serial_bmd.isEmpty()){
                 tv_product_serial_infos.setVisibility(View.GONE);
             }
+
+            if(product_serial_content.hasConsistentValue(MD_ProductDao.PRODUCT_ICON_NAME)
+                    && !product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).isEmpty()){
+                if(ToolBox_Inf.verifyDownloadFileInf(product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), Constant.CACHE_PATH)){
+                    File imgFile = new  File(Constant.CACHE_PATH + "/" + product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase());
+                    if(imgFile.exists()){
+                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        iv_product_serial_id.setImageBitmap(myBitmap);
+                    }
+                }
+            }else{
+                iv_product_serial_id.setVisibility(View.GONE);
+                tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+                tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+            }
+
         }catch (NullPointerException e){
             tv_product_serial_infos.setText("");
             tv_product_serial_infos.setVisibility(View.GONE);
+            cv_product_serial_card.setVisibility(View.GONE);
         }
 
-        if(product_serial_content.hasConsistentValue(MD_ProductDao.PRODUCT_ICON_NAME)
-        && !product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).isEmpty()){
-            if(ToolBox_Inf.verifyDownloadFileInf(product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), Constant.CACHE_PATH)){
-                File imgFile = new  File(Constant.CACHE_PATH + "/" + product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase());
-                if(imgFile.exists()){
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    iv_product_serial_id.setImageBitmap(myBitmap);
-                }
-            }
-        }else{
-            iv_product_serial_id.setVisibility(View.GONE);
-            tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-            tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-        }
+
     }
 
     public void setServiceAdapter(boolean isChecked) {

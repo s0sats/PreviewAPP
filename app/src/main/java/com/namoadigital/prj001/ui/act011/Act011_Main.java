@@ -297,6 +297,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_location_info_aquired_succesfully");
         transList.add("alert_location_info_aquired_unsuccesfully");
         transList.add("alert_schedule_comment_ttl");
+        transList.add("lbl_no_serial_placeholder");
 
         transList.add("dialog_finalize_option_ttl");
         transList.add("dialog_finalize_option_finalize_lbl");
@@ -3052,7 +3053,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 serial_id);
     }
 
-    public String getProduct_icon(long product_code){
-        return mPresenter.getProductIcon(product_code);
+    public String getProduct_icon(){
+        return mPresenter.getProductIcon(Long.parseLong(product_code));
     }
 }
