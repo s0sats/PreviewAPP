@@ -562,6 +562,9 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        if(contentMain.getVisibility() == View.INVISIBLE){
+            mPresenter.onBackPressedClicked();
+        }
         disableProgressDialog();
     }
 
@@ -707,6 +710,9 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        if(contentMain.getVisibility() == View.INVISIBLE){
+            mPresenter.onBackPressedClicked();
+        }
         progressDialog.dismiss();
     }
 
