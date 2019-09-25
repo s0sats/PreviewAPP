@@ -580,6 +580,8 @@ public class WS_DownLoad_Picture extends IntentService {
                         );
                         //
                         ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), "");
+
+                        file_address = Constant.CACHE_PATH + "/" + hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
                     }
 
                     //Atualiza campo com url local
@@ -587,7 +589,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             new MD_Product_Sql_008(
                                     customer_code,
                                     hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                                    hmAux.get(MD_ProductDao.PRODUCT_ICON_URL)
+                                    file_address
                             ).toSqlQuery()
                     );
                 } catch (Exception e) {

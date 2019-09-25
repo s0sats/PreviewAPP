@@ -23,6 +23,7 @@ public class MD_Product_Sql_007 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
+                        MD_ProductDao.PRODUCT_CODE + ", " +
                         MD_ProductDao.PRODUCT_ICON_URL + ", " +
                         MD_ProductDao.PRODUCT_ICON_NAME + " " +
                         " FROM\n" +
@@ -30,7 +31,8 @@ public class MD_Product_Sql_007 implements Specification {
                         " WHERE\n" +
                         "   p."+MD_ProductDao.CUSTOMER_CODE+" = '"+customer_code+"'\n" +
                         "   and p."+MD_ProductDao.PRODUCT_ICON_URL+" is not null\n" +
-                        "   and p."+MD_ProductDao.PRODUCT_ICON_NAME+" is not null")
+                        "   and p."+MD_ProductDao.PRODUCT_ICON_NAME+" is not null\n" +
+                        "   and p."+MD_ProductDao.PRODUCT_ICON_URL_LOCAL+" = ''" )
                 .append(";")
                 //.append(HmAuxFields+"#"+PROD_FILE_LOCAL_NAME)
                 .toString();

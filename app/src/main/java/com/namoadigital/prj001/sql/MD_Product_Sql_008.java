@@ -11,12 +11,12 @@ import com.namoadigital.prj001.database.Specification;
 public class MD_Product_Sql_008 implements Specification {
     private long customer_code;
     private String product_code;
-    private String product_icon_url;
+    private String product_icon_url_local;
 
-    public MD_Product_Sql_008(long customer_code, String product_code, String product_icon_url) {
+    public MD_Product_Sql_008(long customer_code, String product_code, String product_icon_url_local) {
         this.customer_code = customer_code;
         this.product_code = product_code;
-        this.product_icon_url = product_icon_url;
+        this.product_icon_url_local = product_icon_url_local;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class MD_Product_Sql_008 implements Specification {
 
         return sb
                 .append(" UPDATE "+ MD_ProductDao.TABLE +" SET\n" +
-                        "   product_icon_url = '"+product_icon_url+"'\n" +
+                        "   product_icon_url_local = '"+product_icon_url_local+"'\n" +
                         " WHERE\n" +
                         "   "+MD_ProductDao.CUSTOMER_CODE+" = '"+customer_code+"'\n" +
                         "   and "+MD_ProductDao.PRODUCT_CODE+" = '"+product_code+"'")
