@@ -2390,7 +2390,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         TextView tv_info_2_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_val);
         TextView tv_info_3_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_val);
 
-
         TextView tv_serial_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
         TextView tv_class_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_class_id_lbl);
         TextView tv_category_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_category_code_lbl);
@@ -2402,72 +2401,57 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         TextView tv_info_2_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_lbl);
         TextView tv_info_3_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_lbl);
 
+        //Campos que sempre existem
+        tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
+        tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
+        tv_form_title.setText(hmAux_Trans.get("dialog_info_form_ttl"));
+        tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
+        tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
+        tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
+        tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
+        tv_product_desc.setText(product_desc);
+        tv_serial_val.setText(serial_id);
+        tv_form_type_desc.setText(type + " - " + type_desc);
+        tv_form_code_val.setText(form);
+        tv_form_code_desc.setText(form_desc);
+        tv_form_version_val.setText(form_version);
+
+        //Campos do Serial podem ou não existir
         MD_Product_Serial serial = null;
 
         if(serial_id == null || serial_id.isEmpty()) {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
         }else{
-             serial = mPresenter.getSerialInfo(
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    Integer.parseInt(product_code),
-                    serial_id
-            );
+             serial = getSerialInfo();
+             //
+            if(serial != null) {
+                setDescriptions(tv_descriptions, serial);
+                setSerialInfo(ll_serial, tv_serial_code_val, serial.getSerial_id());
+                setSerialInfo(ll_class, tv_classe_id_val, serial.getClass_id());
+                setSerialInfo(ll_category, tv_categoria_code_val, serial.getCategory_price_id(), serial.getCategory_price_desc());
+                setSerialInfo(ll_segment, tv_segmento_val, serial.getSegment_id(), serial.getSegment_desc());
+                setSerialInfo(ll_site, tv_site_val, serial.getSite_id(), serial.getSite_desc());
+                setSerialInfo(ll_zone, tv_zona_val, serial.getZone_id(), serial.getZone_desc());
+                setSerialInfo(ll_position, tv_posicao_val, serial.getLocal_id());
+                setTrackingListForm(ll_tracking, ll_tracking_val, serial);
+                setSerialInfo(ll_info_1, tv_info_1_val, serial.getAdd_inf1());
+                setSerialInfo(ll_info_2, tv_info_2_val, serial.getAdd_inf2());
+                setSerialInfo(ll_info_3, tv_info_3_val, serial.getAdd_inf3());
+            }
+            //
+            tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
+            tv_class_id_lbl.setText(hmAux_Trans.get("dialog_info_class_lbl"));
+            tv_category_code_lbl.setText(hmAux_Trans.get("dialog_info_category_lbl"));
+            tv_segment_lbl.setText(hmAux_Trans.get("dialog_info_segment_lbl"));
+            tv_site_lbl.setText(hmAux_Trans.get("dialog_info_site_lbl"));
+            tv_zone_lbl.setText(hmAux_Trans.get("dialog_info_zone_lbl"));
+            tv_position_lbl.setText(hmAux_Trans.get("dialog_info_position_lbl"));
+            tv_info_1_lbl.setText(hmAux_Trans.get("dialog_info_add_info_1_lbl"));
+            tv_info_2_lbl.setText(hmAux_Trans.get("dialog_info_add_info_2_lbl"));
+            tv_info_3_lbl.setText(hmAux_Trans.get("dialog_info_add_info_3_lbl"));
         }
-
-        if(serial!= null) {
-            setDescriptions(tv_descriptions, serial);
-            setSerialInfo(ll_serial, tv_serial_code_val, serial.getSerial_id());
-            setSerialInfo(ll_class, tv_classe_id_val, serial.getClass_id());
-            setSerialInfo(ll_category, tv_categoria_code_val, serial.getCategory_price_id(), serial.getCategory_price_desc());
-            setSerialInfo(ll_segment, tv_segmento_val, serial.getSegment_id(), serial.getSegment_desc());
-            setSerialInfo(ll_site, tv_site_val, serial.getSite_id(), serial.getSite_desc());
-            setSerialInfo(ll_zone, tv_zona_val, serial.getZone_id(), serial.getZone_desc());
-            setSerialInfo(ll_position, tv_posicao_val, serial.getLocal_id());
-            setTrackingListForm(ll_tracking, ll_tracking_val, serial);
-            setSerialInfo(ll_info_1, tv_info_1_val, serial.getAdd_inf1());
-            setSerialInfo(ll_info_2, tv_info_2_val, serial.getAdd_inf2());
-            setSerialInfo(ll_info_3, tv_info_3_val, serial.getAdd_inf3());
-        }
-
-        tv_class_id_lbl.setText(hmAux_Trans.get("dialog_info_class_lbl"));
-        tv_category_code_lbl.setText(hmAux_Trans.get("dialog_info_category_lbl"));
-        tv_segment_lbl.setText(hmAux_Trans.get("dialog_info_segment_lbl"));
-        tv_site_lbl.setText(hmAux_Trans.get("dialog_info_site_lbl"));
-        tv_zone_lbl.setText(hmAux_Trans.get("dialog_info_zone_lbl"));
-        tv_position_lbl.setText(hmAux_Trans.get("dialog_info_position_lbl"));
-        tv_info_1_lbl.setText(hmAux_Trans.get("dialog_info_add_info_1_lbl"));
-        tv_info_2_lbl.setText(hmAux_Trans.get("dialog_info_add_info_2_lbl"));
-        tv_info_3_lbl.setText(hmAux_Trans.get("dialog_info_add_info_3_lbl"));
-
-        tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
-//        tv_product_id_lbl.setText(hmAux_Trans.get("dialog_info_product_id_lbl"));
-        tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
-//        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
-        tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
-
-        tv_form_title.setText(hmAux_Trans.get("dialog_info_form_ttl"));
-        tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
-        tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
-        tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
-
-        tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
-
-//        tv_product_code_val.setText(product_code);
-        tv_product_desc.setText(product_desc);
-
-//        tv_product_id_val.setText(product_id);
-
-        tv_serial_val.setText(serial_id);
-
-
-        tv_form_type_desc.setText(type + " - " + type_desc);
-
-        tv_form_code_val.setText(form);
-        tv_form_code_desc.setText(form_desc);
-
-        tv_form_version_val.setText(form_version);
-
+        //Campos da S.O que podem ou não existir
         if (mSo_Code != null) {
             tv_so_code_desc.setText(String.valueOf(mSo_Prefix) + "." + String.valueOf(mSo_Code));
         } else {
@@ -2496,12 +2480,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 ).toSqlQuery()
 
         );
+        //Dados do agendamento
         if (dialogFormLocal != null && dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).length() > 0) {
-
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
-
             //
             ll_schedule_info.setVisibility(View.VISIBLE);
             tv_data_serv_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
@@ -3050,10 +3033,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         return mPresenter.getSerialInfo(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 Integer.parseInt(product_code),
-                serial_id);
+                serial_id,
+                formLocal
+        );
     }
 
     public String getProduct_icon(){
-        return mPresenter.getProductIcon(Long.parseLong(product_code));
+        //return mPresenter.getProductIcon(Long.parseLong(product_code));
+        return formLocal != null ? formLocal.getCustom_product_icon_name(): "";
     }
 }

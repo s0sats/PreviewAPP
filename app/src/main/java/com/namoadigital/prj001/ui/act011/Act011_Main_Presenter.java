@@ -27,7 +27,7 @@ public interface Act011_Main_Presenter {
 
     boolean checkNFormExists(GE_Custom_Form_Local formLocal);
 
-    MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id);
+    MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id, GE_Custom_Form_Local formLocal);
 
     String getProductIcon(long product_code);
 }

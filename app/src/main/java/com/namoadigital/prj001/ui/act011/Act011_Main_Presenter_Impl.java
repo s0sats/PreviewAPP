@@ -162,6 +162,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
+            //customFormLocal.setCustom_product_icon_name(getProductIcon());
             customFormLocal.setCustom_form_type_desc(formtype_desc);
             customFormLocal.setCustom_form_desc(formcode_desc);
             customFormLocal.setSerial_id(serial_id);
@@ -563,10 +564,26 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
 
     @Override
-    public MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id) {
+    public MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id, GE_Custom_Form_Local formLocal) {
         MD_Product_Serial result = md_product_serialDao.getByString(new MD_Product_Serial_Sql_016(customer_code,
                 product_code,
                 serial_id).toSqlQuery());
+        //LUCHE - 25/09/2019
+        //Como o usr pode perder acesso ao serial, caso ele não exista na base local,
+        //"cria" obj com dados basicos apenas para exibição minima
+        if(result == null){
+            result = new MD_Product_Serial();
+            if(formLocal != null) {
+                result.setCustomer_code(customer_code);
+                result.setProduct_code(product_code);
+                result.setProduct_id(formLocal.getCustom_product_id());
+                result.setProduct_desc(formLocal.getCustom_product_desc());
+                result.setSerial_id(serial_id);
+            }else{
+                //ISSO NUNCA DERIA ACONTECER
+            }
+        }
+        //
         return result;
     }
 
