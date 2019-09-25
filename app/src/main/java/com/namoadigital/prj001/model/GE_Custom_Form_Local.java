@@ -21,6 +21,9 @@ public class GE_Custom_Form_Local {
     private int custom_product_code;
     private String custom_product_desc;
     private String custom_product_id;
+    private String custom_product_icon_name;
+    private String custom_product_icon_url;
+    private String custom_product_icon_url_local;
     private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
@@ -168,6 +171,30 @@ public class GE_Custom_Form_Local {
 
     public void setCustom_product_id(String custom_product_id) {
         this.custom_product_id = custom_product_id;
+    }
+
+    public String getCustom_product_icon_name() {
+        return custom_product_icon_name;
+    }
+
+    public void setCustom_product_icon_name(String custom_product_icon_name) {
+        this.custom_product_icon_name = custom_product_icon_name;
+    }
+
+    public String getCustom_product_icon_url() {
+        return custom_product_icon_url;
+    }
+
+    public void setCustom_product_icon_url(String custom_product_icon_url) {
+        this.custom_product_icon_url = custom_product_icon_url;
+    }
+
+    public String getCustom_product_icon_url_local() {
+        return custom_product_icon_url_local;
+    }
+
+    public void setCustom_product_icon_url_local(String custom_product_icon_url_local) {
+        this.custom_product_icon_url_local = custom_product_icon_url_local;
     }
 
     public String getCustom_form_type_desc() {

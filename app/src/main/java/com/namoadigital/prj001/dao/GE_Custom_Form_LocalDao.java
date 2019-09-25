@@ -39,6 +39,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String CUSTOM_PRODUCT_CODE = "custom_product_code";
     public static final String CUSTOM_PRODUCT_DESC = "custom_product_desc";
     public static final String CUSTOM_PRODUCT_ID = "custom_product_id";
+    public static final String CUSTOM_PRODUCT_ICON_NAME = "custom_product_icon_name";
+    public static final String CUSTOM_PRODUCT_ICON_URL = "custom_product_icon_url";
+    public static final String CUSTOM_PRODUCT_ICON_URL_LOCAL = "custom_product_icon_url_local";
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     public static final String SERIAL_ID = "serial_id";
@@ -484,6 +487,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setCustom_product_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_PRODUCT_CODE)));
             custom_form_local.setCustom_product_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_DESC)));
             custom_form_local.setCustom_product_id(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_ID)));
+            custom_form_local.setCustom_product_icon_name(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_ICON_NAME)));
+            custom_form_local.setCustom_product_icon_url(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_ICON_URL)));
+            custom_form_local.setCustom_product_icon_url_local(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_ICON_URL_LOCAL)));
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
             custom_form_local.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
@@ -584,6 +590,15 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             if (custom_form_local.getCustom_product_id() != null) {
                 contentValues.put(CUSTOM_PRODUCT_ID, custom_form_local.getCustom_product_id());
+            }
+            if (custom_form_local.getCustom_product_icon_name() != null) {
+                contentValues.put(CUSTOM_PRODUCT_ICON_NAME, custom_form_local.getCustom_product_icon_name());
+            }
+            if (custom_form_local.getCustom_product_icon_url() != null) {
+                contentValues.put(CUSTOM_PRODUCT_ICON_URL, custom_form_local.getCustom_product_icon_url());
+            }
+            if (custom_form_local.getCustom_product_icon_url_local() != null) {
+                contentValues.put(CUSTOM_PRODUCT_ICON_URL_LOCAL, custom_form_local.getCustom_product_icon_url_local());
             }
             if (custom_form_local.getCustom_form_type_desc() != null) {
                 contentValues.put(CUSTOM_FORM_TYPE_DESC, custom_form_local.getCustom_form_type_desc());
