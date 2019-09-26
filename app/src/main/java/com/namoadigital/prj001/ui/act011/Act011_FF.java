@@ -302,48 +302,37 @@ public class Act011_FF extends Fragment {
         }
     }
 
+    /**
+     * Metodo que popula as informações do card de Produto Serial
+     */
     private void setSerialInfo() {
-
         if (mAct != null) {
             MD_Product_Serial serialInfo = mAct.getSerialInfo();
-            long product_code =0;
-            String serial_id="";
-            try {
-                serial_id = serialInfo.getSerial_id();
-                tv_product_serial_id.setText(serial_id);
-
-                String serial_bmd = "";
-                if (serialInfo.getBrand_desc()!= null) {
-                    serial_bmd = serialInfo.getBrand_desc();
-                }
-                if (serialInfo.getModel_desc() != null) {
+            String serial_id = serialInfo.getSerial_id();
+            //Se existe serial, tenta preencher infos de Brand ,model e color
+            if(serial_id != null && !serial_id.isEmpty()) {
+                try {
+                    tv_product_serial_id.setText(serial_id);
+                    String serial_bmd =
+                        ToolBox_Inf.formatSerialBrandModelColor(serialInfo) != null ? ToolBox_Inf.formatSerialBrandModelColor(serialInfo) : "" ;
+                    tv_product_serial_infos.setText(serial_bmd);
+                    tv_product_serial_infos.setVisibility(View.VISIBLE);
                     if (serial_bmd.isEmpty()) {
-                        serial_bmd = serialInfo.getModel_desc();
-                    } else {
-                        serial_bmd = serial_bmd + " | " + serialInfo.getModel_desc();
+                        tv_product_serial_infos.setVisibility(View.GONE);
                     }
-                }
-                if (serialInfo.getColor_desc() != null) {
-                    if (serial_bmd.isEmpty()) {
-                        serial_bmd = serialInfo.getColor_desc();
-                    } else {
-                        serial_bmd = serial_bmd + " | " + serialInfo.getColor_desc();
-                    }
-                }
-                tv_product_serial_infos.setText(serial_bmd);
-                tv_product_serial_infos.setVisibility(View.VISIBLE);
-                if (serial_bmd.isEmpty()) {
+                } catch (NullPointerException e) {
+                    tv_product_serial_id.setText(hmAux_Trans.get("lbl_no_serial_placeholder"));
+                    tv_product_serial_infos.setText("");
                     tv_product_serial_infos.setVisibility(View.GONE);
                 }
-            } catch (NullPointerException e) {
+            } else{
                 tv_product_serial_id.setText(hmAux_Trans.get("lbl_no_serial_placeholder"));
                 tv_product_serial_infos.setText("");
                 tv_product_serial_infos.setVisibility(View.GONE);
             }
-
+            //Defini a exibição dos dados do produto
             String product_icon_name = mAct.getProduct_icon();
             if (product_icon_name != null && !product_icon_name.isEmpty()) {
-
                 if (ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)) {
                     File imgFile = new File(Constant.CACHE_PATH + "/" + product_icon_name);
                     if (imgFile.exists()) {

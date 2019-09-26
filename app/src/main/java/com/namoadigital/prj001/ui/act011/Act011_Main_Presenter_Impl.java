@@ -148,7 +148,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ).toSqlQuery().toString().toLowerCase()
 
             );
-
+            MD_Product productInfo = getProduct(Integer.parseInt(product_code));
+            //
             customFormLocal = new GE_Custom_Form_Local();
 
             customFormLocal.setCustomer_code(customForm.getCustomer_code());
@@ -162,7 +163,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
-            //customFormLocal.setCustom_product_icon_name(getProductIcon());
+            customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
+            customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
+            customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
             customFormLocal.setCustom_form_type_desc(formtype_desc);
             customFormLocal.setCustom_form_desc(formcode_desc);
             customFormLocal.setSerial_id(serial_id);
@@ -587,14 +590,23 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return result;
     }
 
-    @Override
-    public String getProductIcon(long product_code) {
+    /**
+     * LUCHE - 26/09/2019
+     * Metodo que busca obj do produto usado no form
+     * Chamado apenas na criação de form para setar no obj formLocal
+     * o nome e URL do icone do prod
+     *
+     * @param product_code
+     * @return
+     */
+    private MD_Product getProduct(long product_code) {
         MD_Product result = md_productDao.getByString(
-                new MD_Product_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code
-                ).toSqlQuery()
+            new MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                product_code
+            ).toSqlQuery()
         );
-        return result.getProduct_icon_name();
+        //
+        return result != null ? result : new MD_Product() ;
     }
 }

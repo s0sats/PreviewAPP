@@ -29,5 +29,4 @@ public interface Act011_Main_Presenter {
 
     MD_Product_Serial getSerialInfo(long customer_code, long product_code, String serial_id, GE_Custom_Form_Local formLocal);
 
-    String getProductIcon(long product_code);
 }
