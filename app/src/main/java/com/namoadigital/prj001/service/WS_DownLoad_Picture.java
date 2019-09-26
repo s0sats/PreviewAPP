@@ -581,7 +581,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         //
                         ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), "");
 
-                        file_address = Constant.CACHE_PATH + "/" + hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
+                        file_address = hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
                     }
 
                     //Atualiza campo com url local

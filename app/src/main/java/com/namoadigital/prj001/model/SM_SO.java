@@ -125,6 +125,11 @@ public class SM_SO {
     private ArrayList<SM_SO_Pack> pack = new ArrayList<>();
     @Expose
     private ArrayList<SM_SO_Product_Event> product_event = new ArrayList<>();
+    @Expose
+    private String product_icon_name;
+    @Expose
+    private String product_icon_url;
+    private String product_icon_url_local;
 
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
@@ -754,5 +759,29 @@ public class SM_SO {
 
     public void setClient_so_id(String client_so_id) {
         this.client_so_id = client_so_id;
+    }
+
+    public String getProduct_icon_name() {
+        return product_icon_name;
+    }
+
+    public void setProduct_icon_name(String product_icon_name) {
+        this.product_icon_name = product_icon_name;
+    }
+
+    public String getProduct_icon_url() {
+        return product_icon_url;
+    }
+
+    public void setProduct_icon_url(String product_icon_url) {
+        this.product_icon_url = product_icon_url;
+    }
+
+    public String getProduct_icon_url_local() {
+        return product_icon_url_local;
+    }
+
+    public void setProduct_icon_url_local(String product_icon_url_local) {
+        this.product_icon_url_local = product_icon_url_local;
     }
 }
