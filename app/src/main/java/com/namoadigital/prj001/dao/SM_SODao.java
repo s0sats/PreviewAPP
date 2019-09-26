@@ -106,6 +106,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String LOG_DATE = "log_date";
     public static final String TOKEN = "token";
 
+    public static final String PRODUCT_ICON_NAME = "product_icon_name";
+    public static final String PRODUCT_ICON_URL = "product_icon_url";
+    public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
+
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
             PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, CATEGORY_PRICE_CODE, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC,
             SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, SITE_CODE, SITE_ID, SITE_DESC, OPERATION_CODE, OPERATION_ID, OPERATION_DESC,
@@ -114,7 +118,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             DEADLINE, ORIGIN, CLIENT_TYPE, CLIENT_USER, CLIENT_CODE, CLIENT_ID, CLIENT_NAME, CLIENT_EMAIL, CLIENT_PHONE, CLIENT_APPROVAL_IMAGE,
             CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
-            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN
+            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN,
+            PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL
     };
 
     public SM_SODao(Context context) {
@@ -750,6 +755,19 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             //
             so.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
+            if (cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_NAME))) {
+                so.setProduct_icon_name(null);
+            } else {
+                so.setProduct_icon_name(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_NAME)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_URL))) {
+                so.setProduct_icon_url(null);
+            } else {
+                so.setProduct_icon_url(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL)));
+            }
+
+            so.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
 
             return so;
         }
@@ -1055,6 +1073,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             if (sm_so.getToken() != null) {
                 contentValues.put(TOKEN, sm_so.getToken());
+            }
+
+            contentValues.put(PRODUCT_ICON_NAME, sm_so.getProduct_icon_name());
+            contentValues.put(PRODUCT_ICON_URL, sm_so.getProduct_icon_url());
+            if (sm_so.getProduct_icon_url_local() != null) {
+                contentValues.put(PRODUCT_ICON_URL_LOCAL, sm_so.getProduct_icon_url_local());
             }
 
             return contentValues;

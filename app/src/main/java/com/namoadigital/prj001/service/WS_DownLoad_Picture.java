@@ -415,6 +415,8 @@ public class WS_DownLoad_Picture extends IntentService {
                         );
                         //
                         ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), "");
+
+                        file_address = hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
                     }
 
                     //Atualiza campo com url local
@@ -422,39 +424,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         new MD_Product_Sql_008(
                             customer_code,
                             hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                            hmAux.get(MD_ProductDao.PRODUCT_ICON_URL)
-                        ).toSqlQuery()
-                    );
-                } catch (Exception e) {
-                    ToolBox_Inf.registerException(getClass().getName(), e);
-                }
-            }
-            //
-            //Icones dos produtos dos forms agendados
-            for(HMAux hmAux : schedule_product_icon_list){
-                String file_address = "";
-                try {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME).toLowerCase(), Constant.CACHE_PATH)) {
-
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
-                        //
-                        file_address = Constant.CACHE_PATH + "/" + hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME).toLowerCase() + ".tmp";
-                        ToolBox_Inf.downloadImagePDF(
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_URL),
                             file_address
-                        );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME).toLowerCase(), "");
-                    }
-                    //Atualiza campo com url local
-                    formLocalDao.addUpdate(
-                        new GE_Custom_Form_Local_Sql_018(
-                            customer_code,
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE),
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA),
-                            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME)
                         ).toSqlQuery()
                     );
                 } catch (Exception e) {

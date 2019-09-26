@@ -12,6 +12,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 /*
     12/09/2019 BARRIONUEVO
     Query que busca os dados do card de produto/serial da lista de servicos da OS
+    utilizando a tabela de SO pq uma vez que o usuário tenha a SO localmente, ele pode ter acesso
+    a SO mesmo assim.
+
 */
 public class SM_SO_Sql_023 implements Specification {
 
@@ -39,18 +42,14 @@ public class SM_SO_Sql_023 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "      S.*,\n" +
-                        MD_BrandDao.BRAND_DESC+" ,\n" +
-                        MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
-                        MD_Brand_ColorDao.COLOR_DESC+" ,\n" +
-                        MD_ProductDao.PRODUCT_ICON_NAME +" \n" +
+                        "ps."+MD_BrandDao.BRAND_DESC+" ,\n" +
+                        "ps."+MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
+                        "ps."+MD_Brand_ColorDao.COLOR_DESC+" \n" +
                         " FROM\n" + SM_SODao.TABLE + " S\n" +
                         "  LEFT JOIN\n" +
                         MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
                         "                             and ps.product_code = s.product_code \n" +
                         "                             and ps.serial_code = s.serial_code\n" +
-                        "  LEFT JOIN\n" +
-                        MD_ProductDao.TABLE +"        p on p.customer_code = s.customer_code\n" +
-                        "                             and p.product_code = s.product_code \n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                         filter +";").toString();
