@@ -227,7 +227,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //09/01/18 - Luche
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
         //via parametro do profile.
-        mket_serial.setmOCR(false);
+        mket_serial.setmOCR(
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+            )
+        );
         mket_serial.setmBARCODE(
                 ToolBox_Inf.profileExists(
                         context,

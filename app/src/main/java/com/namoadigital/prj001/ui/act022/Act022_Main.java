@@ -243,7 +243,17 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         //LUCHE - 10/06/2019
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
         //via parametro do profile.
-        mk_serial_id.setmOCR(false);
+        //mk_serial_id.setmOCR(false);
+        //LUCHE - 26/09/2019
+        //Agora o parametro ocr padrão é o leitor OCR da mosolf e esta sendo utlizado
+        //com a var mOCR
+        mk_serial_id.setmOCR(
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+            )
+        );
         mk_serial_id.setmNFC(false);
         mk_serial_id.setmBARCODE(
             ToolBox_Inf.profileExists(

@@ -780,7 +780,18 @@ public class Frg_Serial_Edit extends BaseFragment {
         //09/01/18 - Luche
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
         //via parametro do profile.
-        mket_serial_id.setmOCR(false);
+        //
+        //mket_serial_id.setmOCR(false);
+        //LUCHE - 26/09/2019
+        //Agora o parametro ocr padrão é o leitor OCR da mosolf e esta sendo utlizado
+        //com a var mOCR
+        mket_serial_id.setmOCR(
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+            )
+        );
         mket_serial_id.setmNFC(false);
         mket_serial_id.setmBARCODE(
                 ToolBox_Inf.profileExists(
