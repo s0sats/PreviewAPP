@@ -4857,6 +4857,12 @@ public class ToolBox_Inf {
         return text.trim().replaceAll("\\r|\\n", "");
     }
 
+    public static String removeForbidenChars(String text) {
+        return text.trim().replaceAll("\\t|\'|\"", "");
+    }
+
+
+
     public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code) {
         ArrayList<HMAux> profiles = new ArrayList<>();
         //

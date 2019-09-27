@@ -481,6 +481,8 @@ public class Frg_Serial_Search extends Fragment {
     public HMAux getHMAuxValues() {
         HMAux values = new HMAux();
         values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+        String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim());
+        mket_serial.setText(serial_id);
         values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
         values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
