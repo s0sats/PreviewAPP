@@ -469,6 +469,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 //Seta variavel de controle.
                 exitProcess = false;
                 //
+                handleSerialIdCharConstraints();
                 if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()))) {
                     ToolBox.alertMSG_YES_NO(
                             context,
@@ -560,6 +561,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         iv_search_serial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                handleSerialIdCharConstraints();
+
                 if(md_product != null) {
                     mPresenter.executeSerialSearch(md_product, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()));
                 }else{
@@ -576,6 +580,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             mket_barcode.setText(bundle_express_pack_code);
             mket_serial.setText(bundle_serial_id);
         }
+    }
+
+    private void handleSerialIdCharConstraints() {
+        String serial_id = mket_serial.getText().toString();
+        mket_serial.setText(ToolBox_Inf.removeForbidenChars(serial_id));
     }
 
     @Override
@@ -636,7 +645,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void onBackPressed() {
-
+        handleSerialIdCharConstraints();
         mPresenter.onBackPressedClicked(
                 md_product == null ? null : md_product.getProduct_code(),
                 ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString())
@@ -694,6 +703,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             }
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
             progressDialog.dismiss();
+            handleSerialIdCharConstraints();
             mPresenter.extractSearchResult(md_product, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString()), mLink);
         }else if(wsProcess.equals(WS_Serial_Save.class.getName())){
             mPresenter.processSerialSaveResult(hmAux);
