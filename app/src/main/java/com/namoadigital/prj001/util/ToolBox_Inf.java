@@ -4858,6 +4858,7 @@ public class ToolBox_Inf {
     }
 
     public static String removeForbidenChars(String text) {
+        text = ToolBox_Inf.removeAllLineBreaks(text);
         return text.trim().replaceAll("\\t|\'|\"", "");
     }
 

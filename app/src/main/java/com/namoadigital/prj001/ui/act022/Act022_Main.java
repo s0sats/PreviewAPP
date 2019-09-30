@@ -198,7 +198,9 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
                         new Runnable() {
                             @Override
                             public void run() {
-                                mPresenter.processValidation(product_code, serial_id, "", s);
+                                String serial_id_formatted = ToolBox_Inf.removeForbidenChars(s);
+                                mk_serial_id.setText(serial_id_formatted);
+                                mPresenter.processValidation(product_code, serial_id, "", serial_id_formatted);
                             }
                         },
                         500
@@ -228,6 +230,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String serial_id_formatted = mk_serial_id.getText().toString();
+                mk_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id_formatted));
                 mPresenter.processValidation(product_code, serial_id, "", mk_serial_id.getText().toString());
             }
         });

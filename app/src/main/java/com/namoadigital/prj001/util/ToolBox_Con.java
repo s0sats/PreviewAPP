@@ -1134,6 +1134,11 @@ public class ToolBox_Con {
                 false
         ).apply();
         //
+        sharedPreferences.edit().putBoolean(
+                Constant.FORCE_NOT_SHOW_SERIAL_INFO,
+                false
+        ).apply();
+        //
         sharedPreferences.edit().putString(
                 "SERVICE",
                 "NO_SERVICE"

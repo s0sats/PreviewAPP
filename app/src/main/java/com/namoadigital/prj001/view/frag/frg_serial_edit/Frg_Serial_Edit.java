@@ -1330,6 +1330,8 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (delegate != null) {
+                    String serial_id = mket_serial_id.getText().toString();
+                    mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
                     if (mket_serial_id.isValid()) {
                         delegate.onCheckButtonClick(
                                 mdProduct.getProduct_code(),
