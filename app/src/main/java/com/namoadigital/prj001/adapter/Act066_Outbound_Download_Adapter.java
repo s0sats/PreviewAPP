@@ -234,6 +234,7 @@ public class Act066_Outbound_Download_Adapter extends RecyclerView.Adapter<Recyc
             //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
             pv_done.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
             pv_done.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
+            pv_done.setPieInnerPadding((int) ToolBox.convertPixelsToDpIndeed(context,5));
         }
 
         public View getItemView() {

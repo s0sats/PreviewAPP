@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act061.frag_header;
 
 import android.content.Context;
+
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.IO_InboundDao;
@@ -11,6 +12,7 @@ import com.namoadigital.prj001.model.IO_Inbound_Item;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.Sql_Act061_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -128,6 +130,28 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
         //
         return false;
     }
+//
+//    /**
+//     * Verifica se todos os item foram finalizados.
+//     * @param mInbound - Obj inbound carregado.
+//     * @return - True se todos os itens estiverem finalizados.
+//     */
+//    @Override
+//    public boolean allItemsDone(IO_Inbound mInbound) {
+//        int doneItems = 0;
+//        if(mInbound.getItems() != null && mInbound.getItems().size() > 0 ){
+//            //
+//            for(IO_Inbound_Item inboundItem : mInbound.getItems()){
+//                if( inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) ){
+//                    doneItems++;
+//                }
+//            }
+//            //
+//            return doneItems == mInbound.getItems().size();
+//        }
+//        //
+//        return false;
+//    }
 
     /**
      * Verifica se todos os item foram finalizados.
@@ -136,16 +160,19 @@ public class Act061_Frag_Header_Presenter implements Act061_Frag_Header_Contract
      */
     @Override
     public boolean allItemsDone(IO_Inbound mInbound) {
-        int doneItems = 0;
-        if(mInbound.getItems() != null && mInbound.getItems().size() > 0 ){
-            //
-            for(IO_Inbound_Item inboundItem : mInbound.getItems()){
-                if( inboundItem.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) ){
-                    doneItems++;
-                }
-            }
-            //
-            return doneItems == mInbound.getItems().size();
+        HMAux hmAux = inboundDao.getByStringHM(
+            new Sql_Act061_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mInbound.getInbound_prefix(),
+                mInbound.getInbound_code()
+            ).toSqlQuery()
+        );
+        //
+        if( hmAux != null
+            && hmAux.hasConsistentValue(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+            && hmAux.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC).equals("1")
+        ){
+            return true;
         }
         //
         return false;

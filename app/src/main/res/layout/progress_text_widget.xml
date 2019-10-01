@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ProgressBar
+        android:id="@+id/progress_text_widget_progress"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        style="?android:progressBarStyleHorizontal"
+        android:progress="80"
+        android:layoutDirection="rtl"
+        android:progressDrawable="@drawable/progress_text_widget_drawable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/progress_text_widget_tv_value"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="100%"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_text_widget_progress"
+        app:layout_constraintEnd_toEndOf="@+id/progress_text_widget_progress"
+        app:layout_constraintStart_toStartOf="@+id/progress_text_widget_progress"
+        app:layout_constraintTop_toTopOf="@+id/progress_text_widget_progress" />
+
+
+</android.support.constraint.ConstraintLayout>

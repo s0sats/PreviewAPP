@@ -57,7 +57,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener {
+public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contract.I_View, Frag_Move_Create.OnFragmentInteractionListener, Frag_Move_Create.OnFragmentInteractionMoveListener {
 
     public static final String FRAGMENT_MOVE = "FRAGMENT_MOVE";
     private FragmentManager fm;
@@ -96,6 +96,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     private MD_Product_Serial serialInfo;
     private int viewMode;
     private boolean isLocalProcess;
+    private Integer outbound_item;
+    private Integer inbound_item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,6 +230,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                 inbound_prefix,
                 outbound_code,
                 inbound_code,
+                null,
+                null,
                 planned_local_code,
                 status,
                 to_class_code
@@ -258,6 +262,8 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
         inbound_prefix = movePlanned.getInbound_prefix();
         outbound_code = movePlanned.getOutbound_code();
         inbound_code = movePlanned.getInbound_code();
+        outbound_item = movePlanned.getOutbound_item();
+        inbound_item = movePlanned.getInbound_item();
         planned_local_code = movePlanned.getPlanned_local_code();
         status = movePlanned.getStatus();
         to_class_code = movePlanned.getTo_class_code();
@@ -559,9 +565,12 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                                 inbound_prefix,
                                 outbound_code,
                                 inbound_code,
+                                outbound_item,
+                                inbound_item,
                                 planned_local_code,
                                 status,
-                                to_class_code);
+                                to_class_code,
+                                null);
                     }
                 }
             }
@@ -665,7 +674,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
                                      Integer to_zone_code,
                                      Integer to_local_code,
                                      Integer to_class_code,
-                                     Integer reason_code,
+                                     String classId, Integer reason_code,
                                      String comments,
                                      String done_date,
                                      MD_Product_Serial serial,

@@ -289,6 +289,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         pieView.setPercentageBackgroundColor(context.getResources().getColor(R.color.namoa_status_done));
         pieView.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
+        pieView.setPieInnerPadding((int) ToolBox.convertPixelsToDpIndeed(context,5));
     }
 
     /**

@@ -286,6 +286,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
         pieView.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
         pieView.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));
+        pieView.setPieInnerPadding((int) ToolBox.convertPixelsToDpIndeed(context,5));
     }
 
     /**
