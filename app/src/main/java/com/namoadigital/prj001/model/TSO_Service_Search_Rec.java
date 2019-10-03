@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-import com.google.gson.JsonArray;
+import java.util.ArrayList;
 
 /**
  * Created by d.luche on 27/06/2017.
@@ -11,7 +11,7 @@ public class TSO_Service_Search_Rec {
     private String validation;
     private String link_url;
     private String error_msg;
-    private JsonArray data;
+    private ArrayList<TSO_Service_Search_Obj> data = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -45,11 +45,11 @@ public class TSO_Service_Search_Rec {
         this.error_msg = error_msg;
     }
 
-    public JsonArray getData() {
+    public ArrayList<TSO_Service_Search_Obj> getData() {
         return data;
     }
 
-    public void setData(JsonArray data) {
+    public void setData(ArrayList<TSO_Service_Search_Obj> data) {
         this.data = data;
     }
 }

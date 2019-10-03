@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -28,6 +27,7 @@ public class WS_SO_Service_Search extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Service_Search";
+    private Gson gson;
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
@@ -39,9 +39,6 @@ public class WS_SO_Service_Search extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
-
-
             int contract_code = bundle.getInt(SM_SODao.CONTRACT_CODE,0);
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
@@ -79,7 +76,7 @@ public class WS_SO_Service_Search extends IntentService {
         //Seleciona traduções
         loadTranslation();
         //
-        Gson gson = new GsonBuilder().serializeNulls().create();
+        gson = new GsonBuilder().serializeNulls().create();
         //
         TSO_Service_Search_Env env = new TSO_Service_Search_Env();
         //
@@ -131,16 +128,7 @@ public class WS_SO_Service_Search extends IntentService {
     }
     //
     private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) {
-        HMAux auxReturn = new HMAux();
-        //25/10/18 - Caso o data seja null, o que NUNCA deveria ter acontecido, mas aconteceu,
-        //seta array vazio que será tratado pela tela que recebe o CLOSE_ACT.
-        if(rec.getData() == null ){
-            rec.setData(new JsonArray());
-        }
-        //
-        auxReturn.put(Constant.PARAM_KEY_WS_RETURN,rec.getData().toString());
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxReturn,"", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
     }
 
     private void loadTranslation() {

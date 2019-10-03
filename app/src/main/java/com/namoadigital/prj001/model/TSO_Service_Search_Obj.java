@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
 
 public class TSO_Service_Search_Obj {
+
     private String type_ps;
     private String customer_code;//long
     private String price_list_code;//int
@@ -16,6 +19,7 @@ public class TSO_Service_Search_Obj {
     private String manual_price;//double
     private String rating;//int
     private String rating_ref;//double
+    private ArrayList<PackServiceDetailObj> service_list = new ArrayList<>();
 
     public String getType_ps() {
         return type_ps;
@@ -103,5 +107,13 @@ public class TSO_Service_Search_Obj {
 
     public void setRating_ref(String rating_ref) {
         this.rating_ref = rating_ref;
+    }
+
+    public ArrayList<PackServiceDetailObj> getService_list() {
+        return service_list;
+    }
+
+    public void setService_list(ArrayList<PackServiceDetailObj> service_list) {
+        this.service_list = service_list;
     }
 }

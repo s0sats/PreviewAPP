@@ -627,9 +627,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //
         if (ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())) {
             //
-            if (hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
+            if (mLink != null && !mLink.isEmpty()) {
                 //25/10/18
-                ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
+                //ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
+                ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(mLink);
                 if(servicesList != null && servicesList.size() > 0) {
                     act043_frag_service_list.setmService(mSm_so);
                     act043_frag_service_list.setDataReturn(servicesList);

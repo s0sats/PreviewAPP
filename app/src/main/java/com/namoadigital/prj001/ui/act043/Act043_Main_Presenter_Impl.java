@@ -10,6 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -31,12 +32,17 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     public ArrayList<TSO_Service_Search_Obj> processServiceList(String ws_list_return) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<TSO_Service_Search_Obj> serviceList = new ArrayList<>();
-        //
-        serviceList = gson.fromJson(
+        try {
+            //
+            serviceList = gson.fromJson(
                 ws_list_return,
                 new TypeToken<ArrayList<TSO_Service_Search_Obj>>() {
                 }.getType()
-        );
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            e.printStackTrace();
+        }
         //
         return serviceList;
     }
