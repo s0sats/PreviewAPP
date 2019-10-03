@@ -2,13 +2,21 @@ package com.namoadigital.prj001.model;
 
 /**
  * Created by d.luche on 27/06/2017.
+ *
+ * LUCHE - 03/10/2019
+ *
+ * Os campos partner_code e zone_code não são usado para nada e por isso não foram colocados no modelo.
+ * Eles serão usados no TSO_SO_Service_Item_Detail
  */
+
+import java.util.ArrayList;
 
 public class TSO_SO_Service_Item {
     private String type_ps;
     private String customer_code;//long
     private String price_list_code;//int
     private String pack_code;//int
+    private int pack_seq;//maior que 100 mil e incrementado a cada item adicionado
     private String service_code;//int
     private String pack_service_desc;
     private String pack_service_desc_full;
@@ -20,6 +28,7 @@ public class TSO_SO_Service_Item {
     private double price_ref;
     private String comments;
     private boolean selected = true;
+    private ArrayList<TSO_SO_Service_Item_Detail> service = new ArrayList<>();
 
     public String getType_ps() {
         return type_ps;
@@ -139,5 +148,21 @@ public class TSO_SO_Service_Item {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
+    public ArrayList<TSO_SO_Service_Item_Detail> getService() {
+        return service;
+    }
+
+    public void setService(ArrayList<TSO_SO_Service_Item_Detail> service) {
+        this.service = service;
     }
 }

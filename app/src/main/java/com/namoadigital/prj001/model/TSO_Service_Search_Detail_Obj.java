@@ -2,7 +2,7 @@ package com.namoadigital.prj001.model;
 
 import java.util.ArrayList;
 
-public class PackServiceDetailObj {
+public class TSO_Service_Search_Detail_Obj {
 
     private long customer_code;
     private int price_list_code;
@@ -15,7 +15,7 @@ public class PackServiceDetailObj {
     private int manual_price;
     private int optional;
     private int require_approval;
-    private ArrayList<PackServiceDetailsSiteZonePartnerObj> site_zone;
+    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;
     //private JSONArray site_zone;
 
     public long getCustomer_code() {
@@ -106,11 +106,11 @@ public class PackServiceDetailObj {
         this.require_approval = require_approval;
     }
 
-    public ArrayList<PackServiceDetailsSiteZonePartnerObj> getSite_zone() {
+    public ArrayList<TSO_Service_Search_Detail_Params_Obj> getSite_zone() {
         return site_zone;
     }
 
-    public void setSite_zone(ArrayList<PackServiceDetailsSiteZonePartnerObj> site_zone) {
+    public void setSite_zone(ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone) {
         this.site_zone = site_zone;
     }
 }

@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-public class PackServiceDetailsSiteZonePartnerObj {
+public class TSO_Service_Search_Detail_Params_Obj {
 
     private Integer site_code;
     private String site_desc;

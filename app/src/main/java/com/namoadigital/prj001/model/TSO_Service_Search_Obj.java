@@ -19,7 +19,7 @@ public class TSO_Service_Search_Obj {
     private String manual_price;//double
     private String rating;//int
     private String rating_ref;//double
-    private ArrayList<PackServiceDetailObj> service_list = new ArrayList<>();
+    private ArrayList<TSO_Service_Search_Detail_Obj> service_list = new ArrayList<>();
 
     public String getType_ps() {
         return type_ps;
@@ -109,11 +109,11 @@ public class TSO_Service_Search_Obj {
         this.rating_ref = rating_ref;
     }
 
-    public ArrayList<PackServiceDetailObj> getService_list() {
+    public ArrayList<TSO_Service_Search_Detail_Obj> getService_list() {
         return service_list;
     }
 
-    public void setService_list(ArrayList<PackServiceDetailObj> service_list) {
+    public void setService_list(ArrayList<TSO_Service_Search_Detail_Obj> service_list) {
         this.service_list = service_list;
     }
 }
