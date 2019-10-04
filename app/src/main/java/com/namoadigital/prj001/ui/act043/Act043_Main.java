@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -37,10 +38,14 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral
+        implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_I_Add_Service_Interaction {
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
+
+    public static final String TYPE_PS_PACK = "P";
+    public static final String TYPE_PS_SERVICE = "S";
 
     private Bundle bundle;
     private Act043_Main_Presenter_Impl mPresenter;
@@ -59,6 +64,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
+    private ArrayList<MD_Partner> partner_list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -318,7 +324,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
 //        act043_frag_service_list.setmService(mSm_so);
     }
-
+    //region Metodo interface onSmSoRequestObject
     @Override
     public SM_SO getSmSo() {
         return mSm_so;
@@ -328,8 +334,19 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     public HMAux getHMAux_Trans() {
         return hmAux_Trans;
     }
+    //endregion
 
+    //region Metodo interface Act043_I_Add_Service_Interaction
+    @Override
+    public ArrayList<TSO_Service_Search_Obj> getPackServiceAdapterList(ArrayList<TSO_Service_Search_Obj> packServiceList) {
+        return mPresenter.prepareListToAdapter(packServiceList);
+    }
 
+    @Override
+    public ArrayList<MD_Partner> getPartnerList() {
+        return partner_list != null ? partner_list : new ArrayList<MD_Partner>();
+    }
+    //endregion
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
@@ -455,6 +472,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
+    }
+
+    public ArrayList<MD_Partner> getPartner_list() {
+        return partner_list;
     }
 
     @Override
@@ -631,9 +652,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                 //25/10/18
                 //ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
                 ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(mLink);
+                partner_list = mPresenter.getPackServicePartnerList(mLink);
                 if(servicesList != null && servicesList.size() > 0) {
                     act043_frag_service_list.setmService(mSm_so);
-                    act043_frag_service_list.setDataReturn(servicesList);
+                    act043_frag_service_list.setData(servicesList);
+                    act043_frag_service_list.setAdapterData(
+                        mPresenter.prepareListToAdapter(new ArrayList<>(servicesList))
+                    );
                     setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
                 }else{
                     ToolBox.alertMSG(

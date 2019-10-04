@@ -12,6 +12,7 @@ public class TSO_Service_Search_Rec {
     private String link_url;
     private String error_msg;
     private ArrayList<TSO_Service_Search_Obj> data = new ArrayList<>();
+    private ArrayList<MD_Partner> partner_list = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -51,5 +52,13 @@ public class TSO_Service_Search_Rec {
 
     public void setData(ArrayList<TSO_Service_Search_Obj> data) {
         this.data = data;
+    }
+
+    public ArrayList<MD_Partner> getPartner_list() {
+        return partner_list;
+    }
+
+    public void setPartner_list(ArrayList<MD_Partner> partner_list) {
+        this.partner_list = partner_list;
     }
 }

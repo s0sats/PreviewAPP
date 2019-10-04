@@ -9,17 +9,20 @@ import java.util.ArrayList;
 public class TSO_Service_Search_Obj {
 
     private String type_ps;
-    private String customer_code;//long
-    private String price_list_code;//int
-    private String pack_code;//int
-    private String service_code;//int
+    private long customer_code;//long
+    private int price_list_code;//int
+    private int pack_code;//int
+    private int service_code;//int
     private String pack_service_desc;
     private String pack_service_desc_full;
-    private String price;//double
-    private String manual_price;//double
-    private String rating;//int
-    private String rating_ref;//double
+    private Double price;//double
+    private int manual_price;//double
+    private int rating;//int
+    private Double rating_ref;//double
     private ArrayList<TSO_Service_Search_Detail_Obj> service_list = new ArrayList<>();
+    //Atributos apenas para lista
+    private boolean selected;
+    private boolean anyNullPrice;
 
     public String getType_ps() {
         return type_ps;
@@ -29,35 +32,35 @@ public class TSO_Service_Search_Obj {
         this.type_ps = type_ps;
     }
 
-    public String getCustomer_code() {
+    public long getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(String customer_code) {
+    public void setCustomer_code(long customer_code) {
         this.customer_code = customer_code;
     }
 
-    public String getPrice_list_code() {
+    public int getPrice_list_code() {
         return price_list_code;
     }
 
-    public void setPrice_list_code(String price_list_code) {
+    public void setPrice_list_code(int price_list_code) {
         this.price_list_code = price_list_code;
     }
 
-    public String getPack_code() {
+    public int getPack_code() {
         return pack_code;
     }
 
-    public void setPack_code(String pack_code) {
+    public void setPack_code(int pack_code) {
         this.pack_code = pack_code;
     }
 
-    public String getService_code() {
+    public int getService_code() {
         return service_code;
     }
 
-    public void setService_code(String service_code) {
+    public void setService_code(int service_code) {
         this.service_code = service_code;
     }
 
@@ -77,35 +80,35 @@ public class TSO_Service_Search_Obj {
         this.pack_service_desc_full = pack_service_desc_full;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public String getManual_price() {
+    public int getManual_price() {
         return manual_price;
     }
 
-    public void setManual_price(String manual_price) {
+    public void setManual_price(int manual_price) {
         this.manual_price = manual_price;
     }
 
-    public String getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
-    public String getRating_ref() {
+    public Double getRating_ref() {
         return rating_ref;
     }
 
-    public void setRating_ref(String rating_ref) {
+    public void setRating_ref(Double rating_ref) {
         this.rating_ref = rating_ref;
     }
 
@@ -115,5 +118,21 @@ public class TSO_Service_Search_Obj {
 
     public void setService_list(ArrayList<TSO_Service_Search_Detail_Obj> service_list) {
         this.service_list = service_list;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean hasNullPrice() {
+        return anyNullPrice;
+    }
+
+    public void setNullPrice(boolean anyNullPrice) {
+        this.anyNullPrice = anyNullPrice;
     }
 }

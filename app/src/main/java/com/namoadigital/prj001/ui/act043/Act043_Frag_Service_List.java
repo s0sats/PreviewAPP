@@ -5,12 +5,20 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -19,9 +27,16 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List;
+import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List_RV;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SO_Save_Return;
+import com.namoadigital.prj001.model.TSO_SO_Service;
+import com.namoadigital.prj001.model.TSO_SO_Service_Env;
+import com.namoadigital.prj001.model.TSO_SO_Service_Item;
+import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -39,21 +54,27 @@ public class Act043_Frag_Service_List extends BaseFragment {
     onSmSoRequestObject delegateSmSo;
     private TextView tv_title;
     private MKEditTextNM mk_desc;
-    private ListView lv_services_packs;
+    private RecyclerView rv_services_packs;
     private Act043_Adapter_Services_Packs_List mAdapter;
-    private ArrayList<HMAux> data;
+    private Act043_Adapter_Services_Packs_List_RV mAdapterRv;
+    private ArrayList<TSO_Service_Search_Obj> data;
+    private ArrayList<TSO_Service_Search_Obj> adapterData;
     private Button btn_save;
-
     private String mToken;
+    private Act043_I_Add_Service_Interaction delegateAddService;
 
     public void setmService(SM_SO mSO_Service) {
         this.mSO_Service = mSO_Service;
     }
 
-    public void setData(ArrayList<HMAux> data) {
+    public void setData(ArrayList<TSO_Service_Search_Obj> data) {
         this.data = data;
         //
-        gerarExtraFields(this.data);
+        //gerarExtraFields(this.data);
+    }
+
+    public void setAdapterData(ArrayList<TSO_Service_Search_Obj> adapterData) {
+        this.adapterData = adapterData;
     }
 
     public interface IAct043_Frag_Service_List {
@@ -63,40 +84,36 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private IAct043_Frag_Service_List delegate;
 
+    public void setDelegateAddService(Act043_I_Add_Service_Interaction delegateAddService) {
+        this.delegateAddService = delegateAddService;
+    }
+
     public void setProgressAction(IAct043_Frag_Service_List delegate) {
         this.delegate = delegate;
     }
 
-    public void setDataReturn(ArrayList<TSO_Service_Search_Obj> data) {
-        this.data = new ArrayList<>();
-        //
-        this.data = gerarData(data);
-        //
-        gerarExtraFields(this.data);
-    }
-
-    private void gerarExtraFields(ArrayList<HMAux> data) {
-        for (HMAux item : data) {
-            item.put("qty", "");
-
-            // Hugo
-            if (item.get("manual_price").equalsIgnoreCase("1")) {
-                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_EMPTY));
-                item.put("price_ref", item.get("price"));
-            } else {
-                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_ZERO));
-                item.put("price_ref", item.get("price"));
-            }
-            item.put("comments", "");
-        }
-    }
+//    private void gerarExtraFields(ArrayList<HMAux> data) {
+//        for (HMAux item : data) {
+//            item.put("qty", "");
+//
+//            // Hugo
+//            if (item.get("manual_price").equalsIgnoreCase("1")) {
+//                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_EMPTY));
+//                item.put("price_ref", item.get("price"));
+//            } else {
+//                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_ZERO));
+//                item.put("price_ref", item.get("price"));
+//            }
+//            item.put("comments", "");
+//        }
+//    }
 
     public boolean hasAnyItemAdded() {
-        for (int i = 0; i < data.size(); i++) {
-            if (!data.get(i).get("qty").isEmpty()) {
-                return true;
-            }
-        }
+//        for (int i = 0; i < data.size(); i++) {
+//            if (!data.get(i).get("qty").isEmpty()) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
@@ -127,6 +144,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         delegateSmSo = (onSmSoRequestObject) context;
+        delegateAddService = (Act043_I_Add_Service_Interaction) context;
     }
 
     private void iniVar(View view) {
@@ -142,7 +160,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         mk_desc.setHint(hmAux_Trans.get("service_or_pack_filter_hint"));
         mk_desc.requestFocus();
         //
-        lv_services_packs = (ListView) view.findViewById(R.id.act043_frag_service_lv_services);
+        rv_services_packs = view.findViewById(R.id.act043_frag_service_rv_services);
         //
         btn_save = (Button) view.findViewById(R.id.act043_frag_service_btn_save);
         btn_save.setText(hmAux_Trans.get("btn_save_service"));
@@ -151,14 +169,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     private void iniAction() {
-
-        lv_services_packs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showSercice_Pack_Details((HMAux) parent.getItemAtPosition(position));
-            }
-        });
-
         mk_desc.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -166,8 +176,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                if(mAdapter != null) {
-                    mAdapter.getFilter().filter(mk_desc.getText().toString().trim());
+                if(mAdapterRv != null) {
+                    mAdapterRv.getFilter().filter(mk_desc.getText().toString().trim());
                 }
             }
         });
@@ -179,29 +189,29 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     //ArrayList<HMAux> data_env = new ArrayList<>();
                     ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
-                    for (int i = 0; i < data.size(); i++) {
-                        if (!data.get(i).get("qty").isEmpty()) {
-                            //data_env.add(data.get(i));
-                            //
-                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
-                            item.setType_ps(data.get(i).get("type_ps"));
-                            item.setCustomer_code(data.get(i).get("customer_code"));
-                            item.setPrice_list_code(data.get(i).get("price_list_code"));
-                            item.setPack_code(data.get(i).get("pack_code"));
-                            item.setService_code(data.get(i).get("service_code"));
-                            item.setPack_service_desc(data.get(i).get("pack_service_desc"));
-                            item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
-                            item.setPrice(convertValueEmptyZero(data.get(i).get("price"), CONVERT_TYPE_ZERO));
-                            item.setManual_price(data.get(i).get("manual_price"));
-                            item.setRating(data.get(i).get("rating"));
-                            item.setRating_ref(data.get(i).get("rating_ref"));
-                            item.setQty(Integer.parseInt(data.get(i).get("qty")));
-                            item.setPrice_ref(convertDouble(data.get(i).get("price_ref")));
-                            item.setComments(data.get(i).get("comments"));
-                            //
-                            pack.add(item);
-                        }
-                    }
+//                    for (int i = 0; i < data.size(); i++) {
+//                        if (!data.get(i).get("qty").isEmpty()) {
+//                            //data_env.add(data.get(i));
+//                            //
+//                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
+//                            item.setType_ps(data.get(i).get("type_ps"));
+//                            item.setCustomer_code(data.get(i).get("customer_code"));
+//                            item.setPrice_list_code(data.get(i).get("price_list_code"));
+//                            item.setPack_code(data.get(i).get("pack_code"));
+//                            item.setService_code(data.get(i).get("service_code"));
+//                            item.setPack_service_desc(data.get(i).get("pack_service_desc"));
+//                            item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
+//                            item.setPrice(convertValueEmptyZero(data.get(i).get("price"), CONVERT_TYPE_ZERO));
+//                            item.setManual_price(data.get(i).get("manual_price"));
+//                            item.setRating(data.get(i).get("rating"));
+//                            item.setRating_ref(data.get(i).get("rating_ref"));
+//                            item.setQty(Integer.parseInt(data.get(i).get("qty")));
+//                            item.setPrice_ref(convertDouble(data.get(i).get("price_ref")));
+//                            item.setComments(data.get(i).get("comments"));
+//                            //
+//                            pack.add(item);
+//                        }
+//                    }
                     //
                     if (pack.size() > 0) {
                         new Service_Pack_MicroService().execute(pack);
@@ -214,9 +224,12 @@ public class Act043_Frag_Service_List extends BaseFragment {
         });
     }
 
+
+
     private void hideKeyBoard() {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
+
 
     private void showSercice_Pack_Details(final HMAux item) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -333,6 +346,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
         });
     }
 
+    private void showService_Pack_Dialog(TSO_Service_Search_Obj item) {
+        if(Act043_Main.TYPE_PS_PACK.equals(item.getType_ps())){
+            Toast.makeText(context,"Pacote: " + item.getPack_service_desc_full(),Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(context,"Service: " + item.getPack_service_desc_full(),Toast.LENGTH_LONG).show();
+        }
+    }
+
     private boolean checkFields(HMAux item, String qtd, String price, String comments) {
         boolean results;
 
@@ -354,7 +375,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
             results = true;
         }
         //
-        mAdapter.notifyDataSetChanged();
+        mAdapterRv.notifyDataSetChanged();
         //
         return results;
     }
@@ -379,18 +400,36 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 //LUCHE - 06/08/2019
                 //Antigamente usava 2 layout com recurso diferente mas o mesmo layout no xml
                 //Modificado para usar o mesmo layout, pois o segundo foi alterado para um segunda opção.
-                mAdapter = new Act043_Adapter_Services_Packs_List(
+                /*mAdapter = new Act043_Adapter_Services_Packs_List(
                         context,
                         //R.layout.act043_adapter_services_pack_list_content_cell_service,
                         R.layout.act043_adapter_services_pack_list_content_cell_pack,
                         R.layout.act043_adapter_services_pack_list_content_cell_pack,
                         hmAux_Trans,
                         data
+                );*/
+
+                mAdapterRv = new Act043_Adapter_Services_Packs_List_RV(
+                    context,
+                    R.layout.act043_adapter_services_pack_list_content_cell_pack,
+                    adapterData
+                );
+                rv_services_packs.setLayoutManager(new LinearLayoutManager(context));
+                rv_services_packs.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+                rv_services_packs.setAdapter(
+                    mAdapterRv
                 );
                 //
-                lv_services_packs.setAdapter(
-                        mAdapter
-                );
+                if(mAdapterRv != null) {
+                    mAdapterRv.setmOnItemClickListener(new Act043_Adapter_Services_Packs_List_RV.OnItemClickListener() {
+                        @Override
+                        public void onClick(TSO_Service_Search_Obj item) {
+                            showService_Pack_Dialog(item);
+                            //showSercice_Pack_Details(item);
+                        }
+                    });
+                }
+
             }
         }
     }
@@ -409,16 +448,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 HMAux item = new HMAux();
                 //
                 item.put("type_ps", obj.getType_ps());
-                item.put("customer_code", obj.getCustomer_code());
-                item.put("price_list_code", obj.getPrice_list_code());
-                item.put("pack_code", obj.getPack_code());
-                item.put("service_code", obj.getService_code());
+                item.put("customer_code", String.valueOf(obj.getCustomer_code()));
+                item.put("price_list_code", String.valueOf(obj.getPrice_list_code()));
+                item.put("pack_code", String.valueOf(obj.getPack_code()));
+                item.put("service_code", String.valueOf(obj.getService_code()));
                 item.put("pack_service_desc", obj.getPack_service_desc());
                 item.put("pack_service_desc_full", obj.getPack_service_desc_full());
-                item.put("price", obj.getPrice());
-                item.put("manual_price", obj.getManual_price());
-                item.put("rating", obj.getRating());
-                item.put("rating_ref", obj.getRating_ref());
+                item.put("price",String.valueOf( obj.getPrice()));
+                item.put("manual_price", String.valueOf(obj.getManual_price()));
+                item.put("rating", String.valueOf(obj.getRating()));
+                item.put("rating_ref", String.valueOf(obj.getRating_ref()));
                 //
                 data.add(item);
             }
