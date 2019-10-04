@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+
+    <TextView
+        android:id="@+id/tv_pack_service_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Service desc - trad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="99 - trad"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_val"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_zone_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Zone - trad"
+        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_val"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_val" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_partner_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Parceiro - trad"
+        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_zone_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_zone_val" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_zone_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_zone_lbl"
+        app:layout_constraintEnd_toStartOf="@+id/iv_pack_service_item"
+        app:layout_constraintStart_toEndOf="@+id/tv_pack_service_zone_lbl"
+        app:layout_constraintTop_toTopOf="@+id/tv_pack_service_zone_lbl" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_partner_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_partner_lbl"
+        app:layout_constraintEnd_toStartOf="@+id/iv_pack_service_item"
+        app:layout_constraintStart_toEndOf="@+id/tv_pack_service_partner_lbl"
+        app:layout_constraintTop_toTopOf="@+id/tv_pack_service_partner_lbl" />
+
+    <ImageView
+        android:id="@+id/iv_pack_service_item"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="8dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_partner_val"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_pack_service_zone_val"
+        app:srcCompat="@drawable/ic_pencil" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_comment_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="komentar - trad"
+        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_partner_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_partner_lbl" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_comment_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="komentar"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_comment_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_pack_service_comment_lbl"
+        app:layout_constraintTop_toTopOf="@+id/tv_pack_service_comment_lbl" />
+</android.support.constraint.ConstraintLayout>
