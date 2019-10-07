@@ -20,6 +20,7 @@ public class TSO_Service_Search_Obj {
     private int rating;//int
     private Double rating_ref;//double
     private ArrayList<TSO_Service_Search_Detail_Obj> service_list = new ArrayList<>();
+    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;//SiteZone quando type_ps = S
     //Atributos apenas para lista
     private boolean selected;
     private boolean anyNullPrice;
@@ -118,6 +119,14 @@ public class TSO_Service_Search_Obj {
 
     public void setService_list(ArrayList<TSO_Service_Search_Detail_Obj> service_list) {
         this.service_list = service_list;
+    }
+
+    public ArrayList<TSO_Service_Search_Detail_Params_Obj> getSite_zone() {
+        return site_zone;
+    }
+
+    public void setSite_zone(ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone) {
+        this.site_zone = site_zone;
     }
 
     public boolean isSelected() {

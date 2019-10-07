@@ -425,6 +425,20 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         @Override
                         public void onClick(TSO_Service_Search_Obj item) {
                             showService_Pack_Dialog(item);
+                            if(delegateAddService != null) {
+                                ArrayList<HMAux> tstSite = new ArrayList<>();
+                                ArrayList<HMAux> tstZone = new ArrayList<>();
+                                if(item.getService_list().size() > 0) {
+                                    tstSite = delegateAddService.generateSiteOption(item.getService_list().get(0).getSite_zone());
+                                    tstZone = delegateAddService.generateSiteZoneOption(item.getService_list().get(0).getSite_zone());
+                                }else{
+                                    tstSite = delegateAddService.generateSiteOption(item.getSite_zone());
+                                    tstZone = delegateAddService.generateSiteZoneOption(item.getSite_zone());
+                                }
+                                int i = tstSite.size();
+                            }
+                            //
+
                             //showSercice_Pack_Details(item);
                         }
                     });

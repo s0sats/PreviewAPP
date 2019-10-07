@@ -15,14 +15,16 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Env;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WS_SO_Service_Search extends IntentService {
-
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -127,9 +129,26 @@ public class WS_SO_Service_Search extends IntentService {
         processSOServiceSearchReturn(rec);
     }
     //
-    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) {
+    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) throws IOException {
         //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec), "0");
+        //Gera nome do arquivo json
+        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ToolBox_Inf.getToken(getApplicationContext()) + ".json";
+        //Chama metodo para criar arquivo
+        createJsonFile(file_name, gson.toJson(rec));
+        HMAux auxName = new HMAux();
+        auxName.put(ConstantBaseApp.WS_RETURN_FILENAME,file_name);
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+    }
+
+    private void createJsonFile(String file_name, String json) throws IOException {
+        File file = new File(Constant.TOKEN_PATH, file_name);
+        //
+        if(file.exists()){
+            file.delete();
+        }
+        //
+        ToolBox_Inf.writeIn(json,file);
     }
 
     private void loadTranslation() {
