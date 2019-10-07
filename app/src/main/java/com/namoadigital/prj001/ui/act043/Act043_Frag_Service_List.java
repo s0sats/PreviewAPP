@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,8 +67,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     public void setData(ArrayList<TSO_Service_Search_Obj> data) {
         this.data = data;
-        //
-        //gerarExtraFields(this.data);
     }
 
     public void setAdapterData(ArrayList<TSO_Service_Search_Obj> adapterData) {
@@ -93,11 +90,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
 
     public boolean hasAnyItemAdded() {
-//        for (int i = 0; i < data.size(); i++) {
-//            if (!data.get(i).get("qty").isEmpty()) {
-//                return true;
-//            }
-//        }
+        if(adapterData != null){
+            for (TSO_Service_Search_Obj packService : adapterData) {
+                if(packService.isSelected()){
+                    return true;
+                }
+            }
+        }
+        //
         return false;
     }
 
@@ -173,29 +173,27 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     //ArrayList<HMAux> data_env = new ArrayList<>();
                     ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
 
-//                    for (int i = 0; i < data.size(); i++) {
-//                        if (!data.get(i).get("qty").isEmpty()) {
-//                            //data_env.add(data.get(i));
-//                            //
-//                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
-//                            item.setType_ps(data.get(i).get("type_ps"));
-//                            item.setCustomer_code(data.get(i).get("customer_code"));
-//                            item.setPrice_list_code(data.get(i).get("price_list_code"));
-//                            item.setPack_code(data.get(i).get("pack_code"));
-//                            item.setService_code(data.get(i).get("service_code"));
-//                            item.setPack_service_desc(data.get(i).get("pack_service_desc"));
-//                            item.setPack_service_desc_full(data.get(i).get("pack_service_desc_full"));
-//                            item.setPrice(convertValueEmptyZero(data.get(i).get("price"), CONVERT_TYPE_ZERO));
-//                            item.setManual_price(data.get(i).get("manual_price"));
-//                            item.setRating(data.get(i).get("rating"));
-//                            item.setRating_ref(data.get(i).get("rating_ref"));
-//                            item.setQty(Integer.parseInt(data.get(i).get("qty")));
-//                            item.setPrice_ref(convertDouble(data.get(i).get("price_ref")));
-//                            item.setComments(data.get(i).get("comments"));
-//                            //
-//                            pack.add(item);
-//                        }
-//                    }
+                    for (TSO_Service_Search_Obj packService : adapterData) {
+                        if(packService.isSelected()){
+                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
+                            item.setType_ps(packService.getType_ps());
+                            item.setPrice_list_code(packService.getPrice_list_code());
+                            item.setPack_code(packService.getPack_code());
+                            //todo definir qnd setar pack_seq
+                            item.setPack_seq(packService.getPack_code());
+                            item.setService_code(packService.getService_code());
+                            //todo definir qnd setar qty(chumbar 1)
+                            item.setQty(1);
+                            //todo definir qnd setar partnerCode()
+                            item.setPartner_code(-1);
+                            //todo definir qnd setar comentario()
+                            item.setComments("-1");
+                            //todo definir SE TERÁ FLAG COM OU SEM DETALHE
+                            //QUEM PREENCHE OS SEQS E SE PRECISA MONTAR SUB ITEM SERVICES
+                            //
+                            pack.add(item);
+                        }
+                    }
                     //
                     if (pack.size() > 0) {
                         new Service_Pack_MicroService().execute(pack);
@@ -392,7 +390,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
-            if (data != null) {
+            if (adapterData != null) {
                 mAdapterRv = new Act043_Adapter_Services_Packs_List_RV(
                     context,
                     R.layout.act043_adapter_services_pack_list_content_cell_pack,
@@ -437,35 +435,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         super.onPause();
 
         loadScreenToData();
-    }
-
-    private ArrayList<HMAux> gerarData(ArrayList<TSO_Service_Search_Obj> dataRec) {
-        ArrayList<HMAux> data = new ArrayList<>();
-        try {
-            for (TSO_Service_Search_Obj obj : dataRec) {
-                HMAux item = new HMAux();
-                //
-                item.put("type_ps", obj.getType_ps());
-                item.put("customer_code", String.valueOf(obj.getCustomer_code()));
-                item.put("price_list_code", String.valueOf(obj.getPrice_list_code()));
-                item.put("pack_code", String.valueOf(obj.getPack_code()));
-                item.put("service_code", String.valueOf(obj.getService_code()));
-                item.put("pack_service_desc", obj.getPack_service_desc());
-                item.put("pack_service_desc_full", obj.getPack_service_desc_full());
-                item.put("price",String.valueOf( obj.getPrice()));
-                item.put("manual_price", String.valueOf(obj.getManual_price()));
-                item.put("rating", String.valueOf(obj.getRating()));
-                item.put("rating_ref", String.valueOf(obj.getRating_ref()));
-                //
-                data.add(item);
-            }
-
-
-        } catch (Exception e) {
-            Log.d("TESTE", e.toString());
-        }
-
-        return data;
     }
 
     private class Service_Pack_MicroService extends AsyncTask<ArrayList<TSO_SO_Service_Item>, Void, HMAux> {

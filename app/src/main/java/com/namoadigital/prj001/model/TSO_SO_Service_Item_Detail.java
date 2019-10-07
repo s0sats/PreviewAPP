@@ -4,9 +4,9 @@ public class TSO_SO_Service_Item_Detail {
 
     private int category_price_code;
     private int service_code;
-    private long service_seq;
+    private long service_seq;//maior que 100 mil e incrementado a cada item adicionado
     private int qty;
-    private int partner_code;
+    private Integer partner_code;
     private double price;
     private String comments;
     private int zone_code;
