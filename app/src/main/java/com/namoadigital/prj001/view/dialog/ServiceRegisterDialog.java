@@ -1,0 +1,162 @@
+package com.namoadigital.prj001.view.dialog;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
+
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+
+public class ServiceRegisterDialog extends AlertDialog {
+
+    HMAux hmAux_trans;
+    TSO_Service_Search_Obj item;
+    TextView tv_desc;
+    TextView tv_id_lbl;
+    TextView tv_id_val;
+    TextView tv_qtd_lbl;
+    MKEditTextNM mk_qtd_val;
+    TextView tv_price_lbl;
+    MKEditTextNM mk_price_val;
+    TextView tv_comments_lbl;
+    MKEditTextNM mk_comments_val;
+    CheckBox cb_remove_val;
+    Button btn_cancelar;
+    Button btn_ok;
+
+    /*
+        dialogType = 0 {
+            dialog para o pacote
+        }
+
+        dialogType = 1 {
+            dialog para serviços do pacote
+        }
+
+        dialogType = 2 {
+            dialog para edição de serviço
+        }
+     */
+    int dialogType;
+    private View.OnClickListener btnOkListener=null;
+    private View.OnClickListener btnCancelListener=null;
+
+    protected ServiceRegisterDialog(Context context) {
+        super(context);
+    }
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, TSO_Service_Search_Obj item){
+        this(context);
+        this.hmAux_trans = hmAux_trans;
+        this.dialogType = dialogType;
+        this.item = item;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.act043_frag_service_list_form);
+
+        tv_desc = findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
+        tv_id_lbl = findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
+        tv_id_val = findViewById(R.id.act043_frag_service_list_form_tv_id_val);
+        tv_qtd_lbl = findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
+        mk_qtd_val =  findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        tv_price_lbl = findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
+        mk_price_val =  findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        tv_comments_lbl = findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
+        mk_comments_val =  findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
+        btn_ok =  findViewById(R.id.act043_frag_service_list_btn_ok);
+        //
+        tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
+        tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
+        tv_price_lbl.setText(hmAux_trans.get("alert_service_price"));
+        mk_price_val.setHint(hmAux_trans.get("alert_service_price_hint"));
+        tv_comments_lbl.setText(hmAux_trans.get("alert_service_comments"));
+        cb_remove_val.setText(hmAux_trans.get("alert_service_remove"));
+        //
+        btn_cancelar.setText(hmAux_trans.get("sys_alert_btn_cancel"));
+
+        btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
+        //
+        tv_desc.setText(item.getPack_service_desc());
+        tv_id_val.setText(item.getPack_service_desc());
+        //
+//        if (!item.get("qty").isEmpty()) {
+//            mk_qtd_val.setText(item.get("qty"));
+//            cb_remove_val.setVisibility(View.VISIBLE);
+//        } else {
+//            mk_qtd_val.setText("1");
+//            cb_remove_val.setVisibility(View.GONE);
+//        }
+        //
+        mk_price_val.setText(item.getPrice() != null ?item.getPrice().toString() : "" );
+        if (item.getManual_price() == 1) {
+            mk_price_val.setEnabled(true);
+            mk_price_val.requestFocus();
+        } else {
+            mk_price_val.setEnabled(false);
+        }
+        //
+        mk_comments_val.setText("");
+        //
+        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
+            cb_remove_val.setEnabled(false);
+        } else {
+            cb_remove_val.setEnabled(true);
+        }
+        btn_ok.setOnClickListener(btnOkListener);
+        btn_cancelar.setOnClickListener(btnCancelListener);
+
+        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if (s.isEmpty()) {
+                    cb_remove_val.setEnabled(false);
+                } else {
+                    cb_remove_val.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    public void setBtnOkListener(View.OnClickListener btnOkListener) {
+        this.btnOkListener = btnOkListener;
+    }
+
+    public void setBtnCancelListener(View.OnClickListener btnCancelListener) {
+        this.btnCancelListener = btnCancelListener;
+    }
+
+    public String getMk_qtd_val() {
+        return mk_qtd_val.getText().toString().trim();
+    }
+
+    public String getMk_price_val() {
+        return mk_price_val.getText().toString().trim();
+    }
+
+    public String getMk_comments_val() {
+        return mk_comments_val.getText().toString().trim();
+    }
+
+    public boolean getCb_remove_val() {
+        return cb_remove_val.isChecked();
+    }
+
+    public void resetMk_price_val() {
+        this.mk_price_val.setText("");
+    }
+}
