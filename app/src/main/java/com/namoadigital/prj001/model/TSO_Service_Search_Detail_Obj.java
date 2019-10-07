@@ -15,6 +15,13 @@ public class TSO_Service_Search_Detail_Obj {
     private int manual_price;
     private int optional;
     private int require_approval;
+    private Integer site_code_selected;
+    private String site_desc_selected;
+    private Integer zone_code_selected;
+    private String zone_desc_selected;
+    private Integer partner_code_selected;
+    private String partner_desc_selected;
+    private String comment;
     private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;
     //private JSONArray site_zone;
 
@@ -112,5 +119,61 @@ public class TSO_Service_Search_Detail_Obj {
 
     public void setSite_zone(ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone) {
         this.site_zone = site_zone;
+    }
+
+    public Integer getSite_code_selected() {
+        return site_code_selected;
+    }
+
+    public void setSite_code_selected(Integer site_code_selected) {
+        this.site_code_selected = site_code_selected;
+    }
+
+    public String getSite_desc_selected() {
+        return site_desc_selected;
+    }
+
+    public void setSite_desc_selected(String site_desc_selected) {
+        this.site_desc_selected = site_desc_selected;
+    }
+
+    public Integer getZone_code_selected() {
+        return zone_code_selected;
+    }
+
+    public void setZone_code_selected(Integer zone_code_selected) {
+        this.zone_code_selected = zone_code_selected;
+    }
+
+    public String getZone_desc_selected() {
+        return zone_desc_selected;
+    }
+
+    public void setZone_desc_selected(String zone_desc_selected) {
+        this.zone_desc_selected = zone_desc_selected;
+    }
+
+    public Integer getPartner_code_selected() {
+        return partner_code_selected;
+    }
+
+    public void setPartner_code_selected(Integer partner_code_selected) {
+        this.partner_code_selected = partner_code_selected;
+    }
+
+    public String getPartner_desc_selected() {
+        return partner_desc_selected;
+    }
+
+    public void setPartner_desc_selected(String partner_desc_selected) {
+        this.partner_desc_selected = partner_desc_selected;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
@@ -37,7 +38,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener {
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
@@ -126,6 +127,16 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("alert_no_service_found_ttl");
         transList.add("alert_no_service_found_msg");
         transList.add("service_or_pack_filter_hint");
+        //Frag_Package_Detail_List
+        transList.add("tv_package_detail_list_ttl");
+        transList.add("btn_save_package_detail");
+        transList.add("btn_cancel_package_detail");
+        transList.add("alert_service_without_price_ttl");
+        transList.add("alert_service_without_price_msg");
+        transList.add("zone_package_detail_lbl");
+        transList.add("partner_package_detail_lbl");
+        transList.add("comment_package_detail_lbl");
+        transList.add("amount_package_detail_lbl");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -572,6 +583,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     private void hideKeyBoard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    @Override
+    public void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item) {
+
     }
 
     //region TRATATIVA_FCM

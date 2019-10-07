@@ -10,10 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Package_Detail_Frag_Item_Adapter;
-import com.namoadigital.prj001.ui.act043.dummy.DummyContent;
-import com.namoadigital.prj001.ui.act043.dummy.DummyContent.DummyItem;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 /**
  * A fragment representing a list of Items.
@@ -23,11 +27,13 @@ import com.namoadigital.prj001.ui.act043.dummy.DummyContent.DummyItem;
  */
 public class Act043_Frag_Package_Detail_List extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+    private static final String HMAUX_TRANS = "hmaux_trans";
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private HMAux hmAux_Trans = new HMAux();
+    private Context context;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,12 +42,11 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
     public Act043_Frag_Package_Detail_List() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static Act043_Frag_Package_Detail_List newInstance(int columnCount) {
+    public static Act043_Frag_Package_Detail_List newInstance(int columnCount, HMAux hmAux_Trans) {
         Act043_Frag_Package_Detail_List fragment = new Act043_Frag_Package_Detail_List();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putSerializable(HMAUX_TRANS, hmAux_Trans);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +57,7 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) getArguments().getSerializable(HMAUX_TRANS));
         }
     }
 
@@ -60,16 +66,15 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rv_pack_service_detail);
+            context = view.getContext();
+            RecyclerView recyclerView = view.findViewById(R.id.rv_pack_service_detail);
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new Act043_Package_Detail_Frag_Item_Adapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new Act043_Package_Detail_Frag_Item_Adapter(new ArrayList<TSO_Service_Search_Detail_Obj>(), mListener, hmAux_Trans));
         }
         return view;
     }
@@ -104,6 +109,6 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item);
     }
 }

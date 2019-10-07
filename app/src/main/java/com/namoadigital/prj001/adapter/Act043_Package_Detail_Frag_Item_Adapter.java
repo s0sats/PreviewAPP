@@ -7,25 +7,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.ui.act043.Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener;
-import com.namoadigital.prj001.ui.act043.dummy.DummyContent.DummyItem;
+
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link TSO_Service_Search_Detail_Obj} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapter<Act043_Package_Detail_Frag_Item_Adapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<TSO_Service_Search_Detail_Obj> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private HMAux hmAux_Trans;
 
-    public Act043_Package_Detail_Frag_Item_Adapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public Act043_Package_Detail_Frag_Item_Adapter(List<TSO_Service_Search_Detail_Obj> items, OnListFragmentInteractionListener listener, HMAux hmAux_Trans) {
         mValues = items;
         mListener = listener;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -37,7 +41,9 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
+        final TSO_Service_Search_Detail_Obj item = mValues.get(position);
+
+        holder.bindValue(item);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +51,7 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(item);
                 }
             }
         });
@@ -67,7 +73,6 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
         private final ImageView iv_pack_service_item;
         private final TextView tv_pack_service_comment_lbl;
         private final TextView tv_pack_service_comment_val;
-        public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -84,9 +89,20 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
             tv_pack_service_comment_val = view.findViewById(R.id.tv_pack_service_comment_val);
         }
 
-        @Override
-        public String toString() {
-        return super.toString() + " '" + "" + "'";
+        public void bindValue(TSO_Service_Search_Detail_Obj mItem){
+            if(mItem.getPrice() != null) {
+                tv_pack_service_price.setVisibility(View.VISIBLE);
+                tv_pack_service_price.setText(mItem.getPrice().toString());
+            }else{
+                tv_pack_service_price.setVisibility(View.INVISIBLE);
+            }
+            tv_pack_service_zone_lbl.setText(hmAux_Trans.get("zone_package_detail_lbl"));
+            tv_pack_service_val.setText(mItem.getService_desc_full());
+            tv_pack_service_partner_lbl.setText(hmAux_Trans.get("partner_package_detail_lbl"));
+            tv_pack_service_zone_val.setText(mItem.getZone_desc_selected());
+            tv_pack_service_partner_val.setText(mItem.getPartner_desc_selected());
+            tv_pack_service_comment_lbl.setText(hmAux_Trans.get("comment_package_detail_lbl"));
+            tv_pack_service_comment_val.setText(mItem.getComment());
         }
     }
 }
