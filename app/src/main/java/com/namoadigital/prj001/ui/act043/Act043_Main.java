@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Act043_Main extends Base_Activity_Frag_NFC_Geral
-        implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_I_Add_Service_Interaction, , Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener{
+        implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_I_Add_Service_Interaction, Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener{
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
