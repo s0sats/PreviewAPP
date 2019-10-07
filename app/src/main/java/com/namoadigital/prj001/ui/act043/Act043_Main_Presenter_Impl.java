@@ -102,25 +102,62 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     @Override
     public ArrayList<TSO_Service_Search_Obj> prepareListToAdapter(ArrayList<TSO_Service_Search_Obj> packServiceList) {
         for (TSO_Service_Search_Obj obj : packServiceList) {
-            Double totPrice = null;
-            boolean reportMissingValue = false;
-            //
-            if (Act043_Main.TYPE_PS_PACK.equals(obj.getType_ps())) {
-                for (TSO_Service_Search_Detail_Obj innerService : obj.getService_list()) {
-                    if (innerService.getPrice() != null) {
-                        totPrice = totPrice == null ? innerService.getPrice() : totPrice + innerService.getPrice();
-                    } else {
-                        reportMissingValue = true;
-                    }
-                }
-                obj.setPrice(totPrice);
-                obj.setNullPrice(reportMissingValue);
-            } else {
-                obj.setNullPrice(obj.getPrice() == null);
-            }
+            calculateTotalPrice(obj,true);
         }
         //
         return packServiceList;
+    }
+
+    /**
+     * Metodo publico que será chamado para recalcular o preço do pacote
+     * @param packService - obj PackService
+     */@Override
+    public void calculateTotalPrice(TSO_Service_Search_Obj packService){
+        calculateTotalPrice(packService,false);
+    }
+
+    /**
+     * Metodo que calcula o preço total do pacote e seta preço referencia caso definePriceRef
+     * for true.
+     * Só dever se chamado como definePriceRef na chamada do close act
+     * @param packService - obj PackSerice
+     * @param definePriceRef - Se true, além de calcular o preço total, seta valores de referencias
+     */
+    private void calculateTotalPrice(TSO_Service_Search_Obj packService, boolean definePriceRef){
+        Double totPrice = null;
+        boolean reportMissingValue = false;
+        if (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps())) {
+            for (TSO_Service_Search_Detail_Obj innerService : packService.getService_list()) {
+                //Se item não foi selecionado,ou seja esta inalterado pelo usr
+                //seta preço de referencia.
+                //Esse metodo deveria dar apenas uma vez, porem, caso não seja, essa
+                //validalção evita que um preço alterado pelo usr passe por cima do original.
+                if(definePriceRef) {
+                    //Seta preço "original" no atributo price_ref
+                    innerService.setPrice_ref(innerService.getPrice());
+                }
+                //
+                if (innerService.getPrice() != null) {
+                    totPrice = totPrice == null ? innerService.getPrice() : totPrice + innerService.getPrice();
+                } else {
+                    reportMissingValue = true;
+                }
+            }
+            //
+            if(definePriceRef) {
+                packService.setPrice_ref(totPrice);
+            }
+            packService.setPrice(totPrice);
+            packService.setNullPrice(reportMissingValue);
+        } else {
+            //Se item não foi selecionado,ou seja esta inalterado pelo usr
+            //seta preço de referencia.
+            //Esse metodo deveria dar apenas uma vez, porem, caso não seja, essa
+            //validalção evita que um preço alterado pelo usr passe por cima do original.
+            packService.setPrice_ref( definePriceRef ? packService.getPrice() : packService.getPrice_ref() );
+            //Seta flag que indica se valor do preço não esta definido.
+            packService.setNullPrice(packService.getPrice() == null);
+        }
     }
 
     /**

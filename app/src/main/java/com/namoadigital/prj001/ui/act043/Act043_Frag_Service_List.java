@@ -27,7 +27,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List_RV;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -56,7 +55,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private TextView tv_title;
     private MKEditTextNM mk_desc;
     private RecyclerView rv_services_packs;
-    private Act043_Adapter_Services_Packs_List mAdapter;
     private Act043_Adapter_Services_Packs_List_RV mAdapterRv;
     private ArrayList<TSO_Service_Search_Obj> data;
     private ArrayList<TSO_Service_Search_Obj> adapterData;
@@ -93,21 +91,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         this.delegate = delegate;
     }
 
-//    private void gerarExtraFields(ArrayList<HMAux> data) {
-//        for (HMAux item : data) {
-//            item.put("qty", "");
-//
-//            // Hugo
-//            if (item.get("manual_price").equalsIgnoreCase("1")) {
-//                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_EMPTY));
-//                item.put("price_ref", item.get("price"));
-//            } else {
-//                item.put("price", convertValueEmptyZero(item.get("price"), CONVERT_TYPE_ZERO));
-//                item.put("price_ref", item.get("price"));
-//            }
-//            item.put("comments", "");
-//        }
-//    }
 
     public boolean hasAnyItemAdded() {
 //        for (int i = 0; i < data.size(); i++) {
@@ -410,18 +393,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (data != null) {
-                //LUCHE - 06/08/2019
-                //Antigamente usava 2 layout com recurso diferente mas o mesmo layout no xml
-                //Modificado para usar o mesmo layout, pois o segundo foi alterado para um segunda opção.
-                /*mAdapter = new Act043_Adapter_Services_Packs_List(
-                        context,
-                        //R.layout.act043_adapter_services_pack_list_content_cell_service,
-                        R.layout.act043_adapter_services_pack_list_content_cell_pack,
-                        R.layout.act043_adapter_services_pack_list_content_cell_pack,
-                        hmAux_Trans,
-                        data
-                );*/
-
                 mAdapterRv = new Act043_Adapter_Services_Packs_List_RV(
                     context,
                     R.layout.act043_adapter_services_pack_list_content_cell_pack,

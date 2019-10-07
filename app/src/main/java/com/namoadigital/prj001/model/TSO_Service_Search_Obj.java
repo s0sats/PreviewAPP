@@ -16,6 +16,7 @@ public class TSO_Service_Search_Obj {
     private String pack_service_desc;
     private String pack_service_desc_full;
     private Double price;//double
+    private Double price_ref;//Preenchido pelo app
     private int manual_price;//double
     private int rating;//int
     private Double rating_ref;//double
@@ -87,6 +88,14 @@ public class TSO_Service_Search_Obj {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getPrice_ref() {
+        return price_ref;
+    }
+
+    public void setPrice_ref(Double price_ref) {
+        this.price_ref = price_ref;
     }
 
     public int getManual_price() {

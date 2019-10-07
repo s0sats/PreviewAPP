@@ -11,6 +11,7 @@ public class TSO_Service_Search_Detail_Obj {
     private String service_desc;
     private String service_desc_full;
     private Double price;
+    private Double price_ref;
     private int qty;
     private int manual_price;
     private int optional;
@@ -79,6 +80,14 @@ public class TSO_Service_Search_Detail_Obj {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getPrice_ref() {
+        return price_ref;
+    }
+
+    public void setPrice_ref(Double price_ref) {
+        this.price_ref = price_ref;
     }
 
     public int getQty() {
