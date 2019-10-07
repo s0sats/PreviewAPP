@@ -24,19 +24,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_pack_service_amount_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Amount - trad"
+        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_val"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_val" />
+
+    <TextView
+        android:id="@+id/tv_pack_service_amount_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Amount - trad"
+        app:layout_constraintStart_toEndOf="@+id/tv_pack_service_amount_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_amount_lbl"
+        app:layout_constraintBottom_toTopOf="@+id/tv_pack_service_amount_lbl"/>
+
+    <TextView
         android:id="@+id/tv_pack_service_zone_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Zone - trad"
-        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_val"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_val" />
+        app:layout_constraintStart_toStartOf="@+id/tv_pack_service_amount_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_amount_lbl" />
 
     <TextView
         android:id="@+id/tv_pack_service_partner_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Parceiro - trad"
         app:layout_constraintStart_toStartOf="@+id/tv_pack_service_zone_lbl"
         app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_zone_val" />
@@ -80,7 +99,7 @@
         android:id="@+id/tv_pack_service_comment_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="komentar - trad"
         app:layout_constraintStart_toStartOf="@+id/tv_pack_service_partner_lbl"
         app:layout_constraintTop_toBottomOf="@+id/tv_pack_service_partner_lbl" />

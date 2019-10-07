@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -224,30 +225,87 @@ public class Act043_Frag_Service_List extends BaseFragment {
         });
     }
 
-
-
     private void hideKeyBoard() {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
-
-    private void showSercice_Pack_Details(final HMAux item) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
+    private void showService_Pack_Details(final HMAux item) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act043_frag_service_list_form, null);
+        final AlertDialog.Builder builder = getBuilderForRegisterDialog(item, view);
+
+//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                    }
+//                });
         //
-        final TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
-        final TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
-        final TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
-        final TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
-        final MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        final TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
-        final MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        final TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
-        final MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        final CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        final Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
+        final AlertDialog dialog = builder.create();
+        Button btn_cancelar = view.findViewById(R.id.act043_frag_service_list_btn_cancel);
+        Button btn_ok = view.findViewById(R.id.act043_frag_service_list_btn_ok);
+        final MKEditTextNM mk_price_val = view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        final CheckBox cb_remove_val = view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        final MKEditTextNM mk_qtd_val = view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        final MKEditTextNM mk_comments_val =  view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        dialog.show();
+
+        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if (s.isEmpty()) {
+                    cb_remove_val.setEnabled(false);
+                } else {
+                    cb_remove_val.setEnabled(true);
+                }
+            }
+        });
+        //
+        btn_cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkFields(
+                        item,
+                        cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
+                        mk_price_val.getText().toString().trim(),
+                        cb_remove_val.isChecked() ? "" : mk_comments_val.getText().toString().trim()
+                )) {
+                    dialog.dismiss();
+                } else {
+                    mk_price_val.setText("");
+                }
+            }
+        });
+    }
+
+    @NonNull
+    private AlertDialog.Builder getBuilderForRegisterDialog(HMAux item, View view ) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+
+        //
+        TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
+        TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
+        TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
+        TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
+        MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
+        MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
+        MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
         //
         tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
         tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
@@ -294,56 +352,11 @@ public class Act043_Frag_Service_List extends BaseFragment {
             cb_remove_val.setEnabled(true);
         }
 
-        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
 
-            }
-
-            @Override
-            public void reportTextChange(String s, boolean b) {
-                if (s.isEmpty()) {
-                    cb_remove_val.setEnabled(false);
-                } else {
-                    cb_remove_val.setEnabled(true);
-                }
-            }
-        });
         //
-        builder
-                .setView(view)
+        builder.setView(view)
                 .setCancelable(true);
-//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                    }
-//                });
-        //
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-        //
-        btn_cancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkFields(
-                        item,
-                        cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
-                        mk_price_val.getText().toString().trim(),
-                        cb_remove_val.isChecked() ? "" : mk_comments_val.getText().toString().trim()
-                )) {
-                    dialog.dismiss();
-                } else {
-                    mk_price_val.setText("");
-                }
-            }
-        });
+        return builder;
     }
 
     private void showService_Pack_Dialog(TSO_Service_Search_Obj item) {
