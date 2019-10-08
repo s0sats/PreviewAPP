@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private TextView tv_comments_lbl;
     private MKEditTextNM mk_comments_val;
     private CheckBox cb_remove_val;
+    private ImageView iv_foto;
     private Button btn_cancelar;
     private Button btn_ok;
     private Button btn_package_detail;
@@ -99,6 +101,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         tv_comments_lbl = findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
         mk_comments_val =  findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
         cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        iv_foto =  findViewById(R.id.iv_foto);
         btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
         btn_ok =  findViewById(R.id.act043_frag_service_list_btn_ok);
         btn_package_detail =  findViewById(R.id.btn_package_detail);
@@ -173,6 +176,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 mk_qtd_val.setEnabled(false);
                 mk_price_val.setEnabled(false);
                 cb_remove_val.setVisibility(View.GONE);
+                iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
                 break;
             case 1:
                 cl_register_service_form.setVisibility(View.GONE);
@@ -180,6 +184,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 ll_register_spinners.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(true);
+                iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
                 setSpinnersContent();
                 setSpinnersAction();
                 if(item.getManual_price() == 1) {
@@ -260,11 +265,23 @@ public class ServiceRegisterDialog extends AlertDialog {
         act043_ss_site.setmLabel(hmAux_trans.get("alert_site_lbl"));
         act043_ss_zone.setmLabel(hmAux_trans.get("alert_zone_lbl"));
         act043_ss_partner.setmLabel(hmAux_trans.get("alert_partner_lbl"));
+
         if(siteOption != null && !siteOption.isEmpty()){
             act043_ss_site.setmOption(siteOption);
             act043_ss_site.setmEnabled(true);
+            ArrayList<HMAux> zoneOption = getZoneOption(siteOption.get(0).get(SearchableSpinner.CODE));
+            act043_ss_zone.setmOption(zoneOption);
+            if(item != null &&
+                    item.getSite_zone().size() == 1 ) {
+                act043_ss_site.setmEnabled(false);
+                act043_ss_zone.setmEnabled(false);
+            }
+            act043_ss_site.setmValue(siteOption.get(0));
+            act043_ss_zone.setmValue(zoneOption.get(0));
         }else{
             act043_ss_site.setmEnabled(false);
+            act043_ss_zone.setmEnabled(false);
+            act043_ss_partner.setmEnabled(false);
         }
         ArrayList<HMAux> partners = new ArrayList<>();
 
@@ -276,10 +293,11 @@ public class ServiceRegisterDialog extends AlertDialog {
             partner.put(SearchableSpinner.ID,mdPartner.getPartner_id());
             //
             partners.add(partner);
+            if(item != null && item.getSite_zone().size() == 1){
+                act043_ss_partner.setmValue(partner);
+            }
         }
-
         act043_ss_partner.setmOption(partners);
-
         //
     }
 
@@ -313,5 +331,17 @@ public class ServiceRegisterDialog extends AlertDialog {
 
     public void resetMk_price_val() {
         this.mk_price_val.setText("");
+    }
+
+    public HMAux get_ss_site_content() {
+        return act043_ss_site.getmValue();
+    }
+
+    public HMAux get_ss_zone_content() {
+        return act043_ss_zone.getmValue();
+    }
+
+    public HMAux get_ss_partner_content() {
+        return act043_ss_partner.getmValue();
     }
 }

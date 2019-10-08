@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -285,6 +286,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
         int dialogType = 0;
+
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
         if("S".equalsIgnoreCase(item.getType_ps())){
@@ -306,20 +308,52 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         delegateAddService.getPartnerList()
                 );
         //
+        final int finalDialogType = dialogType;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
         dialog.setBtnOkListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (checkFields(
-                        item,
-                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
-                        dialog.getMk_price_val(),
-                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
-                )) {
-                    dialog.dismiss();
-                } else {
-                    dialog.resetMk_price_val();
+                switch (finalDialogType ){
+                    case 0:
+                        break;
+                    case 1:
+                        if(dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
+                        &&  dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                        && ( (dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty() )
+                        && ( (dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty() )
+                        ){
+                            item.setSelected(true);
+                            item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
+                            item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                            item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                            if(dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                            }
+                            item.setComment(dialog.getMk_comments_val());
+                            delegateAddService.calculateTotalPrice(item);
+                            mAdapterRv.notifyDataSetChanged();
+                        }
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+
                 }
+
+//                if (checkFields(
+//                        item,
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
+//                        dialog.getMk_price_val(),
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
+//                )) {
+                    dialog.dismiss();
+//                } else {
+//                    dialog.resetMk_price_val();
+//                }
             }
         });
         dialog.setBtnCancelListener( new View.OnClickListener() {
@@ -480,24 +514,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         @Override
                         public void onClick(TSO_Service_Search_Obj item) {
                             showService_Pack_Details(item);
-                            if(delegateAddService != null) {
-                                ArrayList<HMAux> tstSite = new ArrayList<>();
-                                ArrayList<HMAux> tstZone = new ArrayList<>();
-                                if(item.getService_list().size() > 0) {
-                                    tstSite = delegateAddService.generateSiteOption(item.getService_list().get(0).getSite_zone());
-                                    tstZone = delegateAddService.generateSiteZoneOption(item.getService_list().get(0).getSite_zone());
-                                }else{
-                                    tstSite = delegateAddService.generateSiteOption(item.getSite_zone());
-                                    tstZone = delegateAddService.generateSiteZoneOption(item.getSite_zone());
-                                }
-                                int i = tstSite.size();
-                                //
-                                delegateAddService.calculateTotalPrice(item);
-                                mAdapterRv.notifyDataSetChanged();
-                            }
-                            //
-
-                            //showSercice_Pack_Details(item);
                         }
                     });
                 }
@@ -522,6 +538,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
         loadScreenToData();
     }
+
+
 
     private class Service_Pack_MicroService extends AsyncTask<ArrayList<TSO_SO_Service_Item>, Void, HMAux> {
 
@@ -652,6 +670,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
             }
         }
     }
+
 
     private void showResults(HMAux so) {
         ArrayList<HMAux> mSO = new ArrayList<>();
