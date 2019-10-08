@@ -700,7 +700,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList();
                     if (servicesList != null && servicesList.size() > 0) {
                         act043_frag_service_list.setmService(mSm_so);
-                        act043_frag_service_list.setData(servicesList);
                         act043_frag_service_list.setAdapterData(
                             mPresenter.prepareListToAdapter(new ArrayList<>(servicesList))
                         );

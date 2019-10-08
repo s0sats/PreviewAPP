@@ -20,7 +20,6 @@ public class TSO_SO_Service_Item {
     private long pack_seq;//maior que 100 mil e incrementado a cada item adicionado
     private int service_code;//int
     private String price;//double
-    private int manual_price;//double
     private int qty;
     private Integer partner_code;
     private String comments;
@@ -28,14 +27,13 @@ public class TSO_SO_Service_Item {
 
     public TSO_SO_Service_Item() {}
 
-    public TSO_SO_Service_Item(String type_ps, int price_list_code, int pack_code, long pack_seq, int service_code, String price, int manual_price, int qty, Integer partner_code, String comments) {
+    public TSO_SO_Service_Item(String type_ps, int price_list_code, int pack_code, long pack_seq, int service_code, String price, int qty, Integer partner_code, String comments) {
         this.type_ps = type_ps;
         this.price_list_code = price_list_code;
         this.pack_code = pack_code;
         this.pack_seq = pack_seq;
         this.service_code = service_code;
         this.price = price;
-        this.manual_price = manual_price;
         this.qty = qty;
         this.partner_code = partner_code;
         this.comments = comments;
@@ -89,13 +87,6 @@ public class TSO_SO_Service_Item {
         this.price = price;
     }
 
-    public int getManual_price() {
-        return manual_price;
-    }
-
-    public void setManual_price(int manual_price) {
-        this.manual_price = manual_price;
-    }
 
     public int getQty() {
         return qty;

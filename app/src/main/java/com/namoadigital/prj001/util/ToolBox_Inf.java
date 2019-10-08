@@ -5145,7 +5145,7 @@ public class ToolBox_Inf {
             return (new DecimalFormat("###0.00").format(vDouble)).replace(",", ".");
         } catch (Exception e){
             ToolBox_Inf.registerException(CLASS_NAME,e);
-            return "0,00";
+            return "0.00";
         }
 
     }

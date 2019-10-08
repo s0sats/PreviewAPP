@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,6 +42,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +58,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private MKEditTextNM mk_desc;
     private RecyclerView rv_services_packs;
     private Act043_Adapter_Services_Packs_List_RV mAdapterRv;
-    private ArrayList<TSO_Service_Search_Obj> data;
     private ArrayList<TSO_Service_Search_Obj> adapterData;
     private Button btn_save;
     private String mToken;
@@ -68,10 +67,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     public void setmService(SM_SO mSO_Service) {
         this.mSO_Service = mSO_Service;
-    }
-
-    public void setData(ArrayList<TSO_Service_Search_Obj> data) {
-        this.data = data;
     }
 
     public void setAdapterData(ArrayList<TSO_Service_Search_Obj> adapterData) {
@@ -225,11 +220,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
             packService.getPack_code(),
             getNextPackSeq(),
             packService.getService_code(),
-            ToolBox_Inf.formatDoubleToServer(
+            formatDoubleToSend(
                 packService.getPrice()
             ),
-            packService.getManual_price(),
-            packService.getQty(),
+            (packService.getQty() > 0 ? packService.getQty() : 1),
             packService.getPartner_code_selected(),
             packService.getComment()
         );
@@ -248,9 +242,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
             getNextServiceSeq(),
             serviceDetail.getQty(),
             serviceDetail.getPartner_code_selected(),
-            ToolBox_Inf.formatDoubleToServer(
+            formatDoubleToSend(
                 serviceDetail.getPrice()
-            ),//TROCAR PROP PARA STRING, DECIMAL SERÁ ,
+            ),
             serviceDetail.getComment(),
             serviceDetail.getSite_code_selected(),
             serviceDetail.getZone_code_selected()
@@ -264,19 +258,41 @@ public class Act043_Frag_Service_List extends BaseFragment {
      */
     private TSO_SO_Service_Item_Detail createServiceDetail(TSO_Service_Search_Obj packService) {
         //
-        return new TSO_SO_Service_Item_Detail(
-            mSO_Service.getCategory_price_code(),
-            packService.getService_code(),
-            getNextServiceSeq(),
-            packService.getQty(),
-            packService.getPartner_code_selected(),
-            ToolBox_Inf.formatDoubleToServer(
-                packService.getPrice()
-            ),
-            packService.getComment(),
-            packService.getSite_code_selected(),
-            packService.getZone_code_selected()
-        );
+        try {
+            return new TSO_SO_Service_Item_Detail(
+                mSO_Service.getCategory_price_code(),
+                packService.getService_code(),
+                getNextServiceSeq(),
+                packService.getQty(),
+                packService.getPartner_code_selected(),
+                formatDoubleToSend(
+                    (packService.getPrice() / packService.getQty())
+                ),
+                packService.getComment(),
+                packService.getSite_code_selected(),
+                packService.getZone_code_selected()
+            );
+        }catch (Exception e ){
+            //Como tratar ?
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return new TSO_SO_Service_Item_Detail();
+        }
+    }
+
+    /**
+     * Metodo que SERVE SOMENTE
+     *
+     * @param dValue
+     * @return
+     */
+
+    private String formatDoubleToSend(Double dValue){
+        try {
+            return (new DecimalFormat("###0.00").format(dValue)).replace(".", ",");
+        } catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return "0,00";
+        }
     }
 
     private void hideKeyBoard() {
@@ -342,8 +358,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
     @NonNull
     private AlertDialog.Builder getBuilderForRegisterDialog(HMAux item, View view ) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-
         //
         TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
         TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
@@ -407,14 +421,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         builder.setView(view)
                 .setCancelable(true);
         return builder;
-    }
-
-    private void showService_Pack_Dialog(TSO_Service_Search_Obj item) {
-        if(Act043_Main.TYPE_PS_PACK.equals(item.getType_ps())){
-            Toast.makeText(context,"Pacote: " + item.getPack_service_desc_full(),Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(context,"Service: " + item.getPack_service_desc_full(),Toast.LENGTH_LONG).show();
-        }
     }
 
     private boolean checkFields(TSO_Service_Search_Obj item, String qtd, String price, String comments) {
@@ -481,23 +487,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         public void onClick(TSO_Service_Search_Obj item) {
                             showService_Pack_Details(item);
                             if(delegateAddService != null) {
-                                ArrayList<HMAux> tstSite = new ArrayList<>();
-                                ArrayList<HMAux> tstZone = new ArrayList<>();
-                                if(item.getService_list().size() > 0) {
-                                    tstSite = delegateAddService.generateSiteOption(item.getService_list().get(0).getSite_zone());
-                                    tstZone = delegateAddService.generateSiteZoneOption(item.getService_list().get(0).getSite_zone());
-                                }else{
-                                    tstSite = delegateAddService.generateSiteOption(item.getSite_zone());
-                                    tstZone = delegateAddService.generateSiteZoneOption(item.getSite_zone());
-                                }
-                                int i = tstSite.size();
-                                //
                                 delegateAddService.calculateTotalPrice(item);
                                 mAdapterRv.notifyDataSetChanged();
                             }
-                            //
-
-                            //showSercice_Pack_Details(item);
                         }
                     });
                 }
@@ -741,15 +733,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
             return -1;
         }
     }
-
-    private double convertDouble(String value) {
-        try {
-            return Double.parseDouble(value);
-        } catch (Exception e) {
-            return -1.0;
-        }
-    }
-
 
     private String convertValueEmptyZero(String value, String TYPE) {
         try {
