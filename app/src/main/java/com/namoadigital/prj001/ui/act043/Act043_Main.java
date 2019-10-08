@@ -135,6 +135,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_service_price_hint");
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
+        transList.add("alert_site_lbl");
+        transList.add("alert_zone_lbl");
+        transList.add("alert_partner_lbl");
         transList.add("alert_so_status");
         transList.add("alert_no_service_found_ttl");
         transList.add("alert_no_service_found_msg");
@@ -145,6 +148,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("btn_cancel_package_detail");
         transList.add("alert_service_without_price_ttl");
         transList.add("alert_service_without_price_msg");
+        transList.add("site_package_detail_lbl");
         transList.add("zone_package_detail_lbl");
         transList.add("partner_package_detail_lbl");
         transList.add("comment_package_detail_lbl");

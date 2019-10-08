@@ -11,9 +11,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 public class ServiceRegisterDialog extends AlertDialog {
 
@@ -36,6 +42,13 @@ public class ServiceRegisterDialog extends AlertDialog {
     private LinearLayout ll_register_package_form;
     private LinearLayout ll_register_spinners;
 
+    private ArrayList<HMAux> siteOption;
+    private ArrayList<HMAux> siteZoneOption;
+    private ArrayList<MD_Partner> mdPartners;
+
+    private SearchableSpinner act043_ss_site;
+    private SearchableSpinner act043_ss_zone;
+    private SearchableSpinner act043_ss_partner;
 
     /*
         dialogType = 0 {
@@ -43,13 +56,16 @@ public class ServiceRegisterDialog extends AlertDialog {
         }
 
         dialogType = 1 {
-            dialog para serviços do pacote
+            dialog para serviços
         }
 
         dialogType = 2 {
+            dialog para serviços do pacote
+        }
+        dialogType = 3 {
             dialog para edição de serviço
         }
-     */
+    */
     int dialogType;
     private View.OnClickListener btnOkListener=null;
     private View.OnClickListener btnCancelListener=null;
@@ -58,11 +74,14 @@ public class ServiceRegisterDialog extends AlertDialog {
     protected ServiceRegisterDialog(Context context) {
         super(context);
     }
-    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, TSO_Service_Search_Obj item){
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, TSO_Service_Search_Obj item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
         this(context);
         this.hmAux_trans = hmAux_trans;
         this.dialogType = dialogType;
         this.item = item;
+        this.siteOption = siteOption;
+        this.siteZoneOption = siteZoneOption;
+        this.mdPartners = mdPartners;
     }
 
     @Override
@@ -86,6 +105,9 @@ public class ServiceRegisterDialog extends AlertDialog {
         cl_register_service_form =  findViewById(R.id.ll_register_service_form);
         ll_register_package_form =  findViewById(R.id.ll_register_package_form);
         ll_register_spinners =  findViewById(R.id.ll_register_spinners);
+        act043_ss_site = findViewById(R.id.act043_ss_site);
+        act043_ss_zone = findViewById(R.id.act043_ss_zone);
+        act043_ss_partner = findViewById(R.id.act043_ss_partner);
         //
         tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
         tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
@@ -100,18 +122,9 @@ public class ServiceRegisterDialog extends AlertDialog {
         //
         tv_desc.setText(item.getPack_service_desc());
         tv_id_val.setText(item.getPack_service_desc());
-
-
-        //
-//        if (!item.get("qty").isEmpty()) {
-//            mk_qtd_val.setText(item.get("qty"));
-//            cb_remove_val.setVisibility(View.VISIBLE);
-//        } else {
-//            mk_qtd_val.setText("1");
-//            cb_remove_val.setVisibility(View.GONE);
-//        }
         //
         mk_price_val.setText(item.getPrice() != null ?item.getPrice().toString() : "" );
+        //
         setComponentsVisibility();
         if (item.getManual_price() == 1) {
             mk_price_val.setEnabled(true);
@@ -129,7 +142,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         }
         btn_ok.setOnClickListener(btnOkListener);
         btn_cancelar.setOnClickListener(btnCancelListener);
-
+        btn_package_detail.setOnClickListener(btnPackageDetailListener);
         mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -148,6 +161,9 @@ public class ServiceRegisterDialog extends AlertDialog {
     }
 
     private void setComponentsVisibility() {
+
+        cb_remove_val.setVisibility(View.GONE);
+
         switch (dialogType){
             case 0:
                 cl_register_service_form.setVisibility(View.GONE);
@@ -159,6 +175,23 @@ public class ServiceRegisterDialog extends AlertDialog {
                 cb_remove_val.setVisibility(View.GONE);
                 break;
             case 1:
+                cl_register_service_form.setVisibility(View.GONE);
+                ll_register_package_form.setVisibility(View.VISIBLE);
+                ll_register_spinners.setVisibility(View.VISIBLE);
+                btn_package_detail.setVisibility(View.GONE);
+                mk_qtd_val.setEnabled(true);
+                setSpinnersContent();
+                setSpinnersAction();
+                if(item.getManual_price() == 1) {
+                    mk_price_val.setEnabled(true);
+                }else{
+                    mk_price_val.setEnabled(false);
+                }
+                if (item.isSelected()) {
+                    cb_remove_val.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 2:
                 cl_register_service_form.setVisibility(View.VISIBLE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
@@ -169,10 +202,85 @@ public class ServiceRegisterDialog extends AlertDialog {
                 }else{
                     mk_price_val.setEnabled(false);
                 }
+                setSpinnersContent();
+                setSpinnersAction();
                 break;
-            case 2:
+            case 3:
+                setSpinnersContent();
                 break;
         }
+    }
+
+    private void setSpinnersAction() {
+        act043_ss_site.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
+            @Override
+            public void onValueChanged(HMAux hmAux) {
+                setSSZoneValue(hmAux);
+            }
+        });
+
+        act043_ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                setSSZoneValue(hmAux);
+            }
+        });
+    }
+
+    private void setSSZoneValue(HMAux hmAux) {
+        String site_code = hmAux.get(SearchableSpinner.CODE);
+        if(site_code != null &&!site_code.isEmpty()) {
+            ArrayList<HMAux> zoneOption = getZoneOption(site_code);
+            act043_ss_zone.setmOption(zoneOption);
+            if (zoneOption.size() == 1) {
+                act043_ss_zone.setmValue(zoneOption.get(0));
+            }
+        }else{
+            ToolBox_Inf.setSSmValue(act043_ss_zone, null, null, null, false, true);
+            act043_ss_zone.setmOption(siteZoneOption);
+        }
+    }
+
+    private ArrayList<HMAux> getZoneOption(String site_code) {
+        ArrayList<HMAux> zone_temp = new ArrayList<>();
+        for (HMAux siteZone : siteZoneOption) {
+            if(site_code.equalsIgnoreCase(siteZone.get(MD_Site_ZoneDao.SITE_CODE))){
+                zone_temp.add(siteZone);
+            }
+        }
+        return zone_temp;
+    }
+
+    private void setSpinnersContent() {
+        act043_ss_site.setmLabel(hmAux_trans.get("alert_site_lbl"));
+        act043_ss_zone.setmLabel(hmAux_trans.get("alert_zone_lbl"));
+        act043_ss_partner.setmLabel(hmAux_trans.get("alert_partner_lbl"));
+        if(siteOption != null && !siteOption.isEmpty()){
+            act043_ss_site.setmOption(siteOption);
+            act043_ss_site.setmEnabled(true);
+        }else{
+            act043_ss_site.setmEnabled(false);
+        }
+        ArrayList<HMAux> partners = new ArrayList<>();
+
+        for (MD_Partner mdPartner : mdPartners) {
+            HMAux partner = new HMAux();
+            //
+            partner.put(SearchableSpinner.CODE, String.valueOf(mdPartner.getPartner_code()));
+            partner.put(SearchableSpinner.DESCRIPTION,mdPartner.getPartner_desc());
+            partner.put(SearchableSpinner.ID,mdPartner.getPartner_id());
+            //
+            partners.add(partner);
+        }
+
+        act043_ss_partner.setmOption(partners);
+
+        //
     }
 
     public void setBtnOkListener(View.OnClickListener btnOkListener) {

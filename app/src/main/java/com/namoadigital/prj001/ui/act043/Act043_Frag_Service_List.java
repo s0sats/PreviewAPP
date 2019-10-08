@@ -233,11 +233,26 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
         int dialogType = 0;
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
         if("S".equalsIgnoreCase(item.getType_ps())){
             dialogType =1;
         }
-        final ServiceRegisterDialog dialog = new ServiceRegisterDialog(context, dialogType, hmAux_Trans, item);
+        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
+            siteOption = delegateAddService.generateSiteOption(item.getSite_zone());
+            siteZoneOption = delegateAddService.generateSiteZoneOption(item.getSite_zone());
+        }
 
+        final ServiceRegisterDialog dialog =
+                new ServiceRegisterDialog(
+                        context,
+                        dialogType,
+                        hmAux_Trans,
+                        item,
+                        siteOption,
+                        siteZoneOption,
+                        delegateAddService.getPartnerList()
+                );
         //
         dialog.setBtnOkListener(new View.OnClickListener() {
             @Override
@@ -261,6 +276,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 dialog.dismiss();
             }
         });
+
+        dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         dialog.show();
     }
 
