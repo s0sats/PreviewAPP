@@ -136,7 +136,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                     //Seta preço "original" no atributo price_ref
                     innerService.setPrice_ref(innerService.getPrice());
                 }
-                //
+                //Calcula preço total, soma dos valores
                 if (innerService.getPrice() != null) {
                     totPrice = totPrice == null ? innerService.getPrice() : totPrice + innerService.getPrice();
                 } else {
@@ -154,7 +154,14 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             //seta preço de referencia.
             //Esse metodo deveria dar apenas uma vez, porem, caso não seja, essa
             //validalção evita que um preço alterado pelo usr passe por cima do original.
-            packService.setPrice_ref( definePriceRef ? packService.getPrice() : packService.getPrice_ref() );
+            packService.setPrice_ref( definePriceRef ? packService.getPrice() : packService.getPrice_ref());
+            //Calcula preço total,pois price é sempre UNITÁRIO (price * qty)
+            if(packService.getPrice() != null && packService.getQty() >= 1){
+                //totPrice = packService.getPrice() * (packService.getQty() >= 1 ? packService.getQty() : 1);
+                totPrice = packService.getPrice() * packService.getQty();
+                packService.setPrice(totPrice);
+            }
+            packService.setPrice(packService.getPrice());
             //Seta flag que indica se valor do preço não esta definido.
             packService.setNullPrice(packService.getPrice() == null);
         }

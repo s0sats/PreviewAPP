@@ -17,14 +17,29 @@ public class TSO_SO_Service_Item {
     private String type_ps;
     private int price_list_code;//int
     private int pack_code;//int
-    private int pack_seq;//maior que 100 mil e incrementado a cada item adicionado
+    private long pack_seq;//maior que 100 mil e incrementado a cada item adicionado
     private int service_code;//int
-    private double price;//double
+    private String price;//double
     private int manual_price;//double
     private int qty;
     private Integer partner_code;
     private String comments;
     private ArrayList<TSO_SO_Service_Item_Detail> service = new ArrayList<>();
+
+    public TSO_SO_Service_Item() {}
+
+    public TSO_SO_Service_Item(String type_ps, int price_list_code, int pack_code, long pack_seq, int service_code, String price, int manual_price, int qty, Integer partner_code, String comments) {
+        this.type_ps = type_ps;
+        this.price_list_code = price_list_code;
+        this.pack_code = pack_code;
+        this.pack_seq = pack_seq;
+        this.service_code = service_code;
+        this.price = price;
+        this.manual_price = manual_price;
+        this.qty = qty;
+        this.partner_code = partner_code;
+        this.comments = comments;
+    }
 
     public String getType_ps() {
         return type_ps;
@@ -50,11 +65,11 @@ public class TSO_SO_Service_Item {
         this.pack_code = pack_code;
     }
 
-    public int getPack_seq() {
+    public long getPack_seq() {
         return pack_seq;
     }
 
-    public void setPack_seq(int pack_seq) {
+    public void setPack_seq(long pack_seq) {
         this.pack_seq = pack_seq;
     }
 
@@ -66,11 +81,11 @@ public class TSO_SO_Service_Item {
         this.service_code = service_code;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

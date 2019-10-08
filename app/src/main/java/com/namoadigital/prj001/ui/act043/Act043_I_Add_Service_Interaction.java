@@ -13,4 +13,5 @@ public interface Act043_I_Add_Service_Interaction {
     ArrayList<MD_Partner> getPartnerList();
     ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone);
     ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone);
+    void calculateTotalPrice(TSO_Service_Search_Obj packService);
 }

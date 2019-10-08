@@ -34,6 +34,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_SO_Service;
 import com.namoadigital.prj001.model.TSO_SO_Service_Env;
 import com.namoadigital.prj001.model.TSO_SO_Service_Item;
+import com.namoadigital.prj001.model.TSO_SO_Service_Item_Detail;
 import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
@@ -62,6 +63,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private Button btn_save;
     private String mToken;
     private Act043_I_Add_Service_Interaction delegateAddService;
+    private long mPackSeq = 100000;
+    private long mServiceSeq = 200000;
 
     public void setmService(SM_SO mSO_Service) {
         this.mSO_Service = mSO_Service;
@@ -177,21 +180,23 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
                     for (TSO_Service_Search_Obj packService : adapterData) {
                         if(packService.isSelected()){
-                            TSO_SO_Service_Item item = new TSO_SO_Service_Item();
-                            item.setType_ps(packService.getType_ps());
-                            item.setPrice_list_code(packService.getPrice_list_code());
-                            item.setPack_code(packService.getPack_code());
-                            //todo definir qnd setar pack_seq
-                            item.setPack_seq(packService.getPack_code());
-                            item.setService_code(packService.getService_code());
-                            //todo definir qnd setar qty(chumbar 1)
-                            item.setQty(1);
-                            //todo definir qnd setar partnerCode()
-                            item.setPartner_code(-1);
-                            //todo definir qnd setar comentario()
-                            item.setComments("-1");
-                            //todo definir SE TERÁ FLAG COM OU SEM DETALHE
-                            //QUEM PREENCHE OS SEQS E SE PRECISA MONTAR SUB ITEM SERVICES
+                            TSO_SO_Service_Item item = createPackDetail(packService);
+                            //Verifica a necessidade de abrir os serviços para gerar itens
+                            if( Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())
+                                || (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps()) && packService.isDetailed())
+                            ){
+                               if(Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())){
+                                   item.getService().add(
+                                       createServiceDetail(packService)
+                                   );
+                               } else{
+                                   for (TSO_Service_Search_Detail_Obj detailObj : packService.getService_list()) {
+                                       item.getService().add(
+                                           createServiceDetail(detailObj)
+                                       );
+                                   }
+                               }
+                            }
                             //
                             pack.add(item);
                         }
@@ -206,6 +211,72 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 }
             }
         });
+    }
+
+    /**
+     * Gera obj pack para envio de dados pro server.
+     * @param packService
+     * @return
+     */
+    private TSO_SO_Service_Item createPackDetail(TSO_Service_Search_Obj packService) {
+        return new TSO_SO_Service_Item(
+            packService.getType_ps(),
+            packService.getPrice_list_code(),
+            packService.getPack_code(),
+            getNextPackSeq(),
+            packService.getService_code(),
+            ToolBox_Inf.formatDoubleToServer(
+                packService.getPrice()
+            ),
+            packService.getManual_price(),
+            packService.getQty(),
+            packService.getPartner_code_selected(),
+            packService.getComment()
+        );
+    }
+
+    /**
+     * Metodo que gera objeto service de envio quando type_ps for PACK com serviço detalhado
+     * @param serviceDetail - Obj serviço detalhado do pacote
+     * @return Obj serviço para envio para o servidor.
+     */
+    private TSO_SO_Service_Item_Detail createServiceDetail(TSO_Service_Search_Detail_Obj serviceDetail) {
+        //
+        return new TSO_SO_Service_Item_Detail(
+            mSO_Service.getCategory_price_code(),
+            serviceDetail.getService_code(),
+            getNextServiceSeq(),
+            serviceDetail.getQty(),
+            serviceDetail.getPartner_code_selected(),
+            ToolBox_Inf.formatDoubleToServer(
+                serviceDetail.getPrice()
+            ),//TROCAR PROP PARA STRING, DECIMAL SERÁ ,
+            serviceDetail.getComment(),
+            serviceDetail.getSite_code_selected(),
+            serviceDetail.getZone_code_selected()
+        );
+    }
+
+    /**
+     * Metodo que gera objeto service de envio  quando type_ps for SERVICE
+     * @param packService
+     * @return
+     */
+    private TSO_SO_Service_Item_Detail createServiceDetail(TSO_Service_Search_Obj packService) {
+        //
+        return new TSO_SO_Service_Item_Detail(
+            mSO_Service.getCategory_price_code(),
+            packService.getService_code(),
+            getNextServiceSeq(),
+            packService.getQty(),
+            packService.getPartner_code_selected(),
+            ToolBox_Inf.formatDoubleToServer(
+                packService.getPrice()
+            ),
+            packService.getComment(),
+            packService.getSite_code_selected(),
+            packService.getZone_code_selected()
+        );
     }
 
     private void hideKeyBoard() {
@@ -397,6 +468,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
                                     tstZone = delegateAddService.generateSiteZoneOption(item.getSite_zone());
                                 }
                                 int i = tstSite.size();
+                                //
+                                delegateAddService.calculateTotalPrice(item);
+                                mAdapterRv.notifyDataSetChanged();
                             }
                             //
 
@@ -407,6 +481,16 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
             }
         }
+    }
+
+    private long getNextPackSeq(){
+        mPackSeq += 1000;
+        return mPackSeq;
+    }
+
+    private long getNextServiceSeq(){
+        mServiceSeq += 1000;
+        return mServiceSeq;
     }
 
     @Override
@@ -434,8 +518,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
         @Override
         protected HMAux doInBackground(ArrayList<TSO_SO_Service_Item>... pack) {
 
-            Gson gsonEnv = new Gson();
-            Gson gsonRec = new GsonBuilder().serializeNulls().create();
+            //Gson gsonEnv = new Gson();
+            //Gson gsonRec = new GsonBuilder().serializeNulls().create();
+            Gson gson = new GsonBuilder().serializeNulls().create();
 
             HMAux hmAux = null;
 
@@ -457,12 +542,12 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
                 String resultado = ToolBox_Con.connWebService(
                         Constant.WS_SO_PACK_SERVICE,
-                        gsonEnv.toJson(env)
+                    gson.toJson(env)
                 );
 
                 ToolBox.sendBCStatus(getActivity(), "STATUS", hmAux_Trans.get("dialog_receiving_add_service_msg"), "", "0");
                 //
-                TSO_SO_Service_Rec rec = gsonRec.fromJson(
+                TSO_SO_Service_Rec rec = gson.fromJson(
                         resultado,
                         TSO_SO_Service_Rec.class
                 );

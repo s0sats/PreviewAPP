@@ -7,10 +7,24 @@ public class TSO_SO_Service_Item_Detail {
     private long service_seq;//maior que 100 mil e incrementado a cada item adicionado
     private int qty;
     private Integer partner_code;
-    private double price;
+    private String price;
     private String comments;
-    private int zone_code;
-    private int site_code;
+    private Integer site_code;
+    private Integer zone_code;
+
+    public TSO_SO_Service_Item_Detail(int category_price_code, int service_code, long service_seq, int qty, Integer partner_code, String price, String comments, Integer site_code, Integer zone_code) {
+        this.category_price_code = category_price_code;
+        this.service_code = service_code;
+        this.service_seq = service_seq;
+        this.qty = qty;
+        this.partner_code = partner_code;
+        this.price = price;
+        this.comments = comments;
+        this.site_code = site_code;
+        this.zone_code = zone_code;
+    }
+
+    public TSO_SO_Service_Item_Detail() {}
 
     public int getCategory_price_code() {
         return category_price_code;
@@ -44,19 +58,19 @@ public class TSO_SO_Service_Item_Detail {
         this.qty = qty;
     }
 
-    public int getPartner_code() {
+    public Integer getPartner_code() {
         return partner_code;
     }
 
-    public void setPartner_code(int partner_code) {
+    public void setPartner_code(Integer partner_code) {
         this.partner_code = partner_code;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -68,19 +82,19 @@ public class TSO_SO_Service_Item_Detail {
         this.comments = comments;
     }
 
-    public int getZone_code() {
+    public Integer getZone_code() {
         return zone_code;
     }
 
-    public void setZone_code(int zone_code) {
+    public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
     }
 
-    public int getSite_code() {
+    public Integer getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(int site_code) {
+    public void setSite_code(Integer site_code) {
         this.site_code = site_code;
     }
 }

@@ -374,7 +374,12 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         return mPresenter.generateSiteZoneOption(rawSiteZone);
     }
 
-//endregion
+    @Override
+    public void calculateTotalPrice(TSO_Service_Search_Obj packService) {
+        mPresenter.calculateTotalPrice(packService);
+    }
+
+    //endregion
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {

@@ -26,6 +26,7 @@ public class TSO_Service_Search_Obj {
     private boolean selected;
     private boolean anyNullPrice;
     private boolean detailed;
+    private int qty;
     private Integer site_code_selected;
     private Integer zone_code_selected;
     private Integer partner_code_selected;
@@ -166,6 +167,14 @@ public class TSO_Service_Search_Obj {
 
     public void setDetailed(boolean detailed) {
         this.detailed = detailed;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 
     public Integer getSite_code_selected() {
