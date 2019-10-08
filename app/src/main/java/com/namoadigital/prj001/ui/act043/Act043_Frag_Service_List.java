@@ -232,7 +232,11 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
-        final ServiceRegisterDialog dialog = new ServiceRegisterDialog(context, 0, hmAux_Trans, item);
+        int dialogType = 0;
+        if("S".equalsIgnoreCase(item.getType_ps())){
+            dialogType =1;
+        }
+        final ServiceRegisterDialog dialog = new ServiceRegisterDialog(context, dialogType, hmAux_Trans, item);
 
         //
         dialog.setBtnOkListener(new View.OnClickListener() {

@@ -3,9 +3,11 @@ package com.namoadigital.prj001.view.dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -15,20 +17,25 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 
 public class ServiceRegisterDialog extends AlertDialog {
 
-    HMAux hmAux_trans;
-    TSO_Service_Search_Obj item;
-    TextView tv_desc;
-    TextView tv_id_lbl;
-    TextView tv_id_val;
-    TextView tv_qtd_lbl;
-    MKEditTextNM mk_qtd_val;
-    TextView tv_price_lbl;
-    MKEditTextNM mk_price_val;
-    TextView tv_comments_lbl;
-    MKEditTextNM mk_comments_val;
-    CheckBox cb_remove_val;
-    Button btn_cancelar;
-    Button btn_ok;
+    private HMAux hmAux_trans;
+    private TSO_Service_Search_Obj item;
+    private TextView tv_desc;
+    private TextView tv_id_lbl;
+    private TextView tv_id_val;
+    private TextView tv_qtd_lbl;
+    private MKEditTextNM mk_qtd_val;
+    private TextView tv_price_lbl;
+    private MKEditTextNM mk_price_val;
+    private TextView tv_comments_lbl;
+    private MKEditTextNM mk_comments_val;
+    private CheckBox cb_remove_val;
+    private Button btn_cancelar;
+    private Button btn_ok;
+    private Button btn_package_detail;
+    private ConstraintLayout cl_register_service_form;
+    private LinearLayout ll_register_package_form;
+    private LinearLayout ll_register_spinners;
+
 
     /*
         dialogType = 0 {
@@ -46,6 +53,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     int dialogType;
     private View.OnClickListener btnOkListener=null;
     private View.OnClickListener btnCancelListener=null;
+    private View.OnClickListener btnPackageDetailListener=null;
 
     protected ServiceRegisterDialog(Context context) {
         super(context);
@@ -60,7 +68,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act043_frag_service_list_form);
+        setContentView(R.layout.act043_frag_service_list_form2);
 
         tv_desc = findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
         tv_id_lbl = findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
@@ -74,6 +82,10 @@ public class ServiceRegisterDialog extends AlertDialog {
         cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
         btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
         btn_ok =  findViewById(R.id.act043_frag_service_list_btn_ok);
+        btn_package_detail =  findViewById(R.id.btn_package_detail);
+        cl_register_service_form =  findViewById(R.id.ll_register_service_form);
+        ll_register_package_form =  findViewById(R.id.ll_register_package_form);
+        ll_register_spinners =  findViewById(R.id.ll_register_spinners);
         //
         tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
         tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
@@ -88,6 +100,8 @@ public class ServiceRegisterDialog extends AlertDialog {
         //
         tv_desc.setText(item.getPack_service_desc());
         tv_id_val.setText(item.getPack_service_desc());
+
+
         //
 //        if (!item.get("qty").isEmpty()) {
 //            mk_qtd_val.setText(item.get("qty"));
@@ -98,6 +112,7 @@ public class ServiceRegisterDialog extends AlertDialog {
 //        }
         //
         mk_price_val.setText(item.getPrice() != null ?item.getPrice().toString() : "" );
+        setComponentsVisibility();
         if (item.getManual_price() == 1) {
             mk_price_val.setEnabled(true);
             mk_price_val.requestFocus();
@@ -132,12 +147,44 @@ public class ServiceRegisterDialog extends AlertDialog {
         });
     }
 
+    private void setComponentsVisibility() {
+        switch (dialogType){
+            case 0:
+                cl_register_service_form.setVisibility(View.GONE);
+                ll_register_spinners.setVisibility(View.GONE);
+                ll_register_package_form.setVisibility(View.VISIBLE);
+                btn_package_detail.setVisibility(View.VISIBLE);
+                mk_qtd_val.setEnabled(false);
+                mk_price_val.setEnabled(false);
+                cb_remove_val.setVisibility(View.GONE);
+                break;
+            case 1:
+                cl_register_service_form.setVisibility(View.VISIBLE);
+                ll_register_spinners.setVisibility(View.VISIBLE);
+                ll_register_package_form.setVisibility(View.GONE);
+                btn_package_detail.setVisibility(View.GONE);
+                mk_qtd_val.setEnabled(true);
+                if(item.getManual_price() == 1) {
+                    mk_price_val.setEnabled(true);
+                }else{
+                    mk_price_val.setEnabled(false);
+                }
+                break;
+            case 2:
+                break;
+        }
+    }
+
     public void setBtnOkListener(View.OnClickListener btnOkListener) {
         this.btnOkListener = btnOkListener;
     }
 
     public void setBtnCancelListener(View.OnClickListener btnCancelListener) {
         this.btnCancelListener = btnCancelListener;
+    }
+
+    public void setBtnPackageDetaillListener(View.OnClickListener btnPackageDetailListener) {
+        this.btnPackageDetailListener = btnPackageDetailListener;
     }
 
     public String getMk_qtd_val() {
