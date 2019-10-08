@@ -25,6 +25,12 @@ public class TSO_Service_Search_Obj {
     //Atributos apenas para lista
     private boolean selected;
     private boolean anyNullPrice;
+    private boolean detailed;
+    private Integer site_code_selected;
+    private Integer zone_code_selected;
+    private Integer partner_code_selected;
+    private String comment;
+
 
     public String getType_ps() {
         return type_ps;
@@ -152,5 +158,45 @@ public class TSO_Service_Search_Obj {
 
     public void setNullPrice(boolean anyNullPrice) {
         this.anyNullPrice = anyNullPrice;
+    }
+
+    public boolean isDetailed() {
+        return detailed;
+    }
+
+    public void setDetailed(boolean detailed) {
+        this.detailed = detailed;
+    }
+
+    public Integer getSite_code_selected() {
+        return site_code_selected;
+    }
+
+    public void setSite_code_selected(Integer site_code_selected) {
+        this.site_code_selected = site_code_selected;
+    }
+
+    public Integer getZone_code_selected() {
+        return zone_code_selected;
+    }
+
+    public void setZone_code_selected(Integer zone_code_selected) {
+        this.zone_code_selected = zone_code_selected;
+    }
+
+    public Integer getPartner_code_selected() {
+        return partner_code_selected;
+    }
+
+    public void setPartner_code_selected(Integer partner_code_selected) {
+        this.partner_code_selected = partner_code_selected;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

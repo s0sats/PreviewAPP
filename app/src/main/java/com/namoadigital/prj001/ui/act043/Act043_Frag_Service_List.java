@@ -35,10 +35,12 @@ import com.namoadigital.prj001.model.TSO_SO_Service;
 import com.namoadigital.prj001.model.TSO_SO_Service_Env;
 import com.namoadigital.prj001.model.TSO_SO_Service_Item;
 import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,64 +212,37 @@ public class Act043_Frag_Service_List extends BaseFragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
-    private void showService_Pack_Details(final HMAux item) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act043_frag_service_list_form, null);
-        final AlertDialog.Builder builder = getBuilderForRegisterDialog(item, view);
+    private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
+        int dialogType = 0;
+        if("S".equalsIgnoreCase(item.getType_ps())){
+            dialogType =1;
+        }
+        final ServiceRegisterDialog dialog = new ServiceRegisterDialog(context, dialogType, hmAux_Trans, item);
 
-//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                    }
-//                });
         //
-        final AlertDialog dialog = builder.create();
-        Button btn_cancelar = view.findViewById(R.id.act043_frag_service_list_btn_cancel);
-        Button btn_ok = view.findViewById(R.id.act043_frag_service_list_btn_ok);
-        final MKEditTextNM mk_price_val = view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        final CheckBox cb_remove_val = view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        final MKEditTextNM mk_qtd_val = view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        final MKEditTextNM mk_comments_val =  view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        dialog.show();
-
-        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-
-            }
-
-            @Override
-            public void reportTextChange(String s, boolean b) {
-                if (s.isEmpty()) {
-                    cb_remove_val.setEnabled(false);
-                } else {
-                    cb_remove_val.setEnabled(true);
-                }
-            }
-        });
-        //
-        btn_cancelar.setOnClickListener(new View.OnClickListener() {
+        dialog.setBtnOkListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
                 if (checkFields(
                         item,
-                        cb_remove_val.isChecked() ? "" : mk_qtd_val.getText().toString().trim(),
-                        mk_price_val.getText().toString().trim(),
-                        cb_remove_val.isChecked() ? "" : mk_comments_val.getText().toString().trim()
+                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
+                        dialog.getMk_price_val(),
+                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
                 )) {
                     dialog.dismiss();
                 } else {
-                    mk_price_val.setText("");
+                    dialog.resetMk_price_val();
                 }
             }
         });
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @NonNull
@@ -348,13 +323,17 @@ public class Act043_Frag_Service_List extends BaseFragment {
         }
     }
 
-    private boolean checkFields(HMAux item, String qtd, String price, String comments) {
+    private boolean checkFields(TSO_Service_Search_Obj item, String qtd, String price, String comments) {
         boolean results;
 
         if (convertQtd(qtd) > 0) {
-            item.put("qty", qtd);
-            item.put("price", price);
-            item.put("comments", comments);
+//            item.put("qty", qtd);
+            item.setPrice(Double.parseDouble(price));
+            if(item.getService_list() != null){
+                for(TSO_Service_Search_Detail_Obj obj: item.getService_list() ){
+                    obj.setComment(comments);
+                }
+            }
             //
             if (convertValueEmptyZero(price, CONVERT_TYPE_EMPTY).isEmpty()) {
                 results = false;
@@ -362,9 +341,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 results = true;
             }
         } else {
-            item.put("qty", "");
-            item.put("price", item.get("price_ref"));
-            item.put("comments", "");
+//            item.put("qty", "");
+//            item.put("price", item.get("price_ref"));
+//            item.put("comments", "");
             //
             results = true;
         }
@@ -406,7 +385,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     mAdapterRv.setmOnItemClickListener(new Act043_Adapter_Services_Packs_List_RV.OnItemClickListener() {
                         @Override
                         public void onClick(TSO_Service_Search_Obj item) {
-                            showService_Pack_Dialog(item);
+                            showService_Pack_Details(item);
                             if(delegateAddService != null) {
                                 ArrayList<HMAux> tstSite = new ArrayList<>();
                                 ArrayList<HMAux> tstZone = new ArrayList<>();
