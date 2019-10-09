@@ -335,11 +335,26 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
                 switch (finalDialogType ){
                     case 0:
-
+                        if(dialog.getCb_remove_val()){
+                            delegateAddService.resetPackService(item);
+                            mAdapterRv.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }else{
+                            item.setComment(dialog.getMk_comments_val());
+                            item.setSelected(true);
+                            for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
+                                service.setComment(dialog.getMk_comments_val());
+                            }
+                            delegateAddService.calculateTotalPrice(item);
+                            mAdapterRv.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
                         break;
                     case 1:
                         if(dialog.getCb_remove_val()){
-                            Toast.makeText(context, "Delete item", Toast.LENGTH_SHORT).show();
+                            delegateAddService.resetPackService(item);
+                            mAdapterRv.notifyDataSetChanged();
+                            dialog.dismiss();
                         }else {
                             if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
                                     && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
@@ -349,9 +364,15 @@ public class Act043_Frag_Service_List extends BaseFragment {
                                     && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
                             ) {
                                 item.setSelected(true);
-                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
-                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
-                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                }
+
+                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                }
+
                                 if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
                                 } else {
@@ -372,20 +393,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             }
                         }
                         break;
-
                 }
-
-
-//                if (checkFields(
-//                        item,
-//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
-//                        dialog.getMk_price_val(),
-//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
-//                )) {
-
-//                } else {
-//                    dialog.resetMk_price_val();
-//                }
             }
         });
         dialog.setBtnCancelListener( new View.OnClickListener() {
@@ -537,7 +545,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     mAdapterRv.setmOnItemClickListener(new Act043_Adapter_Services_Packs_List_RV.OnItemClickListener() {
                         @Override
                         public void onClick(TSO_Service_Search_Obj item) {
-                            showService_Pack_Details(item);
+                            if (item.isSelected()
+                                &&  Act043_Main.TYPE_PS_PACK.equalsIgnoreCase(item.getType_ps())) {
+                                delegateAddService.setPackageServiceDetailList(item);
+                                delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
+                            }else {
+                                showService_Pack_Details(item);
+                            }
                             if(delegateAddService != null) {
                                 delegateAddService.calculateTotalPrice(item);
                                 //PARA TESTES

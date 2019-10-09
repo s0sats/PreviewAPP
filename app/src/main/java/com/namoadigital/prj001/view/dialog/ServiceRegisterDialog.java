@@ -2,6 +2,7 @@ package com.namoadigital.prj001.view.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -30,6 +31,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private TextView tv_desc;
     private TextView tv_id_lbl;
     private TextView tv_id_val;
+    private TextView tv_pack_lbl;
+    private TextView tv_pack_val;
     private TextView tv_qtd_lbl;
     private MKEditTextNM mk_qtd_val;
     private TextView tv_price_lbl;
@@ -95,6 +98,8 @@ public class ServiceRegisterDialog extends AlertDialog {
         tv_desc = findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
         tv_id_lbl = findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
         tv_id_val = findViewById(R.id.act043_frag_service_list_form_tv_id_val);
+        tv_pack_lbl = findViewById(R.id.act043_frag_service_list_form_tv_pack_lbl);
+        tv_pack_val = findViewById(R.id.act043_frag_service_list_form_tv_pack_val);
         tv_qtd_lbl = findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
         mk_qtd_val =  findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
         tv_price_lbl = findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
@@ -114,6 +119,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         act043_ss_partner = findViewById(R.id.act043_ss_partner);
         //
         tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
+        tv_pack_lbl.setText(hmAux_trans.get("alert_package_id"));
         tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
         tv_price_lbl.setText(hmAux_trans.get("alert_service_price"));
         mk_price_val.setHint(hmAux_trans.get("alert_service_price_hint"));
@@ -127,7 +133,11 @@ public class ServiceRegisterDialog extends AlertDialog {
         tv_desc.setText(item.getPack_service_desc());
         tv_id_val.setText(item.getPack_service_desc());
         //
-        Double unitaryPrice = (Double) (item.getPrice()/item.getQty());
+        int qty = item.getQty();
+        if(qty == 0){
+            qty =1;
+        }
+        Double unitaryPrice = (Double) (item.getPrice()/ qty);
         item.setPrice(unitaryPrice);
         mk_price_val.setText(item.getPrice() != null ? String.valueOf(unitaryPrice) : "");
         //
@@ -138,7 +148,7 @@ public class ServiceRegisterDialog extends AlertDialog {
             mk_price_val.setEnabled(false);
         }
         //
-        mk_qtd_val.setText(String.valueOf(item.getQty()));
+        mk_qtd_val.setText(String.valueOf(qty));
         if (item.isSelected()) {
             cb_remove_val.setEnabled(true);
         } else {
@@ -186,6 +196,9 @@ public class ServiceRegisterDialog extends AlertDialog {
                 mk_price_val.setEnabled(false);
                 cb_remove_val.setVisibility(View.GONE);
                 iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
+                if(item.hasNullPrice()){
+                    mk_price_val.setTextColor(Color.RED);
+                }
                 break;
             case 1:
                 cl_register_service_form.setVisibility(View.GONE);
@@ -201,23 +214,23 @@ public class ServiceRegisterDialog extends AlertDialog {
                 }else{
                     mk_price_val.setEnabled(false);
                 }
-                if (item.isSelected()) {
-                    cb_remove_val.setVisibility(View.VISIBLE);
-                }
                 break;
             case 2:
                 cl_register_service_form.setVisibility(View.VISIBLE);
-                ll_register_spinners.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
+                ll_register_spinners.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(true);
+                iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+                setSpinnersContent();
+                setSpinnersAction();
+                cb_remove_val.setVisibility(View.GONE);
+                tv_pack_val.setText(item.getPack_service_desc());
                 if(item.getManual_price() == 1) {
                     mk_price_val.setEnabled(true);
                 }else{
                     mk_price_val.setEnabled(false);
                 }
-                setSpinnersContent();
-                setSpinnersAction();
                 break;
             case 3:
                 setSpinnersContent();
@@ -226,12 +239,6 @@ public class ServiceRegisterDialog extends AlertDialog {
     }
 
     private void setSpinnersAction() {
-        act043_ss_site.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
-            @Override
-            public void onValueChanged(HMAux hmAux) {
-                setSSZoneValue(hmAux);
-            }
-        });
 
         act043_ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -242,6 +249,21 @@ public class ServiceRegisterDialog extends AlertDialog {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 setSSZoneValue(hmAux);
+            }
+        });
+
+        act043_ss_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                String zone_code = hmAux.get(MD_Site_ZoneDao.SITE_CODE);
+                if(zone_code != null && !zone_code.isEmpty()) {
+                    act043_ss_site.setmValue(getSiteOption(zone_code));
+                }
             }
         });
     }
@@ -265,6 +287,16 @@ public class ServiceRegisterDialog extends AlertDialog {
         for (HMAux siteZone : siteZoneOption) {
             if(site_code.equalsIgnoreCase(siteZone.get(MD_Site_ZoneDao.SITE_CODE))){
                 zone_temp.add(siteZone);
+            }
+        }
+        return zone_temp;
+    }
+
+    private HMAux getSiteOption(String site_code) {
+        HMAux zone_temp = new HMAux();
+        for (HMAux siteZone : siteOption) {
+            if(site_code.equalsIgnoreCase(siteZone.get(SearchableSpinner.CODE))){
+                return siteZone;
             }
         }
         return zone_temp;
