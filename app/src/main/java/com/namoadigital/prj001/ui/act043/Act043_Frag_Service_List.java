@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -53,7 +54,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private SM_SO mSO_Service;
     private SM_SODao sm_so_serviceDao;
-    onSmSoRequestObject delegateSmSo;
+    private onSmSoRequestObject delegateSmSo;
     private TextView tv_title;
     private MKEditTextNM mk_desc;
     private RecyclerView rv_services_packs;
@@ -62,6 +63,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private Button btn_save;
     private String mToken;
     private Act043_I_Add_Service_Interaction delegateAddService;
+    private Act043_Main_View delegateMainView;
     private long mPackSeq = 100000;
     private long mServiceSeq = 200000;
 
@@ -129,6 +131,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         super.onAttach(context);
         delegateSmSo = (onSmSoRequestObject) context;
         delegateAddService = (Act043_I_Add_Service_Interaction) context;
+        delegateMainView = (Act043_Main_View) context;
     }
 
     private void iniVar(View view) {
@@ -301,9 +304,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
         int dialogType = 0;
+
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
-        if("S".equalsIgnoreCase(item.getType_ps())){
+        if(Act043_Main.TYPE_PS_SERVICE.equalsIgnoreCase(item.getType_ps())){
             dialogType =1;
         }
         if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
@@ -322,20 +326,65 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         delegateAddService.getPartnerList()
                 );
         //
+        final int finalDialogType = dialogType;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
         dialog.setBtnOkListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (checkFields(
-                        item,
-                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
-                        dialog.getMk_price_val(),
-                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
-                )) {
-                    dialog.dismiss();
-                } else {
-                    dialog.resetMk_price_val();
+                switch (finalDialogType ){
+                    case 0:
+
+                        break;
+                    case 1:
+                        if(dialog.getCb_remove_val()){
+                            Toast.makeText(context, "Delete item", Toast.LENGTH_SHORT).show();
+                        }else {
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
+                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                item.setSelected(true);
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
+                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                } else {
+                                    item.setPartner_code_selected(null);
+                                }
+                                item.setComment(dialog.getMk_comments_val());
+                                delegateAddService.calculateTotalPrice(item);
+                                mAdapterRv.notifyDataSetChanged();
+                                dialog.dismiss();
+                            } else {
+                                ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                        null,
+                                        0
+                                );
+                            }
+                        }
+                        break;
+
                 }
+
+
+//                if (checkFields(
+//                        item,
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
+//                        dialog.getMk_price_val(),
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
+//                )) {
+
+//                } else {
+//                    dialog.resetMk_price_val();
+//                }
             }
         });
         dialog.setBtnCancelListener( new View.OnClickListener() {
@@ -348,7 +397,9 @@ public class Act043_Frag_Service_List extends BaseFragment {
         dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                delegateAddService.setPackageServiceDetailList(item);
+                delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
+                dialog.dismiss();
             }
         });
 

@@ -70,6 +70,8 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
         private final TextView tv_pack_service_partner_lbl;
         private final TextView tv_pack_service_zone_val;
         private final TextView tv_pack_service_partner_val;
+        private final TextView tv_pack_service_amount_lbl;
+        private final TextView tv_pack_service_amount_val;
         private final ImageView iv_pack_service_item;
         private final TextView tv_pack_service_comment_lbl;
         private final TextView tv_pack_service_comment_val;
@@ -87,6 +89,8 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
             iv_pack_service_item = view.findViewById(R.id.iv_pack_service_item);
             tv_pack_service_comment_lbl = view.findViewById(R.id.tv_pack_service_comment_lbl);
             tv_pack_service_comment_val = view.findViewById(R.id.tv_pack_service_comment_val);
+            tv_pack_service_amount_lbl = view.findViewById(R.id.tv_pack_service_amount_lbl);
+            tv_pack_service_amount_val = view.findViewById(R.id.tv_pack_service_amount_val);
         }
 
         public void bindValue(TSO_Service_Search_Detail_Obj mItem){
@@ -103,6 +107,8 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
             tv_pack_service_partner_val.setText(mItem.getPartner_desc_selected());
             tv_pack_service_comment_lbl.setText(hmAux_Trans.get("comment_package_detail_lbl"));
             tv_pack_service_comment_val.setText(mItem.getComment());
+            tv_pack_service_amount_lbl.setText(hmAux_Trans.get("amount_package_detail_lbl"));
+            tv_pack_service_amount_val.setText(mItem.getComment());
         }
     }
 }

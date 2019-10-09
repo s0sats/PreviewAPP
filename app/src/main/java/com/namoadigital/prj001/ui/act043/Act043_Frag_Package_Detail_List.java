@@ -2,20 +2,21 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Package_Detail_Frag_Item_Adapter;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -25,15 +26,20 @@ import java.util.HashMap;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class Act043_Frag_Package_Detail_List extends Fragment {
+public class Act043_Frag_Package_Detail_List extends BaseFragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String HMAUX_TRANS = "hmaux_trans";
+    private static final String PACKAGE_SERVICE = "PACKAGE_SERVICE";
 
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private HMAux hmAux_Trans = new HMAux();
+    private TSO_Service_Search_Obj packageDataset = new TSO_Service_Search_Obj();
     private Context context;
+    private Button btn_cancel;
+    private Button btn_save;
+    private RecyclerView recyclerView ;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,18 +71,24 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        recyclerView = view.findViewById(R.id.rv_pack_service_detail);
+        btn_save = view.findViewById(R.id.btn_save);
+        btn_cancel = view.findViewById(R.id.btn_cancel);
 
-        if (view instanceof RecyclerView) {
-            context = view.getContext();
-            RecyclerView recyclerView = view.findViewById(R.id.rv_pack_service_detail);
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new Act043_Package_Detail_Frag_Item_Adapter(new ArrayList<TSO_Service_Search_Detail_Obj>(), mListener, hmAux_Trans));
-        }
+        context = view.getContext();
+
+        setRecyclerView();
+
         return view;
+    }
+
+    private void setRecyclerView() {
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        }
+        recyclerView.setAdapter(new Act043_Package_Detail_Frag_Item_Adapter(packageDataset.getService_list(), mListener, hmAux_Trans));
     }
 
 
@@ -110,5 +122,12 @@ public class Act043_Frag_Package_Detail_List extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item);
+    }
+
+    public void setPackageDataset(TSO_Service_Search_Obj packageDataset) {
+        Bundle arguments = getArguments();
+        arguments.putSerializable(PACKAGE_SERVICE, packageDataset);
+        this.setArguments(arguments);
+        this.packageDataset = packageDataset;
     }
 }
