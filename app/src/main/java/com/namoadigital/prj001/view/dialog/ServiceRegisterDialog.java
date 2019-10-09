@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -120,15 +121,16 @@ public class ServiceRegisterDialog extends AlertDialog {
         cb_remove_val.setText(hmAux_trans.get("alert_service_remove"));
         //
         btn_cancelar.setText(hmAux_trans.get("sys_alert_btn_cancel"));
-
+        btn_package_detail.setText(hmAux_trans.get("alert_package_details"));
         btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
         //
         tv_desc.setText(item.getPack_service_desc());
         tv_id_val.setText(item.getPack_service_desc());
         //
-        mk_price_val.setText(item.getPrice() != null ?item.getPrice().toString() : "" );
+        Double unitaryPrice = (Double) (item.getPrice()/item.getQty());
+        item.setPrice(unitaryPrice);
+        mk_price_val.setText(item.getPrice() != null ? String.valueOf(unitaryPrice) : "");
         //
-        setComponentsVisibility();
         if (item.getManual_price() == 1) {
             mk_price_val.setEnabled(true);
             mk_price_val.requestFocus();
@@ -136,13 +138,16 @@ public class ServiceRegisterDialog extends AlertDialog {
             mk_price_val.setEnabled(false);
         }
         //
-        mk_comments_val.setText("");
-        //
-        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
-            cb_remove_val.setEnabled(false);
-        } else {
+        mk_qtd_val.setText(String.valueOf(item.getQty()));
+        if (item.isSelected()) {
             cb_remove_val.setEnabled(true);
+        } else {
+            cb_remove_val.setEnabled(false);
         }
+        mk_comments_val.setText(item.getComment());
+        //
+        setComponentsVisibility();
+        //
         btn_ok.setOnClickListener(btnOkListener);
         btn_cancelar.setOnClickListener(btnCancelListener);
         btn_package_detail.setOnClickListener(btnPackageDetailListener);
@@ -161,6 +166,10 @@ public class ServiceRegisterDialog extends AlertDialog {
                 }
             }
         });
+
+        getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
     private void setComponentsVisibility() {
@@ -276,14 +285,26 @@ public class ServiceRegisterDialog extends AlertDialog {
                 act043_ss_site.setmEnabled(false);
                 act043_ss_zone.setmEnabled(false);
             }
-            act043_ss_site.setmValue(siteOption.get(0));
-            act043_ss_zone.setmValue(zoneOption.get(0));
+            if(item.getSite_code_selected() != null && item.getSite_code_selected() > 0){
+                act043_ss_site.setmValue(getSiteDesc(item.getSite_code_selected()));
+                act043_ss_zone.setmValue(getSiteZoneDesc(item.getZone_code_selected()));
+            }else {
+                act043_ss_site.setmValue(siteOption.get(0));
+                act043_ss_zone.setmValue(zoneOption.get(0));
+            }
         }else{
             act043_ss_site.setmEnabled(false);
             act043_ss_zone.setmEnabled(false);
             act043_ss_partner.setmEnabled(false);
         }
+        setPartnerSS();
+        //
+    }
+
+    private void setPartnerSS() {
         ArrayList<HMAux> partners = new ArrayList<>();
+        boolean found = false;
+
 
         for (MD_Partner mdPartner : mdPartners) {
             HMAux partner = new HMAux();
@@ -293,12 +314,24 @@ public class ServiceRegisterDialog extends AlertDialog {
             partner.put(SearchableSpinner.ID,mdPartner.getPartner_id());
             //
             partners.add(partner);
-            if(item != null && item.getSite_zone().size() == 1){
-                act043_ss_partner.setmValue(partner);
+            if(item != null){
+                if(!found
+                        && item.isSelected()
+                        && item.getPartner_code_selected()!= null
+                        && item.getPartner_code_selected() > 0
+                        && item.getPartner_code_selected().equals(mdPartner.getPartner_code())){
+                    act043_ss_partner.setmValue(partner);
+                    found = true;
+                }else {
+                    if (item.getSite_zone() != null
+                            && !item.isSelected()
+                            && mdPartner.getPartner_code() == item.getSite_zone().get(0).getPartner_code()) {
+                        act043_ss_partner.setmValue(partner);
+                    }
+                }
             }
         }
         act043_ss_partner.setmOption(partners);
-        //
     }
 
     public void setBtnOkListener(View.OnClickListener btnOkListener) {
@@ -343,5 +376,25 @@ public class ServiceRegisterDialog extends AlertDialog {
 
     public HMAux get_ss_partner_content() {
         return act043_ss_partner.getmValue();
+    }
+
+    protected HMAux getSiteDesc(Integer site_code){
+
+        for(HMAux site: siteOption){
+            if(site.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(site_code))){
+                return site;
+            }
+        }
+        return new HMAux();
+    }
+
+    protected HMAux getSiteZoneDesc(Integer site_zone_code){
+
+        for(HMAux siteZone: siteZoneOption){
+            if(siteZone.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(site_zone_code))){
+                return siteZone;
+            }
+        }
+        return new HMAux();
     }
 }

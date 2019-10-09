@@ -47,6 +47,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_I_Add_Service_Interaction, Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener{
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
+    public static final String SELECTION_FRAG_PACKAGE_DETAIL_LIST = "SELECTION_FRAG_PACKAGE_DETAIL_LIST";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
 
     public static final String TYPE_PS_PACK = "P";
@@ -62,6 +63,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     //FRAGMENTS
     private Act043_Frag_Preview act043_frag_preview;
     private Act043_Frag_Service_List act043_frag_service_list;
+    private Act043_Frag_Package_Detail_List act043_frag_package_detail_list;
     private Act027_Opc act027_opc_;
     private String currentFrag = "";
     private Act043_Frag_Service_List mServiceList;
@@ -135,12 +137,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_service_price_hint");
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
+        transList.add("alert_package_details");
         transList.add("alert_site_lbl");
         transList.add("alert_zone_lbl");
         transList.add("alert_partner_lbl");
         transList.add("alert_so_status");
         transList.add("alert_no_service_found_ttl");
         transList.add("alert_no_service_found_msg");
+        transList.add("alert_invalid_service_value_ttl");
+        transList.add("alert_invalid_service_value_msg");
         transList.add("service_or_pack_filter_hint");
         //Frag_Package_Detail_List
         transList.add("tv_package_detail_list_ttl");
@@ -307,6 +312,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         act043_frag_preview = new Act043_Frag_Preview();
         act043_frag_preview.setBaInfra(this);
         act043_frag_preview.setHmAux_Trans(hmAux_Trans);
+
+
+        act043_frag_package_detail_list = Act043_Frag_Package_Detail_List.newInstance(
+                1,
+                hmAux_Trans
+        );
+
 //        act043_frag_preview.setmSm_so(mSm_so);
         //
         act043_frag_service_list = new Act043_Frag_Service_List();
@@ -381,6 +393,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     @Override
     public void calculateTotalPrice(TSO_Service_Search_Obj packService) {
         mPresenter.calculateTotalPrice(packService);
+    }
+
+    @Override
+    public void setPackageServiceDetailList(TSO_Service_Search_Obj packService) {
+        act043_frag_package_detail_list.setPackageDataset(packService);
     }
 
     //endregion
@@ -523,6 +540,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                 break;
             case  SELECTION_FRAG_SERVICE_LIST:
                 setFrag(act043_frag_service_list,SELECTION_FRAG_SERVICE_LIST);
+                break;
+            case SELECTION_FRAG_PACKAGE_DETAIL_LIST:
+                setFrag(act043_frag_package_detail_list,SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 break;
         }
     }

@@ -85,7 +85,6 @@
                 android:layout_weight="3"
                 android:gravity="center"
                 android:inputType="text"
-                android:selectAllOnFocus="true"
                 android:text="1"
                 app:mBARCODE="false"
                 app:mInputType="NUMBER" />

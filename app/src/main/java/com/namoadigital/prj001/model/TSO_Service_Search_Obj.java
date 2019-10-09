@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by d.luche on 27/06/2017.
  */
 
-public class TSO_Service_Search_Obj {
+public class TSO_Service_Search_Obj implements Serializable {
 
     private String type_ps;
     private long customer_code;//long
