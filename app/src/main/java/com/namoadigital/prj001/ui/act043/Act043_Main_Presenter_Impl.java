@@ -288,6 +288,9 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         switch (mView.getCurrentFrag()){
+            case Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST:
+                mView.setFragByTag(Act043_Main.SELECTION_FRAG_SERVICE_LIST);
+                break;
             case Act043_Main.SELECTION_FRAG_SERVICE_LIST:
                 if(mView.hasItemAdded()){
                     ToolBox.alertMSG(

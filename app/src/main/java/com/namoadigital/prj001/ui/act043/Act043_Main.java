@@ -16,7 +16,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -25,8 +27,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
@@ -39,6 +41,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -658,7 +661,112 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
     @Override
     public void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item) {
+       //TODO FODEU AQUI EIN
+        //O ServiceRegisterDialog ESPERAR RECEBER TSO_Service_Search_Obj NÃO TSO_Service_Search_Detail_Obj
+        // showService_Pack_Details(item);
+    }
 
+    private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
+        int dialogType = 0;
+
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
+        if(Act043_Main.TYPE_PS_SERVICE.equalsIgnoreCase(item.getType_ps())){
+            dialogType =1;
+        }
+        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
+            siteOption = generateSiteOption(item.getSite_zone());
+            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
+        }
+
+        final ServiceRegisterDialog dialog =
+            new ServiceRegisterDialog(
+                context,
+                dialogType,
+                hmAux_Trans,
+                item,
+                siteOption,
+                siteZoneOption,
+                getPartnerList()
+            );
+        //
+        final int finalDialogType = dialogType;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
+        dialog.setBtnOkListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (finalDialogType ){
+                    case 0:
+
+                        break;
+                    case 1:
+                        if(dialog.getCb_remove_val()){
+                            Toast.makeText(context, "Delete item", Toast.LENGTH_SHORT).show();
+                        }else {
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
+                                && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                                && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                item.setSelected(true);
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
+                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                } else {
+                                    item.setPartner_code_selected(null);
+                                }
+                                item.setComment(dialog.getMk_comments_val());
+                                calculateTotalPrice(item);
+                                dialog.dismiss();
+                            } else {
+                                ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                    null,
+                                    0
+                                );
+                            }
+                        }
+                        break;
+
+                }
+
+
+//                if (checkFields(
+//                        item,
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
+//                        dialog.getMk_price_val(),
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
+//                )) {
+
+//                } else {
+//                    dialog.resetMk_price_val();
+//                }
+            }
+        });
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPackageServiceDetailList(item);
+                //delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     //region TRATATIVA_FCM

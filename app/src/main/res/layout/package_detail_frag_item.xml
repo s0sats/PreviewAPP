@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-
     <ImageView
         android:id="@+id/iv_pack_service_item"
         android:layout_width="50dp"
@@ -137,4 +136,205 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_pack_service_comment_lbl"
         app:layout_constraintTop_toTopOf="@+id/tv_pack_service_comment_lbl" />
+
+<!--Metodo de barreira, sacou-->
+<!--    <ImageView-->
+<!--            android:id="@+id/iv_pack_service_item"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:padding="8dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/tv_pack_service_partner_val"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/tv_pack_service_zone_val"-->
+<!--            app:srcCompat="@drawable/ic_pencil" />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_val"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Service desc - trad"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_service"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_price"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="99 - trad"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_service"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_amount_lbl"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="Amount - trad"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_pack_service_amount_val"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="1"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_service"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_amount"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_amount_val"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="Amount - trad "-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="2"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_pack_service_amount_lbl"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_service"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_amount"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_zone_lbl"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="Zone - trad"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_pack_service_zone_val"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="1"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_amount"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_zone"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_zone_val"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="TextView"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/iv_pack_service_item"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="2"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_pack_service_zone_lbl"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_amount"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_zone"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_partner_lbl"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Parceiro - trad"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_pack_service_partner_val"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="1"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_zone"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_partner"-->
+<!--            tools:layout_editor_absoluteY="89dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_partner_val"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="TextView"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/iv_pack_service_item"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="2"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_pack_service_partner_lbl"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_zone"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_partner" />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_comment_lbl"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="komentar - trad"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_pack_service_comment_val"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="1"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_partner"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_comment"-->
+<!--            />-->
+
+<!--    <TextView-->
+<!--            android:id="@+id/tv_pack_service_comment_val"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:ellipsize="end"-->
+<!--            android:maxLines="1"-->
+<!--            android:text="komentar"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_weight="2"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_pack_service_comment_lbl"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/br_partner"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/br_comment"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            />-->
+
+<!--    <android.support.constraint.Barrier-->
+<!--            android:id="@+id/br_service"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:barrierDirection="bottom"-->
+<!--            app:constraint_referenced_ids="tv_pack_service_val,tv_pack_service_price"-->
+<!--            tools:layout_editor_absoluteX="8dp"-->
+<!--            tools:layout_editor_absoluteY="135dp"-->
+<!--            />-->
+
+<!--    <android.support.constraint.Barrier-->
+<!--            android:id="@+id/br_amount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:barrierDirection="bottom"-->
+<!--            app:constraint_referenced_ids="tv_pack_service_amount_lbl,tv_pack_service_amount_val"-->
+<!--            tools:layout_editor_absoluteX="8dp"-->
+<!--            tools:layout_editor_absoluteY="135dp" />-->
+
+<!--    <android.support.constraint.Barrier-->
+<!--            android:id="@+id/br_zone"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:barrierDirection="bottom"-->
+<!--            app:constraint_referenced_ids="tv_pack_service_zone_lbl,tv_pack_service_zone_val"-->
+<!--            tools:layout_editor_absoluteX="8dp"-->
+<!--            tools:layout_editor_absoluteY="135dp" />-->
+
+<!--    <android.support.constraint.Barrier-->
+<!--            android:id="@+id/br_partner"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:barrierDirection="bottom"-->
+<!--            app:constraint_referenced_ids="tv_pack_service_partner_lbl,tv_pack_service_partner_val"-->
+<!--            tools:layout_editor_absoluteX="8dp"-->
+<!--            tools:layout_editor_absoluteY="135dp" />-->
+
+<!--    <android.support.constraint.Barrier-->
+<!--            android:id="@+id/br_comment"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:barrierDirection="bottom"-->
+<!--            app:constraint_referenced_ids="tv_pack_service_comment_lbl,tv_pack_service_comment_val"-->
+<!--            tools:layout_editor_absoluteX="8dp"-->
+<!--            tools:layout_editor_absoluteY="135dp" />-->
+
 </android.support.constraint.ConstraintLayout>
