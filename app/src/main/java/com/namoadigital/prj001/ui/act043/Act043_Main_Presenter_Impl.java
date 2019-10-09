@@ -126,6 +126,10 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     private void calculateTotalPrice(TSO_Service_Search_Obj packService, boolean definePriceRef){
         Double totPrice = null;
         boolean reportMissingValue = false;
+        //Independente do type,
+        //Seta qtd 0 para 1
+        packService.setQty(packService.getQty() == 0 ? 1 : packService.getQty());
+        //
         if (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps())) {
             for (TSO_Service_Search_Detail_Obj innerService : packService.getService_list()) {
                 //Se item não foi selecionado,ou seja esta inalterado pelo usr
@@ -136,6 +140,8 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                     //Seta preço "original" no atributo price_ref
                     innerService.setPrice_ref(innerService.getPrice());
                 }
+                //Seta qtd 0 para 1
+                innerService.setQty(packService.getQty() == 0 ? 1 : packService.getQty());
                 //Calcula preço total, soma dos valores
                 if (innerService.getPrice() != null) {
                     totPrice = totPrice == null ? innerService.getPrice() : totPrice + innerService.getPrice();
@@ -164,6 +170,38 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             packService.setPrice(packService.getPrice());
             //Seta flag que indica se valor do preço não esta definido.
             packService.setNullPrice(packService.getPrice() == null);
+        }
+    }
+
+    @Override
+    public void resetPackService(TSO_Service_Search_Obj packService) {
+        if(packService != null){
+            //Propriedades do "obj" pack, comum a ambos os types
+            packService.setQty(1);
+            packService.setPrice(packService.getPrice_ref());
+            packService.setSite_code_selected(null);
+            packService.setZone_code_selected(null);
+            packService.setPartner_code_selected(null);
+            packService.setComment(null);
+            packService.setDetailed(false);
+            packService.setSelected(false);
+            packService.setNullPrice(false);
+            //
+            if(Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps())){
+                //Propriedades do service
+                for (TSO_Service_Search_Detail_Obj innerService : packService.getService_list()) {
+                    innerService.setPrice(innerService.getPrice_ref());
+                    innerService.setSite_code_selected(null);
+                    innerService.setSite_desc_selected(null);
+                    innerService.setZone_code_selected(null);
+                    innerService.setZone_desc_selected(null);
+                    innerService.setPartner_code_selected(null);
+                    innerService.setPartner_desc_selected(null);
+                    innerService.setComment(null);
+                }
+            }
+            //
+            calculateTotalPrice(packService);
         }
     }
 

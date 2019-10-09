@@ -383,6 +383,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         mPresenter.calculateTotalPrice(packService);
     }
 
+    @Override
+    public void resetPackService(TSO_Service_Search_Obj packService) {
+        mPresenter.resetPackService(packService);
+    }
     //endregion
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {

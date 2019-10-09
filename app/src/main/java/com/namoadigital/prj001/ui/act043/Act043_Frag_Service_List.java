@@ -488,6 +488,10 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             showService_Pack_Details(item);
                             if(delegateAddService != null) {
                                 delegateAddService.calculateTotalPrice(item);
+                                //PARA TESTES
+                                if("RESETAR".equalsIgnoreCase(item.getComment())){
+                                    delegateAddService.resetPackService(item);
+                                }
                                 mAdapterRv.notifyDataSetChanged();
                             }
                         }

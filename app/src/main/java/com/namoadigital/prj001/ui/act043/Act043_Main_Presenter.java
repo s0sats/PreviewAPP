@@ -26,4 +26,6 @@ public interface Act043_Main_Presenter {
     ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone);
 
     void calculateTotalPrice(TSO_Service_Search_Obj packService);
+
+    void resetPackService(TSO_Service_Search_Obj packService);
 }
