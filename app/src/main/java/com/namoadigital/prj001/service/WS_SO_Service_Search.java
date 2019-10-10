@@ -132,7 +132,7 @@ public class WS_SO_Service_Search extends IntentService {
     private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) throws IOException {
         //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
         //Gera nome do arquivo json
-        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ToolBox_Inf.getToken(getApplicationContext()) + ".json";
+        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
         //Chama metodo para criar arquivo
         createJsonFile(file_name, gson.toJson(rec));
         HMAux auxName = new HMAux();
