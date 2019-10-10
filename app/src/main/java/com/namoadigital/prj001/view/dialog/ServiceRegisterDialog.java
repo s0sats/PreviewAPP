@@ -2,6 +2,7 @@ package com.namoadigital.prj001.view.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -30,6 +31,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private TextView tv_desc;
     private TextView tv_id_lbl;
     private TextView tv_id_val;
+    private TextView tv_pack_lbl;
+    private TextView tv_pack_val;
     private TextView tv_qtd_lbl;
     private MKEditTextNM mk_qtd_val;
     private TextView tv_price_lbl;
@@ -53,23 +56,12 @@ public class ServiceRegisterDialog extends AlertDialog {
     private SearchableSpinner act043_ss_zone;
     private SearchableSpinner act043_ss_partner;
 
-    /*
-        dialogType = 0 {
-            dialog para o pacote
-        }
+    private int dialogType;
+    public static final int ALERT_DIALOG_TYPE_PACKAGE = 0;
+    public static final int ALERT_DIALOG_TYPE_SERVICE = 1;
+    public static final int ALERT_DIALOG_TYPE_PACKAGE_SERVICE = 2;
+    public static final int ALERT_DIALOG_TYPE_SERVICE_EDIT = 3;
 
-        dialogType = 1 {
-            dialog para serviços
-        }
-
-        dialogType = 2 {
-            dialog para serviços do pacote
-        }
-        dialogType = 3 {
-            dialog para edição de serviço
-        }
-    */
-    int dialogType;
     private View.OnClickListener btnOkListener=null;
     private View.OnClickListener btnCancelListener=null;
     private View.OnClickListener btnPackageDetailListener=null;
@@ -92,59 +84,11 @@ public class ServiceRegisterDialog extends AlertDialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act043_frag_service_list_form2);
 
-        tv_desc = findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
-        tv_id_lbl = findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
-        tv_id_val = findViewById(R.id.act043_frag_service_list_form_tv_id_val);
-        tv_qtd_lbl = findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
-        mk_qtd_val =  findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        tv_price_lbl = findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
-        mk_price_val =  findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        tv_comments_lbl = findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
-        mk_comments_val =  findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        iv_foto =  findViewById(R.id.iv_foto);
-        btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
-        btn_ok =  findViewById(R.id.act043_frag_service_list_btn_ok);
-        btn_package_detail =  findViewById(R.id.btn_package_detail);
-        cl_register_service_form =  findViewById(R.id.ll_register_service_form);
-        ll_register_package_form =  findViewById(R.id.ll_register_package_form);
-        ll_register_spinners =  findViewById(R.id.ll_register_spinners);
-        act043_ss_site = findViewById(R.id.act043_ss_site);
-        act043_ss_zone = findViewById(R.id.act043_ss_zone);
-        act043_ss_partner = findViewById(R.id.act043_ss_partner);
+        setViewsById();
         //
-        tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
-        tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
-        tv_price_lbl.setText(hmAux_trans.get("alert_service_price"));
-        mk_price_val.setHint(hmAux_trans.get("alert_service_price_hint"));
-        tv_comments_lbl.setText(hmAux_trans.get("alert_service_comments"));
-        cb_remove_val.setText(hmAux_trans.get("alert_service_remove"));
+        setLabels();
         //
-        btn_cancelar.setText(hmAux_trans.get("sys_alert_btn_cancel"));
-        btn_package_detail.setText(hmAux_trans.get("alert_package_details"));
-        btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
-        //
-        tv_desc.setText(item.getPack_service_desc());
-        tv_id_val.setText(item.getPack_service_desc());
-        //
-        Double unitaryPrice = (Double) (item.getPrice()/item.getQty());
-        item.setPrice(unitaryPrice);
-        mk_price_val.setText(item.getPrice() != null ? String.valueOf(unitaryPrice) : "");
-        //
-        if (item.getManual_price() == 1) {
-            mk_price_val.setEnabled(true);
-            mk_price_val.requestFocus();
-        } else {
-            mk_price_val.setEnabled(false);
-        }
-        //
-        mk_qtd_val.setText(String.valueOf(item.getQty()));
-        if (item.isSelected()) {
-            cb_remove_val.setEnabled(true);
-        } else {
-            cb_remove_val.setEnabled(false);
-        }
-        mk_comments_val.setText(item.getComment());
+
         //
         setComponentsVisibility();
         //
@@ -172,66 +116,141 @@ public class ServiceRegisterDialog extends AlertDialog {
                         | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
+    private void setHeaderResume() {
+        tv_desc.setText(item.getPack_service_desc());
+        tv_id_val.setText(item.getPack_service_desc());
+    }
+
+    private void setPriceEnable(int hasManualPrice) {
+        if (hasManualPrice == 1) {
+            mk_price_val.setEnabled(true);
+            mk_price_val.requestFocus();
+        } else {
+            mk_price_val.setEnabled(false);
+        }
+    }
+
+    private void setPriceValue(int qty) {
+        Double unitaryPrice = (Double) (item.getPrice()/ qty);
+        item.setPrice(unitaryPrice);
+        mk_price_val.setText(item.getPrice() != null ? String.valueOf(unitaryPrice) : "");
+    }
+
+    private void setLabels() {
+        tv_id_lbl.setText(hmAux_trans.get("alert_service_id"));
+        tv_pack_lbl.setText(hmAux_trans.get("alert_package_id"));
+        tv_qtd_lbl.setText(hmAux_trans.get("alert_service_qtd"));
+        tv_price_lbl.setText(hmAux_trans.get("alert_service_price"));
+        mk_price_val.setHint(hmAux_trans.get("alert_service_price_hint"));
+        tv_comments_lbl.setText(hmAux_trans.get("alert_service_comments"));
+        cb_remove_val.setText(hmAux_trans.get("alert_service_remove"));
+        btn_cancelar.setText(hmAux_trans.get("sys_alert_btn_cancel"));
+        btn_package_detail.setText(hmAux_trans.get("alert_package_details"));
+        btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
+    }
+
+    private void setViewsById() {
+        tv_desc = findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
+        tv_id_lbl = findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
+        tv_id_val = findViewById(R.id.act043_frag_service_list_form_tv_id_val);
+        tv_pack_lbl = findViewById(R.id.act043_frag_service_list_form_tv_pack_lbl);
+        tv_pack_val = findViewById(R.id.act043_frag_service_list_form_tv_pack_val);
+        tv_qtd_lbl = findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
+        mk_qtd_val =  findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
+        tv_price_lbl = findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
+        mk_price_val =  findViewById(R.id.act043_frag_service_list_form_tv_price_val);
+        tv_comments_lbl = findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
+        mk_comments_val =  findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
+        iv_foto =  findViewById(R.id.iv_foto);
+        btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
+        btn_ok =  findViewById(R.id.act043_frag_service_list_btn_ok);
+        btn_package_detail =  findViewById(R.id.btn_package_detail);
+        cl_register_service_form =  findViewById(R.id.ll_register_service_form);
+        ll_register_package_form =  findViewById(R.id.ll_register_package_form);
+        ll_register_spinners =  findViewById(R.id.ll_register_spinners);
+        act043_ss_site = findViewById(R.id.act043_ss_site);
+        act043_ss_zone = findViewById(R.id.act043_ss_zone);
+        act043_ss_partner = findViewById(R.id.act043_ss_partner);
+    }
+
+    private void setRemoveCheckboxVisibility(boolean isSelected) {
+        if (isSelected) {
+            cb_remove_val.setVisibility(View.VISIBLE);
+        } else {
+            cb_remove_val.setVisibility(View.GONE);
+        }
+    }
+
     private void setComponentsVisibility() {
 
         cb_remove_val.setVisibility(View.GONE);
 
         switch (dialogType){
-            case 0:
+            case ALERT_DIALOG_TYPE_PACKAGE:
                 cl_register_service_form.setVisibility(View.GONE);
                 ll_register_spinners.setVisibility(View.GONE);
                 ll_register_package_form.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.VISIBLE);
                 mk_qtd_val.setEnabled(false);
                 mk_price_val.setEnabled(false);
-                cb_remove_val.setVisibility(View.GONE);
+                setRemoveCheckboxVisibility(item.isSelected());
                 iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
+                setPriceAndQtyValues();
+                setHeaderResume();
+                setPriceEnable(item.getManual_price());
+                mk_comments_val.setText(item.getComment());
+                if(item.hasNullPrice()){
+                    mk_price_val.setTextColor(Color.RED);
+                }
                 break;
-            case 1:
+            case ALERT_DIALOG_TYPE_SERVICE:
                 cl_register_service_form.setVisibility(View.GONE);
                 ll_register_package_form.setVisibility(View.VISIBLE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(true);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+                setPriceAndQtyValues();
+                setHeaderResume();
+                setPriceEnable(item.getManual_price());
+                setRemoveCheckboxVisibility(item.isSelected());
                 setSpinnersContent();
                 setSpinnersAction();
-                if(item.getManual_price() == 1) {
-                    mk_price_val.setEnabled(true);
-                }else{
-                    mk_price_val.setEnabled(false);
-                }
-                if (item.isSelected()) {
-                    cb_remove_val.setVisibility(View.VISIBLE);
-                }
+                mk_comments_val.setText(item.getComment());
                 break;
-            case 2:
+            case ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
                 cl_register_service_form.setVisibility(View.VISIBLE);
-                ll_register_spinners.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
+                ll_register_spinners.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(true);
+                iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+                setSpinnersContent();
+                setSpinnersAction();
+                tv_pack_val.setText(item.getPack_service_desc());
                 if(item.getManual_price() == 1) {
                     mk_price_val.setEnabled(true);
                 }else{
                     mk_price_val.setEnabled(false);
                 }
-                setSpinnersContent();
-                setSpinnersAction();
                 break;
-            case 3:
+            case ALERT_DIALOG_TYPE_SERVICE_EDIT:
                 setSpinnersContent();
                 break;
         }
     }
 
+    private void setPriceAndQtyValues() {
+        int qty = item.getQty();
+        if (qty == 0) {
+            qty = 1;
+        }
+        mk_qtd_val.setText(String.valueOf(qty));
+        setPriceValue(qty);
+    }
+
     private void setSpinnersAction() {
-        act043_ss_site.setOnValueChangeListner(new SearchableSpinner.OnValueChangeListner() {
-            @Override
-            public void onValueChanged(HMAux hmAux) {
-                setSSZoneValue(hmAux);
-            }
-        });
 
         act043_ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -242,6 +261,21 @@ public class ServiceRegisterDialog extends AlertDialog {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 setSSZoneValue(hmAux);
+            }
+        });
+
+        act043_ss_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                String zone_code = hmAux.get(MD_Site_ZoneDao.SITE_CODE);
+                if(zone_code != null && !zone_code.isEmpty()) {
+                    act043_ss_site.setmValue(getSiteOption(zone_code));
+                }
             }
         });
     }
@@ -265,6 +299,16 @@ public class ServiceRegisterDialog extends AlertDialog {
         for (HMAux siteZone : siteZoneOption) {
             if(site_code.equalsIgnoreCase(siteZone.get(MD_Site_ZoneDao.SITE_CODE))){
                 zone_temp.add(siteZone);
+            }
+        }
+        return zone_temp;
+    }
+
+    private HMAux getSiteOption(String site_code) {
+        HMAux zone_temp = new HMAux();
+        for (HMAux siteZone : siteOption) {
+            if(site_code.equalsIgnoreCase(siteZone.get(SearchableSpinner.CODE))){
+                return siteZone;
             }
         }
         return zone_temp;

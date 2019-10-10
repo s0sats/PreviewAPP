@@ -135,6 +135,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("dialog_receiving_add_service_msg");
         transList.add("alert_service_desc");
         transList.add("alert_service_id");
+        transList.add("alert_package_id");
         transList.add("alert_service_qtd");
         transList.add("alert_service_price");
         transList.add("alert_service_price_hint");
