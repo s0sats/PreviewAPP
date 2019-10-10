@@ -20,14 +20,15 @@
         />
 
     <TextView
-        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_val"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Service desc - trad"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold"
-        />
+            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Service desc - trad"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
