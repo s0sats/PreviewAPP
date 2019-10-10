@@ -161,6 +161,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("partner_package_detail_lbl");
         transList.add("comment_package_detail_lbl");
         transList.add("amount_package_detail_lbl");
+        transList.add("btn_back");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -564,6 +565,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     }
 
     @Override
+    public TSO_Service_Search_Obj getPackDetailObj() {
+        if(act043_frag_package_detail_list != null){
+            return act043_frag_package_detail_list.getPackObj();
+        }else{
+            return new TSO_Service_Search_Obj();
+        }
+    }
+
+    @Override
     public String getCurrentFrag() {
         return currentFrag;
     }
@@ -664,6 +674,23 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
        //TODO FODEU AQUI EIN
         //O ServiceRegisterDialog ESPERAR RECEBER TSO_Service_Search_Obj NÃO TSO_Service_Search_Detail_Obj
         // showService_Pack_Details(item);
+    }
+
+    @Override
+    public void alertPackDetailRemoveConfirm(final TSO_Service_Search_Obj packageDetailObj) {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            hmAux_Trans.get("alert_remove_pack_ttl"),
+            hmAux_Trans.get("alert_remove_pack_confirm"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    resetPackService(packageDetailObj);
+                    setFragByTag(Act043_Main.SELECTION_FRAG_SERVICE_LIST);
+                }
+            },
+            1
+        );
     }
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {

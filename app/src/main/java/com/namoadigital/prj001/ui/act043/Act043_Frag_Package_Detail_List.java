@@ -49,6 +49,9 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
     private boolean bStatus = false;
     private Act043_Package_Detail_Frag_Item_Adapter mAdapter;
     private Act043_I_Add_Service_Interaction delegateAddService;
+    private View.OnClickListener removeListener;
+    private View.OnClickListener cancelListener;
+    private View.OnClickListener saveListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -84,6 +87,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         View view = inflater.inflate(R.layout.act043_frag_package_detail_list, container, false);
         //
         bindViews(view);
+        initListeners();
         initAction();
         //
         return view;
@@ -98,38 +102,50 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         btn_cancel = view.findViewById(R.id.act043_frag_package_detail_list_btn_cancel);
     }
 
-    private void initAction() {
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+    private void initListeners() {
+        //Apenas volta para frag anterior
+        cancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //Seguro??
+                getActivity().onBackPressed();
             }
-        });
-        //
-        btn_save.setOnClickListener(new View.OnClickListener() {
+        };
+        //Descarta alterações resetando o obj para estado original
+        removeListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mListener.alertPackDetailRemoveConfirm(packageDataset);
             }
-        });
-        //
-        ivRemoveIcon.setOnClickListener(new View.OnClickListener() {
+        };
+        //Valida lista e seta como selecionado.
+        saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ToolBox.alertMSG_YES_NO(
                     context,
-                    hmAux_Trans.get("alert_remove_pack_ttl"),
-                    hmAux_Trans.get("alert_remove_pack_confirm"),
+                    "Dados do pacote",//hmAux_Trans.get(""),
+                    "Deseja adicionar pacote?",//hmAux_Trans.get(),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                            packageDataset.setSelected(true);
                         }
                     },
                     1
+
+
                 );
             }
-        });
+        };
+    }
+
+    private void initAction() {
+        ivRemoveIcon.setOnClickListener(removeListener);
+        //
+        btn_cancel.setOnClickListener(packageDataset == null || packageDataset.isSelected() ? cancelListener : removeListener);
+        //
+        btn_save.setOnClickListener(saveListener);
     }
 
     private void setRecyclerView() {
@@ -149,11 +165,19 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
+
+        if(context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
-        } else {
+        }else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                + " must implement OnListFragmentInteractionListener");
+        }
+        //
+        if(context instanceof Act043_I_Add_Service_Interaction) {
+            delegateAddService = (Act043_I_Add_Service_Interaction) context;
+        }else{
+            throw new RuntimeException(context.toString()
+                + " must implement Act043_I_Add_Service_Interaction");
         }
     }
 
@@ -169,10 +193,21 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         if (bStatus) {
             if (packageDataset != null) {
                 tvPackDesc.setText(packageDataset.getPack_service_desc_full());
+                btn_save.setText(hmAux_Trans.get("btn_save_package_detail"));
+                removeIcVisibility();
+                setBtnCancelLabel();
                 setRecyclerView();
             }
         }
 
+    }
+
+    private void setBtnCancelLabel() {
+        btn_cancel.setText(packageDataset.isSelected() ? hmAux_Trans.get("btn_back") : hmAux_Trans.get("btn_cancel_package_detail") );
+    }
+
+    private void removeIcVisibility() {
+        ivRemoveIcon.setVisibility(packageDataset.isSelected() ? View.VISIBLE : View.GONE );
     }
 
     @Override
@@ -200,6 +235,8 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item);
+
+        void alertPackDetailRemoveConfirm(TSO_Service_Search_Obj packageDetailObj);
     }
 
     public void setPackageDataset(TSO_Service_Search_Obj packageDataset) {
@@ -211,6 +248,10 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
 
     public void setDelegateAddService(Act043_I_Add_Service_Interaction delegateAddService) {
         this.delegateAddService = delegateAddService;
+    }
+
+    public TSO_Service_Search_Obj getPackObj(){
+        return packageDataset;
     }
 
 }

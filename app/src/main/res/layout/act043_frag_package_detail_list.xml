@@ -8,25 +8,30 @@
 
     <Button
             android:id="@+id/act043_frag_package_detail_list_btn_cancel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="Cancel - trad"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_btn_save"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act043_frag_package_detail_list_rv_pack_service_detail"
+            />
 
     <Button
             android:id="@+id/act043_frag_package_detail_list_btn_save"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:text="Save - trad"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_btn_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_btn_cancel"
             app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_btn_cancel" />
 
@@ -41,49 +46,67 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_tv_pack_desc"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@id/act043_frag_package_detail_list_v_divider"
             tools:context="com.namoadigital.prj001.ui.act043.Act043_Frag_Package_Detail_List"
             tools:listitem="@layout/package_detail_frag_item" />
 
-    <ImageView
-            android:id="@+id/act043_frag_package_detail_list_iv_pack_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_tv_pack_desc"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_archive_material_black_24dp" />
-
-    <TextView
-            android:id="@+id/act043_frag_package_detail_list_tv_pack_desc"
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/act043_frag_package_detail_list_cl_pack"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:padding="10dp"
-            android:text="Pack Desc - trad "
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_iv_remove_icon"
-            app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_iv_pack_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-            android:id="@+id/act043_frag_package_detail_list_iv_remove_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/namoa_danger_bg_states"
-            android:padding="2dp"
-            android:tint="@color/padrao_WHITE"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_tv_pack_desc"
+            android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            app:srcCompat="@drawable/ic_trash" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+                android:id="@+id/act043_frag_package_detail_list_iv_pack_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_archive_material_black_24dp" />
+
+        <ImageView
+                android:id="@+id/act043_frag_package_detail_list_iv_remove_icon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/namoa_danger_bg_states"
+                android:padding="2dp"
+                android:tint="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_trash" />
+
+        <TextView
+                android:id="@+id/act043_frag_package_detail_list_tv_pack_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:padding="10dp"
+                android:text="Pack Desc - trad "
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_iv_remove_icon"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_iv_pack_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+            android:id="@+id/act043_frag_package_detail_list_v_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act043_frag_package_detail_list_cl_pack"
+            app:layout_constraintBottom_toTopOf="@id/act043_frag_package_detail_list_rv_pack_service_detail"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/namoa_color_gray"
+            />
 
 
 </android.support.constraint.ConstraintLayout>
