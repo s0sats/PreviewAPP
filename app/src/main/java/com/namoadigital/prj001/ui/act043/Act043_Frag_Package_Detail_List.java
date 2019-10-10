@@ -213,8 +213,8 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
 
         if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
-            siteOption = delegateAddService.generateSiteOption(packageDataset.getSite_zone());
-            siteZoneOption = delegateAddService.generateSiteZoneOption(packageDataset.getSite_zone());
+            siteOption = delegateAddService.generateSiteOption(item.getSite_zone());
+            siteZoneOption = delegateAddService.generateSiteZoneOption(item.getSite_zone());
         }
 
         final ServiceRegisterDialog dialog =
@@ -256,12 +256,15 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
 
                                 if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                    item.setSite_desc_selected(dialog.get_ss_site_content().get(SearchableSpinner.DESCRIPTION));
                                 }
 
                                 if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                    item.setPartner_desc_selected(dialog.get_ss_partner_content().get(SearchableSpinner.DESCRIPTION));
                                 } else {
                                     item.setPartner_code_selected(null);
+                                    item.setPartner_desc_selected(null);
                                 }
                                 item.setComment(dialog.getMk_comments_val());
                                 item.setSelected(false);
