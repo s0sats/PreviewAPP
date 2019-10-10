@@ -343,6 +343,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             if (!item.hasNullPrice()){
                                 item.setComment(dialog.getMk_comments_val());
                                 item.setSelected(true);
+                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
                                 for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
                                     service.setComment(dialog.getMk_comments_val());
                                 }
@@ -375,6 +376,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             ) {
                                 item.setSelected(true);
                                 item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
                                 if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
                                 }

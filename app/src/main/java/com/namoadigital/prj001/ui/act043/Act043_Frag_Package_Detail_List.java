@@ -212,7 +212,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
 
-        if(packageDataset.getSite_zone() != null && !packageDataset.getSite_zone().isEmpty() ){
+        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
             siteOption = delegateAddService.generateSiteOption(packageDataset.getSite_zone());
             siteZoneOption = delegateAddService.generateSiteZoneOption(packageDataset.getSite_zone());
         }
@@ -265,7 +265,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                                 }
                                 item.setComment(dialog.getMk_comments_val());
                                 item.setSelected(false);
-                                packageDataset.getService_list().set(position, item);
+                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
                                 mAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
                             } else {
