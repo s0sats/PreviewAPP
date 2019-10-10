@@ -23,6 +23,7 @@ public class TSO_Service_Search_Detail_Obj {
     private Integer partner_code_selected;
     private String partner_desc_selected;
     private String comment;
+    private boolean isSelected;
     private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;
     //private JSONArray site_zone;
 
@@ -184,5 +185,13 @@ public class TSO_Service_Search_Detail_Obj {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

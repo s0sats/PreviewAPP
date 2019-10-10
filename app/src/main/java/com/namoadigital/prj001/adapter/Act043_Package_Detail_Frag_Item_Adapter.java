@@ -22,13 +22,16 @@ import java.util.List;
 public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapter<Act043_Package_Detail_Frag_Item_Adapter.ViewHolder> {
 
     private final List<TSO_Service_Search_Detail_Obj> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private OnItemClickListener mListener;
     private HMAux hmAux_Trans;
 
-    public Act043_Package_Detail_Frag_Item_Adapter(List<TSO_Service_Search_Detail_Obj> items, OnListFragmentInteractionListener listener, HMAux hmAux_Trans) {
+    public Act043_Package_Detail_Frag_Item_Adapter(List<TSO_Service_Search_Detail_Obj> items, HMAux hmAux_Trans) {
         mValues = items;
-        mListener = listener;
         this.hmAux_Trans = hmAux_Trans;
+    }
+
+    public void setmListener(OnItemClickListener mListener) {
+        this.mListener = mListener;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(item);
+                    mListener.onItemClick(item, holder.getAdapterPosition());
                 }
             }
         });
@@ -147,4 +150,9 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
     private String formatSiteZone(TSO_Service_Search_Detail_Obj mItem) {
         return mItem.getSite_desc_selected() + " / " + mItem.getZone_desc_selected();
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(TSO_Service_Search_Detail_Obj item, int adapterPosition);
+    }
+
 }
