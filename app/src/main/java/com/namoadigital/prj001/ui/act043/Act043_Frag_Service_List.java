@@ -334,7 +334,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
             public void onClick(View v) {
 
                 switch (finalDialogType ){
-                    case 0:
+                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE:
                         if(dialog.getCb_remove_val()){
                             delegateAddService.resetPackService(item);
                             mAdapterRv.notifyDataSetChanged();
@@ -350,7 +350,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             dialog.dismiss();
                         }
                         break;
-                    case 1:
+                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE:
                         if(dialog.getCb_remove_val()){
                             delegateAddService.resetPackService(item);
                             mAdapterRv.notifyDataSetChanged();
