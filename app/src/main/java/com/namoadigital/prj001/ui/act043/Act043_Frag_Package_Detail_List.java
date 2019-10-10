@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -20,7 +21,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Package_Detail_Frag_Item_Adapter;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -190,13 +193,103 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         mAdapter =
             new Act043_Package_Detail_Frag_Item_Adapter(
                 packageDataset.getService_list(),
-                mListener,
                 hmAux_Trans
             );
         //
+        mAdapter.setmListener(new Act043_Package_Detail_Frag_Item_Adapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(TSO_Service_Search_Detail_Obj item, int adapterPosition) {
+                showService_Pack_Details(adapterPosition, item);
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void showService_Pack_Details(final int position, final TSO_Service_Search_Detail_Obj item) {
+
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
+
+        if(packageDataset.getSite_zone() != null && !packageDataset.getSite_zone().isEmpty() ){
+            siteOption = delegateAddService.generateSiteOption(packageDataset.getSite_zone());
+            siteZoneOption = delegateAddService.generateSiteZoneOption(packageDataset.getSite_zone());
+        }
+
+        final ServiceRegisterDialog dialog =
+                new ServiceRegisterDialog(
+                        context,
+                        ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE,
+                        hmAux_Trans,
+                        packageDataset.getPack_service_desc_full(),
+                        item,
+                        siteOption,
+                        siteZoneOption,
+                        delegateAddService.getPartnerList()
+                );
+        //
+        final int finalDialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
+        dialog.setBtnOkListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (finalDialogType ){
+                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
+                        if(dialog.getCb_remove_val()){
+                            delegateAddService.resetPackService(packageDataset);
+                            mAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }else {
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
+                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                }
+
+                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                }
+
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                } else {
+                                    item.setPartner_code_selected(null);
+                                }
+                                item.setComment(dialog.getMk_comments_val());
+                                item.setSelected(false);
+                                packageDataset.getService_list().set(position, item);
+                                mAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                            } else {
+                                ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                        null,
+                                        0
+                                );
+                            }
+                        }
+                        break;
+                }
+            }
+        });
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
 
@@ -274,9 +367,6 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item);
-
         void alertPackDetailRemoveConfirm(TSO_Service_Search_Obj packageDetailObj);
     }
 

@@ -150,6 +150,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_no_service_found_msg");
         transList.add("alert_invalid_service_value_ttl");
         transList.add("alert_invalid_service_value_msg");
+        transList.add("alert_invalid_package_total_value_ttl");
+        transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
         //Frag_Package_Detail_List
         transList.add("tv_package_detail_list_ttl");
@@ -676,13 +678,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
-    @Override
-    public void onListFragmentInteraction(TSO_Service_Search_Detail_Obj item) {
-       //TODO FODEU AQUI EIN
-        //O ServiceRegisterDialog ESPERAR RECEBER TSO_Service_Search_Obj NÃO TSO_Service_Search_Detail_Obj
-        // showService_Pack_Details(item);
-        Toast.makeText(context,item.getService_desc_full(),Toast.LENGTH_LONG).show();
-    }
 
     @Override
     public void alertPackDetailRemoveConfirm(final TSO_Service_Search_Obj packageDetailObj) {

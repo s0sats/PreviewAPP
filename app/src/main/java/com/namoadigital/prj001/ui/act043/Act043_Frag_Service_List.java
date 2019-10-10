@@ -340,14 +340,24 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             mAdapterRv.notifyDataSetChanged();
                             dialog.dismiss();
                         }else{
-                            item.setComment(dialog.getMk_comments_val());
-                            item.setSelected(true);
-                            for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
-                                service.setComment(dialog.getMk_comments_val());
+                            if (!item.hasNullPrice()){
+                                item.setComment(dialog.getMk_comments_val());
+                                item.setSelected(true);
+                                for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
+                                    service.setComment(dialog.getMk_comments_val());
+                                }
+                                delegateAddService.calculateTotalPrice(item);
+                                mAdapterRv.notifyDataSetChanged();
+                                dialog.dismiss();
+                            }else{
+                                ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_package_total_value_ttl"),
+                                        hmAux_Trans.get("alert_invalid_package_total_value_msg"),
+                                        null,
+                                        0
+                                );
                             }
-                            delegateAddService.calculateTotalPrice(item);
-                            mAdapterRv.notifyDataSetChanged();
-                            dialog.dismiss();
                         }
                         break;
                     case ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE:
