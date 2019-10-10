@@ -163,6 +163,12 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("comment_package_detail_lbl");
         transList.add("amount_package_detail_lbl");
         transList.add("btn_back");
+        transList.add("alert_add_pack_ttl");
+        transList.add("alert_add_pack_confirm");
+        transList.add("alert_invalid_pack_ttl");
+        transList.add("alert_invalid_pack_msg");
+        transList.add("alert_remove_pack_ttl");
+        transList.add("alert_remove_pack_confirm");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -675,6 +681,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
        //TODO FODEU AQUI EIN
         //O ServiceRegisterDialog ESPERAR RECEBER TSO_Service_Search_Obj NÃO TSO_Service_Search_Detail_Obj
         // showService_Pack_Details(item);
+        Toast.makeText(context,item.getService_desc_full(),Toast.LENGTH_LONG).show();
     }
 
     @Override

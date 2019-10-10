@@ -218,6 +218,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                 HMAux hmAux = new HMAux();
                 if(!isSiteInList(siteList,siteZone.getSite_code())){
                     hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getSite_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getSite_id());
                     hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getSite_desc());
                     hmAux.put(MD_PartnerDao.PARTNER_CODE, String.valueOf(siteZone.getPartner_code()));
                     siteList.add(hmAux);
@@ -260,6 +261,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                 HMAux hmAux = new HMAux();
                 if(!isSiteZoneInList(siteZoneList,siteZone.getSite_code(),siteZone.getZone_code())){
                     hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getZone_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getZone_id());
                     hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getZone_desc());
                     hmAux.put(MD_Site_ZoneDao.SITE_CODE,String.valueOf(siteZone.getSite_code()));
                     siteZoneList.add(hmAux);

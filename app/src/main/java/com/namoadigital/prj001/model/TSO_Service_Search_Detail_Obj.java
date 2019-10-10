@@ -1,8 +1,9 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TSO_Service_Search_Detail_Obj {
+public class TSO_Service_Search_Detail_Obj implements Serializable {
 
     private long customer_code;
     private int price_list_code;

@@ -20,9 +20,12 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceRegisterDialog extends AlertDialog {
 
@@ -65,6 +68,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private View.OnClickListener btnOkListener=null;
     private View.OnClickListener btnCancelListener=null;
     private View.OnClickListener btnPackageDetailListener=null;
+    private String mResource_Code;
+    private String mResourceName = "service_register_dialog";
 
     protected ServiceRegisterDialog(Context context) {
         super(context);
@@ -83,7 +88,9 @@ public class ServiceRegisterDialog extends AlertDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act043_frag_service_list_form2);
-
+        //
+        loadTranslation();
+        //
         setViewsById();
         //
         setLabels();
@@ -114,6 +121,32 @@ public class ServiceRegisterDialog extends AlertDialog {
         getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+    }
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        //
+        transList.add("alert_service_id");
+        transList.add("alert_package_id");
+        transList.add("alert_service_qtd");
+        transList.add("alert_service_price");
+        transList.add("alert_service_price_hint");
+        transList.add("alert_service_comments");
+        transList.add("alert_service_remove");
+        transList.add("alert_package_details");
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(
+            getContext(),
+            ConstantBaseApp.APP_MODULE,
+            mResourceName
+        );
+        //
+        hmAux_trans = ToolBox_Inf.setLanguage(
+            getContext(),
+            ConstantBaseApp.APP_MODULE,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(getContext()),
+            transList
+        );
     }
 
     private void setHeaderResume() {

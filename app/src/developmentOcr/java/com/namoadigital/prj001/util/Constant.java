@@ -32,14 +32,14 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SO_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_so.ws";
-    public static final String WS_SO_SERVICE_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_list_app.ws";
+    public static final String WS_SO_SERVICE_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_list_app_2.ws";
     public static final String WS_SO_SERVICE_REMOVE = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_cancel_app.ws";
     public static final String WS_SO_CLIENT_LIST = "https://dev.namoadigital.com/ws/prj001/sm_order/server_client.ws";
     public static final String WS_SO_FAVORITE_LIST = "https://dev.namoadigital.com/ws/prj001/sm_order/server_main.ws";
     public static final String WS_SO_CREATION = "https://dev.namoadigital.com/ws/prj001/sm_order/server_save_so.ws";
 
     public static final String WS_SO_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_so.ws";
-    public static final String WS_SO_PACK_SERVICE = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
+    public static final String WS_SO_PACK_SERVICE = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app_2.ws";
 
     public static final String WS_AP_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_ap.ws";
     public static final String WS_AP_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_ap.ws";

@@ -1,20 +1,31 @@
 package com.namoadigital.prj001.model;
 
-public class TSO_Service_Search_Detail_Params_Obj {
+import java.io.Serializable;
+
+public class TSO_Service_Search_Detail_Params_Obj implements Serializable {
 
     private Integer site_code;
+    private String site_id;
     private String site_desc;
     private Integer zone_code;
+    private String zone_id;
     private String zone_desc;
     private Integer partner_code;
     //
-
     public Integer getSite_code() {
         return site_code;
     }
 
     public void setSite_code(Integer site_code) {
         this.site_code = site_code;
+    }
+
+    public String getSite_id() {
+        return site_id;
+    }
+
+    public void setSite_id(String site_id) {
+        this.site_id = site_id;
     }
 
     public String getSite_desc() {
@@ -31,6 +42,14 @@ public class TSO_Service_Search_Detail_Params_Obj {
 
     public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
+    }
+
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
     }
 
     public String getZone_desc() {

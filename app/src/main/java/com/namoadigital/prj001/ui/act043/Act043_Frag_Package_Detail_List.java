@@ -107,8 +107,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         cancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Seguro??
-                getActivity().onBackPressed();
+                forceBackPress();
             }
         };
         //Descarta alterações resetando o obj para estado original
@@ -122,22 +121,61 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         saveListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToolBox.alertMSG_YES_NO(
-                    context,
-                    "Dados do pacote",//hmAux_Trans.get(""),
-                    "Deseja adicionar pacote?",//hmAux_Trans.get(),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            packageDataset.setSelected(true);
-                        }
-                    },
-                    1
+                    ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_add_pack_ttl"),
+                        hmAux_Trans.get("alert_add_pack_confirm"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(addPackValidate()) {
+                                    packageDataset.setSelected(true);
+                                    forceBackPress();
+                                }else{
+                                    ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_pack_ttl"),
+                                        hmAux_Trans.get("alert_invalid_pack_msg"),
+                                        null,
+                                        0
+                                    );
+                                }
+                            }
+                        },
+                        1
+                    );
 
-
-                );
             }
         };
+    }
+
+    /**
+     * Valida se serviços estão com os valores preenchidos.
+     * @return
+     */
+
+    private boolean addPackValidate() {
+
+        for (TSO_Service_Search_Detail_Obj serviceObj : packageDataset.getService_list()) {
+            //Valida se site e zona preenchidos
+            if(serviceObj.getSite_zone() != null
+               && serviceObj.getSite_zone().size() > 0
+               && ( serviceObj.getSite_code_selected() == null
+                  || serviceObj.getZone_code_selected() == null)
+            ){
+              return false;
+            }
+            //
+            if(serviceObj.getQty() <= 0){
+                return false;
+            }
+            //
+            if(serviceObj.getPrice() == null){
+                return false;
+            }
+        }
+        //
+        return true;
     }
 
     private void initAction() {
@@ -194,20 +232,23 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
             if (packageDataset != null) {
                 tvPackDesc.setText(packageDataset.getPack_service_desc_full());
                 btn_save.setText(hmAux_Trans.get("btn_save_package_detail"));
-                removeIcVisibility();
-                setBtnCancelLabel();
+                setLayoutCnfig();
                 setRecyclerView();
             }
         }
 
     }
 
-    private void setBtnCancelLabel() {
+    /**
+     * Seta configurações de itens que tem comportamento afetado pela flag is selected
+     */
+    private void setLayoutCnfig() {
+        //Muda label do btn de acordo com a função
         btn_cancel.setText(packageDataset.isSelected() ? hmAux_Trans.get("btn_back") : hmAux_Trans.get("btn_cancel_package_detail") );
-    }
-
-    private void removeIcVisibility() {
+        //Exibe botão de remover apenas se pacote ja adicionado
         ivRemoveIcon.setVisibility(packageDataset.isSelected() ? View.VISIBLE : View.GONE );
+        //Exibe botão de "save/adicionar" apenas se pacote ainda não adicionado.
+        btn_save.setVisibility(packageDataset.isSelected() ? View.GONE : View.VISIBLE );
     }
 
     @Override
@@ -252,6 +293,14 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
 
     public TSO_Service_Search_Obj getPackObj(){
         return packageDataset;
+    }
+
+    void forceBackPress(){
+        try {
+            getActivity().onBackPressed();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

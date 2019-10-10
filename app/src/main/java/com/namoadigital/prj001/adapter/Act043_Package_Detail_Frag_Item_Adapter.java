@@ -34,7 +34,7 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.package_detail_frag_item, parent, false);
+                .inflate(R.layout.act043_frag_package_detail_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -79,17 +79,17 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
             super(view);
             mView = view;
 
-            tv_pack_service_price = view.findViewById(R.id.tv_pack_service_price);
-            tv_pack_service_zone_lbl = view.findViewById(R.id.tv_pack_service_zone_lbl);
-            tv_pack_service_val = view.findViewById(R.id.tv_pack_service_val);
-            tv_pack_service_partner_lbl = view.findViewById(R.id.tv_pack_service_partner_lbl);
-            tv_pack_service_zone_val = view.findViewById(R.id.tv_pack_service_zone_val);
-            tv_pack_service_partner_val = view.findViewById(R.id.tv_pack_service_partner_val);
-            iv_pack_service_item = view.findViewById(R.id.iv_pack_service_item);
-            tv_pack_service_comment_lbl = view.findViewById(R.id.tv_pack_service_comment_lbl);
-            tv_pack_service_comment_val = view.findViewById(R.id.tv_pack_service_comment_val);
-            tv_pack_service_amount_lbl = view.findViewById(R.id.tv_pack_service_amount_lbl);
-            tv_pack_service_amount_val = view.findViewById(R.id.tv_pack_service_amount_val);
+            tv_pack_service_price = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_price);
+            tv_pack_service_zone_lbl = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_zone_lbl);
+            tv_pack_service_val = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_val);
+            tv_pack_service_partner_lbl = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_partner_lbl);
+            tv_pack_service_zone_val = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_zone_val);
+            tv_pack_service_partner_val = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_partner_val);
+            iv_pack_service_item = view.findViewById(R.id.act043_frag_package_detail_list_item_iv_pack_service);
+            tv_pack_service_comment_lbl = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_comment_lbl);
+            tv_pack_service_comment_val = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_comment_val);
+            tv_pack_service_amount_lbl = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_amount_lbl);
+            tv_pack_service_amount_val = view.findViewById(R.id.act043_frag_package_detail_list_item_tv_pack_service_amount_val);
         }
 
         public void bindValue(TSO_Service_Search_Detail_Obj mItem){
