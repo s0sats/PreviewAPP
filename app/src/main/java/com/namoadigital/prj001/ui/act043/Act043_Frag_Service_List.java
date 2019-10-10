@@ -304,12 +304,12 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
-        int dialogType = 0;
+        int dialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE;
 
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
         if(Act043_Main.TYPE_PS_SERVICE.equalsIgnoreCase(item.getType_ps())){
-            dialogType =1;
+            dialogType =ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE;
         }
         if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
             siteOption = delegateAddService.generateSiteOption(item.getSite_zone());
@@ -406,6 +406,13 @@ public class Act043_Frag_Service_List extends BaseFragment {
         dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                item.setComment("");
+
+                for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
+                    service.setComment(dialog.getMk_comments_val());
+                }
+
+                delegateAddService.calculateTotalPrice(item);
                 delegateAddService.setPackageServiceDetailList(item);
                 delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 dialog.dismiss();
