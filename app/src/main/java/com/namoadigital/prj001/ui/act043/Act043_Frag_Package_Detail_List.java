@@ -133,6 +133,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 if(addPackValidate()) {
                                     packageDataset.setSelected(true);
+                                    packageDataset.setDetailed(true);
                                     forceBackPress();
                                 }else{
                                     ToolBox.alertMSG(

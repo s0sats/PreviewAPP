@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -78,7 +76,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
 
     public interface IAct043_Frag_Service_List {
         void progressAction(String title, String message, String action);
-
     }
 
     private IAct043_Frag_Service_List delegate;
@@ -434,104 +431,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         dialog.show();
     }
 
-    @NonNull
-    private AlertDialog.Builder getBuilderForRegisterDialog(HMAux item, View view ) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        //
-        TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
-        TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
-        TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
-        TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
-        MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
-        MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
-        MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
-        //
-        tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
-        tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
-        tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
-        mk_price_val.setHint(hmAux_Trans.get("alert_service_price_hint"));
-        tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
-        cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
-        //
-        btn_cancelar.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
-        final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        tv_desc.setText(item.get("pack_service_desc"));
-        tv_id_val.setText(item.get("pack_service_desc_full"));
-        //
-        if (!item.get("qty").isEmpty()) {
-            mk_qtd_val.setText(item.get("qty"));
-            cb_remove_val.setVisibility(View.VISIBLE);
-        } else {
-            mk_qtd_val.setText("1");
-            cb_remove_val.setVisibility(View.GONE);
-        }
-        //
-        if (item.get("manual_price").equals("1")) {
-//            if (item.get("price_ref").isEmpty()) {
-//                mk_price_val.setText(item.get("price"));
-//            } else {
-//                mk_price_val.setText(item.get("price_ref"));
-//            }
-            mk_price_val.setText(item.get("price"));
-            //
-            mk_price_val.setEnabled(true);
-            mk_price_val.requestFocus();
-        } else {
-            mk_price_val.setText(item.get("price"));
-            mk_price_val.setEnabled(false);
-        }
-        //
-        mk_comments_val.setText(item.get("comments"));
-        //
-        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
-            cb_remove_val.setEnabled(false);
-        } else {
-            cb_remove_val.setEnabled(true);
-        }
-
-
-        //
-        builder.setView(view)
-                .setCancelable(true);
-        return builder;
-    }
-
-    private boolean checkFields(TSO_Service_Search_Obj item, String qtd, String price, String comments) {
-        boolean results;
-
-        if (convertQtd(qtd) > 0) {
-//            item.put("qty", qtd);
-            item.setPrice(Double.parseDouble(price));
-            if(item.getService_list() != null){
-                for(TSO_Service_Search_Detail_Obj obj: item.getService_list() ){
-                    obj.setComment(comments);
-                }
-            }
-            //
-            if (convertValueEmptyZero(price, CONVERT_TYPE_EMPTY).isEmpty()) {
-                results = false;
-            } else {
-                results = true;
-            }
-        } else {
-//            item.put("qty", "");
-//            item.put("price", item.get("price_ref"));
-//            item.put("comments", "");
-            //
-            results = true;
-        }
-        //
-        mAdapterRv.notifyDataSetChanged();
-        //
-        return results;
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -560,7 +459,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     mAdapterRv
                 );
                 //
-                repositionToSelectedItem();
+                repositioningToSelectedItem();
                 //
                 if(mAdapterRv != null) {
                     if(mk_desc != null && !mk_desc.getText().toString().trim().isEmpty()) {
@@ -590,15 +489,20 @@ public class Act043_Frag_Service_List extends BaseFragment {
      * Metodo que salva a posição do item da lista para reposiciona-la
      * quando o fragmento for resumido
      */
-    private void repositionToSelectedItem() {
+    private void repositioningToSelectedItem() {
         //Se item diferente do default, reposiciona a list ano item
         if (mClickedItemPosition != -1) {
             //Se posição no "range" de indices do adapter, posiciona lista
             if(mClickedItemPosition <= mAdapterRv.getItemCount() -1){
                 rv_services_packs.scrollToPosition(mClickedItemPosition);
             }
-            mClickedItemPosition = -1;
+            //
+            resetClickedItemPosition();
         }
+    }
+
+    public void resetClickedItemPosition(){
+        mClickedItemPosition = -1;
     }
 
     private long getNextPackSeq(){

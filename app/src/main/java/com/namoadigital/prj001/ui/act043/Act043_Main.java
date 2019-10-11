@@ -27,7 +27,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -443,10 +442,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                 callAct027(context, Act027_Main.SELECTION_SERIAL);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
-            case Act027_Main.SELECTION_HEADER:
-                callAct027(context, Act027_Main.SELECTION_HEADER);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                break;
             case Act027_Main.SELECTION_APPROVAL:
 
                 if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
@@ -501,6 +496,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     );
                 }
                 break;
+            case Act027_Main.SELECTION_HEADER:
             default:
                 callAct027(context, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -579,6 +575,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             return act043_frag_package_detail_list.getPackObj();
         }else{
             return new TSO_Service_Search_Obj();
+        }
+    }
+
+    public void resetFragListPosition(){
+        //Reseta var de posição do item da lista
+        if(act043_frag_service_list != null){
+            act043_frag_service_list.resetClickedItemPosition();
         }
     }
 
