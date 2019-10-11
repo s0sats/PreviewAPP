@@ -252,7 +252,6 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                                 item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
                                 if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
-                                    item.setZone_desc_selected(dialog.get_ss_zone_content().get(SearchableSpinner.DESCRIPTION));
                                 }
 
                                 if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -269,7 +268,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                                 }
                                 item.setComment(dialog.getMk_comments_val());
                                 item.setSelected(false);
-                                //packageDataset.getService_list().set(position, item);
+                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
                                 mAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
                             } else {

@@ -112,8 +112,6 @@ public class ServiceRegisterDialog extends AlertDialog {
         //
         setLabels();
         //
-
-        //
         setComponentsVisibility();
         //
         btn_ok.setOnClickListener(btnOkListener);
@@ -139,6 +137,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
+
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         //
@@ -150,6 +149,9 @@ public class ServiceRegisterDialog extends AlertDialog {
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
         transList.add("alert_package_details");
+        transList.add("alert_site_lbl");
+        transList.add("alert_zone_lbl");
+        transList.add("alert_partner_lbl");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getContext(),
@@ -188,7 +190,6 @@ public class ServiceRegisterDialog extends AlertDialog {
     private void setPriceValue(int qty, Double unitPrice) {
         if(unitPrice != null) {
             Double unitaryPrice = (unitPrice / qty);
-            packageObj.setPrice(unitaryPrice);
             mk_price_val.setText(String.valueOf(unitaryPrice));
         }else{
             mk_price_val.setText("");
@@ -206,6 +207,10 @@ public class ServiceRegisterDialog extends AlertDialog {
         btn_cancelar.setText(hmAux_trans.get("sys_alert_btn_cancel"));
         btn_package_detail.setText(hmAux_trans.get("alert_package_details"));
         btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
+        mk_price_val.setText("");
+        mk_qtd_val.setText("1");
+        mk_comments_val.setText("");
+
     }
 
     private void setViewsById() {
@@ -257,7 +262,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
                 setPriceAndQtyValues(packageObj.getQty(), packageObj.getPrice());
                 setHeaderResume();
-                setPriceEnable(packageObj.getManual_price());
+
                 mk_comments_val.setText(packageObj.getComment());
                 setPartnerSS(packageObj.isSelected(), packageObj.getPartner_code_selected(), packageObj.getSite_zone());
                 if(packageObj.hasNullPrice()){
@@ -276,11 +281,11 @@ public class ServiceRegisterDialog extends AlertDialog {
                 setPriceEnable(packageObj.getManual_price());
                 setRemoveCheckboxVisibility(packageObj.isSelected());
                 int packageObjSiteListSize=0;
-                if(item != null
-                && item.getSite_zone() != null){
-                    packageObjSiteListSize = item.getSite_zone().size();
+                if(packageObj != null
+                && packageObj.getSite_zone() != null){
+                    packageObjSiteListSize = packageObj.getSite_zone().size();
                 }
-                setSpinnersContent(packageObjSiteListSize, packageObj.getSite_code_selected(), packageObj.getSite_code_selected());
+                setSpinnersContent(packageObjSiteListSize, packageObj.getSite_code_selected(), packageObj.getZone_code_selected());
                 setSpinnersAction();
                 setPartnerSS(packageObj.isSelected(), packageObj.getPartner_code_selected(), packageObj.getSite_zone());
                 mk_comments_val.setText(packageObj.getComment());
@@ -290,7 +295,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 ll_register_package_form.setVisibility(View.GONE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
                 btn_package_detail.setVisibility(View.GONE);
-                mk_qtd_val.setEnabled(true);
+                mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
                 setHeaderPackageService();
                 int itemSiteListSize=0;
@@ -298,9 +303,11 @@ public class ServiceRegisterDialog extends AlertDialog {
                         && item.getSite_zone() != null){
                     itemSiteListSize = item.getSite_zone().size();
                 }
+                setRemoveCheckboxVisibility(false);
                 setSpinnersContent(itemSiteListSize, item.getSite_code_selected(), item.getSite_code_selected());
                 setSpinnersAction();
                 setPartnerSS(item.isSelected(), item.getPartner_code_selected(), item.getSite_zone());
+                setPriceAndQtyValues(item.getQty(), item.getPrice());
                 setPriceEnable(item.getManual_price());
                 mk_comments_val.setText(item.getComment());
                 break;
@@ -383,12 +390,12 @@ public class ServiceRegisterDialog extends AlertDialog {
         return zone_temp;
     }
 
-    private void setSpinnersContent(int site_zone_size, Integer site_code_selected, Integer siteCodeSelected) {
+    private void setSpinnersContent(int site_zone_size, Integer site_code_selected, Integer zoneCodeSelected) {
         act043_ss_site.setmLabel(hmAux_trans.get("alert_site_lbl"));
         act043_ss_zone.setmLabel(hmAux_trans.get("alert_zone_lbl"));
         act043_ss_partner.setmLabel(hmAux_trans.get("alert_partner_lbl"));
 
-        if(siteOption != null && !siteOption.isEmpty()){
+        if(siteOption != null && siteOption.size() > 0 ){
             act043_ss_site.setmOption(siteOption);
             act043_ss_site.setmEnabled(true);
             ArrayList<HMAux> zoneOption = getZoneOption(siteOption.get(0).get(SearchableSpinner.CODE));
@@ -398,8 +405,8 @@ public class ServiceRegisterDialog extends AlertDialog {
                     act043_ss_site.setmEnabled(false);
                     act043_ss_zone.setmEnabled(false);
                 }
-                act043_ss_site.setmValue(getSiteDesc(siteCodeSelected));
-                act043_ss_zone.setmValue(getSiteZoneDesc(siteCodeSelected));
+                act043_ss_site.setmValue(getSiteDesc(site_code_selected));
+                act043_ss_zone.setmValue(getSiteZoneDesc(zoneCodeSelected));
             }else {
                 act043_ss_site.setmValue(siteOption.get(0));
                 act043_ss_zone.setmValue(zoneOption.get(0));
@@ -407,7 +414,10 @@ public class ServiceRegisterDialog extends AlertDialog {
         }else{
             act043_ss_site.setmEnabled(false);
             act043_ss_zone.setmEnabled(false);
-            act043_ss_partner.setmEnabled(false);
+        }
+        if(mdPartners != null
+        && mdPartners.size() >0){
+            act043_ss_partner.setmEnabled(true);
         }
         //
     }
@@ -424,22 +434,21 @@ public class ServiceRegisterDialog extends AlertDialog {
             partner.put(SearchableSpinner.ID,mdPartner.getPartner_id());
             //
             partners.add(partner);
-            if(item != null){
-                if(!found
-                    && isSelected
-                    && partner_code_selected!= null
-                    && partner_code_selected > 0
-                    && partner_code_selected.equals(mdPartner.getPartner_code())){
+            //
+            if(!found
+                && isSelected
+                && partner_code_selected!= null
+                && partner_code_selected > 0
+                && partner_code_selected.equals(mdPartner.getPartner_code())){
+                act043_ss_partner.setmValue(partner);
+                found = true;
+            }else {
+                if (site_zone != null
+                        && !site_zone.isEmpty()
+                        && !isSelected
+                        && site_zone.get(0).getPartner_code() != null
+                        && mdPartner.getPartner_code() == site_zone.get(0).getPartner_code()) {
                     act043_ss_partner.setmValue(partner);
-                    found = true;
-                }else {
-                    if (site_zone != null
-                            && !site_zone.isEmpty()
-                            && !isSelected
-                            && site_zone.get(0).getPartner_code() != null
-                            && mdPartner.getPartner_code() == site_zone.get(0).getPartner_code()) {
-                        act043_ss_partner.setmValue(partner);
-                    }
                 }
             }
         }

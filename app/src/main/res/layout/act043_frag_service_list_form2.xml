@@ -154,7 +154,7 @@
                 android:layout_weight="3"
                 android:gravity="center"
                 android:inputType="text"
-                android:text="1200"
+                android:text=""
                 app:mBARCODE="false"
                 app:mDecimal="2"
                 app:mInputType="NUMBER" />
