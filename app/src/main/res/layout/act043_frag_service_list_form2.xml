@@ -63,6 +63,7 @@
                 android:gravity="left"
                 android:inputType="textMultiLine"
                 android:lines="5"
+                app:mMaxSize="100"
                 android:text=""
                 app:mBARCODE="false" />
 
