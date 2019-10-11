@@ -32,7 +32,7 @@ public class Act043_Adapter_Services_Packs_List_RV extends RecyclerView.Adapter<
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener{
-        void onClick(TSO_Service_Search_Obj item);
+        void onClick(TSO_Service_Search_Obj item,int position);
     }
 
     public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
@@ -89,7 +89,7 @@ public class Act043_Adapter_Services_Packs_List_RV extends RecyclerView.Adapter<
         @Override
         public void onClick(View v) {
             if(mOnItemClickListener != null){
-                mOnItemClickListener.onClick(data_filtered.get(getAdapterPosition()));
+                mOnItemClickListener.onClick(data_filtered.get(getAdapterPosition()),getAdapterPosition());
             }
         }
 

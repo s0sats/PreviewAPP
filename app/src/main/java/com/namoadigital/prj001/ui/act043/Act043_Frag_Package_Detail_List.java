@@ -269,6 +269,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                                 item.setComment(dialog.getMk_comments_val());
                                 item.setSelected(false);
                                 item.setPrice(Double.valueOf(dialog.getMk_price_val()));
+                                delegateAddService.calculateTotalPrice(packageDataset);
                                 mAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
                             } else {

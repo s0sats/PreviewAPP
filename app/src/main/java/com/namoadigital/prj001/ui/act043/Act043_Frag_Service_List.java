@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,6 +66,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
     private Act043_Main_View delegateMainView;
     private long mPackSeq = 100000;
     private long mServiceSeq = 200000;
+    private int mClickedItemPosition = -1;
 
     public void setmService(SM_SO mSO_Service) {
         this.mSO_Service = mSO_Service;
@@ -303,7 +303,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
-    private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
+    private void showService_Pack_Details(final TSO_Service_Search_Obj item, final int position) {
         int dialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE;
 
         ArrayList<HMAux> siteOption = new ArrayList<>();
@@ -423,7 +423,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
                     service.setComment(dialog.getMk_comments_val());
                 }
-
+                mClickedItemPosition = position;
                 delegateAddService.calculateTotalPrice(item);
                 delegateAddService.setPackageServiceDetailList(item);
                 delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
@@ -560,30 +560,44 @@ public class Act043_Frag_Service_List extends BaseFragment {
                     mAdapterRv
                 );
                 //
+                repositionToSelectedItem();
+                //
                 if(mAdapterRv != null) {
+                    if(mk_desc != null && !mk_desc.getText().toString().trim().isEmpty()) {
+                        mAdapterRv.getFilter().filter(mk_desc.getText().toString().trim());
+                    }
+                    //
                     mAdapterRv.setmOnItemClickListener(new Act043_Adapter_Services_Packs_List_RV.OnItemClickListener() {
                         @Override
-                        public void onClick(TSO_Service_Search_Obj item) {
+                        public void onClick(TSO_Service_Search_Obj item, int position) {
                             if (item.isSelected()
                                 &&  Act043_Main.TYPE_PS_PACK.equalsIgnoreCase(item.getType_ps())) {
+                                mClickedItemPosition = position;
                                 delegateAddService.setPackageServiceDetailList(item);
                                 delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                             }else {
-                                showService_Pack_Details(item);
-                            }
-                            if(delegateAddService != null) {
-                                delegateAddService.calculateTotalPrice(item);
-                                //PARA TESTES
-                                if("RESETAR".equalsIgnoreCase(item.getComment())){
-                                    delegateAddService.resetPackService(item);
-                                }
-                                mAdapterRv.notifyDataSetChanged();
+                                showService_Pack_Details(item,position);
                             }
                         }
                     });
                 }
 
             }
+        }
+    }
+
+    /**
+     * Metodo que salva a posição do item da lista para reposiciona-la
+     * quando o fragmento for resumido
+     */
+    private void repositionToSelectedItem() {
+        //Se item diferente do default, reposiciona a list ano item
+        if (mClickedItemPosition != -1) {
+            //Se posição no "range" de indices do adapter, posiciona lista
+            if(mClickedItemPosition <= mAdapterRv.getItemCount() -1){
+                rv_services_packs.scrollToPosition(mClickedItemPosition);
+            }
+            mClickedItemPosition = -1;
         }
     }
 
@@ -600,8 +614,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-
-        loadScreenToData();
+        //Salva posição do primeiro item na lista para que no
+        //onResume a lista seja reposicionado.
+        if (mClickedItemPosition == -1
+            &&  rv_services_packs != null
+            && rv_services_packs.getLayoutManager() != null)
+        {
+            mClickedItemPosition = ((LinearLayoutManager) rv_services_packs.getLayoutManager()).findFirstVisibleItemPosition();
+        }
     }
 
     private class Service_Pack_MicroService extends AsyncTask<ArrayList<TSO_SO_Service_Item>, Void, HMAux> {
