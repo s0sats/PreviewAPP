@@ -26,11 +26,13 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceRegisterDialog extends AlertDialog {
 
+    public static final String DECIMAL_PRICE_PATTERN = "###0.00";
     private String pack_service_desc_full;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
@@ -190,7 +192,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private void setPriceValue(int qty, Double unitPrice) {
         if(unitPrice != null) {
             Double unitaryPrice = (unitPrice / qty);
-            mk_price_val.setText(String.valueOf(unitaryPrice));
+            mk_price_val.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(unitaryPrice)).replace(",","."));
         }else{
             mk_price_val.setText("");
         }
@@ -262,9 +264,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 iv_foto.setImageResource(R.drawable.ic_archive_material_black_24dp);
                 setPriceAndQtyValues(packageObj.getQty(), packageObj.getPrice());
                 setHeaderResume();
-
                 mk_comments_val.setText(packageObj.getComment());
-                setPartnerSS(packageObj.isSelected(), packageObj.getPartner_code_selected(), packageObj.getSite_zone());
                 if(packageObj.hasNullPrice()){
                     mk_price_val.setTextColor(Color.RED);
                 }
@@ -304,7 +304,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                     itemSiteListSize = item.getSite_zone().size();
                 }
                 setRemoveCheckboxVisibility(false);
-                setSpinnersContent(itemSiteListSize, item.getSite_code_selected(), item.getSite_code_selected());
+                setSpinnersContent(itemSiteListSize, item.getSite_code_selected(), item.getZone_code_selected());
                 setSpinnersAction();
                 setPartnerSS(item.isSelected(), item.getPartner_code_selected(), item.getSite_zone());
                 setPriceAndQtyValues(item.getQty(), item.getPrice());
@@ -363,6 +363,8 @@ public class ServiceRegisterDialog extends AlertDialog {
             act043_ss_zone.setmOption(zoneOption);
             if (zoneOption.size() == 1) {
                 act043_ss_zone.setmValue(zoneOption.get(0));
+            }else{
+                ToolBox_Inf.setSSmValue(act043_ss_zone, null, null, null, false, true);
             }
         }else{
             ToolBox_Inf.setSSmValue(act043_ss_zone, null, null, null, false, true);
@@ -394,21 +396,29 @@ public class ServiceRegisterDialog extends AlertDialog {
         act043_ss_site.setmLabel(hmAux_trans.get("alert_site_lbl"));
         act043_ss_zone.setmLabel(hmAux_trans.get("alert_zone_lbl"));
         act043_ss_partner.setmLabel(hmAux_trans.get("alert_partner_lbl"));
-
+        act043_ss_site.setmCanClean(false);
+        act043_ss_zone.setmCanClean(false);
         if(siteOption != null && siteOption.size() > 0 ){
             act043_ss_site.setmOption(siteOption);
             act043_ss_site.setmEnabled(true);
             ArrayList<HMAux> zoneOption = getZoneOption(siteOption.get(0).get(SearchableSpinner.CODE));
             act043_ss_zone.setmOption(zoneOption);
+            if (siteOption.size() == 1) {
+                act043_ss_site.setmEnabled(false);
+            }
+            if(site_zone_size == 1 ) {
+                act043_ss_zone.setmEnabled(false);
+            }
+
             if(site_code_selected != null && site_code_selected > 0){
-                if(site_zone_size == 1 ) {
-                    act043_ss_site.setmEnabled(false);
-                    act043_ss_zone.setmEnabled(false);
-                }
                 act043_ss_site.setmValue(getSiteDesc(site_code_selected));
-                act043_ss_zone.setmValue(getSiteZoneDesc(zoneCodeSelected));
             }else {
                 act043_ss_site.setmValue(siteOption.get(0));
+            }
+
+            if(zoneCodeSelected != null && zoneCodeSelected > 0){
+                act043_ss_zone.setmValue(getSiteZoneDesc(zoneCodeSelected));
+            }else {
                 act043_ss_zone.setmValue(zoneOption.get(0));
             }
         }else{
@@ -436,7 +446,6 @@ public class ServiceRegisterDialog extends AlertDialog {
             partners.add(partner);
             //
             if(!found
-                && isSelected
                 && partner_code_selected!= null
                 && partner_code_selected > 0
                 && partner_code_selected.equals(mdPartner.getPartner_code())){
@@ -444,6 +453,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 found = true;
             }else {
                 if (site_zone != null
+                        && !found
                         && !site_zone.isEmpty()
                         && !isSelected
                         && site_zone.get(0).getPartner_code() != null

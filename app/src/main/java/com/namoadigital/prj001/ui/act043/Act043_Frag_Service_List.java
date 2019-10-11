@@ -367,8 +367,8 @@ public class Act043_Frag_Service_List extends BaseFragment {
                             mAdapterRv.notifyDataSetChanged();
                             dialog.dismiss();
                         }else {
-                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
-                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
+                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty() && Double.valueOf(dialog.getMk_price_val()) >= 0
                                     && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
                                     && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
                                     && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
