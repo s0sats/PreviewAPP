@@ -7,28 +7,29 @@
     android:padding="8dp">
 
     <ImageView
-            android:id="@+id/act043_frag_package_detail_list_item_iv_pack_service"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/btn_namoa_main_3_states"
-            android:padding="3dp"
-            android:scaleType="fitXY"
-            android:tint="@color/padrao_WHITE"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_lbl"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
-            app:srcCompat="@drawable/ic_pencil" />
+        android:id="@+id/act043_frag_package_detail_list_item_iv_pack_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_namoa_main_3_states"
+        android:padding="3dp"
+        android:scaleType="centerInside"
+        android:tint="@color/padrao_WHITE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_pencil" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_val"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Service desc - trad"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="Service desc - trad"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
@@ -53,98 +54,109 @@
             app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_val"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Amount - trad"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+
+        android:text="Amount - trad"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_iv_pack_service"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Zone - trad"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Zone - trad"
+        android:textStyle="bold"
+
+
+        app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Parceiro - trad"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Parceiro - trad"
+        android:textStyle="bold"
+
+
+        app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_iv_pack_service"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="TextView"
+
+
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_iv_pack_service"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_amount_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_iv_pack_service"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="TextView"
+
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_iv_pack_service"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_zone_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="komentar - trad"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="komentar - trad"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
+        app:layout_constraintEnd_toStartOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val" />
 
     <TextView
-            android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="komentar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_iv_pack_service" />
+        android:id="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="komentar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val" />
 
 <!--Metodo de barreira, sacou-->
 <!--    <ImageView-->
