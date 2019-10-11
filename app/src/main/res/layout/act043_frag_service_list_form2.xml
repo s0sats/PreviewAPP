@@ -215,7 +215,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/act043_frag_service_list_form_tv_desc_lbl"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/act043_frag_service_list_form_tv_desc_lbl"
-                    app:srcCompat="@drawable/ic_archive_material_black_24dp" />
+                    app:srcCompat="@drawable/ic_archive_material_black_24dp"
+                    android:tint="@color/namoa_color_dark_blue"/>
 
                 <TextView
                     android:id="@+id/act043_frag_service_list_form_tv_desc_lbl"
@@ -246,9 +247,10 @@
                     android:text="Service - Trad"
                     android:textSize="@dimen/font_size_item_md"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/act043_frag_service_list_form_tv_id_val"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act043_frag_service_list_form_tv_id_val"
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
@@ -257,12 +259,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:gravity="left"
-                    android:text="Service ID"
+                    android:text="Service ID \n asdasd"
                     android:textSize="@dimen/font_size_item_md_lib"
                     app:layout_constraintBottom_toBottomOf="@+id/act043_frag_service_list_form_tv_id_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/act043_frag_service_list_form_tv_id_lbl"
-                    app:layout_constraintTop_toTopOf="@+id/act043_frag_service_list_form_tv_id_lbl" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
                 <TextView
@@ -272,9 +274,9 @@
                     android:text="Package - Trad"
                     android:textSize="@dimen/font_size_item_md"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/act043_frag_service_list_form_tv_pack_val"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act043_frag_service_list_form_tv_id_lbl" />
+                    app:layout_constraintTop_toTopOf="@+id/act043_frag_service_list_form_tv_pack_val" />
 
                 <TextView
                     android:id="@+id/act043_frag_service_list_form_tv_pack_val"
@@ -282,12 +284,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:gravity="left"
-                    android:text="Pack ID"
+                    android:text="Pack ID \n asdasd"
                     android:textSize="@dimen/font_size_item_md_lib"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/act043_frag_service_list_form_tv_pack_lbl"
-                    app:layout_constraintTop_toTopOf="@+id/act043_frag_service_list_form_tv_pack_lbl" />
+                    app:layout_constraintTop_toBottomOf="@+id/act043_frag_service_list_form_tv_id_val" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
