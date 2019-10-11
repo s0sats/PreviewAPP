@@ -2,6 +2,7 @@ package com.namoadigital.prj001.view.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Partner;
@@ -154,6 +156,8 @@ public class ServiceRegisterDialog extends AlertDialog {
         transList.add("alert_site_lbl");
         transList.add("alert_zone_lbl");
         transList.add("alert_partner_lbl");
+        transList.add("alert_multiple_service_added_ttl");
+        transList.add("alert_multiple_service_added_msg");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getContext(),
@@ -527,5 +531,14 @@ public class ServiceRegisterDialog extends AlertDialog {
             }
         }
         return new HMAux();
+    }
+
+    public void commitConfirm(OnClickListener listener) {
+        ToolBox.alertMSG_YES_NO(
+                getContext(),
+                hmAux_trans.get("alert_multiple_service_added_ttl"),
+                hmAux_trans.get("alert_multiple_service_added_msg"),
+                listener,
+                1);
     }
 }
