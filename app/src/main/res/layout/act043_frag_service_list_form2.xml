@@ -24,7 +24,7 @@
             app:layout_constraintBottom_toTopOf="@+id/act043_frag_service_list_cb_remove_val"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_register_spinners" />
+            app:layout_constraintTop_toBottomOf="@+id/ll_comment" />
 
         <CheckBox
             android:id="@+id/act043_frag_service_list_cb_remove_val"
@@ -40,21 +40,31 @@
             android:id="@+id/ll_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/act043_frag_service_list_form_tv_comment_val"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/btn_package_detail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_price">
+            app:layout_constraintTop_toBottomOf="@+id/ll_register_spinners">
 
             <TextView
                 android:id="@+id/act043_frag_service_list_form_tv_comment_lbl"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="2"
                 android:text="Comentario - Trad"
                 android:textSize="@dimen/font_size_item_md"
                 android:textStyle="bold" />
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act043_frag_service_list_form_tv_comment_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:inputType="textMultiLine"
+                android:lines="5"
+                android:text=""
+                app:mBARCODE="false" />
 
         </LinearLayout>
 
@@ -132,7 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/ll_comment"
+            app:layout_constraintBottom_toTopOf="@+id/ll_register_spinners"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_amount">
@@ -166,10 +176,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/btn_package_detail"
+            app:layout_constraintBottom_toTopOf="@+id/ll_comment"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act043_frag_service_list_form_tv_comment_val">
+            app:layout_constraintTop_toBottomOf="@+id/ll_price">
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                 android:id="@+id/act043_ss_site"
@@ -225,6 +235,7 @@
                     android:text="Service Desc - Trad"
                     android:textSize="@dimen/font_size_title_dialog"
                     android:textStyle="bold"
+                    android:layout_marginLeft="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_foto"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -238,7 +249,8 @@
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
                     android:id="@+id/act043_frag_service_list_form_tv_id_lbl"
@@ -294,19 +306,6 @@
 
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
-
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act043_frag_service_list_form_tv_comment_val"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:inputType="textMultiLine"
-            android:lines="5"
-            android:text="Pack ID"
-            app:layout_constraintBottom_toTopOf="@+id/ll_register_spinners"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_comment"
-            app:mBARCODE="false" />
 
     </android.support.constraint.ConstraintLayout>
 
