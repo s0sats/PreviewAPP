@@ -23,18 +23,18 @@
                 >
 
             <Button
-                    android:id="@+id/btn_package_detail"
-                    android:layout_width="366dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/btn_namoa_main_states"
-                    android:text="Cancel - Trad"
-                    android:textColor="@color/padrao_WHITE"
-                    app:layout_constraintBottom_toTopOf="@+id/act043_frag_service_list_cb_remove_val"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ll_comment" />
+                android:id="@+id/btn_package_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/btn_namoa_main_states"
+                android:text="Cancel - Trad"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toTopOf="@+id/act043_frag_service_list_cb_remove_val"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_comment" />
 
             <CheckBox
                     android:id="@+id/act043_frag_service_list_cb_remove_val"
@@ -284,42 +284,68 @@
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
-    <LinearLayout
-            android:id="@+id/ll_bottom_buttons"
-            android:layout_width="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ll_bottom_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="9dp"
+        android:paddingEnd="9dp"
+        android:visibility="visible"
+        android:weightSum="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act043_frag_service_list_form_sv_main">
+
+        <Button
+            android:id="@+id/act043_frag_service_list_btn_cancel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:visibility="visible"
-            android:weightSum="3"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1.3"
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="Cancel - Trad"
+            android:textColor="@color/padrao_WHITE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+             />
+
+        <Button
+            android:id="@+id/act043_frag_service_list_btn_ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1.3"
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="Ok - Trad"
+            android:textColor="@color/padrao_WHITE"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act043_frag_service_list_form_sv_main">
+            app:layout_constraintStart_toStartOf="@+id/gl_bottom_buttons"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+             />
 
-        <Button
-                android:id="@+id/act043_frag_service_list_btn_cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1.3"
-                android:background="@drawable/btn_namoa_main_states"
-                android:text="Cancel - Trad"
-                android:textColor="@color/padrao_WHITE" />
+        <android.support.constraint.Guideline
+            android:id="@+id/gl_bottom_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".5" />
 
-        <Button
-                android:id="@+id/act043_frag_service_list_btn_ok"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_weight="1.3"
-                android:background="@drawable/btn_namoa_main_states"
-                android:text="Ok - Trad"
-                android:textColor="@color/padrao_WHITE" />
-
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 
 </LinearLayout>
