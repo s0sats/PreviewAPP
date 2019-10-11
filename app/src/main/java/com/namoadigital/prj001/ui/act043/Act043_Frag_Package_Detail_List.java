@@ -173,7 +173,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                 return false;
             }
             //
-            if(serviceObj.getPrice() == null){
+            if(serviceObj.getPrice() == null || serviceObj.getPrice() < 0){
                 return false;
             }
         }
