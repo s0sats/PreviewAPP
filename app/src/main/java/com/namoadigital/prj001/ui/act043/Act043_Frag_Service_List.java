@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -313,7 +314,7 @@ public class Act043_Frag_Service_List extends BaseFragment {
             siteZoneOption = delegateAddService.generateSiteZoneOption(item.getSite_zone());
         }
 
-        final ServiceRegisterDialog dialog =
+        final ServiceRegisterDialog serviceRegisterDialog =
                 new ServiceRegisterDialog(
                         context,
                         dialogType,
@@ -326,27 +327,27 @@ public class Act043_Frag_Service_List extends BaseFragment {
         //
         final int finalDialogType = dialogType;
         final ArrayList<HMAux> finalSiteOption = siteOption;
-        dialog.setBtnOkListener(new View.OnClickListener() {
+        serviceRegisterDialog.setBtnOkListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 switch (finalDialogType ){
                     case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE:
-                        if(dialog.getCb_remove_val()){
+                        if(serviceRegisterDialog.getCb_remove_val()){
                             delegateAddService.resetPackService(item);
                             mAdapterRv.notifyDataSetChanged();
-                            dialog.dismiss();
+                            serviceRegisterDialog.dismiss();
                         }else{
                             if (!item.hasNullPrice()){
-                                item.setComment(dialog.getMk_comments_val());
+                                item.setComment(serviceRegisterDialog.getMk_comments_val());
                                 item.setSelected(true);
-                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
+                                item.setPrice(Double.valueOf(serviceRegisterDialog.getMk_price_val()));
                                 for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
-                                    service.setComment(dialog.getMk_comments_val());
+                                    service.setComment(serviceRegisterDialog.getMk_comments_val());
                                 }
                                 delegateAddService.calculateTotalPrice(item);
                                 mAdapterRv.notifyDataSetChanged();
-                                dialog.dismiss();
+                                serviceRegisterDialog.dismiss();
                             }else{
                                 ToolBox.alertMSG(
                                         context,
@@ -359,38 +360,28 @@ public class Act043_Frag_Service_List extends BaseFragment {
                         }
                         break;
                     case ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE:
-                        if(dialog.getCb_remove_val()){
+                        if(serviceRegisterDialog.getCb_remove_val()){
                             delegateAddService.resetPackService(item);
                             mAdapterRv.notifyDataSetChanged();
-                            dialog.dismiss();
+                            serviceRegisterDialog.dismiss();
                         }else {
-                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
-                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty() && Double.valueOf(dialog.getMk_price_val()) >= 0
-                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                            if (serviceRegisterDialog.getMk_qtd_val() != null && !serviceRegisterDialog.getMk_qtd_val().isEmpty() && Double.valueOf(serviceRegisterDialog.getMk_qtd_val()) > 0
+                                    && serviceRegisterDialog.getMk_price_val() != null && !serviceRegisterDialog.getMk_price_val().isEmpty() && Double.valueOf(serviceRegisterDialog.getMk_price_val()) >= 0
+                                    && ((serviceRegisterDialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
                                     && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && ((serviceRegisterDialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
                                     && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
                             ) {
-                                item.setSelected(true);
-                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
-                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
-                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                if (Integer.valueOf(serviceRegisterDialog.getMk_qtd_val()) == 1) {
+                                    commitPackageOrServicesChanges(item, serviceRegisterDialog);
+                                }else{
+                                    serviceRegisterDialog.commitConfirm(new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            commitPackageOrServicesChanges(item, serviceRegisterDialog);
+                                        }
+                                    });
                                 }
-
-                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
-                                }
-
-                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
-                                } else {
-                                    item.setPartner_code_selected(null);
-                                }
-                                item.setComment(dialog.getMk_comments_val());
-                                delegateAddService.calculateTotalPrice(item);
-                                mAdapterRv.notifyDataSetChanged();
-                                dialog.dismiss();
                             } else {
                                 ToolBox.alertMSG(
                                         context,
@@ -405,30 +396,53 @@ public class Act043_Frag_Service_List extends BaseFragment {
                 }
             }
         });
-        dialog.setBtnCancelListener( new View.OnClickListener() {
+        serviceRegisterDialog.setBtnCancelListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
+                serviceRegisterDialog.dismiss();
             }
         });
 
-        dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
+        serviceRegisterDialog.setBtnPackageDetaillListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 item.setComment("");
 
                 for (TSO_Service_Search_Detail_Obj service : item.getService_list()) {
-                    service.setComment(dialog.getMk_comments_val());
+                    service.setComment(serviceRegisterDialog.getMk_comments_val());
                 }
                 mClickedItemPosition = position;
                 delegateAddService.calculateTotalPrice(item);
                 delegateAddService.setPackageServiceDetailList(item);
                 delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
-                dialog.dismiss();
+                serviceRegisterDialog.dismiss();
             }
         });
 
-        dialog.show();
+        serviceRegisterDialog.show();
+    }
+
+    private void commitPackageOrServicesChanges(TSO_Service_Search_Obj item, ServiceRegisterDialog serviceRegisterDialog) {
+        item.setSelected(true);
+        item.setQty(Integer.valueOf(serviceRegisterDialog.getMk_qtd_val()));
+        item.setPrice(Double.valueOf(serviceRegisterDialog.getMk_price_val()));
+        if(serviceRegisterDialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+            item.setZone_code_selected(Integer.valueOf(serviceRegisterDialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+        }
+
+        if(serviceRegisterDialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+            item.setSite_code_selected(Integer.valueOf(serviceRegisterDialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+        }
+
+        if (serviceRegisterDialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+            item.setPartner_code_selected(Integer.valueOf(serviceRegisterDialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+        } else {
+            item.setPartner_code_selected(null);
+        }
+        item.setComment(serviceRegisterDialog.getMk_comments_val());
+        delegateAddService.calculateTotalPrice(item);
+        mAdapterRv.notifyDataSetChanged();
+        serviceRegisterDialog.dismiss();
     }
 
     @Override
