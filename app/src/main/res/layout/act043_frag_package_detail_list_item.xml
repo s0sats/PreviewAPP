@@ -10,13 +10,15 @@
         android:id="@+id/act043_frag_package_detail_list_item_iv_pack_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:background="@drawable/btn_namoa_main_3_states"
         android:padding="3dp"
         android:scaleType="centerInside"
         android:tint="@color/padrao_WHITE"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_val"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_price"
+        app:layout_constraintVertical_bias="0.45"
         app:srcCompat="@drawable/ic_pencil" />
 
     <TextView
@@ -158,7 +160,14 @@
         app:layout_constraintStart_toEndOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_comment_lbl"
         app:layout_constraintTop_toBottomOf="@+id/act043_frag_package_detail_list_item_tv_pack_service_partner_val" />
 
-<!--Metodo de barreira, sacou-->
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".5" />
+
+    <!--Metodo de barreira, sacou-->
 <!--    <ImageView-->
 <!--            android:id="@+id/iv_pack_service_item"-->
 <!--            android:layout_width="50dp"-->
