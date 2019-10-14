@@ -65,7 +65,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_product_serial_id"
                 app:srcCompat="@drawable/ic_edit_black_24dp"
-                android:tint="@color/namoa_dark_blue"/>
+                android:tint="@color/lib_custom_cell_font_color"/>
 
 
         </android.support.constraint.ConstraintLayout>
