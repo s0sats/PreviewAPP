@@ -13,9 +13,7 @@ android {
 
         multiDexEnabled true
         lintOptions {
-
             checkReleaseBuilds false
-
         }
     }
     buildTypes {

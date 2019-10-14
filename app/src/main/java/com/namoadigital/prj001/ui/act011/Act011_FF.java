@@ -56,6 +56,7 @@ public class Act011_FF extends Fragment {
     private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
+    private ImageView iv_editable_serial;
     private CardView cv_product_serial_card;
     private HMAux hmAux_Trans;
 
@@ -173,6 +174,7 @@ public class Act011_FF extends Fragment {
         iv_product_serial_id = view.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
+        iv_editable_serial = view.findViewById(R.id.iv_editable_serial);
         cv_product_serial_card = view.findViewById(R.id.cv_product_serial_card);
         //
         tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
@@ -307,6 +309,7 @@ public class Act011_FF extends Fragment {
      */
     private void setSerialInfo() {
         if (mAct != null) {
+            iv_editable_serial.setVisibility(View.GONE);
             MD_Product_Serial serialInfo = mAct.getSerialInfo();
             String serial_id = serialInfo.getSerial_id();
             //Se existe serial, tenta preencher infos de Brand ,model e color

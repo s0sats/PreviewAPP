@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -81,6 +82,7 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
+    private ImageView iv_editable_serial;
     private View listHeader;
 
     public void setmSm_so(SM_SO mSm_so) {
@@ -180,8 +182,11 @@ public class Act027_Services extends BaseFragment {
         iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
+        iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
+        iv_editable_serial.setVisibility(View.VISIBLE);
+        iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
         lv_services.addHeaderView(listHeader);
         listHeader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +253,7 @@ public class Act027_Services extends BaseFragment {
         );
 
         try {
+            iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
             if (product_serial_content.hasConsistentValue(SM_SODao.SERIAL_ID)) {
                 tv_product_serial_id.setText(product_serial_content.get(SM_SODao.SERIAL_ID));
             }
@@ -306,6 +312,7 @@ public class Act027_Services extends BaseFragment {
         if(mSm_so == null){
             recoveryDelegate.callAct005();
         }else {
+            iv_editable_serial.setVisibility(View.VISIBLE);
             adp = new Act027_Services_Adapter(
                     getActivity(),
                     R.layout.act027_services_content_adapter_cell,
