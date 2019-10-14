@@ -15,18 +15,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:background="@drawable/border_black">
+            android:paddingTop="10dp">
 
             <ImageView
                 android:id="@+id/iv_product_serial_id"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:scaleType="fitXY"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_product_serial_id"
@@ -36,24 +37,35 @@
                 android:layout_marginEnd="8dp"
                 android:text="PROD SERIAL ID - TRAD"
                 app:layout_constraintBottom_toTopOf="@+id/tv_product_serial_infos"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintEnd_toStartOf="@+id/imageView2"
                 app:layout_constraintStart_toEndOf="@+id/iv_product_serial_id"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_product_serial_id"
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/tv_product_serial_infos"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="BRAND MODEL INFO - TRAD"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/tv_product_serial_id"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_product_serial_id"
+                app:layout_constraintEnd_toStartOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/iv_product_serial_id"
                 app:layout_constraintTop_toBottomOf="@+id/tv_product_serial_id"
                 app:layout_constraintVertical_bias="1.0" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_product_serial_id"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_product_serial_id"
+                app:srcCompat="@drawable/ic_edit_black_24dp"
+                android:tint="@color/namoa_dark_blue"/>
 
 
         </android.support.constraint.ConstraintLayout>
