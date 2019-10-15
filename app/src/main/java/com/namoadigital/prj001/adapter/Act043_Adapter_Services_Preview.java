@@ -27,13 +27,22 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
     private ArrayList<HMAux> data;
     private HMAux hmAux_Trans;
     private OnInfoClickListner onInfoClickListner;
+    private OnRemoveClickListener onRemoveClickListener;
 
     public interface OnInfoClickListner{
         void OnInfoClick(HMAux service);
     }
 
+    public interface OnRemoveClickListener{
+        void OnRemoveClick(HMAux service);
+    }
+
     public void setOnInfoClickListner(OnInfoClickListner onInfoClickListner) {
         this.onInfoClickListner = onInfoClickListner;
+    }
+
+    public void setOnRemoveClickListener(OnRemoveClickListener onRemoveClickListener) {
+        this.onRemoveClickListener = onRemoveClickListener;
     }
 
     public Act043_Adapter_Services_Preview(Context context, int resource_01, ArrayList<HMAux> data, HMAux hmAux_Trans) {
@@ -70,18 +79,38 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
 
         final HMAux hmAux = data.get(position);//
         //
-        ImageView iv_type = (ImageView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_type);
+        ImageView iv_remove = convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_remove);
+        ImageView iv_type = convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_type);
+        TextView tv_service_desc = convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_service_desc);
+        TextView tv_service_price = convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_service_price);
+        TextView tv_comments = convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_comments);
+        ImageView iv_info = convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
         //
-        TextView tv_service_desc = (TextView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_service_desc);
+        //PARA TESTES
+        //iv_remove.setEnabled(position % 2 == 0);
+        iv_remove.setEnabled(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0"));
         //
-        TextView tv_service_price = (TextView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_service_price);
-        //
-        ImageView iv_info = (ImageView) convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
+        if(onRemoveClickListener != null){
+            iv_remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onRemoveClickListener.OnRemoveClick(hmAux);
+                }
+            });
+        }else{
+            iv_remove.setOnClickListener(null);
+        }
         //
         tv_service_desc.setText(hmAux.get(Sql_Act043_001.PACK_SERVICE_DESC_FULL));
         tv_service_desc.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(hmAux.get(SM_SO_ServiceDao.STATUS))));
         //
         tv_service_price.setText(hmAux.get(SM_SO_ServiceDao.PRICE));
+        if(hmAux.hasConsistentValue(SM_SO_ServiceDao.COMMENTS) && !hmAux.get(SM_SO_ServiceDao.COMMENTS).isEmpty()) {
+            tv_comments.setText(hmAux.get(SM_SO_ServiceDao.COMMENTS));
+            tv_comments.setVisibility(View.VISIBLE);
+        }else{
+            tv_comments.setVisibility(View.GONE);
+        }
         //
         if(hmAux.get(Sql_Act043_001.TYPE_PS).equals(Sql_Act043_001.TYPE_PS_PACK)){
             //iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_black_24dp));
@@ -110,6 +139,10 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
 //        });
 
         return convertView;
+    }
+
+    private void bindViews(View convertView) {
+
     }
 
 
