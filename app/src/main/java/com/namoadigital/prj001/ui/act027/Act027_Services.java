@@ -294,16 +294,14 @@ public class Act027_Services extends BaseFragment {
                     }
                 }
             }else{
-                iv_product_serial_id.setVisibility(View.GONE);
+                iv_product_serial_id.setVisibility(View.INVISIBLE);
                 tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
             }
-
         }catch (NullPointerException e){
             tv_product_serial_infos.setText("");
             tv_product_serial_infos.setVisibility(View.GONE);
         }
-
 
     }
 
