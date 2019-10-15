@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act043;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,8 +15,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -24,13 +29,14 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -52,6 +58,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     public static final String SELECTION_FRAG_PACKAGE_DETAIL_LIST = "SELECTION_FRAG_PACKAGE_DETAIL_LIST";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
 
+    public static final String TYPE_PS = "TYPE_PS";
     public static final String TYPE_PS_PACK = "P";
     public static final String TYPE_PS_SERVICE = "S";
 
@@ -125,6 +132,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("dialog_service_search_msg");
         transList.add("alert_remove_service_confirm_ttl");
         transList.add("alert_remove_service_confirm_msg");
+        transList.add("alert_service_cancel_ttl");
+        transList.add("alert_service_cancel_confirm");
+        transList.add("dialog_service_cancel_start");
+        transList.add("dialog_service_cancel_msg");
         //
         //Frag_Service_List
         transList.add("tv_service_list_title");
@@ -348,27 +359,36 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                         callAct027(context);
                         break;
                     case "RELOAD_SO":
-                        mSm_so = loadSM_So(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
-                                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
-                        );
-                        //
-                        act043_frag_preview.setmSm_so(mSm_so);
-                        //
-                        setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
-
+                        reloadSO();
                         break;
 
                     default:
                         break;
                 }
             }
+
+            @Override
+            public void showResults(HMAux so) {
+                Act043_Main.this.showResults(so);
+            }
         });
         act043_frag_service_list.setBaInfra(this);
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
 //        act043_frag_service_list.setmService(mSm_so);
     }
+
+    private void reloadSO() {
+        mSm_so = loadSM_So(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+        );
+        //
+        act043_frag_preview.setmSm_so(mSm_so);
+        //
+        setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
+    }
+
     //region Metodo interface onSmSoRequestObject
     @Override
     public SM_SO getSmSo() {
@@ -889,10 +909,84 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             } else {
                 //DEFINIR MSG DE ERRO
             }
-        }else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
-         //   processSoDownloadResult(hmAux);
+        //}else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
+        }else if(ws_process.equalsIgnoreCase(WS_SO_Service_Cancel.class.getName())){
+            showResults(hmAux);
         }
         disableProgressDialog();
+    }
+
+    private void showResults(HMAux so) {
+        ArrayList<HMAux> mSO = new ArrayList<>();
+
+        for (String sKey : so.keySet()) {
+            HMAux hmAux = new HMAux();
+            //
+            String sParts = sKey;
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, so.get(sKey));
+
+            mSO.add(hmAux);
+        }
+
+        showResultsDialog(mSO);
+    }
+
+    private void showResultsDialog(final List<HMAux> so_express) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+//        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+//        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                so_express,
+                Generic_Results_Adapter.CONFIG_2_ITENS,
+                hmAux_Trans
+            )
+        );
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+                //
+                if (so_express.size() > 0) {
+                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
+                        reloadSO();
+                    } else {
+                        reloadSO();
+                    }
+                }
+            }
+        });
     }
 
     private void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listenerOK) {

@@ -4,6 +4,7 @@ import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 
 /**
@@ -11,9 +12,6 @@ import com.namoadigital.prj001.util.Constant;
  */
 
 public class Sql_Act043_001 implements Specification {
-    public static final String TYPE_PS = "TYPE_PS";
-    public static final String TYPE_PS_PACK = "P";
-    public static final String TYPE_PS_SERVICE= "S";
     public static final String PACK_SERVICE_ID = "PACK_SERVICE_ID";
     public static final String PACK_SERVICE_DESC = "PACK_SERVICE_DESC";
     public static final String PACK_SERVICE_DESC_FULL = "PACK_SERVICE_DESC_FULL";
@@ -36,13 +34,14 @@ public class Sql_Act043_001 implements Specification {
 
         return sb
                 .append("   SELECT      \n" +
-                        "         T.TYPE_PS "+TYPE_PS+",\n" +
+                        "         T.TYPE_PS "+ Act043_Main.TYPE_PS +",\n" +
                         "         T.CUSTOMER_CODE customer_code,\n" +
                         "         T.SO_PREFIX so_prefix,\n" +
                         "         T.SO_CODE so_code,\n" +
                         "         T.PRICE_LIST_CODE price_list_code,\n" +
                         "         T.PACK_CODE pack_code,\n" +
                         "         T.PACK_SEQ pack_seq,\n" +
+                        "         T.CATEGORY_PRICE_CODE category_price_code,\n" +
                         "         T.SERVICE_CODE service_code,\n" +
                         "         T.SERVICE_SEQ service_seq,\n" +
                         "         T.PACK_SERVICE_DESC "+PACK_SERVICE_DESC+",\n" +
@@ -53,16 +52,16 @@ public class Sql_Act043_001 implements Specification {
                         "         T.MANUAL_PRICE manual_price,\n" +
                         "         T.COMMENTS comments,\n" +
                         "         T.EXEC_SEQ_OPER exec_seq_oper,\n" +
-                        "         (CASE WHEN  T.TYPE_PS = '"+TYPE_PS_PACK+"' THEN\n" +
+                        "         (CASE WHEN  T.TYPE_PS = '"+ Act043_Main.TYPE_PS_PACK+"' THEN\n" +
                         "                   CASE\n" +
                         "                       WHEN T.QTD_SERVICES > 0 AND (T.STATUS / QTD_SERVICES) = 1 AND (T.STATUS % QTD_SERVICES) = 0 THEN '"+Constant.SYS_STATUS_DONE+"'\n" +
                         "                       WHEN T.QTD_SERVICES > 0 AND (T.STATUS / QTD_SERVICES) = 3 AND (T.STATUS % QTD_SERVICES) = 0 THEN '"+Constant.SYS_STATUS_CANCELLED+"'\n" +
-                        "                       ELSE 'PENDING'\n" +
+                        "                       ELSE '"+ Constant.SYS_STATUS_PENDING+"'\n" +
                         "                    END \n" +
                         "                ELSE\n" +
                         "                  T.STATUS\n" +
                         "          END)  status,\n" +
-                        "        (CASE WHEN T.TYPE_PS = '"+TYPE_PS_PACK+"' THEN\n" +
+                        "        (CASE WHEN T.TYPE_PS = '"+ Act043_Main.TYPE_PS_PACK+"' THEN\n" +
                         "                  (SELECT \n" +
                         "                       COUNT(\n" +
                         "                             CASE WHEN  e.status IS NOT NULL AND e.status <> '"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
@@ -102,7 +101,7 @@ public class Sql_Act043_001 implements Specification {
                         "                  \n" +
                         "            END) "+IN_PROCESS+"\n " +
                         "   FROM (\n" +
-                        "             SELECT '"+TYPE_PS_PACK+"' "+TYPE_PS+",\n" +
+                        "             SELECT '"+Act043_Main.TYPE_PS_PACK+"' "+Act043_Main.TYPE_PS+",\n" +
                         "                    p.CUSTOMER_CODE,\n" +
                         "                    p.so_prefix,\n" +
                         "                    p.so_code,\n" +
@@ -148,7 +147,7 @@ public class Sql_Act043_001 implements Specification {
                         "            --FIM PACK       \n" +
                         "            UNION\n" +
                         "            --INI service\n" +
-                        "            SELECT '"+TYPE_PS_SERVICE+"' "+TYPE_PS+",\n" +
+                        "            SELECT '"+Act043_Main.TYPE_PS_SERVICE+"' "+Act043_Main.TYPE_PS+",\n" +
                         "                    s.CUSTOMER_CODE,\n" +
                         "                    p.so_prefix,\n" +
                         "                    p.so_code,\n" +

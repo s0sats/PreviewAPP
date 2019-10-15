@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -26,19 +27,10 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
     private int resource_01;
     private ArrayList<HMAux> data;
     private HMAux hmAux_Trans;
-    private OnInfoClickListner onInfoClickListner;
     private OnRemoveClickListener onRemoveClickListener;
-
-    public interface OnInfoClickListner{
-        void OnInfoClick(HMAux service);
-    }
 
     public interface OnRemoveClickListener{
         void OnRemoveClick(HMAux service);
-    }
-
-    public void setOnInfoClickListner(OnInfoClickListner onInfoClickListner) {
-        this.onInfoClickListner = onInfoClickListner;
     }
 
     public void setOnRemoveClickListener(OnRemoveClickListener onRemoveClickListener) {
@@ -112,7 +104,7 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
             tv_comments.setVisibility(View.GONE);
         }
         //
-        if(hmAux.get(Sql_Act043_001.TYPE_PS).equals(Sql_Act043_001.TYPE_PS_PACK)){
+        if(hmAux.get(Act043_Main.TYPE_PS).equals(Act043_Main.TYPE_PS_PACK)){
             //iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_black_24dp));
             iv_type.setImageDrawable(context.getDrawable(R.drawable.ic_archive_material_black_24dp));
         }else{
@@ -123,27 +115,6 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         //ESCONDE IV_INFO POIS POR HORA PERDEU O SENTIDO
         //
         iv_info.setVisibility(View.GONE);
-//        if(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")){
-//            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_edit_black_24dp));
-//        }else{
-//            iv_info.setImageDrawable(context.getDrawable(R.drawable.ic_engrenagens_ns));
-//        }
-        //
-//        iv_info.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(onInfoClickListner != null){
-//                    onInfoClickListner.OnInfoClick(hmAux);
-//                }
-//            }
-//        });
-
         return convertView;
     }
-
-    private void bindViews(View convertView) {
-
-    }
-
-
 }

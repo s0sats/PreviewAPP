@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -24,7 +23,9 @@ import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Preview;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_SO_Service_Cancel;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
+import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
 import com.namoadigital.prj001.sql.Sql_Act043_002;
@@ -126,8 +127,8 @@ public class Act043_Frag_Preview extends BaseFragment {
                 }
             }
         });
-        //
-        lv_service_pack.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //Removido em 15/10/2019, pois agora não existe dialog, somente icone de remoção.
+        /*lv_service_pack.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(!isDialogOpen) {
@@ -135,7 +136,8 @@ public class Act043_Frag_Preview extends BaseFragment {
                     showServiceInfoDialog(Act043_Main.SELECTION_FRAG_PREVIEW, service);
                 }
             }
-        });
+        });*/
+        //
     }
 
     private void executeWS_SO_Service_Search() {
@@ -160,6 +162,38 @@ public class Act043_Frag_Preview extends BaseFragment {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    private void executeWSServiceCancel(HMAux hmAux) {
+        if(ToolBox_Con.isOnline(context)) {
+            mMain.setWs_process(WS_SO_Service_Cancel.class.getName());
+            //
+            mMain.showPD(
+                hmAux_Trans.get("dialog_service_cancel_start"),
+                hmAux_Trans.get("dialog_service_cancel_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Service_Cancel.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(SM_SO_ServiceDao.SO_PREFIX, hmAux.get(SM_SO_ServiceDao.SO_PREFIX));
+            bundle.putString(SM_SO_ServiceDao.SO_CODE, hmAux.get(SM_SO_ServiceDao.SO_CODE));
+            bundle.putString(Act043_Main.TYPE_PS, hmAux.get(Act043_Main.TYPE_PS));
+            bundle.putString(SM_SO_ServiceDao.PRICE_LIST_CODE, hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE));
+            bundle.putString(SM_SO_ServiceDao.PACK_CODE, hmAux.get(SM_SO_ServiceDao.PACK_CODE));
+            bundle.putString(SM_SO_ServiceDao.PACK_SEQ, hmAux.get(SM_SO_ServiceDao.PACK_SEQ));
+            bundle.putString(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE));
+            bundle.putString(SM_SO_ServiceDao.SERVICE_CODE, hmAux.get(SM_SO_ServiceDao.SERVICE_CODE));
+            bundle.putString(SM_SO_ServiceDao.SERVICE_SEQ, hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ));
+            //Descomentar quando lista pronta
+            //bundle.putString(SM_SO_Service_ExecDao.EXEC_CODE, hmAux.get(SM_SO_Service_ExecDao.EXEC_CODE));
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override
@@ -220,6 +254,23 @@ public class Act043_Frag_Preview extends BaseFragment {
                         }
                     }
                 });*/
+        mAdapter.setOnRemoveClickListener(new Act043_Adapter_Services_Preview.OnRemoveClickListener() {
+            @Override
+            public void OnRemoveClick(final HMAux service) {
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_service_cancel_ttl"),
+                    hmAux_Trans.get("alert_service_cancel_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            executeWSServiceCancel(service);
+                        }
+                    },
+                    1
+                );
+            }
+        });
         //
         lv_service_pack.setAdapter(mAdapter);
     }
@@ -246,13 +297,70 @@ public class Act043_Frag_Preview extends BaseFragment {
         ArrayList<HMAux> packServiceList = new ArrayList<>();
         //
         packServiceList = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-                new Sql_Act043_001(
+            new Sql_Act043_001(
+                mSm_so.getCustomer_code(),
+                mSm_so.getSo_prefix(),
+                mSm_so.getSo_code()
+            ).toSqlQuery()
+        );
+        //
+        return packServiceList;
+    }
+
+//    private ArrayList<HMAux> getPackServiceList(){
+//        //
+//        ArrayList<HMAux> packServiceList = generatePackServiceExecList(
+//            (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+//            new Sql_Act043_001(
+//                mSm_so.getCustomer_code(),
+//                mSm_so.getSo_prefix(),
+//                mSm_so.getSo_code()
+//            ).toSqlQuery()
+//        ));
+//        //
+//        return packServiceList;
+//    }
+
+    private ArrayList<HMAux> generatePackServiceExecList(ArrayList<HMAux> rawList) {
+        ArrayList<HMAux> packServiceList = new ArrayList<>();
+        for (HMAux hmAux : rawList) {
+            int duplicateCtrl = 0;
+            int qty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
+
+            //
+            if( hmAux.hasConsistentValue(Act043_Main.TYPE_PS)
+                && Act043_Main.TYPE_PS_SERVICE.equals(hmAux.get(Act043_Main.TYPE_PS)))
+            {
+                ArrayList<HMAux> execs = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+                    new Sql_Act043_001(
                         mSm_so.getCustomer_code(),
                         mSm_so.getSo_prefix(),
                         mSm_so.getSo_code()
-                ).toSqlQuery()
-        );
-        //
+                    ).toSqlQuery()
+                );
+                //
+                if(execs != null && execs.size() > 0){
+                    for (HMAux aux : execs) {
+                        int inQty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
+
+                        //TODO continuar algoritmo para verificar nos item que retornaram se ele é valida
+                        //todo , se deve ser inserido na lista e gerar registro fake quando necessario
+                        /*if(inQty > 1){
+
+                        }else{
+
+                        }*/
+
+                    }
+
+                }
+
+
+            }else{
+                packServiceList.add(hmAux);
+            }
+        }
+
         return packServiceList;
     }
 
