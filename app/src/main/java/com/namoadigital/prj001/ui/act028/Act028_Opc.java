@@ -42,6 +42,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -96,7 +97,7 @@ public class Act028_Opc extends BaseFragment {
     private TextView tv_optional_lbl;
     private TextView tv_optional_val;
 
-    private ImageView iv_new_exec;
+    private ImageView iv_edit_service;
     private ImageView iv_not_exec;
 
     private Act028_Main mMain;
@@ -207,7 +208,7 @@ public class Act028_Opc extends BaseFragment {
         tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
         tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
 
-        iv_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
+        iv_edit_service = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_edit_service);
 
         iv_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
 
@@ -260,7 +261,7 @@ public class Act028_Opc extends BaseFragment {
             }
         });
 
-        iv_new_exec.setOnClickListener(new View.OnClickListener() {
+        iv_edit_service.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -272,46 +273,53 @@ public class Act028_Opc extends BaseFragment {
                     return;
                 }
 
-                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
 
-                sm_so_service_execNew.setExec_code(0);
-
-                sm_so_service_execNew.setPK(mService);
-
-                long nExecTemp = Long.parseLong(sm_so_service_execDao.getByStringHM(
-                        new SM_SO_Service_Exec_Sql_003(
-                                mService.getCustomer_code(),
-                                mService.getSo_prefix(),
-                                mService.getSo_code(),
-                                mService.getPrice_list_code(),
-                                mService.getPack_code(),
-                                mService.getPack_seq(),
-                                mService.getCategory_price_code(),
-                                mService.getService_code(),
-                                mService.getService_seq()
-
-                        ).toSqlQuery()
-                ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
-
-                sm_so_service_execNew.setExec_tmp(nExecTemp);
-                sm_so_service_execNew.setStatus(Constant.SYS_STATUS_PROCESS);
-
-                if (mService.getPartner_code() == null) {
-                    handlePartnerDefinition(sm_so_service_execNew, 1);
-                } else {
-                    sm_so_service_execNew.setPartner_code(mService.getPartner_code());
-                    sm_so_service_execNew.setPartner_id(mService.getPartner_id());
-                    sm_so_service_execNew.setPartner_desc(mService.getPartner_desc());
-                    //
-                    sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
-                    //
-                    setOffLineStatus(sm_so_service_execNew);
-                    //
-                    if (delegate != null) {
-                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
-                        loadDataToScreen();
-                    }
+                if(ToolBox_Con.isOnline(context)){
+                    mMain.executeSOInfoForEdit();
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
                 }
+
+//                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
+//
+//                sm_so_service_execNew.setExec_code(0);
+//
+//                sm_so_service_execNew.setPK(mService);
+//
+//                long nExecTemp = Long.parseLong(sm_so_service_execDao.getByStringHM(
+//                        new SM_SO_Service_Exec_Sql_003(
+//                                mService.getCustomer_code(),
+//                                mService.getSo_prefix(),
+//                                mService.getSo_code(),
+//                                mService.getPrice_list_code(),
+//                                mService.getPack_code(),
+//                                mService.getPack_seq(),
+//                                mService.getCategory_price_code(),
+//                                mService.getService_code(),
+//                                mService.getService_seq()
+//
+//                        ).toSqlQuery()
+//                ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
+//
+//                sm_so_service_execNew.setExec_tmp(nExecTemp);
+//                sm_so_service_execNew.setStatus(Constant.SYS_STATUS_PROCESS);
+//
+//                if (mService.getPartner_code() == null) {
+//                    handlePartnerDefinition(sm_so_service_execNew, 1);
+//                } else {
+//                    sm_so_service_execNew.setPartner_code(mService.getPartner_code());
+//                    sm_so_service_execNew.setPartner_id(mService.getPartner_id());
+//                    sm_so_service_execNew.setPartner_desc(mService.getPartner_desc());
+//                    //
+//                    sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
+//                    //
+//                    setOffLineStatus(sm_so_service_execNew);
+//                    //
+//                    if (delegate != null) {
+//                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+//                        loadDataToScreen();
+//                    }
+//                }
             }
         });
 
@@ -481,35 +489,34 @@ public class Act028_Opc extends BaseFragment {
 
 
                 if (partner_restriction) {
-                    iv_new_exec.setVisibility(View.GONE);
+//                    iv_edit_service.setVisibility(View.GONE);
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
-                        iv_new_exec.setVisibility(View.GONE);
+//                        iv_edit_service.setVisibility(View.GONE);
                         iv_not_exec.setVisibility(View.GONE);
                     } else {
-                        iv_new_exec.setVisibility(View.VISIBLE);
+//                        iv_edit_service.setVisibility(View.VISIBLE);
                     }
                 }
-
+                List<HMAux> execution_list = sm_so_service_execDao.query_HM(
+                        new Sql_Act028_001(
+                                mService.getCustomer_code(),
+                                mService.getSo_prefix(),
+                                mService.getSo_code(),
+                                mService.getPrice_list_code(),
+                                mService.getPack_code(),
+                                mService.getPack_seq(),
+                                mService.getCategory_price_code(),
+                                mService.getService_code(),
+                                mService.getService_seq(),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
                 lv_execs.setAdapter(
                         new Act028_Exec_Adapter(
                                 getActivity(),
                                 R.layout.act028_opc_content_cell,
-
-                                sm_so_service_execDao.query_HM(
-                                        new Sql_Act028_001(
-                                                mService.getCustomer_code(),
-                                                mService.getSo_prefix(),
-                                                mService.getSo_code(),
-                                                mService.getPrice_list_code(),
-                                                mService.getPack_code(),
-                                                mService.getPack_seq(),
-                                                mService.getCategory_price_code(),
-                                                mService.getService_code(),
-                                                mService.getService_seq(),
-                                                ToolBox_Con.getPreference_User_Code(context)
-                                        ).toSqlQuery()
-                                )
+                                execution_list
                         )
 
                 );
@@ -520,13 +527,24 @@ public class Act028_Opc extends BaseFragment {
                 );
 
                 if (data.get("full_status").equalsIgnoreCase("0")) {
-                    iv_new_exec.setVisibility(View.GONE);
+//                    iv_edit_service.setVisibility(View.GONE);
                 } else {
                 }
 
                 if (!mMain.hasExecutionProfile()) {
-                    iv_new_exec.setVisibility(View.GONE);
+                    iv_edit_service.setVisibility(View.GONE);
                     iv_not_exec.setVisibility(View.GONE);
+                }
+
+                if((ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_SERVICE)
+                    || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)
+                    )
+                    && !mMain.hasSOSyncStatus()
+                    && qty < mService.getQty()
+                ){
+                    iv_edit_service.setVisibility(View.VISIBLE);
+                }else{
+                    iv_edit_service.setVisibility(View.GONE);
                 }
             }
         }

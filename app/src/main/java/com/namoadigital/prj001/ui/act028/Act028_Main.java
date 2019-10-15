@@ -835,7 +835,22 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             } else {
                 Log.d("SO_RETURN", "SO RETURN null!!!");
             }
-        } else {
+        } else if (wsSoProcess.equalsIgnoreCase("SERVICO_BUSCA_SERVICO")) {
+            setWsSoProcess("");
+
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            String so_current_reload = hmAux.get(String.valueOf(mService.getSo_prefix()) + "." + String.valueOf(mService.getSo_code()));
+
+            if (so != null) {
+                disableProgressDialog();
+                //
+                showResults(so, so_current_reload);
+            } else {
+                Log.d("SO_RETURN", "SO RETURN null!!!");
+            }
+        }else{
+
         }
 
 //        String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -1904,5 +1919,111 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     @Override
     public HMAux getHMAux_Trans() {
         return hmAux_Trans;
+    }
+
+    public boolean hasSOSyncStatus() {
+        if(mSoAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED)){
+            if ("1".equals(mSoAux.get(SM_SODao.SYNC_REQUIRED))) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void executeSOInfoForEdit() {
+        setWsSoProcess("SERVICO_BUSCA_SERVICO");
+
+        cleanUpResults();
+
+        if (ToolBox_Con.isOnline(context)) {
+            setWsSoProcess("SERVICO_BUSCA_SERVICO");
+
+
+
+//            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+//            //
+//            mIntent.putExtras(bundle);
+//            //
+//            context.sendBroadcast(mIntent);
+
+        } else {
+            executeSoSave(true);
+        }
+    }
+
+    public void showService_Pack_Details(TSO_Service_Search_Obj  item) {
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
+
+//        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
+//            siteOption = generateSiteOption(item.getSite_zone());
+//            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
+//        }
+    }
+
+    private ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
+        ArrayList<HMAux> siteList = new ArrayList<>();
+        if(rawSiteZone != null){
+            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
+                HMAux hmAux = new HMAux();
+                if(!isSiteInList(siteList,siteZone.getSite_code())){
+                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getSite_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getSite_id());
+                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getSite_desc());
+                    hmAux.put(MD_PartnerDao.PARTNER_CODE, String.valueOf(siteZone.getPartner_code()));
+                    siteList.add(hmAux);
+                }
+            }
+        }
+        //
+        return siteList;
+    }
+    private boolean isSiteInList(ArrayList<HMAux> siteList, Integer site_code) {
+        for (HMAux hmAux : siteList) {
+            if( hmAux != null
+                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(site_code))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
+    private ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
+        ArrayList<HMAux> siteZoneList = new ArrayList<>();
+        if(rawSiteZone != null){
+            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
+                HMAux hmAux = new HMAux();
+                if(!isSiteZoneInList(siteZoneList,siteZone.getSite_code(),siteZone.getZone_code())){
+                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getZone_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getZone_id());
+                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getZone_desc());
+                    hmAux.put(MD_Site_ZoneDao.SITE_CODE,String.valueOf(siteZone.getSite_code()));
+                    siteZoneList.add(hmAux);
+                }
+            }
+        }
+        //
+        return siteZoneList;
+    }
+
+    private boolean isSiteZoneInList(ArrayList<HMAux> siteList, Integer site_code,Integer zone_code) {
+        for (HMAux hmAux : siteList) {
+            if( hmAux != null
+                    && hmAux.hasConsistentValue(MD_Site_ZoneDao.SITE_CODE)
+                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                    && hmAux.get(MD_Site_ZoneDao.SITE_CODE).equals(String.valueOf(site_code))
+                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(zone_code))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
     }
 }
