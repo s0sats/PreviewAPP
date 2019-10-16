@@ -49,9 +49,9 @@ public class WS_SO_Service_Cancel extends IntentService {
             String pack_code = bundle.getString(SM_SO_ServiceDao.PACK_CODE,"0");
             String pack_seq = bundle.getString(SM_SO_ServiceDao.PACK_SEQ,"0");
             String category_price_code = bundle.getString(SM_SO_ServiceDao.CATEGORY_PRICE_CODE,"0");
-            String service_code = bundle.getString(SM_SO_ServiceDao.SERVICE_CODE,"0");
-            String service_seq = bundle.getString(SM_SO_ServiceDao.SERVICE_SEQ,"0");
-            String exec_code = bundle.getString(SM_SO_Service_ExecDao.EXEC_CODE,"0");
+            String service_code = bundle.getString(SM_SO_ServiceDao.SERVICE_CODE,"");
+            String service_seq = bundle.getString(SM_SO_ServiceDao.SERVICE_SEQ,"");
+            String exec_code = bundle.getString(SM_SO_Service_ExecDao.EXEC_CODE,"");
             //
             processSOServiceCancel(
                 so_prefix,
@@ -99,7 +99,7 @@ public class WS_SO_Service_Cancel extends IntentService {
         env.setType_ps(type_ps);
         env.setPrice_list_code(price_list_code);
         env.setPack_code(pack_code);
-        env.setPack_seq(pack_code);
+        env.setPack_seq(pack_seq);
         env.setCategory_price_code(category_price_code);
         env.setService_code(service_code);
         env.setService_seq(service_seq);
@@ -185,7 +185,6 @@ public class WS_SO_Service_Cancel extends IntentService {
         translist.add("msg_searching_services");
         translist.add("msg_receiving_services");
         translist.add("msg_end_proccess");
-
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

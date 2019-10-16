@@ -6,6 +6,7 @@ import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by neomatrix on 23/02/17.
@@ -52,6 +53,7 @@ public class Sql_Act043_001 implements Specification {
                         "         T.MANUAL_PRICE manual_price,\n" +
                         "         T.COMMENTS comments,\n" +
                         "         T.EXEC_SEQ_OPER exec_seq_oper,\n" +
+                        "         T.exec_code exec_code,\n" +
                         "         (CASE WHEN  T.TYPE_PS = '"+ Act043_Main.TYPE_PS_PACK+"' THEN\n" +
                         "                   CASE\n" +
                         "                       WHEN T.QTD_SERVICES > 0 AND (T.STATUS / QTD_SERVICES) = 1 AND (T.STATUS % QTD_SERVICES) = 0 THEN '"+Constant.SYS_STATUS_DONE+"'\n" +
@@ -123,7 +125,8 @@ public class Sql_Act043_001 implements Specification {
                         "                          ELSE 0\n" +
                         "                         END) STATUS ,\n" +
                         "                    COUNT(1) QTD_SERVICES,\n" +
-                        "                    MIN(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER\n" +
+                        "                    MIN(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER,\n" +
+                        "                    0 exec_code \n" +
                         "             FROM\n" +
                                             SM_SO_PackDao.TABLE +"  p,\n" +
                                             SM_SO_ServiceDao.TABLE +" s\n" +
@@ -139,6 +142,7 @@ public class Sql_Act043_001 implements Specification {
                         "                AND p.so_prefix = '"+so_prefix+"'\n" +
                         "                AND p.so_code = '"+so_code+"'\n" +
                         "                AND P.SELECTION_TYPE = 'PACK'\n" +
+                        "                AND s.STATUS not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') \n" +
                         "             GROUP BY\n" +
                         "                   p.CUSTOMER_CODE,\n" +
                         "                   p.PRICE_LIST_CODE,\n" +
@@ -166,7 +170,8 @@ public class Sql_Act043_001 implements Specification {
                         "                    S.COMMENTS COMMENTS, \n" +
                         "                    S.STATUS STATUS, \n" +
                         "                    1 QTD_SERVICES, \n" +
-                        "                    S.EXEC_SEQ_OPER EXEC_SEQ_OPER \n" +
+                        "                    S.EXEC_SEQ_OPER EXEC_SEQ_OPER, \n" +
+                        "                    0 exec_code \n" +
                         "             FROM\n" +
                                             SM_SO_PackDao.TABLE +"  p,\n" +
                                             SM_SO_ServiceDao.TABLE +" s\n" +
@@ -182,6 +187,7 @@ public class Sql_Act043_001 implements Specification {
                         "                AND p.so_prefix = '"+so_prefix+"'\n" +
                         "                AND p.so_code = '"+so_code+"'\n" +
                         "                AND P.SELECTION_TYPE = 'UNITARY' \n" +
+                        "                AND s.STATUS not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') \n" +
                         "                --FIM service                       \n" +
                         "   ) T\n" +
                         "   ORDER BY\n" +

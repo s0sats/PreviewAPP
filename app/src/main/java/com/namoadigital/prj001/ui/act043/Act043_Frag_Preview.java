@@ -22,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Preview;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Cancel;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
@@ -29,7 +30,9 @@ import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
 import com.namoadigital.prj001.sql.Sql_Act043_002;
+import com.namoadigital.prj001.sql.Sql_Act043_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -185,8 +188,7 @@ public class Act043_Frag_Preview extends BaseFragment {
             bundle.putString(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE));
             bundle.putString(SM_SO_ServiceDao.SERVICE_CODE, hmAux.get(SM_SO_ServiceDao.SERVICE_CODE));
             bundle.putString(SM_SO_ServiceDao.SERVICE_SEQ, hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ));
-            //Descomentar quando lista pronta
-            //bundle.putString(SM_SO_Service_ExecDao.EXEC_CODE, hmAux.get(SM_SO_Service_ExecDao.EXEC_CODE));
+            bundle.putString(SM_SO_Service_ExecDao.EXEC_CODE, hmAux.get(SM_SO_Service_ExecDao.EXEC_CODE));
             //
             mIntent.putExtras(bundle);
             //
@@ -293,68 +295,70 @@ public class Act043_Frag_Preview extends BaseFragment {
         return totalVal;
     }
 
-    private ArrayList<HMAux> getPackServiceList(){
-        ArrayList<HMAux> packServiceList = new ArrayList<>();
-        //
-        packServiceList = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-            new Sql_Act043_001(
-                mSm_so.getCustomer_code(),
-                mSm_so.getSo_prefix(),
-                mSm_so.getSo_code()
-            ).toSqlQuery()
-        );
-        //
-        return packServiceList;
-    }
-
 //    private ArrayList<HMAux> getPackServiceList(){
+//        ArrayList<HMAux> packServiceList = new ArrayList<>();
 //        //
-//        ArrayList<HMAux> packServiceList = generatePackServiceExecList(
-//            (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+//        packServiceList = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
 //            new Sql_Act043_001(
 //                mSm_so.getCustomer_code(),
 //                mSm_so.getSo_prefix(),
 //                mSm_so.getSo_code()
 //            ).toSqlQuery()
-//        ));
+//        );
 //        //
 //        return packServiceList;
 //    }
 
+    private ArrayList<HMAux> getPackServiceList(){
+        //
+        ArrayList<HMAux> packServiceList = generatePackServiceExecList(
+            (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+            new Sql_Act043_001(
+                mSm_so.getCustomer_code(),
+                mSm_so.getSo_prefix(),
+                mSm_so.getSo_code()
+            ).toSqlQuery()
+        ));
+        //
+        return packServiceList;
+    }
+
     private ArrayList<HMAux> generatePackServiceExecList(ArrayList<HMAux> rawList) {
         ArrayList<HMAux> packServiceList = new ArrayList<>();
         for (HMAux hmAux : rawList) {
-            int duplicateCtrl = 0;
             int qty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
-
             //
             if( hmAux.hasConsistentValue(Act043_Main.TYPE_PS)
                 && Act043_Main.TYPE_PS_SERVICE.equals(hmAux.get(Act043_Main.TYPE_PS)))
             {
                 ArrayList<HMAux> execs = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-                    new Sql_Act043_001(
-                        mSm_so.getCustomer_code(),
-                        mSm_so.getSo_prefix(),
-                        mSm_so.getSo_code()
+                    new Sql_Act043_003(
+                        String.valueOf(mSm_so.getCustomer_code()),
+                        hmAux.get(SM_SO_ServiceDao.SO_PREFIX),
+                        hmAux.get(SM_SO_ServiceDao.SO_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PACK_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PACK_SEQ),
+                        hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+                        hmAux.get(SM_SO_ServiceDao.SERVICE_CODE),
+                        hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ)
                     ).toSqlQuery()
                 );
                 //
                 if(execs != null && execs.size() > 0){
-                    for (HMAux aux : execs) {
-                        int inQty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
-
-                        //TODO continuar algoritmo para verificar nos item que retornaram se ele é valida
-                        //todo , se deve ser inserido na lista e gerar registro fake quando necessario
-                        /*if(inQty > 1){
-
+                    for (int i = 0; i < qty ; i++) {
+                        if( i <= execs.size() - 1 ){
+                            packServiceList.add(execs.get(i));
                         }else{
-
-                        }*/
-
+                            //Criar registro "fake" da exec
+                            HMAux tmpAux = (HMAux) execs.get(0).clone();
+                            tmpAux.put(SM_SO_Service_ExecDao.EXEC_TMP, "0");
+                            tmpAux.put(SM_SO_ServiceDao.STATUS, ConstantBaseApp.SYS_STATUS_PENDING);
+                            tmpAux.put(Sql_Act043_003.IN_PROCESS, "0");
+                            packServiceList.add(tmpAux);
+                        }
                     }
-
                 }
-
 
             }else{
                 packServiceList.add(hmAux);

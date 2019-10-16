@@ -386,6 +386,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         act043_frag_preview.setmSm_so(mSm_so);
         //
+        if(SELECTION_FRAG_PREVIEW.equals(currentFrag)){
+            act043_frag_preview.loadDataToScreen();
+        }
+        //
         setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
     }
 
