@@ -84,8 +84,8 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
         if(file.exists()) {
             try {
                 rec = gson.fromJson(
-                    ToolBox_Inf.getContents(file),
-                    TSO_Service_Search_Rec.class
+                        ToolBox_Inf.getContents(file),
+                        TSO_Service_Search_Rec.class
                 );
                 //
                 if (rec != null) {

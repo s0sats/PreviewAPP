@@ -273,12 +273,7 @@ public class Act028_Opc extends BaseFragment {
                     return;
                 }
 
-
-                if(ToolBox_Con.isOnline(context)){
-                    mMain.executeSOInfoForEdit();
-                }else{
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                }
+                mMain.executeSOInfoForEdit();
 
 //                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
 //

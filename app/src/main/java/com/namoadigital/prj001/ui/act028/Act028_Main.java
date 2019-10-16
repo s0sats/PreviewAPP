@@ -19,6 +19,9 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -28,6 +31,7 @@ import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.*;
 import com.namoadigital.prj001.model.*;
 import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.*;
@@ -37,7 +41,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -835,20 +841,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             } else {
                 Log.d("SO_RETURN", "SO RETURN null!!!");
             }
-        } else if (wsSoProcess.equalsIgnoreCase("SERVICO_BUSCA_SERVICO")) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Get_Service_For_Edit.class.getName())) {
             setWsSoProcess("");
-
-            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-
-            String so_current_reload = hmAux.get(String.valueOf(mService.getSo_prefix()) + "." + String.valueOf(mService.getSo_code()));
-
-            if (so != null) {
-                disableProgressDialog();
-                //
-                showResults(so, so_current_reload);
-            } else {
-                Log.d("SO_RETURN", "SO RETURN null!!!");
-            }
+            String file_name = hmAux.get(ConstantBaseApp.WS_RETURN_FILENAME);
+            TSO_Service_Search_Obj  item = getServiceFromHmaux(hmAux.get(ConstantBaseApp.WS_RETURN_LIST));
+            showService_Pack_Details(item, file_name);
         }else{
 
         }
@@ -865,6 +862,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 //            //refreshUI();
 //            Log.d("SO_RETURN", "SO RETURN null!!!");
 //        }
+    }
+
+    private TSO_Service_Search_Obj getServiceFromHmaux(String return_list) {
+        return null;
     }
 
     private void showResults(String[] so, String so_current_reload) {
@@ -1932,36 +1933,163 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     public void executeSOInfoForEdit() {
-        setWsSoProcess("SERVICO_BUSCA_SERVICO");
-
-        cleanUpResults();
 
         if (ToolBox_Con.isOnline(context)) {
-            setWsSoProcess("SERVICO_BUSCA_SERVICO");
+            setWsSoProcess(WS_SO_Get_Service_For_Edit.class.getName());
 
-
-
-//            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
-//            //
-//            mIntent.putExtras(bundle);
-//            //
-//            context.sendBroadcast(mIntent);
-
+            cleanUpResults();
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("dialog_service_edit_service_ttl"),
+                    hmAux_Trans.get("dialog_service_edit_service_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            int site_code=0;
+            int product_code=0;
+            int serial_code=0;
+            int service_code=0;
+            //
+            if (mSoAux.hasConsistentValue(SM_SODao.SITE_CODE)) {
+                site_code = Integer.parseInt(mSoAux.get(SM_SODao.SITE_CODE));
+            }
+            //
+            if (mSoAux.hasConsistentValue(SM_SODao.PRODUCT_CODE)) {
+                product_code = Integer.parseInt(mSoAux.get(SM_SODao.PRODUCT_CODE));
+            }
+            //
+            if (mSoAux.hasConsistentValue(SM_SODao.SERIAL_CODE)) {
+                serial_code = Integer.parseInt(mSoAux.get(SM_SODao.SERIAL_CODE));
+            }
+            //
+            if (mSoAux.hasConsistentValue(SM_SO_ServiceDao.SERVICE_CODE)) {
+                service_code = Integer.parseInt(mSoAux.get(SM_SO_ServiceDao.SERVICE_CODE));
+            }
+            //
+            bundle.putInt(SM_SODao.SITE_CODE, site_code);
+            bundle.putInt(SM_SODao.PRODUCT_CODE,product_code);
+            bundle.putInt(SM_SODao.SERIAL_CODE, serial_code);
+            bundle.putInt(SM_SO_ServiceDao.SERVICE_CODE, service_code);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
         } else {
-            executeSoSave(true);
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
-    public void showService_Pack_Details(TSO_Service_Search_Obj  item) {
+    public void showService_Pack_Details(final TSO_Service_Search_Obj  item, String file_name){
+
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
 
-//        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
-//            siteOption = generateSiteOption(item.getSite_zone());
-//            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
-//        }
+        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ) {
+            siteOption = generateSiteOption(item.getSite_zone());
+            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
+        }
+
+        final ServiceRegisterDialog dialog =
+                new ServiceRegisterDialog(
+                        context,
+                        ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE,
+                        hmAux_Trans,
+                        item,
+                        siteOption,
+                        siteZoneOption,
+                        getPartnerList(file_name)
+                );
+        final int finalDialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
+
+        dialog.setBtnOkListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (finalDialogType ){
+                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
+
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
+                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()  && Double.valueOf(dialog.getMk_price_val()) >= 0
+                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                }
+
+                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                }
+
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                } else {
+                                    item.setPartner_code_selected(null);
+                                }
+                                item.setComment(dialog.getMk_comments_val());
+                                item.setSelected(false);
+                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
+                                callServiceEditService(item);
+                                dialog.dismiss();
+                            } else {
+                                ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                        null,
+                                        0
+                                );
+                            }
+                        break;
+                }
+            }
+        });
+
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void callServiceEditService(TSO_Service_Search_Obj item) {
+
+    }
+
+    private ArrayList<MD_Partner> getPartnerList(String file_name) {
+            File file = new File(Constant.TOKEN_PATH, file_name);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            TSO_Service_Search_Rec rec = null;
+            ArrayList<MD_Partner> partner_list = new ArrayList<>();
+            //
+            if(file.exists()) {
+                try {
+                    rec = gson.fromJson(
+                            ToolBox_Inf.getContents(file),
+                            TSO_Service_Search_Rec.class
+                    );
+                    //
+                    if (rec != null) {
+                        partner_list = rec.getPartner_list();
+                    }
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
+                }
+            }
+            //
+            return partner_list;
+
     }
 
     private ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
