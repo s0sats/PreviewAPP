@@ -15,26 +15,65 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.*;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -43,9 +82,12 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by neomatrix on 18/08/17.
@@ -843,9 +885,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             }
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Get_Service_For_Edit.class.getName())) {
             setWsSoProcess("");
-            String file_name = hmAux.get(ConstantBaseApp.WS_RETURN_FILENAME);
-            TSO_Service_Search_Obj  item = getServiceFromHmaux(hmAux.get(ConstantBaseApp.WS_RETURN_LIST));
-            showService_Pack_Details(item, file_name);
+            Gson gson = new Gson();
+            TSO_Get_Service_Edit_Rec  item = gson.fromJson(mLink, TSO_Get_Service_Edit_Rec.class);
+            showService_Pack_Details(item);
         }else{
 
         }
@@ -1967,7 +2009,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             }
             //
             if (mSoAux.hasConsistentValue(SM_SO_ServiceDao.SERVICE_CODE)) {
-                service_code = Integer.parseInt(mSoAux.get(SM_SO_ServiceDao.SERVICE_CODE));
+                service_code = mService.getService_code();
             }
             //
             bundle.putInt(SM_SODao.SITE_CODE, site_code);
@@ -1983,7 +2025,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         }
     }
 
-    public void showService_Pack_Details(final TSO_Service_Search_Obj  item, String file_name){
+    public void showService_Pack_Details(final TSO_Get_Service_Edit_Rec item){
 
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
@@ -1998,10 +2040,12 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                         context,
                         ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE,
                         hmAux_Trans,
+                        mService.getService_desc(),
+                        mService.getPrice(),
                         item,
                         siteOption,
                         siteZoneOption,
-                        getPartnerList(file_name)
+                        item.getPartner_list()
                 );
         final int finalDialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE;
         final ArrayList<HMAux> finalSiteOption = siteOption;
@@ -2020,7 +2064,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                                     && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
                                     && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
                             ) {
-                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+
                                 if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
                                     item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
                                 }
@@ -2034,10 +2078,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                                 } else {
                                     item.setPartner_code_selected(null);
                                 }
-                                item.setComment(dialog.getMk_comments_val());
-                                item.setSelected(false);
-                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
-                                callServiceEditService(item);
+
                                 dialog.dismiss();
                             } else {
                                 ToolBox.alertMSG(
@@ -2064,31 +2105,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void callServiceEditService(TSO_Service_Search_Obj item) {
-
-    }
-
-    private ArrayList<MD_Partner> getPartnerList(String file_name) {
-            File file = new File(Constant.TOKEN_PATH, file_name);
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            TSO_Service_Search_Rec rec = null;
-            ArrayList<MD_Partner> partner_list = new ArrayList<>();
-            //
-            if(file.exists()) {
-                try {
-                    rec = gson.fromJson(
-                            ToolBox_Inf.getContents(file),
-                            TSO_Service_Search_Rec.class
-                    );
-                    //
-                    if (rec != null) {
-                        partner_list = rec.getPartner_list();
-                    }
-                } catch (Exception e) {
-                    ToolBox_Inf.registerException(getClass().getName(), e);
-                }
-            }
-            //
-            return partner_list;
 
     }
 

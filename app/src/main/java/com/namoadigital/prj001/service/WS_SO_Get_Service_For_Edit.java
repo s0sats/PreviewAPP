@@ -129,7 +129,7 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
     }
 
     private void processSOGetServiceEditReturn(TSO_Get_Service_Edit_Rec rec) {
-
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec) , "0");
     }
 
     private void loadTranslation() {

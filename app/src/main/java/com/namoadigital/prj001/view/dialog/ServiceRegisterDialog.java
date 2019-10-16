@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
@@ -35,6 +36,7 @@ import java.util.List;
 public class ServiceRegisterDialog extends AlertDialog {
 
     public static final String DECIMAL_PRICE_PATTERN = "###0.00";
+    private TSO_Get_Service_Edit_Rec editItem;
     private String pack_service_desc_full;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
@@ -78,6 +80,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private View.OnClickListener btnPackageDetailListener=null;
     private String mResource_Code;
     private String mResourceName = "service_register_dialog";
+    private Double service_price;
 
     protected ServiceRegisterDialog(Context context) {
         super(context);
@@ -98,6 +101,18 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.dialogType = dialogType;
         this.pack_service_desc_full = pack_service_desc_full;
         this.item = item;
+        this.siteOption = siteOption;
+        this.siteZoneOption = siteZoneOption;
+        this.mdPartners = mdPartners;
+    }
+
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, TSO_Get_Service_Edit_Rec item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
+        this(context);
+        this.hmAux_trans = hmAux_trans;
+        this.dialogType = dialogType;
+        this.pack_service_desc_full = pack_service_desc_full;
+        this.service_price = service_price;
+        this.editItem = item;
         this.siteOption = siteOption;
         this.siteZoneOption = siteZoneOption;
         this.mdPartners = mdPartners;
@@ -316,7 +331,21 @@ public class ServiceRegisterDialog extends AlertDialog {
                 mk_comments_val.setText(item.getComment());
                 break;
             case ALERT_DIALOG_TYPE_SERVICE_EDIT:
-
+                cl_register_service_form.setVisibility(View.VISIBLE);
+                ll_register_package_form.setVisibility(View.GONE);
+                ll_register_spinners.setVisibility(View.VISIBLE);
+                btn_package_detail.setVisibility(View.GONE);
+                mk_qtd_val.setEnabled(false);
+                iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+                setHeaderPackageService();
+                setRemoveCheckboxVisibility(false);
+                if(siteOption != null) {
+                    setSpinnersContent(siteOption.size(), editItem.getSite_code_selected(), editItem.getZone_code_selected());
+                }
+                setSpinnersAction();
+                setPartnerSS(true, editItem.getPartner_code_selected(), editItem.getSite_zone());
+                setPriceAndQtyValues(1, service_price);
+                setPriceEnable(0);
                 break;
         }
     }
