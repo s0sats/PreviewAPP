@@ -3,9 +3,9 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
@@ -71,9 +71,9 @@ public class Sql_Act043_003 implements Specification {
                         "         T.exec_code exec_code,\n" +
                         "         (CASE WHEN  T.status IS NOT NULL\n" +
                         "                THEN T.status\n" +
-                        "                ELSE '"+ Constant.SYS_STATUS_PENDING+"'\n" +
+                        "                ELSE '"+ ConstantBaseApp.SYS_STATUS_PENDING+"'\n" +
                         "           END) status,\n" +
-                        "         (CASE WHEN  T.status IS NOT NULL AND T.status <> '"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
+                        "         (CASE WHEN  T.status IS NOT NULL AND T.status NOT IN ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') AND T.IN_PROCESS = 1\n" +
                         "                THEN 1\n" +
                         "                ELSE 0\n" +
                         "           END ) "+IN_PROCESS+" \n" +
@@ -99,12 +99,16 @@ public class Sql_Act043_003 implements Specification {
                         "                    E.STATUS STATUS,                    \n" +
                         "                    S.EXEC_SEQ_OPER EXEC_SEQ_OPER,\n" +
                         "                    E.exec_code, \n" +
-                        "                    E.exec_tmp \n" +
+                        "                    E.exec_tmp, \n" +
+                        "                    SUM( CASE WHEN t.status NOT IN ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"')\n" +
+                        "                              THEN 1\n" +
+                        "                              ELSE 0\n" +
+                        "                           END ) "+IN_PROCESS+" \n" +
                         "             FROM\n" +
-                        "           " + SM_SO_PackDao.TABLE +"  p,\n" +
-                        "           " + SM_SO_ServiceDao.TABLE +" s\n" +
+                        "               " + SM_SO_PackDao.TABLE +"  p,\n" +
+                        "               " + SM_SO_ServiceDao.TABLE +" s\n" +
                         "             LEFT JOIN\n" +
-                        "           " + SM_SO_Service_ExecDao.TABLE +" e ON \n" +
+                        "               " + SM_SO_Service_ExecDao.TABLE +" e ON \n" +
                         "                                      s.customer_code =  e.customer_code\n" +
                         "                                      AND s.so_prefix = e.so_prefix\n" +
                         "                                      AND s.so_code = e.so_code\n" +
@@ -124,6 +128,28 @@ public class Sql_Act043_003 implements Specification {
                         "                                      AND s.service_code = '"+service_code+"'\n" +
                         "                                      AND s.service_seq = '"+service_seq+"'\n" +
                         "                                      AND e.STATUS not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') \n" +
+                        "             LEFT JOIN\n" +
+                        "                   " + SM_SO_Service_Exec_TaskDao.TABLE +" t ON \n" +
+                        "                                      e.customer_code =  t.customer_code\n" +
+                        "                                      AND e.so_prefix = t.so_prefix\n" +
+                        "                                      AND e.so_code = t.so_code\n" +
+                        "                                      AND e.price_list_code = t.price_list_code\n" +
+                        "                                      AND e.pack_code = t.pack_code\n" +
+                        "                                      AND e.pack_seq = t.pack_seq\n" +
+                        "                                      AND e.category_price_code = e.category_price_code\n" +
+                        "                                      AND e.service_code = t.service_code\n" +
+                        "                                      AND e.service_seq = t.service_seq  \n" +
+                        "                                      AND e.exec_tmp = t.exec_tmp  \n" +
+                        "\n" +
+                        "                                      AND e.customer_code = '"+customer_code+"'\n" +
+                        "                                      AND e.so_prefix = '"+so_prefix+"'\n" +
+                        "                                      AND e.so_code = '"+so_code+"'\n" +
+                        "                                      AND e.price_list_code = '"+price_list_code+"'\n" +
+                        "                                      AND e.pack_code = '"+pack_code+"'\n" +
+                        "                                      AND e.pack_seq = '"+pack_seq+"'\n" +
+                        "                                      AND e.category_price_code = '"+category_price_code+"'\n" +
+                        "                                      AND e.service_code = '"+service_code+"'\n" +
+                        "                                      AND e.service_seq = '"+service_seq+"'\n" +
                         "                                       \n" +
                         "             WHERE\n" +
                         "                p.customer_code =  s.customer_code\n" +
