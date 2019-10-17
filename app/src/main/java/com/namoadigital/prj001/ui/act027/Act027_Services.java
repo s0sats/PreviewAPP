@@ -3,12 +3,12 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +82,8 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
-    private CardView cv_product_serial_card;
+    private ImageView iv_editable_serial;
+    private View listHeader;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -175,24 +176,29 @@ public class Act027_Services extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
         //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        listHeader = inflater.inflate(R.layout.cv_product_serial_with_icon, null);
         tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
-        cv_product_serial_card =  view.findViewById(R.id.cv_product_serial_card);
-        iv_product_serial_id =  view.findViewById(R.id.iv_product_serial_id);
-        tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
-        tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
+        iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
+        tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
+        tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
+        iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
-    }
-
-    private void iniAction() {
-
-        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
-        cv_product_serial_card.setOnClickListener(new View.OnClickListener() {
+        iv_editable_serial.setVisibility(View.VISIBLE);
+        iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
+        lv_services.addHeaderView(listHeader);
+        listHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delegate.onProductSerialSelected();
             }
         });
+    }
+
+    private void iniAction() {
+
+        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
     }
 
     private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
@@ -247,6 +253,7 @@ public class Act027_Services extends BaseFragment {
         );
 
         try {
+            iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
             if (product_serial_content.hasConsistentValue(SM_SODao.SERIAL_ID)) {
                 tv_product_serial_id.setText(product_serial_content.get(SM_SODao.SERIAL_ID));
             }
@@ -287,17 +294,14 @@ public class Act027_Services extends BaseFragment {
                     }
                 }
             }else{
-                iv_product_serial_id.setVisibility(View.GONE);
+                iv_product_serial_id.setVisibility(View.INVISIBLE);
                 tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
             }
-
         }catch (NullPointerException e){
             tv_product_serial_infos.setText("");
             tv_product_serial_infos.setVisibility(View.GONE);
-            cv_product_serial_card.setVisibility(View.GONE);
         }
-
 
     }
 
@@ -306,6 +310,7 @@ public class Act027_Services extends BaseFragment {
         if(mSm_so == null){
             recoveryDelegate.callAct005();
         }else {
+            iv_editable_serial.setVisibility(View.VISIBLE);
             adp = new Act027_Services_Adapter(
                     getActivity(),
                     R.layout.act027_services_content_adapter_cell,
