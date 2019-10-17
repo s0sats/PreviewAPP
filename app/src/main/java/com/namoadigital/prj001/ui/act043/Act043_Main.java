@@ -130,8 +130,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("total_val");
         transList.add("dialog_service_search_ttl");
         transList.add("dialog_service_search_msg");
-        transList.add("alert_remove_service_confirm_ttl");
-        transList.add("alert_remove_service_confirm_msg");
+//        transList.add("alert_remove_service_confirm_ttl");
+//        transList.add("alert_remove_service_confirm_msg");
         transList.add("alert_service_cancel_ttl");
         transList.add("alert_service_cancel_confirm");
         transList.add("dialog_service_cancel_start");

@@ -73,7 +73,7 @@ public class Sql_Act043_003 implements Specification {
                         "                THEN T.status\n" +
                         "                ELSE '"+ ConstantBaseApp.SYS_STATUS_PENDING+"'\n" +
                         "           END) status,\n" +
-                        "         (CASE WHEN  T.status IS NOT NULL AND T.status NOT IN ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') AND T.IN_PROCESS = 1\n" +
+                        "         (CASE WHEN  T.status IS NOT NULL AND T.status NOT IN ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') AND T.IN_PROCESS >= 1\n" +
                         "                THEN 1\n" +
                         "                ELSE 0\n" +
                         "           END ) "+IN_PROCESS+" \n" +
@@ -136,7 +136,7 @@ public class Sql_Act043_003 implements Specification {
                         "                                      AND e.price_list_code = t.price_list_code\n" +
                         "                                      AND e.pack_code = t.pack_code\n" +
                         "                                      AND e.pack_seq = t.pack_seq\n" +
-                        "                                      AND e.category_price_code = e.category_price_code\n" +
+                        "                                      AND e.category_price_code = t.category_price_code\n" +
                         "                                      AND e.service_code = t.service_code\n" +
                         "                                      AND e.service_seq = t.service_seq  \n" +
                         "                                      AND e.exec_tmp = t.exec_tmp  \n" +
@@ -169,9 +169,20 @@ public class Sql_Act043_003 implements Specification {
                         "                AND s.service_code = '"+service_code+"'\n" +
                         "                AND s.service_seq = '"+service_seq+"'\n" +
                         "                --FIM service \n" +
+                        "              GROUP BY   \n" +
+                        "                 e.customer_code ,\n" +
+                        "                 e.so_prefix ,\n" +
+                        "                 e.so_code ,\n" +
+                        "                 e.price_list_code ,\n" +
+                        "                 e.pack_code ,\n" +
+                        "                 e.pack_seq ,\n" +
+                        "                 e.category_price_code ,\n" +
+                        "                 e.service_code,\n" +
+                        "                 e.service_seq ,\n" +
+                        "                 e.exec_code" +
                         "   ) T\n" +
                         "   ORDER BY\n" +
-                        "        T.exec_tmp")
+                        "        T.exec_tmp desc")
                 .append(";")
                 .toString();
     }

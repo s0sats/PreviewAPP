@@ -78,8 +78,6 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         TextView tv_comments = convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_comments);
         ImageView iv_info = convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
         //
-        //PARA TESTES
-        //iv_remove.setEnabled(position % 2 == 0);
         iv_remove.setEnabled(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0"));
         //
         if(onRemoveClickListener != null){

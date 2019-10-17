@@ -106,14 +106,14 @@ public class WS_SO_Service_Cancel extends IntentService {
         env.setExec_code(exec_code);
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_SO_SERVICE_REMOVE,
             gson.toJson(env)
         );
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
         TSO_SO_Service_Rec rec = gson.fromJson(
             resultado,
@@ -175,29 +175,27 @@ public class WS_SO_Service_Cancel extends IntentService {
             }
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAuxRet, "", "0");
     }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
-        translist.add("msg_processing_list");
-        translist.add("msg_searching_services");
-        translist.add("msg_receiving_services");
-        translist.add("msg_end_proccess");
-
-        mResource_Code = ToolBox_Inf.getResourceCode(
-            getApplicationContext(),
-            mModule_Code,
-            mResource_Name
-        );
+        translist.add("generic_sending_data_msg");
+        translist.add("generic_receiving_data_msg");
+        translist.add("generic_process_finalized_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
             getApplicationContext(),
             mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
-            translist);
+            ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                ""
+            ),
+         ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+         translist
+        );
 
     }
 }
