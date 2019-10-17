@@ -19,8 +19,10 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
@@ -36,7 +38,12 @@ import java.util.List;
 public class ServiceRegisterDialog extends AlertDialog {
 
     public static final String DECIMAL_PRICE_PATTERN = "###0.00";
-    private TSO_Get_Service_Edit_Rec editItem;
+    private Integer site_code_selected;
+    private Integer zone_code_selected;
+    private Integer partner_code_selected;
+    private String comments;
+    private String service_desc;
+    private SM_SO_Service editItem;
     private String pack_service_desc_full;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
@@ -81,6 +88,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private String mResource_Code;
     private String mResourceName = "service_register_dialog";
     private Double service_price;
+    private String service_desc_full;
 
     protected ServiceRegisterDialog(Context context) {
         super(context);
@@ -106,7 +114,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.mdPartners = mdPartners;
     }
 
-    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, TSO_Get_Service_Edit_Rec item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, SM_SO_Service item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
         this(context);
         this.hmAux_trans = hmAux_trans;
         this.dialogType = dialogType;
@@ -118,6 +126,21 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.mdPartners = mdPartners;
     }
 
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, String service_desc, Integer site_code_selected, Integer zone_code_selected, Integer partner_code_selected, String comments, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners) {
+        this(context);
+        this.hmAux_trans = hmAux_trans;
+        this.dialogType = dialogType;
+        this.pack_service_desc_full = pack_service_desc_full;
+        this.service_price = service_price;
+        this.service_desc = service_desc;
+        this.site_code_selected = site_code_selected;
+        this.zone_code_selected = zone_code_selected;
+        this.partner_code_selected = partner_code_selected;
+        this.comments = comments;
+        this.siteOption = siteOption;
+        this.siteZoneOption = siteZoneOption;
+        this.mdPartners = mdPartners;
+    }
 
 
     @Override
@@ -194,9 +217,9 @@ public class ServiceRegisterDialog extends AlertDialog {
         tv_id_val.setText(packageObj.getPack_service_desc());
     }
 
-    private void setHeaderPackageService() {
-        tv_pack_val.setText(pack_service_desc_full);
-        tv_id_val.setText(item.getService_desc_full());
+    private void setHeaderPackageService(String pack_desc, String service_desc) {
+        tv_pack_val.setText(pack_desc);
+        tv_id_val.setText(service_desc);
     }
 
     private void setPriceEnable(int hasManualPrice) {
@@ -316,7 +339,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
-                setHeaderPackageService();
+                setHeaderPackageService(pack_service_desc_full, item.getService_desc_full());
                 int itemSiteListSize=0;
                 if(item != null
                         && item.getSite_zone() != null){
@@ -337,17 +360,52 @@ public class ServiceRegisterDialog extends AlertDialog {
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
-                setHeaderPackageService();
+                setHeaderPackageService(this.pack_service_desc_full, this.service_desc_full);
                 setRemoveCheckboxVisibility(false);
                 if(siteOption != null) {
-                    setSpinnersContent(siteOption.size(), editItem.getSite_code_selected(), editItem.getZone_code_selected());
+                    setSpinnersContent(siteOption.size(), this.site_code_selected, this.zone_code_selected);
                 }
+                mk_comments_val.setVisibility(View.GONE);
+                tv_comments_lbl.setVisibility(View.GONE);
                 setSpinnersAction();
-                setPartnerSS(true, editItem.getPartner_code_selected(), editItem.getSite_zone());
-                setPriceAndQtyValues(1, service_price);
+                setPartnerForEditSS(true, this.partner_code_selected, siteOption);
+                setPriceAndQtyValues(1, this.service_price);
                 setPriceEnable(0);
                 break;
         }
+    }
+
+    private void setPartnerForEditSS(boolean isSelected, Integer partner_code, ArrayList<HMAux> site_zone) {
+        ArrayList<HMAux> partners = new ArrayList<>();
+        boolean found = false;
+
+        for (MD_Partner mdPartner : mdPartners) {
+            HMAux partner = new HMAux();
+            //
+            partner.put(SearchableSpinner.CODE, String.valueOf(mdPartner.getPartner_code()));
+            partner.put(SearchableSpinner.DESCRIPTION,mdPartner.getPartner_desc());
+            partner.put(SearchableSpinner.ID,mdPartner.getPartner_id());
+            //
+            partners.add(partner);
+            //
+            if(!found
+                    && partner_code!= null
+                    && partner_code > 0
+                    && partner_code.equals(mdPartner.getPartner_code())){
+                act043_ss_partner.setmValue(partner);
+                found = true;
+            }else {
+                if (site_zone != null
+                        && !found
+                        && !site_zone.isEmpty()
+                        && !isSelected
+                        && site_zone.get(0).hasConsistentValue(MD_PartnerDao.PARTNER_CODE)
+                        && mdPartner.getPartner_code() == Integer.valueOf(site_zone.get(0).get(MD_PartnerDao.PARTNER_CODE))) {
+                    act043_ss_partner.setmValue(partner);
+                }
+            }
+        }
+        act043_ss_partner.setmOption(partners);
     }
 
     private void setPriceAndQtyValues(int qty,Double unitPrice) {

@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Exec_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
@@ -28,6 +29,9 @@ import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
+import com.namoadigital.prj001.model.TSO_Set_Service_Edit_Env;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
@@ -39,6 +43,7 @@ import com.namoadigital.prj001.sql.Sql_Act028_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -269,9 +274,9 @@ public class Act028_Opc extends BaseFragment {
                  *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
                  *  o site do cabecalho da S.O.
                  */
-                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
-                    return;
-                }
+//                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+//                    return;
+//                }
 
                 mMain.executeSOInfoForEdit();
 
@@ -741,4 +746,160 @@ public class Act028_Opc extends BaseFragment {
     private void changeTabColor() {
     }
 
+
+    public void showService_Pack_Details(final TSO_Get_Service_Edit_Rec item) {
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
+
+        if(item.getSite_zone_list() != null && !item.getSite_zone_list().isEmpty() ) {
+            siteOption = generateSiteOption(item.getSite_zone_list());
+            siteZoneOption = generateSiteZoneOption(item.getSite_zone_list());
+        }
+        String package_service_desc = "";
+        if(data.get("pack_id") != null && data.get("pack_desc") != null) {
+            package_service_desc = data.get("pack_id") + " - " + data.get("pack_desc");
+        }
+        final ServiceRegisterDialog dialog =
+                new ServiceRegisterDialog(
+                        context,
+                        ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE_EDIT,
+                        hmAux_Trans,
+                        package_service_desc,
+                        mService.getPrice(),
+                        mService.getService_desc(),
+                        mService.getSite_code(),
+                        mService.getZone_code(),
+                        mService.getPartner_code(),
+                        mService.getComments(),
+                        siteOption,
+                        siteZoneOption,
+                        item.getPartner_list()
+                );
+        final int finalDialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE_EDIT;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setBtnOkListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (finalDialogType ){
+                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE_EDIT:
+                        if ( ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                        ) {
+                            Integer zone_code=null;
+                            Integer site_code=null;
+                            Integer partner_code;
+
+                            if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                zone_code = Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE));
+                            }
+
+                            if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                site_code = Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE));
+                            }
+
+                            if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                partner_code = Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE));
+                            } else {
+                                partner_code = null;
+                            }
+
+                            if (ToolBox_Con.isOnline(context)) {
+                                mMain.callServiceEditSet(zone_code, site_code, partner_code);
+                                dialog.dismiss();
+                            }else{
+                                ToolBox_Inf.showNoConnectionDialog(context);
+                            }
+
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                        break;
+                }
+            }
+        });
+
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+
+
+    private ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
+        ArrayList<HMAux> siteList = new ArrayList<>();
+        if(rawSiteZone != null){
+            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
+                HMAux hmAux = new HMAux();
+                if(!isSiteInList(siteList,siteZone.getSite_code())){
+                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getSite_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getSite_id());
+                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getSite_desc());
+                    hmAux.put(MD_PartnerDao.PARTNER_CODE, String.valueOf(siteZone.getPartner_code()));
+                    siteList.add(hmAux);
+                }
+            }
+        }
+        //
+        return siteList;
+    }
+    private boolean isSiteInList(ArrayList<HMAux> siteList, Integer site_code) {
+        for (HMAux hmAux : siteList) {
+            if( hmAux != null
+                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(site_code))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
+    private ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
+        ArrayList<HMAux> siteZoneList = new ArrayList<>();
+        if(rawSiteZone != null){
+            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
+                HMAux hmAux = new HMAux();
+                if(!isSiteZoneInList(siteZoneList,siteZone.getSite_code(),siteZone.getZone_code())){
+                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getZone_code()));
+                    hmAux.put(SearchableSpinner.ID, siteZone.getZone_id());
+                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getZone_desc());
+                    hmAux.put(MD_Site_ZoneDao.SITE_CODE,String.valueOf(siteZone.getSite_code()));
+                    siteZoneList.add(hmAux);
+                }
+            }
+        }
+        //
+        return siteZoneList;
+    }
+
+    private boolean isSiteZoneInList(ArrayList<HMAux> siteList, Integer site_code,Integer zone_code) {
+        for (HMAux hmAux : siteList) {
+            if( hmAux != null
+                    && hmAux.hasConsistentValue(MD_Site_ZoneDao.SITE_CODE)
+                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                    && hmAux.get(MD_Site_ZoneDao.SITE_CODE).equals(String.valueOf(site_code))
+                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(zone_code))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
 }

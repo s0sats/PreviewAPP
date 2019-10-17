@@ -51,17 +51,20 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.model.TSO_Set_Service_Edit_Env;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
-import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
+import com.namoadigital.prj001.receiver.WBR_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.service.WS_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
@@ -108,7 +111,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
     public String full_status;
 
-    private Context context;
+//    private Context context;
     private Bundle bundle;
 
     private DrawerLayout mDrawerLayout;
@@ -188,7 +191,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void iniSetup() {
-        context = Act028_Main.this;
+//        context = Act028_Main.this;
 
         fm = getSupportFragmentManager();
 
@@ -252,6 +255,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         transList.add("dialog_form_prod_ss_product_lbl");
         transList.add("dialog_form_prod_ss_product_search_ttl");
         transList.add("dialog_form_prod_serial_lbl");
+        //
+        transList.add("dialog_set_service_edit_service_ttl");
+        transList.add("dialog_set_service_edit_service_ttl");
+        transList.add("dialog_get_service_edit_service_msg");
+        transList.add("dialog_get_service_edit_service_msg");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -887,7 +895,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             setWsSoProcess("");
             Gson gson = new Gson();
             TSO_Get_Service_Edit_Rec  item = gson.fromJson(mLink, TSO_Get_Service_Edit_Rec.class);
-            showService_Pack_Details(item);
+            disableProgressDialog();
+            act028_opc.showService_Pack_Details(item);
         }else{
 
         }
@@ -1982,13 +1991,13 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             cleanUpResults();
             //
             enableProgressDialog(
-                    hmAux_Trans.get("dialog_service_edit_service_ttl"),
-                    hmAux_Trans.get("dialog_service_edit_service_msg"),
+                    hmAux_Trans.get("dialog_get_service_edit_service_ttl"),
+                    hmAux_Trans.get("dialog_get_service_edit_service_msg"),
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
             //
-            Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
+            Intent mIntent = new Intent(context, WBR_SO_Get_Service_For_Edit.class);
             Bundle bundle = new Bundle();
             //
             int site_code=0;
@@ -2008,9 +2017,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                 serial_code = Integer.parseInt(mSoAux.get(SM_SODao.SERIAL_CODE));
             }
             //
-            if (mSoAux.hasConsistentValue(SM_SO_ServiceDao.SERVICE_CODE)) {
-                service_code = mService.getService_code();
-            }
+            service_code = mService.getService_code();
             //
             bundle.putInt(SM_SODao.SITE_CODE, site_code);
             bundle.putInt(SM_SODao.PRODUCT_CODE,product_code);
@@ -2025,149 +2032,36 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         }
     }
 
-    public void showService_Pack_Details(final TSO_Get_Service_Edit_Rec item){
-
-        ArrayList<HMAux> siteOption = new ArrayList<>();
-        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
-
-        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ) {
-            siteOption = generateSiteOption(item.getSite_zone());
-            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
-        }
-
-        final ServiceRegisterDialog dialog =
-                new ServiceRegisterDialog(
-                        context,
-                        ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE,
-                        hmAux_Trans,
-                        mService.getService_desc(),
-                        mService.getPrice(),
-                        item,
-                        siteOption,
-                        siteZoneOption,
-                        item.getPartner_list()
-                );
-        final int finalDialogType = ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE;
-        final ArrayList<HMAux> finalSiteOption = siteOption;
-
-        dialog.setBtnOkListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (finalDialogType ){
-                    case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
-
-                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
-                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()  && Double.valueOf(dialog.getMk_price_val()) >= 0
-                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
-                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
-                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                            ) {
-
-                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
-                                }
-
-                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
-                                }
-
-                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
-                                } else {
-                                    item.setPartner_code_selected(null);
-                                }
-
-                                dialog.dismiss();
-                            } else {
-                                ToolBox.alertMSG(
-                                        context,
-                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
-                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
-                                        null,
-                                        0
-                                );
-                            }
-                        break;
-                }
-            }
-        });
-
-        dialog.setBtnCancelListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void callServiceEditService(TSO_Service_Search_Obj item) {
-
-    }
-
-    private ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
-        ArrayList<HMAux> siteList = new ArrayList<>();
-        if(rawSiteZone != null){
-            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
-                HMAux hmAux = new HMAux();
-                if(!isSiteInList(siteList,siteZone.getSite_code())){
-                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getSite_code()));
-                    hmAux.put(SearchableSpinner.ID, siteZone.getSite_id());
-                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getSite_desc());
-                    hmAux.put(MD_PartnerDao.PARTNER_CODE, String.valueOf(siteZone.getPartner_code()));
-                    siteList.add(hmAux);
-                }
-            }
-        }
+    public void callServiceEditSet(Integer zone_code, Integer site_code, Integer partner_code) {
+        setWsSoProcess(WS_SO_Set_Service_For_Edit.class.getName());
         //
-        return siteList;
-    }
-    private boolean isSiteInList(ArrayList<HMAux> siteList, Integer site_code) {
-        for (HMAux hmAux : siteList) {
-            if( hmAux != null
-                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
-                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(site_code))
-            ){
-                return true;
-            }
-        }
+        cleanUpResults();
         //
-        return false;
+        enableProgressDialog(
+                hmAux_Trans.get("dialog_set_service_edit_service_ttl"),
+                hmAux_Trans.get("dialog_set_service_edit_service_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Set_Service_For_Edit.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putInt(SM_SO_ServiceDao.ZONE_CODE, zone_code);
+        bundle.putInt(SM_SO_ServiceDao.SITE_CODE, site_code);
+        bundle.putInt(SM_SO_ServiceDao.PARTNER_CODE, partner_code);
+        bundle.putInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, mService.getCategory_price_code());
+        bundle.putInt(SM_SO_ServiceDao.PACK_CODE, mService.getPack_code());
+        bundle.putInt(SM_SO_ServiceDao.PACK_SEQ, mService.getPack_seq());
+        bundle.putInt(SM_SO_ServiceDao.PRICE_LIST_CODE, mService.getPrice_list_code());
+        bundle.putInt(SM_SO_ServiceDao.SO_PREFIX, mService.getSo_prefix());
+        bundle.putInt(SM_SO_ServiceDao.SO_CODE, mService.getSo_code());
+        bundle.putInt(SM_SO_ServiceDao.SERVICE_CODE, mService.getService_code());
+        bundle.putInt(SM_SO_ServiceDao.SERVICE_SEQ, mService.getService_seq());
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
-    private ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){
-        ArrayList<HMAux> siteZoneList = new ArrayList<>();
-        if(rawSiteZone != null){
-            for (TSO_Service_Search_Detail_Params_Obj siteZone : rawSiteZone) {
-                HMAux hmAux = new HMAux();
-                if(!isSiteZoneInList(siteZoneList,siteZone.getSite_code(),siteZone.getZone_code())){
-                    hmAux.put(SearchableSpinner.CODE, String.valueOf(siteZone.getZone_code()));
-                    hmAux.put(SearchableSpinner.ID, siteZone.getZone_id());
-                    hmAux.put(SearchableSpinner.DESCRIPTION, siteZone.getZone_desc());
-                    hmAux.put(MD_Site_ZoneDao.SITE_CODE,String.valueOf(siteZone.getSite_code()));
-                    siteZoneList.add(hmAux);
-                }
-            }
-        }
-        //
-        return siteZoneList;
-    }
-
-    private boolean isSiteZoneInList(ArrayList<HMAux> siteList, Integer site_code,Integer zone_code) {
-        for (HMAux hmAux : siteList) {
-            if( hmAux != null
-                    && hmAux.hasConsistentValue(MD_Site_ZoneDao.SITE_CODE)
-                    && hmAux.hasConsistentValue(SearchableSpinner.CODE)
-                    && hmAux.get(MD_Site_ZoneDao.SITE_CODE).equals(String.valueOf(site_code))
-                    && hmAux.get(SearchableSpinner.CODE).equals(String.valueOf(zone_code))
-            ){
-                return true;
-            }
-        }
-        //
-        return false;
-    }
 }

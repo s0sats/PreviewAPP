@@ -1,13 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 public class TSO_Get_Service_Edit_Rec {
+    @Expose
     private String app;
+    @Expose
     private String validation;
+    @Expose
     private String link_url;
+    @Expose
     private String error_msg;
-    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone = new ArrayList<>();
+    @Expose
+    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone_list = new ArrayList<>();
+    @Expose
     private ArrayList<MD_Partner> partner_list = new ArrayList<>();
     //Atributos apenas para lista
     private Integer site_code_selected;
@@ -47,12 +55,12 @@ public class TSO_Get_Service_Edit_Rec {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<TSO_Service_Search_Detail_Params_Obj> getSite_zone() {
-        return site_zone;
+    public ArrayList<TSO_Service_Search_Detail_Params_Obj> getSite_zone_list() {
+        return site_zone_list;
     }
 
-    public void setSite_zone(ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone) {
-        this.site_zone = site_zone;
+    public void setSite_zone_list(ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone_list) {
+        this.site_zone_list = site_zone_list;
     }
 
     public ArrayList<MD_Partner> getPartner_list() {
