@@ -19,7 +19,6 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Act043_Adapter_Services_Packs_List_RV extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
@@ -110,7 +109,7 @@ public class Act043_Adapter_Services_Packs_List_RV extends RecyclerView.Adapter<
 
         private void setPrice(Double price, boolean hasNullPrice) {
             //tv_price.setText(price == null ? null : new DecimalFormat("#,##0.00").format(price));
-            tv_price.setText(price == null ? null : (new DecimalFormat("###0.00").format(price)).replace(",","."));
+            tv_price.setText(price == null ? null : ToolBox_Inf.formatDoublePriceToScreen(price));
             if(hasNullPrice) {
                 tv_price.setTextColor(context.getResources().getColor(R.color.namoa_color_danger_red));
             } else{
