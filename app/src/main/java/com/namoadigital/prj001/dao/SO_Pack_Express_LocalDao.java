@@ -45,8 +45,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String CONTRACT_DESC = "contract_desc";
     public static final String PRIORITY_CODE = "priority_code";
     public static final String PRIORITY_DESC = "priority_desc";
-    public static final String SITE_ID = "site_id";
-    public static final String SITE_DESC = "site_desc";
     public static final String OPERATION_ID = "operation_id";
     public static final String OPERATION_DESC = "operation_desc";
     public static final String PRODUCT_ID = "product_id";
@@ -58,10 +56,22 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String RET_CODE = "ret_code";
     public static final String RET_MSG = "ret_msg";
     public static final String STATUS = "status";
+    public static final String EXEC_SITE_CODE = "exec_site_code" ;
+    public static final String EXEC_SITE_ID = "exec_site_id";
+    public static final String EXEC_SITE_DESC = "exec_site_desc";
+    public static final String EXEC_ZONE_CODE = "exec_zone_code";
+    public static final String EXEC_ZONE_ID = "exec_zone_id";
+    public static final String EXEC_ZONE_DESC = "exec_zone_desc";
     public static final String LOG_DATE = "log_date";
     public static final String TOKEN = "token";
 
-    public static String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC, SITE_ID, SITE_DESC, OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, LOG_DATE, TOKEN};
+    public static String[] columns = {
+        CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE,
+        SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC,
+        OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE,
+        SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, EXEC_SITE_CODE,EXEC_SITE_ID,EXEC_SITE_DESC,
+        EXEC_ZONE_CODE,EXEC_ZONE_ID, EXEC_ZONE_DESC, LOG_DATE, TOKEN
+    };
 
     public SO_Pack_Express_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -339,16 +349,13 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             } else {
                 so_pack_express_local.setPriority_desc(cursor.getString(cursor.getColumnIndex(PRIORITY_DESC)));
             }
-            if (cursor.isNull(cursor.getColumnIndex(SITE_ID))) {
-                so_pack_express_local.setSite_id(null);
-            } else {
-                so_pack_express_local.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(SITE_DESC))) {
-                so_pack_express_local.setSite_desc(null);
-            } else {
-                so_pack_express_local.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
-            }
+            so_pack_express_local.setExec_site_code(cursor.getInt(cursor.getColumnIndex(EXEC_SITE_CODE)));
+            so_pack_express_local.setExec_site_id(cursor.getString(cursor.getColumnIndex(EXEC_SITE_ID)));
+            so_pack_express_local.setExec_site_desc(cursor.getString(cursor.getColumnIndex(EXEC_SITE_DESC)));
+            so_pack_express_local.setExec_zone_code(cursor.getInt(cursor.getColumnIndex(EXEC_ZONE_CODE)));
+            so_pack_express_local.setExec_zone_id(cursor.getString(cursor.getColumnIndex(EXEC_ZONE_ID)));
+            so_pack_express_local.setExec_zone_desc(cursor.getString(cursor.getColumnIndex(EXEC_ZONE_DESC)));
+            so_pack_express_local.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
             if (cursor.isNull(cursor.getColumnIndex(OPERATION_ID))) {
                 so_pack_express_local.setOperation_id(null);
             } else {
@@ -400,7 +407,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
                 so_pack_express_local.setRet_msg(cursor.getString(cursor.getColumnIndex(RET_MSG)));
             }
             so_pack_express_local.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
-            so_pack_express_local.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
             so_pack_express_local.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             //
             return so_pack_express_local;
@@ -465,11 +471,23 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getPriority_desc() != null) {
                 contentValues.put(PRIORITY_DESC, so_pack_express_local.getPriority_desc());
             }
-            if (so_pack_express_local.getSite_id() != null) {
-                contentValues.put(SITE_ID, so_pack_express_local.getSite_id());
+            if (so_pack_express_local.getExec_site_code() > 0) {
+                contentValues.put(EXEC_SITE_CODE, so_pack_express_local.getExec_site_code());
             }
-            if (so_pack_express_local.getSite_desc() != null) {
-                contentValues.put(SITE_DESC, so_pack_express_local.getSite_desc());
+            if (so_pack_express_local.getExec_site_id() != null) {
+                contentValues.put(EXEC_SITE_ID, so_pack_express_local.getExec_site_id());
+            }
+            if (so_pack_express_local.getExec_site_desc() != null) {
+                contentValues.put(EXEC_SITE_DESC, so_pack_express_local.getExec_site_desc());
+            }
+            if (so_pack_express_local.getExec_zone_code() > 0) {
+                contentValues.put(EXEC_ZONE_CODE, so_pack_express_local.getExec_zone_code());
+            }
+            if (so_pack_express_local.getExec_zone_id() != null) {
+                contentValues.put(EXEC_ZONE_ID, so_pack_express_local.getExec_zone_id());
+            }
+            if (so_pack_express_local.getExec_zone_desc() != null) {
+                contentValues.put(EXEC_ZONE_DESC, so_pack_express_local.getExec_zone_desc());
             }
             if (so_pack_express_local.getOperation_id() != null) {
                 contentValues.put(OPERATION_ID, so_pack_express_local.getOperation_id());

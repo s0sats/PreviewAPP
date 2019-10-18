@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -22,6 +23,7 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -36,6 +38,7 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
@@ -65,8 +68,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     private MD_SiteDao mdSiteDao;
     private MD_OperationDao mdOperationDao;
     private MD_Product_SerialDao productSerialDao;
+    private MD_Site_ZoneDao zoneDao;
 
-    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao, MD_SiteDao mdSiteDao, MD_OperationDao mdOperationDao, MD_Product_SerialDao productSerialDao) {
+    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao, MD_SiteDao mdSiteDao, MD_Site_ZoneDao zoneDao, MD_OperationDao mdOperationDao, MD_Product_SerialDao productSerialDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -77,6 +81,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         this.mdSiteDao = mdSiteDao;
         this.mdOperationDao = mdOperationDao;
         this.productSerialDao = productSerialDao;
+        this.zoneDao = zoneDao;
     }
 
     @Override
@@ -180,8 +185,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         SO_Pack_Express_Local so_pack_express_local = new SO_Pack_Express_Local();
         MD_Site md_site = getSiteInfo();
         MD_Operation md_operation = getOperationInfo();
+        MD_Site_Zone md_zone = getZoneInfo();
         //
-        if (md_site == null || md_operation == null) {
+        if (md_site == null ||  md_zone == null|| md_operation == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_site_or_operation_not_found_ttl"),
                     hmAux_Trans.get("alert_site_or_operation_not_found_msg")
@@ -202,8 +208,12 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         so_pack_express_local.setCustomer_code(mSo_pack_express.getCustomer_code());
         so_pack_express_local.setSite_code(Long.parseLong(md_site.getSite_code()));
-        so_pack_express_local.setSite_id(md_site.getSite_id());
-        so_pack_express_local.setSite_desc(md_site.getSite_desc());
+        so_pack_express_local.setExec_site_code(Integer.parseInt(md_site.getSite_code()));
+        so_pack_express_local.setExec_site_id(md_site.getSite_id());
+        so_pack_express_local.setExec_site_desc(md_site.getSite_desc());
+        so_pack_express_local.setExec_zone_code(md_zone.getZone_code());
+        so_pack_express_local.setExec_zone_id(md_zone.getZone_id());
+        so_pack_express_local.setExec_zone_desc(md_zone.getZone_desc());
         so_pack_express_local.setOperation_code(md_operation.getOperation_code());
         so_pack_express_local.setOperation_id(md_operation.getOperation_id());
         so_pack_express_local.setOperation_desc(md_operation.getOperation_desc());
@@ -225,6 +235,20 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         //executeSO_Pack_Express_Local(connectionStatusAlter);
         executeSerialSave(connectionStatusAlter);
+    }
+
+    private MD_Site_Zone getZoneInfo() {
+        MD_Site_Zone md_site_zone = null;
+        //
+        md_site_zone = zoneDao.getByString(
+                new MD_Site_Zone_Sql_003(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_Site_Code(context)),
+                    ToolBox_Con.getPreference_Zone_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return md_site_zone;
     }
 
     private MD_Site getSiteInfo() {

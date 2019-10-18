@@ -26,7 +26,11 @@ public class SO_Pack_Express_Local_Sql_012 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "      S.*\n," +
-                        "      '" + Constant.PARAM_KEY_TYPE_SO_EXPRESS + "' " + Constant.PARAM_KEY_TYPE + ",\n" +
+                        "      S.exec_site_id "+SM_SODao.SITE_ID+" \n," +
+                        "      S.exec_site_desc "+SM_SODao.SITE_DESC+" \n," +
+                        "      S.exec_zone_id "+ SO_Pack_Express_LocalDao.EXEC_ZONE_ID + " \n," +
+                        "      S.exec_zone_desc " +SO_Pack_Express_LocalDao.EXEC_ZONE_DESC + " \n," +
+                        "      '" + Constant.PARAM_KEY_TYPE_SO_EXPRESS + "' " + Constant.PARAM_KEY_TYPE + "\n ," +
                         "   '' " + SM_SODao.CLIENT_TYPE + ",\n" +
                         "   '' " + SM_SODao.DEADLINE + "\n" +
                         " FROM\n" +
