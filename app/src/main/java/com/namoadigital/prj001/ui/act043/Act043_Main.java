@@ -2,9 +2,11 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,13 +16,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
+
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
@@ -33,14 +40,20 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject {
+public class Act043_Main extends Base_Activity_Frag_NFC_Geral
+        implements Act043_Main_View, Act027_Opc.IAct027_Opc, onSmSoRequestObject, Act043_I_Add_Service_Interaction, Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener{
 
     public static final String SELECTION_FRAG_PREVIEW = "FRAG_PREVIEW";
+    public static final String SELECTION_FRAG_PACKAGE_DETAIL_LIST = "SELECTION_FRAG_PACKAGE_DETAIL_LIST";
     public static final String SELECTION_FRAG_SERVICE_LIST = "FRAG_SERVICE_LIST";
+
+    public static final String TYPE_PS_PACK = "P";
+    public static final String TYPE_PS_SERVICE = "S";
 
     private Bundle bundle;
     private Act043_Main_Presenter_Impl mPresenter;
@@ -52,6 +65,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     //FRAGMENTS
     private Act043_Frag_Preview act043_frag_preview;
     private Act043_Frag_Service_List act043_frag_service_list;
+    private Act043_Frag_Package_Detail_List act043_frag_package_detail_list;
     private Act027_Opc act027_opc_;
     private String currentFrag = "";
     private Act043_Frag_Service_List mServiceList;
@@ -59,6 +73,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
+    private ArrayList<MD_Partner> partner_list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +113,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("act043_title");
         transList.add("alert_discard_services_ttl");
         transList.add("alert_discard_services_msg");
+        transList.add("alert_service_list_not_found_ttl");
+        transList.add("alert_service_list_not_found_msg");
         //
         //FragPreview
         transList.add("btn_search_service");
@@ -117,15 +134,42 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("dialog_receiving_add_service_msg");
         transList.add("alert_service_desc");
         transList.add("alert_service_id");
+        transList.add("alert_package_id");
         transList.add("alert_service_qtd");
         transList.add("alert_service_price");
         transList.add("alert_service_price_hint");
         transList.add("alert_service_comments");
         transList.add("alert_service_remove");
+        transList.add("alert_package_details");
+        transList.add("alert_site_lbl");
+        transList.add("alert_zone_lbl");
+        transList.add("alert_partner_lbl");
         transList.add("alert_so_status");
         transList.add("alert_no_service_found_ttl");
         transList.add("alert_no_service_found_msg");
+        transList.add("alert_invalid_service_value_ttl");
+        transList.add("alert_invalid_service_value_msg");
+        transList.add("alert_invalid_package_total_value_ttl");
+        transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
+        //Frag_Package_Detail_List
+        transList.add("tv_package_detail_list_ttl");
+        transList.add("btn_save_package_detail");
+        transList.add("btn_cancel_package_detail");
+        transList.add("alert_service_without_price_ttl");
+        transList.add("alert_service_without_price_msg");
+        transList.add("site_package_detail_lbl");
+        transList.add("zone_package_detail_lbl");
+        transList.add("partner_package_detail_lbl");
+        transList.add("comment_package_detail_lbl");
+        transList.add("amount_package_detail_lbl");
+        transList.add("btn_back");
+        transList.add("alert_add_pack_ttl");
+        transList.add("alert_add_pack_confirm");
+        transList.add("alert_invalid_pack_ttl");
+        transList.add("alert_invalid_pack_msg");
+        transList.add("alert_remove_pack_ttl");
+        transList.add("alert_remove_pack_confirm");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -280,6 +324,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_preview = new Act043_Frag_Preview();
         act043_frag_preview.setBaInfra(this);
         act043_frag_preview.setHmAux_Trans(hmAux_Trans);
+
+
+        act043_frag_package_detail_list = Act043_Frag_Package_Detail_List.newInstance(
+                1,
+                hmAux_Trans
+        );
+
 //        act043_frag_preview.setmSm_so(mSm_so);
         //
         act043_frag_service_list = new Act043_Frag_Service_List();
@@ -318,7 +369,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         act043_frag_service_list.setHmAux_Trans(hmAux_Trans);
 //        act043_frag_service_list.setmService(mSm_so);
     }
-
+    //region Metodo interface onSmSoRequestObject
     @Override
     public SM_SO getSmSo() {
         return mSm_so;
@@ -328,8 +379,44 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
     public HMAux getHMAux_Trans() {
         return hmAux_Trans;
     }
+    //endregion
 
+    //region Metodo interface Act043_I_Add_Service_Interaction
+    @Override
+    public ArrayList<TSO_Service_Search_Obj> getPackServiceAdapterList(ArrayList<TSO_Service_Search_Obj> packServiceList) {
+        return mPresenter.prepareListToAdapter(packServiceList);
+    }
 
+    @Override
+    public ArrayList<MD_Partner> getPartnerList() {
+        return partner_list != null ? partner_list : new ArrayList<MD_Partner>();
+    }
+
+    @Override
+    public ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone) {
+        return mPresenter.generateSiteOption(rawSiteZone);
+    }
+
+    @Override
+    public ArrayList<HMAux> generateSiteZoneOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone) {
+        return mPresenter.generateSiteZoneOption(rawSiteZone);
+    }
+
+    @Override
+    public void calculateTotalPrice(TSO_Service_Search_Obj packService) {
+        mPresenter.calculateTotalPrice(packService);
+    }
+
+    @Override
+    public void setPackageServiceDetailList(TSO_Service_Search_Obj packService) {
+        act043_frag_package_detail_list.setPackageDataset(packService);
+    }
+
+    @Override
+    public void resetPackService(TSO_Service_Search_Obj packService) {
+        mPresenter.resetPackService(packService);
+    }
+    //endregion
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
@@ -353,10 +440,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                 break;
             case Act027_Main.SELECTION_SERIAL:
                 callAct027(context, Act027_Main.SELECTION_SERIAL);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                break;
-            case Act027_Main.SELECTION_HEADER:
-                callAct027(context, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case Act027_Main.SELECTION_APPROVAL:
@@ -413,6 +496,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                     );
                 }
                 break;
+            case Act027_Main.SELECTION_HEADER:
             default:
                 callAct027(context, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -457,6 +541,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         this.currentFrag = currentFrag;
     }
 
+    public ArrayList<MD_Partner> getPartner_list() {
+        return partner_list;
+    }
+
     @Override
     public void setFragByTag(String tag) {
         switch (tag){
@@ -465,6 +553,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
                 break;
             case  SELECTION_FRAG_SERVICE_LIST:
                 setFrag(act043_frag_service_list,SELECTION_FRAG_SERVICE_LIST);
+                break;
+            case SELECTION_FRAG_PACKAGE_DETAIL_LIST:
+                setFrag(act043_frag_package_detail_list,SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 break;
         }
     }
@@ -475,6 +566,22 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
            return act043_frag_service_list.hasAnyItemAdded();
         }else{
             return false;
+        }
+    }
+
+    @Override
+    public TSO_Service_Search_Obj getPackDetailObj() {
+        if(act043_frag_package_detail_list != null){
+            return act043_frag_package_detail_list.getPackObj();
+        }else{
+            return new TSO_Service_Search_Obj();
+        }
+    }
+
+    public void resetFragListPosition(){
+        //Reseta var de posição do item da lista
+        if(act043_frag_service_list != null){
+            act043_frag_service_list.resetClickedItemPosition();
         }
     }
 
@@ -574,6 +681,127 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
+
+    @Override
+    public void alertPackDetailRemoveConfirm(final TSO_Service_Search_Obj packageDetailObj) {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            hmAux_Trans.get("alert_remove_pack_ttl"),
+            hmAux_Trans.get("alert_remove_pack_confirm"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    resetPackService(packageDetailObj);
+                    setFragByTag(Act043_Main.SELECTION_FRAG_SERVICE_LIST);
+                }
+            },
+            1
+        );
+    }
+
+    private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
+        int dialogType = 0;
+
+        ArrayList<HMAux> siteOption = new ArrayList<>();
+        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
+        if(Act043_Main.TYPE_PS_SERVICE.equalsIgnoreCase(item.getType_ps())){
+            dialogType =1;
+        }
+        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
+            siteOption = generateSiteOption(item.getSite_zone());
+            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
+        }
+
+        final ServiceRegisterDialog dialog =
+            new ServiceRegisterDialog(
+                context,
+                dialogType,
+                hmAux_Trans,
+                item,
+                siteOption,
+                siteZoneOption,
+                getPartnerList()
+            );
+        //
+        final int finalDialogType = dialogType;
+        final ArrayList<HMAux> finalSiteOption = siteOption;
+        dialog.setBtnOkListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (finalDialogType ){
+                    case 0:
+
+                        break;
+                    case 1:
+                        if(dialog.getCb_remove_val()){
+                            Toast.makeText(context, "Delete item", Toast.LENGTH_SHORT).show();
+                        }else {
+                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
+                                && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
+                                && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                item.setSelected(true);
+                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
+                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                } else {
+                                    item.setPartner_code_selected(null);
+                                }
+                                item.setComment(dialog.getMk_comments_val());
+                                calculateTotalPrice(item);
+                                dialog.dismiss();
+                            } else {
+                                ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                    null,
+                                    0
+                                );
+                            }
+                        }
+                        break;
+
+                }
+
+
+//                if (checkFields(
+//                        item,
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
+//                        dialog.getMk_price_val(),
+//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
+//                )) {
+
+//                } else {
+//                    dialog.resetMk_price_val();
+//                }
+            }
+        });
+        dialog.setBtnCancelListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPackageServiceDetailList(item);
+                //delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
     //region TRATATIVA_FCM
 
     /**
@@ -606,6 +834,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
 
     @Override
     protected void onDestroy() {
+        //todo REVER
+        mPresenter.deleteJsonFile();
         //Para receiver que ouve o FCM
         startStopFCMReceiver(false);
         //
@@ -627,20 +857,33 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //
         if (ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())) {
             //
-            if (hmAux.containsKey(Constant.PARAM_KEY_WS_RETURN)) {
-                //25/10/18
-                ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList(hmAux.get(Constant.PARAM_KEY_WS_RETURN));
-                if(servicesList != null && servicesList.size() > 0) {
-                    act043_frag_service_list.setmService(mSm_so);
-                    act043_frag_service_list.setDataReturn(servicesList);
-                    setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
-                }else{
-                    ToolBox.alertMSG(
+            if (hmAux != null && hmAux.hasConsistentValue(ConstantBaseApp.WS_RETURN_FILENAME)) {
+                mPresenter.setFileName(hmAux.get(ConstantBaseApp.WS_RETURN_FILENAME));
+                //
+                if(mPresenter.jsonFileExists()) {
+                    partner_list = mPresenter.getPackServicePartnerList();
+                    ArrayList<TSO_Service_Search_Obj> servicesList = mPresenter.processServiceList();
+                    if (servicesList != null && servicesList.size() > 0) {
+                        act043_frag_service_list.setmService(mSm_so);
+                        act043_frag_service_list.setAdapterData(
+                            mPresenter.prepareListToAdapter(new ArrayList<>(servicesList))
+                        );
+                        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                    } else {
+                        ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_service_found_ttl"),
                             hmAux_Trans.get("alert_no_service_found_msg"),
                             null,
                             0
+                        );
+                    }
+                } else{
+                    showAlert(
+                        hmAux_Trans.get("alert_service_list_not_found_ttl"),
+                        hmAux_Trans.get("alert_service_list_not_found_msg"),
+                        null
+
                     );
                 }
             } else {
@@ -650,6 +893,16 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
          //   processSoDownloadResult(hmAux);
         }
         disableProgressDialog();
+    }
+
+    private void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listenerOK) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            listenerOK,
+            0
+        );
     }
 //
 //      AVALIAR QUAL METODO SERÁ USADO, CLIQUE NO SYNC CHAMADA ACT027

@@ -5131,6 +5131,25 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * LUCHE - 08/10/2019
+     *
+     * Formata o double do java para formato esperado pelo servidor:
+     * Sem casa de milhar e casa decimal representado por "ponto"
+     *
+     * @param vDouble - Valor double
+     * @return  - Retorno string no formato esperado pelo server.
+     */
+    public static String formatDoubleToServer(Double vDouble){
+        try {
+            return (new DecimalFormat("###0.00").format(vDouble)).replace(",", ".");
+        } catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "0.00";
+        }
+
+    }
+
     public static File[] getListDB(final String prefix) {
         File fileList = new File(Constant.DB_PATH);
         File[] files = fileList.listFiles(new FilenameFilter() {

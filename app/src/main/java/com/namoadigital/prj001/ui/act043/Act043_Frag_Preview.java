@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -182,6 +181,9 @@ public class Act043_Frag_Preview extends BaseFragment {
     }
 
     private void setContentIntoView() {
+        //Reseta var de posição do fragmento de lista
+        mMain.resetFragListPosition();
+        //
         tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
         //
         btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
