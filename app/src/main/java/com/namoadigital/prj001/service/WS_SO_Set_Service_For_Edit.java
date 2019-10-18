@@ -42,8 +42,8 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
 
         try {
             TSO_Set_Service_Edit_Env service_edit_env = (TSO_Set_Service_Edit_Env) bundle.getSerializable(WS_SO_Set_Service_For_Edit.class.getName());
-            int zone_code = bundle.getInt(SM_SO_ServiceDao.ZONE_CODE, -1);
             int site_zone = bundle.getInt(SM_SO_ServiceDao.SITE_CODE, -1);
+            int zone_code = bundle.getInt(SM_SO_ServiceDao.ZONE_CODE, -1);
             int partner_code = bundle.getInt(SM_SO_ServiceDao.PARTNER_CODE, -1);
             int category_price_code = bundle.getInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, -1);
             int pack_code = bundle.getInt(SM_SO_ServiceDao.PACK_CODE, -1);
@@ -53,8 +53,9 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
             int so_code = bundle.getInt(SM_SO_ServiceDao.SO_CODE, -1);
             int service_code = bundle.getInt(SM_SO_ServiceDao.SERVICE_CODE, -1);
             int service_seq = bundle.getInt(SM_SO_ServiceDao.SERVICE_SEQ, -1);
+            int so_scn = bundle.getInt(SM_SODao.SO_SCN, -1);
             //
-            processSOSetServiceEdit(zone_code, site_zone, partner_code, category_price_code, pack_code, pack_seq, price_list_code, so_prefix, so_code, service_code, service_seq);
+            processSOSetServiceEdit(zone_code, site_zone, partner_code, category_price_code, pack_code, pack_seq, price_list_code, so_prefix, so_code, service_code, service_seq, so_scn);
             //
         }catch (Exception e) {
 
@@ -70,7 +71,7 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         }
     }
 
-    private void processSOSetServiceEdit(int zone_code, int site_zone, int partner_code, int category_price_code, int pack_code, int pack_seq, int price_list_code, int so_prefix, int so_code, int service_code, int service_seq) throws Exception {
+    private void processSOSetServiceEdit(int zone_code, int site_zone, int partner_code, int category_price_code, int pack_code, int pack_seq, int price_list_code, int so_prefix, int so_code, int service_code, int service_seq, int so_scn) throws Exception {
 
         loadTranslation();
 
@@ -83,9 +84,22 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //body
-        env.setZone_code(zone_code);
-        env.setSite_code(site_zone);
-        env.setPartner_code(partner_code);
+        env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
+        if(zone_code == -1) {
+            env.setZone_code(null);
+        }else{
+            env.setZone_code(zone_code);
+        }
+        if(site_zone == -1) {
+            env.setSite_code(null);
+        }else{
+            env.setSite_code(site_zone);
+        }
+        if(partner_code == -1) {
+            env.setPartner_code(null);
+        }else{
+            env.setPartner_code(partner_code);
+        }
         env.setCategory_price_code(category_price_code);
         env.setPack_code(pack_code);
         env.setPack_seq(pack_seq);
@@ -94,15 +108,16 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         env.setSo_code(so_code);
         env.setService_code(service_code);
         env.setService_seq(service_seq);
+        env.setSo_scn(so_scn);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SERVICE_EDIT_SET,
                 gson.toJson(env)
         );
 
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
 
         TSO_SO_Service_Rec rec = gson.fromJson(
                 resultado,
@@ -124,7 +139,13 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         ) {
             return;
         }
+
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_so_return"), "", "0");
         //
+        processSetServiceEditRet(rec);
+    }
+
+    private void processSetServiceEditRet(TSO_SO_Service_Rec rec) {
         SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         //
         HMAux hmAux = new HMAux();
@@ -155,6 +176,7 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
                 hmAux.put(so_pk, "OK");
             }
         }
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
     }
 
     private void loadTranslation() {
@@ -162,12 +184,8 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         //
         translist.add("msg_sending_so_data");
         translist.add("msg_receiving_so_data");
-        translist.add("msg_processing_from_to_data");
-        translist.add("msg_re_processing_so_data");
-        translist.add("msg_error_on_save_serial");
+        translist.add("msg_processing_so_return");
         translist.add("msg_save_ok");
-        translist.add("msg_updating_serial");
-        translist.add("error_from_to_processing");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

@@ -784,41 +784,52 @@ public class Act028_Opc extends BaseFragment {
 
                 switch (finalDialogType ){
                     case ServiceRegisterDialog.ALERT_DIALOG_TYPE_SERVICE_EDIT:
-                        if ( ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
-                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
-                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                        ) {
-                            Integer zone_code=null;
-                            Integer site_code=null;
-                            Integer partner_code;
 
-                            if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                zone_code = Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE));
-                            }
+                        if(hasChanged(dialog.get_ss_site_content(), dialog.get_ss_zone_content(), dialog.get_ss_partner_content())) {
+                            if (((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                            ) {
+                                Integer zone_code = null;
+                                Integer site_code = null;
+                                Integer partner_code;
 
-                            if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                site_code = Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE));
-                            }
+                                if (dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    zone_code = Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE));
+                                }
 
-                            if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                partner_code = Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE));
+                                if (dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    site_code = Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE));
+                                }
+
+                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                    partner_code = Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE));
+                                } else {
+                                    partner_code = null;
+                                }
+
+                                if (ToolBox_Con.isOnline(context)) {
+                                    mMain.callServiceEditSet(site_code, zone_code, partner_code);
+                                    dialog.dismiss();
+                                } else {
+                                    ToolBox_Inf.showNoConnectionDialog(context);
+                                }
+
                             } else {
-                                partner_code = null;
+                                ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                        null,
+                                        0
+                                );
                             }
-
-                            if (ToolBox_Con.isOnline(context)) {
-                                mMain.callServiceEditSet(zone_code, site_code, partner_code);
-                                dialog.dismiss();
-                            }else{
-                                ToolBox_Inf.showNoConnectionDialog(context);
-                            }
-
-                        } else {
+                        }else{
                             ToolBox.alertMSG(
                                     context,
-                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
-                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                    hmAux_Trans.get("alert_value_changed_ttl"),
+                                    hmAux_Trans.get("alert_value_changed_msg"),
                                     null,
                                     0
                             );
@@ -838,6 +849,38 @@ public class Act028_Opc extends BaseFragment {
         dialog.show();
     }
 
+    private boolean hasChanged(HMAux ss_site_content, HMAux ss_zone_content, HMAux ss_partner_content) {
+
+        if(ss_site_content.hasConsistentValue(SearchableSpinner.CODE)){
+            if (!ss_site_content.get(SearchableSpinner.CODE).equals(String.valueOf(mService.getSite_code()))) {
+                return true;
+            }
+        }else{
+            if(mService.getSite_code() != null){
+                return true;
+            }
+        }
+        if(ss_zone_content.hasConsistentValue(SearchableSpinner.CODE)){
+            if (!ss_zone_content.get(SearchableSpinner.CODE).equals(String.valueOf(mService.getZone_code()))) {
+                return true;
+            }
+        }else{
+            if(mService.getZone_code() != null){
+                return true;
+            }
+        }
+        if(ss_partner_content.hasConsistentValue(SearchableSpinner.CODE)){
+            if (!ss_partner_content.get(SearchableSpinner.CODE).equals(String.valueOf(mService.getPartner_code()))) {
+                return true;
+            }
+        }else{
+            if(mService.getPartner_code() != null){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
     private ArrayList<HMAux> generateSiteOption(ArrayList<TSO_Service_Search_Detail_Params_Obj> rawSiteZone){

@@ -14,7 +14,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Env;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
-import com.namoadigital.prj001.model.TSO_Service_Search_Env;
 import com.namoadigital.prj001.receiver.WBR_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -44,12 +43,27 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
             int service_code = bundle.getInt(SM_SO_ServiceDao.SERVICE_CODE,0);
+            int category_price_code = bundle.getInt(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, -1);
+            int pack_code = bundle.getInt(SM_SO_ServiceDao.PACK_CODE, -1);
+            int pack_seq = bundle.getInt(SM_SO_ServiceDao.PACK_SEQ, -1);
+            int price_list_code = bundle.getInt(SM_SO_ServiceDao.PRICE_LIST_CODE, -1);
+            int so_prefix = bundle.getInt(SM_SO_ServiceDao.SO_PREFIX, -1);
+            int so_code = bundle.getInt(SM_SO_ServiceDao.SO_CODE, -1);
+            int service_seq = bundle.getInt(SM_SO_ServiceDao.SERVICE_SEQ, -1);
             //
             processSOSearchServiceForEdit(
                     product_code,
                     serial_code,
                     service_code,
-                    site_code
+                    site_code,
+                    category_price_code,
+                    pack_code,
+                    pack_seq,
+                    price_list_code,
+                    so_prefix,
+                    so_code,
+                    service_code,
+                    service_seq
             );
             //
         }catch (Exception e) {
@@ -66,7 +80,7 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
         }
     }
 
-    private void processSOSearchServiceForEdit(int product_code, int serial_code, int service_code, int site_code) throws Exception {
+    private void processSOSearchServiceForEdit(int product_code, int serial_code, int service_code, int site_code, int category_price_code, int pack_code, int pack_seq, int price_list_code, int so_prefix, int so_code, int serviceCode, int service_seq) throws Exception {
 
 
         loadTranslation();
@@ -84,15 +98,23 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
         env.setSerial_code(serial_code);
         env.setSite_code(site_code);
         env.setService_code(service_code);
+        env.setCategory_price_code(category_price_code);
+        env.setPack_code(pack_code);
+        env.setPack_seq(pack_seq);
+        env.setPrice_list_code(price_list_code);
+        env.setSo_prefix(so_prefix);
+        env.setSo_code(so_code);
+        env.setService_code(service_code);
+        env.setService_seq(service_seq);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_service_info_list"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SERVICE_EDIT_GET,
                 gson.toJson(env)
         );
 
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_services"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_service_info_list"), "", "0");
         //
         TSO_Get_Service_Edit_Rec rec = gson.fromJson(
                 resultado,
@@ -118,14 +140,7 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
         processSOGetServiceEditReturn(rec);
-        /*
-        Tratamento de sucesso e erro
-        if (true) {
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-        } else {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-        }
-        */
+
     }
 
     private void processSOGetServiceEditReturn(TSO_Get_Service_Edit_Rec rec) {
@@ -135,14 +150,10 @@ public class WS_SO_Get_Service_For_Edit extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
-        translist.add("msg_sending_so_data");
-        translist.add("msg_receiving_so_data");
-        translist.add("msg_processing_from_to_data");
+        translist.add("msg_searching_service_info_list");
+        translist.add("msg_receiving_service_info_list");
         translist.add("msg_re_processing_so_data");
-        translist.add("msg_error_on_save_serial");
-        translist.add("msg_save_ok");
-        translist.add("msg_updating_serial");
-        translist.add("error_from_to_processing");
+        translist.add("msg_end_proccess");
 
 
         //

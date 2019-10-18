@@ -15,6 +15,7 @@ public class TSO_Set_Service_Edit_Env extends Main_Header_Env {
     Integer site_code;
     Integer zone_code;
     Integer partner_code;
+    private int so_scn;
 
     public String getToken() {
         return token;
@@ -110,5 +111,13 @@ public class TSO_Set_Service_Edit_Env extends Main_Header_Env {
 
     public void setPartner_code(Integer partner_code) {
         this.partner_code = partner_code;
+    }
+
+    public int getSo_scn() {
+        return so_scn;
+    }
+
+    public void setSo_scn(int so_scn) {
+        this.so_scn = so_scn;
     }
 }

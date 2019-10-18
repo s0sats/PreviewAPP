@@ -427,7 +427,11 @@ public class ServiceRegisterDialog extends AlertDialog {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+
                 setSSZoneValue(hmAux);
+                if(hmAux.hasConsistentValue(MD_PartnerDao.PARTNER_CODE)) {
+                    setPartnerForEditSS(true, Integer.valueOf(hmAux.get(MD_PartnerDao.PARTNER_CODE)), siteOption);
+                }
             }
         });
 
@@ -509,6 +513,9 @@ public class ServiceRegisterDialog extends AlertDialog {
 
             if(zoneCodeSelected != null && zoneCodeSelected > 0){
                 act043_ss_zone.setmValue(getSiteZoneDesc(zoneCodeSelected));
+                if(act043_ss_site.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    act043_ss_zone.setmOption(getZoneOption(act043_ss_site.getmValue().get(SearchableSpinner.CODE)));
+                }
             }else {
                 act043_ss_zone.setmValue(zoneOption.get(0));
             }
