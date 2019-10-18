@@ -327,7 +327,12 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     }
 
     public void deleteJsonFile() {
-        File file = new File(Constant.TOKEN_PATH,fileName);
-        file.delete();
+        if(fileName != null && !fileName.isEmpty()) {
+            File file = new File(Constant.TOKEN_PATH, fileName);
+            //
+            if(file.exists() && file.isFile()){
+                file.delete();
+            }
+        }
     }
 }

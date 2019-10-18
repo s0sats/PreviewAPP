@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act043;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,13 +8,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -23,12 +19,17 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Preview;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_SO_Service_Cancel;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
+import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
 import com.namoadigital.prj001.sql.Sql_Act043_002;
+import com.namoadigital.prj001.sql.Sql_Act043_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -51,8 +52,6 @@ public class Act043_Frag_Preview extends BaseFragment {
     private boolean isDialogOpen = false;
     private DialogInterface.OnDismissListener dismissListener;
     onSmSoRequestObject delegateSmSo;
-
-
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -126,16 +125,6 @@ public class Act043_Frag_Preview extends BaseFragment {
                 }
             }
         });
-        //
-        lv_service_pack.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!isDialogOpen) {
-                    HMAux service = (HMAux) parent.getItemAtPosition(position);
-                    showServiceInfoDialog(Act043_Main.SELECTION_FRAG_PREVIEW, service);
-                }
-            }
-        });
     }
 
     private void executeWS_SO_Service_Search() {
@@ -160,6 +149,37 @@ public class Act043_Frag_Preview extends BaseFragment {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    private void executeWSServiceCancel(HMAux hmAux) {
+        if(ToolBox_Con.isOnline(context)) {
+            mMain.setWs_process(WS_SO_Service_Cancel.class.getName());
+            //
+            mMain.showPD(
+                hmAux_Trans.get("dialog_service_cancel_start"),
+                hmAux_Trans.get("dialog_service_cancel_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Service_Cancel.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(SM_SO_ServiceDao.SO_PREFIX, hmAux.get(SM_SO_ServiceDao.SO_PREFIX));
+            bundle.putString(SM_SO_ServiceDao.SO_CODE, hmAux.get(SM_SO_ServiceDao.SO_CODE));
+            bundle.putString(Act043_Main.TYPE_PS, hmAux.get(Act043_Main.TYPE_PS));
+            bundle.putString(SM_SO_ServiceDao.PRICE_LIST_CODE, hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE));
+            bundle.putString(SM_SO_ServiceDao.PACK_CODE, hmAux.get(SM_SO_ServiceDao.PACK_CODE));
+            bundle.putString(SM_SO_ServiceDao.PACK_SEQ, hmAux.get(SM_SO_ServiceDao.PACK_SEQ));
+            bundle.putString(SM_SO_ServiceDao.CATEGORY_PRICE_CODE, hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE));
+            bundle.putString(SM_SO_ServiceDao.SERVICE_CODE, hmAux.get(SM_SO_ServiceDao.SERVICE_CODE));
+            bundle.putString(SM_SO_ServiceDao.SERVICE_SEQ, hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ));
+            bundle.putString(SM_SO_Service_ExecDao.EXEC_CODE, hmAux.get(SM_SO_Service_ExecDao.EXEC_CODE));
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override
@@ -210,16 +230,24 @@ public class Act043_Frag_Preview extends BaseFragment {
                 getPackServiceList(),
                 hmAux_Trans
         );
-        //
-               /* mAdapter.setOnInfoClickListner(new Act043_Adapter_Services_Preview.OnInfoClickListner() {
-                    @Override
-                    public void OnInfoClick(HMAux service) {
-                        //Toast.makeText(context,"Chamar Dialog - Trad",Toast.LENGTH_LONG).show();
-                        if(!isDialogOpen) {
-                            showServiceInfoDialog(Act043_Main.SELECTION_FRAG_PREVIEW, service);
+        //Interface de click no btn de cancelar item
+        mAdapter.setOnRemoveClickListener(new Act043_Adapter_Services_Preview.OnRemoveClickListener() {
+            @Override
+            public void OnRemoveClick(final HMAux service) {
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_service_cancel_ttl"),
+                    hmAux_Trans.get("alert_service_cancel_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            executeWSServiceCancel(service);
                         }
-                    }
-                });*/
+                    },
+                    1
+                );
+            }
+        });
         //
         lv_service_pack.setAdapter(mAdapter);
     }
@@ -242,214 +270,93 @@ public class Act043_Frag_Preview extends BaseFragment {
         return totalVal;
     }
 
+    /**
+     * Metodo que retorna a lista já processada para o adapter.
+     * @return
+     */
     private ArrayList<HMAux> getPackServiceList(){
+        //
+        return generatePackServiceExecList(
+                        (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+                            new Sql_Act043_001(
+                                mSm_so.getCustomer_code(),
+                                mSm_so.getSo_prefix(),
+                                mSm_so.getSo_code()
+                            ).toSqlQuery()
+                        )
+                );
+    }
+
+    /**
+     * LUCHE - 16/10/2019
+     *
+     * Metodo que recebe a lista de serviços e pacotes da O.S e retorna lista transformando
+     * serviços em execuções.*
+     *
+     * @param rawList - Lista de pacotes e serviços da O.S.
+     * @return Lista de execuções e pacotes.
+     */
+    private ArrayList<HMAux> generatePackServiceExecList(ArrayList<HMAux> rawList) {
         ArrayList<HMAux> packServiceList = new ArrayList<>();
-        //
-        packServiceList = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-                new Sql_Act043_001(
-                        mSm_so.getCustomer_code(),
-                        mSm_so.getSo_prefix(),
-                        mSm_so.getSo_code()
-                ).toSqlQuery()
-        );
-        //
+        //Executa loop na lista de pacotes e serviços.
+        for (HMAux hmAux : rawList) {
+            //Se tipo for serviço, pega qtd e gera lista de execuções.
+            if( hmAux.hasConsistentValue(Act043_Main.TYPE_PS)
+                && Act043_Main.TYPE_PS_SERVICE.equals(hmAux.get(Act043_Main.TYPE_PS)))
+            {
+                int qty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
+                //Lista de execuções do serviço.
+                ArrayList<HMAux> execs = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+                    new Sql_Act043_003(
+                        String.valueOf(mSm_so.getCustomer_code()),
+                        hmAux.get(SM_SO_ServiceDao.SO_PREFIX),
+                        hmAux.get(SM_SO_ServiceDao.SO_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PACK_CODE),
+                        hmAux.get(SM_SO_ServiceDao.PACK_SEQ),
+                        hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+                        hmAux.get(SM_SO_ServiceDao.SERVICE_CODE),
+                        hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ)
+                    ).toSqlQuery()
+                );
+                //A lista sempre deverá retornar ao menos 1 resultado,
+                //mesmo assim,verifica se a lista <> de null e tem resultado.
+                if(execs != null && execs.size() > 0){
+                    //Executa loop base na QTD de execuções definida no serviço
+                    for (int i = 0; i < qty ; i++) {
+                        //Se o indice existir na lista de execuções, pega o item da lista de execuções
+                        //Se Não, cria execução "fake" para exibir na lista e tornando possivel o cancelamento.
+                        if( i <= execs.size() - 1 ){
+                            packServiceList.add(execs.get(i));
+                        }else{
+                            packServiceList.add(
+                                getPendingFakeExec(execs.get(0))
+                            );
+                        }
+                    }
+                }
+            }else{
+                packServiceList.add(hmAux);
+            }
+        }
+
         return packServiceList;
     }
 
-    private void showServiceInfoDialog(String frag, HMAux item) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act043_frag_service_list_form, null);
+    /**
+     * Metodo que gera execução "fake" baseada na primeira execução retornada.
+     * @param hmAux - Execução de origem.
+     * @return Execução fake
+     */
+    private HMAux getPendingFakeExec(HMAux hmAux) {
+        //Criar registro "fake" da exec
+        HMAux tmpAux = (HMAux) hmAux.clone();
+        tmpAux.put(SM_SO_Service_ExecDao.EXEC_TMP, "");
+        tmpAux.put(SM_SO_Service_ExecDao.EXEC_CODE, "");
+        tmpAux.put(SM_SO_ServiceDao.STATUS, ConstantBaseApp.SYS_STATUS_PENDING);
+        tmpAux.put(Sql_Act043_003.IN_PROCESS, "0");
         //
-        isDialogOpen = true;
-        //
-        switch (frag){
-            case Act043_Main.SELECTION_FRAG_PREVIEW:
-                serviceInfoPreviewDialogConfig(builder,view,item);
-                break;
-            case Act043_Main.SELECTION_FRAG_SERVICE_LIST:
-                serviceInfoAddServiceDialogConfig(builder, view,item);
-                break;
-        }
-
-    }
-
-
-    private void serviceInfoPreviewDialogConfig(AlertDialog.Builder builder, View view, HMAux item) {
-        final TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
-        final TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
-        final TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
-        final TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
-        final MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        final TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
-        final MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        final TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
-        final MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        final CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        final Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
-        final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
-        //
-        tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
-        tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
-        tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
-        tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
-        cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
-        //
-        btn_cancelar.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        tv_desc.setText(item.get(Sql_Act043_001.PACK_SERVICE_DESC));
-        tv_id_val.setText(item.get(Sql_Act043_001.PACK_SERVICE_DESC_FULL));
-        //
-        mk_qtd_val.setText(item.get(SM_SO_ServiceDao.QTY));
-        mk_qtd_val.setEnabled(false);
-        //
-        mk_price_val.setText(item.get(SM_SO_ServiceDao.PRICE));
-        mk_price_val.setEnabled(false);
-        //
-        mk_comments_val.setText(item.get(SM_SO_ServiceDao.COMMENTS));
-        mk_comments_val.setEnabled(false);
-        //
-        if (item.containsKey(Sql_Act043_001.IN_PROCESS) && item.get(Sql_Act043_001.IN_PROCESS).equalsIgnoreCase("0")) {
-            //HJ SOMENTE S.O EM EDIT PERMITE REMOVER SERVIÇO
-            //NO APP A S.O NUNCA RECEBE STATUS EDIT, ENTÃO ELE NUNCA PODERÁ SER REMOVIDO
-            //ESSE PONTO SERÁ REAVALIADO DEPOIS QUE O CESAR VOLTAR DE FÉRIAS.
-            if(mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)){
-                cb_remove_val.setEnabled(true);
-            }else{
-                cb_remove_val.setEnabled(false);
-            }
-        } else {
-            cb_remove_val.setEnabled(false);
-        }
-        cb_remove_val.setVisibility(View.GONE);
-        //
-        builder
-                .setView(view)
-                .setCancelable(true)
-                .setOnDismissListener(dismissListener)
-        ;
-        //
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-        //
-        btn_cancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(cb_remove_val.isChecked()){
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_remove_service_confirm_ttl"),
-                            hmAux_Trans.get("alert_remove_service_confirm_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            },1
-                    );
-                }
-                //
-                dialog.dismiss();
-
-            }
-        });
-    }
-
-    private void serviceInfoAddServiceDialogConfig(AlertDialog.Builder builder, View view, HMAux item) {
-        //
-        final TextView tv_desc = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_desc_lbl);
-        final TextView tv_id_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_lbl);
-        final TextView tv_id_val = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_id_val);
-        final TextView tv_qtd_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_lbl);
-        final MKEditTextNM mk_qtd_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_qtd_val);
-        final TextView tv_price_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_price_lbl);
-        final MKEditTextNM mk_price_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_price_val);
-        final TextView tv_comments_lbl = (TextView) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
-        final MKEditTextNM mk_comments_val = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
-        final CheckBox cb_remove_val = (CheckBox) view.findViewById(R.id.act043_frag_service_list_cb_remove_val);
-        final Button btn_cancelar = (Button) view.findViewById(R.id.act043_frag_service_list_btn_cancel);
-        btn_cancelar.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
-        final Button btn_ok = (Button) view.findViewById(R.id.act043_frag_service_list_btn_ok);
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        tv_id_lbl.setText(hmAux_Trans.get("alert_service_id"));
-        tv_qtd_lbl.setText(hmAux_Trans.get("alert_service_qtd"));
-        tv_price_lbl.setText(hmAux_Trans.get("alert_service_price"));
-        tv_comments_lbl.setText(hmAux_Trans.get("alert_service_comments"));
-        cb_remove_val.setText(hmAux_Trans.get("alert_service_remove"));
-        //
-        tv_desc.setText(item.get("pack_service_desc"));
-        tv_id_val.setText(item.get("pack_code") + " / " + item.get("service_code"));
-        mk_qtd_val.setText(item.get("qtd"));
-        //
-        if (item.get("manual_price").equals("1")) {
-            if (item.get("informed_price").isEmpty()) {
-                mk_price_val.setText(item.get("price"));
-            } else {
-                mk_price_val.setText(item.get("informed_price"));
-            }
-            //
-            mk_price_val.setEnabled(true);
-        } else {
-            mk_price_val.setText(item.get("price"));
-            mk_price_val.setEnabled(false);
-        }
-        //
-        mk_comments_val.setText(item.get("comments"));
-        //
-        if (mk_qtd_val.getText().toString().trim().isEmpty() || mk_qtd_val.getText().toString().trim().equalsIgnoreCase("0")) {
-            cb_remove_val.setEnabled(false);
-        } else {
-            cb_remove_val.setEnabled(true);
-        }
-
-        mk_qtd_val.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-
-            }
-
-            @Override
-            public void reportTextChange(String s, boolean b) {
-                if (s.isEmpty()) {
-                    cb_remove_val.setEnabled(false);
-                } else {
-                    cb_remove_val.setEnabled(true);
-                }
-            }
-        });
-        //
-        builder
-                .setView(view)
-                .setCancelable(true)
-                .setOnDismissListener(dismissListener);
-        //
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-        //
-        btn_cancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-
-            }
-        });
+        return tmpAux;
     }
 
     @Override

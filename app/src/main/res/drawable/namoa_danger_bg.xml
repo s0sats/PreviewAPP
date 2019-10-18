@@ -5,5 +5,5 @@
     <stroke
         android:color="@color/namoa_color_danger_red"/>
     <solid
-            android:color="@color/namoa_color_danger_red"/>
+        android:color="@color/namoa_color_danger_red"/>
 </shape>
