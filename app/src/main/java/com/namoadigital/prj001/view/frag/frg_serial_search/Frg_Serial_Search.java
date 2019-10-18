@@ -501,6 +501,7 @@ public class Frg_Serial_Search extends Fragment {
         tv_product_id.setText(hmAux_Trans.get("product_lbl"));
         tv_serial.setText(hmAux_Trans.get("serial_lbl"));
         tv_tracking.setText(hmAux_Trans.get("tracking_lbl"));
+        chk_hide_serial_info.setText(hmAux_Trans.get("chk_hide_serial_info_lbl"));
         //
         if (showHint) {
             mket_product_id.setHint(hmAux_Trans.get("product_hint"));
@@ -700,6 +701,7 @@ public class Frg_Serial_Search extends Fragment {
         transListFrag.add("alert_no_product_msg");
         transListFrag.add("alert_serial_pendencies_ttl");
         transListFrag.add("alert_serial_pendencies_msg");
+        transListFrag.add("chk_hide_serial_info_lbl");
         //
         return transListFrag;
     }
