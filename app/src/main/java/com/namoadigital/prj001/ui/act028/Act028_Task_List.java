@@ -431,6 +431,10 @@ public class Act028_Task_List extends BaseFragment {
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         task.setEnd_date("");
         task.setComments(null);
+        //LUCHE - 21/10/2019
+        //Add set de site e zona na criação da Task
+        task.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
+        task.setZone_code(ToolBox_Con.getPreference_Zone_Code(context));
         //
         task.setPK(sm_so_service_exec);
         //
