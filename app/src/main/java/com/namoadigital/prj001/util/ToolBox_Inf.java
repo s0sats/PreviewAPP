@@ -5134,13 +5134,12 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 08/10/2019
      *
-     * Formata o double do java para formato esperado pelo servidor:
-     * Sem casa de milhar e casa decimal representado por "ponto"
+     * Formata o price em double do java para formato esperado pela tela
      *
      * @param vDouble - Valor double
-     * @return  - Retorno string no formato esperado pelo server.
+     * @return  - Retorno string no formato esperado pela tela.
      */
-    public static String formatDoubleToServer(Double vDouble){
+    public static String formatDoublePriceToScreen(Double vDouble){
         try {
             return (new DecimalFormat("###0.00").format(vDouble)).replace(",", ".");
         } catch (Exception e){

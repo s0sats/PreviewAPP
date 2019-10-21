@@ -7,15 +7,13 @@ android {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 24
-        versionName "3.12.1.10"
+        versionCode 25
+        versionName "3.13.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
         lintOptions {
-
             checkReleaseBuilds false
-
         }
     }
     buildTypes {

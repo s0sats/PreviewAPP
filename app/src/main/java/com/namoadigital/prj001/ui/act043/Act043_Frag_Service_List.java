@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act043;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -26,7 +24,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List_RV;
-import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Save_Return;
@@ -44,7 +41,6 @@ import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Act043_Frag_Service_List extends BaseFragment {
 
@@ -76,7 +72,19 @@ public class Act043_Frag_Service_List extends BaseFragment {
     }
 
     public interface IAct043_Frag_Service_List {
+        /**
+         * Interface que interage com o dialog da Act
+         * @param title - Titulo
+         * @param message - Msg
+         * @param action - Ação
+         */
         void progressAction(String title, String message, String action);
+
+        /**
+         * Interface que chama metodo que processa hmAux de retornodo da adição do item
+         * @param so
+         */
+        void showResults(HMAux so);
     }
 
     private IAct043_Frag_Service_List delegate;
@@ -665,90 +673,90 @@ public class Act043_Frag_Service_List extends BaseFragment {
             if (delegate != null) {
                 if (hmAux != null) {
                     delegate.progressAction("", "", "hide");
-                    showResults(hmAux);
+                    delegate.showResults(hmAux);
                 } else {
                 }
             }
         }
     }
 
-    private void showResults(HMAux so) {
-        ArrayList<HMAux> mSO = new ArrayList<>();
-
-        for (String sKey : so.keySet()) {
-            HMAux hmAux = new HMAux();
-            //
-            String sParts = sKey;
-
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
-            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
-
-            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
-            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, so.get(sKey));
-
-            mSO.add(hmAux);
-        }
-
-        showResultsDialog(mSO);
-    }
-
-    public void showResultsDialog(final List<HMAux> so_express) {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        /**
-         * Ini Vars
-         */
-
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
-
-//        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-//        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-
-        lv_results.setAdapter(
-                new Generic_Results_Adapter(
-                        context,
-                        so_express,
-                        Generic_Results_Adapter.CONFIG_2_ITENS,
-                        hmAux_Trans
-                )
-        );
-
-        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
-        builder.setView(view);
-        builder.setCancelable(false);
-
-        final AlertDialog show = builder.show();
-
-        /**
-         * Ini Action
-         */
-
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
-                //
-                if (so_express.size() > 0) {
-                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
-                        if (delegate != null) {
-                            delegate.progressAction("", "", "reload_so");
-                        }
-                    } else {
-                        if (delegate != null) {
-                            //delegate.progressAction("", "", "callact027");
-                            delegate.progressAction("", "", "reload_so");
-                        }
-                    }
-                }
-            }
-        });
-    }
+//    private void showResults(HMAux so) {
+//        ArrayList<HMAux> mSO = new ArrayList<>();
+//
+//        for (String sKey : so.keySet()) {
+//            HMAux hmAux = new HMAux();
+//            //
+//            String sParts = sKey;
+//
+//            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
+//            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sKey);
+//
+//            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
+//            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, so.get(sKey));
+//
+//            mSO.add(hmAux);
+//        }
+//
+//        showResultsDialog(mSO);
+//    }
+//
+//    public void showResultsDialog(final List<HMAux> so_express) {
+//
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+//
+//        /**
+//         * Ini Vars
+//         */
+//
+//        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+//        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+//        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+//
+////        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+////        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+//
+//        lv_results.setAdapter(
+//                new Generic_Results_Adapter(
+//                        context,
+//                        so_express,
+//                        Generic_Results_Adapter.CONFIG_2_ITENS,
+//                        hmAux_Trans
+//                )
+//        );
+//
+//        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+//        builder.setView(view);
+//        builder.setCancelable(false);
+//
+//        final AlertDialog show = builder.show();
+//
+//        /**
+//         * Ini Action
+//         */
+//
+//        btn_ok.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                show.dismiss();
+//                //
+//                if (so_express.size() > 0) {
+//                    if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
+//                        if (delegate != null) {
+//                            delegate.progressAction("", "", "reload_so");
+//                        }
+//                    } else {
+//                        if (delegate != null) {
+//                            //delegate.progressAction("", "", "callact027");
+//                            delegate.progressAction("", "", "reload_so");
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     private static final String CONVERT_TYPE_EMPTY = "convert_type_empty";
     private static final String CONVERT_TYPE_ZERO = "convert_type_zero";

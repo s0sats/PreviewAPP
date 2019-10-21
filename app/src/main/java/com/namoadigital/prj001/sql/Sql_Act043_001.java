@@ -3,17 +3,17 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by neomatrix on 23/02/17.
  */
 
 public class Sql_Act043_001 implements Specification {
-    public static final String TYPE_PS = "TYPE_PS";
-    public static final String TYPE_PS_PACK = "P";
-    public static final String TYPE_PS_SERVICE= "S";
     public static final String PACK_SERVICE_ID = "PACK_SERVICE_ID";
     public static final String PACK_SERVICE_DESC = "PACK_SERVICE_DESC";
     public static final String PACK_SERVICE_DESC_FULL = "PACK_SERVICE_DESC_FULL";
@@ -36,13 +36,14 @@ public class Sql_Act043_001 implements Specification {
 
         return sb
                 .append("   SELECT      \n" +
-                        "         T.TYPE_PS "+TYPE_PS+",\n" +
+                        "         T.TYPE_PS "+ Act043_Main.TYPE_PS +",\n" +
                         "         T.CUSTOMER_CODE customer_code,\n" +
                         "         T.SO_PREFIX so_prefix,\n" +
                         "         T.SO_CODE so_code,\n" +
                         "         T.PRICE_LIST_CODE price_list_code,\n" +
                         "         T.PACK_CODE pack_code,\n" +
                         "         T.PACK_SEQ pack_seq,\n" +
+                        "         T.CATEGORY_PRICE_CODE category_price_code,\n" +
                         "         T.SERVICE_CODE service_code,\n" +
                         "         T.SERVICE_SEQ service_seq,\n" +
                         "         T.PACK_SERVICE_DESC "+PACK_SERVICE_DESC+",\n" +
@@ -53,23 +54,37 @@ public class Sql_Act043_001 implements Specification {
                         "         T.MANUAL_PRICE manual_price,\n" +
                         "         T.COMMENTS comments,\n" +
                         "         T.EXEC_SEQ_OPER exec_seq_oper,\n" +
-                        "         (CASE WHEN  T.TYPE_PS = '"+TYPE_PS_PACK+"' THEN\n" +
+                        "         T.exec_code exec_code,\n" +
+                        "         (CASE WHEN  T.TYPE_PS = '"+ Act043_Main.TYPE_PS_PACK+"' THEN\n" +
                         "                   CASE\n" +
                         "                       WHEN T.QTD_SERVICES > 0 AND (T.STATUS / QTD_SERVICES) = 1 AND (T.STATUS % QTD_SERVICES) = 0 THEN '"+Constant.SYS_STATUS_DONE+"'\n" +
                         "                       WHEN T.QTD_SERVICES > 0 AND (T.STATUS / QTD_SERVICES) = 3 AND (T.STATUS % QTD_SERVICES) = 0 THEN '"+Constant.SYS_STATUS_CANCELLED+"'\n" +
-                        "                       ELSE 'PENDING'\n" +
+                        "                       ELSE '"+ Constant.SYS_STATUS_PENDING+"'\n" +
                         "                    END \n" +
                         "                ELSE\n" +
                         "                  T.STATUS\n" +
                         "          END)  status,\n" +
-                        "        (CASE WHEN T.TYPE_PS = '"+TYPE_PS_PACK+"' THEN\n" +
-                        "                  (SELECT \n" +
-                        "                       COUNT(\n" +
-                        "                             CASE WHEN  e.status IS NOT NULL AND e.status <> '"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
+                        "        (CASE WHEN T.TYPE_PS = '"+ Act043_Main.TYPE_PS_PACK+"' THEN\n" +
+                        "                  IFNULL( (SELECT \n" +
+                        "                       SUM(\n" +
+                        "                             CASE WHEN  t2.status IS NOT NULL AND t2.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"')\n" +
                         "                                  THEN 1\n" +
                         "                                  ELSE 0\n" +
                         "                             END )\n" +
                         "                   FROM "+ SM_SO_Service_ExecDao.TABLE +" e\n" +
+                        "                   LEFT JOIN\n" +
+                        "                         " + SM_SO_Service_Exec_TaskDao.TABLE +" t2 ON \n" +
+                        "                                            e.customer_code =  t2.customer_code\n" +
+                        "                                            AND e.so_prefix = t2.so_prefix\n" +
+                        "                                            AND e.so_code = t2.so_code\n" +
+                        "                                            AND e.price_list_code = t2.price_list_code\n" +
+                        "                                            AND e.pack_code = t2.pack_code\n" +
+                        "                                            AND e.pack_seq = t2.pack_seq\n" +
+                        "                                            AND e.category_price_code = t2.category_price_code\n" +
+                        "                                            AND e.service_code = t2.service_code\n" +
+                        "                                            AND e.service_seq = t2.service_seq  \n" +
+                        "                                            AND e.exec_tmp = t2.exec_tmp  \n" +
+                        "\n" +
                         "                   WHERE e.customer_code =  T.customer_code\n" +
                         "                         AND e.so_prefix = T.so_prefix\n" +
                         "                         AND e.so_code =  T.so_code \n" +
@@ -78,11 +93,11 @@ public class Sql_Act043_001 implements Specification {
                         "                         AND e.pack_seq =  T.pack_seq\n" +
                         "                         AND E.customer_code = '"+customer_code+"'\n" +
                         "                         AND E.so_prefix = '"+so_prefix+"'\n" +
-                        "                         AND E.so_code = '"+so_code+"') \n" +
+                        "                         AND E.so_code = '"+so_code+"'),0)  \n" +
                         "               ELSE \n" +
                         "                    (SELECT \n" +
                         "                       COUNT(\n" +
-                        "                             CASE WHEN  e.status IS NOT NULL AND e.status <> '"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
+                        "                             CASE WHEN  e.status IS NOT NULL AND e.status not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"')\n" +
                         "                                  THEN 1\n" +
                         "                                  ELSE 0\n" +
                         "                             END )\n" +
@@ -102,7 +117,7 @@ public class Sql_Act043_001 implements Specification {
                         "                  \n" +
                         "            END) "+IN_PROCESS+"\n " +
                         "   FROM (\n" +
-                        "             SELECT '"+TYPE_PS_PACK+"' "+TYPE_PS+",\n" +
+                        "             SELECT '"+Act043_Main.TYPE_PS_PACK+"' "+Act043_Main.TYPE_PS+",\n" +
                         "                    p.CUSTOMER_CODE,\n" +
                         "                    p.so_prefix,\n" +
                         "                    p.so_code,\n" +
@@ -118,13 +133,14 @@ public class Sql_Act043_001 implements Specification {
                         "                    1 QTY,\n" +
                         "                    printf(\"%.2f\",SUM(s.qty * s.PRICE)) PRICE,\n" +
                         "                    0 MANUAL_PRICE, \n" +
-                        "                    S.COMMENTS COMMENTS, \n" +
+                        "                    '' COMMENTS, \n" +
                         "                    SUM(CASE WHEN S.STATUS = '"+Constant.SYS_STATUS_DONE+"' THEN 1\n" +
                         "                          WHEN S.STATUS = '"+Constant.SYS_STATUS_CANCELLED+"' THEN 3\n" +
                         "                          ELSE 0\n" +
                         "                         END) STATUS ,\n" +
                         "                    COUNT(1) QTD_SERVICES,\n" +
-                        "                    MIN(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER\n" +
+                        "                    MIN(S.EXEC_SEQ_OPER) EXEC_SEQ_OPER,\n" +
+                        "                    0 exec_code \n" +
                         "             FROM\n" +
                                             SM_SO_PackDao.TABLE +"  p,\n" +
                                             SM_SO_ServiceDao.TABLE +" s\n" +
@@ -140,6 +156,7 @@ public class Sql_Act043_001 implements Specification {
                         "                AND p.so_prefix = '"+so_prefix+"'\n" +
                         "                AND p.so_code = '"+so_code+"'\n" +
                         "                AND P.SELECTION_TYPE = 'PACK'\n" +
+                        "                AND s.STATUS not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') \n" +
                         "             GROUP BY\n" +
                         "                   p.CUSTOMER_CODE,\n" +
                         "                   p.PRICE_LIST_CODE,\n" +
@@ -148,7 +165,7 @@ public class Sql_Act043_001 implements Specification {
                         "            --FIM PACK       \n" +
                         "            UNION\n" +
                         "            --INI service\n" +
-                        "            SELECT '"+TYPE_PS_SERVICE+"' "+TYPE_PS+",\n" +
+                        "            SELECT '"+Act043_Main.TYPE_PS_SERVICE+"' "+Act043_Main.TYPE_PS+",\n" +
                         "                    s.CUSTOMER_CODE,\n" +
                         "                    p.so_prefix,\n" +
                         "                    p.so_code,\n" +
@@ -167,7 +184,8 @@ public class Sql_Act043_001 implements Specification {
                         "                    S.COMMENTS COMMENTS, \n" +
                         "                    S.STATUS STATUS, \n" +
                         "                    1 QTD_SERVICES, \n" +
-                        "                    S.EXEC_SEQ_OPER EXEC_SEQ_OPER \n" +
+                        "                    S.EXEC_SEQ_OPER EXEC_SEQ_OPER, \n" +
+                        "                    0 exec_code \n" +
                         "             FROM\n" +
                                             SM_SO_PackDao.TABLE +"  p,\n" +
                                             SM_SO_ServiceDao.TABLE +" s\n" +
@@ -183,6 +201,7 @@ public class Sql_Act043_001 implements Specification {
                         "                AND p.so_prefix = '"+so_prefix+"'\n" +
                         "                AND p.so_code = '"+so_code+"'\n" +
                         "                AND P.SELECTION_TYPE = 'UNITARY' \n" +
+                        "                AND s.STATUS not in ('"+ ConstantBaseApp.SYS_STATUS_CANCELLED +"','"+ ConstantBaseApp.SYS_STATUS_INCONSISTENT +"') \n" +
                         "                --FIM service                       \n" +
                         "   ) T\n" +
                         "   ORDER BY\n" +
@@ -197,27 +216,6 @@ public class Sql_Act043_001 implements Specification {
                        "        T.EXEC_SEQ_OPER"
                        )
                 .append(";")
-//                .append(
-//                        TYPE_PS+"#"+
-//                        SM_SO_ServiceDao.CUSTOMER_CODE+"#"+
-//                        SM_SO_ServiceDao.SO_PREFIX+"#"+
-//                        SM_SO_ServiceDao.SO_CODE+"#"+
-//                        SM_SO_ServiceDao.PRICE_LIST_CODE+"#"+
-//                        SM_SO_ServiceDao.PACK_CODE+"#"+
-//                        SM_SO_ServiceDao.PACK_SEQ+"#"+
-//                        SM_SO_ServiceDao.SERVICE_CODE+"#"+
-//                        SM_SO_ServiceDao.SERVICE_SEQ+"#"+
-//                        PACK_SERVICE_ID+"#"+
-//                        PACK_SERVICE_DESC+"#"+
-//                        PACK_SERVICE_DESC_FULL+"#"+
-//                        SM_SO_ServiceDao.QTY+"#"+
-//                        SM_SO_ServiceDao.PRICE+"#"+
-//                        SM_SO_ServiceDao.MANUAL_PRICE +"#"+
-//                        SM_SO_ServiceDao.COMMENTS +"#"+
-//                        SM_SO_ServiceDao.EXEC_SEQ_OPER +"#"+
-//                        SM_SO_ServiceDao.STATUS +"#"+
-//                        IN_PROCESS
-//                )
                 .toString();
     }
 }
