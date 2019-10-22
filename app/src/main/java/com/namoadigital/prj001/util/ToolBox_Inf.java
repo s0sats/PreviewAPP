@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -3135,8 +3136,7 @@ public class ToolBox_Inf {
      */
     public static void hideSoftKeyboard(Context context, View view) {
         if (view!= null && view.hasFocus()){
-            if (context instanceof Base_Activity
-            || context instanceof Base_Activity_Frag) {
+            if (context instanceof AppCompatActivity) {
                 InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
