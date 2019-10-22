@@ -3134,10 +3134,12 @@ public class ToolBox_Inf {
         Metodo para esconder keyboard no AlertDialog, inicialmente utilizado nos fragmentos da act043
      */
     public static void hideSoftKeyboard(Context context, View view) {
-        if (view!= null && view.hasFocus() &&
-        context instanceof Base_Activity) {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (view!= null && view.hasFocus()){
+            if (context instanceof Base_Activity
+            || context instanceof Base_Activity_Frag) {
+                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
