@@ -590,6 +590,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return result;
     }
 
+    @Override
+    public boolean setCanSave(GE_Custom_Form_Local formLocal) {
+        if (formLocal.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_IN_PROCESSING)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * LUCHE - 26/09/2019
      * Metodo que busca obj do produto usado no form

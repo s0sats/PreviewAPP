@@ -414,7 +414,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void initVars() {
         fm = getSupportFragmentManager();
-        canSave = true;
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -1094,6 +1094,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
         int pages = 0;
+
+        canSave = mPresenter.setCanSave(formLocal);
 
         if (cf_fields != null && cf_fields.size() > 0) {
             pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get("page"));
@@ -2197,7 +2199,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getSignatueF(String mValue) {
         String sName = mValue;
-
+        canSave = mPresenter.setCanSave(formLocal);
         if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
@@ -2239,6 +2241,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     @Override
     public void callSignature() {
+        canSave = false;
         try {
             Bundle bundleN = new Bundle();
             bundleN.putInt(ConstantBase.PID, -1);
@@ -2252,6 +2255,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            canSave = mPresenter.setCanSave(formLocal);
         }
     }
 
@@ -2262,6 +2266,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getNFCResults(String mValue) {
         String sResults = mValue;
+        canSave = mPresenter.setCanSave(formLocal);
         //Se resultado
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
             require_serial_done_ok = "OK";
@@ -2292,6 +2297,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     public void callNFCResults() {
         require_serial_done_ok = "";
+        canSave = false;
         try {
             Bundle bundle = new Bundle();
             bundle.putInt(ConstantBase.PID, -1);
@@ -2307,6 +2313,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            canSave = mPresenter.setCanSave(formLocal);
         }
     }
 
