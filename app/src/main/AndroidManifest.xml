@@ -772,6 +772,14 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_SO_Service_Cancel" />
 
 
+        <receiver android:name=".receiver.WBR_SO_Get_Service_For_Edit" />
+
+        <service android:name=".service.WS_SO_Get_Service_For_Edit" />
+
+        <receiver android:name=".receiver.WBR_SO_Set_Service_For_Edit" />
+
+        <service android:name=".service.WS_SO_Set_Service_For_Edit" />
+
     </application>
 
 </manifest>

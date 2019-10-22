@@ -482,6 +482,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String PROFILE_MENU_SO_PARAM_EDIT = "EDIT";
+    public static final String PROFILE_MENU_SO_PARAM_EDIT_SERVICE = "EDIT_SERVICE";
     public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
     public static final String PROFILE_MENU_SO_PARAM_NEW = "NEW";
     public static final String PROFILE_MENU_SO_PARAM_EDIT_CLIENT = "EDIT_CLIENT";

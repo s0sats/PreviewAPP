@@ -200,7 +200,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         mAdapter.setmListener(new Act043_Package_Detail_Frag_Item_Adapter.OnItemClickListener() {
             @Override
             public void onItemClick(TSO_Service_Search_Detail_Obj item, int adapterPosition) {
-                showService_Pack_Details(adapterPosition, item);
+                showService_Pack_Details(item);
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -208,7 +208,7 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void showService_Pack_Details(final int position, final TSO_Service_Search_Detail_Obj item) {
+    private void showService_Pack_Details(final TSO_Service_Search_Detail_Obj item) {
 
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
@@ -238,52 +238,48 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
 
                 switch (finalDialogType ){
                     case ServiceRegisterDialog.ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
-                        if(dialog.getCb_remove_val()){
-                            delegateAddService.resetPackService(packageDataset);
+
+                        if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
+                                && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()  && Double.valueOf(dialog.getMk_price_val()) >= 0
+                                && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
+                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
+                        ) {
+                            item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
+                            if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
+                                item.setZone_desc_selected(dialog.get_ss_zone_content().get(SearchableSpinner.DESCRIPTION));
+                            }
+
+                            if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
+                                item.setSite_desc_selected(dialog.get_ss_site_content().get(SearchableSpinner.DESCRIPTION));
+                            }
+
+                            if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
+                                item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
+                                item.setPartner_desc_selected(dialog.get_ss_partner_content().get(SearchableSpinner.DESCRIPTION));
+                            } else {
+                                item.setPartner_code_selected(null);
+                                item.setPartner_desc_selected(null);
+                            }
+                            item.setComment(dialog.getMk_comments_val());
+                            item.setSelected(true);
+                            item.setPrice(Double.valueOf(dialog.getMk_price_val()));
+                            delegateAddService.calculateTotalPrice(packageDataset);
                             mAdapter.notifyDataSetChanged();
                             dialog.dismiss();
-                        }else {
-                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty() && Double.valueOf(dialog.getMk_qtd_val()) > 0
-                                    && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()  && Double.valueOf(dialog.getMk_price_val()) >= 0
-                                    && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
-                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                                    && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
-                                    && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                            ) {
-                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val()));
-                                if(dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
-                                    item.setZone_desc_selected(dialog.get_ss_zone_content().get(SearchableSpinner.DESCRIPTION));
-                                }
-
-                                if(dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
-                                    item.setSite_desc_selected(dialog.get_ss_site_content().get(SearchableSpinner.DESCRIPTION));
-                                }
-
-                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
-                                    item.setPartner_desc_selected(dialog.get_ss_partner_content().get(SearchableSpinner.DESCRIPTION));
-                                } else {
-                                    item.setPartner_code_selected(null);
-                                    item.setPartner_desc_selected(null);
-                                }
-                                item.setComment(dialog.getMk_comments_val());
-                                item.setSelected(false);
-                                item.setPrice(Double.valueOf(dialog.getMk_price_val()));
-                                delegateAddService.calculateTotalPrice(packageDataset);
-                                mAdapter.notifyDataSetChanged();
-                                dialog.dismiss();
-                            } else {
-                                ToolBox.alertMSG(
-                                        context,
-                                        hmAux_Trans.get("alert_invalid_service_value_ttl"),
-                                        hmAux_Trans.get("alert_invalid_service_value_msg"),
-                                        null,
-                                        0
-                                );
-                            }
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
+                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
+                                    null,
+                                    0
+                            );
                         }
+
                         break;
                 }
             }
@@ -294,7 +290,6 @@ public class Act043_Frag_Package_Detail_List extends BaseFragment {
                 dialog.dismiss();
             }
         });
-
         dialog.show();
     }
 
