@@ -164,16 +164,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
         //Frag_Package_Detail_List
-        transList.add("tv_package_detail_list_ttl");
         transList.add("btn_save_package_detail");
         transList.add("btn_cancel_package_detail");
-        transList.add("alert_service_without_price_ttl");
-        transList.add("alert_service_without_price_msg");
-        transList.add("site_package_detail_lbl");
-        transList.add("zone_package_detail_lbl");
-        transList.add("partner_package_detail_lbl");
-        transList.add("comment_package_detail_lbl");
-        transList.add("amount_package_detail_lbl");
         transList.add("btn_back");
         transList.add("alert_add_pack_ttl");
         transList.add("alert_add_pack_confirm");
@@ -721,109 +713,6 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             },
             1
         );
-    }
-
-    private void showService_Pack_Details(final TSO_Service_Search_Obj item) {
-        int dialogType = 0;
-
-        ArrayList<HMAux> siteOption = new ArrayList<>();
-        ArrayList<HMAux> siteZoneOption = new ArrayList<>();
-        if(Act043_Main.TYPE_PS_SERVICE.equalsIgnoreCase(item.getType_ps())){
-            dialogType =1;
-        }
-        if(item.getSite_zone() != null && !item.getSite_zone().isEmpty() ){
-            siteOption = generateSiteOption(item.getSite_zone());
-            siteZoneOption = generateSiteZoneOption(item.getSite_zone());
-        }
-
-        final ServiceRegisterDialog dialog =
-            new ServiceRegisterDialog(
-                context,
-                dialogType,
-                hmAux_Trans,
-                item,
-                siteOption,
-                siteZoneOption,
-                getPartnerList()
-            );
-        //
-        final int finalDialogType = dialogType;
-        final ArrayList<HMAux> finalSiteOption = siteOption;
-        dialog.setBtnOkListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (finalDialogType ){
-                    case 0:
-
-                        break;
-                    case 1:
-                        if(dialog.getCb_remove_val()){
-                            Toast.makeText(context, "Delete item", Toast.LENGTH_SHORT).show();
-                        }else {
-                            if (dialog.getMk_qtd_val() != null && !dialog.getMk_qtd_val().isEmpty()
-                                && dialog.getMk_price_val() != null && !dialog.getMk_price_val().isEmpty()
-                                && ((dialog.get_ss_site_content().hasConsistentValue(SearchableSpinner.CODE)
-                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                                && ((dialog.get_ss_zone_content().hasConsistentValue(SearchableSpinner.CODE)
-                                && finalSiteOption.size() > 0) || finalSiteOption.isEmpty())
-                            ) {
-                                item.setSelected(true);
-                                item.setQty(Integer.valueOf(dialog.getMk_qtd_val().toString()));
-                                item.setZone_code_selected(Integer.valueOf(dialog.get_ss_zone_content().get(SearchableSpinner.CODE)));
-                                item.setSite_code_selected(Integer.valueOf(dialog.get_ss_site_content().get(SearchableSpinner.CODE)));
-                                if (dialog.get_ss_partner_content().hasConsistentValue(SearchableSpinner.CODE)) {
-                                    item.setPartner_code_selected(Integer.valueOf(dialog.get_ss_partner_content().get(SearchableSpinner.CODE)));
-                                } else {
-                                    item.setPartner_code_selected(null);
-                                }
-                                item.setComment(dialog.getMk_comments_val());
-                                calculateTotalPrice(item);
-                                dialog.dismiss();
-                            } else {
-                                ToolBox.alertMSG(
-                                    context,
-                                    hmAux_Trans.get("alert_invalid_service_value_ttl"),
-                                    hmAux_Trans.get("alert_invalid_service_value_msg"),
-                                    null,
-                                    0
-                                );
-                            }
-                        }
-                        break;
-
-                }
-
-
-//                if (checkFields(
-//                        item,
-//                        dialog.getCb_remove_val() ? "" : dialog.getMk_qtd_val(),
-//                        dialog.getMk_price_val(),
-//                        dialog.getCb_remove_val() ? "" : dialog.getMk_comments_val()
-//                )) {
-
-//                } else {
-//                    dialog.resetMk_price_val();
-//                }
-            }
-        });
-        dialog.setBtnCancelListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.setBtnPackageDetaillListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setPackageServiceDetailList(item);
-                //delegateMainView.setFragByTag(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST);
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
     }
 
     //region TRATATIVA_FCM

@@ -755,10 +755,8 @@ public class Act028_Opc extends BaseFragment {
             siteOption = generateSiteOption(item.getSite_zone_list());
             siteZoneOption = generateSiteZoneOption(item.getSite_zone_list());
         }
-        String package_service_desc = "";
-        if(data.get("pack_id") != null && data.get("pack_desc") != null) {
-            package_service_desc = data.get("pack_id") + " - " + data.get("pack_desc");
-        }
+        String package_service_desc = formatDescFull(data.get("pack_id"),  data.get("pack_desc"));
+        String service_desc = formatDescFull(mService.getService_id(), mService.getService_desc());
         final ServiceRegisterDialog dialog =
                 new ServiceRegisterDialog(
                         context,
@@ -766,7 +764,7 @@ public class Act028_Opc extends BaseFragment {
                         hmAux_Trans,
                         package_service_desc,
                         mService.getPrice(),
-                        mService.getService_desc(),
+                        service_desc,
                         mService.getSite_code(),
                         mService.getZone_code(),
                         mService.getPartner_code(),
@@ -847,6 +845,20 @@ public class Act028_Opc extends BaseFragment {
         });
 
         dialog.show();
+    }
+
+    private String formatDescFull(String prefix, String sufix) {
+        String desc_full;
+        if(prefix != null){
+            desc_full = prefix;
+        }
+        if(prefix != null && sufix != null) {
+            desc_full = prefix + " - " + sufix;
+        }else{
+            desc_full = sufix;
+        }
+
+        return desc_full != null? desc_full: "";
     }
 
     private boolean hasChanged(HMAux ss_site_content, HMAux ss_zone_content, HMAux ss_partner_content) {

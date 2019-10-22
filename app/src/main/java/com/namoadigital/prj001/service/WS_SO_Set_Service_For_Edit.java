@@ -110,14 +110,14 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         env.setService_seq(service_seq);
         env.setSo_scn(so_scn);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SERVICE_EDIT_SET,
                 gson.toJson(env)
         );
 
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
 
         TSO_SO_Service_Rec rec = gson.fromJson(
                 resultado,
@@ -139,8 +139,6 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         ) {
             return;
         }
-
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_so_return"), "", "0");
         //
         processSetServiceEditRet(rec);
     }
@@ -176,28 +174,26 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
                 hmAux.put(so_pk, "OK");
             }
         }
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux, "", "0");
     }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
-        //
-        translist.add("msg_sending_so_data");
-        translist.add("msg_receiving_so_data");
-        translist.add("msg_processing_so_return");
-        translist.add("msg_save_ok");
-        //
-        mResource_Code = ToolBox_Inf.getResourceCode(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Name
-        );
-        //
+
+        translist.add("generic_sending_data_msg");
+        translist.add("generic_receiving_data_msg");
+        translist.add("generic_process_finalized_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 getApplicationContext(),
                 mModule_Code,
-                mResource_Code,
+                ToolBox_Inf.getResourceCode(
+                        getApplicationContext(),
+                        mModule_Code,
+                        ""
+                ),
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
-                translist);
+                translist
+        );
     }
 }

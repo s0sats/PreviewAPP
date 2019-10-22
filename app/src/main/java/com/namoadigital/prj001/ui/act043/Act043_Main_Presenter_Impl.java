@@ -198,6 +198,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                     innerService.setPartner_code_selected(null);
                     innerService.setPartner_desc_selected(null);
                     innerService.setComment(null);
+                    innerService.setSelected(false);
                 }
             }
             //

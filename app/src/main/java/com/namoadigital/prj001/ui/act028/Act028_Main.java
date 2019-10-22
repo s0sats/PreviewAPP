@@ -261,6 +261,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         transList.add("alert_value_changed_msg");
         transList.add("alert_invalid_service_value_ttl");
         transList.add("alert_invalid_service_value_msg");
+        //
+        transList.add("alert_so_get_edit_service_fail_ttl");
+        transList.add("alert_so_get_edit_service_fail_msg");
 
 
         sm_soDao = new SM_SODao(
@@ -896,9 +899,19 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Get_Service_For_Edit.class.getName())) {
             setWsSoProcess("");
             Gson gson = new Gson();
-            TSO_Get_Service_Edit_Rec  item = gson.fromJson(mLink, TSO_Get_Service_Edit_Rec.class);
             disableProgressDialog();
-            act028_opc.showService_Pack_Details(item);
+            if(mLink != null ) {
+                TSO_Get_Service_Edit_Rec item = gson.fromJson(mLink, TSO_Get_Service_Edit_Rec.class);
+                act028_opc.showService_Pack_Details(item);
+            }else{
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_get_edit_service_fail_ttl"),
+                        hmAux_Trans.get("alert_so_get_edit_service_fail_msg"),
+                        null,
+                        0
+                );
+            }
         }else if (wsSoProcess.equalsIgnoreCase(WS_SO_Set_Service_For_Edit.class.getName())) {
             boolean hasError = false;
             setWsSoProcess("");

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.view.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -22,8 +21,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.SM_SO_Service;
-import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
@@ -41,9 +38,6 @@ public class ServiceRegisterDialog extends AlertDialog {
     private Integer site_code_selected;
     private Integer zone_code_selected;
     private Integer partner_code_selected;
-    private String comments;
-    private String service_desc;
-    private SM_SO_Service editItem;
     private String pack_service_desc_full;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
@@ -67,6 +61,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private ConstraintLayout cl_register_service_form;
     private LinearLayout ll_register_package_form;
     private LinearLayout ll_register_spinners;
+
+    private Context context;
 
     private ArrayList<HMAux> siteOption;
     private ArrayList<HMAux> siteZoneOption;
@@ -95,6 +91,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     }
     public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, TSO_Service_Search_Obj item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
         this(context);
+        this.context = context;
         this.hmAux_trans = hmAux_trans;
         this.dialogType = dialogType;
         this.packageObj = item;
@@ -105,6 +102,7 @@ public class ServiceRegisterDialog extends AlertDialog {
 
     public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, TSO_Service_Search_Detail_Obj item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
         this(context);
+        this.context = context;
         this.hmAux_trans = hmAux_trans;
         this.dialogType = dialogType;
         this.pack_service_desc_full = pack_service_desc_full;
@@ -114,29 +112,17 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.mdPartners = mdPartners;
     }
 
-    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, SM_SO_Service item, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners){
+    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, String service_desc_full, Integer site_code_selected, Integer zone_code_selected, Integer partner_code_selected, String comments, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners) {
         this(context);
+        this.context = context;
         this.hmAux_trans = hmAux_trans;
         this.dialogType = dialogType;
         this.pack_service_desc_full = pack_service_desc_full;
         this.service_price = service_price;
-        this.editItem = item;
-        this.siteOption = siteOption;
-        this.siteZoneOption = siteZoneOption;
-        this.mdPartners = mdPartners;
-    }
-
-    public ServiceRegisterDialog(Context context, int dialogType, HMAux hmAux_trans, String pack_service_desc_full, Double service_price, String service_desc, Integer site_code_selected, Integer zone_code_selected, Integer partner_code_selected, String comments, ArrayList<HMAux> siteOption, ArrayList<HMAux> siteZoneOption, ArrayList<MD_Partner> mdPartners) {
-        this(context);
-        this.hmAux_trans = hmAux_trans;
-        this.dialogType = dialogType;
-        this.pack_service_desc_full = pack_service_desc_full;
-        this.service_price = service_price;
-        this.service_desc = service_desc;
+        this.service_desc_full = service_desc_full;
         this.site_code_selected = site_code_selected;
         this.zone_code_selected = zone_code_selected;
         this.partner_code_selected = partner_code_selected;
-        this.comments = comments;
         this.siteOption = siteOption;
         this.siteZoneOption = siteZoneOption;
         this.mdPartners = mdPartners;
@@ -634,5 +620,11 @@ public class ServiceRegisterDialog extends AlertDialog {
                 hmAux_trans.get("alert_multiple_service_added_msg"),
                 listener,
                 1);
+    }
+
+    @Override
+    public void dismiss() {
+        ToolBox_Inf.hideSoftKeyboard(context, this.getCurrentFocus());
+        super.dismiss();
     }
 }
