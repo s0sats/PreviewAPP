@@ -22,7 +22,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -211,7 +210,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act011_main);
-        Log.d("Lifecycle", "onCreate");
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -700,10 +699,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     //Implments PhotoInterface
     private void saveV2(boolean fieldsValidation) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
-
-        formData.setLocation_type("");
-        formData.setLocation_lat("");
-        formData.setLocation_lng("");
+//        LUCHE - 22/10/2019
+//        Comentado reset dos dados de GPS que agora serão feitos
+//        somente nos cancelamentos de GPS, Assinatura e serial.
+//        formData.setLocation_type("");
+//        formData.setLocation_lat("");
+//        formData.setLocation_lng("");
         //
         if(fieldsValidation) {
             returnValidCheck(String.valueOf(-1));
@@ -2226,6 +2227,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             }
         } else {
             String sRes = "";
+            //LUCHE - 22/10/2019
+            //Após bug de dados do GPS sendo limpos pelo save no onpause,
+            //O reseta das informações de GPS serão feitos apenas nos cancelamentos
+            //da assinatura, do gps e do serial.
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
+            formData.setLocation_type("");
         }
     }
 
@@ -2746,24 +2754,50 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         gpsCanceled = false;
     }
 
+    /**
+     * LUCHE - 22/10/2019
+     * Alterado tratativa do metodo para somente recuperar e setar os dados
+     * do GPS caso o usuario NÃO TENHA cancelado a ação.
+     * Em caso de cancelamento, por segurança, os valores estão sendo resetados.
+     *
+     * @param mLink - String concatenada com as informações:
+     *                  * Tipo de Provider
+     *                  * Latitude
+     *                  * Longitude
+     * @param mRequired - Não analisado
+     */
     @Override
     protected void processGPS_OK(String mLink, String mRequired) {
         progressDialog.dismiss();
-        //
-        String parts[] = mLink.split("#");
-        formData.setLocation_type(parts[0]);
-        formData.setLocation_lat(parts[1]);
-        formData.setLocation_lng(parts[2]);
-
         //processa as coordenadas
         if (!gpsCanceled) {
+            String parts[] = mLink.split("#");
+            formData.setLocation_type(parts[0]);
+            formData.setLocation_lat(parts[1]);
+            formData.setLocation_lng(parts[2]);
             startCheckIN();
         } else {
             gpsCanceled = false;
             //Luche - 28/02/2019
             //reseta var de fluxo finaliza  + novo
             finalizeNewFlow = false;
+            formData.setLocation_type("");
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
         }
+    }
+
+
+    @Override
+    protected void processGPS_STOP() {
+        ToolBox_Inf.stop_Location_Tracker(context);
+
+        gpsCanceled = true;
+        //Luche - 28/02/2019
+        //reseta var de finaliza + novo
+        finalizeNewFlow = false;
+
+        progressDialog.dismiss();
     }
 
     @Override
@@ -2813,18 +2847,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             },
             0
         );
-    }
-
-    @Override
-    protected void processGPS_STOP() {
-        ToolBox_Inf.stop_Location_Tracker(context);
-
-        gpsCanceled = true;
-        //Luche - 28/02/2019
-        //reseta var de finaliza + novo
-        finalizeNewFlow = false;
-
-        progressDialog.dismiss();
     }
 
     private void executeSerialSave() {
