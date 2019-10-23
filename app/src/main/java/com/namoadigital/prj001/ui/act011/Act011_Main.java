@@ -2239,12 +2239,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //Luche - 28/02/2019
                 //Reseta var de fluxo finaliza + novo
                 finalizeNewFlow = false;
-                if (signature == 0) {
-                    //mPresenter.checkData(formData);
-                }
+                //LUCHE - 22/10/2019
+                //Após bug de dados do GPS sendo limpos pelo save no onpause,
+                //O reseta das informações de GPS serão feitos apenas nos cancelamentos
+                //da assinatura, do gps e do serial.
+                formData.setLocation_lat("");
+                formData.setLocation_lng("");
+                formData.setLocation_type("");
             }
         } else {
-            String sRes = "";
             //LUCHE - 22/10/2019
             //Após bug de dados do GPS sendo limpos pelo save no onpause,
             //O reseta das informações de GPS serão feitos apenas nos cancelamentos
