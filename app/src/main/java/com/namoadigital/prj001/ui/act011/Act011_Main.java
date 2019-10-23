@@ -751,6 +751,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         formData.setLocation_lat("");
         formData.setLocation_lng("");
 
+        if(canSave) {
+            saveV2(false);
+        }
+
         int sum = returnValidCheck(String.valueOf(-1));
 
         if (sum == 0) {
