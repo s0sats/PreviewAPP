@@ -1090,12 +1090,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         } else {
             serial_id = formData.getSerial_id();
         }
+        String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
+        if(ToolBox.validationCheckFile(signaturePath)
+        && mPresenter.isInProcessing(formLocal)){
+            cleanSignatureFile(signaturePath);
+        }
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
         int pages = 0;
 
-        canSave = mPresenter.setCanSave(formLocal);
+        canSave = mPresenter.isInProcessing(formLocal);
 
         if (cf_fields != null && cf_fields.size() > 0) {
             pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get("page"));
@@ -1302,6 +1307,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             }
         }
 
+    }
+
+    private void cleanSignatureFile(String signaturePath) {
+        File file = new File(signaturePath);
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+        }catch (Exception e){
+            ToolBox.registerException(getClass().getName(), e);
+        }
     }
 
     private CustomFF cfg_Label(HMAux cf) {
@@ -2199,7 +2215,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getSignatueF(String mValue) {
         String sName = mValue;
-        canSave = mPresenter.setCanSave(formLocal);
+        canSave = mPresenter.isInProcessing(formLocal);
         if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
@@ -2255,7 +2271,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            canSave = mPresenter.setCanSave(formLocal);
+            canSave = mPresenter.isInProcessing(formLocal);
         }
     }
 
@@ -2266,7 +2282,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getNFCResults(String mValue) {
         String sResults = mValue;
-        canSave = mPresenter.setCanSave(formLocal);
+        canSave = mPresenter.isInProcessing(formLocal);
         //Se resultado
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
             require_serial_done_ok = "OK";
@@ -2313,7 +2329,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            canSave = mPresenter.setCanSave(formLocal);
+            canSave = mPresenter.isInProcessing(formLocal);
         }
     }
 
