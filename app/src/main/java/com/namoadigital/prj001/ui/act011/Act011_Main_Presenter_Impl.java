@@ -589,7 +589,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         return result;
     }
-
+    /**
+     * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+     * Funcao que verifica o status do n-form para evitar save ao acessar o n-form via historico.
+     */
     @Override
     public boolean isInProcessing(GE_Custom_Form_Local formLocal) {
         if (formLocal.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_IN_PROCESSING)){

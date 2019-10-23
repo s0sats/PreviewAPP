@@ -1090,6 +1090,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         } else {
             serial_id = formData.getSerial_id();
         }
+        /**
+         * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+         * Verifica existencia previa de assinatura do n-form e apaga o arquivo caso esteja
+         * IN_PROCESSING
+         */
         String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
         if(ToolBox.validationCheckFile(signaturePath)
         && mPresenter.isInProcessing(formLocal)){
@@ -1332,7 +1337,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         return labelFF;
     }
-
+    /**
+     * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+     * Função que visa diminuir a perda de dados no N-Form como metodo paliativo para o crash de
+     * unmarshalling.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -2057,6 +2066,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         /*
             30-08-2019 Barrionuevo
             Garante que o onPause nao salvarah nada em cima do ultimo save enviado para o servico
+            23-10-2019
+            Tratativa para não alterar os dados apos a execucao do servico de envio do n-form
          */
         canSave = false;
         if (mSo_Prefix == null || mSo_Code == null) {
