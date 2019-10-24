@@ -490,6 +490,7 @@ public class Act028_Opc extends BaseFragment {
 
                 if (partner_restriction) {
 //                    iv_edit_service.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(View.GONE);
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
 //                        iv_edit_service.setVisibility(View.GONE);

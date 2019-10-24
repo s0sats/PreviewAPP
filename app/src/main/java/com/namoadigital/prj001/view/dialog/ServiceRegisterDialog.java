@@ -417,6 +417,8 @@ public class ServiceRegisterDialog extends AlertDialog {
                 setSSZoneValue(hmAux);
                 if(hmAux.hasConsistentValue(MD_PartnerDao.PARTNER_CODE)) {
                     setPartnerForEditSS(true, Integer.valueOf(hmAux.get(MD_PartnerDao.PARTNER_CODE)), siteOption);
+                }else{
+                    act043_ss_partner.setmValue(new HMAux());
                 }
             }
         });
