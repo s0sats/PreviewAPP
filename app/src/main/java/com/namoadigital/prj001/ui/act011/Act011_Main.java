@@ -22,7 +22,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -211,7 +210,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act011_main);
-        Log.d("Lifecycle", "onCreate");
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -415,7 +414,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void initVars() {
         fm = getSupportFragmentManager();
-        canSave = true;
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -700,10 +699,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     //Implments PhotoInterface
     private void saveV2(boolean fieldsValidation) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
-
-        formData.setLocation_type("");
-        formData.setLocation_lat("");
-        formData.setLocation_lng("");
+//        LUCHE - 22/10/2019
+//        Comentado reset dos dados de GPS que agora serão feitos
+//        somente nos cancelamentos de GPS, Assinatura e serial.
+//        formData.setLocation_type("");
+//        formData.setLocation_lat("");
+//        formData.setLocation_lng("");
         //
         if(fieldsValidation) {
             returnValidCheck(String.valueOf(-1));
@@ -749,6 +750,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         formData.setLocation_type("");
         formData.setLocation_lat("");
         formData.setLocation_lng("");
+
+        if(canSave) {
+            saveV2(false);
+        }
 
         int sum = returnValidCheck(String.valueOf(-1));
 
@@ -1089,10 +1094,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         } else {
             serial_id = formData.getSerial_id();
         }
+        /**
+         * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+         * Verifica existencia previa de assinatura do n-form e apaga o arquivo caso esteja
+         * IN_PROCESSING
+         */
+        String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
+        if(ToolBox.validationCheckFile(signaturePath)
+        && mPresenter.isInProcessing(formLocal)){
+            cleanSignatureFile(signaturePath);
+        }
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
         int pages = 0;
+
+        canSave = mPresenter.isInProcessing(formLocal);
 
         if (cf_fields != null && cf_fields.size() > 0) {
             pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get("page"));
@@ -1301,6 +1318,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     }
 
+    private void cleanSignatureFile(String signaturePath) {
+        File file = new File(signaturePath);
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+        }catch (Exception e){
+            ToolBox.registerException(getClass().getName(), e);
+        }
+    }
+
     private CustomFF cfg_Label(HMAux cf) {
         LabelFF labelFF = new LabelFF(Act011_Main.this);
 
@@ -1313,7 +1341,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         return labelFF;
     }
-
+    /**
+     * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+     * Função que visa diminuir a perda de dados no N-Form como metodo paliativo para o crash de
+     * unmarshalling.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -2038,6 +2070,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         /*
             30-08-2019 Barrionuevo
             Garante que o onPause nao salvarah nada em cima do ultimo save enviado para o servico
+            23-10-2019
+            Tratativa para não alterar os dados apos a execucao do servico de envio do n-form
          */
         canSave = false;
         if (mSo_Prefix == null || mSo_Code == null) {
@@ -2196,7 +2230,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getSignatueF(String mValue) {
         String sName = mValue;
-
+        canSave = mPresenter.isInProcessing(formLocal);
         if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
@@ -2220,17 +2254,28 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //Luche - 28/02/2019
                 //Reseta var de fluxo finaliza + novo
                 finalizeNewFlow = false;
-                if (signature == 0) {
-                    //mPresenter.checkData(formData);
-                }
+                //LUCHE - 22/10/2019
+                //Após bug de dados do GPS sendo limpos pelo save no onpause,
+                //O reseta das informações de GPS serão feitos apenas nos cancelamentos
+                //da assinatura, do gps e do serial.
+                formData.setLocation_lat("");
+                formData.setLocation_lng("");
+                formData.setLocation_type("");
             }
         } else {
-            String sRes = "";
+            //LUCHE - 22/10/2019
+            //Após bug de dados do GPS sendo limpos pelo save no onpause,
+            //O reseta das informações de GPS serão feitos apenas nos cancelamentos
+            //da assinatura, do gps e do serial.
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
+            formData.setLocation_type("");
         }
     }
 
     @Override
     public void callSignature() {
+        canSave = false;
         try {
             Bundle bundleN = new Bundle();
             bundleN.putInt(ConstantBase.PID, -1);
@@ -2244,6 +2289,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            canSave = mPresenter.isInProcessing(formLocal);
         }
     }
 
@@ -2254,6 +2300,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void getNFCResults(String mValue) {
         String sResults = mValue;
+        canSave = mPresenter.isInProcessing(formLocal);
         //Se resultado
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
             require_serial_done_ok = "OK";
@@ -2284,6 +2331,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     public void callNFCResults() {
         require_serial_done_ok = "";
+        canSave = false;
         try {
             Bundle bundle = new Bundle();
             bundle.putInt(ConstantBase.PID, -1);
@@ -2299,6 +2347,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            canSave = mPresenter.isInProcessing(formLocal);
         }
     }
 
@@ -2746,24 +2795,50 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         gpsCanceled = false;
     }
 
+    /**
+     * LUCHE - 22/10/2019
+     * Alterado tratativa do metodo para somente recuperar e setar os dados
+     * do GPS caso o usuario NÃO TENHA cancelado a ação.
+     * Em caso de cancelamento, por segurança, os valores estão sendo resetados.
+     *
+     * @param mLink - String concatenada com as informações:
+     *                  * Tipo de Provider
+     *                  * Latitude
+     *                  * Longitude
+     * @param mRequired - Não analisado
+     */
     @Override
     protected void processGPS_OK(String mLink, String mRequired) {
         progressDialog.dismiss();
-        //
-        String parts[] = mLink.split("#");
-        formData.setLocation_type(parts[0]);
-        formData.setLocation_lat(parts[1]);
-        formData.setLocation_lng(parts[2]);
-
         //processa as coordenadas
         if (!gpsCanceled) {
+            String parts[] = mLink.split("#");
+            formData.setLocation_type(parts[0]);
+            formData.setLocation_lat(parts[1]);
+            formData.setLocation_lng(parts[2]);
             startCheckIN();
         } else {
             gpsCanceled = false;
             //Luche - 28/02/2019
             //reseta var de fluxo finaliza  + novo
             finalizeNewFlow = false;
+            formData.setLocation_type("");
+            formData.setLocation_lat("");
+            formData.setLocation_lng("");
         }
+    }
+
+
+    @Override
+    protected void processGPS_STOP() {
+        ToolBox_Inf.stop_Location_Tracker(context);
+
+        gpsCanceled = true;
+        //Luche - 28/02/2019
+        //reseta var de finaliza + novo
+        finalizeNewFlow = false;
+
+        progressDialog.dismiss();
     }
 
     @Override
@@ -2813,18 +2888,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             },
             0
         );
-    }
-
-    @Override
-    protected void processGPS_STOP() {
-        ToolBox_Inf.stop_Location_Tracker(context);
-
-        gpsCanceled = true;
-        //Luche - 28/02/2019
-        //reseta var de finaliza + novo
-        finalizeNewFlow = false;
-
-        progressDialog.dismiss();
     }
 
     private void executeSerialSave() {
