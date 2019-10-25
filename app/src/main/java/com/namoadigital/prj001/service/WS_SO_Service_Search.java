@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -16,18 +15,21 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Env;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WS_SO_Service_Search extends IntentService {
-
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Service_Search";
+    private Gson gson;
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
@@ -39,9 +41,6 @@ public class WS_SO_Service_Search extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
-
-
             int contract_code = bundle.getInt(SM_SODao.CONTRACT_CODE,0);
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
@@ -79,7 +78,7 @@ public class WS_SO_Service_Search extends IntentService {
         //Seleciona traduções
         loadTranslation();
         //
-        Gson gson = new GsonBuilder().serializeNulls().create();
+        gson = new GsonBuilder().serializeNulls().create();
         //
         TSO_Service_Search_Env env = new TSO_Service_Search_Env();
         //
@@ -130,17 +129,26 @@ public class WS_SO_Service_Search extends IntentService {
         processSOServiceSearchReturn(rec);
     }
     //
-    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) {
-        HMAux auxReturn = new HMAux();
-        //25/10/18 - Caso o data seja null, o que NUNCA deveria ter acontecido, mas aconteceu,
-        //seta array vazio que será tratado pela tela que recebe o CLOSE_ACT.
-        if(rec.getData() == null ){
-            rec.setData(new JsonArray());
+    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) throws IOException {
+        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
+        //Gera nome do arquivo json
+        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
+        //Chama metodo para criar arquivo
+        createJsonFile(file_name, gson.toJson(rec));
+        HMAux auxName = new HMAux();
+        auxName.put(ConstantBaseApp.WS_RETURN_FILENAME,file_name);
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+    }
+
+    private void createJsonFile(String file_name, String json) throws IOException {
+        File file = new File(Constant.TOKEN_PATH, file_name);
+        //
+        if(file.exists()){
+            file.delete();
         }
         //
-        auxReturn.put(Constant.PARAM_KEY_WS_RETURN,rec.getData().toString());
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxReturn,"", "0");
+        ToolBox_Inf.writeIn(json,file);
     }
 
     private void loadTranslation() {

@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
 
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+
 public interface Act043_Main_View {
 
     void showPD(String ttl, String msg);
@@ -13,4 +15,8 @@ public interface Act043_Main_View {
     void setFragByTag(String tag);
 
     boolean hasItemAdded();
+
+    TSO_Service_Search_Obj getPackDetailObj();
+
+    void alertPackDetailRemoveConfirm(TSO_Service_Search_Obj packDetailObj);
 }

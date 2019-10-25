@@ -51,14 +51,16 @@
             android:layout_marginTop="2dp"
             android:background="@color/namoa_color_gray"/>
 
-    <ListView
-            android:id="@+id/act043_frag_service_lv_services"
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/act043_frag_service_rv_services"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="3dp"
-            android:layout_marginBottom="5dp"/>
+            android:divider="@color/namoa_color_gray"
+            android:dividerHeight="5dp"
+            android:layout_marginBottom="5dp"
+            tools:listitem="@layout/act043_adapter_services_pack_list_content_cell_pack"
+            />
 
     <Button
             android:id="@+id/act043_frag_service_btn_save"

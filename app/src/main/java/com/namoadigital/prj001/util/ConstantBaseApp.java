@@ -240,6 +240,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String THUMB_SUFFIX = "_thumb";
 
     public static final String PREFIX_LOG_FILE_SERIAL = "log_serial_";
+    public static final String PREFIX_SO_ADD_SERVICE = "so_add_service_";
 
     public static String APK_PATH = System.getenv("EXTERNAL_STORAGE") + "/namoa_apk";
     public static String APK_FILE_NAME = "namoa_installer.apk";
@@ -457,6 +458,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_EMPTY_SEND_LIST = "WS_EMPTY_SEND_LIST";
     public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
     public static final String WS_RETURN_LIST = "WS_RETURN_LIST";
+    public static final String WS_RETURN_FILENAME = "WS_RETURN_FILENAME";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

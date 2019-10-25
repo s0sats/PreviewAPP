@@ -2,24 +2,42 @@ package com.namoadigital.prj001.model;
 
 /**
  * Created by d.luche on 27/06/2017.
+ *
+ * LUCHE - 03/10/2019
+ *
+ * Objeto que será enviado como PACK no "save" do adicionar serviço
+ *
+ * Os campos partner_code e zone_code não são usado para nada e por isso não foram colocados no modelo.
+ * Eles serão usados no TSO_SO_Service_Item_Detail
  */
+
+import java.util.ArrayList;
 
 public class TSO_SO_Service_Item {
     private String type_ps;
-    private String customer_code;//long
-    private String price_list_code;//int
-    private String pack_code;//int
-    private String service_code;//int
-    private String pack_service_desc;
-    private String pack_service_desc_full;
+    private int price_list_code;//int
+    private int pack_code;//int
+    private long pack_seq;//maior que 100 mil e incrementado a cada item adicionado
+    private int service_code;//int
     private String price;//double
-    private String manual_price;//double
-    private String rating;//int
-    private String rating_ref;//double
     private int qty;
-    private double price_ref;
+    private Integer partner_code;
     private String comments;
-    private boolean selected = true;
+    private ArrayList<TSO_SO_Service_Item_Detail> service = new ArrayList<>();
+
+    public TSO_SO_Service_Item() {}
+
+    public TSO_SO_Service_Item(String type_ps, int price_list_code, int pack_code, long pack_seq, int service_code, String price, int qty, Integer partner_code, String comments) {
+        this.type_ps = type_ps;
+        this.price_list_code = price_list_code;
+        this.pack_code = pack_code;
+        this.pack_seq = pack_seq;
+        this.service_code = service_code;
+        this.price = price;
+        this.qty = qty;
+        this.partner_code = partner_code;
+        this.comments = comments;
+    }
 
     public String getType_ps() {
         return type_ps;
@@ -29,52 +47,36 @@ public class TSO_SO_Service_Item {
         this.type_ps = type_ps;
     }
 
-    public String getCustomer_code() {
-        return customer_code;
-    }
-
-    public void setCustomer_code(String customer_code) {
-        this.customer_code = customer_code;
-    }
-
-    public String getPrice_list_code() {
+    public int getPrice_list_code() {
         return price_list_code;
     }
 
-    public void setPrice_list_code(String price_list_code) {
+    public void setPrice_list_code(int price_list_code) {
         this.price_list_code = price_list_code;
     }
 
-    public String getPack_code() {
+    public int getPack_code() {
         return pack_code;
     }
 
-    public void setPack_code(String pack_code) {
+    public void setPack_code(int pack_code) {
         this.pack_code = pack_code;
     }
 
-    public String getService_code() {
+    public long getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(long pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
+    public int getService_code() {
         return service_code;
     }
 
-    public void setService_code(String service_code) {
+    public void setService_code(int service_code) {
         this.service_code = service_code;
-    }
-
-    public String getPack_service_desc() {
-        return pack_service_desc;
-    }
-
-    public void setPack_service_desc(String pack_service_desc) {
-        this.pack_service_desc = pack_service_desc;
-    }
-
-    public String getPack_service_desc_full() {
-        return pack_service_desc_full;
-    }
-
-    public void setPack_service_desc_full(String pack_service_desc_full) {
-        this.pack_service_desc_full = pack_service_desc_full;
     }
 
     public String getPrice() {
@@ -85,29 +87,6 @@ public class TSO_SO_Service_Item {
         this.price = price;
     }
 
-    public String getManual_price() {
-        return manual_price;
-    }
-
-    public void setManual_price(String manual_price) {
-        this.manual_price = manual_price;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public String getRating_ref() {
-        return rating_ref;
-    }
-
-    public void setRating_ref(String rating_ref) {
-        this.rating_ref = rating_ref;
-    }
 
     public int getQty() {
         return qty;
@@ -117,12 +96,12 @@ public class TSO_SO_Service_Item {
         this.qty = qty;
     }
 
-    public double getPrice_ref() {
-        return price_ref;
+    public Integer getPartner_code() {
+        return partner_code;
     }
 
-    public void setPrice_ref(double price_ref) {
-        this.price_ref = price_ref;
+    public void setPartner_code(Integer partner_code) {
+        this.partner_code = partner_code;
     }
 
     public String getComments() {
@@ -133,11 +112,11 @@ public class TSO_SO_Service_Item {
         this.comments = comments;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public ArrayList<TSO_SO_Service_Item_Detail> getService() {
+        return service;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setService(ArrayList<TSO_SO_Service_Item_Detail> service) {
+        this.service = service;
     }
 }
