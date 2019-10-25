@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -3129,6 +3130,18 @@ public class ToolBox_Inf {
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
+    /*
+        BARRIONUEVO - 22/10/2019
+        Metodo para esconder keyboard no AlertDialog, inicialmente utilizado nos fragmentos da act043
+     */
+    public static void hideSoftKeyboard(Context context, View view) {
+        if (view!= null && view.hasFocus()){
+            if (context instanceof AppCompatActivity) {
+                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
 
     public static void hideKeyBoard(Activity activity) {
         activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -5134,13 +5147,12 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 08/10/2019
      *
-     * Formata o double do java para formato esperado pelo servidor:
-     * Sem casa de milhar e casa decimal representado por "ponto"
+     * Formata o price em double do java para formato esperado pela tela
      *
      * @param vDouble - Valor double
-     * @return  - Retorno string no formato esperado pelo server.
+     * @return  - Retorno string no formato esperado pela tela.
      */
-    public static String formatDoubleToServer(Double vDouble){
+    public static String formatDoublePriceToScreen(Double vDouble){
         try {
             return (new DecimalFormat("###0.00").format(vDouble)).replace(",", ".");
         } catch (Exception e){

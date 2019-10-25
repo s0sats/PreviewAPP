@@ -59,17 +59,28 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act001_main);
-
-        SERVICE_TYPE = "LOGIN";
-
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //
-        initVars();
-        initActions();
-        //23/08/2018
-        deleteApkFile();
-
+        /**LUCHE - 24/10/2019
+         *  Foi identificado que as versões release do app apresentavam comportamento de
+         *  mult-instances caso o usuario usasse o home do Android e depois abrisse o app pelo
+         *  icone (laucher).
+         *  Mesmo usando o lauchMode como singleIntansce ou singleTask, o comportamento ainda
+         *  persistia.
+         *  A correção abaixo, avalia em tempo de execução essa situação e impede o carregamento da
+         *  "nova instance" da act.
+         */
+        //A linha abaixo , em tese, faz o mesmo que o if usado.
+        //if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+        if (!isTaskRoot()) {
+            finish();
+            return;
+        }else {
+            SERVICE_TYPE = "LOGIN";
+            //
+            initVars();
+            initActions();
+            //23/08/2018
+            deleteApkFile();
+        }
     }
 
     /**

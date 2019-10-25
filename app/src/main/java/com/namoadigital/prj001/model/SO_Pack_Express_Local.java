@@ -24,8 +24,12 @@ public class SO_Pack_Express_Local {
     private String contract_desc;
     private Long priority_code;
     private String priority_desc;
-    private String site_id;
-    private String site_desc;
+    private int exec_site_code;
+    private String exec_site_id;
+    private String exec_site_desc;
+    private int exec_zone_code;
+    private String exec_zone_id;
+    private String exec_zone_desc;
     private String operation_id;
     private String operation_desc;
     private String product_id;
@@ -39,6 +43,7 @@ public class SO_Pack_Express_Local {
     private String status;
     private String log_date;
     private String token;
+
 
     public SO_Pack_Express_Local() {
         this.customer_code = -1L;
@@ -59,8 +64,12 @@ public class SO_Pack_Express_Local {
         this.contract_desc = null;
         this.priority_code = null;
         this.priority_desc = null;
-        this.site_id = null;
-        this.site_desc = null;
+        this.exec_site_code = -1;
+        this.exec_site_id = null;
+        this.exec_site_desc = null;
+        this.exec_zone_code = -1;
+        this.exec_zone_id = null;
+        this.exec_zone_desc = null;
         this.operation_id = null;
         this.operation_desc = null;
         this.product_id = null;
@@ -211,20 +220,52 @@ public class SO_Pack_Express_Local {
         this.priority_desc = priority_desc;
     }
 
-    public String getSite_id() {
-        return site_id;
+    public int getExec_site_code() {
+        return exec_site_code;
     }
 
-    public void setSite_id(String site_id) {
-        this.site_id = site_id;
+    public void setExec_site_code(int exec_site_code) {
+        this.exec_site_code = exec_site_code;
     }
 
-    public String getSite_desc() {
-        return site_desc;
+    public String getExec_site_id() {
+        return exec_site_id;
     }
 
-    public void setSite_desc(String site_desc) {
-        this.site_desc = site_desc;
+    public void setExec_site_id(String exec_site_id) {
+        this.exec_site_id = exec_site_id;
+    }
+
+    public String getExec_site_desc() {
+        return exec_site_desc;
+    }
+
+    public void setExec_site_desc(String exec_site_desc) {
+        this.exec_site_desc = exec_site_desc;
+    }
+
+    public int getExec_zone_code() {
+        return exec_zone_code;
+    }
+
+    public void setExec_zone_code(int exec_zone_code) {
+        this.exec_zone_code = exec_zone_code;
+    }
+
+    public String getExec_zone_id() {
+        return exec_zone_id;
+    }
+
+    public void setExec_zone_id(String exec_zone_id) {
+        this.exec_zone_id = exec_zone_id;
+    }
+
+    public String getExec_zone_desc() {
+        return exec_zone_desc;
+    }
+
+    public void setExec_zone_desc(String exec_zone_desc) {
+        this.exec_zone_desc = exec_zone_desc;
     }
 
     public String getOperation_id() {

@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.ui.act043.Act043_Frag_Package_Detail_List.OnListFragmentInteractionListener;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -104,7 +105,9 @@ public class Act043_Package_Detail_Frag_Item_Adapter extends RecyclerView.Adapte
             //
             if(mItem.getPrice() != null) {
                 tv_pack_service_price.setVisibility(View.VISIBLE);
-                tv_pack_service_price.setText(mItem.getPrice().toString());
+                tv_pack_service_price.setText(
+                    ToolBox_Inf.formatDoublePriceToScreen(mItem.getPrice())
+                );
             }else{
                 tv_pack_service_price.setVisibility(View.INVISIBLE);
             }

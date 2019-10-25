@@ -280,10 +280,13 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/act028_opc_content_content_btn_new_exec"
+                        android:id="@+id/act028_opc_content_content_btn_edit_service"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_adicionar_filled_states"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_pencil"
+                        android:tint="@color/padrao_WHITE"
+                        android:background="@drawable/btn_namoa_main_3_states"
                         />
                 </LinearLayout>
 

@@ -813,6 +813,14 @@ public class Act028_Task extends BaseFragment {
                                 mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
                                 mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
+                                //LUCHE - 18/10/2019
+                                //Reseta site e zona que serão enviados para o server.
+                                mTask.setSite_code(null);
+                                mTask.setSite_id(null);
+                                mTask.setSite_desc(null);
+                                mTask.setZone_code(null);
+                                mTask.setZone_id(null);
+                                mTask.setZone_desc(null);
                                 //
                                 sm_so_service_exec_task_fileDao.remove(
                                         new SM_SO_Service_Exec_Task_File_Sql_009(

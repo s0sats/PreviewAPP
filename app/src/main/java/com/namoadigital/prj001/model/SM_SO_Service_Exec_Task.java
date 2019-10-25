@@ -47,9 +47,11 @@ public class SM_SO_Service_Exec_Task {
     private int qty_people;
     @Expose
     private String status;
+    @Expose
     private Integer site_code;
     private String site_id;
     private String site_desc;
+    @Expose
     private Integer zone_code;
     private String zone_id;
     private String zone_desc;
