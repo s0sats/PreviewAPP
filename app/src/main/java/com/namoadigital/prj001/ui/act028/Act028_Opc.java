@@ -537,11 +537,7 @@ public class Act028_Opc extends BaseFragment {
                     iv_not_exec.setVisibility(View.GONE);
                 }
 
-                if((ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_SERVICE)
-                    || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)
-                    )
-                    && !mMain.hasSOSyncStatus()
-                    && qty < mService.getQty()
+                if(checkEditServiceVisibilityRules(qty)
                 ){
                     iv_edit_service.setVisibility(View.VISIBLE);
                 }else{
@@ -549,6 +545,15 @@ public class Act028_Opc extends BaseFragment {
                 }
             }
         }
+    }
+
+    private boolean checkEditServiceVisibilityRules(int qty) {
+        return (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_SERVICE)
+            || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)
+            )
+            && !mMain.hasSOSyncStatus()
+            && mMain.getOriginal_update_required() == 0
+            && qty < mService.getQty();
     }
 
     @Override
