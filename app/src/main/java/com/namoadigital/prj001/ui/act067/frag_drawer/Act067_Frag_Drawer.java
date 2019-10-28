@@ -500,9 +500,9 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
 
     }
 
-    private void performRadioClick(RadioButton rdoItem, String outboundFragItem) {
-        rdoItem.setChecked(true);
-        mFragDrawerListener.setFragToContainer(outboundFragItem);
+    private void performRadioClick(RadioButton rdo, String fragTag) {
+        rdo.setChecked(true);
+        mFragDrawerListener.setFragToContainer(fragTag);
     }
 
     private void hideView() {
