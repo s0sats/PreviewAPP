@@ -31,7 +31,6 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
-import com.namoadigital.prj001.model.TSO_Set_Service_Edit_Env;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
@@ -102,6 +101,7 @@ public class Act028_Opc extends BaseFragment {
     private TextView tv_optional_lbl;
     private TextView tv_optional_val;
 
+    private ImageView iv_new_exec;
     private ImageView iv_edit_service;
     private ImageView iv_not_exec;
 
@@ -213,6 +213,7 @@ public class Act028_Opc extends BaseFragment {
         tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
         tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
 
+        iv_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
         iv_edit_service = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_edit_service);
 
         iv_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
@@ -261,6 +262,61 @@ public class Act028_Opc extends BaseFragment {
                     // Chamar Lista de Tasks
                     if (delegate != null) {
                         delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+                    }
+                }
+            }
+        });
+
+        iv_new_exec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /**
+                 *  06-08-2018 Verifica se site do servico é diferente do site logado. Não leva em consideracao
+                 *  o site do cabecalho da S.O.
+                 */
+                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(mService.getSite_code()), hmAux_Trans)) {
+                    return;
+                }
+
+                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
+
+                sm_so_service_execNew.setExec_code(0);
+
+                sm_so_service_execNew.setPK(mService);
+
+                long nExecTemp = Long.parseLong(sm_so_service_execDao.getByStringHM(
+                    new SM_SO_Service_Exec_Sql_003(
+                        mService.getCustomer_code(),
+                        mService.getSo_prefix(),
+                        mService.getSo_code(),
+                        mService.getPrice_list_code(),
+                        mService.getPack_code(),
+                        mService.getPack_seq(),
+                        mService.getCategory_price_code(),
+                        mService.getService_code(),
+                        mService.getService_seq()
+
+                    ).toSqlQuery()
+                ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
+
+                sm_so_service_execNew.setExec_tmp(nExecTemp);
+                sm_so_service_execNew.setStatus(Constant.SYS_STATUS_PROCESS);
+
+                if (mService.getPartner_code() == null) {
+                    handlePartnerDefinition(sm_so_service_execNew, 1);
+                } else {
+                    sm_so_service_execNew.setPartner_code(mService.getPartner_code());
+                    sm_so_service_execNew.setPartner_id(mService.getPartner_id());
+                    sm_so_service_execNew.setPartner_desc(mService.getPartner_desc());
+                    //
+                    sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
+                    //
+                    setOffLineStatus(sm_so_service_execNew);
+                    //
+                    if (delegate != null) {
+                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+                        loadDataToScreen();
                     }
                 }
             }
@@ -490,13 +546,16 @@ public class Act028_Opc extends BaseFragment {
 
                 if (partner_restriction) {
 //                    iv_edit_service.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(View.GONE);
                     iv_not_exec.setVisibility(View.GONE);
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
 //                        iv_edit_service.setVisibility(View.GONE);
+                        iv_new_exec.setVisibility(View.GONE);
                         iv_not_exec.setVisibility(View.GONE);
                     } else {
 //                        iv_edit_service.setVisibility(View.VISIBLE);
+                        iv_new_exec.setVisibility(View.VISIBLE);
                     }
                 }
                 List<HMAux> execution_list = sm_so_service_execDao.query_HM(
@@ -529,10 +588,12 @@ public class Act028_Opc extends BaseFragment {
 
                 if (data.get("full_status").equalsIgnoreCase("0")) {
 //                    iv_edit_service.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(View.GONE);
                 } else {
                 }
 
                 if (!mMain.hasExecutionProfile()) {
+                    iv_new_exec.setVisibility(View.GONE);
                     iv_edit_service.setVisibility(View.GONE);
                     iv_not_exec.setVisibility(View.GONE);
                 }
