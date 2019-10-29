@@ -40,6 +40,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.sql.Sql_Act028_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
@@ -47,6 +48,8 @@ import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.view.View.GONE;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -480,15 +483,15 @@ public class Act028_Opc extends BaseFragment {
                     tv_zone_val.setText(results);
 
                 } else {
-                    tv_zone_lbl.setVisibility(View.GONE);
-                    tv_zone_val.setVisibility(View.GONE);
+                    tv_zone_lbl.setVisibility(GONE);
+                    tv_zone_val.setVisibility(GONE);
                 }
 
-                ll_comment.setVisibility(mService.getComments() != null && mService.getComments().length() > 0 ? View.VISIBLE : View.GONE);
+                ll_comment.setVisibility(mService.getComments() != null && mService.getComments().length() > 0 ? View.VISIBLE : GONE);
                 tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
                 tv_comment_val.setText(mService.getComments());
 
-                ll_partner.setVisibility(mService.getPartner_code() != null ? View.VISIBLE : View.GONE);
+                ll_partner.setVisibility(mService.getPartner_code() != null ? View.VISIBLE : GONE);
                 tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
                 tv_partner_val.setText(mService.getPartner_id() + " - " + mService.getPartner_desc());
 
@@ -507,7 +510,7 @@ public class Act028_Opc extends BaseFragment {
                 if (mService.getOptional() == 1) {
                     iv_not_exec.setVisibility(View.VISIBLE);
                 } else {
-                    iv_not_exec.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(GONE);
                 }
 
                 int qty = 0;
@@ -543,16 +546,15 @@ public class Act028_Opc extends BaseFragment {
                 tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
                 tv_qty_total_val.setText(String.valueOf(qty_done) + " / " + mService.getQty());
 
-
                 if (partner_restriction) {
 //                    iv_edit_service.setVisibility(View.GONE);
-                    iv_new_exec.setVisibility(View.GONE);
-                    iv_not_exec.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(GONE);
+                    iv_not_exec.setVisibility(GONE);
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
 //                        iv_edit_service.setVisibility(View.GONE);
-                        iv_new_exec.setVisibility(View.GONE);
-                        iv_not_exec.setVisibility(View.GONE);
+                        iv_new_exec.setVisibility(GONE);
+                        iv_not_exec.setVisibility(GONE);
                     } else {
 //                        iv_edit_service.setVisibility(View.VISIBLE);
                         iv_new_exec.setVisibility(View.VISIBLE);
@@ -588,14 +590,14 @@ public class Act028_Opc extends BaseFragment {
 
                 if (data.get("full_status").equalsIgnoreCase("0")) {
 //                    iv_edit_service.setVisibility(View.GONE);
-                    iv_new_exec.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(GONE);
                 } else {
                 }
 
                 if (!mMain.hasExecutionProfile()) {
-                    iv_new_exec.setVisibility(View.GONE);
-                    iv_edit_service.setVisibility(View.GONE);
-                    iv_not_exec.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(GONE);
+                    iv_edit_service.setVisibility(GONE);
+                    iv_not_exec.setVisibility(GONE);
                 }
 
                 if((ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_SERVICE)
@@ -606,7 +608,22 @@ public class Act028_Opc extends BaseFragment {
                 ){
                     iv_edit_service.setVisibility(View.VISIBLE);
                 }else{
-                    iv_edit_service.setVisibility(View.GONE);
+                    iv_edit_service.setVisibility(GONE);
+                }
+                //LUCHE - 29/10/2019
+                //Depois de removerem o btn nova exec, tivemos q ressuscitá lo dos mortos pois, no cenario
+                //start/stop com varias exec, ele é a unica manieira de criar execs.
+                //Mantive a regra atual e , somente aqui, caso o botão esta visivel,
+                //valido se ele deve ser mantido ou  não
+                //
+                if(iv_new_exec.getVisibility() == View.VISIBLE){
+                    if(mService.getQty() <= 1){
+                        iv_new_exec.setVisibility(GONE);
+                    }else{
+                        if(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO.equals(mService.getExec_type())){
+                            iv_new_exec.setVisibility(GONE);
+                        }
+                    }
                 }
             }
         }
