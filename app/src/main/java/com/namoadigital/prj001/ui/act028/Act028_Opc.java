@@ -630,7 +630,8 @@ public class Act028_Opc extends BaseFragment {
             || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)
             )
             && !mMain.hasSOSyncStatus()
-            && mMain.getOriginal_update_required() == 0
+            //&& mMain.getOriginal_update_required() == 0
+            && !mMain.isSoDbUpdateRequired()
             && qty < mService.getQty();
     }
 
