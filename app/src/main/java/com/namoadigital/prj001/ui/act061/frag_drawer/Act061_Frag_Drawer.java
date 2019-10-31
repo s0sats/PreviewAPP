@@ -69,6 +69,7 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     private RadioButton rdoHeader;
     private RadioButton rdoItem;
     private onFragDrawerInteraction mFragDrawerListener;
+    private boolean onHeaderFrag=true;
     //
 
     /**
@@ -205,25 +206,47 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                 }
             }
         });
-        //
-        rgFrags.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(mFragDrawerListener != null) {
-                    switch (checkedId) {
-                        case R.id.act061_drawer_rdo_header:
-                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_HEADER);
-                            break;
-                        case R.id.act061_drawer_rdo_item:
-                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_ITEM);
-                            break;
-                    }
-                    //Após mudança no frag, recolhe o drawer
-                    mFragDrawerListener.updateDrawerState(false);
 
+        rdoHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!onHeaderFrag){
+                    mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_HEADER);
                 }
+                onHeaderFrag = true;
+                mFragDrawerListener.updateDrawerState(false);
             }
         });
+
+        rdoItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onHeaderFrag){
+                    mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_ITEM);
+                }
+                onHeaderFrag = false;
+                mFragDrawerListener.updateDrawerState(false);
+            }
+        });
+        //
+//        rgFrags.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                if(mFragDrawerListener != null) {
+//                    switch (checkedId) {
+//                        case R.id.act061_drawer_rdo_header:
+//                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_HEADER);
+//                            break;
+//                        case R.id.act061_drawer_rdo_item:
+//                            mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_ITEM);
+//                            break;
+//                    }
+//                    //Após mudança no frag, recolhe o drawer
+//                    mFragDrawerListener.updateDrawerState(false);
+//
+//                }
+//            }
+//        });
     }
 
 
@@ -464,14 +487,18 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     private void forceFragSelection(String fragToload){
         switch (fragToload){
             case Act061_Main.INBOUND_FRAG_ITEM:
-                rdoItem.performClick();
+                performRadioClick(rdoItem, Act061_Main.INBOUND_FRAG_ITEM);
                 break;
             case Act061_Main.INBOUND_FRAG_HEADER:
             default:
-                rdoHeader.performClick();
+                performRadioClick(rdoHeader, Act061_Main.INBOUND_FRAG_HEADER);
                 break;
         }
+    }
 
+    private void performRadioClick(RadioButton rdo, String fragTag) {
+        rdo.setChecked(true);
+        mFragDrawerListener.setFragToContainer(fragTag);
     }
 
     private void hideView() {

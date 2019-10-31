@@ -113,22 +113,20 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     @Override
     public void loadCustomers(List<HMAux> customers) {
+
+        if(customers != null) {
+            mAdapter = new EV_User_Customer_Adapter(context, R.layout.ev_user_customer_cell, customers);
+            lv_customers.setAdapter(mAdapter);
+        }
+
         if (customers.size() == 1) {
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if (mBundle != null && mBundle.getInt(Constant.BACK_ACTION) == 1) {
                 //
                 callAct001();
-                //
-                mAdapter = new EV_User_Customer_Adapter(context, R.layout.ev_user_customer_cell, customers);
-                lv_customers.setAdapter(mAdapter);
             } else {
                 prepareExecSessionProcess(customers.get(0), 0, 1, 0);
             }
-
-        } else {
-            mAdapter = new EV_User_Customer_Adapter(context, R.layout.ev_user_customer_cell, customers);
-            lv_customers.setAdapter(mAdapter);
-
         }
     }
 
