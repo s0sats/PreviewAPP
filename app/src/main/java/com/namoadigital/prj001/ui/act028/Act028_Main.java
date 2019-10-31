@@ -321,6 +321,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                if(act028_opc != null){
+                    act028_opc.loadDataToScreen();
+                }
 
                 mDrawerStatus = true;
 
@@ -1720,6 +1723,25 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         );
     }
 
+    /**
+     * LUCHE - 30/10/2019
+     * Retorna se registro no banco esta em update_required
+     * @return
+     */
+    public boolean isSoDbUpdateRequired(){
+        HMAux aux = sm_soDao.getByStringHM(
+                        new SM_SO_Sql_002(
+                            mService.getCustomer_code(),
+                            mService.getSo_prefix(),
+                            mService.getSo_code()
+                        ).toSqlQuery()
+                    );
+        //
+        return aux != null
+            && aux.hasConsistentValue(SM_SODao.UPDATE_REQUIRED)
+            && "1".equals(aux.get(SM_SODao.UPDATE_REQUIRED));
+        //
+    }
     private void showNFormProductDialog() {
         resetHmAuxProdutcSelected();
         //
