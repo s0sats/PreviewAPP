@@ -1533,6 +1533,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
     private void callAct027() {
         bundle.remove("data");
+
         bundle.putString(
                 Constant.ACT028_SERVICE_UPDATED,
                 ToolBox_Con.getPreference_Customer_Code(context) + "|" +

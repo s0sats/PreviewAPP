@@ -727,6 +727,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             setFrag(act027_services_, SELECTION_SERVICES);
         } else {
             act027_opc_.perfomClickInOption(request_set_frag);
+            request_set_frag ="";
+            bundle.remove(Act027_Main.REQUEST_SET_FRAG);
         }
         //
         syncChecklistDao = new Sync_ChecklistDao(
