@@ -710,10 +710,11 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     //
                     if (
                         (!showOnlyAvailable || (showOnlyAvailable && isAvailable )) &&
-                         so_prefix_code.contains(constraint.toString().toLowerCase()) ||
+                        (so_prefix_code.contains(constraint.toString().toLowerCase()) ||
                          so_id.contains(constraint.toString().toLowerCase()) ||
                          so_desc.contains(constraint.toString().toLowerCase()) ||
                          serial_id.contains(constraint.toString().toLowerCase())
+                        )
 
                      ) {
                         filterList.add(hmAux);

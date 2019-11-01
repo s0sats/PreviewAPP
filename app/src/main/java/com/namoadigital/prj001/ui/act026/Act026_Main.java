@@ -314,7 +314,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private void setAvailableFilter(boolean isChecked) {
         if (mAdapter != null) {
             mAdapter.setShowOnlyAvailable(isChecked);
-            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+            applySearchFilter();
         }
     }
 
@@ -349,10 +349,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         }
         lv_so.setAdapter(mAdapter);
         //LUCHE - 01/11/2019
-//        if(mket_filter != null && !mket_filter.getText().toString().trim().isEmpty()){
-//            applySearchFilter();
-//        }
-
+        setAvailableFilter(sw_filter.isChecked());
     }
 
     @Override
