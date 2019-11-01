@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -162,7 +160,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         sw_filter = (Switch) findViewById(R.id.act026_sw_filter);
         //
         mPresenter.getSOListTotalCount(product_code, serial_id);
-        mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
+        //mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
+        mPresenter.getSOList(product_code, serial_id, false);
         //
         ToolBox_Inf.cleanUpApproval(
                 context,
@@ -306,9 +305,17 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mPresenter.getSOList(product_code, serial_id, isChecked);
+                //mPresenter.getSOList(product_code, serial_id, isChecked);
+                setAvailableFilter(isChecked);
             }
         });
+    }
+
+    private void setAvailableFilter(boolean isChecked) {
+        if (mAdapter != null) {
+            mAdapter.setShowOnlyAvailable(isChecked);
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
     }
 
     private void applySearchFilter() {
@@ -326,7 +333,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 soList,
                 configType,
                 R.layout.so_header_cell,
-                R.layout.so_header_cell
+                R.layout.so_header_cell,
+                mket_filter != null ? mket_filter.getText().toString().trim() : null
         );
         //
         if(soList.isEmpty()) {
@@ -340,6 +348,10 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             tv_empty_state.setVisibility(View.GONE);
         }
         lv_so.setAdapter(mAdapter);
+        //LUCHE - 01/11/2019
+//        if(mket_filter != null && !mket_filter.getText().toString().trim().isEmpty()){
+//            applySearchFilter();
+//        }
 
     }
 

@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -50,6 +51,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     //Implementação de filter no adapter - 27/07/2018
     private ValueFilter valueFilter;
     private ArrayList<HMAux> source_filtered;
+    //
+    private boolean showOnlyAvailable = false;
 
 //    public SO_Header_Adapter(Context context, int resource_01, List<HMAux> source, String config_type) {
 //        this.context = context;
@@ -69,14 +72,41 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
 //    }
 
     public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02) {
+//        this.context = context;
+//        this.resource_01 = resource_01;
+//        this.resource_02 = resource_02;
+//        this.source = source;
+//        this.mResource_Code = ToolBox_Inf.getResourceCode(
+//                context,
+//                Constant.APP_MODULE,
+//                "so_header_adapter"
+//        );
+//        this.config_type = config_type;
+//        this.checkedStatus = new boolean[source.size()];
+//        for (int i = 0; i < checkedStatus.length; i++) {
+//            checkedStatus[i] = false;
+//        }
+//        loadTranslation();
+//        //
+//        this.source_filtered = (ArrayList<HMAux>) source;
+//
+//        getFilter();
+        applyConstructor(context,source,config_type,resource_01,resource_02,null);
+    }
+
+    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter) {
+        applyConstructor(context,source,config_type,resource_01,resource_02,sFilter);
+    }
+
+    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                Constant.APP_MODULE,
-                "so_header_adapter"
+            context,
+            Constant.APP_MODULE,
+            "so_header_adapter"
         );
         this.config_type = config_type;
         this.checkedStatus = new boolean[source.size()];
@@ -86,8 +116,12 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         loadTranslation();
         //
         this.source_filtered = (ArrayList<HMAux>) source;
-
-        getFilter();
+        //LUCHE - 01/11/2019
+        if(sFilter != null && !sFilter.trim().isEmpty()) {
+            getFilter().filter(sFilter);
+        }else{
+            getFilter();
+        }
     }
 
     public interface ISO_Header_Adapter {
@@ -100,6 +134,9 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         this.delegate = delegate;
     }
 
+    public void setShowOnlyAvailable(boolean showOnlyAvailable) {
+        this.showOnlyAvailable = showOnlyAvailable;
+    }
 
     @Override
     public int getCount() {
@@ -669,11 +706,15 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     String so_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_ID).toLowerCase());
                     String so_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_DESC).toLowerCase());
                     String serial_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SERIAL_ID).toLowerCase());
+                    boolean isAvailable = hmAux.hasConsistentValue(Sql_Act026_001.QTD_SERVICES) && !"0".equals(hmAux.get(Sql_Act026_001.QTD_SERVICES));
                     //
-                    if ( so_prefix_code.contains(constraint.toString().toLowerCase()) ||
+                    if (
+                        (!showOnlyAvailable || (showOnlyAvailable && isAvailable )) &&
+                         so_prefix_code.contains(constraint.toString().toLowerCase()) ||
                          so_id.contains(constraint.toString().toLowerCase()) ||
                          so_desc.contains(constraint.toString().toLowerCase()) ||
                          serial_id.contains(constraint.toString().toLowerCase())
+
                      ) {
                         filterList.add(hmAux);
                     }
@@ -682,8 +723,22 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                 results.count = filterList.size();
                 results.values = filterList;
             } else {
-                results.count = source_filtered.size();
-                results.values = source_filtered;
+                if(showOnlyAvailable){
+                    ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                    for (HMAux hmAux : source_filtered) {
+                        boolean isAvailable = hmAux.hasConsistentValue(Sql_Act026_001.QTD_SERVICES) && !"0".equals(hmAux.get(Sql_Act026_001.QTD_SERVICES));
+                        //
+                        if (isAvailable){
+                            filterList.add(hmAux);
+                        }
+                    }
+                    //
+                    results.count = filterList.size();
+                    results.values = filterList;
+                }else {
+                    results.count = source_filtered.size();
+                    results.values = source_filtered;
+                }
             }
             return results;
         }
