@@ -61,6 +61,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private ConstraintLayout cl_register_service_form;
     private LinearLayout ll_register_package_form;
     private LinearLayout ll_register_spinners;
+    private LinearLayout ll_amount;
+    private LinearLayout ll_price;
 
     private Context context;
 
@@ -263,6 +265,8 @@ public class ServiceRegisterDialog extends AlertDialog {
         cl_register_service_form =  findViewById(R.id.ll_register_service_form);
         ll_register_package_form =  findViewById(R.id.ll_register_package_form);
         ll_register_spinners =  findViewById(R.id.ll_register_spinners);
+        ll_amount =  findViewById(R.id.ll_amount);
+        ll_price =  findViewById(R.id.ll_price);
         act043_ss_site = findViewById(R.id.act043_ss_site);
         act043_ss_zone = findViewById(R.id.act043_ss_zone);
         act043_ss_partner = findViewById(R.id.act043_ss_partner);
@@ -343,6 +347,8 @@ public class ServiceRegisterDialog extends AlertDialog {
                 cl_register_service_form.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
+                ll_amount.setVisibility(View.GONE);
+                ll_price.setVisibility(View.GONE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
