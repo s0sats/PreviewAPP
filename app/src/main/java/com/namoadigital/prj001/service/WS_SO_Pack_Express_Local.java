@@ -57,9 +57,6 @@ public class WS_SO_Pack_Express_Local extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-
-
-
             // token = ToolBox_Inf.getToken(getApplicationContext());
             soPackExpressLocalDao = new SO_Pack_Express_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //

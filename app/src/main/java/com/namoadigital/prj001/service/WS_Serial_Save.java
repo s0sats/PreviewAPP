@@ -50,9 +50,6 @@ public class WS_Serial_Save extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-
-
-
             gson = new GsonBuilder().serializeNulls().create();
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             boolean menu_send_process = bundle.getBoolean(Constant.PROCESS_MENU_SEND, false);
