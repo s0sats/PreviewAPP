@@ -39,6 +39,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private Integer zone_code_selected;
     private Integer partner_code_selected;
     private String pack_service_desc_full;
+    private String comments;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
     private TSO_Service_Search_Detail_Obj item;
@@ -128,6 +129,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.siteOption = siteOption;
         this.siteZoneOption = siteZoneOption;
         this.mdPartners = mdPartners;
+        this.comments = comments;
     }
 
 
@@ -357,8 +359,15 @@ public class ServiceRegisterDialog extends AlertDialog {
                 if(siteOption != null) {
                     setSpinnersContent(siteOption.size(), this.site_code_selected, this.zone_code_selected);
                 }
-                mk_comments_val.setVisibility(View.GONE);
-                tv_comments_lbl.setVisibility(View.GONE);
+                if(comments != null && !comments.isEmpty()) {
+                    tv_comments_lbl.setVisibility(View.VISIBLE);
+                    mk_comments_val.setVisibility(View.VISIBLE);
+                    mk_comments_val.setText(comments);
+                    mk_comments_val.setEnabled(false);
+                }else{
+                    tv_comments_lbl.setVisibility(View.GONE);
+                    mk_comments_val.setVisibility(View.GONE);
+                }
                 setSpinnersAction();
                 setPartnerForEditSS(true, this.partner_code_selected, siteOption);
                 setPriceAndQtyValues(1, this.service_price);
