@@ -1080,7 +1080,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private void processNoRead(HMAux hmAux, View convertView) {
         LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
-        tv_message.setText("(" + hmAux.get("count") + ") " + "mensagens nao lidas ");//hmAux_Trans.get("NO_READ_MESSAGES"));
+        tv_message.setText("(" + hmAux.get("count") + ") " + hmAux_Trans.get("UNREAD_MESSAGES"));
 
     }
 
