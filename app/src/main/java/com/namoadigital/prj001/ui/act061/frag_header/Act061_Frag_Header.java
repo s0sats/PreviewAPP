@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -20,8 +22,16 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.model.IO_From_Outbound_Search_Record;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -49,6 +59,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     private String token = "";
     private boolean bWsTransportCalled = false;
     //
+    private ScrollView svMain;
     private ImageView ivEdit;
     private TextView tvTransportOrderLbl;
     private MKEditTextNM mketTransportOrder;
@@ -228,7 +239,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         super.onResume();
         //Se chamada do reload foi por causa da leitura de barcode.
         //pula recarga de dados.
-        if (!pausedByScan) {
+        if (!pausedByScan && !hasHeaderChanged()) {
             loadDataToScreen();
         }
         //
@@ -661,7 +672,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     views.remove(ssConfLocal);
                 }
                 //
-                if(mInbound != null & mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                if(mInbound != null && mInbound.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)){
                     views.remove(ssStatus);
                 }
                 //
@@ -692,7 +703,6 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             }
         }
     }
-
 
     private void setDataToInbound() {
         if (mInbound != null) {
@@ -881,6 +891,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private void bindViews(View view) {
+        svMain = view.findViewById(R.id.act061_header_sv_main);
         ivEdit = view.findViewById(R.id.act061_header_iv_edit);
         tvTransportOrderLbl = view.findViewById(R.id.act061_header_tv_transport_order_lbl);
         ivTransportOrder = view.findViewById(R.id.act061_header_iv_transport_order);
@@ -1577,6 +1588,8 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                     btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE);
                 }
             }
+            //
+            svMain.scrollTo(0,0);
         }
 
     }
@@ -1689,6 +1702,52 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             mFragHeaderListener.removeFragHeaderControlsSta(controls_sta);
         }
         bStatus = false;
+        //LUCHE - 05/11/219
+        //Kill'n All
+        resetAllViews();
+    }
+
+    private void resetAllViews() {
+        inEdit = false;
+        ivEdit = null;
+        tvTransportOrderLbl =  null;
+        ivTransportOrder =  null;
+        mketTransportOrder =  null;
+        ssFromType =  null;
+        clOtherInfo =  null;
+        ssFromSite =  null;
+        ssPartner =  null;
+        ssFromOutbound =  null;
+        ivFromOutbound =  null;
+        tvInboundLbl =  null;
+        tvInboundPrefixCode =  null;
+        ssStatus =  null;
+        tvInboundIdLbl =  null;
+        etInboundId =  null;
+        tvInboundDescLbl =  null;
+        etInboundDesc =  null;
+        ssConfZone =  null;
+        ssConfLocal =  null;
+        tvInvoiceLbl =  null;
+        etInvoice = null;
+        tvInvoiceDtLbl =  null;
+        tvEtaDtLbl =  null;
+        mkdtEtaDt =  null;
+        tvArrivalDtLbl =  null;
+        mkdtArrivalDt =  null;
+        ssModal =  null;
+        ssCarrier =  null;
+        tvTruckNumLbl =  null;
+        etTruckNum = null;
+        tvDriverLbl =  null;
+        etDriver =  null;
+        tvCommentsLbl =  null;
+        etComments =  null;
+        btnSave =  null;
+        //
+        properties.clear();
+        controls_ss.clear();
+        controls_sta.clear();
     }
 
     public static List<String> getFragTranslationsVars() {
