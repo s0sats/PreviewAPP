@@ -1214,8 +1214,10 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
         //
         ivEdit.setVisibility(View.VISIBLE);
         setIvStatus();
+        //Reseta valor do spinner pois, após a criação, esse SS não tem mais função
+        //e caso usado ele cagava a validação no metodo hasHeaderChanged
+        resetSSFromOutbound();
         loadInbound();
-
     }
 
     private void updateArguments(HMAux hmAux_trans, int inbound_prefix, int inbound_code, boolean bNewProcess, boolean inEdit) {
