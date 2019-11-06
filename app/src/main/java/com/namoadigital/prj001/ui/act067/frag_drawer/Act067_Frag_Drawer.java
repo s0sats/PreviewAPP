@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import az.plainpie.PieView;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -32,6 +32,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import az.plainpie.PieView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -219,7 +221,11 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
                     mFragDrawerListener.setFragToContainer(Act067_Main.OUTBOUND_FRAG_HEADER);
                 }
                 onHeaderFrag = true;
-                mFragDrawerListener.updateDrawerState(false);
+                //LUCHE - 06/11/2019
+                //Evita que o drawer seja fechado quando vindo do fluxo da act066
+                if(!drawerFirstLoad) {
+                    mFragDrawerListener.updateDrawerState(false);
+                }
             }
         });
         //
@@ -487,7 +493,7 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         }
     }
 
-    private void forceFragSelection(String fragToload){
+    public void forceFragSelection(String fragToload){
         switch (fragToload){
             case Act067_Main.OUTBOUND_FRAG_ITEM:
                 performRadioClick(rdoItem, Act067_Main.OUTBOUND_FRAG_ITEM);
@@ -501,7 +507,11 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
     }
 
     private void performRadioClick(RadioButton rdo, String fragTag) {
-        rdo.setChecked(true);
+        //LUCHE - 06/11/2019
+        //Com a mudança de evento troca de frag para .setOnClickListner,
+        //para forçar a mudança é necessario rodar o performClick
+        //rdo.setChecked(true);
+        rdo.performClick();
         mFragDrawerListener.setFragToContainer(fragTag);
     }
 
@@ -544,8 +554,12 @@ public class Act067_Frag_Drawer extends BaseFragment implements Act067_Frag_Draw
         super.onStart();
         //
         if(drawerFirstLoad && mFragDrawerListener != null){
-            drawerFirstLoad = false;
+            //LUCHE - 06/11/2019
+            //Movido set false para após a primeira execução para evitar que o drawer
+            //seja fechado quando vindo do fluxo da act066
+            //drawerFirstLoad = false;
             forceFragSelection(mFragDrawerListener.getFirstFragToLoad());
+            drawerFirstLoad = false;
         }
     }
 

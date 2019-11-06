@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -56,6 +57,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private Act067_Frag_Header.onFragHeaderInteraction mFragHeaderListener;
     private String token = "";
     //
+    private ScrollView svMain;
     private ImageView ivEdit;
     private SearchableSpinner ssToType;
     private ConstraintLayout clOtherInfo;
@@ -176,7 +178,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         super.onResume();
         //Se chamada do reload foi por causa da leitura de barcode.
         //pula recarga de dados.
-        if (!pausedByScan) {
+        if (!pausedByScan && !hasHeaderChanged()) {
             loadDataToScreen();
         }
         //
@@ -373,7 +375,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                 if (validateDates()) {
                     if (bNewProcess || hasHeaderChanged()) {
                         //Sem else aqui pois proprio metodo exibira msg de erro
-                        if (validateSave()) {
+                        if (validateSave() && validateStatusChange()) {
                             setDataToOutbound();
                             //blockAll();
                             applyViewsInteraction(INTERATION_BLOCK_ALL);
@@ -720,6 +722,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     }
 
     private void bindViews(View view) {
+        svMain = view.findViewById(R.id.act067_header_sv_main);
         ivEdit = view.findViewById(R.id.act067_header_iv_edit);
         ssToType = view.findViewById(R.id.act067_header_ss_to_type);
         clOtherInfo = view.findViewById(R.id.act067_header_cl_other_info);
@@ -1024,6 +1027,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
         if (bStatus) {
             if (mOutbound != null) {
                 if (bNewProcess) {
+                    mOutbound.setStatus(ConstantBaseApp.SYS_STATUS_PENDING);
                     //Verifica no caso do novo, se toType ja selecionado,
                     //se sim, ão
                     if (ssToType == null || !ssToType.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -1204,6 +1208,8 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     btnSave.setVisibility(inEdit ? View.VISIBLE : View.GONE);
                 }
             }
+            //
+            svMain.scrollTo(0,0);
         }
 
     }

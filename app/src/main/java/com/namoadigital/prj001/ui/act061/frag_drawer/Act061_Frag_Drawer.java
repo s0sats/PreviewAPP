@@ -216,7 +216,11 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
                     mFragDrawerListener.setFragToContainer(Act061_Main.INBOUND_FRAG_HEADER);
                 }
                 onHeaderFrag = true;
-                mFragDrawerListener.updateDrawerState(false);
+                //LUCHE - 06/11/2019
+                //Evita que o drawer seja fechado quando vindo do fluxo da act066
+                if(!drawerFirstLoad) {
+                    mFragDrawerListener.updateDrawerState(false);
+                }
             }
         });
 
@@ -499,6 +503,9 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
     }
 
     private void performRadioClick(RadioButton rdo, String fragTag) {
+        //LUCHE - 06/11/2019
+        //Com a mudança de evento troca de frag para .setOnClickListner,
+        //para forçar a mudança é necessario rodar o performClick
         //rdo.setChecked(true);
         rdo.performClick();
         mFragDrawerListener.setFragToContainer(fragTag);
@@ -543,8 +550,12 @@ public class Act061_Frag_Drawer extends BaseFragment implements Act061_Frag_Draw
         super.onStart();
         //
         if(drawerFirstLoad && mFragDrawerListener != null){
-            drawerFirstLoad = false;
+            //LUCHE - 06/11/2019
+            //Movido set false para após a primeira execução para evitar que o drawer
+            //seja fechado quando vindo do fluxo da act057
+            //drawerFirstLoad = false;
             forceFragSelection(mFragDrawerListener.getFirstFragToLoad());
+            drawerFirstLoad = false;
         }
     }
 

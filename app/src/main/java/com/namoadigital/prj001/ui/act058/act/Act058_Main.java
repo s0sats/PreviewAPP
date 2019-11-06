@@ -788,7 +788,7 @@ public class Act058_Main extends Base_Activity_Frag implements Act058_Main_Contr
     public void callAct067() {
         Intent mIntent = new Intent(context, Act067_Main.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act061_Main.INBOUND_FRAG_ITEM);
+        bundle.putString(Act067_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(movePlanned.getOutbound_prefix()));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(movePlanned.getOutbound_code()));
 //        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(product_code));

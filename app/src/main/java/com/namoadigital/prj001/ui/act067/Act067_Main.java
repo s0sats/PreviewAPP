@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act067;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -15,10 +16,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -566,8 +572,43 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
                 setFrag(act067_frag_header, OUTBOUND_FRAG_HEADER);
                 break;
             case OUTBOUND_FRAG_ITEM:
-                setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
+                //LUCHE - 06/11/2019
+                checkHeaderChanges();
                 break;
+        }
+    }
+
+    /**
+     * LUCHE - 06/11/2019
+     * Valida se existem dados alterados e não salvo no cabeçalho e , caso exista,
+     * emite alert perguntando se deseja descartar as informações e prosseguir para
+     * lista de itens ou não.
+     */
+    private void checkHeaderChanges() {
+        if(!act067_frag_header.hasHeaderChanged()) {
+            setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
+        } else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
+                hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Reloada dados do banco
+                        act067_frag_header.loadDataToScreen();
+                        //Seta frag de itens
+                        setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
+                    }
+                },
+                2,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_HEADER);
+                    }
+                }
+            );
         }
     }
 

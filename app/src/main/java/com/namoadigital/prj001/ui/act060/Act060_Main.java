@@ -40,7 +40,6 @@ import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act058.frag.Frag_Move_Create;
-import com.namoadigital.prj001.ui.act061.Act061_Main;
 import com.namoadigital.prj001.ui.act067.Act067_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -507,7 +506,7 @@ public class Act060_Main extends Base_Activity_Frag implements Act060_Main_Contr
     public void callAct067() {
         Intent mIntent = new Intent(context, Act067_Main.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Act061_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
+        bundle.putString(Act067_Main.FIRST_FRAG_TO_LOAD, Act067_Main.OUTBOUND_FRAG_ITEM);
         bundle.putString(ConstantBaseApp.HMAUX_PROCESS_KEY, Constant.IO_OUTBOUND);
         bundle.putString(ConstantBaseApp.HMAUX_PREFIX_KEY, String.valueOf(io_prefix));
         bundle.putString(ConstantBaseApp.HMAUX_CODE_KEY, String.valueOf(io_code));
