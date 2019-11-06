@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -12,6 +13,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class WS_AL_Full extends IntentService {
 
+    long customer_code =-1L;
+
     public WS_AL_Full() {
         super("WS_AL_Full");
     }
@@ -19,7 +22,12 @@ public class WS_AL_Full extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
 
+            //Se parametro de customer na preferencias estiver igual a -1 não realizar a limpeza.
+            if (customer_code == -1L) {
+                return;
+            }
             ToolBox_Inf.generateNotification(getApplicationContext(), 100);
 
         } catch (Exception e) {
