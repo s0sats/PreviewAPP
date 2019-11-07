@@ -45,18 +45,29 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:paddingTop="10dp">
+                android:paddingTop="5dp">
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/frg_serial_search_mket_product_id"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/frg_serial_search_til_prod"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    app:hintEnabled="false"
+                    app:helperTextEnabled="true"
+                    tools:helperText="FAHRZEUG / CARRO"
+                    app:helperTextTextAppearance="@color/namoa_dark_blue"
+                    >
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_serial_search_mket_product_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:inputType="text"
                     android:paddingLeft="10dp"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
+                </android.support.design.widget.TextInputLayout>
 
                 <ImageView
                     android:id="@+id/frg_serial_search_iv_product_change"
@@ -84,7 +95,6 @@
                     android:src="@drawable/ic_lupa_states"
                     android:visibility="gone" />
 
-
             </LinearLayout>
 
             <View
@@ -106,17 +116,30 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_back"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                >
 
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/frg_serial_search_til_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:hintEnabled="false"
+                    app:helperTextEnabled="true"
+                    tools:helperText="Regra CHASSI(mín.7; máx.17)"
+                    >
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/frg_serial_search_mket_serial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:paddingLeft="10dp"
+                    android:layout_margin="0dp"
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
