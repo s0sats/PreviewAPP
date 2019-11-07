@@ -636,7 +636,6 @@ public class Frg_Serial_Search extends Fragment {
 
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
             //TODO Verificar a possibilidade de remover a chamada abaixo, pois ao setaro txt acima ja dispara o metodo abaixo
-
             setSerialRule(
                 pAux.getSerial_rule(),
                 pAux.getSerial_min_length() ,
