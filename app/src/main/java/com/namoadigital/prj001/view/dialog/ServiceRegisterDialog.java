@@ -39,6 +39,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private Integer zone_code_selected;
     private Integer partner_code_selected;
     private String pack_service_desc_full;
+    private String comments;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
     private TSO_Service_Search_Detail_Obj item;
@@ -61,6 +62,8 @@ public class ServiceRegisterDialog extends AlertDialog {
     private ConstraintLayout cl_register_service_form;
     private LinearLayout ll_register_package_form;
     private LinearLayout ll_register_spinners;
+    private LinearLayout ll_amount;
+    private LinearLayout ll_price;
 
     private Context context;
 
@@ -126,6 +129,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.siteOption = siteOption;
         this.siteZoneOption = siteZoneOption;
         this.mdPartners = mdPartners;
+        this.comments = comments;
     }
 
 
@@ -263,6 +267,8 @@ public class ServiceRegisterDialog extends AlertDialog {
         cl_register_service_form =  findViewById(R.id.ll_register_service_form);
         ll_register_package_form =  findViewById(R.id.ll_register_package_form);
         ll_register_spinners =  findViewById(R.id.ll_register_spinners);
+        ll_amount =  findViewById(R.id.ll_amount);
+        ll_price =  findViewById(R.id.ll_price);
         act043_ss_site = findViewById(R.id.act043_ss_site);
         act043_ss_zone = findViewById(R.id.act043_ss_zone);
         act043_ss_partner = findViewById(R.id.act043_ss_partner);
@@ -343,6 +349,8 @@ public class ServiceRegisterDialog extends AlertDialog {
                 cl_register_service_form.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
+                ll_amount.setVisibility(View.GONE);
+                ll_price.setVisibility(View.GONE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
@@ -351,8 +359,15 @@ public class ServiceRegisterDialog extends AlertDialog {
                 if(siteOption != null) {
                     setSpinnersContent(siteOption.size(), this.site_code_selected, this.zone_code_selected);
                 }
-                mk_comments_val.setVisibility(View.GONE);
-                tv_comments_lbl.setVisibility(View.GONE);
+                if(comments != null && !comments.isEmpty()) {
+                    tv_comments_lbl.setVisibility(View.VISIBLE);
+                    mk_comments_val.setVisibility(View.VISIBLE);
+                    mk_comments_val.setText(comments);
+                    mk_comments_val.setEnabled(false);
+                }else{
+                    tv_comments_lbl.setVisibility(View.GONE);
+                    mk_comments_val.setVisibility(View.GONE);
+                }
                 setSpinnersAction();
                 setPartnerForEditSS(true, this.partner_code_selected, siteOption);
                 setPriceAndQtyValues(1, this.service_price);
