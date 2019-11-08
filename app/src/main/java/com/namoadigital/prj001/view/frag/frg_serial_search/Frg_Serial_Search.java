@@ -78,7 +78,7 @@ public class Frg_Serial_Search extends Fragment {
 
     private ButtonNFC btn_nfc_reader;
 
-    private Frg_Serial_Search_Presenter mPresenter ;
+    private Frg_Serial_Search_Presenter mPresenter;
     private On_Frg_Serial_Search mFragListener;
 
     public void setClickListener(View.OnClickListener clickListener) {
@@ -90,12 +90,12 @@ public class Frg_Serial_Search extends Fragment {
         this.bTokenPendenciesCheck = bTokenPendenciesCheck;
     }
 
-    public void handleChkForHideSerialInfo(boolean status){
+    public void handleChkForHideSerialInfo(boolean status) {
         chk_hide_serial_info.setChecked(status);
         chk_hide_serial_info.setVisibility(View.VISIBLE);
     }
 
-    public void allowChkForHideSerialInfo(boolean status){
+    public void allowChkForHideSerialInfo(boolean status) {
         chk_hide_serial_info.setEnabled(status);
     }
 
@@ -177,31 +177,31 @@ public class Frg_Serial_Search extends Fragment {
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
         //via parametro do profile.
         mket_serial.setmBARCODE(
-                ToolBox_Inf.profileExists(
-                        getActivity(),
-                        Constant.PROFILE_MENU_PROFILE,
-                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
-                )
+            ToolBox_Inf.profileExists(
+                getActivity(),
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+            )
         );
         //
 
         //Verifica se a lib de OCR esta importada no flavor
         //e se o user possui acesso ao OCR
-        if(ToolBox_Inf.isMicroBlinkImported()) {
+        if (ToolBox_Inf.isMicroBlinkImported()) {
             mket_serial.setmOCRVin(
-                    ToolBox_Inf.profileExists(
-                            getActivity(),
-                            Constant.PROFILE_MENU_PROFILE,
-                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                    )
+                ToolBox_Inf.profileExists(
+                    getActivity(),
+                    Constant.PROFILE_MENU_PROFILE,
+                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
+                )
             );
-        }else{
+        } else {
             mket_serial.setmOCRVin(false);
         }
         mket_serial.setmOCR(ToolBox_Inf.profileExists(
-                getActivity(),
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+            getActivity(),
+            Constant.PROFILE_MENU_PROFILE,
+            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
         ));
         controls_sta.add(mket_serial);
         //
@@ -211,12 +211,12 @@ public class Frg_Serial_Search extends Fragment {
         controls_sta.add(mket_tracking);
         //
         chk_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
-        if(mFragListener.hasHideSerialInfoChk()) {
-            if(!mPresenter.getProfileForHideSerialInfo()
-            && !mPresenter.getProfileForceNotShowSerialInfo()) {
+        if (mFragListener.hasHideSerialInfoChk()) {
+            if (!mPresenter.getProfileForHideSerialInfo()
+                && !mPresenter.getProfileForceNotShowSerialInfo()) {
                 chk_hide_serial_info.setVisibility(View.GONE);
-            }else {
-                if(mPresenter.getProfileForHideSerialInfo()){
+            } else {
+                if (mPresenter.getProfileForHideSerialInfo()) {
                     chk_hide_serial_info.setVisibility(View.VISIBLE);
                 }
             }
@@ -227,7 +227,7 @@ public class Frg_Serial_Search extends Fragment {
             */
             chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
             chk_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
-        }else{
+        } else {
             chk_hide_serial_info.setVisibility(View.GONE);
         }
         //
@@ -285,22 +285,22 @@ public class Frg_Serial_Search extends Fragment {
 
             @Override
             public void reportTextChange(String text, boolean hasText) {
-                if(hasText) {
+                if (hasText) {
                     MD_Product mdProduct = productValidCheck(text);
                     //
                     setProductDesc(mdProduct != null ? mdProduct.getProduct_desc() : null);
-                    if(mdProduct != null) {
+                    if (mdProduct != null) {
                         setSerialRule(
                             mdProduct.getSerial_rule(),
                             mdProduct.getSerial_min_length(),
                             mdProduct.getSerial_max_length()
-                            );
-                    }else{
-                        setSerialRule(null,null,null);
+                        );
+                    } else {
+                        setSerialRule(null, null, null);
                     }
-                }else{
+                } else {
                     setProductDesc(null);
-                    setSerialRule(null, null , null );
+                    setSerialRule(null, null, null);
                 }
             }
         });
@@ -309,6 +309,7 @@ public class Frg_Serial_Search extends Fragment {
     /**
      * LUCHE - 07/11/2019
      * mMetodo qu seta descrição do produto no textHelper
+     *
      * @param productDesc
      */
     private void setProductDesc(String productDesc) {
@@ -355,38 +356,38 @@ public class Frg_Serial_Search extends Fragment {
 
                 if (mdProductAux == null && !values.get(PRODUCT_ID).isEmpty()) {
                     ToolBox.alertMSG(
-                            getActivity(),
-                            hmAux_Trans.get("alert_no_product_ttl"),
-                            hmAux_Trans.get("alert_no_product_msg"),
-                            null,
-                            0
+                        getActivity(),
+                        hmAux_Trans.get("alert_no_product_ttl"),
+                        hmAux_Trans.get("alert_no_product_msg"),
+                        null,
+                        0
                     );
 
                 } else if (ToolBox_Con.isOnline(getActivity()) &&
-                        ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()) {
+                    ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()) {
                     ToolBox.alertMSG(
-                            getActivity(),
-                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
-                            hmAux_Trans.get("alert_serial_pendencies_msg"),
-                            null,
-                            0
+                        getActivity(),
+                        hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                        hmAux_Trans.get("alert_serial_pendencies_msg"),
+                        null,
+                        0
                     );
                 } else {
-                    if(mFragListener.hasHideSerialInfoChk()) {
+                    if (mFragListener.hasHideSerialInfoChk()) {
                         mPresenter.setChkForHideSerialInfoPreference(chk_hide_serial_info.isChecked());
                     }
                     if (delegate != null) {
                         delegate.onSearchClick(
-                                btnAction,
-                                values
+                            btnAction,
+                            values
                         );
                     }
                 }
             } else {
                 if (delegate != null) {
                     delegate.onSearchClick(
-                            btnAction,
-                            values
+                        btnAction,
+                        values
                     );
                 }
             }
@@ -410,7 +411,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setProductIdText(String text) {
-        if (text.length() != 0){
+        if (text.length() != 0) {
             iv_product_change.performClick();
         }
         //
@@ -595,6 +596,7 @@ public class Frg_Serial_Search extends Fragment {
             }
         }
         //LUCHE - 07/11/2019
+        //Chama metodo que define a visibilidade do textHelper do produto.
         setProductHelperVisibility();
     }
 
@@ -635,12 +637,14 @@ public class Frg_Serial_Search extends Fragment {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
 
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
-            //TODO Verificar a possibilidade de remover a chamada abaixo, pois ao setaro txt acima ja dispara o metodo abaixo
-            setSerialRule(
+            //LUCHE - 08/11/2019
+            //Comentado o codigo abaixo pois, o setText acima ja dispara a chamada
+            //do metodo setSerialRule().
+            /*setSerialRule(
                 pAux.getSerial_rule(),
                 pAux.getSerial_min_length() ,
                 pAux.getSerial_max_length()
-            );
+            );*/
         } else {
         }
     }
@@ -671,11 +675,11 @@ public class Frg_Serial_Search extends Fragment {
         MD_ProductDao productDao = new MD_ProductDao(getActivity());
 
         MD_Product md_product = productDao.getByString(
-                new MD_Product_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
-                        "",
-                        product_id
-                ).toSqlQuery()
+            new MD_Product_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                "",
+                product_id
+            ).toSqlQuery()
         );
 
         return md_product;
@@ -685,11 +689,11 @@ public class Frg_Serial_Search extends Fragment {
         MD_ProductDao productDao = new MD_ProductDao(getActivity());
 
         MD_Product md_product = productDao.getByString(
-                new MD_Product_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
-                        product_code,
-                        product_id
-                ).toSqlQuery()
+            new MD_Product_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                product_code,
+                product_id
+            ).toSqlQuery()
         );
         //
         if (md_product != null) {
@@ -706,53 +710,52 @@ public class Frg_Serial_Search extends Fragment {
      * Seta regra de validação no campo.
      * Seta também variaveis para ignorarem mim e max e validação de vin após leitura de barcode
      * para true;
-     *
+     * <p>
      * LUCHE - 07/11/2019
      * Modificado metodo , adicionando campos de min e max que serão usado para definição do
      * textHelper do serial
+     *
      * @param serial_rule
      * @param min
      * @param max
      */
-    public void setSerialRule(String serial_rule, Integer min, Integer max){
+    public void setSerialRule(String serial_rule, Integer min, Integer max) {
         mket_serial.setmInputTypeValidator(serial_rule);
         mket_serial.setmIgnoreVINValidationOnRead(true);
         mket_serial.setmIgnoreMaxMinSize(true);
-        setSerialHelper(serial_rule,min,max);
-
+        setSerialHelper(serial_rule, min, max);
     }
 
     /**
      * LUCHE - 07/11/2019
      *
      * Metodo que seta no textHelper as regras do produto.
+     *
      * A validação helper != null é uma gambiarra para corrigir o que parece ser um problema
      * de "redesenho" da espaço do textHelper.
      * A correção foi necessaria pois, quando o produto é selecionado via act de seleção de produto,
      * ao setar o valor no textHelper, o topo do texto ficava "comido", como se tivesse por baixo
      * do Mket do serial.
      *
+     * LUCHE - 08/11/2019
+     * Removido a gambiarra de desabilitar e abilitar o textHelper, pois
+     * descobrimos que o que gerava o "bug" era a segunda chamada do metodo
+     * setSerialRule dentro do metodo processResult()
+     *
      * @param serial_rule - Regra do Serial ou null se não houver
-     * @param min - Qtd Min de caracteres ou null se não houver
-     * @param max - Qtd Max de caracteres ou null se não houver
+     * @param min         - Qtd Min de caracteres ou null se não houver
+     * @param max         - Qtd Max de caracteres ou null se não houver
      */
     private void setSerialHelper(String serial_rule, Integer min, Integer max) {
         //Chama metodo que retorna texto ja formatado
-        String helper = mPresenter.getFormattedRuleHelper(
-            hmAux_Trans,
-            serial_rule,
-            min,
-            max
+        til_serial.setHelperText(
+            mPresenter.getFormattedRuleHelper(
+                hmAux_Trans,
+                serial_rule,
+                min,
+                max
+            )
         );
-        //Ajuste para que o espaço do textHelper seja rearranjado após preenchimento
-        if(helper != null) {
-            til_serial.setHelperTextEnabled(false);
-            til_serial.setHelperTextEnabled(true);
-        }
-        //Seta regra no textHelper
-        til_serial.setHelperText(helper);
-        //Chama metodo que define a visibilidade do textHelper do produto.
-        setProductHelperVisibility();
     }
 
     /**
@@ -762,7 +765,7 @@ public class Frg_Serial_Search extends Fragment {
      * Regra maluca
      */
     private void setProductHelperVisibility() {
-        if(!showTree && !showAll) {
+        if (!showTree && !showAll) {
             til_product.setHelperTextEnabled(false);
         }
     }
