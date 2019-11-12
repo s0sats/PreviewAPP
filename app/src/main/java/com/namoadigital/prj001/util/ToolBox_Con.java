@@ -1145,6 +1145,16 @@ public class ToolBox_Con {
         ).apply();
     }
 
+    public static void cleanForceNotShowSerialInfoPreference(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putBoolean(
+                Constant.FORCE_NOT_SHOW_SERIAL_INFO,
+                false
+        ).apply();
+    }
+
     public static void resetCustomerSiteOperationPreferences(Context context) {
 
         ToolBox_Con.setPreference_Customer_Code(context, -1);
@@ -1153,6 +1163,7 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_Zone_Code(context, -1);
         ToolBox_Con.setPreference_Operation_Code(context, -1);
         ToolBox_Con.setPreference_Status_Login(context, "");
+        ToolBox_Con.cleanForceNotShowSerialInfoPreference(context);
 
     }
 
