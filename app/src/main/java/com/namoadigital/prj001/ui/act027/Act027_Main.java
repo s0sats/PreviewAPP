@@ -498,6 +498,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("tracking_num_lbl");
         transList.add("alert_goto_service_menu_ttl");
         transList.add("alert_goto_service_menu_msg");
+        transList.add("quality_approval_shortcut");
         //N-Form Creation
         transList.add("toolbar_n_form_lbl");
         transList.add("alert_open_n_form_ttl");

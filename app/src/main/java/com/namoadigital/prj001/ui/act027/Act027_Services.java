@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -20,6 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -84,6 +85,7 @@ public class Act027_Services extends BaseFragment {
     private TextView tv_product_serial_infos;
     private ImageView iv_editable_serial;
     private View listHeader;
+    private Button btn_quality_approval;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -185,6 +187,9 @@ public class Act027_Services extends BaseFragment {
         iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
+        btn_quality_approval = (Button) view.findViewById(R.id.act027_services_content_btn_quality_approval);
+
+        btn_quality_approval.setText(hmAux_Trans.get("quality_approval_shortcut"));
         iv_editable_serial.setVisibility(View.VISIBLE);
         iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
         lv_services.addHeaderView(listHeader);
@@ -194,6 +199,22 @@ public class Act027_Services extends BaseFragment {
                 delegate.onProductSerialSelected();
             }
         });
+
+        if(hasQualityStatus()) {
+            btn_quality_approval.setVisibility(View.VISIBLE);
+            btn_quality_approval.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMain.menuOptionsSelected(Act027_Main.SELECTION_APPROVAL);
+                }
+            });
+        }else{
+            btn_quality_approval.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean hasQualityStatus() {
+        return ConstantBase.SYS_STATUS_WAITING_QUALITY.equals(mSm_so.getStatus());
     }
 
     private void iniAction() {
