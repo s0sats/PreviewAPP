@@ -2319,8 +2319,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     @Override
-    public void onProductSerialSelected() {
-        act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERIAL);
+    public void selectDrawerOption(String selection_type) {
+        act027_opc_.perfomClickInOption(selection_type);
     }
 
     @Override

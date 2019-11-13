@@ -93,7 +93,7 @@ public class Act027_Services extends BaseFragment {
 
     public interface IAct027_Services {
         void onServiceSelected(HMAux sService);
-        void onProductSerialSelected();
+        void selectDrawerOption(String selection_type);
     }
 
     private IAct027_Services delegate;
@@ -196,7 +196,7 @@ public class Act027_Services extends BaseFragment {
         listHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delegate.onProductSerialSelected();
+                delegate.selectDrawerOption(Act027_Main.SELECTION_SERIAL);
             }
         });
 
@@ -205,7 +205,7 @@ public class Act027_Services extends BaseFragment {
             btn_quality_approval.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMain.menuOptionsSelected(Act027_Main.SELECTION_APPROVAL);
+                    mMain.selectDrawerOption(Act027_Main.SELECTION_APPROVAL);
                 }
             });
         }else{
