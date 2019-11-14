@@ -19,7 +19,39 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp">
 
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act015_mket_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                app:mBARCODE="false"
+                app:mNFC="false"
+                app:mOCR="false" />
+
+            <TextView
+                android:id="@+id/act015_tv_filter_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Filtrar "
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Switch
+                android:id="@+id/act015_sw_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true" />
+
+        </LinearLayout>
         <ListView
             android:id="@+id/act015_lv_sent_data"
             android:layout_width="match_parent"
