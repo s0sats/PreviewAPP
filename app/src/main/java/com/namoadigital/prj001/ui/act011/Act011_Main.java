@@ -90,6 +90,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -109,6 +110,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_SEARCH_KEY;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -200,6 +202,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private CustomFF.ICustomFFPhoto onPhotoClick;
     private boolean finalizeNewFlow = false;
     private boolean canSave;
+    private String filter_search;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -302,6 +305,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("dialog_finalize_option_finalize_lbl");
         transList.add("dialog_finalize_option_finalize_new_lbl");
         transList.add("btn_check_new");
+        transList.add("btn_history");
+        transList.add("btn_home");
         transList.add("alert_results_ttl");
         transList.add("lbl_serial_data");
         transList.add("alert_error_on_create_form_ttl");
@@ -1027,6 +1032,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
             mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
+            filter_search = bundle.getString(FILTER_SEARCH_KEY, null);
 
         } else {
             mSo_Prefix = null;
@@ -1878,6 +1884,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //        String sF = formData.getToken();
     }
 
+    public void callAct015() {
+        Intent mIntent = new Intent(context, Act015_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        if(filter_search != null && filter_search.length() > 0) {
+            bundle.putString(FILTER_SEARCH_KEY, filter_search);
+        }
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     private class ScreenAdapter extends FragmentPagerAdapter {
 
         private ArrayList<Fragment> data;
@@ -2215,10 +2233,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
 
-        if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
-            exitAlert();
+        if (formData != null){
+            if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+                exitAlert();
+            }else {
+                if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_SENT)) {
+                    callAct015();
+                }else{
+                    callAct005(Act011_Main.this);
+                }
+            }
         } else {
-            callAct005(Act011_Main.this);
+                callAct005(Act011_Main.this);
         }
     }
 

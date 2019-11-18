@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -26,25 +29,49 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 09/02/2017.
  */
 
-public class Local_Data_List_Adapter extends BaseAdapter {
+public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
     private Context context;
     private int resource;
-    private List<HMAux> source;
+    private List<HMAux> source_filtered = new ArrayList<>();
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private OnIvCommentClickListner onIvCommentClickListner;
+    private ValueFilter valueFilter;
+    private List<HMAux> source = new ArrayList<>();
 
     public Local_Data_List_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
-        this.source = source;
+        this.source_filtered = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 Constant.APP_MODULE,
                 "local_data_list_adapter"
         );
         loadTranslation();
+    }
+
+    public Local_Data_List_Adapter(Context context, int resource, List<HMAux> source, String mket_filter) {
+        this.context = context;
+        this.resource = resource;
+        this.source_filtered = source;
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                "local_data_list_adapter"
+        );
+        this.source = source;
+        getFilter().filter(mket_filter);
+        loadTranslation();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new ValueFilter();
+        }
+        return valueFilter;
     }
 
     public interface OnIvCommentClickListner{
@@ -57,12 +84,12 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return source.size();
+        return source_filtered.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return source.get(position);
+        return source_filtered.get(position);
     }
 
     @Override
@@ -81,7 +108,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         }
 
         //Resgata HmAux com as informações
-        final HMAux item = source.get(position);
+        final HMAux item = source_filtered.get(position);
 
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.local_data_list_cell_01_ll_bg);
@@ -419,5 +446,48 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         );
+    }
+
+    private class ValueFilter extends Filter{
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            String search = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+
+            if (search != null && search.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+
+                for(HMAux item: source){
+
+                    String serial_id = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.SERIAL_ID)).toLowerCase();
+                    String custom_product_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC)).toLowerCase();
+                    String custom_product_id = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID)).toLowerCase();
+                    String custom_form_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC)).toLowerCase();
+                    String custom_form_type_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC)).toLowerCase();
+
+                    if ((serial_id != null && serial_id.contains(search))
+                            || (custom_product_desc != null && custom_product_desc.contains(search))
+                            || (custom_product_id != null && custom_product_id.contains(search))
+                            || (custom_form_desc != null && custom_form_desc.contains(search))
+                            || (custom_form_type_desc != null && custom_form_type_desc.contains(search))
+                    ) {
+                        filterList.add(item);
+                    }
+                }
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = source.size();
+                results.values = source;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            source_filtered = (ArrayList<HMAux>) results.values;
+            //
+            notifyDataSetChanged();
+        }
     }
 }

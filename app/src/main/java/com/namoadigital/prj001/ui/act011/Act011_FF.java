@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,6 +68,8 @@ public class Act011_FF extends Fragment {
     private String comments;
     //LUCHE - 17/01/2019 - RotateBugFixed
     private Act011_Main mAct = null;
+    private Button go_to_history;
+    private Button go_to_home;
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
@@ -164,6 +167,9 @@ public class Act011_FF extends Fragment {
         //
         ll_footer = (LinearLayout) view.findViewById(R.id.act011_ff_ll_footer);
         //
+        go_to_history = (Button) view.findViewById(R.id.act011_go_to_history);
+        go_to_home = (Button) view.findViewById(R.id.act011_go_to_home);
+        //
         ll_pre = (LinearLayout) view.findViewById(R.id.act011_ff_ll_pre);
         ll_nex = (LinearLayout) view.findViewById(R.id.act011_ff_ll_nex);
         ll_drawer = (LinearLayout) view.findViewById(R.id.act011_ff_ll_drawer);
@@ -188,6 +194,18 @@ public class Act011_FF extends Fragment {
         }else{
             cv_product_serial_card.setVisibility(View.GONE);
         }
+
+        if(formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)){
+            go_to_history.setText(hmAux_Trans.get("btn_history"));
+            go_to_history.setVisibility(View.VISIBLE);
+            go_to_home.setVisibility(View.VISIBLE);
+            go_to_home.setText(hmAux_Trans.get("btn_home"));
+
+        }else{
+            go_to_history.setVisibility(View.GONE);
+            go_to_home.setVisibility(View.GONE);
+        }
+
     }
 
     private void iniActions() {
@@ -233,6 +251,20 @@ public class Act011_FF extends Fragment {
                 if (delegate_ll != null) {
                     delegate_ll.checkWithNew();
                 }
+            }
+        });
+        //
+        go_to_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAct.callAct015();
+            }
+        });
+        //
+        go_to_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAct.callAct005(context);
             }
         });
     }

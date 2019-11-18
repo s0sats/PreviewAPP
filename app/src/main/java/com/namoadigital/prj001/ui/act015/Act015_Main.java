@@ -7,9 +7,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -29,7 +31,9 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
 
     private Act015_Main_Presenter mPresenter;
     private ListView lv_sent;
+    private MKEditTextNM mket_filter;
     private Local_Data_List_Adapter mAdapter;
+    public static final String FILTER_SEARCH_KEY = "filter_search_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         //
         List<String> translateList = new ArrayList<>();
         translateList.add("alert_schedule_comment_ttl");
+        translateList.add("lbl_filter");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -76,7 +81,14 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     }
 
     private void initVars() {
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //
+        String filter_search = null;
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            filter_search = bundle.getString(FILTER_SEARCH_KEY);
+        }
+        //
         mPresenter =
                 new Act015_Main_Presenter_Impl(
                         context,
@@ -90,7 +102,11 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                 );
 
         lv_sent = (ListView) findViewById(R.id.act015_lv_sent_data);
-
+        mket_filter = (MKEditTextNM) findViewById(R.id.act015_mket_filter);
+        mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
+        if(filter_search != null && filter_search.length() >0){
+            mket_filter.setText(filter_search);
+        }
         mPresenter.getSentData();
 
     }
@@ -126,6 +142,17 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             }
         });
 
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                applySearchFilter();
+            }
+        });
     }
 
     @Override
@@ -133,7 +160,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         mAdapter = new Local_Data_List_Adapter(
                 context,
                 R.layout.local_data_list_cell,
-                sentData
+                sentData,
+                mket_filter.getText().toString().trim()
         );
         //
         mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
@@ -157,6 +185,9 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(!"".equals(mket_filter.getText().toString())){
+            bundle.putString(FILTER_SEARCH_KEY,mket_filter.getText().toString());
+        }
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -192,4 +223,10 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
+    private void applySearchFilter() {
+        if (mAdapter != null) {
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
+    };
 }
