@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -166,7 +167,8 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         transList.add("alert_not_processing_status_msg");
         transList.add("alert_picking_move_not_found_ttl");
         transList.add("alert_picking_move_not_found_msg");
-
+        transList.add("alert_outbound_exit_ttl");
+        transList.add("alert_outbound_exit_msg");
         //Trad Frag Drawer
         transList.addAll(Act067_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -588,28 +590,32 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
         if(!act067_frag_header.hasHeaderChanged()) {
             setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
         } else{
-            ToolBox.alertMSG_YES_NO(
-                context,
-                hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
-                hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Reloada dados do banco
-                        act067_frag_header.loadDataToScreen();
-                        //Seta frag de itens
-                        setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
-                    }
-                },
-                2,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_HEADER);
-                    }
-                }
-            );
+            confirmHeaderChanges();
         }
+    }
+
+    private void confirmHeaderChanges() {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
+            hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Reloada dados do banco
+                    act067_frag_header.loadDataToScreen();
+                    //Seta frag de itens
+                    setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
+                }
+            },
+            2,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_HEADER);
+                }
+            }
+        );
     }
 
     @Override
@@ -913,7 +919,29 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(requestAct,act067_frag_header != null && act067_frag_header.hasHeaderChanged());
+        Fragment fragmentByTag = fm.findFragmentByTag(OUTBOUND_FRAG_HEADER);
+        if(fragmentByTag != null && fragmentByTag.isVisible()){
+            if(act067_frag_header != null && !act067_frag_header.hasHeaderChanged()) {
+                act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_ITEM);
+            }else{
+                confirmHeaderChanges();
+            }
+        }else{
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_outbound_exit_ttl"),
+                    hmAux_Trans.get("alert_outbound_exit_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mPresenter.onBackPressedClicked(requestAct,act067_frag_header != null && act067_frag_header.hasHeaderChanged());
+                        }
+                    },
+                    1
+
+            );
+
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

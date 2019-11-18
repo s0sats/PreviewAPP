@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -72,6 +73,7 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private int mPrefix;
     private int mCode;
     private boolean bNewProcess;
+    private boolean isDrawerOpen=true;
     private String wsProcess;
     private String fragToLoad = INBOUND_FRAG_HEADER;
     //Receiver do que captura disparo do FCM
@@ -163,6 +165,8 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         transList.add("alert_outbound_destination_msg");
         transList.add("alert_header_changes_will_be_lost_ttl");
         transList.add("alert_header_changes_will_be_lost_msg");
+        transList.add("alert_inbound_exit_ttl");
+        transList.add("alert_inbound_exit_msg");
         //Trad Frag Drawer
         transList.addAll(Act061_Frag_Drawer.getFragTranslationsVars());
         //Trad Frag Header
@@ -297,8 +301,10 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     private void setDrawerState(boolean drawerState) {
         if (drawerState) {
             mDrawerLayout.openDrawer(GravityCompat.START);
+            isDrawerOpen = true;
         } else {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            isDrawerOpen = false;
         }
         //
         mDrawerToggle.syncState();
@@ -641,28 +647,32 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
         if(!act061_frag_header.hasHeaderChanged()) {
             setFrag(act061_frag_item, INBOUND_FRAG_ITEM);
         } else{
-            ToolBox.alertMSG_YES_NO(
-                context,
-                hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
-                hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Reloada dados do banco
-                        act061_frag_header.loadDataToScreen();
-                        //Seta frag de itens
-                        setFrag(act061_frag_item, INBOUND_FRAG_ITEM);
-                    }
-                },
-                2,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        act061_frag_drawer.forceFragSelection(INBOUND_FRAG_HEADER);
-                    }
-                }
-            );
+            confirmHeaderChanges();
         }
+    }
+
+    private void confirmHeaderChanges() {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            hmAux_Trans.get("alert_header_changes_will_be_lost_ttl"),
+            hmAux_Trans.get("alert_header_changes_will_be_lost_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Reloada dados do banco
+                    act061_frag_header.loadDataToScreen();
+                    //Seta frag de itens
+                    setFrag(act061_frag_item, INBOUND_FRAG_ITEM);
+                }
+            },
+            2,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    act061_frag_drawer.forceFragSelection(INBOUND_FRAG_HEADER);
+                }
+            }
+        );
     }
 
     @Override
@@ -974,10 +984,32 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked(
-            requestingAct,
-            act061_frag_header != null && act061_frag_header.hasHeaderChanged()
-        );
+        Fragment fragmentByTag = fm.findFragmentByTag(INBOUND_FRAG_HEADER);
+        if(fragmentByTag != null && fragmentByTag.isVisible()){
+            if(act061_frag_header != null && !act061_frag_header.hasHeaderChanged()) {
+                act061_frag_drawer.forceFragSelection(INBOUND_FRAG_ITEM);
+            }else{
+                confirmHeaderChanges();
+            }
+        }else {
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_inbound_exit_ttl"),
+                    hmAux_Trans.get("alert_inbound_exit_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mPresenter.onBackPressedClicked(
+                                    requestingAct,
+                                    act061_frag_header != null && act061_frag_header.hasHeaderChanged()
+                            );
+                        }
+                    },
+                    1
+
+            );
+        }
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
