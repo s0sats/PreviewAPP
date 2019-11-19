@@ -65,7 +65,7 @@ public class Frg_Serial_Search_Presenter implements Frg_Serial_Search_Contract.P
         }
         //
         if(max != null && max > 0){
-            sMax = (min != null && min > 0 ? hmAux_Trans.get("serial_min_max_separator_lbl") + " " : "") + hmAux_Trans.get("serial_max_length_lbl") + max;
+            sMax = (min != null && min > 0 ?  " " + hmAux_Trans.get("serial_min_max_separator_lbl") + " " : "") + hmAux_Trans.get("serial_max_length_lbl") + max;
         }
         //
         if(!sMin.isEmpty() || !sMax.isEmpty() ){
