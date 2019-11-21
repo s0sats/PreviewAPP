@@ -1158,10 +1158,13 @@ public class Frg_Serial_Edit extends BaseFragment {
         //region Add Info
         mket_info1.setText(mdProductSerial.getAdd_inf1());
         mket_info1.setTag(mdProductSerial.getAdd_inf1());
+        mket_info1.setFocusable(false);
         mket_info2.setText(mdProductSerial.getAdd_inf2());
         mket_info2.setTag(mdProductSerial.getAdd_inf2());
+        mket_info2.setFocusable(false);
         mket_info3.setText(mdProductSerial.getAdd_inf3());
         mket_info3.setTag(mdProductSerial.getAdd_inf3());
+        mket_info3.setFocusable(false);
         //endregion
         //region I/O Info
         if (mdProduct.getIo_control() == 1) {

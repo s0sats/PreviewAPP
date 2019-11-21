@@ -259,6 +259,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         mk_price_val =  findViewById(R.id.act043_frag_service_list_form_tv_price_val);
         tv_comments_lbl = findViewById(R.id.act043_frag_service_list_form_tv_comment_lbl);
         mk_comments_val =  findViewById(R.id.act043_frag_service_list_form_tv_comment_val);
+        mk_comments_val.setFocusable(false);
         cb_remove_val =  findViewById(R.id.act043_frag_service_list_cb_remove_val);
         iv_foto =  findViewById(R.id.iv_foto);
         btn_cancelar =  findViewById(R.id.act043_frag_service_list_btn_cancel);
