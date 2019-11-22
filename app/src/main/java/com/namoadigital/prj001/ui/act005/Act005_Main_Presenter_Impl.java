@@ -1116,7 +1116,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 if (logoutList.length() > 0) {
                     //Cancela notificações do chat
                     ToolBox_Inf.cancelChatNotification(context);
-                    //
+                    //Cancela notificações de update
+                    ToolBox_Inf.cancelNotification(context, 10);
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //
                     if (ToolBox_Con.isOnline(context,true)) {
