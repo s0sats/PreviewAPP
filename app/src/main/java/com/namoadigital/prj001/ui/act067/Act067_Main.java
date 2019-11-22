@@ -919,28 +919,32 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
 
     @Override
     public void onBackPressed() {
-        Fragment fragmentByTag = fm.findFragmentByTag(OUTBOUND_FRAG_HEADER);
-        if(fragmentByTag != null && fragmentByTag.isVisible()){
-            if(act067_frag_header != null && !act067_frag_header.hasHeaderChanged()) {
-                act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_ITEM);
-            }else{
-                confirmHeaderChanges();
+        if(mPrefix > 0 && mCode > 0) {
+            Fragment fragmentByTag = fm.findFragmentByTag(OUTBOUND_FRAG_HEADER);
+            if (fragmentByTag != null && fragmentByTag.isVisible()) {
+                if (act067_frag_header != null && !act067_frag_header.hasHeaderChanged()) {
+                    act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_ITEM);
+                } else {
+                    confirmHeaderChanges();
+                }
+            } else {
+                ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_outbound_exit_ttl"),
+                        hmAux_Trans.get("alert_outbound_exit_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPresenter.onBackPressedClicked(requestAct, act067_frag_header != null && act067_frag_header.hasHeaderChanged());
+                            }
+                        },
+                        1
+
+                );
+
             }
         }else{
-            ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("alert_outbound_exit_ttl"),
-                    hmAux_Trans.get("alert_outbound_exit_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mPresenter.onBackPressedClicked(requestAct,act067_frag_header != null && act067_frag_header.hasHeaderChanged());
-                        }
-                    },
-                    1
-
-            );
-
+            mPresenter.onBackPressedClicked(requestAct, act067_frag_header != null && act067_frag_header.hasHeaderChanged());
         }
     }
 

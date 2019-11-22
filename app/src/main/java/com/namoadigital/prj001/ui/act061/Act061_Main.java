@@ -984,32 +984,38 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        Fragment fragmentByTag = fm.findFragmentByTag(INBOUND_FRAG_HEADER);
-        if(fragmentByTag != null && fragmentByTag.isVisible()){
-            if(act061_frag_header != null && !act061_frag_header.hasHeaderChanged()) {
-                act061_frag_drawer.forceFragSelection(INBOUND_FRAG_ITEM);
-            }else{
-                confirmHeaderChanges();
-            }
-        }else {
-            ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("alert_inbound_exit_ttl"),
-                    hmAux_Trans.get("alert_inbound_exit_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mPresenter.onBackPressedClicked(
-                                    requestingAct,
-                                    act061_frag_header != null && act061_frag_header.hasHeaderChanged()
-                            );
-                        }
-                    },
-                    1
+        if(mPrefix > 0 && mCode > 0) {
+            Fragment fragmentByTag = fm.findFragmentByTag(INBOUND_FRAG_HEADER);
+            if (fragmentByTag != null && fragmentByTag.isVisible()) {
+                if (act061_frag_header != null && !act061_frag_header.hasHeaderChanged()) {
+                    act061_frag_drawer.forceFragSelection(INBOUND_FRAG_ITEM);
+                } else {
+                    confirmHeaderChanges();
+                }
+            } else {
+                ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_inbound_exit_ttl"),
+                        hmAux_Trans.get("alert_inbound_exit_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPresenter.onBackPressedClicked(
+                                        requestingAct,
+                                        act061_frag_header != null && act061_frag_header.hasHeaderChanged()
+                                );
+                            }
+                        },
+                        1
 
+                );
+            }
+        }else{
+            mPresenter.onBackPressedClicked(
+                    requestingAct,
+                    act061_frag_header != null && act061_frag_header.hasHeaderChanged()
             );
         }
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
