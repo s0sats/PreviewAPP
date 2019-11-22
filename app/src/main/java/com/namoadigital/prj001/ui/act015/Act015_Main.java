@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act015;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     private MKEditTextNM mket_filter;
     private Local_Data_List_Adapter mAdapter;
     public static final String FILTER_SEARCH_KEY = "filter_search_key";
+    public static final String FORM_SELECTED_INDEX_KEY = "form_selected_index";
+    private int form_selected_index = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,14 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         initActions();
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(form_selected_index > 0) {
+            lv_sent.setSelection(form_selected_index);
+        }
     }
 
     private void iniSetup() {
@@ -87,6 +98,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             filter_search = bundle.getString(FILTER_SEARCH_KEY);
+            form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
         }
         //
         mPresenter =
@@ -107,6 +119,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if(filter_search != null && filter_search.length() >0){
             mket_filter.setText(filter_search);
         }
+        mket_filter.clearFocus();
         mPresenter.getSentData();
 
     }
@@ -138,6 +151,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
+                form_selected_index = position;
                 mPresenter.addFormInfoToBundle(item);
             }
         });
@@ -178,7 +192,6 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         });
         //
         lv_sent.setAdapter(mAdapter);
-
     }
 
     @Override
@@ -188,6 +201,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if(!"".equals(mket_filter.getText().toString())){
             bundle.putString(FILTER_SEARCH_KEY,mket_filter.getText().toString());
         }
+        bundle.putInt(FORM_SELECTED_INDEX_KEY, form_selected_index);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

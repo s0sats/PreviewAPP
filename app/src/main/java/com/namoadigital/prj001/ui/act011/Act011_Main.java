@@ -111,6 +111,7 @@ import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_SEARCH_KEY;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_KEY;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -203,7 +204,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private boolean finalizeNewFlow = false;
     private boolean canSave;
     private String filter_search;
-
+    private int form_selected_index;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -1033,7 +1034,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
             filter_search = bundle.getString(FILTER_SEARCH_KEY, null);
-
+            form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -1889,7 +1890,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         if(filter_search != null && filter_search.length() > 0) {
-            bundle.putString(FILTER_SEARCH_KEY, filter_search);
+            bundle.putString(Act015_Main.FILTER_SEARCH_KEY, filter_search);
+        }
+        if(form_selected_index > -1) {
+            bundle.putInt(Act015_Main.FORM_SELECTED_INDEX_KEY, form_selected_index);
         }
         mIntent.putExtras(bundle);
         startActivity(mIntent);

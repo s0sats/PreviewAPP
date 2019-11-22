@@ -44,6 +44,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
+            android:choiceMode="singleChoice"
             android:padding="5dp"
             android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="4dp"/>
