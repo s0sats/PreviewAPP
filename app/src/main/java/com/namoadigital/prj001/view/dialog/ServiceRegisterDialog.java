@@ -39,7 +39,6 @@ public class ServiceRegisterDialog extends AlertDialog {
     private Integer zone_code_selected;
     private Integer partner_code_selected;
     private String pack_service_desc_full;
-    private String comments;
     private HMAux hmAux_trans;
     private TSO_Service_Search_Obj packageObj;
     private TSO_Service_Search_Detail_Obj item;
@@ -62,8 +61,6 @@ public class ServiceRegisterDialog extends AlertDialog {
     private ConstraintLayout cl_register_service_form;
     private LinearLayout ll_register_package_form;
     private LinearLayout ll_register_spinners;
-    private LinearLayout ll_amount;
-    private LinearLayout ll_price;
 
     private Context context;
 
@@ -88,6 +85,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private String mResourceName = "service_register_dialog";
     private Double service_price;
     private String service_desc_full;
+    private String service_comments;
 
     protected ServiceRegisterDialog(Context context) {
         super(context);
@@ -129,7 +127,7 @@ public class ServiceRegisterDialog extends AlertDialog {
         this.siteOption = siteOption;
         this.siteZoneOption = siteZoneOption;
         this.mdPartners = mdPartners;
-        this.comments = comments;
+        this.service_comments = comments;
     }
 
 
@@ -188,17 +186,17 @@ public class ServiceRegisterDialog extends AlertDialog {
         transList.add("alert_multiple_service_added_msg");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
-            getContext(),
-            ConstantBaseApp.APP_MODULE,
-            mResourceName
+                getContext(),
+                ConstantBaseApp.APP_MODULE,
+                mResourceName
         );
         //
         hmAux_trans = ToolBox_Inf.setLanguage(
-            getContext(),
-            ConstantBaseApp.APP_MODULE,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(getContext()),
-            transList
+                getContext(),
+                ConstantBaseApp.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getContext()),
+                transList
         );
     }
 
@@ -267,8 +265,6 @@ public class ServiceRegisterDialog extends AlertDialog {
         cl_register_service_form =  findViewById(R.id.ll_register_service_form);
         ll_register_package_form =  findViewById(R.id.ll_register_package_form);
         ll_register_spinners =  findViewById(R.id.ll_register_spinners);
-        ll_amount =  findViewById(R.id.ll_amount);
-        ll_price =  findViewById(R.id.ll_price);
         act043_ss_site = findViewById(R.id.act043_ss_site);
         act043_ss_zone = findViewById(R.id.act043_ss_zone);
         act043_ss_partner = findViewById(R.id.act043_ss_partner);
@@ -299,6 +295,7 @@ public class ServiceRegisterDialog extends AlertDialog {
                 setPriceAndQtyValues(packageObj.getQty(), packageObj.getPrice());
                 setHeaderResume();
                 mk_comments_val.setText(packageObj.getComment());
+                mk_comments_val.clearFocus();
                 if(packageObj.hasNullPrice()){
                     mk_price_val.setTextColor(Color.RED);
                 }
@@ -316,13 +313,14 @@ public class ServiceRegisterDialog extends AlertDialog {
                 setRemoveCheckboxVisibility(packageObj.isSelected());
                 int packageObjSiteListSize=0;
                 if(packageObj != null
-                && packageObj.getSite_zone() != null){
+                        && packageObj.getSite_zone() != null){
                     packageObjSiteListSize = packageObj.getSite_zone().size();
                 }
                 setSpinnersContent(packageObjSiteListSize, packageObj.getSite_code_selected(), packageObj.getZone_code_selected());
                 setSpinnersAction();
                 setPartnerSS(packageObj.isSelected(), packageObj.getPartner_code_selected(), packageObj.getSite_zone());
                 mk_comments_val.setText(packageObj.getComment());
+                mk_comments_val.clearFocus();
                 break;
             case ALERT_DIALOG_TYPE_PACKAGE_SERVICE:
                 cl_register_service_form.setVisibility(View.VISIBLE);
@@ -344,13 +342,12 @@ public class ServiceRegisterDialog extends AlertDialog {
                 setPriceAndQtyValues(item.getQty(), item.getPrice());
                 setPriceEnable(item.getManual_price());
                 mk_comments_val.setText(item.getComment());
+                mk_comments_val.clearFocus();
                 break;
             case ALERT_DIALOG_TYPE_SERVICE_EDIT:
                 cl_register_service_form.setVisibility(View.VISIBLE);
                 ll_register_package_form.setVisibility(View.GONE);
                 ll_register_spinners.setVisibility(View.VISIBLE);
-                ll_amount.setVisibility(View.GONE);
-                ll_price.setVisibility(View.GONE);
                 btn_package_detail.setVisibility(View.GONE);
                 mk_qtd_val.setEnabled(false);
                 iv_foto.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
@@ -359,16 +356,10 @@ public class ServiceRegisterDialog extends AlertDialog {
                 if(siteOption != null) {
                     setSpinnersContent(siteOption.size(), this.site_code_selected, this.zone_code_selected);
                 }
-                if(comments != null && !comments.isEmpty()) {
-                    tv_comments_lbl.setVisibility(View.VISIBLE);
-                    mk_comments_val.setVisibility(View.VISIBLE);
-                    mk_comments_val.setText(comments);
-                    mk_comments_val.setEnabled(false);
-                    mk_comments_val.setFocusable(false);
-                }else{
-                    tv_comments_lbl.setVisibility(View.GONE);
-                    mk_comments_val.setVisibility(View.GONE);
-                }
+                mk_comments_val.setVisibility(View.VISIBLE);
+                tv_comments_lbl.setVisibility(View.VISIBLE);
+                mk_comments_val.setEnabled(false);
+                mk_comments_val.setText(service_comments);
                 setSpinnersAction();
                 setPartnerForEditSS(true, this.partner_code_selected, siteOption);
                 setPriceAndQtyValues(1, this.service_price);
@@ -528,7 +519,7 @@ public class ServiceRegisterDialog extends AlertDialog {
             act043_ss_zone.setmEnabled(false);
         }
         if(mdPartners != null
-        && mdPartners.size() >0){
+                && mdPartners.size() >0){
             act043_ss_partner.setmEnabled(true);
         }
         //
@@ -548,9 +539,9 @@ public class ServiceRegisterDialog extends AlertDialog {
             partners.add(partner);
             //
             if(!found
-                && partner_code_selected!= null
-                && partner_code_selected > 0
-                && partner_code_selected.equals(mdPartner.getPartner_code())){
+                    && partner_code_selected!= null
+                    && partner_code_selected > 0
+                    && partner_code_selected.equals(mdPartner.getPartner_code())){
                 act043_ss_partner.setmValue(partner);
                 found = true;
             }else {
