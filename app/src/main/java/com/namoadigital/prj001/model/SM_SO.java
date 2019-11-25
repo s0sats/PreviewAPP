@@ -54,6 +54,10 @@ public class SM_SO {
     private String contract_po_client2;
     private String contract_po_client3;
     @Expose
+    private int po_code;
+    private String po_id;
+    private String po_desc;
+    @Expose
     private int priority_code;
     private String priority_desc;
     private String status;
@@ -375,6 +379,30 @@ public class SM_SO {
 
     public void setContract_po_client3(String contract_po_client3) {
         this.contract_po_client3 = contract_po_client3;
+    }
+
+    public int getPo_code() {
+        return po_code;
+    }
+
+    public void setPo_code(int po_code) {
+        this.po_code = po_code;
+    }
+
+    public String getPo_id() {
+        return po_id;
+    }
+
+    public void setPo_id(String po_id) {
+        this.po_id = po_id;
+    }
+
+    public String getPo_desc() {
+        return po_desc;
+    }
+
+    public void setPo_desc(String po_desc) {
+        this.po_desc = po_desc;
     }
 
     public int getPriority_code() {
