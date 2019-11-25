@@ -1578,6 +1578,15 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
                         true,
                         false
                     );
+                }else{
+                    ToolBox_Inf.setSSmValue(
+                            ssCarrier,
+                            null,
+                            null,
+                            null,
+                            true,
+                            false
+                    );
                 }
                 etTruckNum.setText(mInbound.getTruck_number());
                 etTruckNum.setTag(mInbound.getTruck_number());

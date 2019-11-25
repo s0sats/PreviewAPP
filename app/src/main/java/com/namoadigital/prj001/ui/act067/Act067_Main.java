@@ -605,7 +605,7 @@ public class Act067_Main extends Base_Activity_Frag implements Act067_Main_Contr
                     //Reloada dados do banco
                     act067_frag_header.loadDataToScreen();
                     //Seta frag de itens
-                    setFrag(act067_frag_item, OUTBOUND_FRAG_ITEM);
+                    act067_frag_drawer.forceFragSelection(OUTBOUND_FRAG_ITEM);
                 }
             },
             2,
