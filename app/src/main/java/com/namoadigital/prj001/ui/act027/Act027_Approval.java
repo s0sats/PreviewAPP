@@ -598,8 +598,11 @@ public class Act027_Approval extends BaseFragment {
                 } else {
                     hasQualityProfile = false;
                 }
-
-                rg_opc.setVisibility(View.VISIBLE);
+                if (hasQualityProfile) {
+                    rg_opc.setVisibility(View.VISIBLE);
+                }else{
+                    rg_opc.setVisibility(View.GONE);
+                }
                 //
                 rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -610,34 +613,49 @@ public class Act027_Approval extends BaseFragment {
                                 approvalApprovalUser.setVisibility(View.VISIBLE);
                                 approvalNFC.setVisibility(View.GONE);
                                 approvalUser_Password.setVisibility(View.GONE);
-                                lastRbChoosenWasUser = true;
                                 break;
                             case R.id.act027_approval_content_rb_other:
 
                                 approvalApprovalUser.setVisibility(View.GONE);
                                 approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
                                 approvalUser_Password.setVisibility(View.VISIBLE);
-                                lastRbChoosenWasUser = false;
                                 break;
                         }
                     }
                 });
 
-                if (hasQualityProfile) {
-                    rb_user.setChecked(true);
-                    rb_other.setChecked(false);
+                if (rg_opc.getVisibility() == View.VISIBLE && rg_opc.getCheckedRadioButtonId() != -1) {
+                    switch (rg_opc.getCheckedRadioButtonId()) {
+                        case R.id.act027_approval_content_rb_user:
+
+                            approvalApprovalUser.setVisibility(View.VISIBLE);
+                            approvalNFC.setVisibility(View.GONE);
+                            approvalUser_Password.setVisibility(View.GONE);
+
+                            break;
+                        case R.id.act027_approval_content_rb_other:
+
+                            approvalApprovalUser.setVisibility(View.GONE);
+                            approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                            approvalUser_Password.setVisibility(View.VISIBLE);
+
+                            break;
+                    }
                 }else{
-                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
-                    approvalUser_Password.setVisibility(View.VISIBLE);
-                    rg_opc.setVisibility(View.GONE);
-                    rb_user.setChecked(false);
-                    rb_user.setEnabled(false);
-                    rb_other.setChecked(true);
+                    if (hasQualityProfile) {
+                        rb_user.setChecked(true);
+                        rb_other.setChecked(false);
+                    }else{
+                        approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                        approvalUser_Password.setVisibility(View.VISIBLE);
+                        rg_opc.setVisibility(View.GONE);
+                        rb_user.setChecked(false);
+                        rb_user.setEnabled(false);
+                        rb_other.setChecked(true);
+                    }
+
                 }
-                //
-                if(lastRbChoosenWasUser != null){
-                    rb_user.setChecked(lastRbChoosenWasUser);
-                }
+
                 tv_so_approval_quality_type_lbl.setVisibility(View.VISIBLE);
                 tv_so_approval_type_lbl.setVisibility(View.GONE);
 
