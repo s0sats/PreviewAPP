@@ -300,7 +300,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         transList.add("alert_user_add_ok_ttl");
         transList.add("alert_user_add_ok_msg");
-
+        //TICKET
+        transList.add("ticket_ttl");
+        transList.add("ticket_id_lbl");
+        transList.add("ticket_type_lbl");
+        transList.add("ticket_open_comments_lbl");
+        transList.add("btn_ticket_download");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -541,26 +547,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         //
         act035_adapter_messages = new Act035_Adapter_Messages(
-                getBaseContext(),
-                R.layout.act035_main_content_cell_whats_img_other,
-                R.layout.act035_main_content_cell_whats_img_me,
-                R.layout.act035_main_content_cell_whats_text_other,
-                R.layout.act035_main_content_cell_whats_text_me,
-                R.layout.act035_main_content_cell_whats_text_data,
-                R.layout.act035_main_content_cell_whats_text_end,
-                R.layout.act035_main_content_cell_whats_text_trans,
-                R.layout.act035_main_content_cell_namoa_ap_other,
-                R.layout.act035_main_content_cell_whats_text_other,
-                R.layout.act035_main_content_cell_whats_text_no_read,
-                R.layout.act035_main_content_cell_namoa_ap_me,
-                this.dados,
-                hmAux_Trans,
-                hmAux_Trans_Extra,
-                ToolBox_Inf.profileExists(
-                        context,
-                        Constant.PROFILE_MENU_AP,
-                        null
-                )
+            getBaseContext(),
+            this.dados,
+            hmAux_Trans,
+            hmAux_Trans_Extra,
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_AP,
+                null
+            )
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
@@ -644,6 +639,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     }
                 }
+            }
+
+            @Override
+            public void downloadTicket(String pk, String site_code, String operation_code, String product_code) {
+                mPresenter.validateTicketDownload(pk,site_code,operation_code,product_code);
             }
         });
 

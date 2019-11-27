@@ -27,4 +27,6 @@ public interface Act035_Main_Presenter {
     void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code);
 
     void checkFormApFlow(HMAux hmAux);
+
+    void validateTicketDownload(String pk, String site_code, String operation_code, String product_code);
 }

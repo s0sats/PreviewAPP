@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,15 +13,24 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -331,6 +341,73 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     },
                     1
             );
+        }
+    }
+
+    @Override
+    public void validateTicketDownload(String pk, String site_code, String operation_code, String product_code) {
+        String pk_fields[] = pk.replace("|", "#").split("#");
+        //
+        if(pk_fields.length == 3){
+            if(checkTicketMdProfile(pk_fields[0],site_code,operation_code,product_code)){
+                Toast.makeText(context,"Possui Perfil",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(context,"SEM PERFIL",Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(context,"DADOS DA PK INCOMPLETOS",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean checkTicketMdProfile(String s_customer_code, String s_site_code, String s_operation_code, String s_product_code) {
+        try {
+            long customerCode = Long.parseLong(s_customer_code);
+            long operationCode = Long.parseLong(s_operation_code);
+            long productCode = Long.parseLong(s_product_code);
+
+            MD_SiteDao siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            MD_OperationDao operationDao = new MD_OperationDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            MD_ProductDao productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            MD_Site site = siteDao.getByString(
+                new MD_Site_Sql_003(
+                    customerCode,
+                    s_site_code
+                ).toSqlQuery()
+            );
+            //
+            MD_Operation operation = operationDao.getByString(
+                new MD_Operation_Sql_003(
+                    customerCode,
+                    operationCode
+                ).toSqlQuery()
+            );
+            MD_Product product = productDao.getByString(
+                new MD_Product_Sql_001(
+                    customerCode,
+                    productCode
+                ).toSqlQuery()
+            );
+            //
+            return site != null && site.getCustomer_code() > -1
+                && operation != null && operation.getCustomer_code() > -1
+                && product != null && product.getCustomer_code() > -1;
+            //
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            return false;
         }
     }
 

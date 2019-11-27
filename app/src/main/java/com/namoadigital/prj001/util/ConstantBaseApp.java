@@ -681,6 +681,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
     public static final String CHAT_MESSAGE_TYPE_FORM_AP = "FORM_AP";
     public static final String CHAT_MESSAGE_TYPE_TRANSLATE = "TRANSLATE";
+    public static final String CHAT_MESSAGE_TYPE_SO = "SO";
+    public static final String CHAT_MESSAGE_TYPE_TICKET = "TICKET";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
     public static final String CHAT_ROOM_TYPE_SO = "SO";
     public static final String CHAT_ROOM_TYPE_AP = "FORM_AP";
