@@ -356,10 +356,15 @@ public class ServiceRegisterDialog extends AlertDialog {
                 if(siteOption != null) {
                     setSpinnersContent(siteOption.size(), this.site_code_selected, this.zone_code_selected);
                 }
-                mk_comments_val.setVisibility(View.VISIBLE);
-                tv_comments_lbl.setVisibility(View.VISIBLE);
-                mk_comments_val.setEnabled(false);
-                mk_comments_val.setText(service_comments);
+                if(service_comments != null && !service_comments.isEmpty()) {
+                    tv_comments_lbl.setVisibility(View.VISIBLE);
+                    mk_comments_val.setVisibility(View.VISIBLE);
+                    mk_comments_val.setText(service_comments);
+                    mk_comments_val.setEnabled(false);
+                }else{
+                    tv_comments_lbl.setVisibility(View.GONE);
+                    mk_comments_val.setVisibility(View.GONE);
+                }
                 setSpinnersAction();
                 setPartnerForEditSS(true, this.partner_code_selected, siteOption);
                 setPriceAndQtyValues(1, this.service_price);
