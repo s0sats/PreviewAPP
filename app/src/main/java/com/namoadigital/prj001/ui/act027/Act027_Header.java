@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +109,9 @@ public class Act027_Header extends BaseFragment {
 
     private TextView tv_priority_desc_title;
     private TextView tv_priority_desc;
+
+    private TextView tv_po_desc_title;
+    private TextView tv_po_desc;
 
     private TextView tv_contract_desc_title;
     private TextView tv_contract_desc;
@@ -303,6 +307,9 @@ public class Act027_Header extends BaseFragment {
         tv_contract_desc_title = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_desc_title);
         tv_contract_desc = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_desc);
 
+        tv_po_desc_title = view.findViewById(R.id.act027_header_content_tv_po_desc_title);
+        tv_po_desc = view.findViewById(R.id.act027_header_content_tv_po_desc);
+
         tv_contract_po_erp_title = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_erp_title);
         tv_contract_po_erp = (TextView) view.findViewById(R.id.act027_header_content_tv_contract_po_erp);
 
@@ -477,6 +484,9 @@ public class Act027_Header extends BaseFragment {
                 tv_priority_desc_title.setText(hmAux_Trans.get("priority_lbl"));
                 tv_priority_desc.setText(mSm_so.getPriority_desc());
 
+                tv_po_desc_title.setText(hmAux_Trans.get("po_desc"));
+                tv_po_desc.setText(getFormattedPoDesc());
+
                 tv_contract_desc_title.setText(hmAux_Trans.get("contract_desc"));
                 tv_contract_desc.setText(mSm_so.getContract_desc());
 
@@ -563,6 +573,28 @@ public class Act027_Header extends BaseFragment {
                 delegate.callAct005();
             }
         }
+    }
+
+    @NonNull
+    private String getFormattedPoDesc() {
+        String formattedDesc = "";
+        //Na teoria seria desnecessario verificar se po_id é null, pois segundo o
+        //Cesinha , nuna será, mas.....
+        if( mSm_so.getPo_id() != null && !mSm_so.getPo_id().trim().isEmpty()){
+            formattedDesc += mSm_so.getPo_id();
+        }
+        //
+        if(formattedDesc.trim().length() > 0 &&  mSm_so.getPo_desc() != null && !mSm_so.getPo_desc().trim().isEmpty()){
+            formattedDesc += " - ";
+        }
+        //
+        if(mSm_so.getPo_desc() != null && !mSm_so.getPo_desc().trim().isEmpty()
+        ){
+            formattedDesc += mSm_so.getPo_desc();
+        }
+        //
+        return  formattedDesc;
+
     }
 
     private void loadPdfList() {

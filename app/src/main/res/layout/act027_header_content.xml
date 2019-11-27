@@ -122,7 +122,7 @@
                                 android:layout_weight="1"
                                 android:gravity="left"
                                 android:padding="2dp"
-                                android:text="Code"
+                                tools:text="Code"
                                 android:textSize="@dimen/font_size_item_md"
                                 android:visibility="gone" />
 
@@ -138,7 +138,7 @@
                                 android:layout_weight="1"
                                 android:gravity="left|center_vertical"
                                 android:padding="2dp"
-                                android:text="Id"
+                                tools:text="Id"
                                 android:textSize="@dimen/font_size_item_md" />
                         </LinearLayout>
 
@@ -150,7 +150,7 @@
                             android:paddingLeft="5dp"
                             android:paddingRight="2dp"
                             android:paddingTop="2dp"
-                            android:text="Product Description"
+                            tools:text="Product Description"
                             android:textSize="@dimen/font_size_title_md" />
                     </LinearLayout>
 
@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:text="SO ID"
+                    tools:text="SO ID"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="2017.30"
+                    tools:text="2017.30"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -178,7 +178,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:text="SO Code"
+                    tools:text="SO Code"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -187,14 +187,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="2017 / 30"
+                    tools:text="2017 / 30"
                     android:textSize="@dimen/font_size_title_md" />
                 <TextView
                     android:id="@+id/act027_header_content_tv_client_so_id_ttl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:text="Client So ID - Trad"
+                    tools:text="Client So ID - Trad"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -203,7 +203,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="ClientSOID - trad"
+                    tools:text="ClientSOID - trad"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -211,7 +211,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:text="SO Desc"
+                    tools:text="SO Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -220,7 +220,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="SO Desc"
+                    tools:text="SO Desc"
                     android:textSize="@dimen/font_size_title_md" />
 
 
@@ -230,7 +230,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Serial Data"
+                    tools:text="Serial Data"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -239,7 +239,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="2530"
+                    tools:text="2530"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -248,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Category Price ID"
+                    tools:text="Category Price ID"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -258,7 +258,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="01 Pequenos"
+                    tools:text="01 Pequenos"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -268,7 +268,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Category Price Desc"
+                    tools:text="Category Price Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -277,7 +277,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Pequenos"
+                    tools:text="Pequenos"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -286,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Segment ID"
+                    tools:text="Segment ID"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -296,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="NOVOS"
+                    tools:text="NOVOS"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -306,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Segment Desc"
+                    tools:text="Segment Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -315,7 +315,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="NOVOS"
+                    tools:text="NOVOS"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -324,7 +324,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Site ID"
+                    tools:text="Site ID"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -334,7 +334,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="SITE_TST_01"
+                    tools:text="SITE_TST_01"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -344,7 +344,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Site Desc"
+                    tools:text="Site Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -353,7 +353,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="SITE TESTE 1"
+                    tools:text="SITE TESTE 1"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -362,7 +362,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Operation ID"
+                    tools:text="Operation ID"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -372,7 +372,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="2"
+                    tools:text="2"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -382,7 +382,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Operation Desc"
+                    tools:text="Operation Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -391,7 +391,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="MERCEDES"
+                    tools:text="MERCEDES"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -400,7 +400,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="DeadLine"
+                    tools:text="DeadLine"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -409,7 +409,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="01/01/2017"
+                    tools:text="01/01/2017"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -418,7 +418,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Status"
+                    tools:text="Status"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -427,7 +427,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="PENDING"
+                    tools:text="PENDING"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -436,7 +436,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Priority Desc"
+                    tools:text="Priority Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -445,7 +445,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="P001"
+                    tools:text="P001"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -454,7 +454,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Contract Desc"
+                    tools:text="Contract Desc"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -463,7 +463,25 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="CONTRATO TST 01"
+                    tools:text="CONTRATO TST 01"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_po_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    tools:text="P.O Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_po_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    tools:text="P._1002"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -472,7 +490,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Contract PO ERP"
+                    tools:text="Contract PO ERP"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -481,7 +499,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="ERP"
+                    tools:text="ERP"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -490,7 +508,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Contract PO Client1"
+                    tools:text="Contract PO Client1"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -499,7 +517,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="CLI1"
+                    tools:text="CLI1"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -508,7 +526,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Contract PO Client2"
+                    tools:text="Contract PO Client2"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -517,7 +535,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="CLI2"
+                    tools:text="CLI2"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -526,7 +544,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Contract PO Client3 -Trad"
+                    tools:text="Contract PO Client3 -Trad"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -535,7 +553,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="CLI3-Trad"
+                    tools:text="CLI3-Trad"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -544,7 +562,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Approval User"
+                    tools:text="Approval User"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -553,7 +571,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="App User"
+                    tools:text="App User"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -562,7 +580,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Approval Nick"
+                    tools:text="Approval Nick"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -571,7 +589,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="App User Nick"
+                    tools:text="App User Nick"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -580,7 +598,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Approval Date"
+                    tools:text="Approval Date"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -589,7 +607,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="App User Date"
+                    tools:text="App User Date"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -598,7 +616,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Comments"
+                    tools:text="Comments"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -607,7 +625,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Comments ???"
+                    tools:text="Comments ???"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -616,7 +634,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Type"
+                    tools:text="Client Type"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -625,7 +643,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client Type"
+                    tools:text="Client Type"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -634,7 +652,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client User"
+                    tools:text="Client User"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -643,7 +661,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client User"
+                    tools:text="Client User"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -652,7 +670,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Code"
+                    tools:text="Client Code"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -661,7 +679,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client Code"
+                    tools:text="Client Code"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -670,7 +688,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client ID"
+                    tools:text="Client ID"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -679,7 +697,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client ID"
+                    tools:text="Client ID"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -688,7 +706,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Name"
+                    tools:text="Client Name"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -697,7 +715,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client Name"
+                    tools:text="Client Name"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -706,7 +724,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Email"
+                    tools:text="Client Email"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -715,7 +733,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client Email"
+                    tools:text="Client Email"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -724,7 +742,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Phone"
+                    tools:text="Client Phone"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -733,7 +751,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Client Phone"
+                    tools:text="Client Phone"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -742,7 +760,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Approval Date"
+                    tools:text="Client Approval Date"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -752,7 +770,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="01/01/1900"
+                    tools:text="01/01/1900"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -762,7 +780,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Approval User"
+                    tools:text="Client Approval User"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -772,7 +790,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="N.Hugo"
+                    tools:text="N.Hugo"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -782,7 +800,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Client Approval User Nick"
+                    tools:text="Client Approval User Nick"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone" />
 
@@ -792,7 +810,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="N.Hugo"
+                    tools:text="N.Hugo"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone" />
 
@@ -802,7 +820,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Total Qty Service"
+                    tools:text="Total Qty Service"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -811,7 +829,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="10"
+                    tools:text="10"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -820,7 +838,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Total Price"
+                    tools:text="Total Price"
                     android:textSize="@dimen/font_size_title_lib"
                     android:visibility="gone"
                 />
@@ -831,7 +849,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="1200.00"
+                    tools:text="1200.00"
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone"
                 />
@@ -842,7 +860,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Info 1"
+                    tools:text="Info 1"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -851,7 +869,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Add Info 1"
+                    tools:text="Add Info 1"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -860,7 +878,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Info 2"
+                    tools:text="Info 2"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -869,7 +887,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Add Info 22222"
+                    tools:text="Add Info 22222"
                     android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
@@ -878,7 +896,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="10dp"
-                    android:text="Info 3"
+                    tools:text="Info 3"
                     android:textSize="@dimen/font_size_title_lib" />
 
                 <TextView
@@ -887,7 +905,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
-                    android:text="Add Info 3"
+                    tools:text="Add Info 3"
                     android:textSize="@dimen/font_size_title_md" />
             </LinearLayout>
         </LinearLayout>
