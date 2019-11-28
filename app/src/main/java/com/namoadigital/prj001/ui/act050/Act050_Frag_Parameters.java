@@ -20,6 +20,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
+import com.namoadigital.prj001.model.SO_Favorite_PO;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,11 +42,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private String favorite_desc;
     private Integer favorite_contract_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
+    private List<SO_Favorite_PO> poList= new ArrayList<>();
     private Integer selected_contract_code = -1;
 
     private ScrollView sv_main;
     private TextView tv_favorite_val;
     private SearchableSpinner ss_contract;
+    private SearchableSpinner ss_po;
     private TextView tv_product_lbl;
     private TextView tv_product_val;
     private TextView tv_serial_lbl;
@@ -102,6 +105,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
          * Esse metodo não esta sendo utilizados.
          */
         void onBackButtonClick();
+
+        List<SO_Favorite_PO> getPOs();
     }
 
     public void setmFragListner(OnFragParameterInteraction mFragListner) {
@@ -241,6 +246,11 @@ public class Act050_Frag_Parameters extends BaseFragment {
         ss_contract.setmShowLabel(true);
         ss_contract.setmStyle(1);
         ss_contract.setmTextSizeLabel(20);
+        ss_po = view.findViewById(R.id.act050_frag_param_ss_po);
+        ss_po.setmLabel(hmAux_Trans.get("po_lbl"));
+        ss_po.setmShowLabel(true);
+        ss_po.setmStyle(1);
+        ss_po.setmTextSizeLabel(20);
         tv_product_lbl = view.findViewById(R.id.act050_frag_param_tv_product_lbl);
         tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
         tv_product_val = view.findViewById(R.id.act050_frag_param_tv_product_val);
@@ -301,6 +311,33 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         }
                     }
                 }
+                if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+
+                    poList = mFragListner.getPOs();
+                    ArrayList<HMAux> options = generateSSPoOption(poList);
+                    ss_po.setmOption(options);
+                    if (options.size() == 1) {
+                        ss_po.setmValue(options.get(0));
+                        ss_po.setmEnabled(false);
+                        //
+                        setContractPoInfo(options.get(0));
+                        Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
+                        Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
+                        selected_contract_code = contract_code;
+                        //Se existe apenas um contrato e ele ja foi selecionado,
+                        //não é necessario atualizar a var da act novamente.
+                        //Sem essa tratativa, ao navegar entre os fragmentos de param e so,
+                        //o pipeline era "resetado" pelo do contrato.
+                        if(!mFragListner.checkIsContractSelected()) {
+                            mFragListner.onContractSelected(contract_code, pipeline_code);
+                        }
+                    } else {
+                        if (selected_contract_code != null) {
+                            ss_po.setmValue(generateSSOption(contracts, favorite_contract_code).get(0));
+                            setContractPoInfo(ss_po.getmValue());
+                        }
+                    }
+                }
                 //
                 tv_favorite_val.setText(favorite_desc);
                 tv_product_val.setText(mdProductSerial.getProduct_id() + " - " + mdProductSerial.getProduct_desc());
@@ -346,11 +383,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SearchableSpinner.CODE, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.ID, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.DESCRIPTION, contract.getContractDesc());
-            aux.put(SM_SODao.CONTRACT_PO_ERP,contract.getPoErp());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT1,contract.getPoClient1());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT2,contract.getPoClient2());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT3,contract.getPoClient3());
-            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(contract.getPipelineCode()));
             //Se favorite_contract_code null, insere todos os itens na lista,
             //Se não insere apenas o item já determinado
             if(contract_code == null || contract_code.equals(contract.getContractCode())) {
@@ -364,10 +396,24 @@ public class Act050_Frag_Parameters extends BaseFragment {
         return options;
     }
 
+    private ArrayList<HMAux> generateSSPoOption(List<SO_Favorite_PO> poList) {
+        ArrayList<HMAux> options = new ArrayList<>();
+        //
+        for(SO_Favorite_PO po_item: poList){
+            HMAux aux = new HMAux();
+            aux.put(SearchableSpinner.CODE, String.valueOf(po_item.getPoCode()));
+            aux.put(SearchableSpinner.ID, po_item.getPoId());
+            aux.put(SearchableSpinner.DESCRIPTION, po_item.getPoDesc());
+        }
+        //
+        return options;
+    }
+
     public static List<String> getFragTranslationsVars(){
         List<String> transList = new ArrayList<>();
         transList.add("favorite_lbl");
         transList.add("contract_lbl");
+        transList.add("po_lbl");
         transList.add("product_lbl");
         transList.add("serial_lbl");
         transList.add("category_lbl");

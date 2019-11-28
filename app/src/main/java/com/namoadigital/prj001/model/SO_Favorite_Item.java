@@ -29,6 +29,9 @@ public class SO_Favorite_Item implements Serializable {
     @SerializedName("contract_code")
     @Expose
     private Integer contractCode;
+    @SerializedName("po_code")
+    @Expose
+    private Integer poCode;
     @SerializedName("pack_default")
     @Expose
     private String packDefault;
@@ -50,6 +53,18 @@ public class SO_Favorite_Item implements Serializable {
     @SerializedName("client_phone")
     @Expose
     private String clientPhone;
+    @SerializedName("pipeline_code")
+    @Expose
+    private String pipelineCode;
+    @SerializedName("price_list_code")
+    @Expose
+    private Integer priceListCode;
+    @SerializedName("pack_code")
+    @Expose
+    private Integer packCode;
+    @SerializedName("pack_service_desc_full")
+    @Expose
+    private String packServiceDescFull;
 
     public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
         this.customerCode = customerCode;
@@ -66,6 +81,28 @@ public class SO_Favorite_Item implements Serializable {
         this.clientName = clientName;
         this.clientEmail = clientEmail;
         this.clientPhone = clientPhone;
+    }
+
+    public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, Integer poCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone, String pipelineCode, Integer priceListCode, Integer packCode, String packServiceDescFull) {
+        this.customerCode = customerCode;
+        this.profileCode = profileCode;
+        this.favoriteCode = favoriteCode;
+        this.favoriteDesc = favoriteDesc;
+        this.favoriteColor = favoriteColor;
+        this.favoriteFontColor = favoriteFontColor;
+        this.contractCode = contractCode;
+        this.poCode = poCode;
+        this.packDefault = packDefault;
+        this.clientType = clientType;
+        this.clientCode = clientCode;
+        this.clientId = clientId;
+        this.clientName = clientName;
+        this.clientEmail = clientEmail;
+        this.clientPhone = clientPhone;
+        this.pipelineCode = pipelineCode;
+        this.priceListCode = priceListCode;
+        this.packCode = packCode;
+        this.packServiceDescFull = packServiceDescFull;
     }
 
     public Integer getCustomerCode() {
@@ -180,4 +217,43 @@ public class SO_Favorite_Item implements Serializable {
         this.clientPhone = clientPhone;
     }
 
+    public Integer getPoCode() {
+        return poCode;
+    }
+
+    public void setPoCode(Integer poCode) {
+        this.poCode = poCode;
+    }
+
+    public String getPipelineCode() {
+        return pipelineCode;
+    }
+
+    public void setPipelineCode(String pipelineCode) {
+        this.pipelineCode = pipelineCode;
+    }
+
+    public Integer getPriceListCode() {
+        return priceListCode;
+    }
+
+    public void setPriceListCode(Integer priceListCode) {
+        this.priceListCode = priceListCode;
+    }
+
+    public Integer getPackCode() {
+        return packCode;
+    }
+
+    public void setPackCode(Integer packCode) {
+        this.packCode = packCode;
+    }
+
+    public String getPackServiceDescFull() {
+        return packServiceDescFull;
+    }
+
+    public void setPackServiceDescFull(String packServiceDescFull) {
+        this.packServiceDescFull = packServiceDescFull;
+    }
 }

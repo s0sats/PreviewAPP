@@ -25,6 +25,7 @@ import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_PO;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
@@ -417,6 +418,14 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onBackButtonClick() {
         onBackPressed();
     }
+
+    @Override
+    public List<SO_Favorite_PO> getPOs() {
+        for (SO_Favorite_Contract so_favorite_contract : response.getContract()) {
+            return so_favorite_contract.getPoList();
+        }
+        return null;
+    }
     //endregion
 
     @Override
@@ -533,13 +542,24 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public List<String> getPackageDefaultByContract() {
+//        if (isContractSelected) {
+//            for (SO_Favorite_Item item : response.getFavorite()
+//            ) {
+//                if (item.getContractCode() == mSoFavoriteItem.getContractCode()) {
+//                    return contract.getPackDefault();
+//                }
+//            }
+//        }
+        return null;
+    }
+
+    @Override
+    public List<String> getPackageDefault() {
         if (isContractSelected) {
-            for (SO_Favorite_Contract contract : response.getContract()
-            ) {
-                if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
-                    return contract.getPackDefault();
-                }
-            }
+//            if (item.getContractCode() == mSoFavoriteItem.getContractCode()) {
+//                return contract.getPackDefault();
+//            }
+
         }
         return null;
     }

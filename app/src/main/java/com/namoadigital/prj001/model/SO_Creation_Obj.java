@@ -46,6 +46,7 @@ public class SO_Creation_Obj implements Serializable {
     private String add_inf2;
     private String add_inf3;
     private int edit_user;
+    private Integer po_code;
 
     public long getCustomer_code() {
         return customer_code;
@@ -338,7 +339,8 @@ public class SO_Creation_Obj implements Serializable {
                 "add_inf1 -> " +add_inf1+ "\n" +
                 "add_inf2 -> " +add_inf2 + "\n" +
                 "add_inf3 -> " +add_inf3+ "\n" +
-                "edit_user -> " +edit_user+ "\n"
+                "edit_user -> " +edit_user+ "\n" +
+                "po_code-> " +po_code+ "\n"
                 ;
     }
 }
