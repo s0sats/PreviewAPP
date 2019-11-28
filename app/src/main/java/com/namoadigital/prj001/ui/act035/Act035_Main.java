@@ -302,10 +302,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_user_add_ok_msg");
         //TICKET
         transList.add("ticket_ttl");
-        transList.add("ticket_id_lbl");
-        transList.add("ticket_type_lbl");
-        transList.add("ticket_open_comments_lbl");
-        transList.add("btn_ticket_download");
+        transList.add("no_profile_msg");
+        transList.add("corrupted_message_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -639,6 +637,27 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     }
                 }
+            }
+
+            @Override
+            public boolean checkTicketProfile(String pk, String site_code, String operation_code, String product_code) {
+                if(mPresenter.validateTicketPk(pk)){
+                    return mPresenter.checkTicketMdProfile( mPresenter.getSplitedPk(pk,"|")[0],
+                                                            site_code,
+                                                            operation_code,
+                                                            product_code
+                                                           );
+                }
+                //
+                return false;
+            }
+
+            @Override
+            public String getTicketProductDesc(String pk, String product_code) {
+                if(mPresenter.validateTicketPk(pk)){
+                   return mPresenter.getTicketProductDesc(mPresenter.getSplitedPk(pk,"|")[0],product_code);
+                }
+                return null;
             }
 
             @Override

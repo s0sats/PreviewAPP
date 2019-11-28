@@ -2,10 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,6 +149,10 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         void download_AP(String pk, String custom_form_url);
 
         void join_AP(String pk);
+
+        boolean checkTicketProfile(String pk, String site_code, String operation_code, String product_code);
+
+        String getTicketProductDesc(String pk, String product_code);
 
         void downloadTicket(String pk, String site_code, String operation_code, String product_code);
     }
@@ -1077,99 +1078,134 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private void processTicket(JSONObject message, HMAux hmAux, View convertView, int itemViewTypeTicket) {
         TextView tv_name = convertView.findViewById(R.id.act035_main_content_cell_ticket_tv_name);
         TextView tv_ttl = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_ttl);
-        TextView tv_id_label = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_id_label);
         TextView tv_id_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_id_val);
-        TextView tv_type_label = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_type_label);
-        TextView tv_type_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_type_val);
-        TextView tv_serial_label = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_serial_label);
-        TextView tv_serial_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_serial_val);
-        TextView tv_comment_lbl = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_comment_lbl);
-        TextView tv_comment_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_comment_val);
-        LinearLayout ll_action_btn = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_ll_action_btn);
-        Button btnDownload = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_btn_download);
+        TextView tv_path_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_path);
+        TextView tv_type_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_type);
+        TextView tv_product_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_product);
+        TextView tv_serial_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_serial);
+        TextView tv_comment_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_comment);
         TextView tv_hour = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_hour_ttl);
         ImageButton ibDownload = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_iv_download);
-        //
-        TextView tv_path_lbl = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_path_label);
-        TextView tv_path_val = convertView.findViewById(R.id.act035_main_content_cell_namoa_ticket_tv_path_val);
-        //
-        ll_action_btn.setVisibility(View.VISIBLE);
+        TextView tv_warning_msg = convertView.findViewById(R.id.act035_main_content_cell_ticket_tv_warning_msg);
         //
         HMAux item = new HMAux();
         //
         try {
             item = HMAux.getHmAuxFromHashMap(
                 ToolBox_Inf.JsonToHashMap(
-                message,
-                "data"
+                    message,
+                    "data"
                 )
             );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        final HMAux finalItem = item;
-        //Listener para download
-        View.OnClickListener onTicketDownloadListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if( delegate != null
-                    && finalItem.hasConsistentValue("pk")
-                    && finalItem.hasConsistentValue("site_code")
-                    && finalItem.hasConsistentValue("operation_code")
-                    && finalItem.hasConsistentValue("product_code")
-                ){
-                    delegate.downloadTicket(
-                        finalItem.get("pk"),
-                        finalItem.get("site_code"),
-                        finalItem.get("operation_code"),
-                        finalItem.get("product_code")
-                    );
-                }
+            //Reseta visibilida de text de msg de aviso
+            tv_warning_msg.setVisibility(View.GONE);
+            //
+            if (hmAuxColors.get(hmAux.get("user_code")) == null) {
+                hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
             }
-        };
-
-        //
-        if (hmAuxColors.get(hmAux.get("user_code")) == null) {
-            hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
+            //
+            tv_name.setText(hmAux.get("user_nick"));
+            tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+            tv_name.setVisibility(itemViewTypeTicket == ITEM_VIEW_TYPE_TICKET_OTHER ? View.VISIBLE : View.GONE);
+            //
+            tv_hour.setText(ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                " HH:mm"
+            ));
+            //
+            tv_ttl.setText(hmAux_Trans.get("ticket_ttl"));
+            tv_ttl.setVisibility(View.VISIBLE);
+            //
+            tv_id_val.setText(item.get("ticket_id"));
+            tv_id_val.setVisibility(View.VISIBLE);
+            //
+            if(item.hasConsistentValue("type_path")) {
+                tv_path_val.setText(item.get("type_path"));
+                tv_path_val.setVisibility(View.VISIBLE);
+            }else{
+                tv_path_val.setVisibility(View.GONE);
+            }
+            //
+            tv_type_val.setText(item.get("type_desc"));
+            tv_type_val.setVisibility(View.VISIBLE);
+            //
+            tv_serial_val.setText(item.get("serial_id"));
+            tv_serial_val.setVisibility(View.VISIBLE);
+            //
+            if (item.hasConsistentValue("open_comments")) {
+                tv_comment_val.setText(item.get("open_comments"));
+                tv_comment_val.setVisibility(View.VISIBLE);
+            } else {
+                tv_comment_val.setVisibility(View.GONE);
+            }
+            //
+            final HMAux finalItem = item;
+            ibDownload.setVisibility(View.VISIBLE);
+            ibDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (delegate != null
+                        && finalItem.hasConsistentValue("pk")
+                        && finalItem.hasConsistentValue("site_code")
+                        && finalItem.hasConsistentValue("operation_code")
+                        && finalItem.hasConsistentValue("product_code")
+                    ) {
+                        delegate.downloadTicket(
+                            finalItem.get("pk"),
+                            finalItem.get("site_code"),
+                            finalItem.get("operation_code"),
+                            finalItem.get("product_code")
+                        );
+                    }
+                }
+            });
+            //Valida de usuario tem acesso ao MD do ticket
+            if (delegate != null
+                && finalItem.hasConsistentValue("pk")
+                && finalItem.hasConsistentValue("site_code")
+                && finalItem.hasConsistentValue("operation_code")
+                && finalItem.hasConsistentValue("product_code")
+            ) {
+                if (!delegate.checkTicketProfile(
+                    finalItem.get("pk"),
+                    finalItem.get("site_code"),
+                    finalItem.get("operation_code"),
+                    finalItem.get("product_code"))
+                ) {
+                    tv_warning_msg.setVisibility(View.VISIBLE);
+                    tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
+                }
+                //
+                String productDesc = delegate.getTicketProductDesc(finalItem.get("pk"), finalItem.get("product_code"));
+                tv_product_val.setText(productDesc != null && !productDesc.isEmpty() ? productDesc : "" );
+                tv_product_val.setVisibility(productDesc != null && !productDesc.isEmpty() ? View.VISIBLE: View.GONE);
+            }
+            //
+        } catch (Exception e) {
+            //
+            tv_name.setText(hmAux.get("user_nick"));
+            tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+            tv_name.setVisibility(itemViewTypeTicket == ITEM_VIEW_TYPE_TICKET_OTHER ? View.VISIBLE : View.GONE);
+            //
+            tv_hour.setText(ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                " HH:mm"
+            ));
+            tv_warning_msg.setVisibility(View.VISIBLE);
+            tv_warning_msg.setText(hmAux_Trans.get("corrupted_message_msg"));
+            //
+            tv_ttl.setVisibility(View.GONE);
+            tv_id_val.setVisibility(View.GONE);
+            tv_path_val.setVisibility(View.GONE);
+            tv_type_val.setVisibility(View.GONE);
+            tv_product_val.setVisibility(View.GONE);
+            tv_serial_val.setVisibility(View.GONE);
+            tv_comment_val.setVisibility(View.GONE);
+            ibDownload.setVisibility(View.GONE);
+            //
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
-        //
-        tv_name.setText(hmAux.get("user_nick"));
-        tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
-        tv_name.setVisibility(itemViewTypeTicket == ITEM_VIEW_TYPE_TICKET_OTHER ? View.VISIBLE : View.GONE);
-        //
-        tv_hour.setText(ToolBox_Inf.millisecondsToString(
-            ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
-            " HH:mm"
-        ));
-        //
-        tv_ttl.setText(hmAux_Trans.get("ticket_ttl"));
-        //
-        tv_id_label.setText(hmAux_Trans.get("ticket_id_lbl"));
-        tv_id_val.setText(item.get("ticket_id"));
-        //
-        tv_path_lbl.setText("Hierarquia: ");
-        tv_path_val.setText(item.get("type_path"));
-        //
-        String rawType = item.get("type_path") + item.get("type_desc");
-        SpannableString sMsg = new SpannableString(item.get("type_path") + item.get("type_desc"));
-        sMsg.setSpan(new StyleSpan(Typeface.BOLD), rawType.length() - item.get("type_desc").length(), rawType.length(), 0);
 
-        //
-        tv_type_label.setText(hmAux_Trans.get("ticket_type_lbl"));
-        //tv_type_val.setText(item.get("type_desc"));
-        tv_type_val.setText(sMsg);
-        //
-        tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
-        tv_serial_val.setText(item.get("serial_id"));
-        //
-        tv_comment_lbl.setText(hmAux_Trans.get("ticket_open_comments_lbl"));
-        tv_comment_val.setText(item.get("open_comments"));
-        //
-        btnDownload.setText(hmAux_Trans.get("btn_ticket_download"));
-        //
-        btnDownload.setOnClickListener(onTicketDownloadListener);
-        ibDownload.setOnClickListener(onTicketDownloadListener);
     }
 
     private void processSo(JSONObject message, HMAux hmAux, View convertView) {

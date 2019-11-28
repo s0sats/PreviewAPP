@@ -34,25 +34,16 @@
             android:orientation="vertical"
             android:padding="10dp">
 
+
             <TextView
                 android:id="@+id/act035_main_content_cell_ticket_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="N.Hugo"
                 android:textColor="#f1194f"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:typeface="normal" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_module_ttl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                tools:text="Formulario - trad"
-                android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:typeface="normal"
+                tools:text="N.Hugo" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,205 +55,112 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
-                    tools:text="Ticket - trad"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_iv_sync_upload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="2dp"
-                    android:padding="2dp"
-                    android:src="@drawable/ic_arrow_up_thick_black_24dp"
-                    android:tint="@color/namoa_dark_blue"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_id_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    tools:text="Ticket.ID:"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold"
+                    tools:text="Ticket - trad" />
 
                 <TextView
                     android:id="@+id/act035_main_content_cell_namoa_ticket_tv_id_val"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    tools:text="2019.666" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginLeft="15dp"
-                >
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_path_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textStyle="bold"
-                    tools:text="Hieraquia:" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_path_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:gravity="right"
                     android:textStyle="bold"
-                    tools:text="LIMPEZA/Copa/" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_type_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    tools:text="Tipo:"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_type_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:textStyle="bold"
-                    tools:text="Teste" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_serial_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    tools:text="Serial:"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_serial_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    tools:text="btt123" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_comment_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    tools:text="Open Comments:"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ticket_tv_comment_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="5dp"
-                    android:gravity="start"
-                    tools:text="Comnetario usado na abertura para que  ajudar  a identificar o problemas "
-                    android:maxLines="3"
-                    android:ellipsize="end"
+                    tools:text="2019.666"
+                    android:textSize="@dimen/font_size_item_md"
                     />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/act035_main_content_cell_namoa_ticket_ll_action_btn"
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_path"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="15dp"
+                android:gravity="start"
+                tools:text="LIMPEZA/Copa/" />
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:gravity="start"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold"
+                tools:text="Falta Copo Plástico" />
+
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="3"
+                android:textColor="@color/namoa_light_blue"
+                tools:text="Comnetario usado na abertura para que  ajudar  a identificar o problemas " />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="15dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingEnd="5dp">
 
-                    <Button
-                        android:id="@+id/act035_main_content_cell_namoa_ticket_btn_download"
-                        android:layout_width="200dp"
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ticket_tv_product"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/btn_namoa_main_states"
-                        android:focusable="false"
-                        android:padding="10dp"
-                        tools:text="Download Ticket"
-                        android:textColor="@color/padrao_WHITE"
-                        android:layout_gravity="center"
-                        />
+                        android:layout_gravity="center_vertical"
+                        android:gravity="start"
+                        tools:text="Copa" />
 
-                    <ImageButton
-                        android:id="@+id/act035_main_content_cell_namoa_ticket_iv_download"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/btn_namoa_main_states"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_file_download_black_24dp"
-                        android:tint="@color/padrao_WHITE"
-                        android:visibility="gone"
-                        />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ticket_tv_serial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="start"
+                        android:textSize="@dimen/font_size_font_14"
+                        android:textStyle="bold"
+                        tools:text="CP.001" />
+
                 </LinearLayout>
 
+                <ImageButton
+                    android:id="@+id/act035_main_content_cell_namoa_ticket_iv_download"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/btn_namoa_main_states"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_file_download_black_24dp"
+                    android:tint="@color/padrao_WHITE" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_ticket_tv_warning_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/namoa_color_danger_red"
+                tools:text="MSG CORROMPIDA"
+                android:layout_gravity="center"
+                android:textSize="@dimen/font_size_item_md"
+                android:visibility="gone"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"

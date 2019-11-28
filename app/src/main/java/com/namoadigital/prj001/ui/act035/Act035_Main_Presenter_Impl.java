@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -345,8 +346,14 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
+    public boolean validateTicketPk(String ticketPk) {
+        String[] pk_fields = getSplitedPk(ticketPk, "|");
+        return pk_fields != null && pk_fields.length == 3;
+    }
+
+    @Override
     public void validateTicketDownload(String pk, String site_code, String operation_code, String product_code) {
-        String pk_fields[] = pk.replace("|", "#").split("#");
+        String[] pk_fields = pk.replace("|", "#").split("#");
         //
         if(pk_fields.length == 3){
             if(checkTicketMdProfile(pk_fields[0],site_code,operation_code,product_code)){
@@ -359,7 +366,18 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }
     }
 
-    private boolean checkTicketMdProfile(String s_customer_code, String s_site_code, String s_operation_code, String s_product_code) {
+    @Override
+    public String[] getSplitedPk(String pk, String splitter){
+        return pk.replace(splitter, "#").split("#");
+
+    }
+
+    @Override
+    public boolean checkTicketMdProfile(String s_customer_code, String s_site_code, String s_operation_code, String s_product_code) {
+        if(!checkCustomerDbExists(s_customer_code)){
+            return false;
+        }
+        //
         try {
             long customerCode = Long.parseLong(s_customer_code);
             long operationCode = Long.parseLong(s_operation_code);
@@ -408,6 +426,46 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(), e);
             return false;
+        }
+    }
+
+    /**
+     * Verifica se o banco de dados do customer existe no device.
+     * Como o banco do caht independe de customer, como precaução, deve ser verificar se o db
+     * daquele customer existe
+     * @param s_customer_code - Customer Code
+     * @return - Verdadeiro se existe banco de dados com o nome do customer e versão atual.
+     */
+    private boolean checkCustomerDbExists(String s_customer_code) {
+        File[] files_db_mult = ToolBox_Inf.getListDB("C_"+s_customer_code+"_"+ ConstantBaseApp.DB_VERSION_CUSTOM+".db3");
+        return files_db_mult != null && files_db_mult.length > 0;
+    }
+
+    public String getTicketProductDesc(String s_customer_code, String s_product_code){
+        try {
+            long customerCode = Long.parseLong(s_customer_code);
+            long productCode = Long.parseLong(s_product_code);
+            //
+            MD_ProductDao productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            MD_Product product = productDao.getByString(
+                new MD_Product_Sql_001(
+                    customerCode,
+                    productCode
+                ).toSqlQuery()
+            );
+            //
+            if(product!= null && product.getCustomer_code() > -1  && product.getProduct_code() > -1){
+                return product.getProduct_desc().trim();
+            }
+            return null;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return null;
         }
     }
 
