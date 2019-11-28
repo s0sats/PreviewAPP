@@ -69,6 +69,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private ImageButton btn_back;
     private ImageButton btn_next;
     private OnFragParameterInteraction mFragListner;
+    private Integer selected_po_code;
 
     public interface OnFragParameterInteraction{
         /**
@@ -311,8 +312,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         }
                     }
                 }
-                if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
 
+                if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     poList = mFragListner.getPOs();
                     ArrayList<HMAux> options = generateSSPoOption(poList);
                     ss_po.setmOption(options);
@@ -321,15 +322,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         ss_po.setmEnabled(false);
                         //
                         setContractPoInfo(options.get(0));
-                        Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
-                        Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
-                        selected_contract_code = contract_code;
+                        Integer po_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
+                        selected_po_code = po_code;
                         //Se existe apenas um contrato e ele ja foi selecionado,
                         //não é necessario atualizar a var da act novamente.
                         //Sem essa tratativa, ao navegar entre os fragmentos de param e so,
                         //o pipeline era "resetado" pelo do contrato.
                         if(!mFragListner.checkIsContractSelected()) {
-                            mFragListner.onContractSelected(contract_code, pipeline_code);
+//                            mFragListner.onContractSelected(contract_code, pipeline_code);
                         }
                     } else {
                         if (selected_contract_code != null) {
@@ -404,6 +404,12 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SearchableSpinner.CODE, String.valueOf(po_item.getPoCode()));
             aux.put(SearchableSpinner.ID, po_item.getPoId());
             aux.put(SearchableSpinner.DESCRIPTION, po_item.getPoDesc());
+            aux.put(SM_SODao.CONTRACT_PO_ERP,po_item.getPoErp());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT1,po_item.getPoClient1());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT2,po_item.getPoClient2());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT3,po_item.getPoClient3());
+//            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(po_item.getPipelineCode()));
+
         }
         //
         return options;
