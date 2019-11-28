@@ -281,7 +281,7 @@ public class ServiceRegisterDialog extends AlertDialog {
     private void setComponentsVisibility() {
 
         cb_remove_val.setVisibility(View.GONE);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         switch (dialogType){
             case ALERT_DIALOG_TYPE_PACKAGE:
                 cl_register_service_form.setVisibility(View.GONE);
