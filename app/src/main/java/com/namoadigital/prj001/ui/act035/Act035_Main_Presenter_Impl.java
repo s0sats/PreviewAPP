@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -24,6 +26,8 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.receiver.WBR_Ticket_Download;
+import com.namoadigital.prj001.service.WS_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
@@ -347,23 +351,67 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
     @Override
     public boolean validateTicketPk(String ticketPk) {
-        String[] pk_fields = getSplitedPk(ticketPk, "|");
-        return pk_fields != null && pk_fields.length == 3;
+        try {
+            String[] pk_fields = getSplitedPk(ticketPk, "|");
+            return pk_fields != null && pk_fields.length == 3;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return false;
+        }
+
     }
 
     @Override
-    public void validateTicketDownload(String pk, String site_code, String operation_code, String product_code) {
-        String[] pk_fields = pk.replace("|", "#").split("#");
-        //
-        if(pk_fields.length == 3){
+    public void validateTicketDownload(final String pk, String site_code, String operation_code, String product_code) {
+        if(validateTicketPk(pk)){
+            String[] pk_fields = getSplitedPk(pk,"|");
             if(checkTicketMdProfile(pk_fields[0],site_code,operation_code,product_code)){
-                Toast.makeText(context,"Possui Perfil",Toast.LENGTH_LONG).show();
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_download_ticket_ttl"),
+                    hmAux_Trans.get("alert_download_ticket_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            executeWsTicketDownload(pk);
+                        }
+                    },
+                    1
+
+                );
             }else{
                 Toast.makeText(context,"SEM PERFIL",Toast.LENGTH_LONG).show();
             }
         }else{
             Toast.makeText(context,"DADOS DA PK INCOMPLETOS",Toast.LENGTH_LONG).show();
         }
+        //
+
+    }
+
+    private void executeWsTicketDownload(String ticketPk) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWSProcess(WS_Ticket_Download.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_download_ticket_ttl"),
+                hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            String[] pk = getSplitedPk(ticketPk,"|");
+            //
+            Intent mIntent = new Intent(context, WBR_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.LOGIN_CUSTOMER_CODE,pk[0]);
+            bundle.putString(WS_Ticket_Download.TICKET_PREFIX,pk[1]);
+            bundle.putString(WS_Ticket_Download.TICKET_CODE,pk[2]);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+
     }
 
     @Override

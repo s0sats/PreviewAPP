@@ -304,6 +304,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("ticket_ttl");
         transList.add("no_profile_msg");
         transList.add("corrupted_message_msg");
+        transList.add("download_ticket_ttl");
+        transList.add("alert_download_ticket_ttl");
+        transList.add("alert_download_ticket_confirm");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -642,11 +647,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             @Override
             public boolean checkTicketProfile(String pk, String site_code, String operation_code, String product_code) {
                 if(mPresenter.validateTicketPk(pk)){
-                    return mPresenter.checkTicketMdProfile( mPresenter.getSplitedPk(pk,"|")[0],
-                                                            site_code,
-                                                            operation_code,
-                                                            product_code
-                                                           );
+                    return mPresenter.checkTicketMdProfile(
+                                        mPresenter.getSplitedPk(pk,"|")[0],
+                                        site_code,
+                                        operation_code,
+                                        product_code
+                           );
                 }
                 //
                 return false;
