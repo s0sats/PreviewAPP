@@ -25,7 +25,6 @@ import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
-import com.namoadigital.prj001.model.SO_Favorite_PO;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
@@ -296,7 +295,7 @@ public class Act050_Main extends Base_Activity_Frag implements
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
         //Inicializa e seta fragmento de parametros.
-        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode());
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getFavoriteCode());
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
@@ -308,6 +307,13 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setClient_email(mSoFavoriteItem.getClientEmail());
         mSOCreationObj.setClient_code(mSoFavoriteItem.getClientCode());
         mSOCreationObj.setPack_default(mSoFavoriteItem.getPackDefault());
+        mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
+        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
+
+        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
+        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
+        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
+
         isSOCreationObjectFilled = true;
     }
 
@@ -397,7 +403,6 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onContractSelected(int contract_code) {
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
-        mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
         mSOCreationObj.setDeadline(null);
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
@@ -409,7 +414,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans);
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans, mSoFavoriteItem.getFavoriteCode());
         //act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }
@@ -494,23 +499,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public HMAux getPipelineFavorite() {
-        HMAux pipeline = new HMAux();
-        if (isContractSelected) {
-            try {
-                for (SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
-                    if (pipelineFav.getPipelineCode() == mSOCreationObj.getPipeline_code()) {
-                        pipeline.put(SearchableSpinner.CODE, String.valueOf(pipelineFav.getPipelineCode()));
-                        pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
-                        pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
-                        return pipeline;
-                    }
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-        return pipeline;
+    public HMAux getPipelineFavorite(int favorite_code) {
+        return null;
     }
 
     @Override
@@ -547,12 +537,13 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public List<String> getPackageDefault() {
+    public String getPackageDefault(int favorite_code) {
         if (isContractSelected) {
-//            if (item.getContractCode() == mSoFavoriteItem.getContractCode()) {
-//                return contract.getPackDefault();
-//            }
-
+            for (SO_Favorite_Item so_favorite_item : response.getFavorite()) {
+                if(so_favorite_item.getFavoriteCode() == favorite_code){
+                    return so_favorite_item.getPackDefault();
+                }
+            }
         }
         return null;
     }

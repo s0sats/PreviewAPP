@@ -33,6 +33,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
 
     public static final String FAVORITE_DESC ="FAVORITE_DESC";
+    public static final String FAVORITE_CODE ="FAVORITE_CODE";
     public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
     public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
 
@@ -41,8 +42,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private MD_Product_Serial mdProductSerial;
     private String favorite_desc;
     private Integer favorite_contract_code;
+    private Integer favorite_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
-    private List<SO_Favorite_PO> poList= new ArrayList<>();
     private Integer selected_contract_code = -1;
 
     private ScrollView sv_main;
@@ -114,7 +115,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     public Act050_Frag_Parameters() {}
 
-    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code){
+    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code, Integer favorite_code){
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
         //
         Bundle args = new Bundle();
@@ -122,6 +123,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         args.putString(FAVORITE_DESC, favorite_desc);
         //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
         //será passado o valor -1. Por isso a tratativa abaixo.
+        args.putInt(FAVORITE_CODE, favorite_code != null ? favorite_code : -1);
         args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
         args.putInt(SELECTED_CONTRACT_CODE, -1);
         fragment.setArguments(args);
@@ -266,6 +268,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
             this.mdProductSerial = (MD_Product_Serial) arguments.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             this.favorite_desc = arguments.getString(FAVORITE_DESC);
+            this.favorite_code = arguments.getInt(FAVORITE_CODE) != -1 ? arguments.getInt(FAVORITE_CODE) : null;
             //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
             //será passado o valor -1. Por isso a tratativa abaixo.
             this.favorite_contract_code = arguments.getInt(FAVORITE_CONTRACT_CODE) != -1 ? arguments.getInt(FAVORITE_CONTRACT_CODE) : null;

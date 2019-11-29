@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_CODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CLIENT_TYPE_CLIENT;
 
 /**
@@ -102,15 +103,17 @@ public class Act050_Frag_SO extends BaseFragment {
     private ScrollView sv_main;
     private ArrayList<SM_SO_Client> clientsList = new ArrayList<>();
     private boolean isClientListRequest = true;
+    private Integer favorite_code;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
 
 
-    public static Act050_Frag_SO newInstance(HMAux hmAux_Trans) {
+    public static Act050_Frag_SO newInstance(HMAux hmAux_Trans, Integer favorite_code) {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
         Bundle args = new Bundle();
+        args.putInt(FAVORITE_CODE, favorite_code != null ? favorite_code : -1);
         args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         fragment.setArguments(args);
         return fragment;
@@ -174,6 +177,7 @@ public class Act050_Frag_SO extends BaseFragment {
         Log.d("NEW_OS", "recoverBundleInfo - > Arguments null " + String.valueOf(arguments == null));
         if (arguments != null) {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+            this.favorite_code = arguments.getInt(FAVORITE_CODE) != -1 ? arguments.getInt(FAVORITE_CODE) : null;
         }
     }
 
@@ -300,8 +304,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         ArrayList<HMAux> mPipelineOptions = new ArrayList<>();
 
-        for (SO_Favorite_Pipeline pipeline :
-                mListener.getPipelineList()) {
+        for (SO_Favorite_Pipeline pipeline : mListener.getPipelineList()) {
             if (my_so_creation_obj.getPipeline_code() != null
                     && my_so_creation_obj.getPipeline_code().equals(pipeline.getPipelineCode())) {
                 pipelineFav.put(SearchableSpinner.CODE, String.valueOf(pipeline.getPipelineCode()));
@@ -318,11 +321,14 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmOption(mPipelineOptions);
 
         if (!pipelineFav.hasConsistentValue(SearchableSpinner.CODE)) {
-            pipelineFav = mListener.getPipelineFavorite();
+            if (favorite_code != null) {
+                pipelineFav = mListener.getPipelineFavorite(favorite_code);
+            }
         }
-        ssPipelineCode.setmValue(pipelineFav);
 
-
+        if(pipelineFav != null) {
+            ssPipelineCode.setmValue(pipelineFav);
+        }
     }
 
     private void setClientNameSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
@@ -953,7 +959,7 @@ public interface OnFragmentInteractionListener {
 
     List<SO_Favorite_Pipeline> getPipelineList();
 
-    HMAux getPipelineFavorite();
+    HMAux getPipelineFavorite(int favorite_code);
 
     void getClientList();
 
@@ -965,7 +971,7 @@ public interface OnFragmentInteractionListener {
 
     List<String> getPackageDefaultByContract();
 
-    List<String> getPackageDefault();
+    String getPackageDefault(int favorite_code);
 
     void onBackButtonPressed();
 

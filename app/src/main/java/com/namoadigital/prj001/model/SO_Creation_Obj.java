@@ -46,6 +46,9 @@ public class SO_Creation_Obj implements Serializable {
     private String add_inf2;
     private String add_inf3;
     private int edit_user;
+    private Integer priceListCode;
+    private Integer packCode;
+    private String packServiceDescFull;
     private Integer po_code;
 
     public long getCustomer_code() {
@@ -304,6 +307,37 @@ public class SO_Creation_Obj implements Serializable {
         this.edit_user = edit_user;
     }
 
+    public Integer getPriceListCode() {
+        return priceListCode;
+    }
+
+    public void setPriceListCode(Integer priceListCode) {
+        this.priceListCode = priceListCode;
+    }
+
+    public Integer getPackCode() {
+        return packCode;
+    }
+
+    public void setPackCode(Integer packCode) {
+        this.packCode = packCode;
+    }
+
+    public String getPackServiceDescFull() {
+        return packServiceDescFull;
+    }
+
+    public void setPackServiceDescFull(String packServiceDescFull) {
+        this.packServiceDescFull = packServiceDescFull;
+    }
+
+    public Integer getPo_code() {
+        return po_code;
+    }
+
+    public void setPo_code(Integer po_code) {
+        this.po_code = po_code;
+    }
 
     @Override
     public String toString() {
