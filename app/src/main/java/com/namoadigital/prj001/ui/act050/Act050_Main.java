@@ -394,10 +394,10 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void onContractSelected(int contract_code, Integer pipeline_code) {
+    public void onContractSelected(int contract_code) {
         isContractSelected = true;
         mSOCreationObj.setContract_code(contract_code);
-        mSOCreationObj.setPipeline_code(pipeline_code);
+        mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
         mSOCreationObj.setDeadline(null);
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
     }
@@ -419,13 +419,6 @@ public class Act050_Main extends Base_Activity_Frag implements
         onBackPressed();
     }
 
-    @Override
-    public List<SO_Favorite_PO> getPOs() {
-        for (SO_Favorite_Contract so_favorite_contract : response.getContract()) {
-            return so_favorite_contract.getPoList();
-        }
-        return null;
-    }
     //endregion
 
     @Override
@@ -601,6 +594,9 @@ public class Act050_Main extends Base_Activity_Frag implements
         super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
+        if(wsProcess.equals(WS_SO_Favorite_List.class.getName())){
+            onBackPressed();
+        }
     }
 
     //TRATA MSG SESSION NOT FOUND

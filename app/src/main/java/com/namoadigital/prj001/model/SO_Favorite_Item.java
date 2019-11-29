@@ -55,7 +55,7 @@ public class SO_Favorite_Item implements Serializable {
     private String clientPhone;
     @SerializedName("pipeline_code")
     @Expose
-    private String pipelineCode;
+    private Integer pipelineCode;
     @SerializedName("price_list_code")
     @Expose
     private Integer priceListCode;
@@ -83,7 +83,7 @@ public class SO_Favorite_Item implements Serializable {
         this.clientPhone = clientPhone;
     }
 
-    public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, Integer poCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone, String pipelineCode, Integer priceListCode, Integer packCode, String packServiceDescFull) {
+    public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, Integer poCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone, Integer pipelineCode, Integer priceListCode, Integer packCode, String packServiceDescFull) {
         this.customerCode = customerCode;
         this.profileCode = profileCode;
         this.favoriteCode = favoriteCode;
@@ -225,11 +225,11 @@ public class SO_Favorite_Item implements Serializable {
         this.poCode = poCode;
     }
 
-    public String getPipelineCode() {
+    public Integer getPipelineCode() {
         return pipelineCode;
     }
 
-    public void setPipelineCode(String pipelineCode) {
+    public void setPipelineCode(Integer pipelineCode) {
         this.pipelineCode = pipelineCode;
     }
 
