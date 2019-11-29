@@ -304,11 +304,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("ticket_ttl");
         transList.add("no_profile_msg");
         transList.add("corrupted_message_msg");
-        transList.add("download_ticket_ttl");
         transList.add("alert_download_ticket_ttl");
         transList.add("alert_download_ticket_confirm");
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
+        transList.add("alert_ticket_other_customer_ttl");
+        transList.add("alert_ticket_other_customer_msg");
+        transList.add("ticket_for_another_customer_msg");
+        transList.add("ticket_key_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -645,30 +648,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
 
             @Override
-            public boolean checkTicketProfile(String pk, String site_code, String operation_code, String product_code) {
-                if(mPresenter.validateTicketPk(pk)){
-                    return mPresenter.checkTicketMdProfile(
-                                        mPresenter.getSplitedPk(pk,"|")[0],
-                                        site_code,
-                                        operation_code,
-                                        product_code
-                           );
-                }
-                //
-                return false;
-            }
-
-            @Override
-            public String getTicketProductDesc(String pk, String product_code) {
-                if(mPresenter.validateTicketPk(pk)){
-                   return mPresenter.getTicketProductDesc(mPresenter.getSplitedPk(pk,"|")[0],product_code);
-                }
-                return null;
+            public boolean checkTicketProfile(String site_code, String operation_code, String product_code) {
+                return mPresenter.checkTicketMdProfile(
+                                    site_code,
+                                    operation_code,
+                                    product_code
+                       );
             }
 
             @Override
             public void downloadTicket(String pk, String site_code, String operation_code, String product_code) {
                 mPresenter.validateTicketDownload(pk,site_code,operation_code,product_code);
+            }
+
+            @Override
+            public void showTicketForOtherCustomerMsg() {
+                showAlert(
+                    hmAux_Trans.get("alert_ticket_other_customer_ttl"),
+                    hmAux_Trans.get("alert_ticket_other_customer_msg")
+                );
             }
         });
 

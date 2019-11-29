@@ -31,12 +31,10 @@ public interface Act035_Main_Presenter {
     //region Ticket
     void validateTicketDownload(String pk, String site_code, String operation_code, String product_code);
 
-    boolean checkTicketMdProfile(String s_customer_code, String s_site_code, String s_operation_code, String s_product_code);
+    boolean checkTicketMdProfile(String s_site_code, String s_operation_code, String s_product_code);
 
     String[] getSplitedPk(String pk, String splitter);
 
     boolean validateTicketPk(String ticketPk);
-
-    String getTicketProductDesc(String s_customer_code, String s_product_code);
     //endregion
 }

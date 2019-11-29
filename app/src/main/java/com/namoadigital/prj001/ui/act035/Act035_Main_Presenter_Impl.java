@@ -26,8 +26,8 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.receiver.WBR_Ticket_Download;
-import com.namoadigital.prj001.service.WS_Ticket_Download;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
@@ -37,7 +37,6 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -364,8 +363,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     @Override
     public void validateTicketDownload(final String pk, String site_code, String operation_code, String product_code) {
         if(validateTicketPk(pk)){
-            String[] pk_fields = getSplitedPk(pk,"|");
-            if(checkTicketMdProfile(pk_fields[0],site_code,operation_code,product_code)){
+            if(checkTicketMdProfile(site_code,operation_code,product_code)){
                 ToolBox.alertMSG_YES_NO(
                     context,
                     hmAux_Trans.get("alert_download_ticket_ttl"),
@@ -391,20 +389,16 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
     private void executeWsTicketDownload(String ticketPk) {
         if(ToolBox_Con.isOnline(context)) {
-            mView.setWSProcess(WS_Ticket_Download.class.getName());
+            mView.setWSProcess(WS_TK_Ticket_Download.class.getName());
             //
             mView.showPD(
                 hmAux_Trans.get("dialog_download_ticket_ttl"),
                 hmAux_Trans.get("dialog_download_ticket_start")
             );
             //
-            String[] pk = getSplitedPk(ticketPk,"|");
-            //
-            Intent mIntent = new Intent(context, WBR_Ticket_Download.class);
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
             Bundle bundle = new Bundle();
-            bundle.putString(Constant.LOGIN_CUSTOMER_CODE,pk[0]);
-            bundle.putString(WS_Ticket_Download.TICKET_PREFIX,pk[1]);
-            bundle.putString(WS_Ticket_Download.TICKET_CODE,pk[2]);
+            bundle.putString(WS_TK_Ticket_Download.TICKET_PREFIX,ticketPk);
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
@@ -421,13 +415,10 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
-    public boolean checkTicketMdProfile(String s_customer_code, String s_site_code, String s_operation_code, String s_product_code) {
-        if(!checkCustomerDbExists(s_customer_code)){
-            return false;
-        }
+    public boolean checkTicketMdProfile(String s_site_code, String s_operation_code, String s_product_code) {
         //
         try {
-            long customerCode = Long.parseLong(s_customer_code);
+            long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
             long operationCode = Long.parseLong(s_operation_code);
             long productCode = Long.parseLong(s_product_code);
 
@@ -474,46 +465,6 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(), e);
             return false;
-        }
-    }
-
-    /**
-     * Verifica se o banco de dados do customer existe no device.
-     * Como o banco do caht independe de customer, como precaução, deve ser verificar se o db
-     * daquele customer existe
-     * @param s_customer_code - Customer Code
-     * @return - Verdadeiro se existe banco de dados com o nome do customer e versão atual.
-     */
-    private boolean checkCustomerDbExists(String s_customer_code) {
-        File[] files_db_mult = ToolBox_Inf.getListDB("C_"+s_customer_code+"_"+ ConstantBaseApp.DB_VERSION_CUSTOM+".db3");
-        return files_db_mult != null && files_db_mult.length > 0;
-    }
-
-    public String getTicketProductDesc(String s_customer_code, String s_product_code){
-        try {
-            long customerCode = Long.parseLong(s_customer_code);
-            long productCode = Long.parseLong(s_product_code);
-            //
-            MD_ProductDao productDao = new MD_ProductDao(
-                context,
-                ToolBox_Con.customDBPath(customerCode),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            MD_Product product = productDao.getByString(
-                new MD_Product_Sql_001(
-                    customerCode,
-                    productCode
-                ).toSqlQuery()
-            );
-            //
-            if(product!= null && product.getCustomer_code() > -1  && product.getProduct_code() > -1){
-                return product.getProduct_desc().trim();
-            }
-            return null;
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            return null;
         }
     }
 

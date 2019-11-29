@@ -150,11 +150,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
         void join_AP(String pk);
 
-        boolean checkTicketProfile(String pk, String site_code, String operation_code, String product_code);
-
-        String getTicketProductDesc(String pk, String product_code);
+        boolean checkTicketProfile(String site_code, String operation_code, String product_code);
 
         void downloadTicket(String pk, String site_code, String operation_code, String product_code);
+
+        void showTicketForOtherCustomerMsg();
     }
 
     private IAct035_Adapter_Messages delegate;
@@ -1123,12 +1123,21 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_path_val.setText(item.get("type_path"));
                 tv_path_val.setVisibility(View.VISIBLE);
             }else{
+                tv_path_val.setText("");
                 tv_path_val.setVisibility(View.GONE);
             }
             //
             tv_type_val.setText(item.get("type_desc"));
             tv_type_val.setVisibility(View.VISIBLE);
             //
+            if(item.hasConsistentValue("product_desc") && !item.get("product_desc").isEmpty()) {
+                tv_product_val.setText(item.get("product_desc"));
+                tv_product_val.setVisibility(View.VISIBLE);
+            }else{
+                tv_product_val.setText("");
+                tv_product_val.setVisibility(View.GONE);
+            }
+
             tv_serial_val.setText(item.get("serial_id"));
             tv_serial_val.setVisibility(View.VISIBLE);
             //
@@ -1136,51 +1145,66 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_comment_val.setText(item.get("open_comments"));
                 tv_comment_val.setVisibility(View.VISIBLE);
             } else {
+                tv_comment_val.setText("");
                 tv_comment_val.setVisibility(View.GONE);
             }
-            //
-            final HMAux finalItem = item;
             ibDownload.setVisibility(View.VISIBLE);
-            ibDownload.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            //Valida de se customer da msg é o mesmo que o logado.
+            if(item.hasConsistentValue("pk") && !item.get("pk").isEmpty()){
+                String customerPk = item.get("pk").substring(0,item.get("pk").indexOf("|"));
+                if(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)).equalsIgnoreCase(customerPk)){
+                    final HMAux finalItem = item;
+                    ibDownload.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (delegate != null
+                                && finalItem.hasConsistentValue("pk")
+                                && finalItem.hasConsistentValue("site_code")
+                                && finalItem.hasConsistentValue("operation_code")
+                                && finalItem.hasConsistentValue("product_code")
+                            ) {
+                                delegate.downloadTicket(
+                                    finalItem.get("pk"),
+                                    finalItem.get("site_code"),
+                                    finalItem.get("operation_code"),
+                                    finalItem.get("product_code")
+                                );
+                            }
+                        }
+                    });
+                    //Valida de usuario tem acesso ao MD do ticket
                     if (delegate != null
-                        && finalItem.hasConsistentValue("pk")
                         && finalItem.hasConsistentValue("site_code")
                         && finalItem.hasConsistentValue("operation_code")
                         && finalItem.hasConsistentValue("product_code")
                     ) {
-                        delegate.downloadTicket(
-                            finalItem.get("pk"),
+                        if (!delegate.checkTicketProfile(
                             finalItem.get("site_code"),
                             finalItem.get("operation_code"),
-                            finalItem.get("product_code")
-                        );
+                            finalItem.get("product_code"))
+                        ) {
+                            tv_warning_msg.setVisibility(View.VISIBLE);
+                            tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
+                        }
                     }
-                }
-            });
-            //Valida de usuario tem acesso ao MD do ticket
-            if (delegate != null
-                && finalItem.hasConsistentValue("pk")
-                && finalItem.hasConsistentValue("site_code")
-                && finalItem.hasConsistentValue("operation_code")
-                && finalItem.hasConsistentValue("product_code")
-            ) {
-                if (!delegate.checkTicketProfile(
-                    finalItem.get("pk"),
-                    finalItem.get("site_code"),
-                    finalItem.get("operation_code"),
-                    finalItem.get("product_code"))
-                ) {
+                    //
+                }else{
+                    ibDownload.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(delegate!= null){
+                                delegate.showTicketForOtherCustomerMsg();
+                            }
+                        }
+                    });
                     tv_warning_msg.setVisibility(View.VISIBLE);
-                    tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
+                    tv_warning_msg.setText(hmAux_Trans.get("ticket_for_another_customer_msg"));
                 }
-                //
-                String productDesc = delegate.getTicketProductDesc(finalItem.get("pk"), finalItem.get("product_code"));
-                tv_product_val.setText(productDesc != null && !productDesc.isEmpty() ? productDesc : "" );
-                tv_product_val.setVisibility(productDesc != null && !productDesc.isEmpty() ? View.VISIBLE: View.GONE);
+            }else{
+                tv_warning_msg.setVisibility(View.VISIBLE);
+                tv_warning_msg.setText(hmAux_Trans.get("ticket_key_not_found_msg"));
             }
-            //
+
         } catch (Exception e) {
             //
             tv_name.setText(hmAux.get("user_nick"));

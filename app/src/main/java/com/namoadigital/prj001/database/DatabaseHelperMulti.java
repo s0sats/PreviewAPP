@@ -110,6 +110,10 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [io_blind_move_tracking]([customer_code] int not null,[blind_tmp] int not null,[tracking] text not null COLLATE NOCASE,constraint [pk_io_blind_move_tracking] primary key([customer_code],[blind_tmp],[tracking]));");
             script.append("create table if not exists [io_conf_tracking]([customer_code] int not null,[prefix] int not null,[code] int not null,[item] int not null,[type] text not null collate nocase,[tracking] text not null collate nocase,constraint [pk_io_conf_tracking] primary key([customer_code],[prefix],[code],[item],[type],[tracking]));");
             //script.append("create table if not exists [io_outbound_file]([customer_code] int not null ,[outbound_prefix] int not null ,[outbound_code] int not null ,[file_code] int not null ,[file_code_tmp] int not null ,[file_name] text collate nocase,[file_url] text collate nocase,[file_url_local] text collate nocase,constraint pk_io_outbound_file primary key(customer_code,outbound_prefix,outbound_code,file_code_tmp));");
+            //Tabelas Ticket
+            script.append("CREATE TABLE IF NOT EXISTS [tk_ticket]([customer_code]int NOT NULL,[ticket_prefix]int NOT NULL,[ticket_code]int NOT NULL,[scn]int NOT NULL,[ticket_id]text NOT NULL COLLATE nocase,[type_code]int NOT NULL,[type_id]text NOT NULL COLLATE nocase,[type_desc]text NOT NULL COLLATE nocase,[type_path]text COLLATE nocase,[open_comments]text COLLATE nocase,[open_photo]text COLLATE nocase,[open_name]text COLLATE nocase,[open_email]text COLLATE nocase,[open_phone]text COLLATE nocase,[open_date]text NOT NULL COLLATE nocase,[open_user]int NOT NULL,[open_user_name]text NOT NULL COLLATE nocase,[internal_comments]text COLLATE nocase,[current_site_code]int NOT NULL,[current_site_id]text NOT NULL COLLATE nocase,[current_site_desc]text NOT NULL COLLATE nocase,[current_operation_code]int NOT NULL,[current_operation_id]text NOT NULL COLLATE nocase,[current_operation_desc]text NOT NULL COLLATE nocase,[current_product_code]int NOT NULL,[current_product_id]text NOT NULL COLLATE nocase,[current_product_desc]text NOT NULL COLLATE nocase,[current_serial_code]int NOT NULL,[current_serial_id]text NOT NULL COLLATE nocase,[forecast_date]text COLLATE nocase,[ticket_status]text NOT NULL COLLATE nocase,[close_date]text COLLATE nocase,[close_user]int,[close_user_name]text COLLATE nocase,[duration_minutes]int,[barcode_code]int,[checkin_date]text COLLATE nocase,[checkin_user]int,[checkin_user_name]text COLLATE nocase,CONSTRAINT[pk_tk_ticket]PRIMARY KEY([customer_code],[ticket_prefix],[ticket_code]));");
+            script.append("CREATE TABLE IF NOT EXISTS [tk_ticket_action]([customer_code]int NOT NULL,[ticket_prefix]int NOT NULL,[ticket_code]int NOT NULL,[ticket_seq]int NOT NULL,[action_comments]text COLLATE NOCASE,[action_photo]text COLLATE NOCASE,CONSTRAINT[pk_tk_ticket_action]PRIMARY KEY([customer_code],[ticket_prefix],[ticket_code],[ticket_seq]));");
+            script.append("CREATE TABLE IF NOT EXISTS [tk_ticket_ctrl]([customer_code]int NOT NULL,[ticket_prefix]int NOT NULL,[ticket_code]int NOT NULL,[ticket_seq]int NOT NULL,[ctrl_type]text NOT NULL COLLATE nocase,[site_code]int NOT NULL,[site_id]text NOT NULL COLLATE nocase,[site_desc]text NOT NULL COLLATE nocase,[operation_code]int NOT NULL,[operation_id]text NOT NULL COLLATE nocase,[operation_desc]text NOT NULL COLLATE nocase,[product_code]int NOT NULL,[product_id]text NOT NULL COLLATE nocase,[product_desc]text NOT NULL COLLATE nocase,[serial_code]int NOT NULL,[serial_id]text NOT NULL COLLATE nocase,[ctrl_start_date]text NOT NULL COLLATE nocase,[ctrl_start_user]text NOT NULL COLLATE nocase,[ctrl_start_user_name]text NOT NULL COLLATE nocase,[ctrl_end_date]text COLLATE nocase,[ctrl_end_user]int,[ctrl_end_user_name]text COLLATE nocase,[ctrl_status]text NOT NULL COLLATE nocase,[partner_code]int,[partner_id]text COLLATE nocase,[partner_desc]text COLLATE nocase,CONSTRAINT[pk_tk_ticket_ctrl]PRIMARY KEY([customer_code],[ticket_prefix],[ticket_code],[ticket_seq]));");
             //
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_PRJ001', 'APP PRJ 01');");
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
@@ -200,7 +204,6 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
         script.append("drop table if exists md_product_brands;");
         script.append("drop table if exists md_product_segments;");
         script.append("drop table if exists md_product_category_prices;");
-
         //Table ActionPlan
         script.append("drop table if exists [md_departments];");
         script.append("drop table if exists [md_users];");
@@ -212,7 +215,10 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
         script.append("drop table if exists io_move;");
         script.append("drop table if exists io_outbound;");
         script.append("drop table if exists io_outbound_item;");
-
+        //Table Ticket
+        script.append("drop table if exists tk_ticket;");
+        script.append("drop table if exists tk_ticket_action;");
+        script.append("drop table if exists tk_ticket_ctrl;");
         //
         String[] scripts = script.toString().split(";");
         //
