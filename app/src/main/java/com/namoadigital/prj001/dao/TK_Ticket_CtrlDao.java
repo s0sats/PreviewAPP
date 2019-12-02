@@ -381,7 +381,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        List<HMAux> io_inbounds = new ArrayList<>();
+        List<HMAux> tk_ticket_ctrls = new ArrayList<>();
         openDB();
 
         try {
@@ -389,7 +389,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                io_inbounds.add(CursorToHMAuxMapper.mapN(cursor));
+                tk_ticket_ctrls.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();
@@ -400,7 +400,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
         closeDB();
 
-        return io_inbounds;
+        return tk_ticket_ctrls;
     }
 
     private class CursorToTK_Ticket_CtrlMapper implements Mapper<Cursor, TK_Ticket_Ctrl> {
