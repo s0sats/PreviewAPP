@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -74,7 +75,7 @@ public class WS_TK_Ticket_Download extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        env.getTickets().addAll(
+        env.getTicket().addAll(
             getTicketPkList(ticketPkList)
         );
         //
@@ -130,26 +131,22 @@ public class WS_TK_Ticket_Download extends IntentService {
             //
             ticketDao.addUpdate(ticketList,false);
             //
+            startDownloadServices();
+            //
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
         }
-        startDownloadServices();
-
     }
 
     private void startDownloadServices() {
-        /**
-         * ANALISAR COMO FAZER, POIS COMO VEM O CHAT, O DOWNLOAD PODE SE PARA OUTRO CUSTOMER...
-         * TALVEZ NÃO VALHE APENAS TENTAR O DOWNLOAD PAR AOUTRO CUSTOMER, DEIXAR ISSO PARA O MOMENTO QUE ELE
-         * TROCAR PARA O OUTRO CUSTOMER.
-         */
-
-        /*Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
+        //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         mIntentPIC.putExtras(bundle);
-        getApplicationContext().sendBroadcast(mIntentPIC);*/
+        getApplicationContext().sendBroadcast(mIntentPIC);
     }
 
     private ArrayList<T_TK_Ticket_Download_PK_Env> getTicketPkList(String ticketPkList) throws Exception {

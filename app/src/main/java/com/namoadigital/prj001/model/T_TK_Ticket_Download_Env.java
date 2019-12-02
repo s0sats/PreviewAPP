@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public class T_TK_Ticket_Download_Env extends Main_Header_Env {
 
-    private ArrayList<T_TK_Ticket_Download_PK_Env> tickets = new ArrayList<>();
+    private ArrayList<T_TK_Ticket_Download_PK_Env> ticket = new ArrayList<>();
 
-    public ArrayList<T_TK_Ticket_Download_PK_Env> getTickets() {
-        return tickets;
+    public ArrayList<T_TK_Ticket_Download_PK_Env> getTicket() {
+        return ticket;
     }
 
-    public void setTickets(ArrayList<T_TK_Ticket_Download_PK_Env> tickets) {
-        this.tickets = tickets;
+    public void setTicket(ArrayList<T_TK_Ticket_Download_PK_Env> ticket) {
+        this.ticket = ticket;
     }
 }

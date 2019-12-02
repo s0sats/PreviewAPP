@@ -90,6 +90,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT065 = "act065";
     public static final String ACT066 = "act066";
     public static final String ACT067 = "act067";
+    public static final String ACT068 = "act068";
+    public static final String ACT069 = "act069";
 
     public static final String title_lbl = "_title";
 
@@ -517,6 +519,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND = "OUTBOUND";
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND_NEW = "OUTBOUND_NEW";
     public static final String PROFILE_MENU_IO_PARAM_BYPASS_CONFIRM_SERIAL = "BYPASS_CONFIRM_SERIAL";
+
+    //Profile Ticket
+    public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";
+    public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
+
 
 
     //Modulos

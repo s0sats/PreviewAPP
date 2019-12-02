@@ -125,6 +125,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         );
         //
         menuList.add(
+            new MenuMainNamoa(
+                Act005_Main.MENU_ID_TICKET,
+                Constant.PROFILE_MENU_TICKET,
+                "lbl_ticket",
+                "lbl_ticket",
+                R.drawable.ic_n_action_plan
+
+            )
+        );
+        //
+        menuList.add(
                 new MenuMainNamoa(
                         Act005_Main.MENU_ID_SERVICE,
                         Constant.PROFILE_PRJ001_SO,
