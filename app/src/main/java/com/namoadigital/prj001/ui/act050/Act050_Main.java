@@ -41,6 +41,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Act050_Main extends Base_Activity_Frag implements
@@ -309,11 +310,10 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setPack_default(mSoFavoriteItem.getPackDefault());
         mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
         mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
-
-        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
-        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
-        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
-
+        mSOCreationObj.setPackCode(mSoFavoriteItem.getPackCode());
+        mSOCreationObj.setPriceListCode(mSoFavoriteItem.getPriceListCode());
+        mSOCreationObj.setPackServiceDescFull(mSoFavoriteItem.getPackServiceDescFull());
+        onContractSelected(mSoFavoriteItem.getContractCode());
         isSOCreationObjectFilled = true;
     }
 
@@ -400,11 +400,20 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void onContractSelected(int contract_code) {
+    public void onContractSelected(Integer contract_code) {
         isContractSelected = true;
-        mSOCreationObj.setContract_code(contract_code);
+        if(contract_code != null) {
+            mSOCreationObj.setContract_code(contract_code);
+        }else{
+            mSOCreationObj.setContract_code(-1);
+        }
         mSOCreationObj.setDeadline(null);
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+    }
+
+    @Override
+    public void onPOSelected(int po_code) {
+        mSOCreationObj.setPo_code(po_code);
     }
 
     @Override
@@ -525,27 +534,26 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public List<String> getPackageDefaultByContract() {
-//        if (isContractSelected) {
-//            for (SO_Favorite_Item item : response.getFavorite()
-//            ) {
-//                if (item.getContractCode() == mSoFavoriteItem.getContractCode()) {
-//                    return contract.getPackDefault();
-//                }
-//            }
-//        }
+        if (isContractSelected) {
+            return Collections.singletonList(mSoFavoriteItem.getPackDefault());
+        }
         return null;
     }
 
     @Override
-    public String getPackageDefault(int favorite_code) {
-        if (isContractSelected) {
-            for (SO_Favorite_Item so_favorite_item : response.getFavorite()) {
-                if(so_favorite_item.getFavoriteCode() == favorite_code){
-                    return so_favorite_item.getPackDefault();
-                }
-            }
+    public String getPackageDefault() {
+        return mSoFavoriteItem.getPackServiceDescFull();
+    }
+
+    @Override
+    public boolean hasValidPackageDefault(Integer contract_code_selected) {
+        if(contract_code_selected != mSoFavoriteItem.getContractCode()
+        || mSoFavoriteItem.getPackDefault() == null
+        || mSoFavoriteItem.getPackDefault().equals(Act050_Frag_SO.WITHOUT_PACK_DEFAULT_PENDING)){
+            return false;
+        }else {
+            return true;
         }
-        return null;
     }
 
     @Override

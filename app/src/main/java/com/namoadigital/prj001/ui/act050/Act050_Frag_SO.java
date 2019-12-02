@@ -253,13 +253,22 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPackageDefault.setmOption(mPackageDefaultOptions);
         ibPackageDeafultInfo.setVisibility(View.GONE);
 
+
         try {
-            if (my_so_creation_obj.getPack_default().equals(WITH_PACK_DEFAULT_PENDING)) {
-                ssPackageDefault.setmValue(packageDefaultWith);
-                ibPackageDeafultInfo.setVisibility(View.VISIBLE);
-            } else if (my_so_creation_obj.getPack_default().equals(WITHOUT_PACK_DEFAULT_PENDING)) {
+            if(mListener.hasValidPackageDefault(my_so_creation_obj.getContract_code())){
+                ssPackageDefault.setmEnabled(true);
+                if (my_so_creation_obj.getPack_default().equals(WITH_PACK_DEFAULT_PENDING)) {
+                    ssPackageDefault.setmValue(packageDefaultWith);
+                    ibPackageDeafultInfo.setVisibility(View.VISIBLE);
+                } else if (my_so_creation_obj.getPack_default().equals(WITHOUT_PACK_DEFAULT_PENDING)) {
+                    ssPackageDefault.setmValue(packageDefaultWithout);
+                }
+            }else{
                 ssPackageDefault.setmValue(packageDefaultWithout);
+                ibPackageDeafultInfo.setVisibility(View.GONE);
+                ssPackageDefault.setmEnabled(false);
             }
+
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -472,18 +481,9 @@ public class Act050_Frag_SO extends BaseFragment {
             @Override
             public void onClick(View v) {
                 String title = hmAux_Trans.get("alert_pack_default_ttl");
-                String msg = "";
-                List<String> msgs = mListener.getPackageDefaultByContract();
+                String msg = mListener.getPackageDefault();
 
-                try {
-                    for (String s : msgs) {
-                        msg += s + "\n";
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-
-                if (msg.isEmpty()) {
+                if (msg == null || msg.isEmpty()) {
                     msg = hmAux_Trans.get("alert_no_pack_default_msg");
                 }
 
@@ -589,35 +589,6 @@ public class Act050_Frag_SO extends BaseFragment {
                 } else {
                     ibPackageDeafultInfo.setVisibility(View.GONE);
                 }
-            }
-        });
-
-        ibPackageDeafultInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = hmAux_Trans.get("alert_pack_default_ttl");
-                String msg = "";
-                List<String> msgs = mListener.getPackageDefaultByContract();
-
-                try {
-                    for (String s : msgs) {
-                        msg = s + "\n";
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-
-                if (msg.isEmpty()) {
-                    msg = hmAux_Trans.get("alert_no_pack_default_msg");
-                }
-
-                ToolBox.alertMSG(
-                        getContext(),
-                        title,
-                        msg,
-                        null,
-                        0
-                );
             }
         });
 
@@ -971,7 +942,9 @@ public interface OnFragmentInteractionListener {
 
     List<String> getPackageDefaultByContract();
 
-    String getPackageDefault(int favorite_code);
+    String getPackageDefault();
+
+    boolean hasValidPackageDefault(Integer contract_code_selected);
 
     void onBackButtonPressed();
 

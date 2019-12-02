@@ -87,7 +87,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
          * Interface disparada na momento que o contrato é selecionado
          * @param contract_code - Codigo do contrato
          */
-        void onContractSelected(int contract_code);
+        void onContractSelected(Integer contract_code);
+
+        /**
+         * Interface disparada na momento que o contrato é selecionado
+         * @param po_code - Codigo do PO
+         */
+        void onPOSelected(int po_code);
 
         /**
          * Interface que checa se contrato já foi selecionado.
@@ -228,6 +234,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
             public void onClick(View v) {
                 if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     if (mFragListner != null) {
+                        mFragListner.onContractSelected(Integer.parseInt(ss_contract.getmValue().get(SearchableSpinner.CODE)));
+                        mFragListner.onPOSelected(Integer.parseInt(ss_po.getmValue().get(SearchableSpinner.CODE)));
                         mFragListner.onMoveToOSFragment();
                     }
                 }else{
