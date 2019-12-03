@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
@@ -398,7 +399,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             //
             Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
             Bundle bundle = new Bundle();
-            bundle.putString(WS_TK_Ticket_Download.TICKET_PREFIX,ticketPk);
+            bundle.putString(TK_TicketDao.TICKET_PREFIX,ticketPk);
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);

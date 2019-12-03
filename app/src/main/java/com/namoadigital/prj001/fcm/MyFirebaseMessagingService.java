@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
@@ -31,12 +33,14 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -191,6 +195,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //ADD TRATATIVA MODULO IO   IO_
             else if(fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_IO)) {
                 handleIoFCM(fcmMessage);
+            }
+            //LUCHE - 03/12/2019
+            //ADD TRATATIVA MODULO Ticket
+            else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET) &&
+                     fcmMessage.getTitle().trim().equalsIgnoreCase(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
+            ) {
+                handleTkFMC(fcmMessage);
             } else {
                 //
                 //LUCHE - 07/08/2019
@@ -348,11 +359,46 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             Integer.parseInt(outbound_scn)
                     ).toSqlQuery()
             );
-
+            //
+            sendFCMStatus(fcmMessage.getTitle());
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
     }
+
+
+    private void handleTkFMC(FCMMessage fcmMessage) {
+        try{
+            TK_TicketDao ticketDao = new TK_TicketDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
+            JSONObject jsonObject = jsonObjectRoot.getJSONObject("ticket");
+
+            String customer_code = fcmMessage.getCustomer();
+            String ticket_prefix = jsonObject.getString(TK_TicketDao.TICKET_PREFIX);
+            String ticket_code = jsonObject.getString(TK_TicketDao.TICKET_CODE);
+            String ticket_scn = jsonObject.getString(TK_TicketDao.SCN);
+            //String status = jsonObject.getString("status");
+            // Update Ticket
+            ticketDao.addUpdate(
+                new TK_Ticket_Sql_003(
+                    Long.parseLong(customer_code),
+                    Integer.parseInt(ticket_prefix),
+                    Integer.parseInt(ticket_code),
+                    Integer.parseInt(ticket_scn)
+                ).toSqlQuery()
+            );
+            //
+            sendFCMStatus(fcmMessage.getTitle());
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+    }
+
+
 
     private void sendFCMStatus(String module_type) {
         Intent mIntent = new Intent();

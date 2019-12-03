@@ -27,9 +27,6 @@ import java.util.List;
 
 public class WS_TK_Ticket_Download extends IntentService {
 
-    public static final String TICKET_PREFIX = "TICKET_PREFIX";
-    public static final String TICKET_CODE = "TICKET_CODE";
-
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -46,7 +43,7 @@ public class WS_TK_Ticket_Download extends IntentService {
         try {
 
             gson = new GsonBuilder().serializeNulls().create();
-            String ticket_pks = bundle.getString(TICKET_PREFIX, "");
+            String ticket_pks = bundle.getString(TK_TicketDao.TICKET_PREFIX, "");
             //
             processTicketDownload(ticket_pks);
 
@@ -121,6 +118,12 @@ public class WS_TK_Ticket_Download extends IntentService {
         if(ticketList != null && ticketList.size() > 0){
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
+                /**
+                 *
+                 * TODO O RESET DO SYNC REQUIRED TEM QUE SER FEITO VIA QUERY DIRETA E NÃO COMO ESTA ABAIXO
+                 *
+                 * */
+                tkTicket.setSync_required(0);
             }
             //
             TK_TicketDao ticketDao = new TK_TicketDao(
@@ -135,7 +138,7 @@ public class WS_TK_Ticket_Download extends IntentService {
             //
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
         }else{
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("no_data_returned_msg"), new HMAux(), "", "0");
         }
     }
 
@@ -173,6 +176,7 @@ public class WS_TK_Ticket_Download extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
+        translist.add("no_data_returned_msg");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),
