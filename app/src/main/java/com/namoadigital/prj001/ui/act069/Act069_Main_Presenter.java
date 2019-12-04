@@ -39,7 +39,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
+    public void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
@@ -48,6 +48,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
                 ToolBox_Con.getPreference_Site_Code(context),
                 statusPending,
                 bStatusProcess,
+                bStatusWaitingSync,
                 bStatusDone,
                 bParterEmpty,
                 bParterProfile

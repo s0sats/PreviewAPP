@@ -19,7 +19,7 @@ public interface Act069_Main_Contract {
 
     interface I_Presenter{
 
-        void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile);
+        void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile);
 
         int checkTicketToSync();
 

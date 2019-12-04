@@ -50,6 +50,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     private Act069_Tickets_Adapter mAdapter;
     private boolean bStatusPending;
     private boolean bStatusProcess;
+    private boolean bStatusWaitingSync;
     private boolean bStatusDone;
     private boolean bParterEmpty;
     private boolean bParterProfile;
@@ -130,7 +131,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         //
         updateIvFilterState();
         //
-        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusDone,bParterEmpty, bParterProfile);
+        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync,bStatusDone,bParterEmpty, bParterProfile);
         //
         setBtnSyncVisibility();
     }
@@ -147,6 +148,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         if (bundle != null) {
             bStatusPending = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PENDING,true);
             bStatusProcess = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,true);
+            bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
             bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY,true);
             bParterProfile= bundle.getBoolean(FILTER_PARTNER_PROFILE,true);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
@@ -154,6 +156,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             if(ConstantBaseApp.ACT014 .equalsIgnoreCase(requestingAct)){
                 bStatusPending = false;
                 bStatusProcess = false;
+                bStatusWaitingSync = false;
                 bStatusDone = true;
                 bParterEmpty = false;
                 bParterProfile = false;
@@ -183,6 +186,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     private void iniFilters() {
         bStatusPending = true;
         bStatusProcess = true;
+        bStatusWaitingSync = true;
         bStatusDone = false;
         bParterEmpty = true;
         bParterProfile = true;
@@ -338,13 +342,11 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         //Esse ultimo stats só existe no quando lista origem do pendentes.
-//        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
-//        chkWaitingSync.setChecked(filter_waiting);
-//        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
-//        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
-//        chkWaitingSync.setVisibility(listPendencies ? View.VISIBLE : View.GONE );
-//        chkWaitingSync.setEnabled(listPendencies );
-
+        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
+        chkWaitingSync.setChecked(bStatusWaitingSync);
+        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        //
         chkPartnerEmpty.setText(hmAux_Trans.get("chk_allow_no_partner_lbl"));
         chkPartnerEmpty.setChecked(bParterEmpty);
         //
@@ -361,12 +363,13 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                     public void onClick(DialogInterface dialog, int which) {
                         bStatusPending = chkPending.isChecked();
                         bStatusProcess = chkProcess.isChecked();
+                        bStatusWaitingSync = chkWaitingSync.isChecked();
                         bParterEmpty = chkPartnerEmpty.isChecked();
                         bParterProfile = chkPartnerProfile.isChecked();
                         //
                         updateIvFilterState();
                         //
-                        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusDone,bParterEmpty,bParterProfile);
+                        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync , bStatusDone, bParterEmpty, bParterProfile);
                     }
                 }
             )
@@ -382,7 +385,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         if(requestingAct.equals(ConstantBaseApp.ACT014)){
             ivFilters.setVisibility(View.GONE);
         }else {
-            if (bStatusPending || bStatusProcess || bParterEmpty || bParterProfile) {
+            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile) {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
             } else {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));

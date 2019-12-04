@@ -11,12 +11,14 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -30,7 +32,7 @@ public class WS_TK_Ticket_Download extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "WS_SO_Search";
+    private String mResource_Name = "ws_tk_ticket_download";
     private Gson gson;
 
     public WS_TK_Ticket_Download() { super("WS_TK_Ticket_Download");}
@@ -116,27 +118,32 @@ public class WS_TK_Ticket_Download extends IntentService {
 
     private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
         if(ticketList != null && ticketList.size() > 0){
-            for (TK_Ticket tkTicket : ticketList) {
-                tkTicket.setPK();
-                /**
-                 *
-                 * TODO O RESET DO SYNC REQUIRED TEM QUE SER FEITO VIA QUERY DIRETA E NÃO COMO ESTA ABAIXO
-                 *
-                 * */
-                tkTicket.setSync_required(0);
-            }
-            //
             TK_TicketDao ticketDao = new TK_TicketDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
             );
             //
-            ticketDao.addUpdate(ticketList,false);
+            for (TK_Ticket tkTicket : ticketList) {
+                tkTicket.setPK();
+                //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
+                ticketDao.addUpdate(
+                    new TK_Ticket_Sql_004(
+                        tkTicket.getCustomer_code(),
+                        tkTicket.getTicket_prefix(),
+                        tkTicket.getTicket_code()
+                    ).toSqlQuery()
+                );
+            }
             //
-            startDownloadServices();
-            //
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticketList, false);
+            if(!daoObjReturn.hasError()){
+                startDownloadServices();
+                //
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
+            }else {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_on_insert_ticket_msg"), new HMAux(), "", "0");
+            }
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("no_data_returned_msg"), new HMAux(), "", "0");
         }
@@ -177,6 +184,7 @@ public class WS_TK_Ticket_Download extends IntentService {
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
         translist.add("no_data_returned_msg");
+        translist.add("error_on_insert_ticket_msg");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),
