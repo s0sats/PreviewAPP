@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -25,9 +24,11 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act069_Tickets_Adapter;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -38,6 +39,7 @@ import java.util.List;
 
 public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I_View {
 
+    public static final String FILTER_TEXT = "FILTER_TEXT";
     public static final String FILTER_PARTNER_EMPTY = "FILTER_PARTNER_EMPTY";
     public static final String FILTER_PARTNER_PROFILE = "FILTER_PARTNER_PROFILE";
 
@@ -146,6 +148,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
+            mketFilter.setText(bundle.getString(FILTER_TEXT,""));
             bStatusPending = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PENDING,true);
             bStatusProcess = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,true);
             bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
@@ -210,11 +213,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 mAdapter.setOnTicketClickListener(new Act069_Tickets_Adapter.OnTicketClickListener() {
                     @Override
                     public void onTicketClickListner(Act069_TicketVH item) {
-                        Toast.makeText(
-                            context,
-                            item.getAllFieldForFilter(),
-                            Toast.LENGTH_LONG
-                        ).show();
+                        callAct070(generateAct070Bundle(item));
                     }
                 });
             }
@@ -226,6 +225,21 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             rvTickets.setVisibility(View.INVISIBLE);
         }
     }
+
+    private Bundle generateAct070Bundle(Act069_TicketVH item) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PENDING,bStatusPending);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,bStatusProcess);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,bStatusWaitingSync);
+        bundle.putBoolean(FILTER_PARTNER_EMPTY,bParterEmpty);
+        bundle.putBoolean(FILTER_PARTNER_PROFILE,bParterProfile);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        //
+        return bundle;
+    }
+
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
@@ -393,6 +407,22 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         }
     }
 
+    private void callAct070(Bundle bundle) {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct005() {
+        Intent intent = new Intent(context, Act005_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -443,10 +473,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        //mPresenter.onBackPressedClicked();
-        Intent intent = new Intent(context, Act005_Main.class);
-        startActivity(intent);
-        finish();
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

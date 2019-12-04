@@ -363,16 +363,16 @@ public class WS_DownLoad_Picture extends IntentService {
     private void processTicketDownloads(TK_TicketDao ticketDao, TK_Ticket_ActionDao ticketActionDao, ArrayList<HMAux> ticketImgList, ArrayList<HMAux> ticketActionImgList) throws Exception {
         for (HMAux hmAux : ticketImgList) {
             try {
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH_PHOTO)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH_PHOTO);
                     //
                     ToolBox_Inf.downloadImagePDF(
                         hmAux.get(TK_TicketDao.OPEN_PHOTO),
-                        Constant.CACHE_PATH + "/" + hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_PATH);
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_PATH_PHOTO);
                     //
                     //Atualiza campo com url local
                     ticketDao.addUpdate(

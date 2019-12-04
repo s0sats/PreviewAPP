@@ -161,6 +161,14 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
 
+    @Override
+    public void onBackPressedClicked(String requestingAct) {
+        switch (requestingAct){
+            case ConstantBaseApp.ACT005:
+            default:
+                mView.callAct005();
+        }
     }
 }

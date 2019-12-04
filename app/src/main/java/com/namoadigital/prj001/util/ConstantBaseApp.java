@@ -526,8 +526,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";
     public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
 
-
-
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
@@ -538,7 +536,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
     public static final String MODULE_IO = "MODULE_IO";
-
 
     //Constantes Status da SO
     public static final String SO_STATUS_EDIT = "EDIT";
@@ -645,6 +642,14 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
     public static final String IO_ACTION_SAVE_ITEM = "IO_ACTION_SAVE_ITEM";
 
+    /*
+    * Constantes Ticket
+    */
+
+    public static final String TK_TICKET_CRTL_TYPE_ACTION ="ACTION";
+    public static final String TK_TICKET_CRTL_TYPE_FORM ="FORM";
+    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
+    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
 
     /*
      * Constantes CHAT

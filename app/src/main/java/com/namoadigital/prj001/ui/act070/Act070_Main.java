@@ -1,27 +1,88 @@
 package com.namoadigital.prj001.ui.act070;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Group;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I_View {
 
+    private Act070_Main_Presenter mPresenter;
+    private TextView tvTicketId;
+    private TextView tvStatus;
+    private TextView tvTypePath;
+    private TextView tvTypeDesc;
+    private TextView tvOpenComment;
+    private TextView tvOpenDate;
+    private TextView tvOpenDate_val;
+    private TextView tvForecastDate;
+    private TextView tvForecastDate_val;
+    private TextView tvProduct;
+    private TextView tvSerial;
+    private ImageView ivInnerComment;
+    private ImageView ivOpenPhoto;
+    private Button btnCheckIn;
+    private ConstraintLayout clCheckinInfo;
+    private ImageView ivCheckinCancel;
+    private TextView tvCheckinInfoLbl;
+    private TextView tvCheckinInfoVal;
+    private TextView tvDoneInfoLbl;
+    private TextView tvDoneInfoVal;
+    private Group grDone;
+    private TextView tvFilterLbl;
+    private Switch swFilter;
+    private Group grFilter;
+    private LinearLayout llActions;
+    private Bundle requestingBundle;
+    private int mTkPrefix;
+    private int mTkCode;
+    private TK_Ticket mTicket;
+    private String requestingAct;
+    private String wsProcess = "";
+    private ArrayList<TK_Ticket_Ctrl_Super> actionList = new ArrayList<>();
+    private boolean bReadOnly = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act069_main);
+        setContentView(R.layout.act070_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,21 +113,14 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("act070_title");
-        transList.add("filter_hint");
-        transList.add("btn_sync_tickets");
-        transList.add("no_record_lbl");
-        transList.add("alert_error_on_generate_list_ttl");
-        transList.add("alert_error_on_generate_list_msg");
-        transList.add("dialog_filter_title");
-        transList.add("dialog_status_lbl");
-        transList.add("dialog_partner_lbl");
-        transList.add("chk_allow_no_partner_lbl");
-        transList.add("chk_hide_other_partner_lbl");
-        //
-        transList.add("alert_ticket_to_send_ttl");
-        transList.add("alert_ticket_to_send_msg");
-        transList.add("dialog_download_ticket_ttl");
-        transList.add("dialog_download_ticket_start");
+        transList.add("open_date_lbl");
+        transList.add("forecast_date_lbl");
+        transList.add("btn_checkin");
+        transList.add("checkin_info_lbl");
+        transList.add("done_info_lbl");
+        transList.add("filter_lbl");
+        transList.add("partner_lbl");
+        transList.add("inner_comment_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -78,6 +132,227 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void initVars() {
+        bindViews();
+        //
+        mPresenter = new Act070_Main_Presenter(
+            context,
+            this,
+            hmAux_Trans
+        );
+        //
+        recoverIntentsInfo();
+        //
+        if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
+            updateTicketData();
+        } else {
+            paramErrorFlow();
+        }
+    }
+
+    private void recoverIntentsInfo() {
+        requestingBundle = getIntent().getExtras();
+        //
+        if (requestingBundle != null) {
+            requestingAct = requestingBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+            mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
+            mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            //
+        } else {
+            requestingAct = ConstantBaseApp.ACT069;
+            mTkPrefix = -1;
+            mTkCode = -1;
+        }
+    }
+
+    private void bindViews() {
+        tvTicketId = findViewById(R.id.act070_tv_ticket_id);
+        tvStatus = findViewById(R.id.act070_tv_status);
+        tvTypePath = findViewById(R.id.act070_tv_type_path);
+        tvTypeDesc = findViewById(R.id.act070_tv_type_desc);
+        tvOpenComment = findViewById(R.id.act070_tv_open_comment);
+        tvOpenDate = findViewById(R.id.act070_tv_open_date);
+        tvOpenDate_val = findViewById(R.id.act070_tv_open_date_val);
+        tvForecastDate = findViewById(R.id.act070_tv_forecast_date);
+        tvForecastDate_val = findViewById(R.id.act070_tv_forecast_date_val);
+        tvProduct = findViewById(R.id.act070_tv_product);
+        tvSerial = findViewById(R.id.act070_tv_serial);
+        ivInnerComment = findViewById(R.id.act070_iv_inner_comment);
+        ivOpenPhoto = findViewById(R.id.act070_iv_open_photo);
+        btnCheckIn = findViewById(R.id.act070_btn_check_in);
+        clCheckinInfo = findViewById(R.id.act070_cl_checkin_info);
+        ivCheckinCancel = findViewById(R.id.act070_iv_checkin_cancel);
+        tvCheckinInfoLbl = findViewById(R.id.act070_tv_checkin_info_lbl);
+        tvCheckinInfoVal = findViewById(R.id.act070_tv_checkin_info_val);
+        tvDoneInfoLbl = findViewById(R.id.act070_tv_done_info_lbl);
+        tvDoneInfoVal = findViewById(R.id.act070_tv_done_info_val);
+        grDone = findViewById(R.id.act070_gr_done);
+        tvFilterLbl = findViewById(R.id.act070_tv_filter_lbl);
+        swFilter = findViewById(R.id.act070_sw_filter);
+        grFilter = findViewById(R.id.act070_gr_filter);
+        llActions = findViewById(R.id.act070_ll_actions);
+        //
+        setTranslation();
+    }
+
+    private void setTranslation() {
+        tvOpenDate.setText(hmAux_Trans.get("open_date_lbl"));
+        tvForecastDate.setText(hmAux_Trans.get("forecast_date_lbl"));
+        btnCheckIn.setText(hmAux_Trans.get("btn_checkin"));
+        tvCheckinInfoLbl.setText(hmAux_Trans.get("checkin_info_lbl"));
+        tvDoneInfoLbl.setText(hmAux_Trans.get("done_info_lbl"));
+        tvFilterLbl.setText(hmAux_Trans.get("filter_lbl"));
+    }
+
+
+    private void updateTicketData() {
+        mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
+        //
+        if (mTicket != null) {
+            setReadOnly();
+            setDataToViews();
+        } else {
+            paramErrorFlow();
+        }
+    }
+
+    private void setReadOnly() {
+        bReadOnly = mPresenter.getReadOnlyDefinition(mTicket);
+    }
+
+    private void setDataToViews() {
+        tvTicketId.setText(mTicket.getTicket_id());
+        //
+        tvStatus.setText(hmAux_Trans.get(mTicket.getTicket_status()));
+        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicket.getTicket_status())));
+        //
+        tvTypePath.setText(mTicket.getType_path());
+        tvTypeDesc.setText(mTicket.getType_desc());
+        tvOpenComment.setText(mTicket.getOpen_comments());
+        tvOpenDate_val.setText(
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            )
+        );
+        tvForecastDate_val.setText(
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(mTicket.getForecast_date()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            )
+        );
+        //
+        tvProduct.setText(mTicket.getCurrent_product_desc());
+        tvSerial.setText(mTicket.getCurrent_serial_id());
+        defineInnerCommentIcon();
+        defineOpenPhotoImage();
+        configCheckinInfos();
+        configDoneInfo();
+        defineFilterVisility();
+        loadActionList();
+    }
+
+    private void loadActionList() {
+        actionList = mPresenter.generateCtrlActions(
+            mTicket,
+            llActions
+        );
+    }
+
+    private void defineFilterVisility() {
+        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())) {
+            grFilter.setVisibility(View.GONE);
+        } else {
+            grFilter.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void configDoneInfo() {
+        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
+            && mTicket.getClose_date() != null && mTicket.getClose_user() != null) {
+            grDone.setVisibility(View.VISIBLE);
+            tvDoneInfoVal.setText(mPresenter.getFormattedDoneInfo(mTicket.getClose_date(), mTicket.getClose_user_name()));
+        } else {
+            grDone.setVisibility(View.GONE);
+        }
+    }
+
+    private void configCheckinInfos() {
+        if (mTicket.getCheckin_date() != null && mTicket.getCheckin_user() != null) {
+            btnCheckIn.setVisibility(View.GONE);
+            clCheckinInfo.setVisibility(View.VISIBLE);
+            tvCheckinInfoVal.setText(mPresenter.getFormattedCheckinInfo(mTicket.getCheckin_date(), mTicket.getCheckin_user_name()));
+        } else {
+            btnCheckIn.setVisibility( bReadOnly ? View.GONE: View.VISIBLE);
+            clCheckinInfo.setVisibility(View.GONE);
+        }
+        //
+        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status()) || bReadOnly) {
+            ivCheckinCancel.setVisibility(View.GONE);
+        } else {
+            ivCheckinCancel.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void defineOpenPhotoImage() {
+        if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
+            ivOpenPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+        } else {
+            if (mTicket.getOpen_photo_local() == null) {
+                //FOTO NÃO FOI BAIXADA, COMO FAZER?
+                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
+                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
+                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
+                Glide.with(context)
+                    .load(mTicket.getOpen_photo())
+                    .placeholder(R.drawable.sand_watch_transp)
+                    .into(ivOpenPhoto);
+            } else {
+                String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                ivOpenPhoto.setImageBitmap(bitmap);
+            }
+        }
+    }
+
+    private void defineInnerCommentIcon() {
+        if (mTicket.getInternal_comments() != null && mTicket.getInternal_comments().trim().length() > 0) {
+            ivInnerComment.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_msg_on));
+        } else {
+            ivInnerComment.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_msg_off));
+        }
+    }
+
+    private void paramErrorFlow() {
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+            hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    callAct069();
+                }
+            },
+            0
+        );
+    }
+
+    @Override
+    public void callAct069() {
+        Intent intent = new Intent(context, Act069_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.remove(TK_TicketDao.TICKET_PREFIX);
+        requestingBundle.remove(TK_TicketDao.TICKET_CODE);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct071(Bundle bundle) {
+        if (bundle != null) {
+            Toast.makeText(context, "Test", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void iniUIFooter() {
@@ -105,7 +380,66 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void initAction() {
+        ivInnerComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTicket.getInternal_comments() != null && mTicket.getInternal_comments().trim().length() > 0) {
+                    showInnerCommetDialog();
+                }
+            }
+        });
+        //
+        ivOpenPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callCameraAct();
+            }
+        });
 
+    }
+
+    private void callCameraAct() {
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local());
+        if (!sFile.exists()) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, ivOpenPhoto.getId());
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, mTicket.getOpen_photo_local());
+        bundle.putBoolean(ConstantBase.PEDIT, false);
+        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
+    }
+
+    private void showInnerCommetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        View cView = (View) layoutInflater.inflate(com.namoa_digital.namoa_library.R.layout.dots_dialog_comments, null);
+        final EditText etComments = cView.findViewById(com.namoa_digital.namoa_library.R.id.dots_dialog_comments_tv_comments);
+        etComments.setText(mTicket.getInternal_comments());
+        etComments.setEnabled(false);
+        etComments.setFocusable(false);
+        builder
+            .setTitle(hmAux_Trans.get("inner_comment_lbl"))
+            .setView(cView)
+            .setCancelable(false)
+            .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
+        //
+        builder.create().show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

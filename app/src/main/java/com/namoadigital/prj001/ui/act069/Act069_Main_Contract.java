@@ -15,6 +15,8 @@ public interface Act069_Main_Contract {
         void setWsProcess(String wsProcess);
 
         void showPD(String ttl, String msg);
+
+        void callAct005();
     }
 
     interface I_Presenter{
@@ -28,5 +30,7 @@ public interface Act069_Main_Contract {
         boolean hasTicketInUpdateRequired();
 
         void executeTicketSync();
+
+        void onBackPressedClicked(String requestingAct);
     }
 }

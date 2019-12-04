@@ -398,8 +398,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-
-
     private void sendFCMStatus(String module_type) {
         Intent mIntent = new Intent();
         mIntent.setAction(Constant.WS_FCM);
