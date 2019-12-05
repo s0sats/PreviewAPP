@@ -263,11 +263,11 @@
 
                 <TextView
                     android:id="@+id/act070_tv_done_info_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="Done"
+                    tools:text="Done"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/act070_iv_checkin_cancel"
@@ -284,20 +284,20 @@
 
                 <TextView
                     android:id="@+id/act070_tv_checkin_info_lbl"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Check-In:"
+                    tools:text="Check-In:"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/act070_iv_checkin_cancel"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/act070_tv_checkin_info_val"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="22/01/2019 16:04 (Luche)"
+                    tools:text="22/01/2019 16:04 (Luche)"
                     app:layout_constraintBottom_toBottomOf="@+id/act070_tv_checkin_info_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -306,10 +306,10 @@
 
                 <TextView
                     android:id="@+id/act070_tv_done_info_val"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="22/01/2019 19:36 (Luche)"
+                    tools:text="22/01/2019 19:36 (Luche)"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -326,10 +326,10 @@
 
             <TextView
                 android:id="@+id/act070_tv_filter_lbl"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Filtros: "
+                tools:text="Filtros: "
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/act070_sw_filter"
                 app:layout_constraintEnd_toStartOf="@+id/act070_sw_filter"

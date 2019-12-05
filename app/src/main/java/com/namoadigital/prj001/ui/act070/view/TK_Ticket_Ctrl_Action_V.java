@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
 
@@ -50,6 +51,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     private void bindData() {
         tvSeq.setText(String.valueOf(getmSeq()));
         tvStatus.setText(getmStatus());
+        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
         tvProducDesc.setText(getmProductDesc());
         tvSerialId.setText(getmSerialID());
         //

@@ -135,9 +135,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = getAct071Bundle(ctrl);
+                    Bundle bundle = getAct071CtrlBundleInfo(ctrl);
                     mView.callAct071(bundle);
-
                 }
             }
         );
@@ -145,7 +144,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return actionCtrlView;
     }
 
-    private Bundle getAct071Bundle(TK_Ticket_Ctrl ctrl) {
+    private Bundle getAct071CtrlBundleInfo(TK_Ticket_Ctrl ctrl) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ctrl.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, ctrl.getTicket_code());

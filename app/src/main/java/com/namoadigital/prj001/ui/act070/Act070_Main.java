@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -33,6 +32,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -350,9 +350,21 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     @Override
     public void callAct071(Bundle bundle) {
-        if (bundle != null) {
-            Toast.makeText(context, "Test", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(context, Act071_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Poderia barra ja aqui
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+        //
+        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
+        bundle.putString(TK_TicketDao.TYPE_PATH,  mTicket.getType_path());
+        bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
+        //
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
+        finish();
     }
 
     private void iniUIFooter() {
