@@ -52,6 +52,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private IO_Inbound_ItemDao assetInboundDao;
     private IO_Outbound_ItemDao assetOutboundDao;
     private GE_Custom_Form_ApDao customFormApDao;
+    private TK_TicketDao tk_ticketdao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
     private MD_SiteDao siteDao;
@@ -94,6 +95,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.assetOutboundDao = new IO_Outbound_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.tk_ticketdao = new TK_TicketDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -533,6 +539,39 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qty);
                         menu.addInBadge2(qtyBadge2);
 
+                        break;
+                    case Act005_Main.MENU_ID_TICKET:
+                        //
+                        try {
+                            qty = String.valueOf(tk_ticketdao.query(
+                                    new Sql_Act069_Sql_001(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            true,
+                                            true,
+                                            false,
+                                            false,
+                                            false,
+                                            false
+                                    ).toSqlQuery()
+                            ).size());
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
+                        //
+                        try {
+                            qtyBadge2 = String.valueOf(tk_ticketdao.query_HM(
+                                    new Sql_Act069_Sql_002(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).size());
+                        } catch (Exception e) {
+                            qtyBadge2 = "0";
+                        }
+                        //
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtyBadge2);
+                        //
                         break;
                     default:
                         menu.addInBadge1(qty);
