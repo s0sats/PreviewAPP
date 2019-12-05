@@ -543,7 +543,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     case Act005_Main.MENU_ID_TICKET:
                         //
                         try {
-                            qty = String.valueOf(tk_ticketdao.query(
+                            qty = String.valueOf(tk_ticketdao.query_HM(
                                     new Sql_Act069_Sql_001(
                                             ToolBox_Con.getPreference_Customer_Code(context),
                                             ToolBox_Con.getPreference_Site_Code(context),
@@ -551,8 +551,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             true,
                                             false,
                                             false,
-                                            false,
-                                            false
+                                            true,
+                                            true
                                     ).toSqlQuery()
                             ).size());
                         } catch (Exception e) {
@@ -561,8 +561,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //
                         try {
                             qtyBadge2 = String.valueOf(tk_ticketdao.query_HM(
-                                    new Sql_Act069_Sql_002(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    new Sql_Act069_Sql_001(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            false,
+                                            false,
+                                            true,
+                                            false,
+                                            true,
+                                            true
                                     ).toSqlQuery()
                             ).size());
                         } catch (Exception e) {
