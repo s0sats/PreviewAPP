@@ -155,7 +155,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/act070_tv_forecast_date"
-                app:layout_constraintEnd_toStartOf="@+id/act070_iv_inner_comment"
+                app:layout_constraintEnd_toStartOf="@id/act070_iv_inner_comment"
                 app:layout_constraintStart_toEndOf="@id/act070_tv_forecast_date"
                 app:layout_constraintTop_toTopOf="@id/act070_tv_forecast_date"
                 tools:text="99/99/9999" />
@@ -215,10 +215,10 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/act070_tv_product"
-                app:layout_constraintEnd_toStartOf="@+id/act070_guide_end"
+                app:layout_constraintBottom_toTopOf="@id/act070_tv_product"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
 
-                app:layout_constraintTop_toTopOf="@+id/act070_tv_open_date"
+                app:layout_constraintTop_toTopOf="@id/act070_tv_open_date"
                 app:srcCompat="@drawable/ic_user_msg_off" />
 
             <ImageView
@@ -228,9 +228,9 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintWidth_percent="0.8"
                 app:layout_constraintHeight_percent="0.3"
-                app:layout_constraintEnd_toStartOf="@+id/act070_guide_end"
-                app:layout_constraintStart_toStartOf="@+id/act070_guide_start"
-                app:layout_constraintTop_toBottomOf="@+id/act070_tv_serial"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_serial"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
 
             <Button
@@ -270,8 +270,8 @@
                     tools:text="Done"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/act070_iv_checkin_cancel"
-                    app:layout_constraintTop_toBottomOf="@+id/act070_tv_checkin_info_lbl" />
+                    app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
+                    app:layout_constraintTop_toBottomOf="@id/act070_tv_checkin_info_lbl" />
 
                 <ImageView
                     android:id="@+id/act070_iv_checkin_cancel"
@@ -289,7 +289,7 @@
                     android:layout_marginStart="16dp"
                     tools:text="Check-In:"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/act070_iv_checkin_cancel"
+                    app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -298,10 +298,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     tools:text="22/01/2019 16:04 (Luche)"
-                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_checkin_info_lbl"
+                    app:layout_constraintBottom_toBottomOf="@id/act070_tv_checkin_info_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/act070_tv_checkin_info_lbl"
+                    app:layout_constraintStart_toEndOf="@id/act070_tv_checkin_info_lbl"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -313,8 +313,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/act070_tv_done_info_lbl"
-                    app:layout_constraintTop_toTopOf="@+id/act070_tv_done_info_lbl" />
+                    app:layout_constraintStart_toEndOf="@id/act070_tv_done_info_lbl"
+                    app:layout_constraintTop_toTopOf="@id/act070_tv_done_info_lbl" />
 
                 <android.support.constraint.Group
                     android:id="@+id/act070_gr_done"
@@ -331,19 +331,21 @@
                 android:layout_marginTop="8dp"
                 tools:text="Filtros: "
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/act070_sw_filter"
-                app:layout_constraintEnd_toStartOf="@+id/act070_sw_filter"
+                app:layout_constraintBottom_toBottomOf="@id/act070_sw_filter"
+                app:layout_constraintEnd_toStartOf="@id/act070_sw_filter"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/act070_guide_start"
-                app:layout_constraintTop_toBottomOf="@+id/act070_cl_checkin_info" />
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_cl_checkin_info" />
 
             <Switch
                 android:id="@+id/act070_sw_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/act070_guide_end"
-                app:layout_constraintTop_toBottomOf="@+id/act070_cl_checkin_info" />
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintTop_toBottomOf="@id/act070_cl_checkin_info"
+                android:checked="true"
+                />
 
             <android.support.constraint.Group
                 android:id="@+id/act070_gr_filter"
@@ -358,9 +360,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
-                app:layout_constraintEnd_toStartOf="@+id/act070_guide_end"
-                app:layout_constraintStart_toStartOf="@+id/act070_guide_start"
-                app:layout_constraintTop_toBottomOf="@+id/act070_tv_filter_lbl">
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_filter_lbl">
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>

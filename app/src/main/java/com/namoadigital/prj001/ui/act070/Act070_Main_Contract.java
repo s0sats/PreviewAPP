@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 
 import java.util.ArrayList;
@@ -29,8 +30,10 @@ public interface Act070_Main_Contract {
 
         void onBackPressedClicked(String requestingAct);
 
-        ArrayList<TK_Ticket_Ctrl_Super> generateCtrlActions(TK_Ticket mTicket, LinearLayout llActions);
+        ArrayList<TK_Ticket_Ctrl_Super> generateCtrlActions(TK_Ticket mTicket, LinearLayout llActions, boolean filterOn);
 
         boolean getReadOnlyDefinition(TK_Ticket mTicket);
+
+        boolean checkFilterDisable(ArrayList<TK_Ticket_Ctrl> ctrl);
     }
 }

@@ -64,6 +64,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private TK_Ticket_Ctrl mTicketCtrl;
     private String requestingAct;
     private boolean bReadOnly;
+    private boolean bDisableByCheckin;
     private View.OnClickListener execClickListener;
     private View.OnClickListener photoClickListener;
 
@@ -105,6 +106,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("photo_lbl");
         transList.add("done_info_lbl");
         transList.add("comments_lbl");
+        transList.add("alert_action_parameter_error_ttl");
+        transList.add("alert_action_parameter_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -148,6 +151,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTicketID = requestingBundle.getString(TK_TicketDao.TICKET_ID, "");
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
             mTypeDesc = requestingBundle.getString(TK_TicketDao.TYPE_DESC, "");
+            bDisableByCheckin = requestingBundle.getBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT070;
@@ -157,6 +161,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTicketID = "";
             mTypePath = "";
             mTypeDesc = "";
+            bDisableByCheckin = false;
         }
     }
 
@@ -199,7 +204,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void setReadOnly() {
-        bReadOnly = mPresenter.getReadOnlyDefinition(mTicketCtrl);
+        bReadOnly = bDisableByCheckin ? bDisableByCheckin: mPresenter.getReadOnlyDefinition(mTicketCtrl);
         //
         if(bReadOnly) {
             applyReadOnly();
@@ -246,7 +251,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 //    private boolean isPhotoReadOnly() {
 //        return  mPresenter.isReadOnlyStatus(mTicketCtrl.getCtrl_status())
 //                ||!mPresenter.hasActionExecProfile()
-//                || !mPresenter.hasPartnerProfile(mTicketCtrl.getPartner_code()
+//                || !mPresenter.checkPartnerProfile(mTicketCtrl.getPartner_code()
 //        );
 //    }
 
@@ -307,8 +312,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void paramErrorFlow() {
         ToolBox.alertMSG(
             context,
-            hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
-            hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+            hmAux_Trans.get("alert_action_parameter_error_ttl"),
+            hmAux_Trans.get("alert_action_parameter_error_msg"),
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

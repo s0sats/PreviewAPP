@@ -76,8 +76,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 || !hasPartnerProfile(mTicketCtrl.getPartner_code());
     }
 
-    @Override
-    public boolean hasPartnerProfile(Integer partner_code) {
+   private boolean hasPartnerProfile(Integer partner_code) {
         if(partner_code == null){
             return true;
         }
@@ -96,8 +95,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         return false;
     }
 
-    @Override
-    public boolean hasActionExecProfile() {
+    private boolean hasActionExecProfile() {
         return ToolBox_Inf.profileExists(
             context,
             ConstantBaseApp.PROFILE_MENU_TICKET,
@@ -105,8 +103,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         );
     }
 
-    @Override
-    public boolean isReadOnlyStatus(String ticketStatus) {
+    private boolean isReadOnlyStatus(String ticketStatus) {
         return
             ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketStatus)
                 || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ticketStatus);

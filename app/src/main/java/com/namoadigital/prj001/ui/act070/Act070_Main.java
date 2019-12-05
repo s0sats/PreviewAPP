@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +14,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -44,7 +48,10 @@ import java.util.List;
 
 public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I_View {
 
+    public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
+
     private Act070_Main_Presenter mPresenter;
+    private ScrollView svMain;
     private TextView tvTicketId;
     private TextView tvStatus;
     private TextView tvTypePath;
@@ -94,7 +101,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         iniUIFooter();
         //
         initAction();
-
     }
 
     private void iniSetup() {
@@ -121,6 +127,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("filter_lbl");
         transList.add("partner_lbl");
         transList.add("inner_comment_lbl");
+        transList.add("alert_ticket_parameter_error_ttl");
+        transList.add("alert_ticket_parameter_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -165,6 +173,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void bindViews() {
+        svMain = findViewById(R.id.act070_sv_main);
         tvTicketId = findViewById(R.id.act070_tv_ticket_id);
         tvStatus = findViewById(R.id.act070_tv_status);
         tvTypePath = findViewById(R.id.act070_tv_type_path);
@@ -254,12 +263,17 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void loadActionList() {
         actionList = mPresenter.generateCtrlActions(
             mTicket,
-            llActions
+            llActions,
+            swFilter.isChecked()
         );
     }
 
     private void defineFilterVisility() {
-        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())) {
+        if (
+            ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
+            || mPresenter.checkFilterDisable(mTicket.getCtrl())
+        ) {
+            swFilter.setChecked(false);
             grFilter.setVisibility(View.GONE);
         } else {
             grFilter.setVisibility(View.VISIBLE);
@@ -294,8 +308,20 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void defineOpenPhotoImage() {
+        //Se status do ticket diferente de pending, reduz o tamanho da imagem
+        if(!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(mTicket.getTicket_status())){
+            ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
+            //
+            layoutParams.width = 250 ;
+            layoutParams.height = 250;
+            //
+            ivOpenPhoto.setLayoutParams(layoutParams);
+        }
+        //
         if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
             ivOpenPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            //VERIFICAR REGRA - Segundo excel, se não tem imagem, escode view.
+            ivOpenPhoto.setVisibility(View.GONE);
         } else {
             if (mTicket.getOpen_photo_local() == null) {
                 //FOTO NÃO FOI BAIXADA, COMO FAZER?
@@ -357,10 +383,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             bundle = new Bundle();
         }
         //
-        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
-        bundle.putString(TK_TicketDao.TYPE_PATH,  mTicket.getType_path());
-        bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
-        //
         intent.putExtras(bundle);
         //
         startActivity(intent);
@@ -407,7 +429,35 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 callCameraAct();
             }
         });
+        //
+        swFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                applyActionFilter(isChecked);
+            }
+        });
 
+    }
+
+    private void applyActionFilter(boolean isChecked) {
+        for (TK_Ticket_Ctrl_Super ctrlSuper : actionList) {
+            //
+            ctrlSuper.setVisible(isChecked);
+            if(isChecked){
+                ctrlSuper.applyFilterVisibility();
+            }else{
+                ctrlSuper.setVisible(true);
+            }
+        }
+        //Faz scroll para o fim do scroll
+        new Handler().postDelayed(
+            new Runnable() {
+                @Override
+                public void run() {
+                    svMain.fullScroll(View.FOCUS_DOWN);
+                }
+            },100
+        );
     }
 
     private void callCameraAct() {

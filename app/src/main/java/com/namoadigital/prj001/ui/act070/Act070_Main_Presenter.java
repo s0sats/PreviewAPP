@@ -7,12 +7,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Action_V;
+import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Generic;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -26,6 +30,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private Act070_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private TK_TicketDao ticketDao;
+    private MD_PartnerDao mdPartnerDao;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -33,6 +38,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         //
         this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        this.mdPartnerDao = new MD_PartnerDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -58,7 +69,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket mTicket) {
-        return isReadOnlyStatus(mTicket.getTicket_status()) || missingProfile();
+        return  isOtherCheckIn(mTicket.getCheckin_user())
+                || isReadOnlyStatus(mTicket.getTicket_status())
+                || missingProfile();
+    }
+
+    private boolean isOtherCheckIn(Integer checkin_user) {
+        if(checkin_user == null){
+            return false;
+        }else{
+            return !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(checkin_user));
+        }
     }
 
     private boolean missingProfile() {
@@ -92,7 +113,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public ArrayList<TK_Ticket_Ctrl_Super> generateCtrlActions(TK_Ticket mTicket, LinearLayout llActions) {
+    public boolean checkFilterDisable(ArrayList<TK_Ticket_Ctrl> ctrls) {
+        //Se vazio ou apénas um controle, esconde filtro
+        if(ctrls == null || ctrls.size() <= 1 ){
+            return true;
+        }
+        //Se algum ctrl status diferente de DONE, NAO esconde filtro
+        for (TK_Ticket_Ctrl ctrl : ctrls) {
+            if(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())){
+                return false;
+            }
+        }
+        //Se chegou aqui, esconde filtro
+        return true;
+    }
+
+    @Override
+    public ArrayList<TK_Ticket_Ctrl_Super> generateCtrlActions(TK_Ticket mTicket, LinearLayout llActions, boolean filterOn) {
         ArrayList<TK_Ticket_Ctrl_Super> ctrlSupers = new ArrayList<>();
         if (mTicket != null && mTicket.getCtrl() != null && mTicket.getCtrl().size() > 0) {
             for (TK_Ticket_Ctrl ctrl : mTicket.getCtrl()) {
@@ -104,6 +141,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     default:
                         auxCtrl = configSuperView(mTicket,ctrl);
                 }
+                //Aplica filtro se ativo.
+                if(filterOn){
+                    auxCtrl.applyFilterVisibility();
+                }
+                //
                 ctrlSupers.add(auxCtrl);
                 llActions.addView(auxCtrl);
             }
@@ -112,8 +154,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return ctrlSupers;
     }
 
-    private TK_Ticket_Ctrl_Super configSuperView(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
-        TK_Ticket_Ctrl_Super ctrlSuper = new TK_Ticket_Ctrl_Super(
+    private TK_Ticket_Ctrl_Generic configSuperView(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
+        TK_Ticket_Ctrl_Generic ctrlGeneric = new TK_Ticket_Ctrl_Generic(
             context,
             mTicket.getCurrent_product_code(),
             mTicket.getCurrent_serial_code(),
@@ -122,10 +164,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             null
         );
         //
-        return ctrlSuper;
+        return ctrlGeneric;
     }
 
-    private TK_Ticket_Ctrl_Action_V configActionView(TK_Ticket mTicket, final TK_Ticket_Ctrl ctrl) {
+    private TK_Ticket_Ctrl_Action_V configActionView(final TK_Ticket mTicket, final TK_Ticket_Ctrl ctrl) {
         TK_Ticket_Ctrl_Action_V actionCtrlView = new TK_Ticket_Ctrl_Action_V(
             context,
             mTicket.getCurrent_product_code(),
@@ -135,8 +177,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = getAct071CtrlBundleInfo(ctrl);
+                    Bundle bundle = getAct071CtrlBundleInfo(mTicket,ctrl);
                     mView.callAct071(bundle);
+                }
+            },
+            new TK_Ticket_Ctrl_Action_V.TK_Ticket_Ctrl_Action_I() {
+                @Override
+                public boolean checkPartnerProfile(Integer partnerCode) {
+                    return hasPartnerProfile(partnerCode);
                 }
             }
         );
@@ -144,11 +192,35 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return actionCtrlView;
     }
 
-    private Bundle getAct071CtrlBundleInfo(TK_Ticket_Ctrl ctrl) {
+
+    private boolean hasPartnerProfile(Integer partner_code) {
+        if(partner_code == null){
+            return true;
+        }
+        //
+        MD_Partner partner = mdPartnerDao.getByString(
+            new MD_Partner_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                partner_code
+            ).toSqlQuery()
+        );
+        //
+        if(partner != null && partner.getCustomer_code() > 0){
+            return true;
+        }
+        //
+        return false;
+    }
+
+    private Bundle getAct071CtrlBundleInfo(TK_Ticket mTicket , TK_Ticket_Ctrl ctrl) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ctrl.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, ctrl.getTicket_code());
         bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ, ctrl.getTicket_seq());
+        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
+        bundle.putString(TK_TicketDao.TYPE_PATH,  mTicket.getType_path());
+        bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
+        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
         return bundle;
     }
 

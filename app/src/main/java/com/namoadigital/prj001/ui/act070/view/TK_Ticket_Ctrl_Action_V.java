@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
@@ -16,11 +17,21 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     private TextView tvPartnerLbl;
     private TextView tvPartnerVal;
     private ImageView ivPhoto;
+    private TK_Ticket_Ctrl_Action_I delegate;
 
-    public TK_Ticket_Ctrl_Action_V(Context context,int ticketProductCode, int ticketSerialCode,TK_Ticket_Ctrl mTicketCtrl,HMAux HmAuxTrans, OnClickListener ivActionClickListener) {
+    public interface TK_Ticket_Ctrl_Action_I{
+        boolean checkPartnerProfile(Integer partnerCode);
+    }
+
+    public TK_Ticket_Ctrl_Action_V(Context context,int ticketProductCode, int ticketSerialCode,TK_Ticket_Ctrl mTicketCtrl,HMAux HmAuxTrans, OnClickListener ivActionClickListener,TK_Ticket_Ctrl_Action_I delegate) {
         super(context,ticketProductCode,ticketSerialCode,mTicketCtrl,HmAuxTrans,ivActionClickListener);
+        this.delegate = delegate;
         //
         initialize();
+    }
+
+    public void setDelegate(TK_Ticket_Ctrl_Action_I delegate) {
+        this.delegate = delegate;
     }
 
     private void initialize() {
@@ -36,6 +47,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
 
     private void bindViews() {
         //Super Views
+        cvRoot = findViewById(R.id.act070_action_cell_cv_root);
         tvSeq = findViewById(R.id.act070_action_cell_tv_seq);
         tvStatus = findViewById(R.id.act070_action_cell_tv_status);
         tvProducDesc = findViewById(R.id.act070_action_cell_tv_product);
@@ -95,8 +107,19 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
         return mTicketCtrl.getAction().getAction_comments();
     }
 
+    public Integer getmPartnerCode(){
+        return mTicketCtrl.getPartner_code();
+    }
     public String getmPartnerDesc() {
         return mTicketCtrl.getPartner_desc();
     }
 
+    @Override
+    public void applyFilterVisibility() {
+        if(delegate != null){
+            setVisible(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus()) && delegate.checkPartnerProfile(getmPartnerCode()));
+        }else{
+            setVisible(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus()));
+        }
+    }
 }

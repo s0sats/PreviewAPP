@@ -6,13 +6,13 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
-public class Sql_Act069_Sql_001 implements Specification {
+public class Sql_Act069_001 implements Specification {
     private long customer_code;
     private String site_logged;
     private String statusFilter ="";
     private String partnerFilter ="";
 
-    public Sql_Act069_Sql_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
+    public Sql_Act069_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
         //

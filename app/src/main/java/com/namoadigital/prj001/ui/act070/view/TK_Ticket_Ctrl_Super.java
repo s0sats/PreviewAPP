@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act070.view;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,9 +11,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 
-public class TK_Ticket_Ctrl_Super extends LinearLayout{
+public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
 
     protected transient Context context;
+    protected CardView cvRoot;
     protected int ticketProductCode;
     protected int ticketSerialCode;
     protected TK_Ticket_Ctrl mTicketCtrl;
@@ -93,7 +95,6 @@ public class TK_Ticket_Ctrl_Super extends LinearLayout{
         super.onAttachedToWindow();
         //
         configViewToAttach();
-
     }
 
     private void configViewToAttach() {
@@ -107,18 +108,36 @@ public class TK_Ticket_Ctrl_Super extends LinearLayout{
     }
 
     private void highlightSerialWhenDiff() {
-        if( tvSerialId != null
-            && (ticketProductCode != mTicketCtrl.getProduct_code()
+        if(tvSerialId != null) {
+            if (ticketProductCode != mTicketCtrl.getProduct_code()
                 || ticketSerialCode != mTicketCtrl.getSerial_code()
-            )
-        ){
-            tvSerialId.setTextColor(ContextCompat.getColor(context,R.color.namoa_color_danger_red));
+            ) {
+                tvSerialId.setVisibility(VISIBLE);
+                tvSerialId.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_danger_red));
+            } else {
+                tvSerialId.setVisibility(GONE);
+            }
         }
     }
 
     private void highlightProductWhenDiff(){
-        if(tvProducDesc != null && ticketProductCode != mTicketCtrl.getProduct_code()){
-            tvProducDesc.setTextColor(ContextCompat.getColor(context,R.color.namoa_color_danger_red));
+        if(tvProducDesc != null) {
+            if (ticketProductCode != mTicketCtrl.getProduct_code()) {
+                tvProducDesc.setVisibility(VISIBLE);
+                tvProducDesc.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_danger_red));
+            }else{
+                tvProducDesc.setVisibility(GONE);
+            }
         }
     }
+
+    public void setVisible(boolean visible) {
+        if(cvRoot != null) {
+            cvRoot.setVisibility(visible ? VISIBLE : GONE);
+        }
+    }
+
+    public abstract void applyFilterVisibility();
+
+
 }

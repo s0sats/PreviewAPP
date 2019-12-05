@@ -21,11 +21,11 @@ public interface Act071_Main_Contract {
 
         boolean getReadOnlyDefinition(TK_Ticket_Ctrl mTicketCtrl);
 
-        boolean hasPartnerProfile(Integer partner_code);
+        /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();
 
-        boolean isReadOnlyStatus(String ticketStatus);
+        boolean isReadOnlyStatus(String ticketStatus);*/
     }
 
 }

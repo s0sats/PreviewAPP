@@ -9,8 +9,8 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
-import com.namoadigital.prj001.sql.Sql_Act069_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act069_Sql_002;
+import com.namoadigital.prj001.sql.Sql_Act069_001;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_To_Send;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -43,7 +43,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-            new Sql_Act069_Sql_001(
+            new Sql_Act069_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context),
                 statusPending,
@@ -91,7 +91,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-            new Sql_Act069_Sql_002(
+            new Sql_Act069_002(
                 ToolBox_Con.getPreference_Customer_Code(context)
             ).toSqlQuery()
         );
@@ -103,8 +103,8 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         ArrayList<HMAux> auxTickets = getTicketToSync();
         String ticketPKList = ConstantBaseApp.MAIN_CONCAT_STRING;
         for (HMAux aux : auxTickets) {
-            if(aux.hasConsistentValue(Sql_Act069_Sql_002.TICKET_PK)){
-                ticketPKList += aux.get(Sql_Act069_Sql_002.TICKET_PK);
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += aux.get(Sql_Act069_002.TICKET_PK);
             }
         }
         //

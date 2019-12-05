@@ -3,12 +3,12 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 
-public class Sql_Act069_Sql_002 implements Specification {
+public class Sql_Act069_002 implements Specification {
 
     public static final String TICKET_PK = "TICKET_PK";
     private long customer_code;
 
-    public Sql_Act069_Sql_002(long customer_code) {
+    public Sql_Act069_002(long customer_code) {
         this.customer_code = customer_code;
     }
 
