@@ -23,8 +23,11 @@ public class WS_AL_Full extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
             customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
-
-            //Se parametro de customer na preferencias estiver igual a -1 não realizar a limpeza.
+            /*
+                BARRIONUEVO - 05/12/2019
+                Tratativa para nao executar servicos quando deslogado
+             */
+            //Se parametro de customer na preferencias estiver igual a -1 não gera notification.
             if (customer_code == -1L) {
                 return;
             }

@@ -1118,6 +1118,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     ToolBox_Inf.cancelChatNotification(context);
                     //Cancela notificações de update
                     ToolBox_Inf.cancelNotification(context, 10);
+                    /*
+                        BARRIONUEVO - 05/12/2019
+                        CANCELA NOTIFICACOES DO N_FORM
+                     */
+                    if (ToolBox_Con.getPreference_Customer_Code(context) != -1L) {
+                        ToolBox_Inf.cancelNotification(context, (int) (500 + ToolBox_Con.getPreference_Customer_Code(context)));
+                    }
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //
                     if (ToolBox_Con.isOnline(context,true)) {
