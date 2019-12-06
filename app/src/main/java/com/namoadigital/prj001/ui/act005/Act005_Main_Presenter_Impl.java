@@ -549,6 +549,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             true,
                                             true,
                                             false,
+                                            false,
+                                            false,
                                             false
                                     ).toSqlQuery()
                             ).get(Sql_Act005_009.PENDING_QTY));
@@ -560,6 +562,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtyBadge2 = String.valueOf(tk_ticketdao.getByStringHM(
                                     new Sql_Act005_009(
                                             ToolBox_Con.getPreference_Customer_Code(context),
+                                            false,
+                                            false,
                                             false,
                                             false,
                                             true,

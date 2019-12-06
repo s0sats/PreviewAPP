@@ -258,6 +258,13 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                     mView.showMsg();
                 }
                 break;
+            case Act012_Main.LABEL_TRANS_TK_TICKET:
+                if (!item.get(Sql_Act012_008.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct069(context);
+                } else {
+                    mView.showMsg();
+                }
+                break;
         }
 
     }

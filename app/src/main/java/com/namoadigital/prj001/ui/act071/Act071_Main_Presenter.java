@@ -152,6 +152,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public void onBackPressedClicked(String requestingAct) {
         switch (requestingAct){
+            case ConstantBaseApp.ACT014:
+                mView.callAct070();
+                break;
             case ConstantBaseApp.ACT070:
             default:
                 //TODO codigo tmp para validação de fluxo de UI

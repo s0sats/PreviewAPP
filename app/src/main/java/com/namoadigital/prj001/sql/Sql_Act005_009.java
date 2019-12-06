@@ -9,23 +9,22 @@ public class Sql_Act005_009 implements Specification{
     public static final String PENDING_QTY = "pending_qty";
     private String status_filtered;
     private long customer_code;
-    boolean statusProcess;
-    boolean statusPending;
-    boolean statusWaitingSync;
-    boolean statusDone;
 
-    public Sql_Act005_009(long customer_code, boolean statusProcess, boolean statusPending, boolean statusWaitingSync, boolean statusDone) {
+    public Sql_Act005_009(long customer_code, boolean statusProcess, boolean statusPending, boolean statusWaitingSync, boolean statusDone, boolean statusSyncRequired, boolean statusUpdateRequired) {
         this.customer_code = customer_code;
-        this.statusProcess = statusProcess;
-        this.statusPending = statusPending;
-        this.statusWaitingSync = statusWaitingSync;
-        this.statusDone = statusDone;
         status_filtered = "   and s.ticket_status in (";
         status_filtered += statusPending ? "'"+ ConstantBaseApp.SYS_STATUS_PENDING +"', ":"";
         status_filtered += statusProcess ? "'"+ConstantBaseApp.SYS_STATUS_PROCESS +"', ":"";
         status_filtered += statusWaitingSync ? "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"', ":"";
         status_filtered += statusDone ? "'"+ConstantBaseApp.SYS_STATUS_DONE +"', ":"";
         status_filtered = status_filtered.substring(0,status_filtered.length() - ", ".length());
+        status_filtered = status_filtered + " )";
+        if(statusSyncRequired){
+            status_filtered = "\n and s.sync_required = 1";
+        }
+        if(statusUpdateRequired){
+            status_filtered = "\n and s.update_required = 1";
+        }
     }
 
     @Override
@@ -40,7 +39,7 @@ public class Sql_Act005_009 implements Specification{
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
                         status_filtered +
-                        " ); \n")
+                        "; \n")
                 .toString();
     }
 }

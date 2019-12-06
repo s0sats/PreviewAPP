@@ -382,6 +382,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if (bundle == null) {
             bundle = new Bundle();
         }
+        if(ConstantBaseApp.ACT014.equals(requestingAct)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        }
         //
         intent.putExtras(bundle);
         //
