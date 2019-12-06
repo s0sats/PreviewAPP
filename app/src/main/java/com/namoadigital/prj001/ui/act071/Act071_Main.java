@@ -25,6 +25,7 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -67,6 +68,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private boolean bDisableByCheckin;
     private View.OnClickListener execClickListener;
     private View.OnClickListener photoClickListener;
+    private String actionPhotoLocalPath ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("comments_lbl");
         transList.add("alert_action_parameter_error_ttl");
         transList.add("alert_action_parameter_error_msg");
+        transList.add("alert_unsaved_data_will_be_lost_ttl");
+        transList.add("alert_unsaved_data_will_be_lost_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -279,6 +283,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void defineActionPhoto() {
+        actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
+        //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
             ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         } else {
@@ -292,11 +298,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     .placeholder(R.drawable.sand_watch_transp)
                     .into(ivActionPhoto);
             } else {
-                String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicketCtrl.getAction().getAction_photo_local();
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                ivActionPhoto.setImageBitmap(bitmap);
+                setActinPhotoToView();
             }
         }
+    }
+
+    private void setActinPhotoToView() {
+        String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        ivActionPhoto.setImageBitmap(bitmap);
     }
 
     private void defineDoneInfo() {
@@ -359,16 +369,35 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
+        updateActionPhotoReference();
+    }
+
+    private void updateActionPhotoReference() {
+        if(mTicketCtrl.getAction().getAction_photo_local() == null && mPresenter.newActionPhotoExists(mTicketCtrl.getAction())){
+            setActinPhotoToView();
+        }
+    }
+
+    @Override
+    public TK_Ticket_Action getAction() {
+        return mTicketCtrl.getAction();
+    }
+
     private void callCameraAct() {
         File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicketCtrl.getAction().getAction_photo_local());
-        if (!sFile.exists()) {
+        if (!sFile.exists() && bReadOnly) {
             return;
         }
         //
         Bundle bundle = new Bundle();
         bundle.putInt(ConstantBase.PID, ivActionPhoto.getId());
         bundle.putInt(ConstantBase.PTYPE, 1);
-        bundle.putString(ConstantBase.PPATH, mTicketCtrl.getAction().getAction_photo_local());
+        //bundle.putString(ConstantBase.PPATH, mTicketCtrl.getAction().getAction_photo_local());
+        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
         bundle.putBoolean(ConstantBase.PEDIT, !bReadOnly);
         bundle.putBoolean(ConstantBase.PENABLED, !bReadOnly);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);

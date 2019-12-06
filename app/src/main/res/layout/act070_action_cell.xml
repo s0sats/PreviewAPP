@@ -55,8 +55,8 @@
             android:gravity="center"
             android:textSize="@dimen/font_size_title"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_iv_photo"
-            app:layout_constraintStart_toEndOf="@+id/act070_action_cell_tv_seq"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_iv_photo"
+            app:layout_constraintStart_toEndOf="@id/act070_action_cell_tv_seq"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Pending" />
 
@@ -68,9 +68,9 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/namoa_color_light_blue"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_guide_end"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_guide_end"
             app:layout_constraintStart_toStartOf="@id/act070_action_cell_guide_start"
-            app:layout_constraintTop_toBottomOf="@+id/act070_action_cell_tv_status"
+            app:layout_constraintTop_toBottomOf="@id/act070_action_cell_tv_status"
             tools:text="Comentario aqui" />
 
         <TextView
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="@id/act070_action_cell_tv_partner_lbl"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_iv_action"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_iv_action"
             app:layout_constraintStart_toEndOf="@id/act070_action_cell_tv_partner_lbl"
             app:layout_constraintTop_toTopOf="@id/act070_action_cell_tv_partner_lbl"
             app:layout_constraintVertical_bias="0.0"
@@ -102,9 +102,9 @@
             android:layout_marginTop="5dp"
             android:textSize="@dimen/font_size_font_12"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_iv_action"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_iv_action"
             app:layout_constraintStart_toStartOf="@id/act070_action_cell_guide_start"
-            app:layout_constraintTop_toBottomOf="@+id/act070_action_cell_tv_partner_val"
+            app:layout_constraintTop_toBottomOf="@id/act070_action_cell_tv_partner_val"
             tools:text="Btt4 " />
 
         <TextView
@@ -112,7 +112,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_iv_action"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_iv_action"
             app:layout_constraintStart_toStartOf="@id/act070_action_cell_guide_start"
             app:layout_constraintTop_toBottomOf="@id/act070_action_cell_tv_product"
             tools:text="Btt00123" />
@@ -121,10 +121,10 @@
             android:id="@+id/act070_action_cell_iv_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/act070_action_cell_tv_status"
-            app:layout_constraintEnd_toEndOf="@+id/act070_action_cell_iv_action"
-            app:layout_constraintStart_toStartOf="@+id/act070_action_cell_iv_action"
-            app:layout_constraintTop_toTopOf="@+id/act070_action_cell_tv_seq"
+            app:layout_constraintBottom_toBottomOf="@id/act070_action_cell_tv_status"
+            app:layout_constraintEnd_toEndOf="@id/act070_action_cell_iv_action"
+            app:layout_constraintStart_toStartOf="@id/act070_action_cell_iv_action"
+            app:layout_constraintTop_toTopOf="@id/act070_action_cell_tv_seq"
             app:srcCompat="@drawable/ic_camera_off" />
 
         <ImageView
@@ -133,8 +133,8 @@
             android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/act070_action_cell_guide_end"
-            app:layout_constraintTop_toBottomOf="@+id/act070_action_cell_tv_comment"
+            app:layout_constraintEnd_toStartOf="@id/act070_action_cell_guide_end"
+            app:layout_constraintTop_toBottomOf="@id/act070_action_cell_tv_comment"
             app:srcCompat="@drawable/ic_ok_azul_ns_states" />
 
     </android.support.constraint.ConstraintLayout>
