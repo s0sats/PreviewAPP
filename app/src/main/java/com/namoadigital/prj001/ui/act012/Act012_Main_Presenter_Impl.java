@@ -10,6 +10,7 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.sql.Sql_Act012_002;
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act012_005;
 import com.namoadigital.prj001.sql.Sql_Act012_006;
 import com.namoadigital.prj001.sql.Sql_Act012_007;
+import com.namoadigital.prj001.sql.Sql_Act012_008;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -162,6 +164,23 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             );
             //
             pendencies.addAll(outboundPendencies);
+        }
+
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+            TK_TicketDao tk_ticketdao = new TK_TicketDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> ticketPendencies = tk_ticketdao.query_HM(
+                    new Sql_Act012_008(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            label_translation
+                    ).toSqlQuery()
+            );
+            //
+            pendencies.addAll(ticketPendencies);
         }
 
 

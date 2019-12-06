@@ -51,6 +51,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     public static final String LABEL_TRANS_IO_INBOUND = "lbl_type_io_inbound";
     public static final String LABEL_TRANS_IO_MOVE = "lbl_type_io_move";
     public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
+    public static final String LABEL_TRANS_TK_TICKET = "lbl_type_tk_ticket";
 
 
     private ListView lv_pendencies;
@@ -96,6 +97,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         translateList.add(LABEL_TRANS_IO_INBOUND);
         translateList.add(LABEL_TRANS_IO_MOVE);
         translateList.add(LABEL_TRANS_IO_OUTBOUND);
+        translateList.add(LABEL_TRANS_TK_TICKET);
         translateList.add("alert_no_pendencies_title");
         translateList.add("alert_no_pendencies_msg");
 

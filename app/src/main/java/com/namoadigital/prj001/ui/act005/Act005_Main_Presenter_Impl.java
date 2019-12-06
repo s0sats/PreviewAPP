@@ -52,6 +52,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private IO_Inbound_ItemDao assetInboundDao;
     private IO_Outbound_ItemDao assetOutboundDao;
     private GE_Custom_Form_ApDao customFormApDao;
+    private TK_TicketDao tk_ticketdao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
     private MD_SiteDao siteDao;
@@ -94,6 +95,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.assetOutboundDao = new IO_Outbound_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.tk_ticketdao = new TK_TicketDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -533,6 +539,40 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qty);
                         menu.addInBadge2(qtyBadge2);
 
+                        break;
+                    case Act005_Main.MENU_ID_TICKET:
+                        //
+                        try {
+                            qty = String.valueOf(tk_ticketdao.getByStringHM(
+                                    new Sql_Act005_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            true,
+                                            true,
+                                            false,
+                                            false
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_009.PENDING_QTY));
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
+                        //
+                        try {
+                            qtyBadge2 = String.valueOf(tk_ticketdao.getByStringHM(
+                                    new Sql_Act005_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            false,
+                                            false,
+                                            true,
+                                            false
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_009.PENDING_QTY));
+                        } catch (Exception e) {
+                            qtyBadge2 = "0";
+                        }
+                        //
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtyBadge2);
+                        //
                         break;
                     default:
                         menu.addInBadge1(qty);
