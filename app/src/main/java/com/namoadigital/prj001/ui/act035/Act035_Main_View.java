@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -31,4 +32,5 @@ public interface Act035_Main_View {
 
     void showAlert(String ttl, String msg);
 
+    void callAct070(Bundle bundle);
 }

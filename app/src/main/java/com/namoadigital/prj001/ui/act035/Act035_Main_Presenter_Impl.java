@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -37,7 +39,9 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -365,19 +369,28 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     public void validateTicketDownload(final String pk, String site_code, String operation_code, String product_code) {
         if(validateTicketPk(pk)){
             if(checkTicketMdProfile(site_code,operation_code,product_code)){
-                ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("alert_download_ticket_ttl"),
-                    hmAux_Trans.get("alert_download_ticket_confirm"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            executeWsTicketDownload(pk);
-                        }
-                    },
-                    1
+                if(!hasTicketDownloaded(pk)) {
+                    ToolBox.alertMSG_YES_NO(
+                            context,
+                            hmAux_Trans.get("alert_download_ticket_ttl"),
+                            hmAux_Trans.get("alert_download_ticket_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    executeWsTicketDownload(pk);
+                                }
+                            },
+                            1
 
-                );
+                    );
+                }else{
+                    String[] pk_fields = getSplitedPk(pk, "|");
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+                    bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(pk_fields [1]));
+                    bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(pk_fields [2]));
+                    mView.callAct070(bundle);
+                }
             }else{
                 Toast.makeText(context,"SEM PERFIL",Toast.LENGTH_LONG).show();
             }
@@ -386,6 +399,24 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }
         //
 
+    }
+
+    private boolean hasTicketDownloaded(String ticketPk) {
+        String[] pk_fields = getSplitedPk(ticketPk, "|");
+        int tk_prefix = Integer.parseInt(pk_fields[1]);
+        int tk_code = Integer.parseInt(pk_fields[2]);
+
+        final long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        TK_TicketDao tk_ticketDao = new TK_TicketDao(context,
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+                );
+        TK_Ticket ticket = tk_ticketDao.getByString(new TK_Ticket_Sql_001(
+                customer_code,
+                tk_prefix,
+                tk_code).toSqlQuery()
+        );
+        return ticket != null;
     }
 
     private void executeWsTicketDownload(String ticketPk) {

@@ -54,6 +54,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Error;
@@ -87,7 +88,9 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -2621,6 +2624,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         ToolBox.alertMSG(context, ttl, msg, null, 0);
     }
 
+    @Override
+    public void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle.getString(CH_RoomDao.ROOM_CODE, null) == null) {
+            bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
+        }
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     public void executeApSyncWs(String type) {
         String mTitle = "";
         String mMessage = "";
@@ -2752,7 +2767,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             setWSProcess("");
 
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
-            bundle.putString(Constant.CHAT_RELOAD, "1");
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+            bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(pk_fields [1]));
+            bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(pk_fields [2]));
+//            bundle.putString(Constant.CHAT_RELOAD, "1");
             //
             callAct034(context);
         }
