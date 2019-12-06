@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.database.Specification;
@@ -38,13 +37,36 @@ public class Sql_Act069_001 implements Specification {
                 statusFilter = "   and t.ticket_status <> '"+ ConstantBaseApp.SYS_STATUS_DONE +"'\n";
             }
             //
-            partnerFilter += "    and (c.partner_code is "+ (bParterEmpty ? " null " : " not null");
-            partnerFilter += bParterProfile ?   " or EXISTS (SELECT 1\n" +
-                                                "             FROM "+ MD_PartnerDao.TABLE +" m\n" +
-                                                "             WHERE m.customer_code = t.customer_code \n" +
-                                                "                   and m.partner_code = c.partner_code ) \n" : "";
-            partnerFilter += "        )\n";
+            String partnerCondition = "";
+            //Filtro de null sempre existe, variando entre is null e is NOT null
+            partnerCondition += bParterEmpty ? " c.partner_code is null " : " c.partner_code is NOT null ";
+            //Filtro de somente meus parceiros só existe se true e varia entre OR se for junto com o filtro is null ou AND se filtro is not null
+            partnerCondition += bParterProfile ? (bParterEmpty ? " or m.partner_code is not null " : " and m.partner_code is not null " ) : "" ;
             //
+            partnerFilter +=        "  and (     \n" +
+                                    "         (SELECT\n" +
+                                    "            SUM(\n" +
+                                    "              CASE WHEN "+partnerCondition+" \n" +
+                                    "                   THEN 1\n" +
+                                    "                   ELSE 0\n" +
+                                    "              END\n" +
+                                    "            ) PARTNER_FILTER\n" +
+                                    "          FROM\n" +
+                                    "            "+ TK_Ticket_CtrlDao.TABLE +" c\n" +
+                                    "          \n" +
+                                    "          LEFT JOIN\n" +
+                                    "                md_partners m on m.customer_code = c.customer_code \n" +
+                                    "                                 and m.partner_code = c.partner_code\n" +
+                                    "            \n" +
+                                    "          WHERE     \n" +
+                                    "            c.customer_code = t.customer_code\n" +
+                                    "            and c.ticket_prefix = t.ticket_prefix\n" +
+                                    "            and c.ticket_code = t.ticket_code\n" +
+                                    "          GROUP BY  \n" +
+                                    "            c.customer_code,\n" +
+                                    "            c.ticket_prefix,\n" +
+                                    "            c.ticket_code) > 0\n" +
+                                    "        )";
         }
     }
 
@@ -69,14 +91,9 @@ public class Sql_Act069_001 implements Specification {
                     "       t.current_product_desc,\n" +
                     "       t.current_serial_id           \n" +
                     " FROM\n" +
-                    "     "+ TK_TicketDao.TABLE +" t,\n" +
-                    "     "+ TK_Ticket_CtrlDao.TABLE +" c\n" +
+                    "     "+ TK_TicketDao.TABLE +" t "+
                     " WHERE\n" +
-                    "     t.customer_code = c.customer_code\n" +
-                    "     and t.ticket_prefix = c.ticket_prefix\n" +
-                    "     and t.ticket_code = c.ticket_code\n" +
-                    "      \n" +
-                    "     and t.customer_code = '"+customer_code+"'\n" +
+                    " t.customer_code = '"+customer_code+"'\n" +
                     statusFilter +
                     partnerFilter +
                     " ORDER BY \n" +
