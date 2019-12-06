@@ -101,14 +101,14 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
 
     private String getTicketConcatList() {
         ArrayList<HMAux> auxTickets = getTicketToSync();
-        String ticketPKList = ConstantBaseApp.MAIN_CONCAT_STRING;
+        String ticketPKList = "";
         for (HMAux aux : auxTickets) {
             if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
-                ticketPKList += aux.get(Sql_Act069_002.TICKET_PK);
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
             }
         }
         //
-        return ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length());
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
     }
 
     @Override

@@ -122,7 +122,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_mket_partner" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_mket_partner" />
 
                 <TextView
                     android:id="@+id/act071_tv_seq"
@@ -132,11 +132,11 @@
                     android:layout_marginBottom="8dp"
                     tools:text="1"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/act071_iv_exec"
-                    app:layout_constraintEnd_toStartOf="@+id/act071_iv_exec"
+                    app:layout_constraintBottom_toBottomOf="@id/act071_iv_exec"
+                    app:layout_constraintEnd_toStartOf="@id/act071_iv_exec"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act071_iv_exec" />
+                    app:layout_constraintTop_toTopOf="@id/act071_iv_exec" />
 
 
                 <ImageView
@@ -148,7 +148,7 @@
                     app:layout_constraintWidth_percent="0.8"
                     app:layout_constraintHeight_percent="0.4"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_tv_photo_lbl"
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_photo_lbl"
                     app:srcCompat="@android:drawable/ic_menu_camera" />
 
                 <TextView
@@ -168,7 +168,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     tools:text="22/01/2019 19:36 (Luche)"
-                    app:layout_constraintBottom_toBottomOf="@+id/act071_tv_done_info_lbl"
+                    app:layout_constraintBottom_toBottomOf="@id/act071_tv_done_info_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/act071_tv_done_info_lbl"
@@ -200,7 +200,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_iv_exec" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_iv_exec" />
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act071_mket_partner"
@@ -212,11 +212,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_tv_partner_lbl"
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_partner_lbl"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false"
-                    app:mOCRVin="false" />
+                    app:mOCRVin="false"
+                    android:enabled="false"/>
 
                 <TextView
                     android:id="@+id/act071_tv_comment_lbl"
@@ -228,7 +229,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_iv_action_photo" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_iv_action_photo" />
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act071_mket_comment_val"
@@ -244,7 +245,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act071_tv_comment_lbl" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_comment_lbl" />
             </android.support.constraint.ConstraintLayout>
 
         </android.support.constraint.ConstraintLayout>

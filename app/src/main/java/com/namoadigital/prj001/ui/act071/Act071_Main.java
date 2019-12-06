@@ -133,14 +133,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             hmAux_Trans
         );
         //
-        //
         if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq)) {
             updateActionData();
         } else {
             paramErrorFlow();
         }
-
-
     }
 
 
@@ -220,7 +217,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void applyReadOnly() {
         ivExec.setVisibility(View.INVISIBLE);
-        mketPartner.setEnabled(false);
         mketComments.setEnabled(false);
     }
 
@@ -266,11 +262,24 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         definePathVisibility();
         tvTypeDesc.setText(mTypeDesc);
         tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
-        mketPartner.setText(mTicketCtrl.getPartner_desc());
+        definePartner();
         mketComments.setText(mTicketCtrl.getAction().getAction_comments());
         defineActionPhoto();
         defineDoneInfo();
 
+    }
+
+    private void definePartner() {
+        mketPartner.setEnabled(false);
+        //
+        if(mTicketCtrl.getPartner_desc() != null && !mTicketCtrl.getPartner_desc().isEmpty()) {
+            mketPartner.setText(mTicketCtrl.getPartner_desc());
+            tvPartnerLbl.setVisibility(View.VISIBLE);
+            mketPartner.setVisibility(View.VISIBLE);
+        }else{
+            tvPartnerLbl.setVisibility(View.GONE);
+            mketPartner.setVisibility(View.GONE);
+        }
     }
 
     private void definePathVisibility() {

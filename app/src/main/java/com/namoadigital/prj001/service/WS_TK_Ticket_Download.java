@@ -137,7 +137,8 @@ public class WS_TK_Ticket_Download extends IntentService {
                     new TK_Ticket_Sql_004(
                         tkTicket.getCustomer_code(),
                         tkTicket.getTicket_prefix(),
-                        tkTicket.getTicket_code()
+                        tkTicket.getTicket_code(),
+                        0
                     ).toSqlQuery()
                 );
             }

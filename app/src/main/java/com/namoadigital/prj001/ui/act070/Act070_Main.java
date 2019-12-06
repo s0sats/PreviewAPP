@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act070;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -32,8 +34,10 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
@@ -130,6 +134,23 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_ticket_parameter_error_ttl");
         transList.add("alert_ticket_parameter_error_msg");
         //
+        transList.add("ticket_lbl");
+        transList.add("alert_cancel_checkin_ttl");
+        transList.add("alert_cancel_checkin_confirm");
+        transList.add("alert_start_checkin_ttl");
+        transList.add("alert_start_checkin_confirm");
+        transList.add("alert_checkin_not_returned_ttl");
+        transList.add("alert_checkin_not_returned_msg");
+        transList.add("alert_checkin_results_ttl");
+        transList.add("dialog_ticket_checkin_ttl");
+        transList.add("dialog_ticket_checkin_start");
+        transList.add("dialog_ticket_checkin_cancel_ttl");
+        transList.add("dialog_ticket_checkin_cancel_start");
+        transList.add("result_checkin_lbl");
+        transList.add("result_checkin_cancel_lbl");
+        transList.add("alert_ticket_checkin_offline_ttl");
+        transList.add("alert_ticket_checkin_offline_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -155,6 +176,27 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         } else {
             paramErrorFlow();
         }
+    }
+
+    private void refreshUi() {
+        resetActionList();
+        //
+        updateTicketData();
+    }
+
+    @Override
+    public void callRefreshUi() {
+        refreshUi();
+    }
+
+    private void resetActionList() {
+        llActions.removeAllViews();
+        actionList = new ArrayList<>();
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
     }
 
     private void recoverIntentsInfo() {
@@ -211,7 +253,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         tvDoneInfoLbl.setText(hmAux_Trans.get("done_info_lbl"));
         tvFilterLbl.setText(hmAux_Trans.get("filter_lbl"));
     }
-
 
     private void updateTicketData() {
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
@@ -271,7 +312,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void defineFilterVisility() {
         if (
             ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
-            || mPresenter.checkFilterDisable(mTicket.getCtrl())
+                || mPresenter.checkFilterDisable(mTicket.getCtrl())
         ) {
             swFilter.setChecked(false);
             grFilter.setVisibility(View.GONE);
@@ -296,11 +337,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             clCheckinInfo.setVisibility(View.VISIBLE);
             tvCheckinInfoVal.setText(mPresenter.getFormattedCheckinInfo(mTicket.getCheckin_date(), mTicket.getCheckin_user_name()));
         } else {
-            btnCheckIn.setVisibility( bReadOnly ? View.GONE: View.VISIBLE);
+            btnCheckIn.setVisibility(bReadOnly ? View.GONE : View.VISIBLE);
             clCheckinInfo.setVisibility(View.GONE);
         }
         //
-        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status()) || bReadOnly) {
+        if (mPresenter.hideCancelCheckin(mTicket)) {
             ivCheckinCancel.setVisibility(View.GONE);
         } else {
             ivCheckinCancel.setVisibility(View.VISIBLE);
@@ -309,10 +350,10 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void defineOpenPhotoImage() {
         //Se status do ticket diferente de pending, reduz o tamanho da imagem
-        if(!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(mTicket.getTicket_status())){
+        if (!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(mTicket.getTicket_status())) {
             ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
             //
-            layoutParams.width = 250 ;
+            layoutParams.width = 250;
             layoutParams.height = 250;
             //
             ivOpenPhoto.setLayoutParams(layoutParams);
@@ -360,6 +401,37 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 }
             },
             0
+        );
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        );
+    }
+
+    private void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            ttl,
+            msg,
+            listenerOk,
+            showNegative ? 1 : 0
         );
     }
 
@@ -436,16 +508,83 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 applyActionFilter(isChecked);
             }
         });
+        //
+        ivCheckinCancel.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mPresenter.hideCancelCheckin(mTicket)) {
+                        showAlert(
+                            hmAux_Trans.get("alert_cancel_checkin_ttl"),
+                            hmAux_Trans.get("alert_cancel_checkin_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mPresenter.executeCheckin(mTicket, false);
+                                }
+                            },
+                            true
+                        );
+                    }
+                }
+            }
+        );
+        //
+        btnCheckIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!bReadOnly) {
+                    showAlert(
+                        hmAux_Trans.get("alert_start_checkin_ttl"),
+                        hmAux_Trans.get("alert_start_checkin_confirm"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Seta dados do checkin
+                                setCheckinToObj();
+                                //Tenta update no banco, se ok, vai pra WS, se não limpa os dados do checkin
+                                if(mPresenter.setCheckInData(mTicket)) {
+                                    mPresenter.executeCheckin(mTicket, true);
+                                }else{
+                                    resetCheckinInObj(true);
+                                    //
+                                    showAlert(
+                                        hmAux_Trans.get("alert_error_on_checkin_ttl"),
+                                        hmAux_Trans.get("alert_error_on_checkin_msg")
+                                    );
+                                }
+                            }
+                        },
+                        true
+                    );
 
+                }
+            }
+        });
+
+    }
+
+    private void resetCheckinInObj(boolean sqlAbort) {
+        mTicket.setUpdate_required(sqlAbort ? 0 : 1);
+        mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+        mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+    }
+
+    private void setCheckinToObj() {
+        mTicket.setUpdate_required(1);
+        mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+        mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
     }
 
     private void applyActionFilter(boolean isChecked) {
         for (TK_Ticket_Ctrl_Super ctrlSuper : actionList) {
             //
             ctrlSuper.setVisible(isChecked);
-            if(isChecked){
+            if (isChecked) {
                 ctrlSuper.applyFilterVisibility();
-            }else{
+            } else {
                 ctrlSuper.setVisible(true);
             }
         }
@@ -456,7 +595,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 public void run() {
                     svMain.fullScroll(View.FOCUS_DOWN);
                 }
-            },100
+            }, 100
         );
     }
 
@@ -497,6 +636,99 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         builder.create().show();
     }
+
+    //region WS Callbacks
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        //super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Checkin.class.getName())) {
+            wsProcess = "";
+            //
+            mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+
+        }
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                resultList,
+                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                hmAux_Trans
+            )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                refreshUi();
+                //
+                show.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+    //endregion
 
     @Override
     public void onBackPressed() {
