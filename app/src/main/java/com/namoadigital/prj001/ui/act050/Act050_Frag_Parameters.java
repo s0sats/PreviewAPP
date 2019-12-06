@@ -20,6 +20,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
+import com.namoadigital.prj001.model.SO_Favorite_PO;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -32,6 +33,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
 
     public static final String FAVORITE_DESC ="FAVORITE_DESC";
+    public static final String FAVORITE_CODE ="FAVORITE_CODE";
     public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
     public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
 
@@ -40,12 +42,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private MD_Product_Serial mdProductSerial;
     private String favorite_desc;
     private Integer favorite_contract_code;
+    private Integer favorite_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
     private Integer selected_contract_code = -1;
 
     private ScrollView sv_main;
     private TextView tv_favorite_val;
     private SearchableSpinner ss_contract;
+    private SearchableSpinner ss_po;
     private TextView tv_product_lbl;
     private TextView tv_product_val;
     private TextView tv_serial_lbl;
@@ -66,6 +70,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private ImageButton btn_back;
     private ImageButton btn_next;
     private OnFragParameterInteraction mFragListner;
+    private Integer selected_po_code;
 
     public interface OnFragParameterInteraction{
         /**
@@ -81,9 +86,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
         /**
          * Interface disparada na momento que o contrato é selecionado
          * @param contract_code - Codigo do contrato
-         * @param pipeline_code - Codigo do pipeline
          */
-        void onContractSelected(int contract_code, Integer pipeline_code);
+        void onContractSelected(Integer contract_code);
+
+        /**
+         * Interface disparada na momento que o contrato é selecionado
+         * @param po_code - Codigo do PO
+         */
+        void onPOSelected(int po_code);
 
         /**
          * Interface que checa se contrato já foi selecionado.
@@ -102,6 +112,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
          * Esse metodo não esta sendo utilizados.
          */
         void onBackButtonClick();
+
     }
 
     public void setmFragListner(OnFragParameterInteraction mFragListner) {
@@ -110,7 +121,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     public Act050_Frag_Parameters() {}
 
-    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code){
+    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code, Integer favorite_code){
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
         //
         Bundle args = new Bundle();
@@ -118,6 +129,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         args.putString(FAVORITE_DESC, favorite_desc);
         //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
         //será passado o valor -1. Por isso a tratativa abaixo.
+        args.putInt(FAVORITE_CODE, favorite_code != null ? favorite_code : -1);
         args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
         args.putInt(SELECTED_CONTRACT_CODE, -1);
         fragment.setArguments(args);
@@ -166,13 +178,44 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+
+                //
+                if(mFragListner != null) {
+                    Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
+                    selected_contract_code = contract_code;
+                    mFragListner.onContractSelected(contract_code);
+                    if(contract_code >0) {
+                        ArrayList<HMAux> poOptions = generatePOOptionForSS(contracts, selected_contract_code);
+                        ss_po.setmOption(poOptions);
+                        if(poOptions.size() == 1){
+                            ss_po.setmEnabled(false);
+                        }
+                        ss_po.setmValue(poOptions.get(0));
+                        setContractPoInfo(poOptions.get(0));
+                    }else{
+                        clearPOValueAndInfo();
+                    }
+                }
+            }
+        });
+        //
+        ss_po.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 setContractPoInfo(hmAux);
                 //
                 if(mFragListner != null) {
                     Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
-                    Integer pipeline_code = hmAux.hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(hmAux.get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                     selected_contract_code = contract_code;
-                    mFragListner.onContractSelected(contract_code,pipeline_code);
+                    mFragListner.onContractSelected(contract_code);
+                    if(contract_code == -1){
+                        clearPOValueAndInfo();
+                    }
                 }
             }
         });
@@ -191,6 +234,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
             public void onClick(View v) {
                 if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     if (mFragListner != null) {
+                        mFragListner.onContractSelected(Integer.parseInt(ss_contract.getmValue().get(SearchableSpinner.CODE)));
+                        mFragListner.onPOSelected(Integer.parseInt(ss_po.getmValue().get(SearchableSpinner.CODE)));
                         mFragListner.onMoveToOSFragment();
                     }
                 }else{
@@ -198,6 +243,11 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void clearPOValueAndInfo() {
+        ToolBox_Inf.setSSmValue(ss_po, null, null, null, false, true);
+        setContractPoInfo(null);
     }
 
     @Override
@@ -226,6 +276,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String,String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
             this.mdProductSerial = (MD_Product_Serial) arguments.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
             this.favorite_desc = arguments.getString(FAVORITE_DESC);
+            this.favorite_code = arguments.getInt(FAVORITE_CODE) != -1 ? arguments.getInt(FAVORITE_CODE) : null;
             //Como no arguments, não existe o tipo INTEGER, quando favorite_contract_code for null,
             //será passado o valor -1. Por isso a tratativa abaixo.
             this.favorite_contract_code = arguments.getInt(FAVORITE_CONTRACT_CODE) != -1 ? arguments.getInt(FAVORITE_CONTRACT_CODE) : null;
@@ -241,6 +292,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
         ss_contract.setmShowLabel(true);
         ss_contract.setmStyle(1);
         ss_contract.setmTextSizeLabel(20);
+        ss_contract.setmCanClean(false);
+        ss_po = view.findViewById(R.id.act050_frag_param_ss_po);
+        ss_po.setmLabel(hmAux_Trans.get("po_lbl"));
+        ss_po.setmShowLabel(true);
+        ss_po.setmStyle(1);
+        ss_po.setmTextSizeLabel(20);
+        ss_po.setmCanClean(false);
         tv_product_lbl = view.findViewById(R.id.act050_frag_param_tv_product_lbl);
         tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
         tv_product_val = view.findViewById(R.id.act050_frag_param_tv_product_val);
@@ -285,19 +343,38 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         //
                         setContractPoInfo(options.get(0));
                         Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
-                        Integer pipeline_code = options.get(0).hasConsistentValue(Act050_Main.SO_CONTRACT_PIPELINE_KEY) ? ToolBox_Inf.mIntegerParse(options.get(0).get(Act050_Main.SO_CONTRACT_PIPELINE_KEY)) : null;
                         selected_contract_code = contract_code;
                         //Se existe apenas um contrato e ele ja foi selecionado,
                         //não é necessario atualizar a var da act novamente.
                         //Sem essa tratativa, ao navegar entre os fragmentos de param e so,
                         //o pipeline era "resetado" pelo do contrato.
                         if(!mFragListner.checkIsContractSelected()) {
-                            mFragListner.onContractSelected(contract_code, pipeline_code);
+//                            mFragListner.onContractSelected(contract_code, pipeline_code);
                         }
                     } else {
                         if (selected_contract_code != null) {
                             ss_contract.setmValue(generateSSOption(contracts, favorite_contract_code).get(0));
                             setContractPoInfo(ss_contract.getmValue());
+                        }
+                    }
+                }
+
+                if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    ArrayList<HMAux> options = generatePOOptionForSS(contracts, selected_contract_code);
+                    ss_po.setmOption(options);
+                    if (options.size() == 1) {
+                        ss_po.setmValue(options.get(0));
+                        ss_po.setmEnabled(false);
+                        //
+                        setContractPoInfo(options.get(0));
+                        Integer po_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
+                        selected_po_code = po_code;
+                    } else {
+                        if (selected_contract_code != null) {
+                            if(options.size() > 0) {
+                                ss_po.setmValue(options.get(0));
+                            }
+                            setContractPoInfo(ss_po.getmValue());
                         }
                     }
                 }
@@ -346,11 +423,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SearchableSpinner.CODE, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.ID, String.valueOf(contract.getContractCode()));
             aux.put(SearchableSpinner.DESCRIPTION, contract.getContractDesc());
-            aux.put(SM_SODao.CONTRACT_PO_ERP,contract.getPoErp());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT1,contract.getPoClient1());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT2,contract.getPoClient2());
-            aux.put(SM_SODao.CONTRACT_PO_CLIENT3,contract.getPoClient3());
-            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(contract.getPipelineCode()));
             //Se favorite_contract_code null, insere todos os itens na lista,
             //Se não insere apenas o item já determinado
             if(contract_code == null || contract_code.equals(contract.getContractCode())) {
@@ -364,10 +436,45 @@ public class Act050_Frag_Parameters extends BaseFragment {
         return options;
     }
 
+    public ArrayList<HMAux>  generatePOOptionForSS(List<SO_Favorite_Contract> contracts, Integer contract_code) {
+        for(SO_Favorite_Contract contract: contracts){
+            if(contract.getContractCode() == contract_code) {
+                return  generateSSPoOption(contract.getPoList());
+            }
+        }
+        return new ArrayList<HMAux>();
+    }
+
+
+
+    private ArrayList<HMAux> generateSSPoOption(List<SO_Favorite_PO> poList) {
+        ArrayList<HMAux> options = new ArrayList<>();
+        //
+        for(SO_Favorite_PO po_item: poList){
+            HMAux aux = new HMAux();
+            aux.put(SearchableSpinner.CODE, String.valueOf(po_item.getPoCode()));
+            aux.put(SearchableSpinner.ID, po_item.getPoId());
+            aux.put(SearchableSpinner.DESCRIPTION, getPoDescSS(po_item));
+            aux.put(SM_SODao.CONTRACT_PO_ERP,po_item.getPoErp());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT1,po_item.getPoClient1());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT2,po_item.getPoClient2());
+            aux.put(SM_SODao.CONTRACT_PO_CLIENT3,po_item.getPoClient3());
+//            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(po_item.getPipelineCode()));
+            options.add(aux);
+        }
+        //
+        return options;
+    }
+
+    private String getPoDescSS(SO_Favorite_PO po_item) {
+        return po_item.getPoDesc() == null ? po_item.getPoId() : po_item.getPoId() + " - " + po_item.getPoDesc();
+    }
+
     public static List<String> getFragTranslationsVars(){
         List<String> transList = new ArrayList<>();
         transList.add("favorite_lbl");
         transList.add("contract_lbl");
+        transList.add("po_lbl");
         transList.add("product_lbl");
         transList.add("serial_lbl");
         transList.add("category_lbl");

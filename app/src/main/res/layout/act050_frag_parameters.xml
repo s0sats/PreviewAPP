@@ -162,7 +162,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-5dp"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ss_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_tv_segment_val"
@@ -171,13 +171,25 @@
 
                 <!--Contrat_PO-->
 
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act050_frag_param_ss_po"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-5dp"
+                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_contract"
+
+                    />
+
                 <LinearLayout
                     android:id="@+id/act050_frag_param_ll_contract_po"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_contract"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_param_ss_po"
                     android:visibility="gone"
                     android:orientation="vertical"
                     >

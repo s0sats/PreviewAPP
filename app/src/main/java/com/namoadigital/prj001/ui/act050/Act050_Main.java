@@ -41,6 +41,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Act050_Main extends Base_Activity_Frag implements
@@ -295,7 +296,7 @@ public class Act050_Main extends Base_Activity_Frag implements
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
         //Inicializa e seta fragmento de parametros.
-        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode());
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getFavoriteCode());
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
@@ -307,6 +308,12 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setClient_email(mSoFavoriteItem.getClientEmail());
         mSOCreationObj.setClient_code(mSoFavoriteItem.getClientCode());
         mSOCreationObj.setPack_default(mSoFavoriteItem.getPackDefault());
+        mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
+        mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
+        mSOCreationObj.setPackCode(mSoFavoriteItem.getPackCode());
+        mSOCreationObj.setPriceListCode(mSoFavoriteItem.getPriceListCode());
+        mSOCreationObj.setPackServiceDescFull(mSoFavoriteItem.getPackServiceDescFull());
+        onContractSelected(mSoFavoriteItem.getContractCode());
         isSOCreationObjectFilled = true;
     }
 
@@ -393,12 +400,20 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void onContractSelected(int contract_code, Integer pipeline_code) {
+    public void onContractSelected(Integer contract_code) {
         isContractSelected = true;
-        mSOCreationObj.setContract_code(contract_code);
-        mSOCreationObj.setPipeline_code(pipeline_code);
+        if(contract_code != null) {
+            mSOCreationObj.setContract_code(contract_code);
+        }else{
+            mSOCreationObj.setContract_code(-1);
+        }
         mSOCreationObj.setDeadline(null);
         mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+    }
+
+    @Override
+    public void onPOSelected(int po_code) {
+        mSOCreationObj.setPo_code(po_code);
     }
 
     @Override
@@ -408,7 +423,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans);
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans, mSoFavoriteItem.getFavoriteCode());
         //act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }
@@ -417,6 +432,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     public void onBackButtonClick() {
         onBackPressed();
     }
+
     //endregion
 
     @Override
@@ -492,23 +508,8 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public HMAux getPipelineFavorite() {
-        HMAux pipeline = new HMAux();
-        if (isContractSelected) {
-            try {
-                for (SO_Favorite_Pipeline pipelineFav : response.getPipeline()) {
-                    if (pipelineFav.getPipelineCode() == mSOCreationObj.getPipeline_code()) {
-                        pipeline.put(SearchableSpinner.CODE, String.valueOf(pipelineFav.getPipelineCode()));
-                        pipeline.put(SearchableSpinner.ID, String.valueOf(pipelineFav.getPipelineCode()));
-                        pipeline.put(SearchableSpinner.DESCRIPTION, pipelineFav.getPipelineDesc());
-                        return pipeline;
-                    }
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-        return pipeline;
+    public HMAux getPipelineFavorite(int favorite_code) {
+        return null;
     }
 
     @Override
@@ -534,14 +535,25 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public List<String> getPackageDefaultByContract() {
         if (isContractSelected) {
-            for (SO_Favorite_Contract contract : response.getContract()
-            ) {
-                if (contract.getContractCode() == mSOCreationObj.getContract_code()) {
-                    return contract.getPackDefault();
-                }
-            }
+            return Collections.singletonList(mSoFavoriteItem.getPackDefault());
         }
         return null;
+    }
+
+    @Override
+    public String getPackageDefault() {
+        return mSoFavoriteItem.getPackServiceDescFull();
+    }
+
+    @Override
+    public boolean hasValidPackageDefault(Integer contract_code_selected) {
+        if(contract_code_selected != mSoFavoriteItem.getContractCode()
+        || mSoFavoriteItem.getPackDefault() == null
+        || mSoFavoriteItem.getPackDefault().equals(Act050_Frag_SO.WITHOUT_PACK_DEFAULT_PENDING)){
+            return false;
+        }else {
+            return true;
+        }
     }
 
     @Override
@@ -581,6 +593,9 @@ public class Act050_Main extends Base_Activity_Frag implements
         super.processCustom_error(mLink, mRequired);
         //
         disableProgressDialog();
+        if(wsProcess.equals(WS_SO_Favorite_List.class.getName())){
+            onBackPressed();
+        }
     }
 
     //TRATA MSG SESSION NOT FOUND

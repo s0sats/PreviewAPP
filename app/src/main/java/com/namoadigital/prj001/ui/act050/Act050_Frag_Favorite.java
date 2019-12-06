@@ -33,9 +33,8 @@ import java.util.List;
  */
 public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Contract.I_Frag_Favorite {
 
-    // TODO: Customize parameter argument names
+
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     public RecyclerView recyclerView;

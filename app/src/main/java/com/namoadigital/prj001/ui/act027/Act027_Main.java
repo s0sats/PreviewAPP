@@ -485,6 +485,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("add_info1_ttl");
         transList.add("add_info2_ttl");
         transList.add("add_info3_ttl");
+        transList.add("po_desc");
         //Service Fragment
         transList.add("filter_lbl");
         transList.add("select_partner_lbl");

@@ -60,6 +60,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String CONTRACT_PO_CLIENT1 = "contract_po_client1";
     public static final String CONTRACT_PO_CLIENT2 = "contract_po_client2";
     public static final String CONTRACT_PO_CLIENT3 = "contract_po_client3";
+    public static final String PO_CODE = "po_code";
+    public static final String PO_ID = "po_id";
+    public static final String PO_DESC = "po_desc";
     public static final String PRIORITY_CODE = "priority_code";
     public static final String PRIORITY_DESC = "priority_desc";
     public static final String STATUS = "status";
@@ -548,6 +551,14 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             } else {
                 so.setContract_po_client3(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_CLIENT3)));
             }
+            //LUCHE - 25/11/2019
+            so.setPo_code(cursor.getInt(cursor.getColumnIndex(PO_CODE)));
+            so.setPo_id(cursor.getString(cursor.getColumnIndex(PO_ID)));
+            if (cursor.isNull(cursor.getColumnIndex(PO_DESC))) {
+                so.setPo_desc(null);
+            } else {
+                so.setPo_desc(cursor.getString(cursor.getColumnIndex(PO_DESC)));
+            }
 
             so.setPriority_code(cursor.getInt(cursor.getColumnIndex(PRIORITY_CODE)));
             so.setPriority_desc(cursor.getString(cursor.getColumnIndex(PRIORITY_DESC)));
@@ -893,6 +904,16 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             if (sm_so.getContract_po_client3() != null) {
                 contentValues.put(CONTRACT_PO_CLIENT3, sm_so.getContract_po_client3());
             }
+
+            if (sm_so.getPo_code() > -1) {
+                contentValues.put(PO_CODE, sm_so.getPo_code());
+            }
+
+            if (sm_so.getPo_id() != null) {
+                contentValues.put(PO_ID, sm_so.getPo_id());
+            }
+
+            contentValues.put(PO_DESC, sm_so.getPo_desc());
 
             if (sm_so.getPriority_code() > -1) {
                 contentValues.put(PRIORITY_CODE, sm_so.getPriority_code());
