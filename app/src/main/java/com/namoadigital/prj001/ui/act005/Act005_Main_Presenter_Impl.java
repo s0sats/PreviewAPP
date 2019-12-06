@@ -543,35 +543,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     case Act005_Main.MENU_ID_TICKET:
                         //
                         try {
-                            qty = String.valueOf(tk_ticketdao.query_HM(
-                                    new Sql_Act069_Sql_001(
+                            qty = String.valueOf(tk_ticketdao.getByStringHM(
+                                    new Sql_Act005_009(
                                             ToolBox_Con.getPreference_Customer_Code(context),
-                                            ToolBox_Con.getPreference_Site_Code(context),
                                             true,
                                             true,
                                             false,
-                                            false,
-                                            true,
-                                            true
+                                            false
                                     ).toSqlQuery()
-                            ).size());
+                            ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qty = "0";
                         }
                         //
                         try {
-                            qtyBadge2 = String.valueOf(tk_ticketdao.query_HM(
-                                    new Sql_Act069_Sql_001(
+                            qtyBadge2 = String.valueOf(tk_ticketdao.getByStringHM(
+                                    new Sql_Act005_009(
                                             ToolBox_Con.getPreference_Customer_Code(context),
-                                            ToolBox_Con.getPreference_Site_Code(context),
                                             false,
                                             false,
                                             true,
-                                            false,
-                                            true,
-                                            true
+                                            false
                                     ).toSqlQuery()
-                            ).size());
+                            ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qtyBadge2 = "0";
                         }
