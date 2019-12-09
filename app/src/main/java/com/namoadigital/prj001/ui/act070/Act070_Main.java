@@ -32,8 +32,10 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
@@ -85,6 +87,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private String wsProcess = "";
     private ArrayList<TK_Ticket_Ctrl_Super> actionList = new ArrayList<>();
     private boolean bReadOnly = false;
+    private String room_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,11 +167,13 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             requestingAct = requestingBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            room_code = requestingBundle.getString(CH_RoomDao.ROOM_CODE, null);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
             mTkPrefix = -1;
             mTkCode = -1;
+            room_code = null;
         }
     }
 
@@ -382,9 +387,28 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if (bundle == null) {
             bundle = new Bundle();
         }
-        if(ConstantBaseApp.ACT014.equals(requestingAct)) {
+        if(ConstantBaseApp.ACT014.equals(requestingAct)
+        || ConstantBaseApp.ACT035.equals(requestingAct)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+            if(ConstantBaseApp.ACT035.equals(requestingAct)){
+                bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+            }
         }
+        //
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct035() {
+        Intent intent = new Intent(context, Act035_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+
+        bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+
         //
         intent.putExtras(bundle);
         //

@@ -16,6 +16,8 @@ public interface Act070_Main_Contract {
         void callAct069();
 
         void callAct071(Bundle bundle);
+
+        void callAct035();
     }
 
     interface I_Presenter{
