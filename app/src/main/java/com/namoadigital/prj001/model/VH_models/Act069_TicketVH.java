@@ -18,11 +18,12 @@ public class Act069_TicketVH {
     private String current_site_desc;
     private String current_product_desc;
     private String current_serial_id;
+    private int sync_required;
 
     public Act069_TicketVH() {
     }
 
-    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id) {
+    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required) {
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -35,6 +36,7 @@ public class Act069_TicketVH {
         this.current_site_desc = current_site_desc;
         this.current_product_desc = current_product_desc;
         this.current_serial_id = current_serial_id;
+        this.sync_required = sync_required;
     }
 
     public int getTicket_prefix() {
@@ -133,6 +135,14 @@ public class Act069_TicketVH {
         this.current_serial_id = current_serial_id;
     }
 
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
+    }
+
     public static Act069_TicketVH getTicketVHObj(HMAux hmAux) throws Exception{
         //
         return new Act069_TicketVH(
@@ -147,7 +157,8 @@ public class Act069_TicketVH {
             hmAux.get(TK_TicketDao.FORECAST_DATE),
             hmAux.get(TK_TicketDao.CURRENT_SITE_DESC),
             hmAux.get(TK_TicketDao.CURRENT_PRODUCT_DESC),
-            hmAux.get(TK_TicketDao.CURRENT_SERIAL_ID)
+            hmAux.get(TK_TicketDao.CURRENT_SERIAL_ID),
+            ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
         );
     }
     //

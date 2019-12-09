@@ -27,6 +27,8 @@ public interface Act070_Main_Contract {
         void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
 
         void callRefreshUi();
+
+        void updateSyncRequiredByFCM();
     }
 
     interface I_Presenter{
@@ -54,5 +56,11 @@ public interface Act070_Main_Contract {
         boolean setCheckInData(TK_Ticket tkTicket);
 
         boolean hideCancelCheckin(TK_Ticket mTicket);
+
+        void prepareSyncProcess(TK_Ticket mTicket);
+
+        boolean checkOnlySyncNeeds(TK_Ticket mTicket);
+
+        public boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code);
     }
 }

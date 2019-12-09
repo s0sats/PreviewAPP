@@ -71,6 +71,7 @@ public class TK_Ticket {
     private String checkin_user_name;
     private int sync_required;
     private int update_required;
+    private String token;
     @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
 
@@ -435,5 +436,13 @@ public class TK_Ticket {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

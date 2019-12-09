@@ -1,15 +1,20 @@
 package com.namoadigital.prj001.ui.act070;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +43,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
@@ -89,6 +95,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private String wsProcess = "";
     private ArrayList<TK_Ticket_Ctrl_Super> actionList = new ArrayList<>();
     private boolean bReadOnly = false;
+    private FCMReceiver fcmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +157,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("result_checkin_cancel_lbl");
         transList.add("alert_ticket_checkin_offline_ttl");
         transList.add("alert_ticket_checkin_offline_msg");
+        //
+        transList.add("alert_sync_data_ttl");
+        transList.add("alert_sync_data_msg");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -259,18 +271,50 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         if (mTicket != null) {
             setReadOnly();
+            initFCMReceiver();
             setDataToViews();
+            checkSyncNeeds();
         } else {
             paramErrorFlow();
         }
     }
 
+    private void checkSyncNeeds() {
+         if(mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)){
+            mPresenter.prepareSyncProcess(mTicket);
+        }
+    }
+
+    @Override
+    public void updateSyncRequiredByFCM() {
+        mTicket.setSync_required(1);
+        //
+        setTicketSync();
+    }
+
+    private void initFCMReceiver() {
+        fcmReceiver = new FCMReceiver();
+        //
+        startStopFCMReceiver(true);
+    }
+
+    private void startStopFCMReceiver(boolean start) {
+        if(start){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConstantBaseApp.WS_FCM);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        }else{
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        }
+    }
     private void setReadOnly() {
         bReadOnly = mPresenter.getReadOnlyDefinition(mTicket);
     }
 
     private void setDataToViews() {
         tvTicketId.setText(mTicket.getTicket_id());
+        setTicketSync();
         //
         tvStatus.setText(hmAux_Trans.get(mTicket.getTicket_status()));
         tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicket.getTicket_status())));
@@ -300,6 +344,21 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         defineFilterVisility();
         loadActionList();
     }
+
+    private void setTicketSync() {
+        if(mTicket != null){
+            Drawable rightDraw = null;
+            Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
+            if(mTicket.getSync_required() == 1 || mTicket.getUpdate_required() == 1){
+                rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
+                rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+                background = getResources().getDrawable(R.drawable.stroke_yellow_states);
+            }
+            tvTicketId.setCompoundDrawablesWithIntrinsicBounds(null,null,rightDraw,null);
+            tvTicketId.setBackground(background);
+        }
+    }
+
 
     private void loadActionList() {
         actionList = mPresenter.generateCtrlActions(
@@ -486,6 +545,24 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void initAction() {
+        tvTicketId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("alert_sync_data_ttl"),
+                    hmAux_Trans.get("alert_sync_data_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mPresenter.prepareSyncProcess(mTicket);
+                        }
+                    },
+                    1
+                );
+            }
+        });
+        //
         ivInnerComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -653,8 +730,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             wsProcess = "";
             //
             mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
-
+        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())){
+            wsProcess = "";
+            //
+            refreshUi();
         }
+        //
         progressDialog.dismiss();
     }
 
@@ -695,6 +776,31 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 show.dismiss();
             }
         });
+    }
+
+    class FCMReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if( bundle != null
+                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
+            ){
+                //
+                if(mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
+                   updateSyncRequiredByFCM();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Para receiver que ouve o FCM
+        startStopFCMReceiver(false);
+        //
+        super.onDestroy();
+
     }
 
     @Override

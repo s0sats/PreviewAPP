@@ -5,16 +5,14 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    >
+    android:layout_margin="5dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/act069_ticket_cell_cl_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/namoa_cell_8_states"
-        android:paddingBottom="8dp"
-        >
+        android:paddingBottom="8dp">
 
         <android.support.constraint.Guideline
             android:id="@+id/act069_ticket_cell_guide_start"
@@ -35,18 +33,27 @@
             app:layout_constraintGuide_end="8dp"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/act069_ticket_cell_tv_ticket_id"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/act069_ticket_cell_cl_ticket_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            tools:text="2019.999"
-            android:textSize="@dimen/font_size_item_md"
-            android:textStyle="bold"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toStartOf="@id/act069_ticket_cell_tv_status"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/act069_ticket_cell_guide_start"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/act069_ticket_cell_tv_ticket_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2019.999" />
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/act069_ticket_cell_tv_status"
@@ -67,14 +74,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="@dimen/font_size_item"
             app:layout_constraintEnd_toStartOf="@id/act069_ticket_cell_guide_end"
             app:layout_constraintStart_toStartOf="@id/act069_ticket_cell_guide_start"
-            app:layout_constraintTop_toBottomOf="@id/act069_ticket_cell_tv_ticket_id"
-            tools:text="2019.Trad"
-            android:maxLines="1"
-            android:ellipsize="end"
-            />
+            app:layout_constraintTop_toBottomOf="@id/act069_ticket_cell_cl_ticket_id"
+            tools:text="2019.Trad" />
 
         <TextView
             android:id="@+id/act069_ticket_cell_tv_type_desc"
@@ -94,14 +100,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/namoa_color_light_blue"
             app:layout_constraintEnd_toStartOf="@id/act069_ticket_cell_guide_end"
             app:layout_constraintStart_toStartOf="@id/act069_ticket_cell_guide_start"
             app:layout_constraintTop_toBottomOf="@id/act069_ticket_cell_tv_type_desc"
-            tools:text="Comentario aqui Comentario aqui Comentario aqui Comentario aqui"
-            android:maxLines="1"
-            android:ellipsize="end"
-            />
+            tools:text="Comentario aqui Comentario aqui Comentario aqui Comentario aqui" />
 
         <TextView
             android:id="@+id/act069_ticket_cell_tv_open_date"
@@ -119,13 +124,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            tools:text="99/99/9999"
             app:layout_constraintBottom_toBottomOf="@id/act069_ticket_cell_tv_open_date"
             app:layout_constraintEnd_toStartOf="@id/act069_ticket_cell_guide_end"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/act069_ticket_cell_tv_open_date"
             app:layout_constraintTop_toTopOf="@id/act069_ticket_cell_tv_open_date"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="99/99/9999" />
 
         <TextView
             android:id="@+id/act069_ticket_cell_tv_forecast_date"
@@ -143,12 +148,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            tools:text="99/99/9999"
             app:layout_constraintBottom_toBottomOf="@id/act069_ticket_cell_tv_forecast_date"
             app:layout_constraintEnd_toStartOf="@id/act069_ticket_cell_guide_end"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/act069_ticket_cell_tv_forecast_date"
-            app:layout_constraintTop_toTopOf="@id/act069_ticket_cell_tv_forecast_date" />
+            app:layout_constraintTop_toTopOf="@id/act069_ticket_cell_tv_forecast_date"
+            tools:text="99/99/9999" />
 
         <TextView
             android:id="@+id/act069_ticket_cell_tv_site"
