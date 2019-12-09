@@ -67,6 +67,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CHECKIN_USER_NAME = "checkin_user_name";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String TOKEN = "token";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -528,6 +529,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             //
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER_NAME))) {
+                tk_ticket.setToken(null);
+            } else {
+                tk_ticket.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
+            }
+
             //
             return tk_ticket;
         }
@@ -633,6 +640,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, tk_ticket.getUpdate_required());
             }
+            //
+            tk_ticket.setToken(tk_ticket.getToken());
             //
             return contentValues;
         }

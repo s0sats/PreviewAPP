@@ -463,6 +463,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
     public static final String WS_RETURN_LIST = "WS_RETURN_LIST";
     public static final String WS_RETURN_FILENAME = "WS_RETURN_FILENAME";
+    public static final String MAIN_RESULT_OK = "OK";
+    public static final String MAIN_RESULT_OK_DUP = "OK_DUP";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

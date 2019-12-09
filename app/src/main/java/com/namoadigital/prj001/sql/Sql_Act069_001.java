@@ -89,7 +89,8 @@ public class Sql_Act069_001 implements Specification {
                     "            ELSE null\n" +
                     "       END site_desc ,\n" +
                     "       t.current_product_desc,\n" +
-                    "       t.current_serial_id           \n" +
+                    "       t.current_serial_id,\n" +
+                    "       t.sync_required\n" +
                     " FROM\n" +
                     "     "+ TK_TicketDao.TABLE +" t "+
                     " WHERE\n" +

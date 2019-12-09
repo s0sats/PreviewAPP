@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -154,6 +156,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
             resetVisibility();
             //
             tvTicketId.setText(item.getTicket_id());
+            setSyncIcon(item.getSync_required());
             tvStatus.setText(hmAux_Trans.get(item.getTicket_status()));
             tvStatus.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
             //
@@ -212,6 +215,16 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
                     item.getCurrent_serial_id()
                 );
             }
+        }
+
+        private void setSyncIcon(int sync_required) {
+            Drawable rightDraw = null;
+            if(sync_required == 1){
+                rightDraw = context.getResources().getDrawable(R.drawable.ic_sync_black_24dp);
+                rightDraw.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+            }
+            //
+            tvTicketId.setCompoundDrawablesWithIntrinsicBounds(null,null,rightDraw,null);
         }
 
         private void resetVisibility() {
