@@ -387,7 +387,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if (bundle == null) {
             bundle = new Bundle();
         }
-        if(ConstantBaseApp.ACT014.equals(requestingAct)
+        if(ConstantBaseApp.ACT012.equals(requestingAct)
+        || ConstantBaseApp.ACT014.equals(requestingAct)
         || ConstantBaseApp.ACT035.equals(requestingAct)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if(ConstantBaseApp.ACT035.equals(requestingAct)){

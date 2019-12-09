@@ -17,6 +17,10 @@ public interface Act069_Main_Contract {
         void showPD(String ttl, String msg);
 
         void callAct005();
+
+        void callAct012();
+
+        void callAct014();
     }
 
     interface I_Presenter{
