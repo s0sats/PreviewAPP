@@ -124,6 +124,8 @@ public class WS_TK_Ticket_Download extends IntentService {
                 Constant.DB_VERSION_CUSTOM
             );
             //
+            HMAux hmAux = new HMAux();
+
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
                 //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
@@ -140,13 +142,17 @@ public class WS_TK_Ticket_Download extends IntentService {
                         tkTicket.getTicket_code()
                     ).toSqlQuery()
                 );
+                if(ticketList.size() == 1){
+                    hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                    hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                }
             }
             //
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticketList, false);
             if(!daoObjReturn.hasError()){
                 startDownloadServices();
                 //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
             }else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_on_insert_ticket_msg"), new HMAux(), "", "0");
             }

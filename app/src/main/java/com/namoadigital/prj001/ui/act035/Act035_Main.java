@@ -2768,11 +2768,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
-            bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(pk_fields [1]));
-            bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(pk_fields [2]));
+            if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+            && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)) {
+                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+            }
 //            bundle.putString(Constant.CHAT_RELOAD, "1");
             //
-            callAct034(context);
+            callAct070(bundle);
         }
 
         progressDialog.dismiss();
