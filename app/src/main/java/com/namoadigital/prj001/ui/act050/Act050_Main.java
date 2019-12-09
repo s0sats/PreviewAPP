@@ -296,7 +296,7 @@ public class Act050_Main extends Base_Activity_Frag implements
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
         //Inicializa e seta fragmento de parametros.
-        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getFavoriteCode());
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getPoCode(), item.getFavoriteCode());
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
@@ -310,9 +310,9 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setPack_default(mSoFavoriteItem.getPackDefault());
         mSOCreationObj.setPipeline_code(mSoFavoriteItem.getPipelineCode());
         mSOCreationObj.setPo_code(mSoFavoriteItem.getPoCode());
-        mSOCreationObj.setPackCode(mSoFavoriteItem.getPackCode());
-        mSOCreationObj.setPriceListCode(mSoFavoriteItem.getPriceListCode());
-        mSOCreationObj.setPackServiceDescFull(mSoFavoriteItem.getPackServiceDescFull());
+        mSOCreationObj.setPack_code(mSoFavoriteItem.getPackCode());
+        mSOCreationObj.setPrice_list_code(mSoFavoriteItem.getPriceListCode());
+        mSOCreationObj.setPack_service_desc_full(mSoFavoriteItem.getPackServiceDescFull());
         onContractSelected(mSoFavoriteItem.getContractCode());
         isSOCreationObjectFilled = true;
     }
@@ -401,14 +401,15 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onContractSelected(Integer contract_code) {
-        isContractSelected = true;
         if(contract_code != null) {
             mSOCreationObj.setContract_code(contract_code);
         }else{
             mSOCreationObj.setContract_code(-1);
         }
         mSOCreationObj.setDeadline(null);
-        mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+        if (mSOCreationObj.getClient_code() == null) {
+            mSOCreationObj.setClient_type(mSoFavoriteItem.getClientType());
+        }
     }
 
     @Override
@@ -418,7 +419,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public boolean checkIsContractSelected() {
-        return isContractSelected;
+        return mSOCreationObj.getContract_code() > 0;
     }
 
     @Override
@@ -431,6 +432,16 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public void onBackButtonClick() {
         onBackPressed();
+    }
+
+    @Override
+    public Integer getSelectedContract() {
+        return mSOCreationObj.getContract_code();
+    }
+
+    @Override
+    public Integer getSelectedPO() {
+        return mSOCreationObj.getPo_code();
     }
 
     //endregion

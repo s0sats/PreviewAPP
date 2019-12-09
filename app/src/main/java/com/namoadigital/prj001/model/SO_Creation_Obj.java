@@ -46,9 +46,9 @@ public class SO_Creation_Obj implements Serializable {
     private String add_inf2;
     private String add_inf3;
     private int edit_user;
-    private Integer priceListCode;
-    private Integer packCode;
-    private String packServiceDescFull;
+    private Integer price_list_code;
+    private Integer pack_code;
+    private String pack_service_desc_full;
     private Integer po_code;
 
     public long getCustomer_code() {
@@ -307,28 +307,28 @@ public class SO_Creation_Obj implements Serializable {
         this.edit_user = edit_user;
     }
 
-    public Integer getPriceListCode() {
-        return priceListCode;
+    public Integer getPrice_list_code() {
+        return price_list_code;
     }
 
-    public void setPriceListCode(Integer priceListCode) {
-        this.priceListCode = priceListCode;
+    public void setPrice_list_code(Integer price_list_code) {
+        this.price_list_code = price_list_code;
     }
 
-    public Integer getPackCode() {
-        return packCode;
+    public Integer getPack_code() {
+        return pack_code;
     }
 
-    public void setPackCode(Integer packCode) {
-        this.packCode = packCode;
+    public void setPack_code(Integer pack_code) {
+        this.pack_code = pack_code;
     }
 
-    public String getPackServiceDescFull() {
-        return packServiceDescFull;
+    public String getPack_service_desc_full() {
+        return pack_service_desc_full;
     }
 
-    public void setPackServiceDescFull(String packServiceDescFull) {
-        this.packServiceDescFull = packServiceDescFull;
+    public void setPack_service_desc_full(String pack_service_desc_full) {
+        this.pack_service_desc_full = pack_service_desc_full;
     }
 
     public Integer getPo_code() {
@@ -374,7 +374,8 @@ public class SO_Creation_Obj implements Serializable {
                 "add_inf2 -> " +add_inf2 + "\n" +
                 "add_inf3 -> " +add_inf3+ "\n" +
                 "edit_user -> " +edit_user+ "\n" +
-                "po_code-> " +po_code+ "\n"
+                "po_code-> " +po_code+ "\n" +
+                "pack_code-> " +pack_code+ "\n"
                 ;
     }
 }
