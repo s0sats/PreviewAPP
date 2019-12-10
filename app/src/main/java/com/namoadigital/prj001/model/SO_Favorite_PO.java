@@ -3,7 +3,9 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SO_Favorite_PO {
+import java.io.Serializable;
+
+public class SO_Favorite_PO  implements Serializable {
     @SerializedName("po_code")
     @Expose
     private Integer poCode;
