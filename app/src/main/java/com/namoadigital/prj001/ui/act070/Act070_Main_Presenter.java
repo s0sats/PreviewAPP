@@ -236,6 +236,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
             executeTicketSaveProcess();
+        }else if(checkCheckinRequiredNeeds(mTicket)){
+            executeCheckin(mTicket,true);
         }else{
             executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code());
         }
@@ -287,12 +289,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public boolean checkOnlySyncNeeds(TK_Ticket mTicket) {
-        return mTicket != null && mTicket.getUpdate_required() == 0 && mTicket.getSync_required() == 1;
+        //return mTicket != null && mTicket.getUpdate_required() == 0 && mTicket.getSync_required() == 1;
+        return
+                mTicket != null
+                && (mTicket.getUpdate_required() == 1
+                    || mTicket.getCheckin_required() == 1
+                    || mTicket.getSync_required() == 1
+                );
     }
 
 
     public boolean checkUpdateRequiredNeeds(TK_Ticket mTicket) {
         return mTicket != null && mTicket.getUpdate_required() == 1;
+    }
+
+    private boolean checkCheckinRequiredNeeds(TK_Ticket mTicket) {
+        return mTicket != null && mTicket.getCheckin_required() == 1;
     }
 
     @Override

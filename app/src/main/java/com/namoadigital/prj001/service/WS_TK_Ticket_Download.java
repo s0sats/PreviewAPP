@@ -169,14 +169,14 @@ public class WS_TK_Ticket_Download extends IntentService {
     private void updateLocalImagesPath(TK_Ticket tkTicket) {
         tkTicket.setOpen_photo_local(
             getLocalPath(
-                buildTicketImgPath(tkTicket)
+                ToolBox_Inf.buildTicketImgPath(tkTicket)
             )
         );
         //
         for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
             ctrl.getAction().setAction_photo_local(
                 getLocalPath(
-                    buildTicketActionImgPath(ctrl)
+                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
                 )
             );
         }
@@ -191,13 +191,6 @@ public class WS_TK_Ticket_Download extends IntentService {
         return null;
     }
 
-    private String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
-        return "t_"+ctrl.getCustomer_code()+"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".jpg";
-    }
-
-    private String buildTicketImgPath(TK_Ticket tkTicket) {
-        return "t_"+tkTicket.getCustomer_code()+"_"+tkTicket.getTicket_prefix()+"_"+tkTicket.getTicket_code()+ ".jpg";
-    }
 
     private void startDownloadServices() {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.

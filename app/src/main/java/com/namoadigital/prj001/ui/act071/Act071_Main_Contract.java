@@ -55,6 +55,8 @@ public interface Act071_Main_Contract {
 
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
 
+        boolean hasPhotoChanged(TK_Ticket_Ctrl mTicketCtrl);
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();

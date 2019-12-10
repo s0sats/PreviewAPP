@@ -38,6 +38,7 @@ public class TK_Ticket_Ctrl {
     private Integer ctrl_end_user;
     @Nullable
     private String ctrl_end_user_name;
+    @Expose
     private String ctrl_status;
     @Expose
     private Integer partner_code;

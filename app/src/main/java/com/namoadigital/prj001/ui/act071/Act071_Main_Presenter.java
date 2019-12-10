@@ -149,7 +149,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public String generateActionPhotoLocalPath(TK_Ticket_Action action) {
         if(action.getAction_photo() == null && action.getAction_photo_local() == null){
-            return "t_" + action.getTicket_prefix() + "_" + action.getTicket_code() + "_" + action.getTicket_seq() +".jpg";
+            return ToolBox_Inf.buildTicketActionImgPath(action);
         }
         //
         return action.getAction_photo_local();
@@ -163,6 +163,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             return file.exists();
         }catch (Exception e){
             return false;
+        }
+    }
+
+    private void checkActionPhotoToDel(TK_Ticket_Action action){
+        if( !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(action.getAction_status())
+            && action.getAction_photo_local() == null
+            && newActionPhotoExists(action)
+        ){
+            deleteNewActionPhoto(action);
         }
     }
 
@@ -196,6 +205,31 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             }
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasPhotoChanged(TK_Ticket_Ctrl mTicketCtrl) {
+        if(
+            mTicketCtrl.getAction().getAction_photo() == null
+            && mTicketCtrl.getAction().getAction_photo_local() != null )
+        {
+            return true;
+        }
+        if(
+            mTicketCtrl.getAction().getAction_photo() != null
+            && mTicketCtrl.getAction().getAction_photo_local() == null )
+        {
+            return true;
+        }
+        //
+        if(actionPhotoChanged(mTicketCtrl)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean actionPhotoChanged(TK_Ticket_Ctrl mTicketCtrl) {
         return false;
     }
 
@@ -390,11 +424,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                TK_Ticket_Action action = mView.getAction();
-                                //
-                                if(action.getAction_photo_local() == null && newActionPhotoExists(action)){
-                                    deleteNewActionPhoto(action);
-                                }
+                                checkActionPhotoToDel(mView.getAction());
                                 //
                                 mView.callAct070();
                             }
@@ -402,6 +432,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                         1
                     );
                 }else{
+                    checkActionPhotoToDel(mView.getAction());
+                    //
                     mView.callAct070();
                 }
                 break;

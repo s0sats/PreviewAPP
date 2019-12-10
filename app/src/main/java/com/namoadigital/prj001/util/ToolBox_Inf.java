@@ -5727,5 +5727,32 @@ public class ToolBox_Inf {
         }
         return false;
     }
+    @Nullable
+    public static String buildTicketImgPath(TK_Ticket tkTicket) {
+        try {
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + ".jpg";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+    @Nullable
+    public static String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
+        try{
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+    @Nullable
+    public static String buildTicketActionImgPath(TK_Ticket_Action action) {
+        try{
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
 
 }

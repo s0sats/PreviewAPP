@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_WS_Return;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -42,6 +43,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "ws_tk_ticket_checkin";
     private Gson gson;
+    private TK_TicketDao ticketDao;
     private ArrayList<T_TK_Ticket_Checkin_Obj_Env> ticketsToCheckin;
 
     public WS_TK_Ticket_Checkin() {
@@ -55,6 +57,13 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         Bundle bundle = intent.getExtras();
         try {
             gson = new GsonBuilder().serializeNulls().create();
+            //
+            ticketDao = new TK_TicketDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
             ticketsToCheckin = (ArrayList<T_TK_Ticket_Checkin_Obj_Env>) bundle.getSerializable(WS_PARAM_TICKET_CHECKIN_LIST);
             //
             processTicketDownload(ticketsToCheckin);
@@ -78,6 +87,10 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //Seleciona traduções
         loadTranslation();
+        //
+        if(ticketPkList == null || ticketPkList.size() == 0) {
+            ticketsToCheckin = getTicketsToCheckin();
+        }
         //
         T_TK_Ticket_Checkin_Env env = new T_TK_Ticket_Checkin_Env();
         env.setApp_code(Constant.PRJ001_CODE);
@@ -120,6 +133,37 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         //
         processTicketCheckinReturn(rec);
 
+    }
+
+    private ArrayList<T_TK_Ticket_Checkin_Obj_Env> getTicketsToCheckin() {
+        ArrayList<TK_Ticket> ticketsToCheckin =
+            (ArrayList<TK_Ticket>) ticketDao.query(
+               new TK_Ticket_Sql_007(
+                   ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+               ).toSqlQuery()
+           );
+        //
+        ArrayList<T_TK_Ticket_Checkin_Obj_Env> checkObjList = getCheckInList(ticketsToCheckin);
+        //
+        return checkObjList;
+    }
+
+    private ArrayList<T_TK_Ticket_Checkin_Obj_Env> getCheckInList(ArrayList<TK_Ticket> ticketsToCheckin) {
+        ArrayList<T_TK_Ticket_Checkin_Obj_Env> checkIns = new ArrayList<>();
+        //
+        for (TK_Ticket tkTicket : ticketsToCheckin) {
+            T_TK_Ticket_Checkin_Obj_Env checkInAux = new T_TK_Ticket_Checkin_Obj_Env();
+            //
+            checkInAux.setCustomer_code(tkTicket.getCustomer_code());
+            checkInAux.setTicket_prefix(tkTicket.getTicket_prefix());
+            checkInAux.setTicket_code(tkTicket.getTicket_code());
+            checkInAux.setTicket_scn(tkTicket.getScn());
+            checkInAux.setCheckin(1);
+            //
+            checkIns.add(checkInAux);
+        }
+        //
+        return checkIns;
     }
 
     private void processTicketCheckinReturn(T_TK_Ticket_Checkin_Rec rec) {
@@ -199,7 +243,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             Constant.DB_VERSION_CUSTOM
         );
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(ticketReturn.getRet_status())) {
-            if(ticketReturn.getTicket() != null){
+            if (ticketReturn.getTicket() != null) {
                 TK_Ticket tkTicket = ticketReturn.getTicket();
                 tkTicket.setPK();
                 updateLocalImagesPath(tkTicket);
@@ -224,10 +268,10 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                 case ERROR_MSG_INVALID_STATUS_TO_CHECKIN:
                 case ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN:
                     TK_Ticket tkTicket = ticketReturn.getTicket();
-                    if(ticketReturn.getTicket() != null){
+                    if (ticketReturn.getTicket() != null) {
                         tkTicket.setPK();
                         updateLocalImagesPath(tkTicket);
-                    }else{
+                    } else {
                         tkTicket = ticketDao.getByString(
                             new TK_Ticket_Sql_001(
                                 ticketReturn.getCustomer_code(),
@@ -236,19 +280,19 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                             ).toSqlQuery()
                         );
                         //
-                        if(tkTicket != null) {
+                        if (tkTicket != null) {
                             //Desfaz a ação feita
-                            if(actReturn.checkinAction == 1){
+                            if (actReturn.checkinAction == 1) {
                                 tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
                                 tkTicket.setCheckin_user_name(null);
                                 tkTicket.setCheckin_user(null);
                                 tkTicket.setCheckin_date(null);
-                            }else{
-                                tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS );
+                            } else {
+                                tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
                             }
                             tkTicket.setToken(null);
                             tkTicket.setUpdate_required(0);
-                        } else{
+                        } else {
                             actReturn.processError = true;
                             actReturn.processStatus = ConstantBaseApp.SYS_STATUS_ERROR;
                             actReturn.processMsg = hmAux_Trans.get("msg_error_on_update_ticket");
@@ -270,34 +314,26 @@ public class WS_TK_Ticket_Checkin extends IntentService {
     private void updateLocalImagesPath(TK_Ticket tkTicket) {
         tkTicket.setOpen_photo_local(
             getLocalPath(
-                buildTicketImgPath(tkTicket)
+                ToolBox_Inf.buildTicketImgPath(tkTicket)
             )
         );
         //
         for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
             ctrl.getAction().setAction_photo_local(
                 getLocalPath(
-                    buildTicketActionImgPath(ctrl)
+                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
                 )
             );
         }
     }
 
     private String getLocalPath(String imgLocalPath) {
-        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
+        String localPath = Constant.CACHE_PATH_PHOTO + "/" + imgLocalPath;
         File file = new File(localPath);
         if (file.exists()) {
             return imgLocalPath;
         }
         return null;
-    }
-
-    private String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
-        return "t_"+ctrl.getCustomer_code()+"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".jpg";
-    }
-
-    private String buildTicketImgPath(TK_Ticket tkTicket) {
-        return "t_"+tkTicket.getCustomer_code()+"_"+tkTicket.getTicket_prefix()+"_"+tkTicket.getTicket_code()+ ".jpg";
     }
 
     private void loadTranslation() {

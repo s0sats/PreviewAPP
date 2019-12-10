@@ -159,7 +159,7 @@
                     tools:text="Done"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_mket_comment_val" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_til_comment" />
 
 
                 <TextView
@@ -231,21 +231,33 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act071_iv_action_photo" />
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act071_mket_comment_val"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/act071_til_comment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    tools:text="Comentario aqui"
-                    android:inputType="text"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    app:mOCRVin="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_tv_comment_lbl" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_comment_lbl"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
+                    >
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act071_mket_comment_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        tools:text="Comentario aqui"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"
+                        app:mOCRVin="false"
+                        android:maxLength="500"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+
             </android.support.constraint.ConstraintLayout>
 
         </android.support.constraint.ConstraintLayout>

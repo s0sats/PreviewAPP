@@ -260,8 +260,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                         },
                         1
                     );
-
-
                 }
             };
         }
@@ -282,6 +280,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         mTicketCtrl.setCtrl_end_date(
             ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
         );
+        //
+        mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_DONE);
+        //
+        mTicketCtrl.getAction().setAction_photo_changed(mPresenter.hasPhotoChanged(mTicketCtrl) ? 1 : 0);
     }
 
     @Override
@@ -457,9 +459,24 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void setActinPhotoToView() {
-        String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        ivActionPhoto.setImageBitmap(bitmap);
+        if(mPresenter.newActionPhotoExists(mTicketCtrl.getAction())) {
+            String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            ivActionPhoto.setImageBitmap(bitmap);
+        }else{
+            if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
+                ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            } else {
+                //FOTO NÃO FOI BAIXADA, COMO FAZER?
+                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
+                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
+                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
+                Glide.with(context)
+                    .load(mTicketCtrl.getAction().getAction_photo())
+                    .placeholder(R.drawable.sand_watch_transp)
+                    .into(ivActionPhoto);
+            }
+        }
     }
 
     private void defineDoneInfo() {
@@ -517,9 +534,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionPhotoReference() {
-        if(mTicketCtrl.getAction().getAction_photo_local() == null && mPresenter.newActionPhotoExists(mTicketCtrl.getAction())){
-            setActinPhotoToView();
-        }
+//       if(mTicketCtrl.getAction().getAction_photo_local() == null && mPresenter.newActionPhotoExists(mTicketCtrl.getAction())){
+//            setActinPhotoToView();
+//        }
+        setActinPhotoToView();
     }
 
     @Override
@@ -551,9 +569,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     @Override
     public boolean hasUnsavedData() {
-        if( mketComments.getText().toString().equalsIgnoreCase(String.valueOf(mketComments.getTag()))
-            //aqui deve vir a diferenciação da img
-        ){
+        //Comentario vindo do banco
+        String commentTag =  mketComments.getTag() == null ? "":String.valueOf(mketComments.getTag());
+        //Comentario capturado da tela
+        String commentText = mketComments.getText().toString();
+        //
+        if(!commentText.equalsIgnoreCase(commentTag)){
             return true;
         }
         return false;
@@ -634,7 +655,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        //Atualiza UI
+        updateActionData();
+        //
         progressDialog.dismiss();
+
     }
 
     //TRATA SESSION_NOT_FOUND

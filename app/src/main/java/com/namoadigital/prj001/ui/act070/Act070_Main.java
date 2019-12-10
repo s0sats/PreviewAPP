@@ -329,7 +329,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         tvTypePath.setText(mTicket.getType_path());
         tvTypeDesc.setText(mTicket.getType_desc());
-        tvOpenComment.setText(mTicket.getOpen_comments());
+        defineOpenComment();
         tvOpenDate_val.setText(
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
@@ -351,6 +351,16 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         configDoneInfo();
         defineFilterVisility();
         loadActionList();
+    }
+
+    private void defineOpenComment() {
+        if(mTicket.getOpen_comments() != null && !mTicket.getOpen_comments().isEmpty()){
+            tvOpenComment.setVisibility(View.VISIBLE);
+            tvOpenComment.setText(mTicket.getOpen_comments());
+        }else{
+            tvOpenComment.setVisibility(View.GONE);
+        }
+
     }
 
     private void setTicketSync() {
@@ -683,7 +693,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                                 if(mPresenter.setCheckInData(mTicket)) {
                                     mPresenter.executeCheckin(mTicket, true);
                                 }else{
-                                    resetCheckinInObj(true);
+                                    resetCheckinInObj();
                                     //
                                     showAlert(
                                         hmAux_Trans.get("alert_error_on_checkin_ttl"),
@@ -701,9 +711,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     }
 
-    private void resetCheckinInObj(boolean sqlAbort) {
+    private void resetCheckinInObj() {
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
-        mTicket.setUpdate_required(sqlAbort ? 0 : 1);
+        mTicket.setCheckin_required(0);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
         mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -711,7 +721,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void setCheckinToObj() {
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-        mTicket.setUpdate_required(1);
+        mTicket.setCheckin_required(1);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
         mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));

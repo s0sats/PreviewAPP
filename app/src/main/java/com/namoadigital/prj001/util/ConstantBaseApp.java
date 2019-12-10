@@ -653,6 +653,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_FORM ="FORM";
     public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
     public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
+    public static final String TK_TICKET_PREX_IMG ="tk_";
 
     /*
      * Constantes CHAT

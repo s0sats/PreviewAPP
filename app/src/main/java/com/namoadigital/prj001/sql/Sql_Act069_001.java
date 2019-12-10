@@ -87,7 +87,7 @@ public class Sql_Act069_001 implements Specification {
                     "       CASE WHEN t.current_site_code <> '"+site_logged+"' \n" +
                     "            THEN t.current_site_desc\n" +
                     "            ELSE null\n" +
-                    "       END site_desc ,\n" +
+                    "       END current_site_desc ,\n" +
                     "       t.current_product_desc,\n" +
                     "       t.current_serial_id,\n" +
                     "       t.sync_required\n" +

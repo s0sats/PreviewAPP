@@ -14,15 +14,20 @@ public class TK_Ticket_Action {
     @Expose
     private int ticket_seq;//pk
     @Nullable
-    //Max 500
     @Expose
-    private String action_comments;
+    private String action_comments;//Max 500
     @Nullable
     @Expose
     private String action_photo;
     @Nullable
     @Expose
     private String action_photo_local;
+    @Nullable
+    private String action_photo_name;
+    @Expose
+    private String action_status;
+    @Expose
+    private int action_photo_changed;
 
     public TK_Ticket_Action() {
         this.customer_code = -1;
@@ -36,6 +41,7 @@ public class TK_Ticket_Action {
         this.ticket_prefix = tk_ticket_ctrl.getTicket_prefix();
         this.ticket_code = tk_ticket_ctrl.getTicket_code();
         this.ticket_seq = tk_ticket_ctrl.getTicket_seq();
+        this.action_status = tk_ticket_ctrl.getCtrl_status();
     }
 
     public long getCustomer_code() {
@@ -93,5 +99,30 @@ public class TK_Ticket_Action {
 
     public void setAction_photo_local(@Nullable String action_photo_local) {
         this.action_photo_local = action_photo_local;
+    }
+
+    @Nullable
+    public String getAction_photo_name() {
+        return action_photo_name;
+    }
+
+    public void setAction_photo_name(@Nullable String action_photo_name) {
+        this.action_photo_name = action_photo_name;
+    }
+
+    public String getAction_status() {
+        return action_status;
+    }
+
+    public void setAction_status(String action_status) {
+        this.action_status = action_status;
+    }
+
+    public int getAction_photo_changed() {
+        return action_photo_changed;
+    }
+
+    public void setAction_photo_changed(int action_photo_changed) {
+        this.action_photo_changed = action_photo_changed;
     }
 }

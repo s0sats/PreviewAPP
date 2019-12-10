@@ -263,14 +263,14 @@ public class WS_TK_Ticket_Save extends IntentService {
     private void updateLocalImagesPath(TK_Ticket retTicket) {
         retTicket.setOpen_photo_local(
             getLocalPath(
-                buildTicketImgPath(retTicket)
+                ToolBox_Inf.buildTicketImgPath(retTicket)
             )
         );
         //
         for (TK_Ticket_Ctrl ctrl : retTicket.getCtrl()) {
             ctrl.getAction().setAction_photo_local(
                 getLocalPath(
-                    buildTicketActionImgPath(ctrl)
+                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
                 )
             );
         }
@@ -283,14 +283,6 @@ public class WS_TK_Ticket_Save extends IntentService {
             return imgLocalPath;
         }
         return null;
-    }
-
-    private String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
-        return "t_"+ctrl.getCustomer_code()+"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".jpg";
-    }
-
-    private String buildTicketImgPath(TK_Ticket retTicket) {
-        return "t_"+retTicket.getCustomer_code()+"_"+retTicket.getTicket_prefix()+"_"+retTicket.getTicket_code()+ ".jpg";
     }
 
     private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {

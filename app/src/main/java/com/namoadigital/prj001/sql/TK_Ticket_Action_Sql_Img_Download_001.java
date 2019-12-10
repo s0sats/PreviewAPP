@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class TK_Ticket_Action_Sql_Img_Download_001 implements Specification {
     public static final String FILE_LOCAL_NAME = "FILE_LOCAL_NAME";
@@ -19,7 +20,7 @@ public class TK_Ticket_Action_Sql_Img_Download_001 implements Specification {
         return sb
             .append(" SELECT\n" +
                     "  a.*,\n" +
-                    "  't_'||a.customer_code||'_'||a.ticket_prefix||'_'||a.ticket_code||'_'||a.ticket_seq  '"+FILE_LOCAL_NAME+"'\n" +
+                    "  '"+ ConstantBaseApp.TK_TICKET_PREX_IMG+"'||a.customer_code||'_'||a.ticket_prefix||'_'||a.ticket_code||'_'||a.ticket_seq  '"+FILE_LOCAL_NAME+"'\n" +
                     " FROM\n" +
                     TK_Ticket_ActionDao.TABLE +"  a\n" +
                     " WHERE\n" +

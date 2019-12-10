@@ -127,7 +127,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="5"
                 android:textColor="@color/namoa_color_light_blue"
                 app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
                 app:layout_constraintStart_toStartOf="@id/act070_guide_start"

@@ -32,6 +32,9 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     public static final String ACTION_COMMENTS = "action_comments";
     public static final String ACTION_PHOTO = "action_photo";
     public static final String ACTION_PHOTO_LOCAL = "action_photo_local";
+    public static final String ACTION_PHOTO_NAME = "action_photo_name";
+    public static final String ACTION_STATUS = "action_status";
+    public static final String ACTION_PHOTO_CHANGED = "action_photo_changed";
 
     public TK_Ticket_ActionDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -386,6 +389,18 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             }else{
                 tk_ticket_action.setAction_photo_local(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO_LOCAL)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_NAME))){
+                tk_ticket_action.setAction_photo_name(null);
+            }else{
+                tk_ticket_action.setAction_photo_name(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO_NAME)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ACTION_STATUS))){
+                tk_ticket_action.setAction_status(null);
+            }else{
+                tk_ticket_action.setAction_status(cursor.getString(cursor.getColumnIndex(ACTION_STATUS)));
+            }
+            tk_ticket_action.setAction_photo_changed(cursor.getInt(cursor.getColumnIndex(ACTION_PHOTO_CHANGED)));
+            //
             return tk_ticket_action;
         }
     }
@@ -410,6 +425,12 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             contentValues.put(ACTION_COMMENTS,tk_ticket_action.getAction_comments());
             contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo());
             contentValues.put(ACTION_PHOTO_LOCAL,tk_ticket_action.getAction_photo_local());
+            contentValues.put(ACTION_PHOTO_NAME,tk_ticket_action.getAction_photo_name());
+            if (tk_ticket_action.getAction_photo_changed() > -1) {
+                contentValues.put(ACTION_PHOTO_CHANGED,tk_ticket_action.getAction_photo_changed());
+            }
+            contentValues.put(ACTION_STATUS,tk_ticket_action.getAction_status());
+
             //
             return contentValues;
         }

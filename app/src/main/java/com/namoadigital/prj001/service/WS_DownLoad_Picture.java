@@ -402,7 +402,7 @@ public class WS_DownLoad_Picture extends IntentService {
         //
         for (HMAux hmAux : ticketActionImgList) {
             try {
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH_PHOTO)) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".png", Constant.CACHE_PATH_PHOTO)) {
 
                     ToolBox_Inf.deleteDownloadFileInf(hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH_PHOTO);
                     //
@@ -411,7 +411,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_PATH_PHOTO);
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase(), ".png", Constant.CACHE_PATH_PHOTO);
                     //
                     //Atualiza campo com url local
                     ticketActionDao.addUpdate(
@@ -420,7 +420,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             hmAux.get(TK_Ticket_ActionDao.TICKET_PREFIX),
                             hmAux.get(TK_Ticket_ActionDao.TICKET_CODE),
                             hmAux.get(TK_Ticket_ActionDao.TICKET_SEQ),
-                            hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".jpg"
+                            hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".png"
                         ).toSqlQuery().toLowerCase()
                     );
 
@@ -432,7 +432,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             hmAux.get(TK_Ticket_ActionDao.TICKET_PREFIX),
                             hmAux.get(TK_Ticket_ActionDao.TICKET_CODE),
                             hmAux.get(TK_Ticket_ActionDao.TICKET_SEQ),
-                            hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".jpg"
+                            hmAux.get(TK_Ticket_Action_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".png"
                         ).toSqlQuery().toLowerCase()
                     );
                 }
