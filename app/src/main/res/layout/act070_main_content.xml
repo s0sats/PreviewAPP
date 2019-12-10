@@ -284,20 +284,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_done_info_val"
                     app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
-                    app:layout_constraintTop_toBottomOf="@id/act070_tv_checkin_info_lbl"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_done_info_val"
                     tools:text="Done" />
 
                 <ImageView
                     android:id="@+id/act070_iv_checkin_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_done_info_val"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_checkin_info_val"
                     app:srcCompat="@drawable/ic_cancelar_ns_states" />
 
                 <TextView
@@ -306,8 +305,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_checkin_info_val"
                     app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_checkin_info_val"
                     tools:text="Check-In:" />
 
                 <TextView
@@ -315,7 +315,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    app:layout_constraintBottom_toBottomOf="@id/act070_tv_checkin_info_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/act070_tv_checkin_info_lbl"
@@ -327,11 +326,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/act070_tv_done_info_lbl"
-                    app:layout_constraintTop_toTopOf="@id/act070_tv_done_info_lbl"
+                    app:layout_constraintTop_toBottomOf="@+id/act070_tv_checkin_info_val"
                     tools:text="22/01/2019 19:36 (Luche)" />
 
                 <android.support.constraint.Group
