@@ -12,13 +12,15 @@ public class Sql_Act005_009 implements Specification{
 
     public Sql_Act005_009(long customer_code, boolean statusProcess, boolean statusPending, boolean statusWaitingSync, boolean statusDone, boolean statusSyncRequired, boolean statusUpdateRequired) {
         this.customer_code = customer_code;
-        status_filtered = "   and s.ticket_status in (";
-        status_filtered += statusPending ? "'"+ ConstantBaseApp.SYS_STATUS_PENDING +"', ":"";
-        status_filtered += statusProcess ? "'"+ConstantBaseApp.SYS_STATUS_PROCESS +"', ":"";
-        status_filtered += statusWaitingSync ? "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"', ":"";
-        status_filtered += statusDone ? "'"+ConstantBaseApp.SYS_STATUS_DONE +"', ":"";
-        status_filtered = status_filtered.substring(0,status_filtered.length() - ", ".length());
-        status_filtered = status_filtered + " )";
+        if(statusPending || statusProcess || statusWaitingSync || statusDone) {
+            status_filtered = "\n   and s.ticket_status in (";
+            status_filtered += statusPending ? "'" + ConstantBaseApp.SYS_STATUS_PENDING + "', " : "";
+            status_filtered += statusProcess ? "'" + ConstantBaseApp.SYS_STATUS_PROCESS + "', " : "";
+            status_filtered += statusWaitingSync ? "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', " : "";
+            status_filtered += statusDone ? "'" + ConstantBaseApp.SYS_STATUS_DONE + "', " : "";
+            status_filtered = status_filtered.substring(0, status_filtered.length() - ", ".length());
+            status_filtered = status_filtered + " )";
+        }
         if(statusSyncRequired){
             status_filtered = "\n and s.sync_required = 1";
         }
