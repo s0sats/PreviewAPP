@@ -15,10 +15,13 @@ public class TK_Ticket_Action {
     private int ticket_seq;//pk
     @Nullable
     //Max 500
+    @Expose
     private String action_comments;
     @Nullable
+    @Expose
     private String action_photo;
     @Nullable
+    @Expose
     private String action_photo_local;
 
     public TK_Ticket_Action() {

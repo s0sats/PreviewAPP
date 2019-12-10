@@ -2,29 +2,48 @@ package com.namoadigital.prj001.ui.act071;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     private Context context;
     private Act071_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
+    private TK_TicketDao ticketDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_PartnerDao mdPartnerDao;
 
@@ -32,6 +51,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        //
+        this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
         //
         this.ticketCtrlDao = new TK_Ticket_CtrlDao(
             context,
@@ -149,6 +174,205 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
     }
     //
+
+
+    @Override
+    public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
+        DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
+        if(!daoObjReturn.hasError()) {
+            ticketDao.addUpdate(
+                new TK_Ticket_Sql_005(
+                    mTicketCtrl.getCustomer_code(),
+                    mTicketCtrl.getTicket_prefix(),
+                    mTicketCtrl.getTicket_code(),
+                    1
+                ).toSqlQuery()
+            );
+            //
+            if( mTicketCtrl.getAction().getAction_photo_local() != null
+                && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
+            ) {
+                uploadActionImage(mTicketCtrl);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void uploadActionImage(TK_Ticket_Ctrl mTicketCtrl) {
+        GE_FileDao geFileDao = new GE_FileDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicketCtrl.getAction().getAction_photo_local());
+        if (sFile.exists()) {
+            GE_File geFile = new GE_File();
+            geFile.setFile_code(mTicketCtrl.getAction().getAction_photo_local().replace(".png", "").replace(".jpg", ""));
+            geFile.setFile_path(mTicketCtrl.getAction().getAction_photo_local());
+            geFile.setFile_status("OPENED");
+            geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            geFileDao.addUpdate(geFile);
+            //
+            startUploadImg();
+        }
+    }
+
+    private void startUploadImg() {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void execTicketSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_ticket_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
+            Bundle bundle = new Bundle();
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                hmAux_Trans.get("alert_offline_save_ttl"),
+                hmAux_Trans.get("alert_offline_save_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mView.postTicketSave();
+                    }
+                }
+            );
+        }
+    }
+
+    @Override
+    public void processSaveReturn(int mPrefix, int mCode, String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        //
+        if (jsonRet != null && !jsonRet.isEmpty()) {
+            try {
+                checkinReturns = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
+                    }.getType());
+
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+            //
+            if (checkinReturns != null && checkinReturns.size() > 0) {
+                boolean ticketResult = true;
+                int ticketNextIdx = 0;
+                HMAux auxResult = new HMAux();
+                //
+                for (WS_TK_Ticket_Save.TicketSaveActReturn actReturn : checkinReturns) {
+                    String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                    //
+                    if (!auxResult.containsKey(ticketCode)
+                        || (auxResult.containsKey(ticketCode)
+                        && !actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK))
+                    ) {
+                        //Se erro, verifica se erro de processamento qual erro foi e pega msg
+                        auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
+                    }
+                }
+                //For no resumido por ticket montando msg a ser exibida
+                for (Map.Entry<String, String> item : auxResult.entrySet()) {
+                    String ticketPk = mPrefix + "." + mCode;
+                    HMAux hmAux = new HMAux();
+                    //
+                    //Monta HmAux
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("ticket_lbl"));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.getValue());
+                    //
+                    if (item.getKey().equals(ticketPk)) {
+                        ticketResult = item.getValue().equals(ConstantBaseApp.MAIN_RESULT_OK);
+                        resultList.add(ticketNextIdx, hmAux);
+                        ticketNextIdx++;
+                    } else {
+                        resultList.add(hmAux);
+                    }
+                }
+                //
+                mView.showResult(resultList, ticketResult);
+            } else {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_none_ticket_returned_ttl"),
+                    hmAux_Trans.get("alert_none_ticket_returned_msg"),
+                    null
+                );
+            }
+        } else {
+            mView.showAlert(
+                hmAux_Trans.get("alert_none_ticket_returned_ttl"),
+                hmAux_Trans.get("alert_none_ticket_returned_msg"),
+                null
+            );
+        }
+    }
+
+    private String getResultMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
+        if (actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+            return actReturn.getRetStatus();
+        } else {
+            return actReturn.isProcessError() ? actReturn.getProcessStatus() + "\n" + actReturn.getProcessMsg() : actReturn.getRetStatus() + "\n" + actReturn.getRetMsg();
+        }
+    }
+
+    @Override
+    public void definePostTicketSaveFlow(int ticket_prefix, int ticket_code) {
+        TK_Ticket tkTicket = ticketDao.getByString(
+            new TK_Ticket_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+        //
+        if(tkTicket != null && tkTicket.getCustomer_code() > 0){
+            if( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
+                || hasActionNotExec(tkTicket)
+            ){
+                mView.callAct069();
+            }else{
+                mView.callAct070();
+            }
+        }
+    }
+
+    /**
+     * Varre os controles em busca de algum que ainda esteja pendente de execução.
+     * @param tkTicket - Ticket pai do controle/action
+     * @return - Verdadeiro se encontrar ao menos uma acão pendente de execução.
+     */
+    private boolean hasActionNotExec(TK_Ticket tkTicket) {
+        //
+        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
+            if(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
+    //
     @Override
     public void onBackPressedClicked(String requestingAct) {
         switch (requestingAct){
@@ -157,26 +381,29 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 break;
             case ConstantBaseApp.ACT070:
             default:
-                //TODO codigo tmp para validação de fluxo de UI
-                ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_unsaved_data_will_be_lost_ttl"),
-                    hmAux_Trans.get("alert_unsaved_data_will_be_lost_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            TK_Ticket_Action action = mView.getAction();
-                            //
-                            if(action.getAction_photo_local() == null && newActionPhotoExists(action)){
-                                deleteNewActionPhoto(action);
+                if(mView.hasUnsavedData()){
+                    //TODO codigo tmp para validação de fluxo de UI
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_unsaved_data_will_be_lost_ttl"),
+                        hmAux_Trans.get("alert_unsaved_data_will_be_lost_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                TK_Ticket_Action action = mView.getAction();
+                                //
+                                if(action.getAction_photo_local() == null && newActionPhotoExists(action)){
+                                    deleteNewActionPhoto(action);
+                                }
+                                //
+                                mView.callAct070();
                             }
-                            //
-                            mView.callAct070();
-                        }
-                    },
-                    1
-                );
-
+                        },
+                        1
+                    );
+                }else{
+                    mView.callAct070();
+                }
                 break;
         }
     }

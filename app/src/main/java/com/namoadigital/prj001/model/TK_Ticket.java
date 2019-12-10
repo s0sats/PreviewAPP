@@ -64,13 +64,17 @@ public class TK_Ticket {
     private String close_user_name;
     private Integer duration_minutes;
     private Integer barcode_code;
+    @Expose
     @Nullable
-    private String checkin_date;
     private Integer checkin_user;
+    @Expose
+    private String checkin_date;
+    @Expose
     @Nullable
     private String checkin_user_name;
     private int sync_required;
     private int update_required;
+    @Expose
     private String token;
     @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();

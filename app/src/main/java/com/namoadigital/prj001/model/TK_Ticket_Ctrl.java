@@ -45,6 +45,7 @@ public class TK_Ticket_Ctrl {
     private String partner_id;
     @Nullable
     private String partner_desc;
+    @Expose
     private TK_Ticket_Action action;
 
     public TK_Ticket_Ctrl() {

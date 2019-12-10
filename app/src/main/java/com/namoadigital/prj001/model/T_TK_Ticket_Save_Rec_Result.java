@@ -1,16 +1,16 @@
 package com.namoadigital.prj001.model;
 
 /**
- * Created by d.luche on 06/12/2019.
+ * Created by d.luche on 09/12/2019.
  */
 
-public class T_TK_Ticket_WS_Return {
+public class T_TK_Ticket_Save_Rec_Result {
     private int customer_code;
     private int ticket_prefix;
     private int ticket_code;
-    private Integer scn;
+    private int scn;
     private String ret_status;
-    private String error_msg;
+    private String ret_msg;
     private TK_Ticket ticket;
 
     public int getCustomer_code() {
@@ -37,11 +37,11 @@ public class T_TK_Ticket_WS_Return {
         this.ticket_code = ticket_code;
     }
 
-    public Integer getScn() {
+    public int getScn() {
         return scn;
     }
 
-    public void setScn(Integer scn) {
+    public void setScn(int scn) {
         this.scn = scn;
     }
 
@@ -53,12 +53,12 @@ public class T_TK_Ticket_WS_Return {
         this.ret_status = ret_status;
     }
 
-    public String getError_msg() {
-        return error_msg;
+    public String getRet_msg() {
+        return ret_msg;
     }
 
-    public void setError_msg(String error_msg) {
-        this.error_msg = error_msg;
+    public void setRet_msg(String ret_msg) {
+        this.ret_msg = ret_msg;
     }
 
     public TK_Ticket getTicket() {

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act071;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,13 +9,15 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.Group;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -23,10 +27,13 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -69,6 +76,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private View.OnClickListener execClickListener;
     private View.OnClickListener photoClickListener;
     private String actionPhotoLocalPath ="";
+    private String wsProcess ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +93,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         iniUIFooter();
         //
         initAction();
-
     }
 
     private void iniSetup() {
@@ -112,6 +119,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_action_parameter_error_msg");
         transList.add("alert_unsaved_data_will_be_lost_ttl");
         transList.add("alert_unsaved_data_will_be_lost_msg");
+        //
+        transList.add("alert_ticket_ttl");
+        transList.add("alert_ticket_save_ttl");
+        transList.add("alert_ticket_save_success_msg");
+        transList.add("dialog_ticket_save_ttl");
+        transList.add("dialog_ticket_save_start");
+        transList.add("alert_offline_save_ttl");
+        transList.add("alert_offline_save_msg");
+        transList.add("ticket_lbl");
+        transList.add("alert_none_ticket_returned_ttl");
+        transList.add("alert_none_ticket_returned_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -227,10 +245,135 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             execClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context,"Executar",Toast.LENGTH_LONG).show();
+                    ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_finalize_action_ttl"),
+                        hmAux_Trans.get("alert_finalize_action_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                setDataToObj();
+                                if(mPresenter.updateTicketAction(mTicketCtrl)){
+                                    mPresenter.execTicketSave();
+                                }
+                            }
+                        },
+                        1
+                    );
+
+
                 }
             };
         }
+    }
+
+    private void setDataToObj() {
+        mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        mTicketCtrl.setCtrl_end_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+        mTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+        mTicketCtrl.getAction().setAction_comments(
+            mketComments.getText().toString()
+        );
+        //
+        if(mPresenter.newActionPhotoExists(mTicketCtrl.getAction())) {
+            mTicketCtrl.getAction().setAction_photo_local(actionPhotoLocalPath);
+        }
+        //
+        mTicketCtrl.setCtrl_end_date(
+            ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+        );
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg, DialogInterface.OnClickListener onClickListener) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            onClickListener,
+            0
+        );
+    }
+
+    @Override
+    public void showResult(ArrayList<HMAux> resultList, final boolean ticketResult) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+        //trad
+        tv_title.setText(hmAux_Trans.get("alert_ticket_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        lv_results.setAdapter(
+            new Generic_Results_Adapter(
+                context,
+                resultList,
+                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                hmAux_Trans
+            )
+        );
+        //
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                if(ticketResult){
+                    mPresenter.definePostTicketSaveFlow(
+                        mTicketCtrl.getTicket_prefix(),
+                        mTicketCtrl.getTicket_code()
+                    );
+                }else{
+                    updateActionData();
+                }
+                //
+                show.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void postTicketSave() {
+        updateActionData();
+        //
+        showAlert(
+            hmAux_Trans.get("alert_ticket_save_ttl"),
+            hmAux_Trans.get("alert_ticket_save_success_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //updateActionData();
+                    mPresenter.definePostTicketSaveFlow(
+                        mTicketCtrl.getTicket_prefix(),
+                        mTicketCtrl.getTicket_code()
+                    );
+                }
+            }
+        );
     }
 
     private void applyReadOnlyInPhoto() {
@@ -264,6 +407,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
         definePartner();
         mketComments.setText(mTicketCtrl.getAction().getAction_comments());
+        mketComments.setTag(mTicketCtrl.getAction().getAction_comments());
         defineActionPhoto();
         defineDoneInfo();
 
@@ -344,19 +488,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     }
 
-    @Override
-    public void callAct070() {
-        Intent intent = new Intent(context, Act070_Main.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ);
-        requestingBundle.remove(TK_TicketDao.TICKET_ID);
-        requestingBundle.remove(TK_TicketDao.TYPE_PATH);
-        requestingBundle.remove(TK_TicketDao.TYPE_DESC);
-        intent.putExtras(requestingBundle);
-        startActivity(intent);
-        finish();
-    }
-
     private void initAction() {
         ivActionPhoto.setOnClickListener(photoClickListener);
         //
@@ -418,6 +549,16 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         context.startActivity(mIntent);
     }
 
+    @Override
+    public boolean hasUnsavedData() {
+        if( mketComments.getText().toString().equalsIgnoreCase(String.valueOf(mketComments.getTag()))
+            //aqui deve vir a diferenciação da img
+        ){
+            return true;
+        }
+        return false;
+    }
+
     //region UiFooter
     private void iniUIFooter() {
         iniFooter();
@@ -440,6 +581,80 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
+    }
+    //endregion
+
+    @Override
+    public void callAct069() {
+        Intent intent = new Intent(context, Act069_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct070() {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ);
+        requestingBundle.remove(TK_TicketDao.TICKET_ID);
+        requestingBundle.remove(TK_TicketDao.TYPE_PATH);
+        requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    //region WS Callbacks
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        //super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())){
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), mLink);
+        }
+        //
+        progressDialog.dismiss();
+    }
+
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
     }
     //endregion
 

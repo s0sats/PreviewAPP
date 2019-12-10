@@ -13,37 +13,40 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Obj_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_WS_Return;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WS_TK_Ticket_Checkin extends IntentService {
 
     public static final String WS_PARAM_TICKET_CHECKIN_LIST = "WS_TICKET_CHECKIN_LIST";
-    public static final String ERROR_MSG_TICKET_NOT_FOUND ="TICKET_NOT_FOUND";
+    public static final String ERROR_MSG_TICKET_NOT_FOUND = "TICKET_NOT_FOUND";
     public static final String ERROR_MSG_INVALID_PARAMETER = "INVALID_PARAMETER";
     public static final String ERROR_MSG_INVALID_STATUS_TO_CHECKIN = "INVALID_STATUS_TO_CHECKIN";
-    public static final String ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN ="INVALID_STATUS_TO_CANCEL_CHECKIN";
+    public static final String ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN = "INVALID_STATUS_TO_CANCEL_CHECKIN";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_tk_ticket_download";
+    private String mResource_Name = "ws_tk_ticket_checkin";
     private Gson gson;
     private ArrayList<T_TK_Ticket_Checkin_Obj_Env> ticketsToCheckin;
 
-    public WS_TK_Ticket_Checkin() { super("WS_TK_Ticket_Download");}
+    public WS_TK_Ticket_Checkin() {
+        super("WS_TK_Ticket_Checkin");
+    }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
@@ -84,8 +87,6 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
         env.setTicket(ticketPkList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
-        //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_CHECKIN,
             gson.toJson(env)
@@ -115,22 +116,22 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
         processTicketCheckinReturn(rec);
 
     }
 
     private void processTicketCheckinReturn(T_TK_Ticket_Checkin_Rec rec) {
-        if( ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
-            ||ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())
-        ){
-            if(rec.getTicket() != null && rec.getTicket().size() > 0) {
+        if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
+            || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())
+        ) {
+            if (rec.getTicket() != null && rec.getTicket().size() > 0) {
                 ArrayList<TicketCheckinActReturn> actReturns = new ArrayList<>();
                 //
                 for (T_TK_Ticket_WS_Return ticketReturn : rec.getTicket()) {
                     TicketCheckinActReturn actReturn = getActReturn(ticketReturn);
-                    updateTicketReturned(ticketReturn,actReturn);
+                    updateTicketReturned(ticketReturn, actReturn);
                     actReturns.add(actReturn);
                 }
                 //
@@ -141,21 +142,21 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                     new HMAux(),
                     gson.toJson(actReturns),
                     "0");
-            }else{
+            } else {
                 ToolBox.sendBCStatus(
                     getApplicationContext(),
                     "ERROR_1",
-                    hmAux_Trans.get("no_ticket_date_returned_msg"),
+                    hmAux_Trans.get("msg_no_ticket_data_returned"),
                     new HMAux(),
                     "",
                     "0");
             }
-        }else{
+        } else {
             //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
             ToolBox.sendBCStatus(
                 getApplicationContext(),
                 "ERROR_1",
-                hmAux_Trans.get("ticket_checkin_error_msg") + rec.getSave(),
+                hmAux_Trans.get("msg_ticket_checkin_error") + rec.getSave(),
                 new HMAux(),
                 "",
                 "0");
@@ -179,11 +180,11 @@ public class WS_TK_Ticket_Checkin extends IntentService {
 
     private int getCheckinAction(T_TK_Ticket_WS_Return ticketReturn) {
         for (T_TK_Ticket_Checkin_Obj_Env checkinObjEnv : ticketsToCheckin) {
-            if(
+            if (
                 checkinObjEnv.getCustomer_code() == ticketReturn.getCustomer_code()
-                && checkinObjEnv.getTicket_prefix() == ticketReturn.getTicket_prefix()
-                && checkinObjEnv.getTicket_code() == ticketReturn.getTicket_code()
-            ){
+                    && checkinObjEnv.getTicket_prefix() == ticketReturn.getTicket_prefix()
+                    && checkinObjEnv.getTicket_code() == ticketReturn.getTicket_code()
+            ) {
                 return checkinObjEnv.getCheckin();
             }
         }
@@ -197,79 +198,104 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
             Constant.DB_VERSION_CUSTOM
         );
-        //
-        TK_Ticket tkTicket = ticketDao.getByString(
-            new TK_Ticket_Sql_001(
-                ticketReturn.getCustomer_code(),
-                ticketReturn.getTicket_prefix(),
-                ticketReturn.getTicket_code()
-            ).toSqlQuery()
-        );
-        //
-        if(tkTicket != null){
-            if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(ticketReturn.getRet_status())) {
-                tkTicket.setScn(ticketReturn.getScn());
-                tkTicket.setUpdate_required(0);
-                //tkTicket.setToken(null);
-                if(actReturn.checkinAction == 1){
-                    tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS );
-                }else{
-                    tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
-                    tkTicket.setCheckin_user_name(null);
-                    tkTicket.setCheckin_user(null);
-                    tkTicket.setCheckin_date(null);
-                }
-                //
+        if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(ticketReturn.getRet_status())) {
+            if(ticketReturn.getTicket() != null){
+                TK_Ticket tkTicket = ticketReturn.getTicket();
+                updateLocalImagesPath(tkTicket);
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                 //oq fazer no erro?
-                if(daoObjReturn.hasError()){
+                if (daoObjReturn.hasError()) {
                     actReturn.processError = true;
                     actReturn.processStatus = ConstantBaseApp.SYS_STATUS_ERROR;
-                    actReturn.processMsg = hmAux_Trans.get("error_on_update_ticket_msg");
+                    actReturn.processMsg = hmAux_Trans.get("msg_error_on_update_ticket");
                 }
             }
-            //ELSE DEVERIA SER ERRO, SE HOUVER OUTRO STATUS DEFINIR COMO TRATAR.
-            else{
-                //Seta tradução da msg de error
-                actReturn.retMsg = hmAux_Trans.get(ticketReturn.getError_msg());
-                //
-                switch (ticketReturn.getError_msg()){
-                    case ERROR_MSG_TICKET_NOT_FOUND:
-                        actReturn.retMsg = hmAux_Trans.get(ERROR_MSG_TICKET_NOT_FOUND);
-                        break;
-                    case ERROR_MSG_INVALID_STATUS_TO_CHECKIN:
-                    case ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN:
-                        tkTicket.setScn(ticketReturn.getScn());
-                        tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-                        //tkTicket.setToken(null);
-                        tkTicket.setUpdate_required(0);
-                        DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+        }
+        //ELSE DEVERIA SER ERRO, SE HOUVER OUTRO STATUS DEFINIR COMO TRATAR.
+        else {
+            //Seta tradução da msg de error
+            //actReturn.retMsg = hmAux_Trans.get(ticketReturn.getError_msg());
+            actReturn.retMsg = ticketReturn.getError_msg();
+            //
+            switch (ticketReturn.getError_msg()) {
+                case ERROR_MSG_TICKET_NOT_FOUND:
+                    break;
+                case ERROR_MSG_INVALID_STATUS_TO_CHECKIN:
+                case ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN:
+                    TK_Ticket tkTicket = ticketReturn.getTicket();
+                    if(ticketReturn.getTicket() != null){
+                        updateLocalImagesPath(tkTicket);
+                    }else{
+                        tkTicket = ticketDao.getByString(
+                            new TK_Ticket_Sql_001(
+                                ticketReturn.getCustomer_code(),
+                                ticketReturn.getTicket_prefix(),
+                                ticketReturn.getTicket_code()
+                            ).toSqlQuery()
+                        );
                         //
-                        if(!daoObjReturn.hasError()){
-                            //Seta syncronismo como necessario
-                            ticketDao.addUpdate(
-                                new TK_Ticket_Sql_004(
-                                    tkTicket.getCustomer_code(),
-                                    tkTicket.getTicket_prefix(),
-                                    tkTicket.getTicket_code(),
-                                    1
-                                ).toSqlQuery()
-                            );
-
-                        }else{
+                        if(tkTicket != null) {
+                            //Desfaz a ação feita
+                            if(actReturn.checkinAction == 1){
+                                tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
+                                tkTicket.setCheckin_user_name(null);
+                                tkTicket.setCheckin_user(null);
+                                tkTicket.setCheckin_date(null);
+                            }else{
+                                tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS );
+                            }
+                            tkTicket.setToken(null);
+                            tkTicket.setUpdate_required(0);
+                        } else{
                             actReturn.processError = true;
                             actReturn.processStatus = ConstantBaseApp.SYS_STATUS_ERROR;
-                            actReturn.processMsg = hmAux_Trans.get("error_on_update_ticket_msg");
+                            actReturn.processMsg = hmAux_Trans.get("msg_error_on_update_ticket");
                         }
-
-                        break;
-                }
+                    }
+                    //
+                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+                    //
+                    if (daoObjReturn.hasError()) {
+                        actReturn.processError = true;
+                        actReturn.processStatus = ConstantBaseApp.SYS_STATUS_ERROR;
+                        actReturn.processMsg = hmAux_Trans.get("msg_error_on_update_ticket");
+                    }
+                    break;
             }
-        }else{
-            actReturn.processError = true;
-            actReturn.processStatus = ConstantBaseApp.SYS_STATUS_ERROR;
-            actReturn.processMsg = hmAux_Trans.get("error_ticket_not_found_msg");
         }
+    }
+
+    private void updateLocalImagesPath(TK_Ticket tkTicket) {
+        tkTicket.setOpen_photo_local(
+            getLocalPath(
+                buildTicketImgPath(tkTicket)
+            )
+        );
+        //
+        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
+            ctrl.getAction().setAction_photo_local(
+                getLocalPath(
+                    buildTicketActionImgPath(ctrl)
+                )
+            );
+        }
+    }
+
+    private String getLocalPath(String imgLocalPath) {
+        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
+        File file = new File(localPath);
+        if (file.exists()) {
+            return imgLocalPath;
+        }
+        return null;
+    }
+
+    private String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
+        return "t_"+ctrl.getCustomer_code()+"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".jpg";
+    }
+
+    private String buildTicketImgPath(TK_Ticket tkTicket) {
+        return "t_"+tkTicket.getCustomer_code()+"_"+tkTicket.getTicket_prefix()+"_"+tkTicket.getTicket_code()+ ".jpg";
     }
 
     private void loadTranslation() {
@@ -278,8 +304,10 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
-        translist.add("error_on_update_ticket_msg");
-        translist.add("error_ticket_not_found_msg");
+        translist.add("msg_error_on_update_ticket");
+        translist.add("msg_ticket_checkin_error");
+        translist.add("msg_no_ticket_data_returned");
+        translist.add("generic_processing_data");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

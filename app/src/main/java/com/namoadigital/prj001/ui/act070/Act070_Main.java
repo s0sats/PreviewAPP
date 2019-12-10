@@ -742,30 +742,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         builder.create().show();
     }
 
-    //region WS Callbacks
-
-    @Override
-    protected void processCloseACT(String mLink, String mRequired) {
-        //super.processCloseACT(mLink, mRequired);
-        processCloseACT(mLink, mRequired, new HMAux());
-    }
-
-    @Override
-    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
-        super.processCloseACT(mLink, mRequired);
-        //
-        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Checkin.class.getName())) {
-            wsProcess = "";
-            //
-            mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
-        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())){
-            wsProcess = "";
-            //
-            refreshUi();
-        }
-        //
-        progressDialog.dismiss();
-    }
 
     @Override
     public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {
@@ -816,7 +792,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             ){
                 //
                 if(mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
-                   updateSyncRequiredByFCM();
+                    updateSyncRequiredByFCM();
                 }
             }
         }
@@ -830,6 +806,31 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         super.onDestroy();
 
     }
+
+    //region WS Callbacks
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        //super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Checkin.class.getName())) {
+            wsProcess = "";
+            //
+            mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())){
+            wsProcess = "";
+            //
+            refreshUi();
+        }
+        //
+        progressDialog.dismiss();
+    }
+
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
