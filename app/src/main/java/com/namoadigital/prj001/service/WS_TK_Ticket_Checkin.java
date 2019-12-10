@@ -201,6 +201,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(ticketReturn.getRet_status())) {
             if(ticketReturn.getTicket() != null){
                 TK_Ticket tkTicket = ticketReturn.getTicket();
+                tkTicket.setPK();
                 updateLocalImagesPath(tkTicket);
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                 //oq fazer no erro?
@@ -224,6 +225,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                 case ERROR_MSG_INVALID_STATUS_TO_CANCEL_CHECKIN:
                     TK_Ticket tkTicket = ticketReturn.getTicket();
                     if(ticketReturn.getTicket() != null){
+                        tkTicket.setPK();
                         updateLocalImagesPath(tkTicket);
                     }else{
                         tkTicket = ticketDao.getByString(

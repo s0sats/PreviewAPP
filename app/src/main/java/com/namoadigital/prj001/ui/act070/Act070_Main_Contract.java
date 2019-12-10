@@ -55,6 +55,8 @@ public interface Act070_Main_Contract {
 
         void processCheckinReturn(int mPrefix, int mCode, String jsonRet);
 
+        void processSaveReturn(int mPrefix, int mCode, String jsonRet);
+
         boolean setCheckInData(TK_Ticket tkTicket);
 
         boolean hideCancelCheckin(TK_Ticket mTicket);

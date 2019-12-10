@@ -22,8 +22,10 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Obj_Env;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Action_V;
@@ -265,24 +267,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private void executeTicketSaveProcess() {
-        /*if (ToolBox_Con.isOnline(context)) {
-            mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("dialog_download_ticket_ttl"),
-                hmAux_Trans.get("dialog_download_ticket_start")
+                hmAux_Trans.get("dialog_ticket_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_save_start")
             );
             //
-            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
             Bundle bundle = new Bundle();
-            //bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketSyncPkFormat(ticket_prefix, ticket_code));
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
-        }*/
+        }
     }
 
     @Override
@@ -347,6 +347,73 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         checkIns.add(checkInAux);
         //
         return checkIns;
+    }
+
+    @Override
+    public void processSaveReturn(int mPrefix, int mCode, String jsonRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        //
+        if (jsonRet != null && !jsonRet.isEmpty()) {
+            try {
+                checkinReturns = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
+                    }.getType());
+
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+            //
+            if (checkinReturns != null && checkinReturns.size() > 0) {
+                boolean ticketResult = true;
+                int ticketNextIdx = 0;
+                HMAux auxResult = new HMAux();
+                //
+                for (WS_TK_Ticket_Save.TicketSaveActReturn actReturn : checkinReturns) {
+                    String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                    //
+                    if (!auxResult.containsKey(ticketCode)
+                        || (auxResult.containsKey(ticketCode)
+                        && !actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK))
+                    ) {
+                        //Se erro, verifica se erro de processamento qual erro foi e pega msg
+                        auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));
+                    }
+                }
+                //For no resumido por ticket montando msg a ser exibida
+                for (Map.Entry<String, String> item : auxResult.entrySet()) {
+                    String ticketPk = mPrefix + "." + mCode;
+                    HMAux hmAux = new HMAux();
+                    //
+                    //Monta HmAux
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("ticket_lbl"));
+                    hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, item.getKey());
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.getValue());
+                    //
+                    if (item.getKey().equals(ticketPk)) {
+                        ticketResult = item.getValue().equals(ConstantBaseApp.MAIN_RESULT_OK);
+                        resultList.add(ticketNextIdx, hmAux);
+                        ticketNextIdx++;
+                    } else {
+                        resultList.add(hmAux);
+                    }
+                }
+                //
+                mView.showResult(resultList, ticketResult);
+            } else {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_none_ticket_returned_ttl"),
+                    hmAux_Trans.get("alert_none_ticket_returned_msg")
+                );
+            }
+        } else {
+            mView.showAlert(
+                hmAux_Trans.get("alert_none_ticket_returned_ttl"),
+                hmAux_Trans.get("alert_none_ticket_returned_msg")
+            );
+        }
     }
 
     @Override
@@ -443,6 +510,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    private String getResultSaveMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
+        if (actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+            return actReturn.getRetStatus();
+        } else {
+            return actReturn.isProcessError() ? actReturn.getProcessStatus() + "\n" + actReturn.getProcessMsg() : actReturn.getRetStatus() + "\n" + actReturn.getRetMsg();
+        }
+    }
     @Override
     public boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code) {
         TK_Ticket aux = getTicketObj(ticket_prefix, ticket_code);

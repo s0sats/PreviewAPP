@@ -72,6 +72,7 @@ public class TK_Ticket {
     @Expose
     @Nullable
     private String checkin_user_name;
+    private int checkin_required;
     private int sync_required;
     private int update_required;
     @Expose
@@ -424,6 +425,14 @@ public class TK_Ticket {
 
     public void setCtrl(ArrayList<TK_Ticket_Ctrl> ctrl) {
         this.ctrl = ctrl;
+    }
+
+    public int getCheckin_required() {
+        return checkin_required;
+    }
+
+    public void setCheckin_required(int checkin_required) {
+        this.checkin_required = checkin_required;
     }
 
     public int getSync_required() {

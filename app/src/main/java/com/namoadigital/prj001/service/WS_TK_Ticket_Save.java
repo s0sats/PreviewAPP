@@ -213,6 +213,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 for (T_TK_Ticket_Save_Rec_Result retResult : rec.getResult()) {
                     TicketSaveActReturn actReturn = getActReturn(retResult);
                     processTicketRet(retResult.getTicket(),actReturn);
+                    actReturnList.add(actReturn);
                 }
                 //
                 if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
@@ -247,7 +248,11 @@ public class WS_TK_Ticket_Save extends IntentService {
 
     private void processTicketRet(TK_Ticket retTicket, TicketSaveActReturn actReturn) throws Exception {
         if(retTicket != null){
+            //Seta PKs nos objs filhos
+            retTicket.setPK();
+            //Verifica se imagens já foram baixadas e atualiza campo com o local_path
             updateLocalImagesPath(retTicket);
+            //Salva obj
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(retTicket);
             if(daoObjReturn.hasError()){
                 throw new Exception(daoObjReturn.getErrorMsg());

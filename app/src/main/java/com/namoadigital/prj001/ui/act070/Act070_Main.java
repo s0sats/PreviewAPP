@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act070;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,13 +41,14 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
@@ -354,7 +357,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if(mTicket != null){
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if(mTicket.getSync_required() == 1 || mTicket.getUpdate_required() == 1){
+            if(mTicket.getUpdate_required() == 1 || mTicket.getCheckin_required() == 1 || mTicket.getSync_required() == 1){
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                 background = getResources().getDrawable(R.drawable.stroke_yellow_states);
@@ -421,6 +424,15 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             layoutParams.height = 250;
             //
             ivOpenPhoto.setLayoutParams(layoutParams);
+        }else{
+            ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
+            //
+            int[] percentMetrics = getPercentageWidthAndHeight(context,0.8,0.3);
+            layoutParams.width = percentMetrics[0];
+            layoutParams.height = percentMetrics[1];
+            //
+            ivOpenPhoto.setLayoutParams(layoutParams);
+            //ivOpenPhoto.requestLayout();
         }
         //
         if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
@@ -443,6 +455,26 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 ivOpenPhoto.setImageBitmap(bitmap);
             }
         }
+    }
+
+    /**
+     *
+     * MOVER METODOS PARA O TOOLBOX?
+     */
+    private int[] getPercentageWidthAndHeight(Context context, double wPercent, double hPercent) {
+        int[] percentMetrics = getScreenMetrics(context);
+        percentMetrics[0] = (int) (percentMetrics[0] * wPercent);
+        percentMetrics[1] = (int) (percentMetrics[1] * hPercent);
+        return percentMetrics;
+    }
+
+    public int[] getScreenMetrics(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int[] metrics = new int[2];
+        metrics[0] = displayMetrics.widthPixels;
+        metrics[1] = displayMetrics.heightPixels;
+        return metrics;
     }
 
     private void defineInnerCommentIcon() {
@@ -670,6 +702,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void resetCheckinInObj(boolean sqlAbort) {
+        mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
         mTicket.setUpdate_required(sqlAbort ? 0 : 1);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
@@ -677,6 +710,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void setCheckinToObj() {
+        mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicket.setUpdate_required(1);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
@@ -820,12 +854,15 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Checkin.class.getName())) {
             wsProcess = "";
-            //
             mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+
         }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())){
             wsProcess = "";
-            //
             refreshUi();
+
+        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())){
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
         }
         //
         progressDialog.dismiss();

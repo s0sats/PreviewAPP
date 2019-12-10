@@ -65,6 +65,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CHECKIN_DATE = "checkin_date";
     public static final String CHECKIN_USER = "checkin_user";
     public static final String CHECKIN_USER_NAME = "checkin_user_name";
+    public static final String CHECKIN_REQUIRED = "checkin_required";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String TOKEN = "token";
@@ -527,6 +528,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 tk_ticket.setCheckin_user_name(cursor.getString(cursor.getColumnIndex(CHECKIN_USER_NAME)));
             }
             //
+            tk_ticket.setCheckin_required(cursor.getInt(cursor.getColumnIndex(CHECKIN_REQUIRED)));
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER_NAME))) {
@@ -630,6 +632,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(CHECKIN_DATE, tk_ticket.getCheckin_date());
             contentValues.put(CHECKIN_USER, tk_ticket.getCheckin_user());
             contentValues.put(CHECKIN_USER_NAME, tk_ticket.getCheckin_user_name());
+            if (tk_ticket.getCheckin_required() > -1) {
+                contentValues.put(CHECKIN_REQUIRED, tk_ticket.getCheckin_required());
+            }
             /**
              * Atualizar somente via query update para evitar sobreposicao com o update do Ticket.
              * Atualiza com 0 quando Ticket Full e através do recebimento do GCM
