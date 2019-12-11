@@ -49,6 +49,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private FCMMessageDao fcmMessageDao;
     private SM_SODao soDao;
     private IO_MoveDao assetMoveDao;
+    private TK_TicketDao tk_ticketDao;
     private IO_Inbound_ItemDao assetInboundDao;
     private IO_Outbound_ItemDao assetOutboundDao;
     private GE_Custom_Form_ApDao customFormApDao;
@@ -257,6 +258,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qtySerial = "";
                 String qtyBadge2 = "";
                 String qtyAssets = "";
+                String qtyTicket = "";
 
 
                 //Reseta valores do badge cada vez que metodo for chamado
@@ -434,6 +436,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtySerial = "0";
                         }
                         qtyAssets = handleAssetsWaitingSync();
+                        qtyTicket = handleTicketsWaitingSync();
                         //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
@@ -443,6 +446,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
+                        menu.addInBadge1(qtyTicket);
 //                        qty = String.valueOf(
 //                                ToolBox_Inf.convertStringToInt(qty) +
 //                                        ToolBox_Inf.convertStringToInt(qtySO) +
@@ -589,6 +593,39 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus);
+    }
+
+    private String handleTicketsWaitingSync() {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getTicketWaitingSyncCount();
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    private String getTicketWaitingSyncCount() {
+
+        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
+                        new Sql_Act005_009(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                true
+                        )
+                ).toSqlQuery()
+        );
+        if(ticketUpdateReq != null
+        && ticketUpdateReq.hasConsistentValue(Sql_Act005_009.PENDING_QTY)){
+            return ticketUpdateReq.get(Sql_Act005_009.PENDING_QTY);
+        }
+        return "0";
+
     }
 
     private String handleAssetsWaitingSync() {
