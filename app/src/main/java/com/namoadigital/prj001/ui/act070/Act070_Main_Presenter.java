@@ -236,8 +236,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
             executeTicketSaveProcess();
-        }else if(checkCheckinRequiredNeeds(mTicket)){
-            executeCheckin(mTicket,true);
         }else{
             executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code());
         }
@@ -293,7 +291,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return
                 mTicket != null
                 && (mTicket.getUpdate_required() == 1
-                    || mTicket.getCheckin_required() == 1
                     || mTicket.getSync_required() == 1
                 );
     }
@@ -301,10 +298,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     public boolean checkUpdateRequiredNeeds(TK_Ticket mTicket) {
         return mTicket != null && mTicket.getUpdate_required() == 1;
-    }
-
-    private boolean checkCheckinRequiredNeeds(TK_Ticket mTicket) {
-        return mTicket != null && mTicket.getCheckin_required() == 1;
     }
 
     @Override
@@ -388,7 +381,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     //
                     if (!auxResult.containsKey(ticketCode)
                         || (auxResult.containsKey(ticketCode)
-                        && !actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK))
+                        &&  !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(actReturn.getRetStatus())
+                            )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
                         auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));

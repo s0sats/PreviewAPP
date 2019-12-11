@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_006;
 import com.namoadigital.prj001.util.Constant;
@@ -82,7 +83,7 @@ public class WS_TK_Ticket_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
-        //Lista arquivos de token de SO
+        //Lista arquivos de token de Ticket
         File[] files = checkTicketTokenToSend();
         //
         if (files != null && files.length > 0) {
@@ -121,6 +122,10 @@ public class WS_TK_Ticket_Save extends IntentService {
                 return;
             }
             //
+            //Set update required do banco para 0
+            for (TK_Ticket ticket : ticketToSend) {
+                ticket.setToken(token);
+            }
             //
             T_TK_Ticket_Save_Env env = new T_TK_Ticket_Save_Env();
             env.setApp_code(Constant.PRJ001_CODE);
@@ -212,8 +217,9 @@ public class WS_TK_Ticket_Save extends IntentService {
             if(rec.getResult() != null && rec.getResult().size() > 0){
                 for (T_TK_Ticket_Save_Rec_Result retResult : rec.getResult()) {
                     TicketSaveActReturn actReturn = getActReturn(retResult);
-                    processTicketRet(retResult.getTicket(),actReturn);
                     actReturnList.add(actReturn);
+                    //
+                    processTicketRet(retResult.getTicket(),actReturn);
                 }
                 //
                 if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
@@ -234,30 +240,55 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //VERIFICAR O QUYE FAZER NESSE CASO.
                 }
             }else{
-
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned_error"), "", "0");
             }
-
+        }else{
+            //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
+            ToolBox.sendBCStatus(
+                getApplicationContext(),
+                "ERROR_1",
+                hmAux_Trans.get("msg_data_returned_error") +":\n"+ rec.getSave(),
+                new HMAux(),
+                "",
+                "0");
         }
-
     }
 
     private void callFinishProcessing(String jsonActReturn) {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), jsonActReturn, "0");
-
     }
 
     private void processTicketRet(TK_Ticket retTicket, TicketSaveActReturn actReturn) throws Exception {
         if(retTicket != null){
-            //Seta PKs nos objs filhos
-            retTicket.setPK();
-            //Verifica se imagens já foram baixadas e atualiza campo com o local_path
-            updateLocalImagesPath(retTicket);
-            //Salva obj
-            DaoObjReturn daoObjReturn = ticketDao.addUpdate(retTicket);
-            if(daoObjReturn.hasError()){
-                throw new Exception(daoObjReturn.getErrorMsg());
+            //Só atualizará o obj ticket se não for processamento de token
+            //ou for processamento de token, mas o ticket nõ posusi mais dados a serem enviados
+            if(!reSend || noMoreUpdate(retTicket) ) {
+                //Seta PKs nos objs filhos
+                retTicket.setPK();
+                //Verifica se imagens já foram baixadas e atualiza campo com o local_path
+                updateLocalImagesPath(retTicket);
+                //Salva obj
+                DaoObjReturn daoObjReturn = ticketDao.addUpdate(retTicket);
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }//
+            }else{
+                //Remove dados do processamento da lista, pois haverá um segundo processamento pro mesmo item
+                actReturnList.remove(actReturn);
             }
         }
+    }
+
+    private boolean noMoreUpdate(TK_Ticket retTicket) {
+        TK_Ticket dbTicket = ticketDao.getByString(
+            new TK_Ticket_Sql_001(
+                retTicket.getCustomer_code(),
+                retTicket.getTicket_prefix(),
+                retTicket.getTicket_code()
+            ).toSqlQuery()
+        );
+        //
+        return dbTicket != null && dbTicket.getUpdate_required() == 0;
     }
 
     private void updateLocalImagesPath(TK_Ticket retTicket) {
@@ -335,8 +366,10 @@ public class WS_TK_Ticket_Save extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
-        translist.add("no_data_returned_msg");
-        translist.add("error_on_insert_ticket_msg");
+        translist.add("msg_error_on_insert_ticket");
+
+        translist.add("msg_no_data_returned_error");
+        translist.add("msg_data_returned_error");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),

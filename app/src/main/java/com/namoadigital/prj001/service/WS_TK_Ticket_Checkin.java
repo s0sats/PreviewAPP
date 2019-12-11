@@ -20,7 +20,6 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_WS_Return;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -66,7 +65,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             //
             ticketsToCheckin = (ArrayList<T_TK_Ticket_Checkin_Obj_Env>) bundle.getSerializable(WS_PARAM_TICKET_CHECKIN_LIST);
             //
-            processTicketDownload(ticketsToCheckin);
+            processTicketCheckin();
 
         } catch (Exception e) {
 
@@ -83,13 +82,13 @@ public class WS_TK_Ticket_Checkin extends IntentService {
 
     }
 
-    private void processTicketDownload(ArrayList<T_TK_Ticket_Checkin_Obj_Env> ticketPkList) throws Exception {
+    private void processTicketCheckin() throws Exception {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //Seleciona traduções
         loadTranslation();
         //
-        if(ticketPkList == null || ticketPkList.size() == 0) {
-            ticketsToCheckin = getTicketsToCheckin();
+        if(ticketsToCheckin == null || ticketsToCheckin.size() == 0){
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ticket_to_chekin"), "", "0");
         }
         //
         T_TK_Ticket_Checkin_Env env = new T_TK_Ticket_Checkin_Env();
@@ -98,7 +97,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
-        env.setTicket(ticketPkList);
+        env.setTicket(ticketsToCheckin);
         //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_CHECKIN,
@@ -133,37 +132,6 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         //
         processTicketCheckinReturn(rec);
 
-    }
-
-    private ArrayList<T_TK_Ticket_Checkin_Obj_Env> getTicketsToCheckin() {
-        ArrayList<TK_Ticket> ticketsToCheckin =
-            (ArrayList<TK_Ticket>) ticketDao.query(
-               new TK_Ticket_Sql_007(
-                   ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-               ).toSqlQuery()
-           );
-        //
-        ArrayList<T_TK_Ticket_Checkin_Obj_Env> checkObjList = getCheckInList(ticketsToCheckin);
-        //
-        return checkObjList;
-    }
-
-    private ArrayList<T_TK_Ticket_Checkin_Obj_Env> getCheckInList(ArrayList<TK_Ticket> ticketsToCheckin) {
-        ArrayList<T_TK_Ticket_Checkin_Obj_Env> checkIns = new ArrayList<>();
-        //
-        for (TK_Ticket tkTicket : ticketsToCheckin) {
-            T_TK_Ticket_Checkin_Obj_Env checkInAux = new T_TK_Ticket_Checkin_Obj_Env();
-            //
-            checkInAux.setCustomer_code(tkTicket.getCustomer_code());
-            checkInAux.setTicket_prefix(tkTicket.getTicket_prefix());
-            checkInAux.setTicket_code(tkTicket.getTicket_code());
-            checkInAux.setTicket_scn(tkTicket.getScn());
-            checkInAux.setCheckin(1);
-            //
-            checkIns.add(checkInAux);
-        }
-        //
-        return checkIns;
     }
 
     private void processTicketCheckinReturn(T_TK_Ticket_Checkin_Rec rec) {

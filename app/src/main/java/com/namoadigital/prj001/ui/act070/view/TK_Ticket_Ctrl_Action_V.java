@@ -62,7 +62,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
 
     private void bindData() {
         tvSeq.setText(String.valueOf(getmSeq()));
-        tvStatus.setText(getmStatus());
+        tvStatus.setText(hmAuxTrans.get(getmStatus()));
         tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
         tvProducDesc.setText(getmProductDesc());
         tvSerialId.setText(getmSerialID());

@@ -367,7 +367,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if(mTicket != null){
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if(mTicket.getUpdate_required() == 1 || mTicket.getCheckin_required() == 1 || mTicket.getSync_required() == 1){
+            if(mTicket.getUpdate_required() == 1 || mTicket.getSync_required() == 1){
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                 background = getResources().getDrawable(R.drawable.stroke_yellow_states);
@@ -713,7 +713,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void resetCheckinInObj() {
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
-        mTicket.setCheckin_required(0);
+        mTicket.setUpdate_required(0);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
         mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -721,7 +721,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void setCheckinToObj() {
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-        mTicket.setCheckin_required(1);
+        mTicket.setUpdate_required(1);
         mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
         mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));

@@ -69,8 +69,9 @@ public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
     }
 
     public String getmStatus() {
-        return hmAuxTrans.get(mTicketCtrl.getCtrl_status());
+        return mTicketCtrl.getCtrl_status();
     }
+
 
     public String getmProductDesc() {
         return mTicketCtrl.getProduct_desc();
