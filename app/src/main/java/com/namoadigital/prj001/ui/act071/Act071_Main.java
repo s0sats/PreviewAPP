@@ -130,6 +130,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("ticket_lbl");
         transList.add("alert_none_ticket_returned_ttl");
         transList.add("alert_none_ticket_returned_msg");
+        transList.add("alert_finalize_action_ttl");
+        transList.add("alert_finalize_action_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

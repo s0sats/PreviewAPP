@@ -80,14 +80,11 @@ public class WS_TK_Ticket_Save extends IntentService {
     private void processTicketSave() throws Exception {
         //Seleciona traduções
         loadTranslation();
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
-        //
         //Lista arquivos de token de Ticket
         File[] files = checkTicketTokenToSend();
         //
         if (files != null && files.length > 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_itens_from_token"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_loading_data_from_token"), "", "0");
             //
             file_to_del = files[0].getName();
             //
@@ -118,7 +115,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             if (ticketToSend == null || ticketToSend.size() == 0) {
                 String json = actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>());
                 //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), json, "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), json, "0");
                 return;
             }
             //
@@ -142,7 +139,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
             if (!checksumJsonToken(json_token_content, jsonToken)) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("generic_token_file_creation_error"), "", "0");
                 return;
             }
             //Set update required do banco para 0
@@ -203,7 +200,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
         processTicketSaveReturn(rec);
     }
@@ -224,7 +221,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 //
                 if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
                     if (reSend) {
-                        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_items_data"), "", "0");
+                        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_re_processing_data"), "", "0");
                         //Reseta var de re transmissão.
                         reSend = false;
                         //Reseta lista de cab após processo de token
@@ -255,7 +252,7 @@ public class WS_TK_Ticket_Save extends IntentService {
     }
 
     private void callFinishProcessing(String jsonActReturn) {
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), jsonActReturn, "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), jsonActReturn, "0");
     }
 
     private void processTicketRet(TK_Ticket retTicket, TicketSaveActReturn actReturn) throws Exception {
@@ -366,8 +363,11 @@ public class WS_TK_Ticket_Save extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
-        translist.add("msg_error_on_insert_ticket");
-
+        translist.add("generic_loading_data_from_token");
+        translist.add("generic_token_file_creation_error");
+        translist.add("generic_processing_data");
+        translist.add("generic_re_processing_data");
+        translist.add("msg_preparing_items_data");
         translist.add("msg_no_data_returned_error");
         translist.add("msg_data_returned_error");
         //

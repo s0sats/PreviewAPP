@@ -168,6 +168,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_sync_data_msg");
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
+        transList.add("dialog_ticket_save_ttl");
+        transList.add("dialog_ticket_save_start");
+        transList.add("alert_none_ticket_returned_ttl");
+        transList.add("alert_none_ticket_returned_msg");
+        transList.add("alert_error_on_checkin_ttl");
+        transList.add("alert_error_on_checkin_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -367,7 +373,10 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if(mTicket != null){
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if(mTicket.getUpdate_required() == 1 || mTicket.getSync_required() == 1){
+            if( mTicket.getUpdate_required() == 1
+                || mTicket.getSync_required() == 1
+                || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(),mTicket.getTicket_code())
+            ){
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                 background = getResources().getDrawable(R.drawable.stroke_yellow_states);

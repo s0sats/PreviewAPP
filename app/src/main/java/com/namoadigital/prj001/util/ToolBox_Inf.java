@@ -5573,6 +5573,38 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Metodo que retorna a qtd de Tickets dentro do arquivos token de Ticket
+     *
+     * @return
+     */
+    public static int getQtyTicketsWithinToken() {
+        return getTicketsWithinToken().size();
+    }
+
+    public static ArrayList<TK_Ticket> getTicketsWithinToken() {
+        ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
+        try {
+            File[] ticketToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_TICKET_PREFIX);
+            if (ticketToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+                //
+                token_ticket_list =
+                    gsonEnv.fromJson(
+                        ToolBox_Inf.getContents(ticketToken[0]),
+                        T_TK_Ticket_Save_Env.class
+                    ).getTicket();
+                //
+                return token_ticket_list != null ? token_ticket_list : new ArrayList<TK_Ticket>();
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+        //
+        return token_ticket_list;
+    }
+
+
+    /**
      * Metodo que identifica se a lib MicroBlinkId , leitor de OCR
      * esta importada na lib.
      * @return

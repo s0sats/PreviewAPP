@@ -310,6 +310,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
+        translist.add("msg_no_ticket_to_chekin");
         translist.add("msg_error_on_update_ticket");
         translist.add("msg_ticket_checkin_error");
         translist.add("msg_no_ticket_data_returned");

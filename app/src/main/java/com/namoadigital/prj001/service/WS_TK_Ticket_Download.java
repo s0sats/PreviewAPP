@@ -80,8 +80,6 @@ public class WS_TK_Ticket_Download extends IntentService {
             getTicketPkList(ticketPkList)
         );
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
-        //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_DOWNLOAD,
             gson.toJson(env)
@@ -112,7 +110,7 @@ public class WS_TK_Ticket_Download extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
         processTicketReturn(rec.getTicket());
 
@@ -159,10 +157,10 @@ public class WS_TK_Ticket_Download extends IntentService {
                 //
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
             }else {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_on_insert_ticket_msg"), new HMAux(), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
             }
         }else{
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("no_data_returned_msg"), new HMAux(), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
         }
     }
 
@@ -225,9 +223,10 @@ public class WS_TK_Ticket_Download extends IntentService {
         //
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
+        translist.add("generic_processing_data");
         translist.add("generic_process_finalized_msg");
-        translist.add("no_data_returned_msg");
-        translist.add("error_on_insert_ticket_msg");
+        translist.add("msg_error_on_insert_ticket");
+        translist.add("msg_no_data_returned");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),
