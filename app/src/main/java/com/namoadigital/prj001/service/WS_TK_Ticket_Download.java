@@ -67,9 +67,10 @@ public class WS_TK_Ticket_Download extends IntentService {
     }
 
     private void processTicketDownload(String ticketPkList) throws Exception {
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //Seleciona traduções
         loadTranslation();
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         T_TK_Ticket_Download_Env env = new T_TK_Ticket_Download_Env();
         env.setApp_code(Constant.PRJ001_CODE);

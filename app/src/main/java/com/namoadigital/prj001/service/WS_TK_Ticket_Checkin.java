@@ -83,9 +83,10 @@ public class WS_TK_Ticket_Checkin extends IntentService {
     }
 
     private void processTicketCheckin() throws Exception {
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //Seleciona traduções
         loadTranslation();
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         if(ticketsToCheckin == null || ticketsToCheckin.size() == 0){
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ticket_to_chekin"), "", "0");

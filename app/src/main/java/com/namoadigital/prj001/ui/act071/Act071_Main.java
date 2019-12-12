@@ -445,8 +445,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvTypeDesc.setText(mTypeDesc);
         tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
         definePartner();
-        mketComments.setText(mTicketCtrl.getAction().getAction_comments());
-        mketComments.setTag(mTicketCtrl.getAction().getAction_comments());
+        defineComments();
         defineActionPhoto();
         defineDoneInfo();
 
@@ -463,6 +462,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             tvPartnerLbl.setVisibility(View.GONE);
             mketPartner.setVisibility(View.GONE);
         }
+    }
+
+    private void defineComments() {
+        //Remove counter
+        tilComment.setCounterEnabled(false);
+        mketComments.setText(mTicketCtrl.getAction().getAction_comments());
+        mketComments.setTag(mTicketCtrl.getAction().getAction_comments());
+        //Reabilita counter para atualizar contador
+        tilComment.setCounterEnabled(true);
     }
 
     private void definePathVisibility() {
