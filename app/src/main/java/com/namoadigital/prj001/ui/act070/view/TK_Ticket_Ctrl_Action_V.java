@@ -92,15 +92,19 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
 
     private void setIvPhotoState() {
         if( mTicketCtrl.getAction() != null
-            && (
-                (mTicketCtrl.getAction().getAction_photo() != null && !mTicketCtrl.getAction().getAction_photo().isEmpty())
-                ||(mTicketCtrl.getAction().getAction_photo_local() != null && !mTicketCtrl.getAction().getAction_photo_local().isEmpty())
-            )
+            && swithOnPhotoIcon()
         ){
             ivPhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_on));
         }else{
             ivPhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_off));
         }
+    }
+
+    private boolean swithOnPhotoIcon() {
+        return mTicketCtrl.getAction().getAction_photo_local() != null
+               ||( mTicketCtrl.getAction().getAction_photo_name() != null && mTicketCtrl.getAction().getAction_photo() == null)
+               || (mTicketCtrl.getAction().getAction_photo() != null && mTicketCtrl.getAction().getAction_photo_changed() == 0);
+
     }
 
     public String getmComment() {

@@ -133,7 +133,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_action_parameter_error_msg");
         transList.add("alert_unsaved_data_will_be_lost_ttl");
         transList.add("alert_unsaved_data_will_be_lost_msg");
-        //
         transList.add("alert_ticket_ttl");
         transList.add("alert_ticket_save_ttl");
         transList.add("alert_ticket_save_success_msg");
@@ -146,6 +145,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_none_ticket_returned_msg");
         transList.add("alert_finalize_action_ttl");
         transList.add("alert_finalize_action_msg");
+        //
+        transList.add("alert_error_on_offline_done_ttl");
+        transList.add("alert_error_on_offline_done_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -348,8 +350,16 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if (hasImageFileChanged) {
             mTicketCtrl.getAction().setAction_photo_changed(1);
+            //Se teve alteração e photo_local null, significa q apagou a
+            //foto que veio do server.Nesse caso reseta photo e photo_name
+            //assim impede que a rotina de download baixe a imagem
+            //e ferre o envio
+            if(mTicketCtrl.getAction().getAction_photo_local() == null){
+                mTicketCtrl.getAction().setAction_photo(null);
+                mTicketCtrl.getAction().setAction_photo_name(null);
+            }
         }else {
-            mTicketCtrl.getAction().setAction_photo_changed(mPresenter.hasPhotoChanged(mTicketCtrl) ? 1 : 0);
+            mTicketCtrl.getAction().setAction_photo_changed(0);
         }
     }
 
