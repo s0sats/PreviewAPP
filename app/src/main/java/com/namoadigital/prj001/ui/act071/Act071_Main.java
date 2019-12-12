@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.Group;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +24,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -85,6 +96,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private TextInputLayout tilComment;
     //flag criada para controle do metodo que coloca imagem na tela
     private boolean fromCamera = false;
+    private boolean hasImageFileChanged=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,11 +276,25 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*
-                                        BARRIONUEVO - 11.12.2019
-                                        Passa alterações da imagem para arquivo oficial.
-                                     */
-                                copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
-                                        ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                    BARRIONUEVO - 11.12.2019
+                                    Passa alterações da imagem para arquivo oficial.
+                                 */
+
+                                try {
+                                    File photo = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                                    long currentLength = photo.length();
+                                    if (currentLength != previousLenght) {
+                                        hasImageFileChanged = true;
+                                    }
+                                    if(photo.exists()) {
+                                        copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
+                                                ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                    }
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                    ToolBox_Inf.registerException(e);
+                                }
+
                                 setDataToObj();
                                 if(mPresenter.updateTicketAction(mTicketCtrl)){
                                     mPresenter.execTicketSave();
@@ -320,7 +346,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_DONE);
         //
-        mTicketCtrl.getAction().setAction_photo_changed(mPresenter.hasPhotoChanged(mTicketCtrl) ? 1 : 0);
+        if (hasImageFileChanged) {
+            mTicketCtrl.getAction().setAction_photo_changed(1);
+        }else {
+            mTicketCtrl.getAction().setAction_photo_changed(mPresenter.hasPhotoChanged(mTicketCtrl) ? 1 : 0);
+        }
     }
 
     @Override
@@ -484,9 +514,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void defineActionPhoto() {
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
+        final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
-            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+
             if(sFile != null && sFile.exists()){
                 sFile.delete();
             }
@@ -497,15 +528,30 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
                 //CRIAR ASYNC_TAKS PARA DOWNLOAD?
                 //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
-                Glide.with(context)
+                Glide.with(context).asBitmap()
                     .load(mTicketCtrl.getAction().getAction_photo())
                     .placeholder(R.drawable.sand_watch_transp)
-                    .into(ivActionPhoto);
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            ivActionPhoto.setImageBitmap(resource);
+                            try (FileOutputStream out = new FileOutputStream(sFile)) {
+                                resource.compress(Bitmap.CompressFormat.PNG, 100, out);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
+
             } else {
                 //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
                 copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath,
                         ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
                 previousLenght = sFile.length();
                 setActinPhotoToView(actionPhotoLocalPath);
             }
