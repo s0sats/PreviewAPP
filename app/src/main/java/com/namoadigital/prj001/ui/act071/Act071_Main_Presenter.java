@@ -158,8 +158,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean newActionPhotoExists(TK_Ticket_Action action) {
         String localPath = generateActionPhotoLocalPath(action);
-        File file = new File(ConstantBase.CACHE_PATH_PHOTO,localPath);
         try {
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO,localPath);
             return file.exists();
         }catch (Exception e){
             return false;
@@ -168,8 +168,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     @Override
     public boolean fileExists(String path) {
-        File file = new File(ConstantBase.CACHE_PATH_PHOTO,path);
         try {
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO,path);
             return file.exists();
         }catch (Exception e){
             return false;
