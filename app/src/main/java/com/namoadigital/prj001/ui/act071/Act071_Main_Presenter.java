@@ -166,12 +166,26 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public boolean fileExists(String path) {
+        File file = new File(ConstantBase.CACHE_PATH_PHOTO,path);
+        try {
+            return file.exists();
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     private void checkActionPhotoToDel(TK_Ticket_Action action){
         if( !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(action.getAction_status())
             && action.getAction_photo_local() == null
             && newActionPhotoExists(action)
         ){
             deleteNewActionPhoto(action);
+        }else{
+            if(action.getAction_photo_local() != null) {
+                mView.restoreActionImage();
+            }
         }
     }
 

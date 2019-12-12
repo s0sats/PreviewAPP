@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.Group;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,11 +42,14 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View {
 
+    public static final String TEMP_SUFIX_FILE = "temp-";
     private Act071_Main_Presenter mPresenter;
     private TextView tvTicketId;
     private TextView tvStatus;
@@ -77,6 +81,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private View.OnClickListener photoClickListener;
     private String actionPhotoLocalPath ="";
     private String wsProcess ="";
+    private long previousLenght =0;
+    private TextInputLayout tilComment;
+    //flag criada para controle do metodo que coloca imagem na tela
+    private boolean fromCamera = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +207,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         ivActionPhoto = findViewById(R.id.act071_iv_action_photo);
         tvCommentsLbl = findViewById(R.id.act071_tv_comment_lbl);
         mketComments = findViewById(R.id.act071_mket_comment_val);
+        tilComment = findViewById(R.id.act071_til_comment);
         tvDoneInfoLbl = findViewById(R.id.act071_tv_done_info_lbl);
         tvDoneInfoVal = findViewById(R.id.act071_tv_done_info_val);
         grDone = findViewById(R.id.act071_gr_done);
@@ -254,6 +263,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                /*
+                                        BARRIONUEVO - 11.12.2019
+                                        Passa alterações da imagem para arquivo oficial.
+                                     */
+                                copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
+                                        ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
                                 setDataToObj();
                                 if(mPresenter.updateTicketAction(mTicketCtrl)){
                                     mPresenter.execTicketSave();
@@ -267,6 +282,26 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
+    private void copyFiles(String fromFile, String toFile) {
+        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
+        File tempImageFile = new File(toFile);
+        try (FileOutputStream out = new FileOutputStream(tempImageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void restoreActionImage() {
+        try{
+            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+            ivActionPhoto.setImageBitmap(bitmap);
+        } catch (NullPointerException e ){
+            e.printStackTrace();
+        }
+    }
+
     private void setDataToObj() {
         mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.setCtrl_end_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
@@ -275,7 +310,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mketComments.getText().toString()
         );
         //
-        if(mPresenter.newActionPhotoExists(mTicketCtrl.getAction())) {
+        if(mPresenter.fileExists(actionPhotoLocalPath)) {
             mTicketCtrl.getAction().setAction_photo_local(actionPhotoLocalPath);
         }
         //
@@ -443,6 +478,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
+            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+            if(sFile != null && sFile.exists()){
+                sFile.delete();
+            }
             ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         } else {
             if (mTicketCtrl.getAction().getAction_photo_local() == null) {
@@ -455,14 +494,19 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     .placeholder(R.drawable.sand_watch_transp)
                     .into(ivActionPhoto);
             } else {
-                setActinPhotoToView();
+                //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
+                copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath,
+                        ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                previousLenght = sFile.length();
+                setActinPhotoToView(actionPhotoLocalPath);
             }
         }
     }
 
-    private void setActinPhotoToView() {
-        if(mPresenter.newActionPhotoExists(mTicketCtrl.getAction())) {
-            String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+    private void setActinPhotoToView(String pathSufix) {
+        if(mPresenter.fileExists(pathSufix)) {
+            String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + pathSufix;
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             ivActionPhoto.setImageBitmap(bitmap);
         }else{
@@ -518,6 +562,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             photoClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    fromCamera = true;
                     callCameraAct();
                 }
             }
@@ -532,14 +577,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     protected void onResume() {
         super.onResume();
         //
-        updateActionPhotoReference();
+        if(fromCamera) {
+            fromCamera = false;
+            updateActionPhotoReference();
+        }
     }
 
     private void updateActionPhotoReference() {
 //       if(mTicketCtrl.getAction().getAction_photo_local() == null && mPresenter.newActionPhotoExists(mTicketCtrl.getAction())){
 //            setActinPhotoToView();
 //        }
-        setActinPhotoToView();
+        setActinPhotoToView(TEMP_SUFIX_FILE + actionPhotoLocalPath);
     }
 
     @Override
@@ -557,7 +605,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         bundle.putInt(ConstantBase.PID, ivActionPhoto.getId());
         bundle.putInt(ConstantBase.PTYPE, 1);
         //bundle.putString(ConstantBase.PPATH, mTicketCtrl.getAction().getAction_photo_local());
-        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
+        /*
+            BARRIONUEVO -  11.12.2019
+            Criacao de arquivo temporario para restaurar imagem original caso user saia da
+            activity sem confirmar as alteracoes.
+        */
+        bundle.putString(ConstantBase.PPATH, TEMP_SUFIX_FILE +actionPhotoLocalPath );
         bundle.putBoolean(ConstantBase.PEDIT, !bReadOnly);
         bundle.putBoolean(ConstantBase.PENABLED, !bReadOnly);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
@@ -576,6 +629,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //Comentario capturado da tela
         String commentText = mketComments.getText().toString();
         //
+        File photo = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE +actionPhotoLocalPath);
+        try {
+            long currentLength = photo.length();
+            if (currentLength != previousLenght) {
+                return true;
+            }
+        }catch (NullPointerException e){
+            if (previousLenght > 0){
+               return true;
+            }
+        }
         if(!commentText.equalsIgnoreCase(commentTag)){
             return true;
         }
