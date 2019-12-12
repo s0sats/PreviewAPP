@@ -13,7 +13,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Obj_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Rec;
@@ -25,7 +24,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -215,7 +213,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             if (ticketReturn.getTicket() != null) {
                 TK_Ticket tkTicket = ticketReturn.getTicket();
                 tkTicket.setPK();
-                updateLocalImagesPath(tkTicket);
+                tkTicket.updateLocalImagesPathIfExists();
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                 //oq fazer no erro?
                 if (daoObjReturn.hasError()) {
@@ -239,7 +237,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                     TK_Ticket tkTicket = ticketReturn.getTicket();
                     if (ticketReturn.getTicket() != null) {
                         tkTicket.setPK();
-                        updateLocalImagesPath(tkTicket);
+                        tkTicket.updateLocalImagesPathIfExists();
                     } else {
                         tkTicket = ticketDao.getByString(
                             new TK_Ticket_Sql_001(
@@ -278,31 +276,6 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                     break;
             }
         }
-    }
-
-    private void updateLocalImagesPath(TK_Ticket tkTicket) {
-        tkTicket.setOpen_photo_local(
-            getLocalPath(
-                ToolBox_Inf.buildTicketImgPath(tkTicket)
-            )
-        );
-        //
-        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-            ctrl.getAction().setAction_photo_local(
-                getLocalPath(
-                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                )
-            );
-        }
-    }
-
-    private String getLocalPath(String imgLocalPath) {
-        String localPath = Constant.CACHE_PATH_PHOTO + "/" + imgLocalPath;
-        File file = new File(localPath);
-        if (file.exists()) {
-            return imgLocalPath;
-        }
-        return null;
     }
 
     private void loadTranslation() {

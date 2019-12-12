@@ -137,9 +137,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if (ctrls == null || ctrls.size() <= 1) {
             return true;
         }
-        //Se algum ctrl status diferente de DONE, NAO esconde filtro
+        //Se algum ctrl status diferente de DONE, OU WAITING_SYNC NAO esconde filtro
         for (TK_Ticket_Ctrl ctrl : ctrls) {
-            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())) {
+            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
+                 && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())
+            ) {
                 return false;
             }
         }

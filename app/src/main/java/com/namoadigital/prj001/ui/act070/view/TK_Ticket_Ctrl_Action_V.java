@@ -117,9 +117,16 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     @Override
     public void applyFilterVisibility() {
         if(delegate != null){
-            setVisible(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus()) && delegate.checkPartnerProfile(getmPartnerCode()));
+            setVisible(
+                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+                && delegate.checkPartnerProfile(getmPartnerCode())
+            );
         }else{
-            setVisible(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus()));
+            setVisible(
+                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+            );
         }
     }
 }

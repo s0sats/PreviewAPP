@@ -5759,6 +5759,7 @@ public class ToolBox_Inf {
         }
         return false;
     }
+
     @Nullable
     public static String buildTicketImgPath(TK_Ticket tkTicket) {
         try {
@@ -5768,6 +5769,7 @@ public class ToolBox_Inf {
             return null;
         }
     }
+
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
         try{
@@ -5777,6 +5779,7 @@ public class ToolBox_Inf {
             return null;
         }
     }
+
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Action action) {
         try{
@@ -5785,6 +5788,48 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME,e);
             return null;
         }
+    }
+
+    /**
+     * Retorna array de inteiros com a porcentagem width e height relativo ao tamanho da tela
+     * Indices:
+     *        0 -> Width
+     *        1 -> Height
+     * @param context - Context
+     * @param wPercent - Percentual de largura
+     * @param hPercent - Percentual de altura
+     * @return - Array int de 2 posições sendo 0 -> Width e 1 -> Height
+     */
+    public static int[] getPercentageWidthAndHeight(Context context, double wPercent, double hPercent) {
+        int[] percentMetrics = getScreenMetrics(context);
+        try {
+            percentMetrics[0] = (int) (percentMetrics[0] * wPercent);
+            percentMetrics[1] = (int) (percentMetrics[1] * hPercent);
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+        }
+        return percentMetrics;
+    }
+    /**
+     * Retorna array de int com o Width e Height da tela do device
+     * Indices:
+     *       0 -> Width
+     *       1 -> Height
+     * @param context - Context
+     * @return Array int[2] com valores da tela ou 0 se exception
+     */
+    public static int[] getScreenMetrics(Context context) {
+        int[] metrics = new int[2];
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            metrics[0] = displayMetrics.widthPixels;
+            metrics[1] = displayMetrics.heightPixels;
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+        }
+        //
+        return metrics;
     }
 
 }

@@ -3,7 +3,10 @@ package com.namoadigital.prj001.model;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class TK_Ticket {
@@ -457,5 +460,51 @@ public class TK_Ticket {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    /**
+     * Metodo que seta a referente a imagem local no campos *_photo_local.
+     */
+    public void updateLocalImagesPathIfExists() {
+        //Se existe foto no servidor, busca referencia local.
+        if(open_photo != null && !open_photo.isEmpty()) {
+            setOpen_photo_local(
+                getLocalPath(
+                    ToolBox_Inf.buildTicketImgPath(this)
+                )
+            );
+        }
+        //
+        for (TK_Ticket_Ctrl ctrl : getCtrl()) {
+            //Se existe foto no servidor, busca referencia local.
+            if(existsActionPhotoInServer(ctrl)) {
+                ctrl.getAction().setAction_photo_local(
+                    getLocalPath(
+                        ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * Verifica se existe referencia de imagem no servidor
+     * A referencia de imagem no servidor se pela regra:
+     *  - Action_photo ou action_photo_name existem
+     * @param ctrl
+     * @return
+     */
+    private boolean existsActionPhotoInServer(TK_Ticket_Ctrl ctrl) {
+        return (ctrl.getAction().getAction_photo_name() != null && !ctrl.getAction().getAction_photo_name().isEmpty())
+            || (ctrl.getAction().getAction_photo() != null && !ctrl.getAction().getAction_photo().isEmpty());
+    }
+
+    private String getLocalPath(String imgLocalPath) {
+        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
+        File file = new File(localPath);
+        if (file.exists()) {
+            return imgLocalPath;
+        }
+        return null;
     }
 }

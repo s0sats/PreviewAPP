@@ -13,7 +13,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
@@ -25,7 +24,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,7 +127,7 @@ public class WS_TK_Ticket_Download extends IntentService {
 
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
-                updateLocalImagesPath(tkTicket);
+                tkTicket.updateLocalImagesPathIfExists();
 
                 //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
                 /**
@@ -164,32 +162,6 @@ public class WS_TK_Ticket_Download extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
         }
     }
-
-    private void updateLocalImagesPath(TK_Ticket tkTicket) {
-        tkTicket.setOpen_photo_local(
-            getLocalPath(
-                ToolBox_Inf.buildTicketImgPath(tkTicket)
-            )
-        );
-        //
-        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-            ctrl.getAction().setAction_photo_local(
-                getLocalPath(
-                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                )
-            );
-        }
-    }
-
-    private String getLocalPath(String imgLocalPath) {
-        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
-        File file = new File(localPath);
-        if (file.exists()) {
-            return imgLocalPath;
-        }
-        return null;
-    }
-
 
     private void startDownloadServices() {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.

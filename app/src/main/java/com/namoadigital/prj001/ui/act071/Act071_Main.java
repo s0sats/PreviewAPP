@@ -324,6 +324,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void setDataToObj() {
         mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.setCtrl_end_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
         mTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
         mTicketCtrl.getAction().setAction_comments(
@@ -337,8 +338,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         mTicketCtrl.setCtrl_end_date(
             ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
         );
-        //
-        mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_DONE);
         //
         if (hasImageFileChanged) {
             mTicketCtrl.getAction().setAction_photo_changed(1);
@@ -423,20 +422,25 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     public void postTicketSave() {
         updateActionData();
         //
-        showAlert(
-            hmAux_Trans.get("alert_ticket_save_ttl"),
-            hmAux_Trans.get("alert_ticket_save_success_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //updateActionData();
-                    mPresenter.definePostTicketSaveFlow(
-                        mTicketCtrl.getTicket_prefix(),
-                        mTicketCtrl.getTicket_code()
-                    );
-                }
-            }
+        mPresenter.definePostTicketSaveFlow(
+            mTicketCtrl.getTicket_prefix(),
+            mTicketCtrl.getTicket_code()
         );
+//        //
+//        showAlert(
+//            hmAux_Trans.get("alert_ticket_save_ttl"),
+//            hmAux_Trans.get("alert_ticket_save_success_msg"),
+//            new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    //updateActionData();
+//                    mPresenter.definePostTicketSaveFlow(
+//                        mTicketCtrl.getTicket_prefix(),
+//                        mTicketCtrl.getTicket_code()
+//                    );
+//                }
+//            }
+//        );
     }
 
     private void applyReadOnlyInPhoto() {
@@ -470,6 +474,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
         definePartner();
         defineComments();
+        defineActionPhotoMetrics();
         defineActionPhoto();
         defineDoneInfo();
 
@@ -508,6 +513,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void defineActionPhoto() {
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
+        //
         final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
@@ -550,6 +556,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 setActinPhotoToView(actionPhotoLocalPath);
             }
         }
+    }
+
+    private void defineActionPhotoMetrics() {
+        int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
+        ivActionPhoto.getLayoutParams().width = percentMetrics[0];
+        ivActionPhoto.getLayoutParams().height = percentMetrics[1];
     }
 
     private void setActinPhotoToView(String pathSufix) {

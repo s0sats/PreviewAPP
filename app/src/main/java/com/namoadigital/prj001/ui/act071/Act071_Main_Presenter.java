@@ -293,16 +293,19 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             //
             context.sendBroadcast(mIntent);
         } else {
-            mView.showAlert(
-                hmAux_Trans.get("alert_offline_save_ttl"),
-                hmAux_Trans.get("alert_offline_save_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mView.postTicketSave();
+            //Se falso, será exibi msg na tela.
+            if(checkOfflineTicketDone(mView.getAction())) {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                    hmAux_Trans.get("alert_offline_save_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.postTicketSave();
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     }
 
@@ -385,23 +388,55 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     @Override
     public void definePostTicketSaveFlow(int ticket_prefix, int ticket_code) {
-        TK_Ticket tkTicket = ticketDao.getByString(
-            new TK_Ticket_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ticket_prefix,
-                ticket_code
-            ).toSqlQuery()
-        );
+        TK_Ticket tkTicket = getTicket(ticket_prefix,ticket_code);
         //
         if(tkTicket != null && tkTicket.getCustomer_code() > 0){
             if( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
-                || hasActionNotExec(tkTicket)
+                || !hasActionNotExec(tkTicket)
             ){
                 mView.callAct069();
             }else{
                 mView.callAct070();
             }
         }
+    }
+
+    private TK_Ticket getTicket(int ticket_prefix, int ticket_code) {
+        return ticketDao.getByString(
+            new TK_Ticket_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+    }
+
+    private boolean checkOfflineTicketDone(TK_Ticket_Action ctrl) {
+        final TK_Ticket tkTicket = getTicket(ctrl.getTicket_prefix(), ctrl.getTicket_code());
+        //
+        if(!hasActionNotExec(tkTicket)){
+            tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            tkTicket.setUpdate_required(1);
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+            //
+            if(daoObjReturn.hasError()){
+                mView.showAlert(
+                    hmAux_Trans.get("alert_error_on_offline_done_ttl"),
+                    hmAux_Trans.get("alert_error_on_offline_done_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            definePostTicketSaveFlow(tkTicket.getTicket_prefix(),tkTicket.getTicket_code());
+                        }
+                    }
+                );
+                return false;
+            }else{
+                return true;
+            }
+        }
+        //
+        return true;
     }
 
     /**
@@ -412,7 +447,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private boolean hasActionNotExec(TK_Ticket tkTicket) {
         //
         for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-            if(!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())){
+            if( !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status()))
+            {
                 return true;
             }
         }

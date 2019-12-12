@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act070;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +16,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -396,9 +394,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void defineFilterVisility() {
-        if (
-            ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
-                || mPresenter.checkFilterDisable(mTicket.getCtrl())
+        if ( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
+            || mPresenter.checkFilterDisable(mTicket.getCtrl())
         ) {
             swFilter.setChecked(false);
             grFilter.setVisibility(View.GONE);
@@ -446,7 +443,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         }else{
             ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
             //
-            int[] percentMetrics = getPercentageWidthAndHeight(context,0.8,0.3);
+            int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
             layoutParams.width = percentMetrics[0];
             layoutParams.height = percentMetrics[1];
             //
@@ -474,26 +471,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 ivOpenPhoto.setImageBitmap(bitmap);
             }
         }
-    }
-
-    /**
-     *
-     * MOVER METODOS PARA O TOOLBOX?
-     */
-    private int[] getPercentageWidthAndHeight(Context context, double wPercent, double hPercent) {
-        int[] percentMetrics = getScreenMetrics(context);
-        percentMetrics[0] = (int) (percentMetrics[0] * wPercent);
-        percentMetrics[1] = (int) (percentMetrics[1] * hPercent);
-        return percentMetrics;
-    }
-
-    public int[] getScreenMetrics(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int[] metrics = new int[2];
-        metrics[0] = displayMetrics.widthPixels;
-        metrics[1] = displayMetrics.heightPixels;
-        return metrics;
     }
 
     private void defineInnerCommentIcon() {

@@ -13,7 +13,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
@@ -263,7 +262,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 //Seta PKs nos objs filhos
                 retTicket.setPK();
                 //Verifica se imagens já foram baixadas e atualiza campo com o local_path
-                updateLocalImagesPath(retTicket);
+                retTicket.updateLocalImagesPathIfExists();
                 //Salva obj
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(retTicket);
                 if (daoObjReturn.hasError()) {
@@ -286,31 +285,6 @@ public class WS_TK_Ticket_Save extends IntentService {
         );
         //
         return dbTicket != null && dbTicket.getUpdate_required() == 0;
-    }
-
-    private void updateLocalImagesPath(TK_Ticket retTicket) {
-        retTicket.setOpen_photo_local(
-            getLocalPath(
-                ToolBox_Inf.buildTicketImgPath(retTicket)
-            )
-        );
-        //
-        for (TK_Ticket_Ctrl ctrl : retTicket.getCtrl()) {
-            ctrl.getAction().setAction_photo_local(
-                getLocalPath(
-                    ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                )
-            );
-        }
-    }
-
-    private String getLocalPath(String imgLocalPath) {
-        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
-        File file = new File(localPath);
-        if (file.exists()) {
-            return imgLocalPath;
-        }
-        return null;
     }
 
     private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
