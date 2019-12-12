@@ -283,6 +283,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if(photo.exists()) {
                                         copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
                                                 ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                    }else{
+                                        if(mPresenter.fileExists(actionPhotoLocalPath)) {
+                                            File originalPhoto = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                            originalPhoto.delete();
+                                        }
                                     }
                                 }catch (NullPointerException e){
                                     e.printStackTrace();
@@ -333,6 +338,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if(mPresenter.fileExists(actionPhotoLocalPath)) {
             mTicketCtrl.getAction().setAction_photo_local(actionPhotoLocalPath);
+        }else{
+            mTicketCtrl.getAction().setAction_photo_local(null);
         }
         //
         mTicketCtrl.setCtrl_end_date(
@@ -553,7 +560,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath,
                         ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
                 previousLenght = sFile.length();
-                setActinPhotoToView(actionPhotoLocalPath);
+                String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                ivActionPhoto.setImageBitmap(bitmap);
             }
         }
     }
@@ -569,20 +578,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + pathSufix;
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             ivActionPhoto.setImageBitmap(bitmap);
-        }else{
-            if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
-                ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
-            } else {
-                //FOTO NÃO FOI BAIXADA, COMO FAZER?
-                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
-                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
-                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
-                Glide.with(context)
-                    .load(mTicketCtrl.getAction().getAction_photo())
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .into(ivActionPhoto);
-            }
+        }else {
+
+            ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         }
+
     }
 
     private void defineDoneInfo() {
@@ -644,9 +644,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionPhotoReference() {
-//       if(mTicketCtrl.getAction().getAction_photo_local() == null && mPresenter.newActionPhotoExists(mTicketCtrl.getAction())){
-//            setActinPhotoToView();
-//        }
         setActinPhotoToView(TEMP_SUFIX_FILE + actionPhotoLocalPath);
     }
 
