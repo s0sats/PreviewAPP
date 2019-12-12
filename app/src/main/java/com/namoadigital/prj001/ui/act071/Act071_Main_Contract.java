@@ -29,6 +29,8 @@ public interface Act071_Main_Contract {
         void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
 
         boolean hasUnsavedData();
+
+        void restoreActionImage();
     }
 
     interface I_Presenter{
@@ -46,6 +48,8 @@ public interface Act071_Main_Contract {
         String generateActionPhotoLocalPath(TK_Ticket_Action action);
 
         boolean newActionPhotoExists(TK_Ticket_Action action);
+
+        boolean fileExists(String path);
 
         boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl);
 
