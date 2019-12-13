@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -100,6 +101,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private boolean bReadOnly = false;
     private String room_code;
     private FCMReceiver fcmReceiver;
+    private View.OnClickListener photoListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +146,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("inner_comment_lbl");
         transList.add("alert_ticket_parameter_error_ttl");
         transList.add("alert_ticket_parameter_error_msg");
-        //
         transList.add("ticket_lbl");
         transList.add("alert_cancel_checkin_ttl");
         transList.add("alert_cancel_checkin_confirm");
@@ -161,7 +162,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("result_checkin_cancel_lbl");
         transList.add("alert_ticket_checkin_offline_ttl");
         transList.add("alert_ticket_checkin_offline_msg");
-        //
         transList.add("alert_sync_data_ttl");
         transList.add("alert_sync_data_msg");
         transList.add("dialog_download_ticket_ttl");
@@ -172,6 +172,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_none_ticket_returned_msg");
         transList.add("alert_error_on_checkin_ttl");
         transList.add("alert_error_on_checkin_msg");
+        //
+        transList.add("alert_image_to_big_to_open_ttl");
+        transList.add("alert_image_to_big_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -292,7 +295,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void checkSyncNeeds() {
-         if(mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)){
+        if (mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)) {
             mPresenter.prepareSyncProcess(mTicket);
         }
     }
@@ -311,15 +314,16 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void startStopFCMReceiver(boolean start) {
-        if(start){
+        if (start) {
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConstantBaseApp.WS_FCM);
             filter.addCategory(Intent.CATEGORY_DEFAULT);
             LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
-        }else{
+        } else {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
         }
     }
+
     private void setReadOnly() {
         bReadOnly = mPresenter.getReadOnlyDefinition(mTicket);
     }
@@ -358,28 +362,28 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void defineOpenComment() {
-        if(mTicket.getOpen_comments() != null && !mTicket.getOpen_comments().isEmpty()){
+        if (mTicket.getOpen_comments() != null && !mTicket.getOpen_comments().isEmpty()) {
             tvOpenComment.setVisibility(View.VISIBLE);
             tvOpenComment.setText(mTicket.getOpen_comments());
-        }else{
+        } else {
             tvOpenComment.setVisibility(View.GONE);
         }
 
     }
 
     private void setTicketSync() {
-        if(mTicket != null){
+        if (mTicket != null) {
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if( mTicket.getUpdate_required() == 1
+            if (mTicket.getUpdate_required() == 1
                 || mTicket.getSync_required() == 1
-                || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(),mTicket.getTicket_code())
-            ){
+                || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(), mTicket.getTicket_code())
+            ) {
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                 background = getResources().getDrawable(R.drawable.stroke_yellow_states);
             }
-            tvTicketId.setCompoundDrawablesWithIntrinsicBounds(null,null,rightDraw,null);
+            tvTicketId.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDraw, null);
             tvTicketId.setBackground(background);
         }
     }
@@ -394,7 +398,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void defineFilterVisility() {
-        if ( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
+        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
             || mPresenter.checkFilterDisable(mTicket.getCtrl())
         ) {
             swFilter.setChecked(false);
@@ -440,36 +444,75 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             layoutParams.height = 250;
             //
             ivOpenPhoto.setLayoutParams(layoutParams);
-        }else{
+        } else {
             ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
             //
-            int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
+            int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context, 0.8, 0.3);
             layoutParams.width = percentMetrics[0];
             layoutParams.height = percentMetrics[1];
             //
             ivOpenPhoto.setLayoutParams(layoutParams);
-            //ivOpenPhoto.requestLayout();
         }
         //
         if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
-            ivOpenPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
-            //VERIFICAR REGRA - Segundo excel, se não tem imagem, escode view.
             ivOpenPhoto.setVisibility(View.GONE);
         } else {
             if (mTicket.getOpen_photo_local() == null) {
-                //FOTO NÃO FOI BAIXADA, COMO FAZER?
-                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
-                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
-                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
                 Glide.with(context)
                     .load(mTicket.getOpen_photo())
                     .placeholder(R.drawable.sand_watch_transp)
                     .into(ivOpenPhoto);
             } else {
-                String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                ivOpenPhoto.setImageBitmap(bitmap);
+                String load = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
+                if (mTicket.getOpen_photo_local() == null) {
+                    load = mTicket.getOpen_photo();
+                }
+                Glide.with(context)
+                    .load(load)
+                    .placeholder(R.drawable.sand_watch_transp)
+                    .into(ivOpenPhoto);
+                //Define listener
+                definePhotoListener(isImageToLarge(load));
             }
+        }
+    }
+
+    private boolean isImageToLarge(String path) {
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            //Se o bitmap for muito grande, crashra no comando abaixo.
+            Canvas canvas = new Canvas(bitmap);
+            return true;
+        } catch (Exception e) {
+            //Se exception, carega via glide e inibe a abertura da foto.
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Define listner do click na foto
+     * TRATATIVA PARA IMAGENS MUITO GRANDES, TIPO 8
+     * @param isImageToLarge
+     */
+    private void definePhotoListener(boolean isImageToLarge) {
+        if (isImageToLarge) {
+            photoListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callCameraAct();
+                }
+            };
+        }else{
+            photoListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAlert(
+                        hmAux_Trans.get("alert_image_to_big_to_open_ttl"),
+                        hmAux_Trans.get("alert_image_to_big_to_open_msg")
+                    );
+                }
+            };
         }
     }
 
@@ -546,11 +589,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if (bundle == null) {
             bundle = new Bundle();
         }
-        if(ConstantBaseApp.ACT012.equals(requestingAct)
-        || ConstantBaseApp.ACT014.equals(requestingAct)
-        || ConstantBaseApp.ACT035.equals(requestingAct)) {
+        if (ConstantBaseApp.ACT012.equals(requestingAct)
+            || ConstantBaseApp.ACT014.equals(requestingAct)
+            || ConstantBaseApp.ACT035.equals(requestingAct)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
-            if(ConstantBaseApp.ACT035.equals(requestingAct)){
+            if (ConstantBaseApp.ACT035.equals(requestingAct)) {
                 bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
             }
         }
@@ -628,12 +671,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             }
         });
         //
-        ivOpenPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callCameraAct();
-            }
-        });
+        ivOpenPhoto.setOnClickListener(photoListener);
         //
         swFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -676,9 +714,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                                 //Seta dados do checkin
                                 setCheckinToObj();
                                 //Tenta update no banco, se ok, vai pra WS, se não limpa os dados do checkin
-                                if(mPresenter.setCheckInData(mTicket)) {
+                                if (mPresenter.setCheckInData(mTicket)) {
                                     mPresenter.executeCheckin(mTicket, true);
-                                }else{
+                                } else {
                                     resetCheckinInObj();
                                     //
                                     showAlert(
@@ -816,12 +854,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-            if( bundle != null
+            if (bundle != null
                 && bundle.containsKey(ConstantBaseApp.SW_TYPE)
                 && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
-            ){
+            ) {
                 //
-                if(mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
+                if (mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
                     updateSyncRequiredByFCM();
                 }
             }
@@ -852,11 +890,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             wsProcess = "";
             mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
 
-        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             wsProcess = "";
             refreshUi();
 
-        }else if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())){
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
             mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
         }
