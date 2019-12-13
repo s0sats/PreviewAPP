@@ -228,11 +228,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct008(Context context) {
 //        Intent mIntent = new Intent(context, Act008_Main.class);
 //        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-//        //bundle.remove(Constant.ACT008_SERIAL_ID);
-//        bundle.remove(MD_ProductDao.PRODUCT_DESC);
-//        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
-//        bundle.remove(Constant.BACK_ACTION);
+//        bundle.removeFull(MD_Product_SerialDao.SERIAL_ID);
+//        //bundle.removeFull(Constant.ACT008_SERIAL_ID);
+//        bundle.removeFull(MD_ProductDao.PRODUCT_DESC);
+//        //bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
+//        bundle.removeFull(Constant.BACK_ACTION);
 //        //
 //        // VERIFICAR
 //        bundle.putString(MD_ProductDao.PRODUCT_CODE,bundle.getString(MD_ProductDao.PRODUCT_CODE));
@@ -258,10 +258,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 //
 //        Intent mIntent = new Intent(context, Act020_Main.class);
 //        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-//        bundle.remove(Constant.ACT008_SERIAL_ID);
-//        bundle.remove(Constant.ACT008_PRODUCT_DESC);
-//        bundle.remove(Constant.BACK_ACTION);
+//        bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
+//        bundle.removeFull(Constant.ACT008_SERIAL_ID);
+//        bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
+//        bundle.removeFull(Constant.BACK_ACTION);
 //        mIntent.putExtras(bundle);
 //        startActivity(mIntent);
 //        finish();
@@ -272,10 +272,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-//        bundle.remove(Constant.ACT008_SERIAL_ID);
-//        bundle.remove(Constant.ACT008_PRODUCT_DESC);
-//        bundle.remove(Constant.BACK_ACTION);
+//        bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
+//        bundle.removeFull(Constant.ACT008_SERIAL_ID);
+//        bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
+//        bundle.removeFull(Constant.BACK_ACTION);
 //        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -286,11 +286,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(MD_ProductDao.PRODUCT_CODE);
-        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        //bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        //bundle.removeFull(Constant.ACT008_SERIAL_ID);
         bundle.remove(MD_ProductDao.PRODUCT_DESC);
-        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        //bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
 
         bundle.remove(Constant.BACK_ACTION);
         bundle.remove(Constant.MAIN_REQUESTING_ACT);
@@ -304,11 +304,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(MD_ProductDao.PRODUCT_CODE);
-        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        //bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        //bundle.removeFull(Constant.ACT008_SERIAL_ID);
         bundle.remove(MD_ProductDao.PRODUCT_DESC);
-        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        //bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
 
         bundle.remove(Constant.BACK_ACTION);
         bundle.remove(Constant.MAIN_REQUESTING_ACT);

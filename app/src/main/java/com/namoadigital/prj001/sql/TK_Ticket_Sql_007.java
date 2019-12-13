@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 
+/**
+ * Query ERA USADA PARA CHECKIN_REQUIRED QUE NÃO EXISTE MAIS
+ *
+ */
 public class TK_Ticket_Sql_007 implements Specification {
 
     private long customer_code;
@@ -15,13 +18,7 @@ public class TK_Ticket_Sql_007 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
         return sb
-            .append(" SELECT\n" +
-                    "       t.*\n" +
-                    " FROM\n" +
-                        TK_TicketDao.TABLE + " t\n" +
-                    " WHERE\n" +
-                    "    t.customer_code =  '" + customer_code + "'\n" +
-                    "    AND t.checkin_required = 1")
+            .append("")
             .toString();
     }
 }

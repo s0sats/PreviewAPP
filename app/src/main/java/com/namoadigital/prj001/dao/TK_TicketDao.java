@@ -65,7 +65,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CHECKIN_DATE = "checkin_date";
     public static final String CHECKIN_USER = "checkin_user";
     public static final String CHECKIN_USER_NAME = "checkin_user_name";
-    public static final String CHECKIN_REQUIRED = "checkin_required";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String TOKEN = "token";
@@ -286,6 +285,72 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         closeDB();
     }
 
+    public DaoObjReturn removeFull(TK_Ticket tk_ticket) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        daoObjReturn.setTable(TABLE);
+        //
+        TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        openDB();
+
+        try {
+            db.beginTransaction();
+            //Tenta o delete do ctrl e actions
+            daoObjReturn = ticketCtrlDao.removeFull(tk_ticket, db);
+            //verifica se erro ao remover itens
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Se sucesso ao deletar ctrl
+            if (!daoObjReturn.hasError()) {
+                curAction = DaoObjReturn.DELETE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket.getCustomer_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket.getTicket_prefix()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket.getTicket_code()).append("'");
+                //Tenta update e armazena retorno
+                addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
+            }
+            //
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+
+        return daoObjReturn;
+    }
+
     @Override
     public TK_Ticket getByString(String sQuery) {
         TK_Ticket tk_ticket = null;
@@ -316,6 +381,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
     /**
      * Retorna lista de ctrl do ticket selecionado.
+     *
      * @param tk_ticket
      */
     private void getTicketCtrls(TK_Ticket tk_ticket) {
@@ -351,7 +417,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -372,7 +438,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             while (cursor.moveToNext()) {
                 TK_Ticket uAux = toTK_TicketMapper.map(cursor);
                 //
-                if(uAux != null){
+                if (uAux != null) {
                     getTicketCtrls(uAux);
                 }
                 //
@@ -381,7 +447,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -405,7 +471,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -528,7 +594,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 tk_ticket.setCheckin_user_name(cursor.getString(cursor.getColumnIndex(CHECKIN_USER_NAME)));
             }
             //
-            tk_ticket.setCheckin_required(cursor.getInt(cursor.getColumnIndex(CHECKIN_REQUIRED)));
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER_NAME))) {
@@ -632,9 +697,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(CHECKIN_DATE, tk_ticket.getCheckin_date());
             contentValues.put(CHECKIN_USER, tk_ticket.getCheckin_user());
             contentValues.put(CHECKIN_USER_NAME, tk_ticket.getCheckin_user_name());
-            if (tk_ticket.getCheckin_required() > -1) {
-                contentValues.put(CHECKIN_REQUIRED, tk_ticket.getCheckin_required());
-            }
             /**
              * Atualizar somente via query update para evitar sobreposicao com o update do Ticket.
              * Atualiza com 0 quando Ticket Full e através do recebimento do GCM

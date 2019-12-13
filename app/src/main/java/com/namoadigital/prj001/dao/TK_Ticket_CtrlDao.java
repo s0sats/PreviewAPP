@@ -10,6 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -270,6 +271,92 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         } finally {
         }
         closeDB();
+    }
+
+    /**
+     * Metodo usado no removeFull do ticket
+     *
+     * @param tk_ticket - Obj ticket a ser removido
+     * @param dbInstance - Instancia compartilhada do banco
+     * @return DaoObjReturn com resultados
+     */
+    public DaoObjReturn removeFull(TK_Ticket tk_ticket , SQLiteDatabase dbInstance ){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long sqlRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        daoObjReturn.setTable(TABLE);
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        try{
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
+
+            for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket.getCtrl()) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_ctrl.getCustomer_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_ctrl.getTicket_prefix()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_ctrl.getTicket_seq()).append("'");
+                //Tenta o delete da Action
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                daoObjReturn.setTable(TK_Ticket_ActionDao.TABLE);
+                sqlRet = db.delete(TK_Ticket_ActionDao.TABLE,sbWhere.toString(),null);
+                //
+                if(sqlRet != 0){
+                    sqlRet = 0;
+                    daoObjReturn.setTable(TABLE);
+                    sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+                    if(sqlRet == 0){
+                        daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
+                }else{
+                    daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+            }
+            //
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterados.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(sqlRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        return daoObjReturn;
     }
 
     @Override

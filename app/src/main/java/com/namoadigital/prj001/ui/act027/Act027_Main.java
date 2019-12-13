@@ -1434,7 +1434,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //    }
 //
 //    public void removeControlToList(MKEditTextNM mket_tracking){
-//        controls_sta.remove(mket_tracking);
+//        controls_sta.removeFull(mket_tracking);
 //    }
 
 
