@@ -213,7 +213,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.PROFILE_MENU_TICKET,
                 "lbl_ticket",
                 "lbl_ticket",
-                R.drawable.ic_n_action_plan
+                R.drawable.ic_n_ticket
 
             )
         );
