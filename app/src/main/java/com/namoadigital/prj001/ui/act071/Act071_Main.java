@@ -560,28 +560,29 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
                 //CRIAR ASYNC_TAKS PARA DOWNLOAD?
                 //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
-                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+//                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
                 Glide.with(context).asBitmap()
+                        .placeholder(R.drawable.sand_watch_transp)
                     .load(mTicketCtrl.getAction().getAction_photo())
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             ivActionPhoto.setImageBitmap(resource);
-                            if(!bReadOnly) {
-                                final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                try (FileOutputStream out = new FileOutputStream(sFile)) {
-                                    resource.compress(Bitmap.CompressFormat.PNG, 99, out);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                previousLenght = sFile.length();
-                            }
+
                         }
+
+                        @Override
+                        public void onLoadStarted(@Nullable Drawable placeholder) {
+                            super.onLoadStarted(placeholder);
+                        }
+
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
 
                         }
-                    });
+
+                    })
+                ;
 
             } else {
                 //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
