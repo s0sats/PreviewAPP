@@ -222,31 +222,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         return false;
     }
 
-    @Override
-    public boolean hasPhotoChanged(TK_Ticket_Ctrl mTicketCtrl) {
-        if(
-            mTicketCtrl.getAction().getAction_photo() == null
-            && mTicketCtrl.getAction().getAction_photo_local() != null )
-        {
-            return true;
-        }
-        if(
-            mTicketCtrl.getAction().getAction_photo() != null
-            && mTicketCtrl.getAction().getAction_photo_local() == null )
-        {
-            return true;
-        }
-        //
-        if(actionPhotoChanged(mTicketCtrl)){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean actionPhotoChanged(TK_Ticket_Ctrl mTicketCtrl) {
-        return false;
-    }
-
     private void uploadActionImage(TK_Ticket_Ctrl mTicketCtrl) {
         GE_FileDao geFileDao = new GE_FileDao(
             context,

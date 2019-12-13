@@ -349,7 +349,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         if (hasImageFileChanged) {
             mTicketCtrl.getAction().setAction_photo_changed(1);
         }else {
-            mTicketCtrl.getAction().setAction_photo_changed(mPresenter.hasPhotoChanged(mTicketCtrl) ? 1 : 0);
+            mTicketCtrl.getAction().setAction_photo_changed(0);
         }
     }
 
@@ -453,12 +453,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void applyReadOnlyInPhoto() {
         //boolean photoReadOnly = isPhotoReadOnly();
         //
-        if(bReadOnly && (mTicketCtrl.getAction().getAction_photo() == null || mTicketCtrl.getAction().getAction_photo_local() == null)){
-            if(mTicketCtrl.getAction().getAction_photo() == null){
+        if(bReadOnly){
+            if(mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null){
                 ivActionPhoto.setEnabled(false);
                 defineActionPhotoListener(false);
             } else{
-                defineActionPhotoListener(false);
+                defineActionPhotoListener(true);
             }
         }else{
             defineActionPhotoListener(true);
