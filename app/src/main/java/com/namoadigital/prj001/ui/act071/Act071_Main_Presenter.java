@@ -442,7 +442,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT070:
             default:
                 if(mView.hasUnsavedData()){
-                    //TODO codigo tmp para validação de fluxo de UI
+
                     ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_unsaved_data_will_be_lost_ttl"),
