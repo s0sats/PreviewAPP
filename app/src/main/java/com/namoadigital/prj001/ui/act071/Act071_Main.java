@@ -148,6 +148,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         transList.add("alert_error_on_offline_done_ttl");
         transList.add("alert_error_on_offline_done_msg");
+        transList.add("alert_image_too_large_to_open_ttl");
+        transList.add("alert_image_too_large_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -557,60 +559,129 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             }
             ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         } else {
-            if (mTicketCtrl.getAction().getAction_photo_local() == null) {
-                //FOTO NÃO FOI BAIXADA, COMO FAZER?
-                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
-                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
-                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
-//                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
-                Glide.with(context).asBitmap()
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .load(mTicketCtrl.getAction().getAction_photo())
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            ivActionPhoto.setEnabled(true);
-                            ivActionPhoto.setImageBitmap(resource);
-                            if(!bReadOnly) {
-                                final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                saveBitmapToFile(resource, sFile);
-                                previousLenght = sFile.length();
-                            }
-                        }
-
-                        @Override
-                        public void onLoadStarted(@Nullable Drawable placeholder) {
-                            super.onLoadStarted(placeholder);
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                            ivActionPhoto.setImageDrawable(placeholder);
-                            ivActionPhoto.setEnabled(false);
-                        }
-
-                        @Override
-                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                            super.onLoadFailed(errorDrawable);
-                        }
-                    });
-
-            } else {
+            String path = mTicketCtrl.getAction().getAction_photo();
+            boolean saveBitmap = false;
+            //
+            if (mTicketCtrl.getAction().getAction_photo_local() != null) {
+                path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
                 ivActionPhoto.setEnabled(true);
+                //
                 if(!bReadOnly) {
+                    path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
                     //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
                     final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                    String tempPath = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
-                    copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
+                    copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, path);
                     previousLenght = sFile.length();
-                    Bitmap bitmap = BitmapFactory.decodeFile(tempPath);
-                    ivActionPhoto.setImageBitmap(bitmap);
-                }else{
-                    String path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
-                    Bitmap bitmap = BitmapFactory.decodeFile(path);
-                    ivActionPhoto.setImageBitmap(bitmap);
                 }
+
+            }else{
+                saveBitmap = !bReadOnly;
             }
+            //
+            final boolean finalSaveBitmap = saveBitmap;
+            final String finalPath = path;
+            //
+            Glide.with(context).asBitmap()
+                .placeholder(R.drawable.sand_watch_transp)
+                .load(path)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        ivActionPhoto.setEnabled(true);
+                        //ivActionPhoto.setImageBitmap(resource);
+                        //
+                        if(finalSaveBitmap){
+                            final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                            saveBitmapToFile(resource, sFile);
+                            previousLenght = sFile.length();
+                        }
+                        //
+                        Glide.with(context).load(resource).into(ivActionPhoto);
+                        if(photoClickListener != null && !ToolBox_Inf.isImageUnder4kLimit(finalPath)){
+                            ivActionPhoto.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    showAlert(
+                                        hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
+                                        hmAux_Trans.get("alert_image_too_large_to_open_msg"),
+                                        null
+                                    );
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onLoadStarted(@Nullable Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        ivActionPhoto.setImageDrawable(placeholder);
+                        ivActionPhoto.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        super.onLoadFailed(errorDrawable);
+                    }
+                });
+
+//            if (mTicketCtrl.getAction().getAction_photo_local() == null) {
+//                //FOTO NÃO FOI BAIXADA, COMO FAZER?
+//                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
+//                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
+//                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
+////                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+//                Glide.with(context).asBitmap()
+//                    .placeholder(R.drawable.sand_watch_transp)
+//                    .load(mTicketCtrl.getAction().getAction_photo())
+//                    .into(new CustomTarget<Bitmap>() {
+//                        @Override
+//                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                            ivActionPhoto.setEnabled(true);
+//                            ivActionPhoto.setImageBitmap(resource);
+//                            if(!bReadOnly) {
+//                                final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+//                                saveBitmapToFile(resource, sFile);
+//                                previousLenght = sFile.length();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onLoadStarted(@Nullable Drawable placeholder) {
+//                            super.onLoadStarted(placeholder);
+//                        }
+//
+//                        @Override
+//                        public void onLoadCleared(@Nullable Drawable placeholder) {
+//                            ivActionPhoto.setImageDrawable(placeholder);
+//                            ivActionPhoto.setEnabled(false);
+//                        }
+//
+//                        @Override
+//                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+//                            super.onLoadFailed(errorDrawable);
+//                        }
+//                    });
+//
+//            } else {
+//                ivActionPhoto.setEnabled(true);
+//                if(!bReadOnly) {
+//                    //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
+//                    final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+//                    String tempPath = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
+//                    copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
+//                    previousLenght = sFile.length();
+//                    Bitmap bitmap = BitmapFactory.decodeFile(tempPath);
+//                    ivActionPhoto.setImageBitmap(bitmap);
+//                }else{
+//                    String path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+//                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+//                    ivActionPhoto.setImageBitmap(bitmap);
+//                }
+//            }
         }
     }
 

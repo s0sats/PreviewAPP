@@ -567,6 +567,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 context,
                 Constant.PROFILE_MENU_AP,
                 null
+            ),
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_TICKET,
+                null
             )
         );
 

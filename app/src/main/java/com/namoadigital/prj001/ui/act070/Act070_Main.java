@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,6 +32,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -454,23 +459,31 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
             ivOpenPhoto.setVisibility(View.GONE);
         } else {
+            String load = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
             if (mTicket.getOpen_photo_local() == null) {
-                Glide.with(context)
-                    .load(mTicket.getOpen_photo())
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .into(ivOpenPhoto);
-            } else {
-                String load = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
-                if (mTicket.getOpen_photo_local() == null) {
-                    load = mTicket.getOpen_photo();
-                }
-                Glide.with(context)
-                    .load(load)
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .into(ivOpenPhoto);
-                //Define listener
-                definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(load));
+                load = mTicket.getOpen_photo();
             }
+            final String finalLoad = load;
+            Glide.with(context)
+                .load(load)
+                .placeholder(R.drawable.sand_watch_transp)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        //Define listener
+                        definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(finalLoad));
+                        ivOpenPhoto.setOnClickListener(photoListener);
+                        return false;
+                    }
+                })
+                .into(ivOpenPhoto);
+            //Define listener
+            //definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(load));
         }
     }
 

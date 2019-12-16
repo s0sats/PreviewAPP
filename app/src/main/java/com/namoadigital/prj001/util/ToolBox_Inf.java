@@ -5845,8 +5845,11 @@ public class ToolBox_Inf {
      */
     public static boolean isImageUnder4kLimit(String path) {
         try {
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
-            return bitmap.getWidth() <= 3840 && bitmap.getHeight() <= 3840;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path,options);
+            //
+            return options.outWidth <= 3840 && options.outHeight <= 3840;
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             return false;

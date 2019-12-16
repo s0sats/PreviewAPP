@@ -64,10 +64,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private String mResource_Name = "act037_adapter_ap";
     //Se usr tem acesso ao profile de form_ap ou não
     private boolean profile_ap = false;
+    private boolean profile_ticket = false;
     //LUCHE - 27/11/2019
     private LinkedHashMap<Integer, Integer> resources = new LinkedHashMap<>();
 
-    public Act035_Adapter_Messages(Context context, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra, boolean profile_ap) {
+    public Act035_Adapter_Messages(Context context, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra, boolean profile_ap, boolean profile_ticket) {
         this.context = context;
 
         loadResources();
@@ -81,6 +82,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.hmAux_Trans_Extra = hmAux_Trans_Extra;
 
         this.profile_ap = profile_ap;
+
+        this.profile_ticket = profile_ticket;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -1149,61 +1152,65 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_comment_val.setVisibility(View.GONE);
             }
             ibDownload.setVisibility(View.VISIBLE);
-            //Valida de se customer da msg é o mesmo que o logado.
-            if(item.hasConsistentValue("pk") && !item.get("pk").isEmpty()){
-                String customerPk = item.get("pk").substring(0,item.get("pk").indexOf("|"));
-                if(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)).equalsIgnoreCase(customerPk)){
-                    final HMAux finalItem = item;
-                    ibDownload.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (delegate != null
-                                && finalItem.hasConsistentValue("pk")
-                                && finalItem.hasConsistentValue("site_code")
-                                && finalItem.hasConsistentValue("operation_code")
-                                && finalItem.hasConsistentValue("product_code")
-                            ) {
-                                delegate.downloadTicket(
-                                    finalItem.get("pk"),
-                                    finalItem.get("site_code"),
-                                    finalItem.get("operation_code"),
-                                    finalItem.get("product_code")
-                                );
+            if(!profile_ticket){
+                ibDownload.setVisibility(View.GONE);
+            }else {
+                //Valida de se customer da msg é o mesmo que o logado.
+                if (item.hasConsistentValue("pk") && !item.get("pk").isEmpty()) {
+                    String customerPk = item.get("pk").substring(0, item.get("pk").indexOf("|"));
+                    if (String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)).equalsIgnoreCase(customerPk)) {
+                        final HMAux finalItem = item;
+                        ibDownload.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (delegate != null
+                                    && finalItem.hasConsistentValue("pk")
+                                    && finalItem.hasConsistentValue("site_code")
+                                    && finalItem.hasConsistentValue("operation_code")
+                                    && finalItem.hasConsistentValue("product_code")
+                                ) {
+                                    delegate.downloadTicket(
+                                        finalItem.get("pk"),
+                                        finalItem.get("site_code"),
+                                        finalItem.get("operation_code"),
+                                        finalItem.get("product_code")
+                                    );
+                                }
                             }
-                        }
-                    });
-                    //Valida de usuario tem acesso ao MD do ticket
-                    if (delegate != null
-                        && finalItem.hasConsistentValue("site_code")
-                        && finalItem.hasConsistentValue("operation_code")
-                        && finalItem.hasConsistentValue("product_code")
-                    ) {
-                        if (!delegate.checkTicketProfile(
-                            finalItem.get("site_code"),
-                            finalItem.get("operation_code"),
-                            finalItem.get("product_code"))
+                        });
+                        //Valida de usuario tem acesso ao MD do ticket
+                        if (delegate != null
+                            && finalItem.hasConsistentValue("site_code")
+                            && finalItem.hasConsistentValue("operation_code")
+                            && finalItem.hasConsistentValue("product_code")
                         ) {
-                            tv_warning_msg.setVisibility(View.VISIBLE);
-                            tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
-                            ibDownload.setVisibility(View.GONE);
-                        }
-                    }
-                    //
-                }else{
-                    ibDownload.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(delegate!= null){
-                                delegate.showTicketForOtherCustomerMsg();
+                            if (!delegate.checkTicketProfile(
+                                finalItem.get("site_code"),
+                                finalItem.get("operation_code"),
+                                finalItem.get("product_code"))
+                            ) {
+                                tv_warning_msg.setVisibility(View.VISIBLE);
+                                tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
+                                ibDownload.setVisibility(View.GONE);
                             }
                         }
-                    });
+                        //
+                    } else {
+                        ibDownload.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (delegate != null) {
+                                    delegate.showTicketForOtherCustomerMsg();
+                                }
+                            }
+                        });
+                        tv_warning_msg.setVisibility(View.VISIBLE);
+                        tv_warning_msg.setText(hmAux_Trans.get("ticket_for_another_customer_msg"));
+                    }
+                } else {
                     tv_warning_msg.setVisibility(View.VISIBLE);
-                    tv_warning_msg.setText(hmAux_Trans.get("ticket_for_another_customer_msg"));
+                    tv_warning_msg.setText(hmAux_Trans.get("ticket_key_not_found_msg"));
                 }
-            }else{
-                tv_warning_msg.setVisibility(View.VISIBLE);
-                tv_warning_msg.setText(hmAux_Trans.get("ticket_key_not_found_msg"));
             }
 
         } catch (Exception e) {
