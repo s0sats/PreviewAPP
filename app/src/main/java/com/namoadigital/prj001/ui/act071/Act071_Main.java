@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.Group;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -47,8 +49,11 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,13 +89,13 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private boolean bDisableByCheckin;
     private View.OnClickListener execClickListener;
     private View.OnClickListener photoClickListener;
-    private String actionPhotoLocalPath ="";
-    private String wsProcess ="";
-    private long previousLenght =0;
+    private String actionPhotoLocalPath = "";
+    private String wsProcess = "";
+    private long previousLenght = 0;
     private TextInputLayout tilComment;
     //flag criada para controle do metodo que coloca imagem na tela
     private boolean fromCamera = false;
-    private boolean hasImageFileChanged=false;
+    private boolean hasImageFileChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +153,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         transList.add("alert_error_on_offline_done_ttl");
         transList.add("alert_error_on_offline_done_msg");
+        transList.add("alert_error_on_save_photo_ttl");
+        transList.add("alert_error_on_save_photo_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -281,9 +288,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if (currentLength != previousLenght) {
                                         hasImageFileChanged = true;
                                     }
-                                    if(photo.exists() && hasImageFileChanged) {
+                                    if (photo.exists() && hasImageFileChanged) {
+
                                         copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
-                                                ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                                    ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+
                                         photo.delete();
                                     }else{
                                         if(mPresenter.fileExists(actionPhotoLocalPath)) {
@@ -291,14 +300,23 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                             originalPhoto.delete();
                                         }
                                     }
-                                }catch (NullPointerException e){
+                                    setDataToObj();
+                                    if(mPresenter.updateTicketAction(mTicketCtrl)){
+                                        mPresenter.execTicketSave();
+                                    }
+                                }catch (Exception e){
                                     e.printStackTrace();
                                     ToolBox_Inf.registerException(e);
-                                }
+                                    showAlert(hmAux_Trans.get("alert_error_on_save_photo_ttl"),
+                                            hmAux_Trans.get("alert_error_on_save_photo_msg"),
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    })
+                                    ;
 
-                                setDataToObj();
-                                if(mPresenter.updateTicketAction(mTicketCtrl)){
-                                    mPresenter.execTicketSave();
                                 }
                             }
                         },
@@ -309,10 +327,31 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
-    private void copyFiles(String fromFile, String toFile) {
-        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
-        File tempImageFile = new File(toFile);
-        saveBitmapToFile(bitmap, tempImageFile);
+    private void copyFiles(String fromFile, String toFile) throws IOException {
+
+        File src = new File(fromFile);
+        File dst = new File(toFile);
+
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+
+//        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
+//        File tempImageFile = new File(toFile);
+//        saveBitmapToFile(bitmap, tempImageFile);
     }
 
     private void saveBitmapToFile(Bitmap bitmap, File tempImageFile) {
@@ -551,7 +590,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
             if(!bReadOnly) {
-                deleteTempFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
             }else{
                 ivActionPhoto.setEnabled(false);
             }
@@ -581,6 +620,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                         @Override
                         public void onLoadStarted(@Nullable Drawable placeholder) {
                             super.onLoadStarted(placeholder);
+                            ivActionPhoto.setEnabled(false);
+                            ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
                         }
 
                         @Override
@@ -601,7 +642,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
                     final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
                     String tempPath = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
-                    copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
+                    try {
+                        copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ToolBox_Inf.registerException(e);
+                    }
                     previousLenght = sFile.length();
                     Bitmap bitmap = BitmapFactory.decodeFile(tempPath);
                     ivActionPhoto.setImageBitmap(bitmap);
@@ -611,13 +657,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     ivActionPhoto.setImageBitmap(bitmap);
                 }
             }
-        }
-    }
-
-    private void deleteTempFile(String path) {
-        final File sFile = new File(path);
-        if (sFile != null && sFile.exists()) {
-            sFile.delete();
         }
     }
 
@@ -633,7 +672,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             ivActionPhoto.setImageBitmap(bitmap);
         }else {
-
             ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         }
 
@@ -711,7 +749,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void callCameraAct() {
-        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicketCtrl.getAction().getAction_photo_local());
+        File sFile;
+
+        if (bReadOnly) {
+            sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+        }else{
+            sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+        }
+
         if (!sFile.exists() && bReadOnly) {
             return;
         }
@@ -751,6 +796,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         File photo = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE +actionPhotoLocalPath);
         try {
             long currentLength = photo.length();
+            deletePhotoFile(TEMP_SUFIX_FILE +actionPhotoLocalPath);
             if (currentLength != previousLenght) {
                 return true;
             }
@@ -871,7 +917,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
         mPresenter.onBackPressedClicked(requestingAct);
     }
 
