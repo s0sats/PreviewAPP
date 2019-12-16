@@ -275,16 +275,16 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     BARRIONUEVO - 11.12.2019
                                     Passa alterações da imagem para arquivo oficial.
                                  */
-
                                 try {
                                     File photo = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
                                     long currentLength = photo.length();
                                     if (currentLength != previousLenght) {
                                         hasImageFileChanged = true;
                                     }
-                                    if(photo.exists()) {
+                                    if(photo.exists() && hasImageFileChanged) {
                                         copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
                                                 ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                        photo.delete();
                                     }else{
                                         if(mPresenter.fileExists(actionPhotoLocalPath)) {
                                             File originalPhoto = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
@@ -312,6 +312,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void copyFiles(String fromFile, String toFile) {
         Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
         File tempImageFile = new File(toFile);
+        saveBitmapToFile(bitmap, tempImageFile);
+    }
+
+    private void saveBitmapToFile(Bitmap bitmap, File tempImageFile) {
         try (FileOutputStream out = new FileOutputStream(tempImageFile)) {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
         } catch (IOException e) {
@@ -357,9 +361,23 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             if(mTicketCtrl.getAction().getAction_photo_local() == null){
                 mTicketCtrl.getAction().setAction_photo(null);
                 mTicketCtrl.getAction().setAction_photo_name(null);
+                deletePhotoFile(actionPhotoLocalPath);
             }
         }else {
             mTicketCtrl.getAction().setAction_photo_changed(0);
+        }
+    }
+
+    private void deletePhotoFile(String filename) {
+        if(mPresenter.fileExists(filename)){
+            try {
+                File file = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + filename);
+                if(file != null && file.exists()) {
+                    file.delete();
+                }
+            }catch (Exception e ){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -531,12 +549,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void defineActionPhoto() {
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
         //
-        final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-        //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
-
-            if(sFile != null && sFile.exists()){
-                sFile.delete();
+            if(!bReadOnly) {
+                deleteTempFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+            }else{
+                ivActionPhoto.setEnabled(false);
             }
             ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
         } else {
@@ -545,35 +562,62 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
                 //CRIAR ASYNC_TAKS PARA DOWNLOAD?
                 //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
+//                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
                 Glide.with(context).asBitmap()
-                    .load(mTicketCtrl.getAction().getAction_photo())
                     .placeholder(R.drawable.sand_watch_transp)
+                    .load(mTicketCtrl.getAction().getAction_photo())
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            ivActionPhoto.setEnabled(true);
                             ivActionPhoto.setImageBitmap(resource);
-                            try (FileOutputStream out = new FileOutputStream(sFile)) {
-                                resource.compress(Bitmap.CompressFormat.PNG, 100, out);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            if(!bReadOnly) {
+                                final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                                saveBitmapToFile(resource, sFile);
+                                previousLenght = sFile.length();
                             }
                         }
 
                         @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        public void onLoadStarted(@Nullable Drawable placeholder) {
+                            super.onLoadStarted(placeholder);
+                        }
 
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            ivActionPhoto.setImageDrawable(placeholder);
+                            ivActionPhoto.setEnabled(false);
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            super.onLoadFailed(errorDrawable);
                         }
                     });
 
             } else {
-                //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
-                copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath,
-                        ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                previousLenght = sFile.length();
-                String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                ivActionPhoto.setImageBitmap(bitmap);
+                ivActionPhoto.setEnabled(true);
+                if(!bReadOnly) {
+                    //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
+                    final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
+                    String tempPath = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
+                    copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
+                    previousLenght = sFile.length();
+                    Bitmap bitmap = BitmapFactory.decodeFile(tempPath);
+                    ivActionPhoto.setImageBitmap(bitmap);
+                }else{
+                    String path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+                    ivActionPhoto.setImageBitmap(bitmap);
+                }
             }
+        }
+    }
+
+    private void deleteTempFile(String path) {
+        final File sFile = new File(path);
+        if (sFile != null && sFile.exists()) {
+            sFile.delete();
         }
     }
 
@@ -654,7 +698,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionPhotoReference() {
-        setActinPhotoToView(TEMP_SUFIX_FILE + actionPhotoLocalPath);
+        if(bReadOnly) {
+            setActinPhotoToView(actionPhotoLocalPath);
+        }else{
+            setActinPhotoToView(TEMP_SUFIX_FILE + actionPhotoLocalPath);
+        }
     }
 
     @Override
@@ -677,7 +725,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             Criacao de arquivo temporario para restaurar imagem original caso user saia da
             activity sem confirmar as alteracoes.
         */
-        bundle.putString(ConstantBase.PPATH, TEMP_SUFIX_FILE +actionPhotoLocalPath );
+        if(bReadOnly) {
+            bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
+        }else {
+            bundle.putString(ConstantBase.PPATH, TEMP_SUFIX_FILE + actionPhotoLocalPath);
+        }
         bundle.putBoolean(ConstantBase.PEDIT, !bReadOnly);
         bundle.putBoolean(ConstantBase.PENABLED, !bReadOnly);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
@@ -819,6 +871,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
         mPresenter.onBackPressedClicked(requestingAct);
     }
 
