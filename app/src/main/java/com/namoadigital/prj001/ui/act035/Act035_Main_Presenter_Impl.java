@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,7 +12,6 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
@@ -392,10 +390,16 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     mView.callAct070(bundle);
                 }
             }else{
-                Toast.makeText(context,"SEM PERFIL",Toast.LENGTH_LONG).show();
+                mView.showAlert(
+                    hmAux_Trans.get("alert_download_ticket_ttl"),
+                    hmAux_Trans.get("alert_ticket_profile_missing_msg")
+                );
             }
         }else{
-            Toast.makeText(context,"DADOS DA PK INCOMPLETOS",Toast.LENGTH_LONG).show();
+            mView.showAlert(
+                hmAux_Trans.get("alert_download_ticket_ttl"),
+                hmAux_Trans.get("alert_ticket_parameter_missing_msg")
+            );
         }
         //
 

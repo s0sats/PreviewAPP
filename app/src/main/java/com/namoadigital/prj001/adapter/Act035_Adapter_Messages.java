@@ -1185,6 +1185,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                         ) {
                             tv_warning_msg.setVisibility(View.VISIBLE);
                             tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));
+                            ibDownload.setVisibility(View.GONE);
                         }
                     }
                     //

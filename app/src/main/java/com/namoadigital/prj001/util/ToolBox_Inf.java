@@ -5832,4 +5832,25 @@ public class ToolBox_Inf {
         return metrics;
     }
 
+    /**
+     * Metodo criado para avaliar se a imagem enviada é grande de mais para abrir.
+     * Depois de tentar metodo baseado no tamanho maximo do canvas e OpenGL, sem sucesso
+     * , foram executado testes em 4 devices com resolução e configurações distintas e todos
+     * suportaram a resolução 4k.
+     * Sendo assim, esse metodo avalia se o width ou height da imagem é maior que a da resolução
+     * 4k(3840).
+     *
+     * @param path - Caminho para imagem
+     * @return Verdadeiro se img menor ou igual a resolução 4k
+     */
+    public static boolean isImageUnder4kLimit(String path) {
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            return bitmap.getWidth() <= 3840 && bitmap.getHeight() <= 3840;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return false;
+        }
+    }
+
 }

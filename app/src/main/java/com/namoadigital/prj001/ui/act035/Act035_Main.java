@@ -316,6 +316,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("ticket_for_another_customer_msg");
         transList.add("ticket_key_not_found_msg");
         //
+        transList.add("alert_ticket_profile_missing_msg");
+        transList.add("alert_ticket_parameter_missing_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -1789,13 +1792,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 Chat_C_Error.class
                         );
                 //
-                ToolBox.sendBCStatus(
+                if(cError != null && cError.getError_msg().equalsIgnoreCase(Constant.LOGIN_STATUS_SESSION_NOT_FOUND) ) {
+                    ToolBox.sendBCStatus(
+                        context,
+                        "ERROR_3",
+                        cError.getError_msg(),
+                        "",
+                        "0"
+                    );
+                }else {
+                    ToolBox.sendBCStatus(
                         context,
                         "ERROR_1",
                         cError != null ? cError.getError_msg() : "Error",
                         "",
                         "0"
-                );
+                    );
+                }
 
             } else {
                 try {
@@ -2797,6 +2810,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         resetWSProcess();
     }
 
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
     private Drawable processBadge(CH_Message ch_Message) {
         // Badge Status for All
         if (ch_Message.getAll_read() == 1) {
@@ -2891,13 +2916,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                     Chat_C_Error.class
                             );
                     //
-                    ToolBox.sendBCStatus(
+                    if(cError != null && cError.getError_msg().equalsIgnoreCase(Constant.LOGIN_STATUS_SESSION_NOT_FOUND) ) {
+                        ToolBox.sendBCStatus(
                             context,
-                            "ERROR_1",
-                            cError != null ? cError.getError_msg() : "Error",
+                            "ERROR_3",
+                            cError.getError_msg(),
                             "",
                             "0"
-                    );
+                        );
+                    }else{
+                        ToolBox.sendBCStatus(
+                                context,
+                                "ERROR_1",
+                                cError != null ? cError.getError_msg() : "Error",
+                                "",
+                                "0"
+                        );
+                    }
 
                 } else {
                     //

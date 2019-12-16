@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -173,8 +170,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_error_on_checkin_ttl");
         transList.add("alert_error_on_checkin_msg");
         //
-        transList.add("alert_image_to_big_to_open_ttl");
-        transList.add("alert_image_to_big_to_open_msg");
+        transList.add("alert_image_too_large_to_open_ttl");
+        transList.add("alert_image_too_large_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -472,31 +469,18 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                     .placeholder(R.drawable.sand_watch_transp)
                     .into(ivOpenPhoto);
                 //Define listener
-                definePhotoListener(isImageToLarge(load));
+                definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(load));
             }
         }
     }
 
-    private boolean isImageToLarge(String path) {
-        try {
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
-            //Se o bitmap for muito grande, crashra no comando abaixo.
-            Canvas canvas = new Canvas(bitmap);
-            return true;
-        } catch (Exception e) {
-            //Se exception, carega via glide e inibe a abertura da foto.
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            return false;
-        }
-    }
-
     /**
-     * Define listner do click na foto
+     * Define listener do click na foto
      * TRATATIVA PARA IMAGENS MUITO GRANDES, TIPO 8
-     * @param isImageToLarge
+     * @param isImageUnder4k
      */
-    private void definePhotoListener(boolean isImageToLarge) {
-        if (isImageToLarge) {
+    private void definePhotoListener(boolean isImageUnder4k) {
+        if (isImageUnder4k) {
             photoListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -508,8 +492,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 @Override
                 public void onClick(View v) {
                     showAlert(
-                        hmAux_Trans.get("alert_image_to_big_to_open_ttl"),
-                        hmAux_Trans.get("alert_image_to_big_to_open_msg")
+                        hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
+                        hmAux_Trans.get("alert_image_too_large_to_open_msg")
                     );
                 }
             };
