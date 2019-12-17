@@ -288,17 +288,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if (currentLength != previousLenght) {
                                         hasImageFileChanged = true;
                                     }
-                                    if (photo.exists() && hasImageFileChanged) {
-
-                                        copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
+                                    if (hasImageFileChanged) {
+                                        if(photo.exists()) {
+                                            copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
                                                     ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
 
-
-                                        photo.delete();
-                                    }else{
-                                        if(mPresenter.fileExists(actionPhotoLocalPath)) {
-                                            File originalPhoto = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-                                            originalPhoto.delete();
+                                            photo.delete();
+                                        }else{
+                                            if(mPresenter.fileExists(actionPhotoLocalPath)) {
+                                                File originalPhoto = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                                originalPhoto.delete();
+                                            }
                                         }
                                     }
                                     setDataToObj();
@@ -662,71 +662,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                         super.onLoadFailed(errorDrawable);
                     }
                 });
-
-            /*
-            ESQUEMA COMENTADO FUNCIONANDO NA LB_TICKET09
-            if (mTicketCtrl.getAction().getAction_photo_local() == null) {
-                //FOTO NÃO FOI BAIXADA, COMO FAZER?
-                //INICIAR SERVICE DOWNLOAD E CRIAR HANDLER PARA DE X em X SEGUNDOS VERIFICAR SE SERVIÇO PAROU DE RODAR E SE PAROU TENTA RESETAR IMAGE?
-                //CRIAR ASYNC_TAKS PARA DOWNLOAD?
-                //USAR GLIDE PARA BAIXAR A IMAGEM SETANDO ELA NO PATH DEFINITIVO? NECESSARIO ATUALIZAR O BANCO DEPOIS...
-//                ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
-                Glide.with(context).asBitmap()
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .load(mTicketCtrl.getAction().getAction_photo())
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            ivActionPhoto.setEnabled(true);
-                            ivActionPhoto.setImageBitmap(resource);
-                            if(!bReadOnly) {
-                                String path =ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
-                                final File sFile = new File(path);
-                                saveBitmapToFile(resource, sFile);
-                                previousLenght = sFile.length();
-                            }
-                        }
-
-                        @Override
-                        public void onLoadStarted(@Nullable Drawable placeholder) {
-                            super.onLoadStarted(placeholder);
-                            ivActionPhoto.setEnabled(false);
-                            ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                            ivActionPhoto.setImageDrawable(placeholder);
-                            ivActionPhoto.setEnabled(false);
-                        }
-
-                        @Override
-                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                            super.onLoadFailed(errorDrawable);
-                        }
-                    });
-
-            } else {
-                ivActionPhoto.setEnabled(true);
-                if(!bReadOnly) {
-                    //Passa dados para arquivo temporario, mudanca feita para restauracao de info original
-                    final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                    String tempPath = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath;
-                    try {
-                        copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, tempPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ToolBox_Inf.registerException(e);
-                    }
-                    previousLenght = sFile.length();
-                    Bitmap bitmap = BitmapFactory.decodeFile(tempPath);
-                    ivActionPhoto.setImageBitmap(bitmap);
-                }else{
-                    Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-                    ivActionPhoto.setImageBitmap(bitmap);
-                }
-            }
-            */
         }
     }
 
