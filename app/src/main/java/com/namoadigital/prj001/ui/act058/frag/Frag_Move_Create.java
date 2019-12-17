@@ -531,7 +531,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                //controls_sta.remove(mket_tracking);
+                //controls_sta.removeFull(mket_tracking);
                 if (mListener != null) {
                     mListener.onAddOrRemoveControl(mket_tracking, false);
                 }
@@ -1090,7 +1090,7 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 int idx = ll_tracking_content.indexOfChild(textViewCT);
                 //
 
-//                mdProductSerial.getTracking_list().remove(idx);
+//                mdProductSerial.getTracking_list().removeFull(idx);
                 if(fromMove) {
                     if (mPresenter.removeTrackingFromMove(trackingFromMove.get(idx))) {
                         trackingFromMove.remove(idx);

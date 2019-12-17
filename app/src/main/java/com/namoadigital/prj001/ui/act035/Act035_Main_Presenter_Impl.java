@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,17 +14,32 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -331,6 +348,159 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     },
                     1
             );
+        }
+    }
+
+    @Override
+    public boolean validateTicketPk(String ticketPk) {
+        try {
+            String[] pk_fields = getSplitedPk(ticketPk, "|");
+            return pk_fields != null && pk_fields.length == 3;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return false;
+        }
+
+    }
+
+    @Override
+    public void validateTicketDownload(final String pk, String site_code, String operation_code, String product_code) {
+        if(validateTicketPk(pk)){
+            if(checkTicketMdProfile(site_code,operation_code,product_code)){
+                if(!hasTicketDownloaded(pk)) {
+                    ToolBox.alertMSG_YES_NO(
+                            context,
+                            hmAux_Trans.get("alert_download_ticket_ttl"),
+                            hmAux_Trans.get("alert_download_ticket_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    executeWsTicketDownload(pk);
+                                }
+                            },
+                            1
+
+                    );
+                }else{
+                    String[] pk_fields = getSplitedPk(pk, "|");
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+                    bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(pk_fields [1]));
+                    bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(pk_fields [2]));
+                    mView.callAct070(bundle);
+                }
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_download_ticket_ttl"),
+                    hmAux_Trans.get("alert_ticket_profile_missing_msg")
+                );
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_download_ticket_ttl"),
+                hmAux_Trans.get("alert_ticket_parameter_missing_msg")
+            );
+        }
+        //
+
+    }
+
+    private boolean hasTicketDownloaded(String ticketPk) {
+        String[] pk_fields = getSplitedPk(ticketPk, "|");
+        int tk_prefix = Integer.parseInt(pk_fields[1]);
+        int tk_code = Integer.parseInt(pk_fields[2]);
+
+        final long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        TK_TicketDao tk_ticketDao = new TK_TicketDao(context,
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+                );
+        TK_Ticket ticket = tk_ticketDao.getByString(new TK_Ticket_Sql_001(
+                customer_code,
+                tk_prefix,
+                tk_code).toSqlQuery()
+        );
+        return ticket != null;
+    }
+
+    private void executeWsTicketDownload(String ticketPk) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWSProcess(WS_TK_Ticket_Download.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_download_ticket_ttl"),
+                hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.TICKET_PREFIX,ticketPk);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+
+    }
+
+    @Override
+    public String[] getSplitedPk(String pk, String splitter){
+        return pk.replace(splitter, "#").split("#");
+
+    }
+
+    @Override
+    public boolean checkTicketMdProfile(String s_site_code, String s_operation_code, String s_product_code) {
+        //
+        try {
+            long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
+            long operationCode = Long.parseLong(s_operation_code);
+            long productCode = Long.parseLong(s_product_code);
+
+            MD_SiteDao siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            MD_OperationDao operationDao = new MD_OperationDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            MD_ProductDao productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            MD_Site site = siteDao.getByString(
+                new MD_Site_Sql_003(
+                    customerCode,
+                    s_site_code
+                ).toSqlQuery()
+            );
+            //
+            MD_Operation operation = operationDao.getByString(
+                new MD_Operation_Sql_003(
+                    customerCode,
+                    operationCode
+                ).toSqlQuery()
+            );
+            MD_Product product = productDao.getByString(
+                new MD_Product_Sql_001(
+                    customerCode,
+                    productCode
+                ).toSqlQuery()
+            );
+            //
+            return site != null && site.getCustomer_code() > -1
+                && operation != null && operation.getCustomer_code() > -1
+                && product != null && product.getCustomer_code() > -1;
+            //
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            return false;
         }
     }
 

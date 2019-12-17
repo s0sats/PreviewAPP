@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act070.Act070_Main"
+    tools:showIn="@layout/act070_main">
+
+    <ScrollView
+        android:id="@+id/act070_sv_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/act070_cl_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act070_guide_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_begin="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/act070_guide_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_end="8dp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/act070_cl_ticket_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toStartOf="@id/act070_tv_status"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true"
+                >
+
+                <TextView
+                    android:id="@+id/act070_tv_ticket_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="3dp"
+                    android:padding="5dp"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:drawableEnd="@drawable/ic_sync_black_24dp"
+                    android:drawablePadding="3dp"
+                    tools:text="2019.999"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/stroke_blue2_states"
+                    />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/act070_tv_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/act070_cl_ticket_id"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintTop_toTopOf="@+id/act070_cl_ticket_id"
+                tools:text="Pending" />
+
+            <TextView
+                android:id="@+id/act070_tv_type_path"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="@dimen/font_size_item"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_cl_ticket_id"
+                tools:text="2019.Trad" />
+
+            <TextView
+                android:id="@+id/act070_tv_type_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_type_path"
+                tools:text="Desc" />
+
+            <TextView
+                android:id="@+id/act070_tv_open_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:textColor="@color/namoa_color_light_blue"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_type_desc"
+                tools:text="Comentario aqui Comentario aqui Comentario aqui Comentario aqui" />
+
+            <TextView
+                android:id="@+id/act070_tv_open_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_open_comment"
+                tools:text="Open Date:" />
+
+            <TextView
+                android:id="@+id/act070_tv_open_date_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/act070_tv_open_date"
+                app:layout_constraintEnd_toStartOf="@id/act070_iv_inner_comment"
+                app:layout_constraintStart_toEndOf="@id/act070_tv_open_date"
+                app:layout_constraintTop_toTopOf="@id/act070_tv_open_date"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="99/99/9999" />
+
+            <TextView
+                android:id="@+id/act070_tv_forecast_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_open_date_val"
+                tools:text="Forecast:" />
+
+            <TextView
+                android:id="@+id/act070_tv_forecast_date_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/act070_tv_forecast_date"
+                app:layout_constraintEnd_toStartOf="@id/act070_iv_inner_comment"
+                app:layout_constraintStart_toEndOf="@id/act070_tv_forecast_date"
+                app:layout_constraintTop_toTopOf="@id/act070_tv_forecast_date"
+                tools:text="99/99/9999" />
+
+            <TextView
+                android:id="@+id/act070_tv_site"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_forecast_date_val"
+                tools:text="Site: " />
+
+            <TextView
+                android:id="@+id/act070_tv_site_dec"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/namoa_color_danger_red"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/act070_tv_site"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/act070_tv_site"
+                app:layout_constraintTop_toTopOf="@id/act070_tv_site"
+                tools:text="666 - trad" />
+
+            <TextView
+                android:id="@+id/act070_tv_product"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="@dimen/font_size_font_12"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_site_dec"
+                tools:text="Btt4 " />
+
+            <TextView
+                android:id="@+id/act070_tv_serial"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_product"
+                tools:text="Btt00123" />
+
+            <ImageView
+                android:id="@+id/act070_iv_inner_comment"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toTopOf="@id/act070_tv_product"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+
+                app:layout_constraintTop_toTopOf="@id/act070_tv_open_date"
+                app:srcCompat="@drawable/ic_user_msg_off" />
+
+            <ImageView
+                android:id="@+id/act070_iv_open_photo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintHeight_percent="0.3"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_serial"
+                app:layout_constraintWidth_percent="0.8"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
+
+            <Button
+                android:id="@+id/act070_btn_check_in"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/btn_namoa_main_3_states"
+                android:gravity="center"
+                android:padding="20dp"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintEnd_toEndOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_iv_open_photo"
+                tools:text="check in"
+                tools:textColor="@color/padrao_WHITE" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/act070_cl_checkin_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="@id/act070_guide_end"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_btn_check_in">
+
+
+                <TextView
+                    android:id="@+id/act070_tv_done_info_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_done_info_val"
+                    app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_done_info_val"
+                    tools:text="Done" />
+
+                <ImageView
+                    android:id="@+id/act070_iv_checkin_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_done_info_val"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_checkin_info_val"
+                    app:srcCompat="@drawable/ic_cancelar_ns_states" />
+
+                <TextView
+                    android:id="@+id/act070_tv_checkin_info_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/act070_tv_checkin_info_val"
+                    app:layout_constraintStart_toEndOf="@id/act070_iv_checkin_cancel"
+                    app:layout_constraintTop_toTopOf="@+id/act070_tv_checkin_info_val"
+                    tools:text="Check-In:" />
+
+                <TextView
+                    android:id="@+id/act070_tv_checkin_info_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/act070_tv_checkin_info_lbl"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="22/01/2019 16:04 (Luche)" />
+
+                <TextView
+                    android:id="@+id/act070_tv_done_info_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/act070_tv_done_info_lbl"
+                    app:layout_constraintTop_toBottomOf="@+id/act070_tv_checkin_info_val"
+                    tools:text="22/01/2019 19:36 (Luche)" />
+
+                <android.support.constraint.Group
+                    android:id="@+id/act070_gr_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="act070_tv_done_info_lbl,act070_tv_done_info_val" />
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/act070_tv_filter_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/act070_sw_filter"
+                app:layout_constraintEnd_toStartOf="@id/act070_sw_filter"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_cl_checkin_info"
+                tools:text="Filtros: " />
+
+            <Switch
+                android:id="@+id/act070_sw_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:checked="true"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintTop_toBottomOf="@id/act070_cl_checkin_info" />
+
+            <android.support.constraint.Group
+                android:id="@+id/act070_gr_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="act070_tv_filter_lbl,act070_sw_filter" />
+
+            <LinearLayout
+                android:id="@+id/act070_ll_actions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/act070_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act070_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act070_tv_filter_lbl"></LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/footer_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act070_sv_main" />
+</android.support.constraint.ConstraintLayout>

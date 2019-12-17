@@ -54,6 +54,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Error;
@@ -87,7 +88,9 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -300,7 +303,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         transList.add("alert_user_add_ok_ttl");
         transList.add("alert_user_add_ok_msg");
-
+        //TICKET
+        transList.add("ticket_ttl");
+        transList.add("no_profile_msg");
+        transList.add("corrupted_message_msg");
+        transList.add("alert_download_ticket_ttl");
+        transList.add("alert_download_ticket_confirm");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
+        transList.add("alert_ticket_other_customer_ttl");
+        transList.add("alert_ticket_other_customer_msg");
+        transList.add("ticket_for_another_customer_msg");
+        transList.add("ticket_key_not_found_msg");
+        //
+        transList.add("alert_ticket_profile_missing_msg");
+        transList.add("alert_ticket_parameter_missing_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -541,26 +559,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         //
         act035_adapter_messages = new Act035_Adapter_Messages(
-                getBaseContext(),
-                R.layout.act035_main_content_cell_whats_img_other,
-                R.layout.act035_main_content_cell_whats_img_me,
-                R.layout.act035_main_content_cell_whats_text_other,
-                R.layout.act035_main_content_cell_whats_text_me,
-                R.layout.act035_main_content_cell_whats_text_data,
-                R.layout.act035_main_content_cell_whats_text_end,
-                R.layout.act035_main_content_cell_whats_text_trans,
-                R.layout.act035_main_content_cell_namoa_ap_other,
-                R.layout.act035_main_content_cell_whats_text_other,
-                R.layout.act035_main_content_cell_whats_text_no_read,
-                R.layout.act035_main_content_cell_namoa_ap_me,
-                this.dados,
-                hmAux_Trans,
-                hmAux_Trans_Extra,
-                ToolBox_Inf.profileExists(
-                        context,
-                        Constant.PROFILE_MENU_AP,
-                        null
-                )
+            getBaseContext(),
+            this.dados,
+            hmAux_Trans,
+            hmAux_Trans_Extra,
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_AP,
+                null
+            ),
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_TICKET,
+                null
+            )
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
@@ -644,6 +656,28 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     }
                 }
+            }
+
+            @Override
+            public boolean checkTicketProfile(String site_code, String operation_code, String product_code) {
+                return mPresenter.checkTicketMdProfile(
+                                    site_code,
+                                    operation_code,
+                                    product_code
+                       );
+            }
+
+            @Override
+            public void downloadTicket(String pk, String site_code, String operation_code, String product_code) {
+                mPresenter.validateTicketDownload(pk,site_code,operation_code,product_code);
+            }
+
+            @Override
+            public void showTicketForOtherCustomerMsg() {
+                showAlert(
+                    hmAux_Trans.get("alert_ticket_other_customer_ttl"),
+                    hmAux_Trans.get("alert_ticket_other_customer_msg")
+                );
             }
         });
 
@@ -1763,13 +1797,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 Chat_C_Error.class
                         );
                 //
-                ToolBox.sendBCStatus(
+                if(cError != null && cError.getError_msg().equalsIgnoreCase(Constant.LOGIN_STATUS_SESSION_NOT_FOUND) ) {
+                    ToolBox.sendBCStatus(
+                        context,
+                        "ERROR_3",
+                        cError.getError_msg(),
+                        "",
+                        "0"
+                    );
+                }else {
+                    ToolBox.sendBCStatus(
                         context,
                         "ERROR_1",
                         cError != null ? cError.getError_msg() : "Error",
                         "",
                         "0"
-                );
+                    );
+                }
 
             } else {
                 try {
@@ -2598,6 +2642,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         ToolBox.alertMSG(context, ttl, msg, null, 0);
     }
 
+    @Override
+    public void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle.getString(CH_RoomDao.ROOM_CODE, null) == null) {
+            bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
+        }
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     public void executeApSyncWs(String type) {
         String mTitle = "";
         String mMessage = "";
@@ -2729,9 +2785,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             setWSProcess("");
 
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
-            bundle.putString(Constant.CHAT_RELOAD, "1");
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+            if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+            && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)) {
+                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+            }
+//            bundle.putString(Constant.CHAT_RELOAD, "1");
             //
-            callAct034(context);
+            callAct070(bundle);
         }
 
         progressDialog.dismiss();
@@ -2751,6 +2813,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         progressDialog.dismiss();
         //
         resetWSProcess();
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
     }
 
     private Drawable processBadge(CH_Message ch_Message) {
@@ -2847,13 +2921,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                     Chat_C_Error.class
                             );
                     //
-                    ToolBox.sendBCStatus(
+                    if(cError != null && cError.getError_msg().equalsIgnoreCase(Constant.LOGIN_STATUS_SESSION_NOT_FOUND) ) {
+                        ToolBox.sendBCStatus(
                             context,
-                            "ERROR_1",
-                            cError != null ? cError.getError_msg() : "Error",
+                            "ERROR_3",
+                            cError.getError_msg(),
                             "",
                             "0"
-                    );
+                        );
+                    }else{
+                        ToolBox.sendBCStatus(
+                                context,
+                                "ERROR_1",
+                                cError != null ? cError.getError_msg() : "Error",
+                                "",
+                                "0"
+                        );
+                    }
 
                 } else {
                     //

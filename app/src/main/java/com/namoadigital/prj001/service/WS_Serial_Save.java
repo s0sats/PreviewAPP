@@ -209,7 +209,7 @@ public class WS_Serial_Save extends IntentService {
                     ) {
                 //Se serial code = 0, apaga o registro do banco de insere o novo ja com serial_code
                 /*if (serialAux.getSerial_code() == 0) {
-                    serialDao.remove(new MD_Product_Serial_Sql_003(
+                    serialDao.removeFull(new MD_Product_Serial_Sql_003(
                                     ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                                     serialAux.getProduct_code()
                             ).toSqlQuery()

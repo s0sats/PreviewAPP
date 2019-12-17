@@ -10,12 +10,15 @@ public class DaoObjReturn {
     public static final String UPDATE = "UPDATE";
     public static final String DELETE = "DELETE";
 
+    public String DELETE_ERROR_0_ROWS_AFFECTED = "delete in table "+this.table+" return 0 affected rows";
+
     private boolean error;
     private String action;
     private String code;
     private String description;
     private String rawMessage;
     private long actionReturn;//Qtd de linhas afetadas
+    private String table;
 
     public DaoObjReturn() {
         this.error = false;
@@ -24,6 +27,7 @@ public class DaoObjReturn {
         this.description = "";
         this.rawMessage = "";
         this.actionReturn = -2;//Default menos 2 pois o retorno de dado não inserido é -1
+        this.table = "";
     }
 
     public DaoObjReturn(String code, String description) {
@@ -42,6 +46,7 @@ public class DaoObjReturn {
         this.code = DaoError.getCode();
         this.description = DaoError.getDescription();
         this.rawMessage = DaoError.getRawMessage();
+        this.table = DaoError.getTable();
     }
 
     public void clearError(){
@@ -51,6 +56,7 @@ public class DaoObjReturn {
         this.code = "";
         this.description = "";
         this.rawMessage = "";
+        this.table = "";
     }
 
     public String getErrorMsg(){
@@ -106,5 +112,13 @@ public class DaoObjReturn {
 
     public void setRawMessage(String rawMessage) {
         this.rawMessage = rawMessage;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
     }
 }

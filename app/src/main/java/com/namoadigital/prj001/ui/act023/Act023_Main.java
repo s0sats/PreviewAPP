@@ -604,7 +604,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //
         bundle.remove(Constant.MAIN_REQUESTING_PROCESS);
         bundle.remove(Constant.MAIN_IS_SCHEDULE);
-//        bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL);
+//        bundle.removeFull(Constant.MAIN_MD_PRODUCT_SERIAL);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT023);
         bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle_product_code);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle_serial_id);

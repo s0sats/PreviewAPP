@@ -64,7 +64,7 @@ public class WS_C_Remove_Room extends IntentService {
         //
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
-//        roomDao.remove(
+//        roomDao.removeFull(
 //                new CH_Room_Sql_004(
 //                        room.getRoom_code()
 //                ).toSqlQuery()
@@ -79,7 +79,7 @@ public class WS_C_Remove_Room extends IntentService {
         //Verifica se obj room é null.
         //Se for, aborta processamento, pois significa que a room não existe mais
         //no banco local.
-        //OBS: Não deveria acontecer,pois o bug do server que gerar msg de remove room com atraso
+        //OBS: Não deveria acontecer,pois o bug do server que gerar msg de removeFull room com atraso
         //já foi corrigido...
         //
         if(ccRoom == null){

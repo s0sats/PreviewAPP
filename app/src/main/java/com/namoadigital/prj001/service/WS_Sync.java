@@ -522,7 +522,7 @@ public class WS_Sync extends IntentService {
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
             departmentDao.remove(new MD_Department_Sql_Truncate().toSqlQuery());
             mdUserDao.remove(new MD_User_Sql_Truncate().toSqlQuery());
-            //geCustomFormApDao.remove(new GE_Custom_Form_Ap_Sql_Truncate().toSqlQuery());
+            //geCustomFormApDao.removeFull(new GE_Custom_Form_Ap_Sql_Truncate().toSqlQuery());
             allProductDao.remove(new MD_All_Product_Sql_Truncate().toSqlQuery());
             allProductGroupDao.remove(new MD_All_Product_Group_Sql_Truncate().toSqlQuery());
             allProductGroupProductDao.remove(new MD_All_Product_Group_Product_Sql_Truncate().toSqlQuery());
@@ -796,7 +796,7 @@ public class WS_Sync extends IntentService {
 //                );
 //                //Se não existir vinculo, apaga o serial e seus trackings
 //                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
-//                    serialDao.remove(
+//                    serialDao.removeFull(
 //                            new MD_Product_Serial_Sql_013(
 //                                    productSerial.getCustomer_code(),
 //                                    productSerial.getProduct_code(),
@@ -804,7 +804,7 @@ public class WS_Sync extends IntentService {
 //                            ).toSqlQuery()
 //                    );
 //                    //
-//                    trackingDao.remove(
+//                    trackingDao.removeFull(
 //                            new MD_Product_Serial_Tracking_Sql_004(
 //                                    productSerial.getCustomer_code(),
 //                                    productSerial.getProduct_code(),
@@ -885,7 +885,7 @@ public class WS_Sync extends IntentService {
 //                    if(dbSerial != null && dbSerial.getSerial_code() > 0){
 //                        if(!serialAlreadyDeleted.containsValue(pk)) {
 //                            //Remove todos os trackings do serial
-//                            trackingDao.remove(
+//                            trackingDao.removeFull(
 //                                    new MD_Product_Serial_Tracking_Sql_004(
 //                                            tracking.getCustomer_code(),
 //                                            tracking.getProduct_code(),
@@ -1553,7 +1553,7 @@ public class WS_Sync extends IntentService {
                                     //Se registro ja existe, atualiza form_data no novo item
                                     schedules.setCustom_form_data(local.getCustom_form_data());
                                 }
-                                //Se encontrou o registro, remove ele da lista de deleção.
+                                //Se encontrou o registro, removeFull ele da lista de deleção.
                                 formLocalToDelete.remove(local);
                                 break;
                             }
