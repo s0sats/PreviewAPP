@@ -293,6 +293,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                         copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath,
                                                     ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
 
+
                                         photo.delete();
                                     }else{
                                         if(mPresenter.fileExists(actionPhotoLocalPath)) {
@@ -302,6 +303,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     }
                                     setDataToObj();
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
+                                        deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
                                         mPresenter.execTicketSave();
                                     }
                                 }catch (Exception e){
