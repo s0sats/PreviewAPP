@@ -148,7 +148,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                         ticket.getCustomer_code(),
                         ticket.getTicket_prefix(),
                         ticket.getTicket_code(),
-                        0
+                        0,
+                        0 //Como retorno sempre full, reseta o sync_required
                     ).toSqlQuery()
                 );
                 //
@@ -205,7 +206,6 @@ public class WS_TK_Ticket_Save extends IntentService {
     }
 
     private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
-        DaoObjReturn daoObjReturn = new DaoObjReturn();
         //
         if( ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
             || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave()))
