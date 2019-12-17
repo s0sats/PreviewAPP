@@ -10,7 +10,7 @@ public class T_TK_Ticket_WS_Return {
     private int ticket_code;
     private Integer scn;
     private String ret_status;
-    private String error_msg;
+    private String ret_msg;
     private TK_Ticket ticket;
 
     public int getCustomer_code() {
@@ -53,12 +53,12 @@ public class T_TK_Ticket_WS_Return {
         this.ret_status = ret_status;
     }
 
-    public String getError_msg() {
-        return error_msg;
+    public String getRet_msg() {
+        return ret_msg;
     }
 
-    public void setError_msg(String error_msg) {
-        this.error_msg = error_msg;
+    public void setRet_msg(String ret_msg) {
+        this.ret_msg = ret_msg;
     }
 
     public TK_Ticket getTicket() {

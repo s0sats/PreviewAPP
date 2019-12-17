@@ -183,7 +183,7 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             ticketReturn.getScn(),
             getCheckinAction(ticketReturn),
             ticketReturn.getRet_status(),
-            ticketReturn.getError_msg()
+            ticketReturn.getRet_msg()
         );
         //
         return aReturn;
@@ -227,9 +227,9 @@ public class WS_TK_Ticket_Checkin extends IntentService {
         else {
             //Seta tradução da msg de error
             //actReturn.retMsg = hmAux_Trans.get(ticketReturn.getError_msg());
-            actReturn.retMsg = ticketReturn.getError_msg();
+            actReturn.retMsg = ticketReturn.getRet_msg();
             //
-            switch (ticketReturn.getError_msg()) {
+            switch (ticketReturn.getRet_msg()) {
                 case ERROR_MSG_TICKET_NOT_FOUND:
                     break;
                 case ERROR_MSG_INVALID_STATUS_TO_CHECKIN:
