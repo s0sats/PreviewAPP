@@ -1717,7 +1717,6 @@ public class ToolBox_Inf {
         LinearLayout ll_footer_close = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll);
 
         ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
-        ImageView iv_ocrvin = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_ocrvin_footer);
         //
         TextView tv_offline_lbl = (TextView) customView.findViewById(R.id.footer_dialog_tv_offline_lbl);
         Switch sw_offline = (Switch) customView.findViewById(R.id.footer_dialog_sw_offline);
@@ -1781,10 +1780,7 @@ public class ToolBox_Inf {
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
         tv_version_code_value.setText("(" + Constant.PRJ001_VERSION_CODE + ")");
-        iv_ocrvin.setVisibility(View.GONE);
-        if(isMicroBlinkImported()){
-            iv_ocrvin.setVisibility(View.VISIBLE);
-        }
+
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.9f;
         float dmH = (float) dm.heightPixels * 0.9f;
@@ -5602,24 +5598,6 @@ public class ToolBox_Inf {
         //
         return token_ticket_list;
     }
-
-
-    /**
-     * Metodo que identifica se a lib MicroBlinkId , leitor de OCR
-     * esta importada na lib.
-     * @return
-     */
-    public static boolean isMicroBlinkImported(){
-        boolean isMBImported = true;
-        try{
-            Class.forName("com.microblink.entities.recognizers.blinkinput.BlinkInputRecognizer");
-        } catch (ClassNotFoundException e) {
-            isMBImported = false;
-            e.printStackTrace();
-        }
-        return isMBImported;
-    }
-
 
     /**
      * LUCHE - 30/04/2019

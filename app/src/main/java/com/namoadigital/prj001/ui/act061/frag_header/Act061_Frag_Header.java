@@ -1673,13 +1673,11 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
             mket.setmBARCODE(true);
             mket.setmNFC(false);
             mket.setmOCR(false);
-            mket.setmOCRVin(false);
             mket.setEnabled(true);
         } else{
             mket.setmBARCODE(false);
             mket.setmNFC(false);
             mket.setmOCR(false);
-            mket.setmOCRVin(false);
             mket.setEnabled(false);
         }
     }

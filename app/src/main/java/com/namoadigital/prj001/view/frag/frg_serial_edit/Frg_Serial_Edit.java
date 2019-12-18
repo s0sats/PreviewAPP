@@ -800,19 +800,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                         Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
                 )
         );
-        //Verifica se a lib de OCR esta importada no flavor
-        //e se o profise do user possui acesso ao OCR
-        if (ToolBox_Inf.isMicroBlinkImported()) {
-            mket_serial_id.setmOCRVin(
-                    ToolBox_Inf.profileExists(
-                            getActivity(),
-                            Constant.PROFILE_MENU_PROFILE,
-                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                    )
-            );
-        } else {
-            mket_serial_id.setmOCRVin(false);
-        }
     }
 
     private void initFabMenuItens() {
@@ -972,7 +959,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         if (!new_serial) {
             mket_serial_id.setmBARCODE(false);
             mket_serial_id.setmOCR(false);
-            mket_serial_id.setmOCRVin(false);
             mket_serial_id.setmNFC(false);
 
             mket_serial_id.setEnabled(false);

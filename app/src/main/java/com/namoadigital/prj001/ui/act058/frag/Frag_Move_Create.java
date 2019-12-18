@@ -984,18 +984,13 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 )
         );
         //
-        mket_serial.setmOCR(false);
-        if (ToolBox_Inf.isMicroBlinkImported()) {
-            mket_serial.setmOCRVin(
-                    ToolBox_Inf.profileExists(
-                            getActivity(),
-                            Constant.PROFILE_MENU_PROFILE,
-                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                    )
-            );
-        } else {
-            mket_serial.setmOCRVin(false);
-        }
+        mket_serial.setmOCR(
+                ToolBox_Inf.profileExists(
+                    getActivity(),
+                    Constant.PROFILE_MENU_PROFILE,
+                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+                )
+        );
         controls_sta.add(mket_serial);
     }
 
