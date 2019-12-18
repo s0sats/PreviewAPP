@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -119,6 +121,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_ID_IO_ASSETS = "menu_io_assets";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
     public static final String MENU_ID_MESSAGES = "menu_messages";
+    public static final String MENU_ID_FAKE = "menu_id_fake";
 
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
@@ -883,6 +886,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int i = gv_menu.getNumColumns();
+
                 MenuMainNamoa item = (MenuMainNamoa) parent.getItemAtPosition(position);
                 mPresenter.accessMenuItem(item.getMenu_id(), 0);
             }
@@ -891,9 +896,37 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     public void loadMenuV2(ArrayList<MenuMainNamoa> menus) {
-        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
-        gv_menu.setAdapter(mAdapter);
+        gv_menu.setNumColumns(calculateNumColumns());
+        rebuildAdapterV1(menus);
+//        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
+//        gv_menu.setAdapter(mAdapter);
     }
+
+    private int calculateNumColumns() {
+        return getMenuWidth();
+    }
+
+    private int getMenuWidth() {
+        int[] metrics = new int[2];
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            metrics[0] = displayMetrics.widthPixels;
+            metrics[1] = displayMetrics.heightPixels;
+            float density = context.getResources().getDisplayMetrics().density;
+            float dpi = context.getResources().getDisplayMetrics().densityDpi;
+            float density2 = context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT ;
+            int qtd = displayMetrics.widthPixels / (int) ToolBox.convertPixelsToDpIndeed(context,112);
+            int qtd2 = displayMetrics.widthPixels / ToolBox.dbToPixel(context,112);
+            return qtd;
+
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return 0;
+        }
+
+    }
+
 
     private void iniUIFooter() {
         iniFooter();
@@ -2206,6 +2239,46 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.getMenuItensV2(hmAux_Trans);
+        //
+        //rebuildAdapterV1(mAdapter.getSource());
+    }
+
+    private void rebuildAdapterV1(ArrayList<MenuMainNamoa> source) {
+        //int ii = getMenuItemWidth();
+        int i3 = gv_menu.getColumnWidth();
+        int i4 = ToolBox.dbToPixel(context,461);
+        int i5 = (int) ToolBox.convertPixelsToDpIndeed(context,461.0f);
+        //
+        int menusQtd = source.size();
+        int coluns =  gv_menu.getNumColumns();
+        int fixedMenus = 6;
+        //
+        int qtdModulos = menusQtd - fixedMenus;
+        int fakeMenus = (qtdModulos % coluns) != 0 ? coluns - (qtdModulos % coluns)   :  0;
+        //
+        for(int i = 0; i < fakeMenus;i++){
+            source.add(
+                qtdModulos + i,
+                new MenuMainNamoa(
+                    MENU_ID_FAKE,
+                    "",
+                    MENU_ID_FAKE,
+                    MENU_ID_FAKE,
+                    R.drawable.ic_sair
+                )
+            );
+        }
+        //
+        rebuildAdapter(source,qtdModulos + fakeMenus -1,coluns);
+    }
+
+
+    private void rebuildAdapter(ArrayList<MenuMainNamoa> menus, int idxMarginStart, int coluns) {
+        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
+        mAdapter.setIdxMarginStart(idxMarginStart);
+        mAdapter.setQtdColuns(coluns);
+        //
+        gv_menu.setAdapter(mAdapter);
     }
 
     public void startDownloadServices() {

@@ -1,77 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/menu_llChecklist"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+    <FrameLayout
+        android:id="@+id/menu_flChecklist"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:background="@drawable/item_menu_states"
-        android:focusable="false"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
+        android:layout_height="wrap_content">
 
-        >
-
-        <ImageView
-            android:id="@+id/menu_ivChecklist"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_sair" />
-
-        <TextView
-            android:id="@+id/menu_tvChecklist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:gravity="center"
-            android:paddingBottom="4dp"
-            android:textColor="@color/item_menu_title_color" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/menu_tvBadge"
+        <LinearLayout
+            android:id="@+id/menu_llChecklist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/badge"
-            android:gravity="center"
-            android:paddingBottom="3dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="3dp"
-            android:layout_marginLeft="0dp"
-            android:text="12"
-            android:textColor="@color/padrao_WHITE"
-            android:textSize="12sp"
-            android:visibility="gone"
-            android:layout_marginBottom="3dp"/>
+            android:layout_margin="3dp"
+            android:background="@drawable/item_menu_states"
+            android:focusable="false"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            >
 
-        <TextView
-            android:id="@+id/menu_tvBadge2"
+            <ImageView
+                android:id="@+id/menu_ivChecklist"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_sair" />
+
+            <TextView
+                android:id="@+id/menu_tvChecklist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:gravity="center"
+                android:paddingBottom="4dp"
+                android:textColor="@color/item_menu_title_color" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/badge2"
-            android:gravity="center"
-            android:paddingBottom="3dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="3dp"
-            android:text="12"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:layout_gravity="top|right"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/menu_tvBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/badge"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="3dp"
+                android:text="12"
+                android:textColor="@color/padrao_WHITE"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
-</FrameLayout>
+            <TextView
+                android:id="@+id/menu_tvBadge2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/badge2"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="3dp"
+                android:text="12"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>
