@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -90,6 +91,13 @@ public class Act005_Adapter extends BaseAdapter {
     }
 
     @Override
+    public boolean isEnabled(int position) {
+        return !source.get(position).getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE);
+
+        //return super.isEnabled(position);
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
@@ -110,20 +118,25 @@ public class Act005_Adapter extends BaseAdapter {
         MenuMainNamoa item = source.get(position);
         if(item.getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE)) {
             flMain.setVisibility(View.INVISIBLE);
-        }else{
-            flMain.setVisibility(View.VISIBLE);
-            //
             if(
                 idxMarginStart >= 0
-                && qtdColuns >= 0
-                && position >= idxMarginStart
-                && position <= idxMarginStart + qtdColuns
+                    && qtdColuns >= 0
+                    && position >= idxMarginStart
+                    && position < idxMarginStart + qtdColuns
             ){
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) flMain.getLayoutParams();
-                params.setMargins(3,100,3,3);
+                //params.setMargins(3,100,3,3);
+                params.height = (int) ToolBox.convertPixelsToDpIndeed(context,30);
                 flMain.setLayoutParams(params);
             }
 
+            flMain.setEnabled(false);
+            flMain.setClickable(false);
+            convertView.setEnabled(false);
+            convertView.setClickable(false);
+        }else{
+            flMain.setVisibility(View.VISIBLE);
+            //
             ivIcon.setImageDrawable(context.getResources().getDrawable(item.getIcon()));
             //tvTitle.setText(item.get(Act005_Main.MENU_DESC));
             tvTitle.setText(item.getMenu_desc());

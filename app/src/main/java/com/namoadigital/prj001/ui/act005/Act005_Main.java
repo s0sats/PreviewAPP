@@ -886,8 +886,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int i = gv_menu.getNumColumns();
-
                 MenuMainNamoa item = (MenuMainNamoa) parent.getItemAtPosition(position);
                 mPresenter.accessMenuItem(item.getMenu_id(), 0);
             }
@@ -913,12 +911,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             metrics[0] = displayMetrics.widthPixels;
             metrics[1] = displayMetrics.heightPixels;
-            float density = context.getResources().getDisplayMetrics().density;
+           /* float density = context.getResources().getDisplayMetrics().density;
             float dpi = context.getResources().getDisplayMetrics().densityDpi;
             float density2 = context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT ;
             int qtd = displayMetrics.widthPixels / (int) ToolBox.convertPixelsToDpIndeed(context,112);
-            int qtd2 = displayMetrics.widthPixels / ToolBox.dbToPixel(context,112);
-            return qtd;
+            int qtd2 = displayMetrics.widthPixels / ToolBox.dbToPixel(context,112);*/
+            int addtionalPixel = (int) ((context.getResources().getDisplayMetrics().density - 1.5) * 5.6);
+            int pixelTot =  101 + addtionalPixel;
+            int totalDp = (int) ToolBox.convertPixelsToDpIndeed(context,pixelTot);
+            int qtd3 = displayMetrics.widthPixels / totalDp ;
+            return qtd3;
 
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);
@@ -2246,17 +2248,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private void rebuildAdapterV1(ArrayList<MenuMainNamoa> source) {
         //int ii = getMenuItemWidth();
         int i3 = gv_menu.getColumnWidth();
-        int i4 = ToolBox.dbToPixel(context,461);
-        int i5 = (int) ToolBox.convertPixelsToDpIndeed(context,461.0f);
         //
         int menusQtd = source.size();
-        int coluns =  gv_menu.getNumColumns();
+        //int coluns =  gv_menu.getNumColumns();
+        int coluns =  calculateNumColumns();
         int fixedMenus = 6;
         //
         int qtdModulos = menusQtd - fixedMenus;
         int fakeMenus = (qtdModulos % coluns) != 0 ? coluns - (qtdModulos % coluns)   :  0;
+        int fakeSpace = fakeMenus + coluns;
         //
-        for(int i = 0; i < fakeMenus;i++){
+        //for(int i = 0; i < fakeMenus;i++){
+        for(int i = 0; i < fakeSpace;i++){
             source.add(
                 qtdModulos + i,
                 new MenuMainNamoa(
@@ -2269,7 +2272,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             );
         }
         //
-        rebuildAdapter(source,qtdModulos + fakeMenus -1,coluns);
+        rebuildAdapter(source,qtdModulos + fakeMenus,coluns);
     }
 
 
