@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act005;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -893,42 +891,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     }
 
-    public void loadMenuV2(ArrayList<MenuMainNamoa> menus) {
-        gv_menu.setNumColumns(calculateNumColumns());
-        rebuildAdapterV1(menus);
-//        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
-//        gv_menu.setAdapter(mAdapter);
+    public void loadMenuV2(ArrayList<MenuMainNamoa> menus, int columnsQty) {
+        gv_menu.setNumColumns(columnsQty);
+        int idxFakeSpaceStart = mPresenter.processFakeMenus(menus,columnsQty);
+        //
+        mAdapter = new Act005_Adapter(
+            context,
+            R.layout.act005_item_menu_badge,
+            menus,
+            idxFakeSpaceStart,
+            columnsQty
+        );
+        //
+        gv_menu.setAdapter(mAdapter);
     }
-
-    private int calculateNumColumns() {
-        return getMenuWidth();
-    }
-
-    private int getMenuWidth() {
-        int[] metrics = new int[2];
-        try {
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            metrics[0] = displayMetrics.widthPixels;
-            metrics[1] = displayMetrics.heightPixels;
-           /* float density = context.getResources().getDisplayMetrics().density;
-            float dpi = context.getResources().getDisplayMetrics().densityDpi;
-            float density2 = context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT ;
-            int qtd = displayMetrics.widthPixels / (int) ToolBox.convertPixelsToDpIndeed(context,112);
-            int qtd2 = displayMetrics.widthPixels / ToolBox.dbToPixel(context,112);*/
-            int addtionalPixel = (int) ((context.getResources().getDisplayMetrics().density - 1.5) * 5.6);
-            int pixelTot =  101 + addtionalPixel;
-            int totalDp = (int) ToolBox.convertPixelsToDpIndeed(context,pixelTot);
-            int qtd3 = displayMetrics.widthPixels / totalDp ;
-            return qtd3;
-
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            return 0;
-        }
-
-    }
-
 
     private void iniUIFooter() {
         iniFooter();
@@ -2239,49 +2215,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         super.onResume();
         //
         ToolBox_Inf.mkDirectory();
-        //
+        // LUCHE - 19/12/2019
+        //O comando getMenuItensV2, foi adicionado em 19 Apr 2017, commit 9ff6860d31decd335f5f2b3d40e75822fa609348
+        //Aparentemente, serve apenas para quando o usuario, estando com a act005,
+        //abre uma noticação do app e é enviado para act019
+        //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
-        //
-        //rebuildAdapterV1(mAdapter.getSource());
-    }
-
-    private void rebuildAdapterV1(ArrayList<MenuMainNamoa> source) {
-        //int ii = getMenuItemWidth();
-        int i3 = gv_menu.getColumnWidth();
-        //
-        int menusQtd = source.size();
-        //int coluns =  gv_menu.getNumColumns();
-        int coluns =  calculateNumColumns();
-        int fixedMenus = 6;
-        //
-        int qtdModulos = menusQtd - fixedMenus;
-        int fakeMenus = (qtdModulos % coluns) != 0 ? coluns - (qtdModulos % coluns)   :  0;
-        int fakeSpace = fakeMenus + coluns;
-        //
-        //for(int i = 0; i < fakeMenus;i++){
-        for(int i = 0; i < fakeSpace;i++){
-            source.add(
-                qtdModulos + i,
-                new MenuMainNamoa(
-                    MENU_ID_FAKE,
-                    "",
-                    MENU_ID_FAKE,
-                    MENU_ID_FAKE,
-                    R.drawable.ic_sair
-                )
-            );
-        }
-        //
-        rebuildAdapter(source,qtdModulos + fakeMenus,coluns);
-    }
-
-
-    private void rebuildAdapter(ArrayList<MenuMainNamoa> menus, int idxMarginStart, int coluns) {
-        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
-        mAdapter.setIdxMarginStart(idxMarginStart);
-        mAdapter.setQtdColuns(coluns);
-        //
-        gv_menu.setAdapter(mAdapter);
     }
 
     public void startDownloadServices() {

@@ -25,14 +25,17 @@ public class Act005_Adapter extends BaseAdapter {
     private Context context;
     private int resource;
     private ArrayList<MenuMainNamoa> source;
-    //
-    private int idxMarginStart = -1;
-    private int qtdColuns = -1;
+    //Atributo que receberá o indice onde se iniciam os fake menus
+    private int idxFakeSpaceStart = -1;
+    //Atributo que recebe a qtd de colunas setadas.
+    private int columnsQty = -1;
 
-    public Act005_Adapter(Context context, int resource, ArrayList<MenuMainNamoa> source) {
+    public Act005_Adapter(Context context, int resource, ArrayList<MenuMainNamoa> source, int idxFakeSpaceStart, int columnsQty) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+        this.idxFakeSpaceStart = idxFakeSpaceStart;
+        this.columnsQty = columnsQty;
     }
 
     @Override
@@ -78,23 +81,14 @@ public class Act005_Adapter extends BaseAdapter {
         }
     }
 
-    public void setIdxMarginStart(int qty){
-        idxMarginStart = qty;
-    }
-
-    public void setQtdColuns(int qtdColuns) {
-        this.qtdColuns = qtdColuns;
-    }
-
-    public ArrayList<MenuMainNamoa> getSource(){
-        return source;
-    }
-
+    /**
+     * Sobrecarregado metodo para definir menus fakes como NÃO clicaveis.
+     * @param position
+     * @return
+     */
     @Override
     public boolean isEnabled(int position) {
         return !source.get(position).getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE);
-
-        //return super.isEnabled(position);
     }
 
     @Override
@@ -113,16 +107,19 @@ public class Act005_Adapter extends BaseAdapter {
         TextView tvTitle = (TextView) convertView.findViewById(R.id.menu_tvChecklist);
         TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
         TextView tvBadge2 = (TextView) convertView.findViewById(R.id.menu_tvBadge2);
-
-        //HashMap<String, String> item = source.get(position);
+        //
         MenuMainNamoa item = source.get(position);
+        //Processa menus fake
         if(item.getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE)) {
+            //Seta view como invisible
             flMain.setVisibility(View.INVISIBLE);
+            //Se item é "linha de separação" entre os tipos de menu,
+            //reduz a altura das views.
             if(
-                idxMarginStart >= 0
-                    && qtdColuns >= 0
-                    && position >= idxMarginStart
-                    && position < idxMarginStart + qtdColuns
+                idxFakeSpaceStart >= 0
+                && columnsQty >= 0
+                && position >= idxFakeSpaceStart
+                && position < idxFakeSpaceStart + columnsQty
             ){
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) flMain.getLayoutParams();
                 //params.setMargins(3,100,3,3);
@@ -130,20 +127,11 @@ public class Act005_Adapter extends BaseAdapter {
                 flMain.setLayoutParams(params);
             }
 
-            flMain.setEnabled(false);
-            flMain.setClickable(false);
-            convertView.setEnabled(false);
-            convertView.setClickable(false);
         }else{
             flMain.setVisibility(View.VISIBLE);
             //
             ivIcon.setImageDrawable(context.getResources().getDrawable(item.getIcon()));
-            //tvTitle.setText(item.get(Act005_Main.MENU_DESC));
             tvTitle.setText(item.getMenu_desc());
-
-            //int badgeNum = item.getBadge1();
-            //int badge2Num = item.getBadge2();
-
             //Se chave Badge tiver preenchida exibe no menu
             if (item.getBadge1() > 0) {
                 tvBadge.setVisibility(View.VISIBLE);
@@ -157,19 +145,6 @@ public class Act005_Adapter extends BaseAdapter {
                 tvBadge.setVisibility(View.GONE);
                 tvBadge.setText(" ");
             }
-
-//        if(item.getMenu_id().equals(Act005_Main.MENU_ID_CHAT)){
-//            tvBadge.setVisibility(View.GONE);
-//            //
-//            if(item.getBadge1() == 1) {
-//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
-//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
-//            }else{
-//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
-//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
-//            }
-//        }
-
             //Se chave Badge2 tiver preenchida exibe no menu
             if (item.getBadge2() > 0) {
                 tvBadge2.setVisibility(View.VISIBLE);
@@ -183,35 +158,6 @@ public class Act005_Adapter extends BaseAdapter {
                 tvBadge2.setVisibility(View.GONE);
                 tvBadge2.setText(" ");
             }
-
-
-//        //Se chave Badge tiver preenchida exibe no menu
-//        if (item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")) {
-//            tvBadge.setVisibility(View.VISIBLE);
-//            String qty = item.get(Act005_Main.MENU_BADGE);
-//
-//            if (item.get(Act005_Main.MENU_BADGE).length() == 1) {
-//                qty = " " + qty + " ";
-//            }
-//            tvBadge.setText(qty);
-//        } else {
-//            tvBadge.setVisibility(View.GONE);
-//            tvBadge.setText(" ");
-//        }
-//
-//        //Se chave BadgeSO tiver preenchida exibe no menu
-//        if (item.get(Act005_Main.MENU_BADGE2).length() > 0 && !item.get(Act005_Main.MENU_BADGE2).equals("0")) {
-//            tvBadgeSO.setVisibility(View.VISIBLE);
-//            String qty = item.get(Act005_Main.MENU_BADGE2);
-//
-//            if (item.get(Act005_Main.MENU_BADGE2).length() == 1) {
-//                qty = " " + qty + " ";
-//            }
-//            tvBadgeSO.setText(qty);
-//        } else {
-//            tvBadgeSO.setVisibility(View.GONE);
-//            tvBadgeSO.setText(" ");
-//        }
         }
         //
         return convertView;

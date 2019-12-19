@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.ui.act005;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MenuMainNamoa;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -62,4 +62,6 @@ public interface Act005_Main_Presenter {
     ArrayList<HMAux> processOutboundItemSaveReturn(String mLink, String io_item_lbl);
 
     ArrayList<HMAux> processInboundItemSaveReturn(String mLink, String io_item_lbl);
+
+    int processFakeMenus(ArrayList<MenuMainNamoa> menus, int columnsQty);
 }
