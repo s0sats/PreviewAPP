@@ -16,6 +16,7 @@ import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.TSerial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_014;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -215,11 +216,24 @@ public class WS_Serial_Save extends IntentService {
                             ).toSqlQuery()
                     );
                 }*/
-                serialAux.setSerial_code(serialSaveReturn.getSerial_code());
-                //Luche - 06/03/2019
-                //Limpa campo de reason.
-                serialAux.setReason_code(null);
-                serialDao.addUpdateTmp(serialAux);
+                //Barrionuevo - 19-12-2019
+                //Verificar status do serial antes de atualizar para evitar respecagem desnecessaria
+                MD_Product_Serial serial =
+                        serialDao.getByString(new MD_Product_Serial_Sql_014(
+                                serialAux.getCustomer_code(),
+                                serialAux.getSerial_id()).toSqlQuery()
+                        );
+                if(serial.getUpdate_required() == 1){
+                    serial.setSerial_code(serialSaveReturn.getSerial_code());
+                    serialDao.addUpdateTmp(serial);
+                }else{
+                    serialAux.setUpdate_required(serial.getUpdate_required());
+                    serialAux.setSerial_code(serialSaveReturn.getSerial_code());
+                    //Luche - 06/03/2019
+                    //Limpa campo de reason.
+                    serialAux.setReason_code(null);
+                    serialDao.addUpdateTmp(serialAux);
+                }
                 //
                 hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
             } else {
