@@ -41,9 +41,9 @@ import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_A
 
 public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
-    public static final int COLUMN_VAR_PIXEL_BASE = 101;
-    public static final float COLUMN_VAR_DENSITY_BASE = 1.5f;
-    public static final float COLUMN_VAR_PIXEL_MULT_FACTOR = 5.6f;
+    private static final int COLUMN_VAR_PIXEL_BASE = 101;
+    private static final float COLUMN_VAR_DENSITY_BASE = 1.5f;
+    private static final float COLUMN_VAR_PIXEL_MULT_FACTOR = 5.6f;
     /**
      * LUCHE - 19/12/2019
      *
@@ -51,7 +51,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      * CASO ALGUMA MENU SEJA CRIA OU RETIRADO ELA DEVE SER ALTERADA MANUALMENTE
      *
      **/
-    public static final int SECUNDARY_MENU_QTY = 6;
+    private static final int SECUNDARY_MENU_QTY = 6;
 
     private Context context;
     private Act005_Main_View mView;
