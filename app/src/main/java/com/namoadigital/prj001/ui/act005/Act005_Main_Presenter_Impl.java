@@ -167,6 +167,26 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         menuList.add(
                 new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SEND_DATA,
+                        "",
+                        "lbl_send_data",
+                        "lbl_send_data",
+                        R.drawable.ic_enviar
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_CHAT,
+                        "",
+                        "lbl_chat",
+                        "lbl_chat",
+                        R.drawable.ic_n_chat
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
                         Act005_Main.MENU_ID_PENDING_DATA,
                         "",
                         "lbl_pending_data",
@@ -192,26 +212,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         "lbl_messages",
                         "lbl_messages",
                         R.drawable.ic_notificacao
-                )
-        );
-        //
-        menuList.add(
-                new MenuMainNamoa(
-                        Act005_Main.MENU_ID_SEND_DATA,
-                        "",
-                        "lbl_send_data",
-                        "lbl_send_data",
-                        R.drawable.ic_enviar
-                )
-        );
-        //
-        menuList.add(
-                new MenuMainNamoa(
-                        Act005_Main.MENU_ID_CHAT,
-                        "",
-                        "lbl_chat",
-                        "lbl_chat",
-                        R.drawable.ic_n_chat
                 )
         );
         //
