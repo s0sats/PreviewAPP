@@ -761,7 +761,7 @@ public class Frg_Serial_Search extends Fragment {
     /**
      * LUCHE - 07/11/2019
      * Metodo que verifica se user possui acesso apenas um produto
-     * e se for ocaso, remove a descrição do produto.
+     * e se for ocaso, removeFull a descrição do produto.
      * Regra maluca
      */
     private void setProductHelperVisibility() {

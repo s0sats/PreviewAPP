@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.sql.SM_SO_Sql_015;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
@@ -20,7 +21,7 @@ import com.namoadigital.prj001.sql.Sql_Act014_003;
 import com.namoadigital.prj001.sql.Sql_Act014_004;
 import com.namoadigital.prj001.sql.Sql_Act014_005;
 import com.namoadigital.prj001.sql.Sql_Act014_006;
-import com.namoadigital.prj001.sql.Sql_Act058_001;
+import com.namoadigital.prj001.sql.Sql_Act014_007;
 import com.namoadigital.prj001.sql.Sql_Act058_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -168,6 +169,22 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             //
             senList.addAll(outboundHistoric);
         }
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+            TK_TicketDao tk_ticketDao = new TK_TicketDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            List<HMAux> ticketHistoric = tk_ticketDao.query_HM(
+                    new Sql_Act014_007(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            hmAux_Trans
+                    ).toSqlQuery()
+            );
+            //
+            senList.addAll(ticketHistoric);
+        }
 
 
         //
@@ -209,6 +226,10 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_OUTBOUND))) {
                 mView.callAct066(context);
 
+            }
+
+            if (item.get(Sql_Act014_007.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_TK_TICKET))) {
+                mView.callAct069(context);
             }
 
         } else {

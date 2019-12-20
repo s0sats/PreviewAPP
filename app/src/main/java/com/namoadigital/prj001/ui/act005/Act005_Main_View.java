@@ -66,4 +66,8 @@ public interface Act005_Main_View {
     void callAct051(Context context);
 
     void callAct040(Context context);
+
+    void callAct068(Context context);
+
+    void callAct069(Context context);
 }

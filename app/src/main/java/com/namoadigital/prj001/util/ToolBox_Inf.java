@@ -5573,6 +5573,38 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Metodo que retorna a qtd de Tickets dentro do arquivos token de Ticket
+     *
+     * @return
+     */
+    public static int getQtyTicketsWithinToken() {
+        return getTicketsWithinToken().size();
+    }
+
+    public static ArrayList<TK_Ticket> getTicketsWithinToken() {
+        ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
+        try {
+            File[] ticketToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_TICKET_PREFIX);
+            if (ticketToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+                //
+                token_ticket_list =
+                    gsonEnv.fromJson(
+                        ToolBox_Inf.getContents(ticketToken[0]),
+                        T_TK_Ticket_Save_Env.class
+                    ).getTicket();
+                //
+                return token_ticket_list != null ? token_ticket_list : new ArrayList<TK_Ticket>();
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+        //
+        return token_ticket_list;
+    }
+
+
+    /**
      * Metodo que identifica se a lib MicroBlinkId , leitor de OCR
      * esta importada na lib.
      * @return
@@ -5726,6 +5758,102 @@ public class ToolBox_Inf {
             }
         }
         return false;
+    }
+
+    @Nullable
+    public static String buildTicketImgPath(TK_Ticket tkTicket) {
+        try {
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + ".jpg";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+    @Nullable
+    public static String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
+        try{
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+    @Nullable
+    public static String buildTicketActionImgPath(TK_Ticket_Action action) {
+        try{
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+    /**
+     * Retorna array de inteiros com a porcentagem width e height relativo ao tamanho da tela
+     * Indices:
+     *        0 -> Width
+     *        1 -> Height
+     * @param context - Context
+     * @param wPercent - Percentual de largura
+     * @param hPercent - Percentual de altura
+     * @return - Array int de 2 posições sendo 0 -> Width e 1 -> Height
+     */
+    public static int[] getPercentageWidthAndHeight(Context context, double wPercent, double hPercent) {
+        int[] percentMetrics = getScreenMetrics(context);
+        try {
+            percentMetrics[0] = (int) (percentMetrics[0] * wPercent);
+            percentMetrics[1] = (int) (percentMetrics[1] * hPercent);
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+        }
+        return percentMetrics;
+    }
+    /**
+     * Retorna array de int com o Width e Height da tela do device
+     * Indices:
+     *       0 -> Width
+     *       1 -> Height
+     * @param context - Context
+     * @return Array int[2] com valores da tela ou 0 se exception
+     */
+    public static int[] getScreenMetrics(Context context) {
+        int[] metrics = new int[2];
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            metrics[0] = displayMetrics.widthPixels;
+            metrics[1] = displayMetrics.heightPixels;
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+        }
+        //
+        return metrics;
+    }
+
+    /**
+     * Metodo criado para avaliar se a imagem enviada é grande de mais para abrir.
+     * Depois de tentar metodo baseado no tamanho maximo do canvas e OpenGL, sem sucesso
+     * , foram executado testes em 4 devices com resolução e configurações distintas e todos
+     * suportaram a resolução 4k.
+     * Sendo assim, esse metodo avalia se o width ou height da imagem é maior que a da resolução
+     * 4k(3840).
+     *
+     * @param path - Caminho para imagem
+     * @return Verdadeiro se img menor ou igual a resolução 4k
+     */
+    public static boolean isImageUnder4kLimit(String path) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path,options);
+            //
+            return options.outWidth <= 3840 && options.outHeight <= 3840;
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return false;
+        }
     }
 
 }

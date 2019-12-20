@@ -27,4 +27,14 @@ public interface Act035_Main_Presenter {
     void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code);
 
     void checkFormApFlow(HMAux hmAux);
+
+    //region Ticket
+    void validateTicketDownload(String pk, String site_code, String operation_code, String product_code);
+
+    boolean checkTicketMdProfile(String s_site_code, String s_operation_code, String s_product_code);
+
+    String[] getSplitedPk(String pk, String splitter);
+
+    boolean validateTicketPk(String ticketPk);
+    //endregion
 }

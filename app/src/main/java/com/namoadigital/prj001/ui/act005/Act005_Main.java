@@ -63,6 +63,7 @@ import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
@@ -86,6 +87,8 @@ import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
+import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -112,6 +115,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_FORM_AP = "menu_form_ap";
+    public static final String MENU_ID_TICKET = "menu_ticket";
     public static final String MENU_ID_SERVICE = "menu_service";
     public static final String MENU_ID_SERIAL = "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
@@ -413,6 +417,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_site_no_io_control_msg");
         transList.add("alert_unsent_img_copy_error_ttl");
         transList.add("alert_unsent_img_copy_error_msg");
+        //
+        transList.add("lbl_ticket");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -868,6 +874,22 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
         mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct068(Context context) {
+        Intent mIntent = new Intent(context, Act068_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct069(Context context) {
+        Intent mIntent = new Intent(context, Act069_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
@@ -1585,6 +1607,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 wsResults.addAll(outbound_items);
             }
 
+            mPresenter.executeTicketSave(); //10
+
+/*
+            mPresenter.getMenuItensV2(hmAux_Trans);
+            progressDialog.dismiss();
+
+            if (wsResults.size() > 0) {
+                showResults(wsResults);
+            } else {
+                if (syncAfterSave) {
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+                } else {
+                    showSuccessDialog();
+                }
+            }*/
+        }  else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+
+            ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, "TICKET");
+
+            if(ticket_items != null) {
+                wsResults.addAll(ticket_items);
+            }
+
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
 
@@ -1813,6 +1861,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     break;
                 case "ASSETS_OUTBOUND_ITEM":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_outbound"));
+                    break;
+                case "TICKET":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
                     break;
 
             }

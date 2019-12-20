@@ -9,7 +9,13 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,11 +24,82 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
-import com.namoadigital.prj001.receiver.*;
-import com.namoadigital.prj001.service.*;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
+import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
+import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
+import com.namoadigital.prj001.receiver.WBR_IO_Blind_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.ScreenStatusService;
+import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Move_Save;
+import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.CH_Message_Sql_025;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.Sql_Act005_001;
+import com.namoadigital.prj001.sql.Sql_Act005_002;
+import com.namoadigital.prj001.sql.Sql_Act005_003;
+import com.namoadigital.prj001.sql.Sql_Act005_004;
+import com.namoadigital.prj001.sql.Sql_Act005_005;
+import com.namoadigital.prj001.sql.Sql_Act005_006;
+import com.namoadigital.prj001.sql.Sql_Act005_007;
+import com.namoadigital.prj001.sql.Sql_Act005_008;
+import com.namoadigital.prj001.sql.Sql_Act005_009;
+import com.namoadigital.prj001.sql.Sql_Act005_010;
+import com.namoadigital.prj001.sql.Sql_Act012_005;
+import com.namoadigital.prj001.sql.Sql_Act012_006;
+import com.namoadigital.prj001.sql.Sql_Act012_007;
+import com.namoadigital.prj001.sql.Sql_Act021_002;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
+import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -52,6 +129,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private IO_Inbound_ItemDao assetInboundDao;
     private IO_Outbound_ItemDao assetOutboundDao;
     private GE_Custom_Form_ApDao customFormApDao;
+    private TK_TicketDao tk_ticketDao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
     private MD_SiteDao siteDao;
@@ -98,6 +176,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        this.tk_ticketDao = new TK_TicketDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
         buildMenuList();
     }
 
@@ -122,6 +205,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         R.drawable.ic_n_action_plan
 
                 )
+        );
+        //
+        menuList.add(
+            new MenuMainNamoa(
+                Act005_Main.MENU_ID_TICKET,
+                Constant.PROFILE_MENU_TICKET,
+                "lbl_ticket",
+                "lbl_ticket",
+                R.drawable.ic_n_ticket
+
+            )
         );
         //
         menuList.add(
@@ -240,6 +334,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qtySerial = "";
                 String qtyBadge2 = "";
                 String qtyAssets = "";
+                String qtyTicket = "";
 
 
                 //Reseta valores do badge cada vez que metodo for chamado
@@ -417,6 +512,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtySerial = "0";
                         }
                         qtyAssets = handleAssetsWaitingSync();
+                        qtyTicket = handleTicketUpdateRequired();
                         //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
@@ -426,15 +522,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
-//                        qty = String.valueOf(
-//                                ToolBox_Inf.convertStringToInt(qty) +
-//                                        ToolBox_Inf.convertStringToInt(qtySO) +
-//                                        isSoWithinTokenFile() +
-//                                        isSerialWithinTokenFile() +
-//                                        ToolBox_Inf.convertStringToInt(qtyAP) +
-//                                        ToolBox_Inf.convertStringToInt(qtySO_Express)
-//                        );
-                        //
+                        menu.addInBadge1(qtyTicket);
+                        menu.addInBadge1(ToolBox_Inf.getQtyTicketsWithinToken());
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -523,6 +612,44 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge2(qtyBadge2);
 
                         break;
+                    case Act005_Main.MENU_ID_TICKET:
+                        //
+                        try {
+                            qty = String.valueOf(tk_ticketDao.getByStringHM(
+                                    new Sql_Act005_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            true,
+                                            true,
+                                            false,
+                                            false,
+                                            false,
+                                            false
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_009.PENDING_QTY));
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
+                        //
+                        try {
+                            qtyBadge2 = String.valueOf(tk_ticketDao.getByStringHM(
+                                    new Sql_Act005_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            false,
+                                            false,
+                                            false,
+                                            false,
+                                            true,
+                                            false
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_009.PENDING_QTY));
+                        } catch (Exception e) {
+                            qtyBadge2 = "0";
+                        }
+                        //
+                        menu.addInBadge1(qty);
+                        menu.addInBadge2(qtyBadge2);
+                        //
+                        break;
                     default:
                         menu.addInBadge1(qty);
                         menu.addInBadge2(qtySO);
@@ -534,6 +661,33 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus);
+    }
+
+    private String handleTicketUpdateRequired() {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getTicketUpdateRequiredCount();
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    private String getTicketUpdateRequiredCount() {
+
+        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
+                        new Sql_Act005_010(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                ).toSqlQuery()
+        );
+        if(ticketUpdateReq != null
+        && ticketUpdateReq.hasConsistentValue(Sql_Act005_010.QTY)){
+            return ticketUpdateReq.get(Sql_Act005_010.QTY);
+        }
+        return "0";
+
     }
 
     private String handleAssetsWaitingSync() {
@@ -843,6 +997,67 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         return null;
     }
 
+    @Override
+    public ArrayList<HMAux> processTicketSaveReturn(String jsonRet, String ticket_lbl) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns = null;
+        ArrayList<HMAux> resultList = new ArrayList<>();
+        //
+        if (jsonRet != null && !jsonRet.isEmpty()) {
+            try {
+                checkinReturns = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
+                    }.getType());
+
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+            //
+            if (checkinReturns != null && checkinReturns.size() > 0) {
+                boolean ticketResult = true;
+                int ticketNextIdx = 0;
+                HMAux auxResult = new HMAux();
+                //
+                for (WS_TK_Ticket_Save.TicketSaveActReturn actReturn : checkinReturns) {
+                    String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                    //
+                    if (!auxResult.containsKey(ticketCode)
+                        || (auxResult.containsKey(ticketCode)
+                        &&  !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(actReturn.getRetStatus())
+                    )
+                    ) {
+                        //Se erro, verifica se erro de processamento qual erro foi e pega msg
+                        auxResult.put(ticketCode, getFormmatedRetMsg(actReturn.getRetStatus(),actReturn.getRetMsg()));
+                    }
+                }
+                //For no resumido por ticket montando msg a ser exibida
+                for (Map.Entry<String, String> item : auxResult.entrySet()) {
+
+                    if(!item.getValue().equals("OK")) {
+                        HMAux hmAux = new HMAux();
+                        //
+                        //Monta HmAux
+                        hmAux.put("type", ticket_lbl);
+                        hmAux.put("label", item.getKey());
+                        hmAux.put("status", item.getValue());
+                        hmAux.put("final_status", item.getKey() + " / " + item.getValue());
+                        //
+                        resultList.add(hmAux);
+                    }
+                }
+                //
+                return resultList;
+            }
+        }
+        return null;
+    }
+
+    private String getFormmatedRetMsg(String retStatus, String retMsg ) {
+        String msg = retStatus ;
+        msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg  :"";
+        return msg;
+    }
 
     @Override
     public void executeSyncProcess(int jump_validation_UR) {
@@ -894,7 +1109,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 case Act005_Main.MENU_ID_FORM_AP:
                     mView.callAct036(context);
                     break;
-
+                case Act005_Main.MENU_ID_TICKET:
+                    //mView.callAct068(context);
+                    mView.callAct069(context);
+                    break;
                 case Act005_Main.MENU_ID_SERVICE:
                     if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
                         mView.callAct040(context);
@@ -1282,6 +1500,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
 
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeTicketSave() {
+        mView.setWsSoProcess(WS_TK_Ticket_Save.class.getName());
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
+        Bundle bundle = new Bundle();
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

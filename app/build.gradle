@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 22
         versionCode 27
-        versionName "3.14.0"
+        versionName "3.14.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -89,7 +89,13 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    //LUCHE - 04/12/2019
+    //Glide 4.3.1 era usa até versão oficial 3.13.1
+    //Alterei para 4.9.0 para usr place holder - apagar comentario após testar se lib esta ok
+    //implementation 'com.github.bumptech.glide:glide:4.3.1'
+    implementation ('com.github.bumptech.glide:glide:4.9.0'){
+        exclude group: "com.android.support"
+    }
 
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
     //Import flavors sem OCR

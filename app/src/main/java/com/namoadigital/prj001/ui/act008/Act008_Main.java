@@ -562,7 +562,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 //        Intent mIntent =  new Intent(context, Act007_Main.class);
 //        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        //Remove produto do bundle
-//        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+//        bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
 //
 //        mIntent.putExtras(bundle);
 //
@@ -803,23 +803,23 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove dados não necessarios para act017
         bundle.remove(MD_ProductDao.PRODUCT_CODE);
-        //bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        //bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(MD_ProductDao.PRODUCT_DESC);
-        //bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        //bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
         bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-        //bundle.remove(Constant.ACT008_SERIAL_ID);
+        //bundle.removeFull(Constant.ACT008_SERIAL_ID);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE);
-        //bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
+        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE);
         bundle.remove(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC);
-        //bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_CODE);
-        //bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
+        //bundle.removeFull(Constant.ACT010_CUSTOM_FORM_CODE);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION);
-        //bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
+        //bundle.removeFull(Constant.ACT010_CUSTOM_FORM_VERSION);
         // DIFERENTE VERIFICAR
         bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
         bundle.remove(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA);
-        //bundle.remove(Constant.ACT013_CUSTOM_FORM_DATA);
+        //bundle.removeFull(Constant.ACT013_CUSTOM_FORM_DATA);
 
         mIntent.putExtras(bundle);
 

@@ -1,0 +1,32 @@
+package com.namoadigital.prj001.model;
+
+import com.google.gson.annotations.Expose;
+
+import java.util.ArrayList;
+
+/**
+ * Created by d.luche on 06/12/2019.
+ */
+
+public class T_TK_Ticket_Save_Env extends Main_Header_Env {
+    @Expose
+    private ArrayList<TK_Ticket> ticket = new ArrayList<>();
+    @Expose
+    private String token;
+
+    public ArrayList<TK_Ticket> getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(ArrayList<TK_Ticket> ticket) {
+        this.ticket = ticket;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}

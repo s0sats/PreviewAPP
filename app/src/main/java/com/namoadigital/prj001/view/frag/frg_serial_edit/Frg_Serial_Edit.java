@@ -1990,7 +1990,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                //controls_sta.remove(mket_tracking);
+                //controls_sta.removeFull(mket_tracking);
                 if (delegate != null) {
                     delegate.onAddOrRemoveControl(mket_tracking, false);
                 }

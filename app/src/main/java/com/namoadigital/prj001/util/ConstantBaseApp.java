@@ -90,6 +90,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT065 = "act065";
     public static final String ACT066 = "act066";
     public static final String ACT067 = "act067";
+    public static final String ACT068 = "act068";
+    public static final String ACT069 = "act069";
+    public static final String ACT070 = "act070";
+    public static final String ACT071 = "act071";
 
     public static final String title_lbl = "_title";
 
@@ -230,6 +234,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String TOKEN_SERIAL_PREFIX;
     public static String TOKEN_INBOUND_PREFIX = "inbound_token_";
     public static String TOKEN_OUTBOUND_PREFIX = "outbound_token_";
+    public static String TOKEN_TICKET_PREFIX = "ticket_token_";
 
     public static String TOKEN_SO_NAME_FULL;
     public static String TOKEN_SERIAL_NAME_FULL;
@@ -459,6 +464,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_EMPTY_RETURN_LIST = "WS_EMPTY_RETURN_LIST";
     public static final String WS_RETURN_LIST = "WS_RETURN_LIST";
     public static final String WS_RETURN_FILENAME = "WS_RETURN_FILENAME";
+    public static final String MAIN_RESULT_OK = "OK";
+    public static final String MAIN_RESULT_OK_DUP = "OK_DUP";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
@@ -518,6 +525,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND_NEW = "OUTBOUND_NEW";
     public static final String PROFILE_MENU_IO_PARAM_BYPASS_CONFIRM_SERIAL = "BYPASS_CONFIRM_SERIAL";
 
+    //Profile Ticket
+    public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";
+    public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
@@ -529,7 +539,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
     public static final String MODULE_IO = "MODULE_IO";
-
 
     //Constantes Status da SO
     public static final String SO_STATUS_EDIT = "EDIT";
@@ -576,9 +585,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_FCM = "WS_FCM";
     public static final String FCM_MODULE_IO = "IO_";
     public static final String FCM_MODULE_SO = "SM_";
+    public static final String FCM_MODULE_TICKET = "TK_";
     public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
     public static final String FCM_ACTION_IO_OUTBOUND_UPDATE = "<IO_OUTBOUND_UPDATE>";
     public static final String FCM_ACTION_SM_SO_UPDATE = "<SM_SO_UPDATE>";
+    public static final String FCM_ACTION_TK_TICKET_UPDATE = "<TK_TICKET_UPDATE>";
     public static final String FCM_MODULE_CHECKLIST = "CHECKLIST";
     public static final String FCM_TYPE_WARNING = "WARNING";
 
@@ -634,6 +645,15 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
     public static final String IO_ACTION_SAVE_ITEM = "IO_ACTION_SAVE_ITEM";
 
+    /*
+    * Constantes Ticket
+    */
+
+    public static final String TK_TICKET_CRTL_TYPE_ACTION ="ACTION";
+    public static final String TK_TICKET_CRTL_TYPE_FORM ="FORM";
+    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
+    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
+    public static final String TK_TICKET_PREX_IMG ="tk_";
 
     /*
      * Constantes CHAT
@@ -681,6 +701,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
     public static final String CHAT_MESSAGE_TYPE_FORM_AP = "FORM_AP";
     public static final String CHAT_MESSAGE_TYPE_TRANSLATE = "TRANSLATE";
+    public static final String CHAT_MESSAGE_TYPE_SO = "SO";
+    public static final String CHAT_MESSAGE_TYPE_TICKET = "TICKET";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
     public static final String CHAT_ROOM_TYPE_SO = "SO";
     public static final String CHAT_ROOM_TYPE_AP = "FORM_AP";
