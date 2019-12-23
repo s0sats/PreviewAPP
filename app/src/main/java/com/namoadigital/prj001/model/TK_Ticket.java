@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -467,13 +468,20 @@ public class TK_Ticket {
         }
         //
         for (TK_Ticket_Ctrl ctrl : getCtrl()) {
-            //Se existe foto no servidor, busca referencia local.
-            if(existsActionPhotoInServer(ctrl)) {
-                ctrl.getAction().setAction_photo_local(
-                    getLocalPath(
-                        ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                    )
-                );
+            switch (ctrl.getCtrl_type()){
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                    break;
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                default:
+                    //Se existe foto no servidor, busca referencia local.
+                    if(existsActionPhotoInServer(ctrl)) {
+                        ctrl.getAction().setAction_photo_local(
+                            getLocalPath(
+                                ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                            )
+                        );
+                    }
+                    break;
             }
         }
     }

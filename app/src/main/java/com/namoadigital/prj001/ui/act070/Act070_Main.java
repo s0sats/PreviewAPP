@@ -174,9 +174,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_none_ticket_returned_msg");
         transList.add("alert_error_on_checkin_ttl");
         transList.add("alert_error_on_checkin_msg");
-        //
         transList.add("alert_image_too_large_to_open_ttl");
         transList.add("alert_image_too_large_to_open_msg");
+        //Measure View
+        transList.add("measure_value_lbl");
+        transList.add("measure_date_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

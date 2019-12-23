@@ -48,6 +48,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     private void bindViews() {
         //Super Views
         cvRoot = findViewById(R.id.act070_action_cell_cv_root);
+        tvType = findViewById(R.id.act070_measure_cell_tv_ctrl_type);
         tvSeq = findViewById(R.id.act070_action_cell_tv_seq);
         tvStatus = findViewById(R.id.act070_action_cell_tv_status);
         tvProducDesc = findViewById(R.id.act070_action_cell_tv_product);
@@ -61,6 +62,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     }
 
     private void bindData() {
+        defineType();
         tvSeq.setText(String.valueOf(getmSeq()));
         tvStatus.setText(hmAuxTrans.get(getmStatus()));
         tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
@@ -71,6 +73,11 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
         tvPartnerLbl.setText(hmAuxTrans.get("partner_lbl"));
         tvPartnerVal.setText(mTicketCtrl.getPartner_desc());
         setIvPhotoState();
+    }
+
+    private void defineType() {
+        tvType.setText(hmAuxTrans.get(mTicketCtrl.getCtrl_type()));
+        tvType.setTextColor(getTypeColor(mTicketCtrl.getCtrl_type()));
     }
 
     private void handleFieldsVisibility() {

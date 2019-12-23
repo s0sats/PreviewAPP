@@ -30,6 +30,7 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Action_V;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Generic;
+import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Measure_V;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -37,6 +38,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
@@ -67,13 +69,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     @Override
     @Nullable
     public TK_Ticket getTicketObj(int mTkPrefix, int mTkCode) {
-        return ticketDao.getByString(
+        TK_Ticket ticket = null;
+        //
+        ticket = ticketDao.getByString(
             new TK_Ticket_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mTkPrefix,
                 mTkCode
             ).toSqlQuery()
         );
+        //Inverte a ordenação dos controles
+        Collections.reverse(ticket.getCtrl());
+        //
+        return ticket;
     }
 
     @Override
@@ -156,6 +164,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             for (TK_Ticket_Ctrl ctrl : mTicket.getCtrl()) {
                 TK_Ticket_Ctrl_Super auxCtrl = null;
                 switch (ctrl.getCtrl_type()) {
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                        auxCtrl = configMeasureView(mTicket, ctrl);
+                        break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                         auxCtrl = configActionView(mTicket, ctrl);
                         break;
@@ -173,6 +184,20 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
         //
         return ctrlSupers;
+    }
+
+    private TK_Ticket_Ctrl_Measure_V configMeasureView(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
+        //
+        TK_Ticket_Ctrl_Measure_V  measureCtrlView = new TK_Ticket_Ctrl_Measure_V(
+            context,
+            mTicket.getCurrent_product_code(),
+            mTicket.getCurrent_serial_code(),
+            ctrl,
+            hmAux_Trans,
+            null
+        );
+        //
+        return measureCtrlView;
     }
 
     private TK_Ticket_Ctrl_Generic configSuperView(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
