@@ -35,6 +35,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     public static final String ACTION_PHOTO_NAME = "action_photo_name";
     public static final String ACTION_STATUS = "action_status";
     public static final String ACTION_PHOTO_CHANGED = "action_photo_changed";
+    public static final String ACTION_PHOTO_CODE = "action_photo_code";
 
     public TK_Ticket_ActionDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -400,6 +401,11 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 tk_ticket_action.setAction_status(cursor.getString(cursor.getColumnIndex(ACTION_STATUS)));
             }
             tk_ticket_action.setAction_photo_changed(cursor.getInt(cursor.getColumnIndex(ACTION_PHOTO_CHANGED)));
+            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_CODE))){
+                tk_ticket_action.setAction_photo_code(null);
+            }else{
+                tk_ticket_action.setAction_photo_code(cursor.getInt(cursor.getColumnIndex(ACTION_PHOTO_CODE)));
+            }
             //
             return tk_ticket_action;
         }
@@ -430,7 +436,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 contentValues.put(ACTION_PHOTO_CHANGED,tk_ticket_action.getAction_photo_changed());
             }
             contentValues.put(ACTION_STATUS,tk_ticket_action.getAction_status());
-
+            contentValues.put(ACTION_PHOTO_CODE,tk_ticket_action.getAction_photo_code());
             //
             return contentValues;
         }

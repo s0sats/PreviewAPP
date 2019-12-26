@@ -487,6 +487,50 @@ public class TK_Ticket {
     }
 
     /**
+     * Metodo que varre todas as actions do ticket e verifica se houve mudança no photo_code.
+     * Esse metodo serve para atualizar a foto da action quando alguem alterou a foto via web
+     * Caso haja, deleta foto local forçando o download da nova foto
+     *
+     * @param dbTicket - Ticket no db local
+     * @param tkTicket - Mesmo ticket só que retornado do servidor
+     */
+    public static void checkActionPhotoResetNeeds(TK_Ticket dbTicket, TK_Ticket tkTicket) {
+        //Se existe o ticket localmente, começa a analisar as fotos das action
+        if(dbTicket != null){
+            for (TK_Ticket_Ctrl tkTicketCtrl : tkTicket.getCtrl()) {
+                if( tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
+                    && tkTicketCtrl.getAction() != null
+                ){
+                    if (haveToResetPhoto(dbTicket,tkTicketCtrl)) {
+                        //Apaga arquivo local
+                        ToolBox_Inf.deleteDownloadFile(
+                            ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean haveToResetPhoto(TK_Ticket ticketDb, TK_Ticket_Ctrl tkTicketCtrl) {
+        for (TK_Ticket_Ctrl ctrlDb : ticketDb.getCtrl()) {
+            if( ctrlDb.getCustomer_code() == tkTicketCtrl.getCustomer_code()
+                && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
+                && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
+                && ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
+                && ctrlDb.getAction().getAction_photo_local() != null
+                && tkTicketCtrl.getAction().getAction_photo_code() != null
+                && (ctrlDb.getAction().getAction_photo_code() == null
+                || !ctrlDb.getAction().getAction_photo_code().equals(0))
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
+    /**
      * Verifica se existe referencia de imagem no servidor
      * A referencia de imagem no servidor se pela regra:
      *  - Action_photo ou action_photo_name existem

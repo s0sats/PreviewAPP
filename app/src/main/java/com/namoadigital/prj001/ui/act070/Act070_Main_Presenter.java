@@ -114,8 +114,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     private boolean isReadOnlyStatus(String ticketStatus) {
         return
-            ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketStatus)
-                || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ticketStatus);
+            !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
+            && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
     @Override

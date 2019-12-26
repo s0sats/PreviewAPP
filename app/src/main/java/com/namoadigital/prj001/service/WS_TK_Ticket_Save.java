@@ -258,9 +258,13 @@ public class WS_TK_Ticket_Save extends IntentService {
         if(retTicket != null){
             //Só atualizará o obj ticket se não for processamento de token
             //ou for processamento de token, mas o ticket nõ posusi mais dados a serem enviados
-            if(!reSend || noMoreUpdate(retTicket) ) {
+            TK_Ticket dbTicket = getDbTicket(retTicket);
+            //
+            if(!reSend || noMoreUpdate(dbTicket)) {
                 //Seta PKs nos objs filhos
                 retTicket.setPK();
+                //Verifica a necessidade de resetar a foto das action
+                TK_Ticket.checkActionPhotoResetNeeds(dbTicket,retTicket);
                 //Verifica se imagens já foram baixadas e atualiza campo com o local_path
                 retTicket.updateLocalImagesPathIfExists();
                 //Salva obj
@@ -275,7 +279,20 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
-    private boolean noMoreUpdate(TK_Ticket retTicket) {
+    private boolean noMoreUpdate(TK_Ticket dbTicket) {
+       /* TK_Ticket dbTicket = ticketDao.getByString(
+            new TK_Ticket_Sql_001(
+                retTicket.getCustomer_code(),
+                retTicket.getTicket_prefix(),
+                retTicket.getTicket_code()
+            ).toSqlQuery()
+        );*/
+
+        //
+        return dbTicket != null && dbTicket.getUpdate_required() == 0;
+    }
+
+    private TK_Ticket getDbTicket(TK_Ticket retTicket) {
         TK_Ticket dbTicket = ticketDao.getByString(
             new TK_Ticket_Sql_001(
                 retTicket.getCustomer_code(),
@@ -284,7 +301,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             ).toSqlQuery()
         );
         //
-        return dbTicket != null && dbTicket.getUpdate_required() == 0;
+        return dbTicket;
     }
 
     private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
