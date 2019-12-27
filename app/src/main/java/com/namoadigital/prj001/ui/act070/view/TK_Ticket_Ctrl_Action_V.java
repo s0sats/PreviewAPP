@@ -65,7 +65,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
         defineType();
         tvSeq.setText(String.valueOf(getmSeq()));
         tvStatus.setText(hmAuxTrans.get(getmStatus()));
-        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
+        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,mTicketCtrl.getCtrl_status()));
         tvProducDesc.setText(getmProductDesc());
         tvSerialId.setText(getmSerialID());
         //
@@ -129,15 +129,18 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     public void applyFilterVisibility() {
         if(delegate != null){
             setVisible(
-                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+                isVisibleStatus()
                 && delegate.checkPartnerProfile(getmPartnerCode())
             );
         }else{
             setVisible(
-                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+                isVisibleStatus()
             );
         }
+    }
+
+    private boolean isVisibleStatus(){
+        return ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(getmStatus())
+                || ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(getmStatus());
     }
 }

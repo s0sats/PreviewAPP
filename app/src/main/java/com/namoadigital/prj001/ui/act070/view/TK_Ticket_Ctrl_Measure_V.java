@@ -77,7 +77,7 @@ public class TK_Ticket_Ctrl_Measure_V extends TK_Ticket_Ctrl_Super {
         defineType();
         tvSeq.setText(String.valueOf(getmSeq()));
         tvStatus.setText(hmAuxTrans.get(getmStatus()));
-        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
+        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,mTicketCtrl.getCtrl_status()));
         tvProducDesc.setText(getmProductDesc());
         tvSerialId.setText(getmSerialID());
         //

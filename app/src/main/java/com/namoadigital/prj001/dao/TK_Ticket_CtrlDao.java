@@ -205,7 +205,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 db.setTransactionSuccessful();
             }
 
-        }catch (SQLiteException e){
+        }catch (Exception e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -216,11 +216,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
                 )
             );
-
-        }catch (Exception e){
-            //Seta obj de retorno com flag de erro e gera arquivo de exception
-            daoObjReturn.setError(true);
-            ToolBox_Inf.registerException(getClass().getName(), e);
         }finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.

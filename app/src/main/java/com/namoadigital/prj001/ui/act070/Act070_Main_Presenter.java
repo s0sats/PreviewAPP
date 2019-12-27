@@ -112,9 +112,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         );
     }
 
-    private boolean isReadOnlyStatus(String ticketStatus) {
-        return
-            !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
+    @Override
+    public boolean isReadOnlyStatus(String ticketStatus) {
+        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
             && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
@@ -147,8 +147,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
         //Se algum ctrl status diferente de DONE, OU WAITING_SYNC NAO esconde filtro
         for (TK_Ticket_Ctrl ctrl : ctrls) {
-            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
-                 && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())
+            if (isReadOnlyStatus(ctrl.getCtrl_status())
             ) {
                 return false;
             }

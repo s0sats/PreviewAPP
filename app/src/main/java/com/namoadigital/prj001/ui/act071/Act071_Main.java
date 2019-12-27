@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -403,6 +404,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 mTicketCtrl.getAction().setAction_photo(null);
                 mTicketCtrl.getAction().setAction_photo_name(null);
                 deletePhotoFile(actionPhotoLocalPath);
+                //Se apagou a foto, limpa photo_code
+                mTicketCtrl.getAction().setAction_photo_code(null);
+            } else {
+                //LUCHE - 27/12/2019
+                //Após a implementação do getAction_photo_code para identificar se houve mudança na foto,
+                //quando o usr adicionar ou alterar a foto, seta campo como 0 para saber que no retorno
+                //do save, a foto deve ser mantida e apenas o photo_code deve ser atualizado
+                //
+                mTicketCtrl.getAction().setAction_photo_code(0);
             }
         }else {
             mTicketCtrl.getAction().setAction_photo_changed(0);
@@ -544,7 +554,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void setDataToViews() {
         tvTicketId.setText(mTicketID);
         tvStatus.setText(hmAux_Trans.get(mTicketCtrl.getCtrl_status()));
-        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
+        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicketCtrl.getCtrl_status()));
         definePathVisibility();
         tvTypeDesc.setText(mTypeDesc);
         tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
@@ -596,7 +606,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             }else{
                 ivActionPhoto.setEnabled(false);
             }
-            ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            Drawable placeHolder;
+            //Se photo name null, de fato não há foto, mas se photo name != null
+            //significa q a imagem foi inserida por outro user
+            if(mTicketCtrl.getAction().getAction_photo_name() == null) {
+                placeHolder = getResources().getDrawable(android.R.drawable.ic_menu_camera);
+            }else{
+                placeHolder = getResources().getDrawable(R.drawable.sand_watch_transp);
+            }
+            //
+            ivActionPhoto.setImageDrawable(placeHolder);
+
         } else {
             String path = mTicketCtrl.getAction().getAction_photo();
             boolean saveBitmap = false;
@@ -627,6 +647,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             Glide.with(context).asBitmap()
                 .placeholder(R.drawable.sand_watch_transp)
                 .load(path)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {

@@ -68,5 +68,7 @@ public interface Act070_Main_Contract {
         public boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code);
 
         boolean isTicketInTokenFile(int ticket_prefix, int ticket_code);
+
+        boolean isReadOnlyStatus(String ticketStatus);
     }
 }
