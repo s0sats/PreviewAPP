@@ -66,6 +66,10 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         if(ToolBox_Con.isOnline(context)){
             mView.showPD();
             //
+            /*
+                Barrionuevo - 30.12.2019
+                Tratamento para pular verificacao de versao caso haja dados pedentes
+             */
             int status_jump = 0;
             if(ToolBox_Inf.hasPendingData(context,ToolBox_Inf.getListDB("C_", true))){
                 status_jump = 1;
