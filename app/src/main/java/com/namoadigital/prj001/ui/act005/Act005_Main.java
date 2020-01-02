@@ -123,6 +123,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_ID_IO_ASSETS = "menu_io_assets";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
     public static final String MENU_ID_MESSAGES = "menu_messages";
+    public static final String MENU_ID_FAKE = "menu_id_fake";
 
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
@@ -912,8 +913,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     }
 
-    public void loadMenuV2(ArrayList<MenuMainNamoa> menus) {
-        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
+    public void loadMenuV2(ArrayList<MenuMainNamoa> menus, int columnsQty) {
+        gv_menu.setNumColumns(columnsQty);
+        int idxFakeSpaceStart = mPresenter.processFakeMenus(menus,columnsQty);
+        //
+        mAdapter = new Act005_Adapter(
+            context,
+            R.layout.act005_item_menu_badge,
+            menus,
+            idxFakeSpaceStart,
+            columnsQty
+        );
+        //
         gv_menu.setAdapter(mAdapter);
     }
 
@@ -2255,7 +2266,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         super.onResume();
         //
         ToolBox_Inf.mkDirectory();
-        //
+        // LUCHE - 19/12/2019
+        //O comando getMenuItensV2, foi adicionado em 19 Apr 2017, commit 9ff6860d31decd335f5f2b3d40e75822fa609348
+        //Aparentemente, serve apenas para quando o usuario, estando com a act005,
+        //abre uma noticação do app e é enviado para act019
+        //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
     }
 

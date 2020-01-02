@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act005;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MenuMainNamoa;
 
 import java.util.ArrayList;
 
@@ -65,4 +66,6 @@ public interface Act005_Main_Presenter {
     void executeTicketSave();
 
     ArrayList<HMAux> processTicketSaveReturn(String mLink, String ticket_lbl);
+
+    int processFakeMenus(ArrayList<MenuMainNamoa> menus, int columnsQty);
 }

@@ -118,6 +118,18 @@ import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_A
 
 public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
+    private static final int COLUMN_VAR_PIXEL_BASE = 101;
+    private static final float COLUMN_VAR_DENSITY_BASE = 1.5f;
+    private static final float COLUMN_VAR_PIXEL_MULT_FACTOR = 5.6f;
+    /**
+     * LUCHE - 19/12/2019
+     *
+     * ATENÇÃO, ESSA CONSTANTE SECUNDARY_MENU_QTY É A QTD DE ITENS DE MENUS QUE NÃO SÃO MODULOS DO APP
+     * CASO ALGUMA MENU SEJA CRIA OU RETIRADO ELA DEVE SER ALTERADA MANUALMENTE
+     *
+     **/
+    private static final int SECUNDARY_MENU_QTY = 6;
+
     private Context context;
     private Act005_Main_View mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
@@ -261,6 +273,26 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         menuList.add(
                 new MenuMainNamoa(
+                        Act005_Main.MENU_ID_SEND_DATA,
+                        "",
+                        "lbl_send_data",
+                        "lbl_send_data",
+                        R.drawable.ic_enviar
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_CHAT,
+                        "",
+                        "lbl_chat",
+                        "lbl_chat",
+                        R.drawable.ic_n_chat
+                )
+        );
+        //
+        menuList.add(
+                new MenuMainNamoa(
                         Act005_Main.MENU_ID_PENDING_DATA,
                         "",
                         "lbl_pending_data",
@@ -286,26 +318,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         "lbl_messages",
                         "lbl_messages",
                         R.drawable.ic_notificacao
-                )
-        );
-        //
-        menuList.add(
-                new MenuMainNamoa(
-                        Act005_Main.MENU_ID_SEND_DATA,
-                        "",
-                        "lbl_send_data",
-                        "lbl_send_data",
-                        R.drawable.ic_enviar
-                )
-        );
-        //
-        menuList.add(
-                new MenuMainNamoa(
-                        Act005_Main.MENU_ID_CHAT,
-                        "",
-                        "lbl_chat",
-                        "lbl_chat",
-                        R.drawable.ic_n_chat
                 )
         );
         //
@@ -660,7 +672,93 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         //mView.loadMenuV2(menuList);
-        mView.loadMenuV2(grantedMenus);
+        mView.loadMenuV2(grantedMenus,calculateNumColumns());
+    }
+
+    /**
+     * LUCHE - 19/12/2019
+     * Metodo responsavel por calcular a qtd de colunas possiveis de serem exibidas na tela.
+     * Para tal, são usadas constantes pre definidas.
+     *  - COLUMN_VAR_PIXEL_BASE: Qtd de pixels padrão para a largura da view do menu
+     *  - COLUMN_VAR_DENSITY_BASE: Densidade base do calculo 1,5
+     *  - COLUMN_VAR_PIXEL_MULT_FACTOR: Fator de multplicação para redefinir a qtd de pixel q será
+     *  convertida em DP para exibição.
+     *  Essas constantes foram obtidas depois de diversos testes para criar uma formula que conseguisse
+     *  calcular a qtd de colunas antes do grid ser "atachado" na tela.
+     *  Obtendo os tamanhos de largura dos itens que o gridview criava foi observado:
+     *   - Com densidade 4.0, a largura em pixel era 115
+     *   - Com densidade 1.5, a largura em pixel era 101
+     *  A partir desses dados, o seguinte calculo foi criado para definir o fator de multiplicação
+     *  dos pixel:
+     *    Diferença de pixels entra as densidades 4.0 e 1.5
+     *    115 - 101 = 14
+     *    Diferença entre as densidades 4.0 e 1.5
+     *    4 - 1.5 = 2.5
+     *    Divisão entre diferença de pixel e diferença de densidades
+     *    14 / 2.5 = 5,6
+     *  Com todos os dados, temos a formula final
+     *   larguraEmPixel = COLUMN_VAR_PIXEL_BASE + ((Densidade do device - COLUMN_VAR_DENSITY_BASE) * COLUMN_VAR_PIXEL_MULT_FACTOR)
+     *   larguraEmPixel = 101 + ((4 - 1.5)*5.6
+     *  Por fim, para calcular a qtd de colunas, convertemos a larguraEmPixel para largura em DP
+     *  e dividimos a largura do device por ela
+     *    qtdColumns = larguraDevice / larguraFinalEmDP
+     *
+     * @return qtdColumns
+     */
+    private int calculateNumColumns() {
+        try {
+            int[] metrics = ToolBox_Inf.getScreenMetrics(context);
+            int addtionalPixel = (int) ((context.getResources().getDisplayMetrics().density - COLUMN_VAR_DENSITY_BASE) * COLUMN_VAR_PIXEL_MULT_FACTOR);
+            int pixelTot = COLUMN_VAR_PIXEL_BASE + addtionalPixel;
+            int totalDp = (int) ToolBox.convertPixelsToDpIndeed(context, pixelTot);
+            return metrics[0] / totalDp;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            //Se não foi possivel calcular, seta 3, pois a maiora dos devices testados suportam no minimo 3 itens
+            return 3;
+        }
+    }
+
+    /**
+     * LUCHE - 19/12/2019
+     *
+     * Metodo que recebe lista de menus e qtd de colunas e processa a qtd de menu fakes que devem
+     * ser criados e retorna idx dp primeiro fake menu.
+     *
+     * @param menus
+     * @param columnsQty
+     * @return indice do primeiro fake menus
+     */
+
+    @Override
+    public int processFakeMenus(ArrayList<MenuMainNamoa> menus, int columnsQty) {
+        //Qtd de menus na lista
+        int menusQtd = menus.size();
+        //Subtrai da qtd total de menus, os menus secundarios que são sempre fixos
+        //descobrindo assim quantos menus de modulos existem
+        int qtdModulos = menusQtd - SECUNDARY_MENU_QTY;
+        //Calcula quantos itens fake precisam ser gerados para completar linha do ultimo menu
+        //Pega o mod da qtd de menus por qtd de colunas, se for diferente de 0, subtrai o mod do total
+        //de colunas para descobrir qtd de itens de menu fake.
+        int fakeMenus = (qtdModulos % columnsQty) != 0 ? columnsQty - (qtdModulos % columnsQty)   :  0;
+        //Soma a qtd de menus fakes com a qtd de colunas , definindo qtos itens fake precisam ser gerados.
+        int fakeTotal = fakeMenus + columnsQty;
+        //Faz loop adicionando a qtd total de fake. O itens começam a ser adicionados após o indice do
+        //ultimo menu de verdade.
+        for(int i = 0; i < fakeTotal;i++){
+            menus.add(
+                qtdModulos + i,
+                new MenuMainNamoa(
+                    Act005_Main.MENU_ID_FAKE,
+                    "",
+                    Act005_Main.MENU_ID_FAKE,
+                    Act005_Main.MENU_ID_FAKE,
+                    null
+                )
+            );
+        }
+        //
+        return qtdModulos + fakeMenus;
     }
 
     private String handleTicketUpdateRequired() {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface Act005_Main_View {
 
-    void loadMenuV2(ArrayList<MenuMainNamoa> menus);
+    void loadMenuV2(ArrayList<MenuMainNamoa> menus, int columnsQty);
 
     void showPD();
 

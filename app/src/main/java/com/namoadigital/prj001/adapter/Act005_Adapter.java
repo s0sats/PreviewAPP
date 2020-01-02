@@ -5,12 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 
 import java.util.ArrayList;
 
@@ -22,11 +25,17 @@ public class Act005_Adapter extends BaseAdapter {
     private Context context;
     private int resource;
     private ArrayList<MenuMainNamoa> source;
+    //Atributo que receberá o indice onde se iniciam os fake menus
+    private int idxFakeSpaceStart = -1;
+    //Atributo que recebe a qtd de colunas setadas.
+    private int columnsQty = -1;
 
-    public Act005_Adapter(Context context, int resource, ArrayList<MenuMainNamoa> source) {
+    public Act005_Adapter(Context context, int resource, ArrayList<MenuMainNamoa> source, int idxFakeSpaceStart, int columnsQty) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+        this.idxFakeSpaceStart = idxFakeSpaceStart;
+        this.columnsQty = columnsQty;
     }
 
     @Override
@@ -72,6 +81,16 @@ public class Act005_Adapter extends BaseAdapter {
         }
     }
 
+    /**
+     * Sobrecarregado metodo para definir menus fakes como NÃO clicaveis.
+     * @param position
+     * @return
+     */
+    @Override
+    public boolean isEnabled(int position) {
+        return !source.get(position).getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE);
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -82,91 +101,65 @@ public class Act005_Adapter extends BaseAdapter {
 
         }
 
+        FrameLayout flMain = convertView.findViewById(R.id.menu_flChecklist);
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.menu_llChecklist);
         ImageView ivIcon = (ImageView) convertView.findViewById(R.id.menu_ivChecklist);
         TextView tvTitle = (TextView) convertView.findViewById(R.id.menu_tvChecklist);
         TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
         TextView tvBadge2 = (TextView) convertView.findViewById(R.id.menu_tvBadge2);
-
-        //HashMap<String, String> item = source.get(position);
+        //
         MenuMainNamoa item = source.get(position);
-
-        ivIcon.setImageDrawable(context.getResources().getDrawable(item.getIcon()));
-        //tvTitle.setText(item.get(Act005_Main.MENU_DESC));
-        tvTitle.setText(item.getMenu_desc());
-
-        //int badgeNum = item.getBadge1();
-        //int badge2Num = item.getBadge2();
-
-        //Se chave Badge tiver preenchida exibe no menu
-        if (item.getBadge1() > 0) {
-            tvBadge.setVisibility(View.VISIBLE);
-            String qty = String.valueOf(item.getBadge1());
-
-            if (qty.length() == 1) {
-                qty = " " + qty + " ";
+        //Processa menus fake
+        if(item.getMenu_id().equalsIgnoreCase(Act005_Main.MENU_ID_FAKE)) {
+            //Seta view como invisible
+            flMain.setVisibility(View.INVISIBLE);
+            //Se item é "linha de separação" entre os tipos de menu,
+            //reduz a altura das views.
+            if(
+                idxFakeSpaceStart >= 0
+                && columnsQty >= 0
+                && position >= idxFakeSpaceStart
+                && position < idxFakeSpaceStart + columnsQty
+            ){
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) flMain.getLayoutParams();
+                //params.setMargins(3,100,3,3);
+                params.height = (int) ToolBox.convertPixelsToDpIndeed(context,30);
+                flMain.setLayoutParams(params);
             }
-            tvBadge.setText(qty);
-        } else {
-            tvBadge.setVisibility(View.GONE);
-            tvBadge.setText(" ");
-        }
 
-//        if(item.getMenu_id().equals(Act005_Main.MENU_ID_CHAT)){
-//            tvBadge.setVisibility(View.GONE);
-//            //
-//            if(item.getBadge1() == 1) {
-//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
-//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
-//            }else{
-//                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
-//                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
-//            }
-//        }
+        }else{
+            flMain.setVisibility(View.VISIBLE);
+            //
+            ivIcon.setImageDrawable(context.getResources().getDrawable(item.getIcon()));
+            tvTitle.setText(item.getMenu_desc());
+            //Se chave Badge tiver preenchida exibe no menu
+            if (item.getBadge1() > 0) {
+                tvBadge.setVisibility(View.VISIBLE);
+                String qty = String.valueOf(item.getBadge1());
 
-        //Se chave Badge2 tiver preenchida exibe no menu
-        if (item.getBadge2() > 0) {
-            tvBadge2.setVisibility(View.VISIBLE);
-            String qty = String.valueOf(item.getBadge2());
-
-            if (qty.length() == 1) {
-                qty = " " + qty + " ";
+                if (qty.length() == 1) {
+                    qty = " " + qty + " ";
+                }
+                tvBadge.setText(qty);
+            } else {
+                tvBadge.setVisibility(View.GONE);
+                tvBadge.setText(" ");
             }
-            tvBadge2.setText(qty);
-        } else {
-            tvBadge2.setVisibility(View.GONE);
-            tvBadge2.setText(" ");
+            //Se chave Badge2 tiver preenchida exibe no menu
+            if (item.getBadge2() > 0) {
+                tvBadge2.setVisibility(View.VISIBLE);
+                String qty = String.valueOf(item.getBadge2());
+
+                if (qty.length() == 1) {
+                    qty = " " + qty + " ";
+                }
+                tvBadge2.setText(qty);
+            } else {
+                tvBadge2.setVisibility(View.GONE);
+                tvBadge2.setText(" ");
+            }
         }
-
-
-//        //Se chave Badge tiver preenchida exibe no menu
-//        if (item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")) {
-//            tvBadge.setVisibility(View.VISIBLE);
-//            String qty = item.get(Act005_Main.MENU_BADGE);
-//
-//            if (item.get(Act005_Main.MENU_BADGE).length() == 1) {
-//                qty = " " + qty + " ";
-//            }
-//            tvBadge.setText(qty);
-//        } else {
-//            tvBadge.setVisibility(View.GONE);
-//            tvBadge.setText(" ");
-//        }
-//
-//        //Se chave BadgeSO tiver preenchida exibe no menu
-//        if (item.get(Act005_Main.MENU_BADGE2).length() > 0 && !item.get(Act005_Main.MENU_BADGE2).equals("0")) {
-//            tvBadgeSO.setVisibility(View.VISIBLE);
-//            String qty = item.get(Act005_Main.MENU_BADGE2);
-//
-//            if (item.get(Act005_Main.MENU_BADGE2).length() == 1) {
-//                qty = " " + qty + " ";
-//            }
-//            tvBadgeSO.setText(qty);
-//        } else {
-//            tvBadgeSO.setVisibility(View.GONE);
-//            tvBadgeSO.setText(" ");
-//        }
-
+        //
         return convertView;
     }
 }
