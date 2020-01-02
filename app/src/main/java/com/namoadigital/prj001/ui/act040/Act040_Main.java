@@ -247,20 +247,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 )
         );
         //
-        //Verifica se a lib de OCR esta importada no flavor
-        //e se o user possui acesso ao OCR
-        if(ToolBox_Inf.isMicroBlinkImported()) {
-            mket_serial.setmOCRVin(
-                    ToolBox_Inf.profileExists(
-                            context,
-                            Constant.PROFILE_MENU_PROFILE,
-                            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                    )
-            );
-        }else{
-            mket_serial.setmOCRVin(false);
-        }
-        //
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
         btn_create_so.setText(hmAux_Trans.get("btn_create_so"));
         //

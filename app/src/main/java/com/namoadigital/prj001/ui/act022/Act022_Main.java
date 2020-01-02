@@ -266,19 +266,6 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
                 Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
             )
         );
-        //Verifica se a lib de OCR esta importada no flavor
-        //e se o profise do user possui acesso ao OCR
-        if (ToolBox_Inf.isMicroBlinkImported()) {
-            mk_serial_id.setmOCRVin(
-                ToolBox_Inf.profileExists(
-                    context,
-                    Constant.PROFILE_MENU_PROFILE,
-                    Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_VIN
-                )
-            );
-        } else {
-            mk_serial_id.setmOCRVin(false);
-        }
     }
 
     /**

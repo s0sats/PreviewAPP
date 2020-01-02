@@ -31,18 +31,9 @@ android {
             applicationId "com.namoadigital.prj001.production"
         }
 
-        productionOcr {
-            applicationId "com.namoadigital.prj001.production"
-        }
-
         development {
             applicationId "com.namoadigital.prj001.development"
         }
-
-        developmentOcr {
-            applicationId "com.namoadigital.prj001.development"
-        }
-
     }
 
 }
@@ -98,17 +89,9 @@ dependencies {
     }
 
     implementation 'com.beardedhen:androidbootstrap:2.3.1'
-    //Import flavors sem OCR
 
-    developmentImplementation(namoaLibVersion) {
-        exclude group: 'com.microblink', module: 'blinkid'
-    }
-    productionImplementation(namoaLibVersion) {
-        exclude group: 'com.microblink', module: 'blinkid'
-    }
-    //Import flavors COM OCR
-    productionOcrImplementation namoaLibVersion
-    developmentOcrImplementation namoaLibVersion
+    developmentImplementation namoaLibVersion
+    productionImplementation namoaLibVersion
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.firebase:firebase-messaging:10.0.1'
