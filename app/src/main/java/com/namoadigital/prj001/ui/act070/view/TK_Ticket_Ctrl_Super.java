@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
 
@@ -20,6 +21,7 @@ public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
     protected TK_Ticket_Ctrl mTicketCtrl;
     protected HMAux hmAuxTrans;
     protected OnClickListener ivActionClickListener;
+    protected TextView tvType;
     protected TextView tvSeq;
     protected TextView tvStatus;
     protected TextView tvProducDesc;
@@ -139,6 +141,22 @@ public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
     }
 
     public abstract void applyFilterVisibility();
+
+    protected int getTypeColor(String ctrl_type){
+        int color = 0;
+        switch (ctrl_type){
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                color = R.color.namoa_status_stop;
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+            default:
+                color = R.color.namoa_status_pending;
+                break;
+        }
+       //
+        return getResources().getColor(color);
+    }
+
 
 
 }

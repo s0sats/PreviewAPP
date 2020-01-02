@@ -28,6 +28,7 @@ public class TK_Ticket_Action {
     private String action_status;
     @Expose
     private int action_photo_changed;
+    private Integer action_photo_code;//somente usado para identificar se foto recebida é diferente da alterior
 
     public TK_Ticket_Action() {
         this.customer_code = -1;
@@ -124,5 +125,13 @@ public class TK_Ticket_Action {
 
     public void setAction_photo_changed(int action_photo_changed) {
         this.action_photo_changed = action_photo_changed;
+    }
+
+    public Integer getAction_photo_code() {
+        return action_photo_code;
+    }
+
+    public void setAction_photo_code(Integer action_photo_code) {
+        this.action_photo_code = action_photo_code;
     }
 }

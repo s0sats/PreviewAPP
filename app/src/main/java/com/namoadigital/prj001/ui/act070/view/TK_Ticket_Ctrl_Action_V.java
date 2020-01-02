@@ -48,6 +48,7 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     private void bindViews() {
         //Super Views
         cvRoot = findViewById(R.id.act070_action_cell_cv_root);
+        tvType = findViewById(R.id.act070_measure_cell_tv_ctrl_type);
         tvSeq = findViewById(R.id.act070_action_cell_tv_seq);
         tvStatus = findViewById(R.id.act070_action_cell_tv_status);
         tvProducDesc = findViewById(R.id.act070_action_cell_tv_product);
@@ -61,9 +62,10 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     }
 
     private void bindData() {
+        defineType();
         tvSeq.setText(String.valueOf(getmSeq()));
         tvStatus.setText(hmAuxTrans.get(getmStatus()));
-        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicketCtrl.getCtrl_status())));
+        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,mTicketCtrl.getCtrl_status()));
         tvProducDesc.setText(getmProductDesc());
         tvSerialId.setText(getmSerialID());
         //
@@ -71,6 +73,11 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
         tvPartnerLbl.setText(hmAuxTrans.get("partner_lbl"));
         tvPartnerVal.setText(mTicketCtrl.getPartner_desc());
         setIvPhotoState();
+    }
+
+    private void defineType() {
+        tvType.setText(hmAuxTrans.get(mTicketCtrl.getCtrl_type()));
+        tvType.setTextColor(getTypeColor(mTicketCtrl.getCtrl_type()));
     }
 
     private void handleFieldsVisibility() {
@@ -122,15 +129,18 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
     public void applyFilterVisibility() {
         if(delegate != null){
             setVisible(
-                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+                isVisibleStatus()
                 && delegate.checkPartnerProfile(getmPartnerCode())
             );
         }else{
             setVisible(
-                !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(getmStatus())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(getmStatus())
+                isVisibleStatus()
             );
         }
+    }
+
+    private boolean isVisibleStatus(){
+        return ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(getmStatus())
+                || ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(getmStatus());
     }
 }

@@ -174,9 +174,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("alert_none_ticket_returned_msg");
         transList.add("alert_error_on_checkin_ttl");
         transList.add("alert_error_on_checkin_msg");
-        //
         transList.add("alert_image_too_large_to_open_ttl");
         transList.add("alert_image_too_large_to_open_msg");
+        //Measure View
+        transList.add("measure_value_lbl");
+        transList.add("measure_date_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -335,7 +337,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         setTicketSync();
         //
         tvStatus.setText(hmAux_Trans.get(mTicket.getTicket_status()));
-        tvStatus.setTextColor(getResources().getColor(ToolBox_Inf.getStatusColor(mTicket.getTicket_status())));
+        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()));
         //
         tvTypePath.setText(mTicket.getType_path());
         tvTypeDesc.setText(mTicket.getType_desc());
@@ -400,9 +402,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void defineFilterVisility() {
-        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
-            || mPresenter.checkFilterDisable(mTicket.getCtrl())
-        ) {
+        if ( mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
+             || mPresenter.checkFilterDisable(mTicket.getCtrl()))
+        {
             swFilter.setChecked(false);
             grFilter.setVisibility(View.GONE);
         } else {
@@ -411,7 +413,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void configDoneInfo() {
-        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicket.getTicket_status())
+        if (mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
             && mTicket.getClose_date() != null && mTicket.getClose_user() != null) {
             grDone.setVisibility(View.VISIBLE);
             tvDoneInfoVal.setText(mPresenter.getFormattedDoneInfo(mTicket.getClose_date(), mTicket.getClose_user_name()));
@@ -588,7 +590,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         }
         if (ConstantBaseApp.ACT012.equals(requestingAct)
             || ConstantBaseApp.ACT014.equals(requestingAct)
-            || ConstantBaseApp.ACT035.equals(requestingAct)) {
+            || ConstantBaseApp.ACT035.equals(requestingAct))
+        {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if (ConstantBaseApp.ACT035.equals(requestingAct)) {
                 bundle.putString(CH_RoomDao.ROOM_CODE, room_code);

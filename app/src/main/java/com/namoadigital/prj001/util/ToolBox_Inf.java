@@ -4648,11 +4648,23 @@ public class ToolBox_Inf {
         return getStatusColor(status);
     }
 
+    @Deprecated
+    /**
+     * Metodo que retorno do color referente ao status passado
+     * LUCHE - 27/12/2019
+     * O Metodo foi depreciado, pois foi criado o getStatusColorV2 que usa o mesmo switch deste metodo
+     * mas ao inves de retornar o R.color, retorna o recurso da cor e , sendo assim, pode ser usado
+     * diretamente no setTextColor();
+     *
+     * @param status - Status
+     * @return - R.color do status passado.
+     */
     public static int getStatusColor(String status) {
         switch (status) {
             case Constant.SYS_STATUS_EDIT:
                 return R.color.namoa_status_edit;
             case Constant.SYS_STATUS_STOP:
+            case Constant.SYS_STATUS_REJECTED:
                 return R.color.namoa_status_stop;
             case Constant.SYS_STATUS_PENDING:
                 return R.color.namoa_status_pending;
@@ -4669,7 +4681,6 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_WAITING_QUALITY:
                 return R.color.namoa_status_waiting_quality;
             case Constant.SYS_STATUS_WAITING_CLIENT:
-                return R.color.namoa_status_waiting_client;
             case Constant.SYS_STATUS_WAITING_ACTION:
                 return R.color.namoa_status_waiting_client;
             case Constant.SYS_STATUS_WAITING_SYNC:
@@ -4696,6 +4707,17 @@ public class ToolBox_Inf {
             default:
                 return R.color.namoa_color_gray_4;
         }
+    }
+
+    /**
+     * Metodo é uma versão melhorada do getStatusColor, pois ja retorna resource do id da cor assim,
+     * pode ser usado diretamente no setTextColor() se a necessidade de usar context.getResources().getColor()
+     * @param context - contexto
+     * @param status - status
+     * @return retorna o resource da cor
+     */
+    public static int getStatusColorV2(Context context, String status) {
+        return context.getResources().getColor(getStatusColor(status));
     }
 
     public static HashMap<String, String> JsonToHashMap(JSONObject jsonObject, String root) throws Exception {

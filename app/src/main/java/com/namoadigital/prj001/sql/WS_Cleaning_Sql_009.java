@@ -2,7 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by dluche on 13/12/2019.
@@ -31,7 +31,10 @@ public class WS_Cleaning_Sql_009 implements Specification {
                         "   "+ TK_TicketDao.TABLE +" t \n" +
                         " WHERE \n" +
                         "   t.customer_code = '"+customer_code+"'\n"+
-                        "   AND t.ticket_status = '"+Constant.SYS_STATUS_DONE+"'\n" +
+                        "   AND t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"') \n" +
                         "   AND Date(t.close_date) < Date('"+s_date+"')\n" )
                 .append(";")
                 .toString();

@@ -11,7 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Measure;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -19,39 +19,37 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Ticket_Action>, DaoWithReturnSharedDbInstance<TK_Ticket_Action> {
+public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ticket_Measure>, DaoWithReturnSharedDbInstance<TK_Ticket_Measure> {
 
-    private final Mapper<TK_Ticket_Action, ContentValues> toContentValuesMapper;
-    private final Mapper<Cursor, TK_Ticket_Action> toTK_Ticket_ActionMapper;
+    private final Mapper<TK_Ticket_Measure, ContentValues> toContentValuesMapper;
+    private final Mapper<Cursor, TK_Ticket_Measure> toTK_Ticket_MeasureMapper;
 
-    public static final String TABLE = "tk_ticket_action";
+    public static final String TABLE = "tk_ticket_measure";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
-    public static final String ACTION_COMMENTS = "action_comments";
-    public static final String ACTION_PHOTO = "action_photo";
-    public static final String ACTION_PHOTO_LOCAL = "action_photo_local";
-    public static final String ACTION_PHOTO_NAME = "action_photo_name";
-    public static final String ACTION_STATUS = "action_status";
-    public static final String ACTION_PHOTO_CHANGED = "action_photo_changed";
-    public static final String ACTION_PHOTO_CODE = "action_photo_code";
+    public static final String MEASURE_TP_CODE = "measure_tp_code";
+    public static final String MEASURE_TP_ID = "measure_tp_id";
+    public static final String MEASURE_TP_DESC = "measure_tp_desc";
+    public static final String MEASURE_VALUE = "measure_value";
+    public static final String MEASURE_DATE = "measure_date";
+    public static final String MEASURE_INFO = "measure_info";
 
-    public TK_Ticket_ActionDao(Context context, String mDB_NAME, int mDB_VERSION) {
+    public TK_Ticket_MeasureDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
-        this.toContentValuesMapper = new TK_TicketActionToContentValues();
-        this.toTK_Ticket_ActionMapper = new CursorToTk_Ticket_ActionMapper();
-    }
-
-
-    @Override
-    public DaoObjReturn addUpdate(TK_Ticket_Action tk_ticket_action) {
-        return addUpdate(tk_ticket_action,null);
+        this.toContentValuesMapper = new TK_Ticket_MeasureToContentValues();
+        this.toTK_Ticket_MeasureMapper = new CursorToTK_Ticket_MeasureMapper();
     }
 
     @Override
-    public DaoObjReturn addUpdate(TK_Ticket_Action tk_ticket_action, SQLiteDatabase dbInstance) {
+    public DaoObjReturn addUpdate(TK_Ticket_Measure tk_ticket_measure) {
+        return addUpdate(tk_ticket_measure,null) ;
+    }
+
+    @Override
+    public DaoObjReturn addUpdate(TK_Ticket_Measure tk_ticket_measure, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
@@ -66,19 +64,19 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_action.getCustomer_code()).append("'");
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_action.getTicket_prefix()).append("'");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_action), sbWhere.toString(), null);
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
             if(addUpdateRet == 0){
                 curAction = DaoObjReturn.INSERT;
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_action));
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_measure));
             }
 
         }catch (SQLiteException e){
@@ -112,12 +110,12 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     }
 
     @Override
-    public DaoObjReturn addUpdate(List<TK_Ticket_Action> tk_ticket_actions, boolean status) {
-        return addUpdate(tk_ticket_actions,status,null);
+    public DaoObjReturn addUpdate(List<TK_Ticket_Measure> tk_ticket_measures, boolean status) {
+        return addUpdate(tk_ticket_measures,status,null);
     }
 
     @Override
-    public DaoObjReturn addUpdate(List<TK_Ticket_Action> tk_ticket_actions, boolean status, SQLiteDatabase dbInstance) {
+    public DaoObjReturn addUpdate(List<TK_Ticket_Measure> tk_ticket_measures, boolean status, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
@@ -138,24 +136,24 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 db.delete(TABLE, null, null);
             }
             //
-            for (TK_Ticket_Action tk_ticket_action : tk_ticket_actions) {
+            for (TK_Ticket_Measure tk_ticket_measure : tk_ticket_measures) {
 
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
                 StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_action.getCustomer_code()).append("'");
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_action.getTicket_prefix()).append("'");
+                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
+                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+                sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_action), sbWhere.toString(), null);
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
                 if(addUpdateRet == 0){
                     curAction = DaoObjReturn.INSERT;
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_action));
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_measure));
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
@@ -208,7 +206,19 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     }
 
     @Override
-    public DaoObjReturn remove(TK_Ticket_Action tk_ticket_action, @Nullable SQLiteDatabase dbInstance) {
+    public void remove(String sQuery) {
+        openDB();
+        try {
+            db.execSQL(sQuery);
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public DaoObjReturn remove(TK_Ticket_Measure tk_ticket_measure, @Nullable SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -221,13 +231,13 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
 
         try{
             StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_action.getCustomer_code()).append("'");
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_action.getTicket_prefix()).append("'");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
             //
             sqlRet = db.delete(TABLE,sbWhere.toString(),null);
         }catch (SQLiteException e){
@@ -258,28 +268,17 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
         return daoObjReturn;
     }
 
-    @Override
-    public void remove(String sQuery) {
-        openDB();
-        try {
-            db.execSQL(sQuery);
-        } catch (Exception e) {
-        } finally {
-        }
-
-        closeDB();
-    }
 
     @Override
-    public TK_Ticket_Action getByString(String sQuery) {
-        TK_Ticket_Action tk_ticket_action = null;
+    public TK_Ticket_Measure getByString(String sQuery) {
+        TK_Ticket_Measure tk_ticket_measure = null;
         openDB();
 
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                tk_ticket_action = toTK_Ticket_ActionMapper.map(cursor);
+                tk_ticket_measure = toTK_Ticket_MeasureMapper.map(cursor);
             }
             //
             cursor.close();
@@ -290,7 +289,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
 
         closeDB();
 
-        return tk_ticket_action;
+        return tk_ticket_measure;
     }
 
     @Override
@@ -318,16 +317,15 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     }
 
     @Override
-    public List<TK_Ticket_Action> query(String sQuery) {
-        List<TK_Ticket_Action> tk_ticket_actions = null;
+    public List<TK_Ticket_Measure> query(String sQuery) {
+        List<TK_Ticket_Measure> tk_ticket_measures = null;
         openDB();
 
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
-                TK_Ticket_Action uAux = toTK_Ticket_ActionMapper.map(cursor);
-                tk_ticket_actions.add(uAux);
+                TK_Ticket_Measure uAux = toTK_Ticket_MeasureMapper.map(cursor);
+                tk_ticket_measures.add(uAux);
             }
             //
             cursor.close();
@@ -338,7 +336,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
 
         closeDB();
 
-        return tk_ticket_actions;
+        return tk_ticket_measures;
     }
 
     @Override
@@ -347,13 +345,10 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 tk_ticket_actions.add(CursorToHMAuxMapper.mapN(cursor));
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
@@ -365,78 +360,65 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
         return tk_ticket_actions;
     }
 
-
-    private class CursorToTk_Ticket_ActionMapper implements Mapper<Cursor, TK_Ticket_Action> {
+    private class CursorToTK_Ticket_MeasureMapper implements Mapper<Cursor, TK_Ticket_Measure> {
         @Override
-        public TK_Ticket_Action map(Cursor cursor) {
-            TK_Ticket_Action tk_ticket_action = new TK_Ticket_Action();
+        public TK_Ticket_Measure map(Cursor cursor) {
+            TK_Ticket_Measure tk_ticket_measure = new TK_Ticket_Measure();
             //
-            tk_ticket_action.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
-            tk_ticket_action.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
-            tk_ticket_action.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
-            tk_ticket_action.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_COMMENTS))){
-                tk_ticket_action.setAction_comments(null);
+            tk_ticket_measure.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            tk_ticket_measure.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
+            tk_ticket_measure.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
+            tk_ticket_measure.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_measure.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
+            tk_ticket_measure.setMeasure_tp_id(cursor.getString(cursor.getColumnIndex(MEASURE_TP_ID)));
+            tk_ticket_measure.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
+            tk_ticket_measure.setMeasure_value(cursor.getInt(cursor.getColumnIndex(MEASURE_VALUE)));
+            tk_ticket_measure.setMeasure_date(cursor.getString(cursor.getColumnIndex(MEASURE_DATE)));
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_INFO))) {
+                tk_ticket_measure.setMeasure_info(null);
             }else{
-                tk_ticket_action.setAction_comments(cursor.getString(cursor.getColumnIndex(ACTION_COMMENTS)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO))){
-                tk_ticket_action.setAction_photo(null);
-            }else{
-                tk_ticket_action.setAction_photo(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_LOCAL))){
-                tk_ticket_action.setAction_photo_local(null);
-            }else{
-                tk_ticket_action.setAction_photo_local(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO_LOCAL)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_NAME))){
-                tk_ticket_action.setAction_photo_name(null);
-            }else{
-                tk_ticket_action.setAction_photo_name(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO_NAME)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_STATUS))){
-                tk_ticket_action.setAction_status(null);
-            }else{
-                tk_ticket_action.setAction_status(cursor.getString(cursor.getColumnIndex(ACTION_STATUS)));
-            }
-            tk_ticket_action.setAction_photo_changed(cursor.getInt(cursor.getColumnIndex(ACTION_PHOTO_CHANGED)));
-            if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_CODE))){
-                tk_ticket_action.setAction_photo_code(null);
-            }else{
-                tk_ticket_action.setAction_photo_code(cursor.getInt(cursor.getColumnIndex(ACTION_PHOTO_CODE)));
+                tk_ticket_measure.setMeasure_info(cursor.getString(cursor.getColumnIndex(MEASURE_INFO)));
             }
             //
-            return tk_ticket_action;
+            return tk_ticket_measure;
         }
     }
 
-    private class TK_TicketActionToContentValues implements Mapper<TK_Ticket_Action, ContentValues> {
+
+    private class TK_Ticket_MeasureToContentValues implements Mapper<TK_Ticket_Measure, ContentValues> {
         @Override
-        public ContentValues map(TK_Ticket_Action tk_ticket_action) {
+        public ContentValues map(TK_Ticket_Measure tk_ticket_measure) {
             ContentValues contentValues = new ContentValues();
             //
-            if (tk_ticket_action.getCustomer_code() > -1) {
-                contentValues.put(CUSTOMER_CODE,tk_ticket_action.getCustomer_code());
+            if(tk_ticket_measure.getCustomer_code() > -1){
+                contentValues.put(CUSTOMER_CODE, tk_ticket_measure.getCustomer_code());
             }
-            if (tk_ticket_action.getTicket_prefix() > -1) {
-                contentValues.put(TICKET_PREFIX,tk_ticket_action.getTicket_prefix());
+            if(tk_ticket_measure.getTicket_prefix() > -1){
+                contentValues.put(TICKET_PREFIX, tk_ticket_measure.getTicket_prefix());
             }
-            if (tk_ticket_action.getTicket_code() > -1) {
-                contentValues.put(TICKET_CODE,tk_ticket_action.getTicket_code());
+            if(tk_ticket_measure.getTicket_code() > -1){
+                contentValues.put(TICKET_CODE, tk_ticket_measure.getTicket_code());
             }
-            if (tk_ticket_action.getTicket_seq() > -1) {
-                contentValues.put(TICKET_SEQ,tk_ticket_action.getTicket_seq());
+            if(tk_ticket_measure.getTicket_seq() > -1){
+                contentValues.put(TICKET_SEQ, tk_ticket_measure.getTicket_seq());
             }
-            contentValues.put(ACTION_COMMENTS,tk_ticket_action.getAction_comments());
-            contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo());
-            contentValues.put(ACTION_PHOTO_LOCAL,tk_ticket_action.getAction_photo_local());
-            contentValues.put(ACTION_PHOTO_NAME,tk_ticket_action.getAction_photo_name());
-            if (tk_ticket_action.getAction_photo_changed() > -1) {
-                contentValues.put(ACTION_PHOTO_CHANGED,tk_ticket_action.getAction_photo_changed());
+            if(tk_ticket_measure.getMeasure_tp_code() > -1){
+                contentValues.put(MEASURE_TP_CODE, tk_ticket_measure.getMeasure_tp_code());
             }
-            contentValues.put(ACTION_STATUS,tk_ticket_action.getAction_status());
-            contentValues.put(ACTION_PHOTO_CODE,tk_ticket_action.getAction_photo_code());
+            if(tk_ticket_measure.getMeasure_tp_id() != null){
+                contentValues.put(MEASURE_TP_ID, tk_ticket_measure.getMeasure_tp_id());
+            }
+            if(tk_ticket_measure.getMeasure_tp_desc() != null){
+                contentValues.put(MEASURE_TP_DESC, tk_ticket_measure.getMeasure_tp_desc());
+            }
+            if(tk_ticket_measure.getMeasure_value() > -1){
+                contentValues.put(MEASURE_VALUE, tk_ticket_measure.getMeasure_value());
+            }
+            if(tk_ticket_measure.getMeasure_date()!= null){
+                contentValues.put(MEASURE_DATE, tk_ticket_measure.getMeasure_date());
+            }
+            //
+            contentValues.put(MEASURE_INFO, tk_ticket_measure.getMeasure_info());
             //
             return contentValues;
         }

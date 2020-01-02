@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -467,15 +468,101 @@ public class TK_Ticket {
         }
         //
         for (TK_Ticket_Ctrl ctrl : getCtrl()) {
-            //Se existe foto no servidor, busca referencia local.
-            if(existsActionPhotoInServer(ctrl)) {
-                ctrl.getAction().setAction_photo_local(
-                    getLocalPath(
-                        ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                    )
-                );
+            switch (ctrl.getCtrl_type()){
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                    break;
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                default:
+                    //Se existe foto no servidor, busca referencia local.
+                    if(existsActionPhotoInServer(ctrl)) {
+                        ctrl.getAction().setAction_photo_local(
+                            getLocalPath(
+                                ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                            )
+                        );
+                    }else{
+                        //Se não existe foto no server, mas existe local, significa que a foto foi apagada
+                        //nesse caso, deleta a imagem local
+                        if(getLocalPath(ToolBox_Inf.buildTicketActionImgPath(ctrl)) != null){
+                            //Apaga arquivo local
+                            ToolBox_Inf.deleteDownloadFile(
+                                Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                            );
+                        }
+                    }
+                    break;
             }
         }
+    }
+
+    /**
+     * Metodo que varre todas as actions do ticket e verifica se houve mudança no photo_code.
+     * Esse metodo serve para atualizar a foto da action quando alguem alterou a foto via web
+     * Caso haja, deleta foto local forçando o download da nova foto
+     *
+     * @param dbTicket - Ticket no db local
+     * @param tkTicket - Mesmo ticket só que retornado do servidor
+     */
+    public static void checkActionPhotoResetNeeds(TK_Ticket dbTicket, TK_Ticket tkTicket) {
+        //Se existe o ticket localmente, começa a analisar as fotos das action
+        if(dbTicket != null){
+            for (TK_Ticket_Ctrl tkTicketCtrl : tkTicket.getCtrl()) {
+                if( tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
+                    && tkTicketCtrl.getAction() != null
+                ){
+                    if (haveToResetPhoto(dbTicket,tkTicketCtrl)) {
+                        //Apaga arquivo local
+                        ToolBox_Inf.deleteDownloadFile(
+                            Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 26/12/2019
+     *
+     * Metodo que verifica se a foto da action precisa ser resetada(apagada).
+     *
+     * O metodo busca o controle passado por parametro na lista de controles do ticketDB e avalia a nessecidade de reset.
+     * A logica para reset é:
+     *  - O ticket local, possui foto baixada(getAction_photo_local() != null)
+     *  - O ticket recebido, possui o codigo da foto(getAction_photo_code() != null)
+     *  - (O ticket local não possui codigo da foto OU possui mas é diferente de 0 e diferente do codigo do ticket recebido)
+     *  A ultima codição se refere:
+     *    "O ticket local não possui codigo da foto":
+     *    - Se não possui codigo da foto e um codigo foi retornado, significa que essa ação teve uma foto adicionada(via web ou por outro usr)
+     *
+     *    "possui mas é diferente de 0":
+     *    - Se o codigo for 0 , signifca que a action não tinha foto e o proprio usr adicionou a foto.Nesse caso não é necessario reset
+     *    " e diferente do codigo do ticket recebido":
+     *    - Se o codigo for != 0, significa que ja existia uma foto, então, só é necessario o reset caso o codigo recebido seja diferente do atual.
+     *
+     *
+     * @param ticketDb - Ticket no DB local
+     * @param tkTicketCtrl - Controle do ticket vindo do server
+     * @return - Verdadeiro se é necessario resetar / apagar a foto
+     */
+    private static boolean haveToResetPhoto(TK_Ticket ticketDb, TK_Ticket_Ctrl tkTicketCtrl) {
+        for (TK_Ticket_Ctrl ctrlDb : ticketDb.getCtrl()) {
+            if( ctrlDb.getCustomer_code() == tkTicketCtrl.getCustomer_code()
+                && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
+                && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
+                && ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
+                && ctrlDb.getAction().getAction_photo_local() != null
+                && tkTicketCtrl.getAction().getAction_photo_code() != null
+                && ( ctrlDb.getAction().getAction_photo_code() == null
+                     || (!ctrlDb.getAction().getAction_photo_code().equals(0)
+                         && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code()))
+                   )
+            ){
+                return true;
+            }
+        }
+        //
+        return false;
     }
 
     /**
@@ -490,7 +577,7 @@ public class TK_Ticket {
             || (ctrl.getAction().getAction_photo() != null && !ctrl.getAction().getAction_photo().isEmpty());
     }
 
-    private String getLocalPath(String imgLocalPath) {
+    private static String getLocalPath(String imgLocalPath) {
         String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
         File file = new File(localPath);
         if (file.exists()) {

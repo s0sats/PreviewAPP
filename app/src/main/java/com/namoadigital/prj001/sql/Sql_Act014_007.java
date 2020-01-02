@@ -1,10 +1,10 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class Sql_Act014_007 implements Specification {
     public static final String SENT_QTY = "sent_qty";
@@ -29,7 +29,10 @@ public class Sql_Act014_007 implements Specification {
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
-                        "   and s.ticket_status = '" + ConstantBase.SYS_STATUS_DONE +"';")
+                        "   and s.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"') \n;")
                 .toString();
     }
 }

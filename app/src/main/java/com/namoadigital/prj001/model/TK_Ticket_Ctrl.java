@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class TK_Ticket_Ctrl {
     @Expose
@@ -47,7 +48,11 @@ public class TK_Ticket_Ctrl {
     @Nullable
     private String partner_desc;
     @Expose
+    @Nullable
     private TK_Ticket_Action action;
+    @Expose
+    @Nullable
+    private TK_Ticket_Measure measure;
 
     public TK_Ticket_Ctrl() {
         this.customer_code = -1;
@@ -60,7 +65,15 @@ public class TK_Ticket_Ctrl {
         this.customer_code = tk_ticket.getCustomer_code();
         this.ticket_prefix = tk_ticket.getTicket_prefix();
         this.ticket_code = tk_ticket.getTicket_code();
-        this.action.setPK(this);
+        //Seta a PK no tipo do controle
+        switch (this.ctrl_type) {
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                this.action.setPK(this);
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                this.measure.setPK(this);
+                break;
+        }
     }
 
     public long getCustomer_code() {
@@ -281,5 +294,13 @@ public class TK_Ticket_Ctrl {
 
     public void setAction(TK_Ticket_Action action) {
         this.action = action;
+    }
+
+    public TK_Ticket_Measure getMeasure() {
+        return measure;
+    }
+
+    public void setMeasure(TK_Ticket_Measure measure) {
+        this.measure = measure;
     }
 }

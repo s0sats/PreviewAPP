@@ -13,7 +13,9 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -195,26 +197,15 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_ctrl));
                 }
-                //
-                //Tenta inserir action
-                TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //Chama insertUpdate da action,passando db como param aguardando retorno.
-                daoObjReturn = ticketActionDao.addUpdate(tk_ticket_ctrl.getAction(), db);
-                //Se erro durante insert, dispara exception abortando o processamento.
-                if (daoObjReturn.hasError()) {
-                    throw new Exception(daoObjReturn.getRawMessage());
-                }
+                //Tenta inserir o "processo" filho
+                insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
                 db.setTransactionSuccessful();
             }
 
-        }catch (SQLiteException e){
+        }catch (Exception e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -225,11 +216,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
                 )
             );
-
-        }catch (Exception e){
-            //Seta obj de retorno com flag de erro e gera arquivo de exception
-            daoObjReturn.setError(true);
-            ToolBox_Inf.registerException(getClass().getName(), e);
         }finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
@@ -306,11 +292,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_ctrl.getTicket_seq()).append("'");
-                //Tenta o delete da Action
-                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
-                daoObjReturn.setTable(TK_Ticket_ActionDao.TABLE);
-                sqlRet = db.delete(TK_Ticket_ActionDao.TABLE,sbWhere.toString(),null);
-                //
+                //Tenta o delete do tipo do controle
+                sqlRet = deleteByCtrlType(tk_ticket_ctrl.getCtrl_type(), sbWhere,db,daoObjReturn);
+                //Se delete do processo "filho" OK, segue para o delete do ctrl
                 if(sqlRet != 0){
                     sqlRet = 0;
                     daoObjReturn.setTable(TABLE);
@@ -358,6 +342,126 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         }
         return daoObjReturn;
     }
+    //region Method By Ctrl Type
+
+    /**
+     * Insere ou altera o processo filho do control, baseado no seu tipo
+     * @param tk_ticket_ctrl - Control
+     * @param db - Instancia do Db
+     * @param daoObjReturn - Obj de retorno do Dao
+     * @throws Exception
+     */
+    private void insertUpdateByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
+        //Tenta inserir action
+        switch (tk_ticket_ctrl.getCtrl_type()) {
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //Chama insertUpdate da action,passando db como param aguardando retorno.
+                daoObjReturn = ticketActionDao.addUpdate(tk_ticket_ctrl.getAction(), db);
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //Chama insertUpdate da action,passando db como param aguardando retorno.
+                daoObjReturn = ticketMeasureDao.addUpdate(tk_ticket_ctrl.getMeasure(), db);
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                break;
+        }
+    }
+
+    /**
+     * Deleta o processo filho do controle baseado no tipo
+     * @param ctrl_type - Tipo do control
+     * @param sbWhere - Where para delete
+     * @param db - Instancia do db
+     * @param daoObjReturn - Obj de retorno do Dao
+     * @return - Qtd de registros removidos
+     * @throws Exception
+     */
+    private long deleteByCtrlType(String ctrl_type, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
+        String ctrlTypeTable = "";
+        //
+        switch (ctrl_type){
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                ctrlTypeTable = TK_Ticket_MeasureDao.TABLE;
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                ctrlTypeTable = TK_Ticket_ActionDao.TABLE;
+            default:
+                break;
+        }
+        //Tenta o delete
+        //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+        daoObjReturn.setTable(ctrlTypeTable);
+        //
+        return db.delete(ctrlTypeTable,sbWhere.toString(),null);
+    }
+
+    /**
+     * Busca process filho do Ctrl e seta no objeto
+     * @param tk_ticket_ctrl
+     */
+    private void getCtrlTypeSon(TK_Ticket_Ctrl tk_ticket_ctrl) {
+        switch (tk_ticket_ctrl.getCtrl_type()){
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                //Busca measure do control
+                TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setMeasure(
+                    ticketMeasureDao.getByString(
+                        new TK_Ticket_Measure_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq()
+                        ).toSqlQuery()
+                    )
+                );
+
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                //Busca action do control
+                TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setAction(
+                    ticketActionDao.getByString(
+                        new TK_Ticket_Action_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq()
+                        ).toSqlQuery()
+
+                    )
+                );
+            default:
+                break;
+        }
+    }
+
+    //endregion
 
     @Override
     public TK_Ticket_Ctrl getByString(String sQuery) {
@@ -373,7 +477,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
             //
             if(tk_ticket_ctrl != null){
-                getCtrlAction(tk_ticket_ctrl);
+                getCtrlTypeSon(tk_ticket_ctrl);
             }
 
             cursor.close();
@@ -385,31 +489,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         closeDB();
         //
         return tk_ticket_ctrl;
-    }
-
-    /**
-     * Busca action do Ctrl e seta no objeto
-     * @param tk_ticket_ctrl
-     */
-    private void getCtrlAction(TK_Ticket_Ctrl tk_ticket_ctrl) {
-        //Se encontrou ação, busca ação para preencher no  obj
-        TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        );
-        //
-        tk_ticket_ctrl.setAction(
-            ticketActionDao.getByString(
-                new TK_Ticket_Action_Sql_001(
-                    tk_ticket_ctrl.getCustomer_code(),
-                    tk_ticket_ctrl.getTicket_prefix(),
-                    tk_ticket_ctrl.getTicket_code(),
-                    tk_ticket_ctrl.getTicket_seq()
-                ).toSqlQuery()
-
-            )
-        );
     }
 
     @Override
@@ -449,7 +528,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 TK_Ticket_Ctrl uAux = toTK_Ticket_CtrlMapper.map(cursor);
                 //
                 if(uAux != null){
-                    getCtrlAction(uAux);
+                    getCtrlTypeSon(uAux);
                 }
                 //
                 tk_ticket_ctrls.add(uAux);

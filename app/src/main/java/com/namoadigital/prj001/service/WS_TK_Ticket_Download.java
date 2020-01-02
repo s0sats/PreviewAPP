@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -34,6 +35,7 @@ public class WS_TK_Ticket_Download extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "ws_tk_ticket_download";
     private Gson gson;
+    private TK_TicketDao ticketDao;
 
     public WS_TK_Ticket_Download() { super("WS_TK_Ticket_Download");}
 
@@ -42,6 +44,12 @@ public class WS_TK_Ticket_Download extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+        ticketDao = new TK_TicketDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+
         try {
 
             gson = new GsonBuilder().serializeNulls().create();
@@ -117,16 +125,12 @@ public class WS_TK_Ticket_Download extends IntentService {
 
     private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
         if(ticketList != null && ticketList.size() > 0){
-            TK_TicketDao ticketDao = new TK_TicketDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
-            );
             //
             HMAux hmAux = new HMAux();
 
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
+                TK_Ticket.checkActionPhotoResetNeeds(getDbTicket(tkTicket),tkTicket);
                 tkTicket.updateLocalImagesPathIfExists();
 
                 //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
@@ -161,6 +165,16 @@ public class WS_TK_Ticket_Download extends IntentService {
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
         }
+    }
+
+    private TK_Ticket getDbTicket(TK_Ticket tkTicket){
+        return ticketDao.getByString(
+                new TK_Ticket_Sql_001(
+                    tkTicket.getCustomer_code(),
+                    tkTicket.getTicket_prefix(),
+                    tkTicket.getTicket_code()
+                ).toSqlQuery()
+            );
     }
 
     private void startDownloadServices() {

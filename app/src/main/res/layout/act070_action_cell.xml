@@ -35,14 +35,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/act070_measure_cell_tv_ctrl_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="@dimen/font_size_title"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/act070_action_cell_tv_status"
+            app:layout_constraintStart_toStartOf="@+id/act070_action_cell_tv_status"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="MEDIÇÃO" />
+
+        <TextView
             android:id="@+id/act070_action_cell_tv_seq"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:textSize="@dimen/font_size_item_md"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/act070_action_cell_guide_start"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act070_action_cell_tv_status"
             tools:text="1" />
 
         <TextView
@@ -50,14 +63,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:textSize="@dimen/font_size_title"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/act070_action_cell_iv_photo"
             app:layout_constraintStart_toEndOf="@id/act070_action_cell_tv_seq"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act070_measure_cell_tv_ctrl_type"
             tools:text="Pending" />
 
         <TextView

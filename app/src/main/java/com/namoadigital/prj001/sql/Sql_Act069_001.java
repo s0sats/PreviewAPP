@@ -16,7 +16,10 @@ public class Sql_Act069_001 implements Specification {
         this.site_logged = site_logged;
         //
         if(bStatusDone){
-            statusFilter = "    and t.ticket_status = '"+ ConstantBaseApp.SYS_STATUS_DONE +"'\n";
+            statusFilter = "    and t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"') \n";
         }else{
             if(bStatusPending || bStatusProcess || bStatusWaitingSync){
                 /*statusFilter = "   and t.ticket_status in(";
