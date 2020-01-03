@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
@@ -634,10 +633,10 @@ public class Act027_Header extends BaseFragment {
                 } catch (Exception e) {
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + localUrl)), "application/pdf");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                //
+                //LUCHE - 03/10/2020
+                //Modificado metodo de abertura do PDF para que seja compativel com Android 10
+                Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + localUrl);
                 /*
                     23/08/2019 - BARRIONUEVO
                     Trata devices sem suporte a pdf

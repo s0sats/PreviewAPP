@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -743,19 +742,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
-
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
-                            "form_ap_" +
-                            pk_fields[0] + "_" +
-                            pk_fields[1] + "_" +
-                            pk_fields[2] + "_" +
-                            pk_fields[3] + "_" +
-                            pk_fields[4] +
-                            ".pdf")),
-                    "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            //LUCHE - 03/10/2020
+            //Modificado metodo de abertura do PDF para que seja compativel com Android 10
+            Intent intent = ToolBox_Inf.getOpenPdfIntent(context,
+                                                            Constant.CACHE_PDF + "/" +
+                                                                    "form_ap_" +
+                                                                    pk_fields[0] + "_" +
+                                                                    pk_fields[1] + "_" +
+                                                                    pk_fields[2] + "_" +
+                                                                    pk_fields[3] + "_" +
+                                                                    pk_fields[4] +
+                                                                    ".pdf"
+                                                            );
             /*
                 23/08/2019 - BARRIONUEVO
                 Trata devices sem suporte a pdf

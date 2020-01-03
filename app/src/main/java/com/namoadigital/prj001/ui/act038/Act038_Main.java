@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -1925,19 +1924,18 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
-
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
-                            "form_ap_" +
-                            String.valueOf(mGe_custom_form_ap.getCustomer_code()) + "_" +
-                            String.valueOf(mGe_custom_form_ap.getCustom_form_type()) + "_" +
-                            String.valueOf(mGe_custom_form_ap.getCustom_form_code()) + "_" +
-                            String.valueOf(mGe_custom_form_ap.getCustom_form_version()) + "_" +
-                            String.valueOf(mGe_custom_form_ap.getCustom_form_data()) +
-                            ".pdf")),
-                    "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            //LUCHE - 03/10/2020
+            //Modificado metodo de abertura do PDF para que seja compativel com Android 10
+            Intent intent = ToolBox_Inf.getOpenPdfIntent(context,
+                Constant.CACHE_PDF + "/" +
+                        "form_ap_" +
+                        mGe_custom_form_ap.getCustomer_code() + "_" +
+                        mGe_custom_form_ap.getCustom_form_type() + "_" +
+                        mGe_custom_form_ap.getCustom_form_code() + "_" +
+                        mGe_custom_form_ap.getCustom_form_version() + "_" +
+                        mGe_custom_form_ap.getCustom_form_data() +
+                        ".pdf"
+                );
             /*
                 23/08/2019 - BARRIONUEVO
                 Trata devices sem suporte a pdf
