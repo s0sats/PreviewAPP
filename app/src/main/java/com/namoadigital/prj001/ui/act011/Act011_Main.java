@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -2626,11 +2625,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         } catch (Exception e) {
                             ToolBox_Inf.registerException(getClass().getName(), e);
                         }
-
-
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        //LUCHE - 03/10/2020
+                        //Modificado metodo de abertura do PDF para que seja compativel com Android 10
+                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + aux.get("blob_url_local"));
                         /*
                             23/08/2019 - BARRIONUEVO
                             Trata devices sem suporte a pdf
