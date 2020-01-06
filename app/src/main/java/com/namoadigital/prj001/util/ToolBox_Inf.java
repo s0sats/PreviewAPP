@@ -69,6 +69,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
+import com.namoadigital.prj001.dao.IO_InboundDao;
+import com.namoadigital.prj001.dao.IO_MoveDao;
+import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -76,6 +80,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -83,6 +88,7 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
@@ -136,6 +142,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_011;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
@@ -147,6 +154,10 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
+import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
+import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
@@ -156,6 +167,7 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
+import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
@@ -1022,21 +1034,50 @@ public class ToolBox_Inf {
         if (sVersion != null) {
             switch (sVersion) {
                 case "VERSION_INVALID":
-                    sendBCStatus(context, "VERSION_INVALID", context.getString(R.string.msg_version_invalid), s_Link, "1");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_VERSION_INVALID, context.getString(R.string.msg_version_invalid), s_Link, "1");
                     return false;
 
                 case "EXPIRED":
-                    sendBCStatus(context, "EXPIRED", context.getString(R.string.msg_version_expired), s_Link, "1");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_EXPIRED, context.getString(R.string.msg_version_expired), s_Link, "1");
                     return false;
 
-                case "UPDATE_REQUIRED":
+                case ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED:
                     if (iStatus == 0) {
                         //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-                        ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
+                        ToolBox.sendBCStatus(
+                            context,
+                            ConstantBase.PD_TYPE_UPDATE_REQUIRED,
+                            context.getString(R.string.msg_update_required),
+                            checkNewDbVersion(context,db_version),
+                            s_Link,
+                            "0");
                         return false;
                     } else {
                         break;
                     }
+                case ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED_WARNING:
+                    if (iStatus == 0) {
+                        //
+                        HMAux hmAux = checkNewDbVersionV2(context, db_version);
+                        //
+                        if(hmAux == null || hmAux.size() == 0) {
+                            ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
+                        }else {
+                            ToolBox
+                                .sendBCStatus(context,
+                                    ConstantBase.PD_TYPE_UPDATE_REQUIRED_WARNING,
+                                    context.getString(R.string.msg_update_required_warning),
+                                    hmAux,
+                                    s_Link,
+                                    "0"
+                                );
+                        }
+                        //
+                        return false;
+                    } else {
+                        break;
+                    }
+
                 case "STABLE":
                     break;
 
@@ -1048,34 +1089,33 @@ public class ToolBox_Inf {
         if (sLogin != null) {
             switch (sLogin) {
                 case "USER_INVALID":
-                    sendBCStatus(context, "USER_INVALID", context.getString(R.string.msg_user_invalid), s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_INVALID, context.getString(R.string.msg_user_invalid), s_Link, "0");
                     return false;
 
                 case "USER_CANCELLED":
-                    sendBCStatus(context, "USER_CANCELLED", context.getString(R.string.msg_user_canceled), s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_CANCELLED, context.getString(R.string.msg_user_canceled), s_Link, "0");
                     return false;
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
-                        sendBCStatus(context, "USER_OTHER_DEVICE", context.getString(R.string.msg_user_other_device), s_Link, "0");
+                        ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_OTHER_DEVICE, context.getString(R.string.msg_user_other_device), s_Link, "0");
                         return false;
                     } else {
                         return true;
                     }
 
                 case "NFC_BLOCKED":
-                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
                     return false;
 
                 case "DEVICE_CODE_REQUIRED":
-                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_device_code_not_found), s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, context.getString(R.string.msg_device_code_not_found), s_Link, "0");
                     return false;
-
 
                 case "OK":
                     break;
                 default:
-                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_unespected_error), s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, context.getString(R.string.msg_unespected_error), s_Link, "0");
                     return false;
             }
         }
@@ -1213,74 +1253,49 @@ public class ToolBox_Inf {
             case "UPDATE_REQUIRED":
                 if (iStatus == 0) {
                     //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-                    ToolBox.sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
                     return false;
                 } else {
                     return true;
                 }
 
             case "VERSION_ERRO":
-                sendBCStatus(context, "VERSION_ERRO", context.getString(R.string.msg_version_invalid), s_Link, "1");
-
-                return false;
-
             case "VERSION_INVALID":
-                sendBCStatus(context, "VERSION_INVALID", context.getString(R.string.msg_version_invalid), s_Link, "1");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_VERSION_INVALID, context.getString(R.string.msg_version_invalid), s_Link, "1");
                 return false;
 
             case "EXPIRED":
-                sendBCStatus(context, "EXPIRED", context.getString(R.string.msg_version_expired), s_Link, "1");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_EXPIRED, context.getString(R.string.msg_version_expired), s_Link, "1");
                 return false;
 
             case "LOGIN_ERRO":
-                sendBCStatus(context, "LOGIN_ERRO", error_msg, s_Link, "0");
-
-                return false;
-
             case "USER_INVALID":
-                sendBCStatus(context, "USER_INVALID", error_msg, s_Link, "0");
-
-                return false;
-
-            case "USER_BLOCKED":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_INVALID, error_msg, s_Link, "0");
                 return false;
 
             case "USER_CANCELLED":
-                sendBCStatus(context, "USER_CANCELLED", error_msg, s_Link, "0");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_CANCELLED, error_msg, s_Link, "0");
                 return false;
 
             case "USER_OTHER_DEVICE":
                 if (iStatus_OD == 0) {
-                    sendBCStatus(context, "USER_OTHER_DEVICE", error_msg, s_Link, "0");
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_USER_OTHER_DEVICE, error_msg, s_Link, "0");
                     return false;
                 } else {
                     return true;
                 }
 
             case "SESSION_NOT_FOUND":
-                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_3, error_msg, s_Link, "0");
                 return false;
 
+            case "USER_BLOCKED":
             case "CREATE_SESSION_ABORT":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
-
             case "LICENSE_QTY_INVALID":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
             case "PARAMETERS_ERROR":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
             case "CUSTOMER_IP_REQUIRED":
-                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
             case "CUSTOMER_IP_RESTRICTION":
-                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, error_msg, s_Link, "0");
                 return false;
             default:
                 if (validation.trim().length() == 0) {
@@ -1303,46 +1318,25 @@ public class ToolBox_Inf {
                 break;
 
             case "VERSION_ERRO":
-                sendBCStatus(context, "VERSION_ERRO", error_msg, s_Link, "1");
-
-                return false;
-
             case "VERSION_INVALID":
-                sendBCStatus(context, "VERSION_INVALID", error_msg, s_Link, "1");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_VERSION_INVALID, error_msg, s_Link, "1");
                 return false;
 
             case "EXPIRED":
-                sendBCStatus(context, "EXPIRED", error_msg, s_Link, "1");
-
-                return false;
-
-            case "USER_BLOCKED":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_EXPIRED, error_msg, s_Link, "1");
                 return false;
 
             case "SESSION_NOT_FOUND":
-                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_3, error_msg, s_Link, "0");
                 return false;
 
+            case "USER_BLOCKED":
             case "CREATE_SESSION_ABORT":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
-
             case "LICENSE_QTY_INVALID":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
             case "PARAMETERS_ERROR":
-                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
-
             case "CUSTOMER_IP_REQUIRED":
-                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
-                return false;
-
             case "CUSTOMER_IP_RESTRICTION":
-                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, error_msg, s_Link, "0");
                 return false;
 
             default:
@@ -1353,7 +1347,7 @@ public class ToolBox_Inf {
         }
 
         if (ret_error != null) {
-            sendBCStatus(context, "ERROR_1", ret_error, s_Link, "0");
+            ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_ERROR_1, ret_error, s_Link, "0");
             return false;
         }
 
@@ -1382,6 +1376,43 @@ public class ToolBox_Inf {
             //
             if(hasPendingData(context,getListDB("C_", true))) {
                 aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
+                ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
+            }
+            //
+            if(hasUnsentImgs(context)){
+                //Se preferencia para checkar backup de imagens pra verdadeiro.
+                ToolBox_Con.setPreference_BkpUnsentImg(context,true);
+            }
+        }
+        return aux;
+    }
+
+    /**
+     * LUCHE - 06/01/2020
+     *
+     * Criado nova versão do metodo checkNewDbVersion.
+     * Após revisão no processo de update_requied, caso o usuario tenha dados pendentes
+     * de envio ele NÃO PODERÁ ATUALIZAR O APP, no login.
+     * Foi solicitado a exibição de uma nova mensagem informando que atualização só poderá ser feita
+     * após os dados serem enviados e exbição de em quais customers existem dados pendentes.
+     *
+     * @param context - Contexto
+     * @param db_version - Versão do banco de dados enviada pelo server.
+     * @return - HmAux com msg e lista de customer.
+     */
+    private static HMAux checkNewDbVersionV2(Context context, Integer db_version){
+        HMAux aux = new HMAux();
+        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
+            //
+            String customerPendencieList = hasPendingDataV2(context, getListDB("C_", true));
+            //
+            if( customerPendencieList != null) {
+                //aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
+                aux.put(
+                    Constant.LIB_DB_VERSION_MSG,
+                    context.getString(R.string.msg_customer_pendencies_list) + customerPendencieList
+                );
+                //
                 ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
             }
             //
@@ -5364,7 +5395,7 @@ public class ToolBox_Inf {
      * Metodo usado quando app recebe UPDATE_REQUIRED no retorno dos WS de Sync ou GetCustomer.
      * Metodo executa loop na lista de banco e chama a cada iteração do loop o mesmo metodo,
      * mas com segunda assinatura que verifica as pendencias em um customer especifico
-     * @param context
+     * @param context - Contexto
      * @param listDB - Lista de bancos de
      * @return
      */
@@ -5378,7 +5409,7 @@ public class ToolBox_Inf {
             String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
             Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
             //
-            if(customer_code != null && customer_code != -1){
+            if( customer_code != null && customer_code != -1 ){
                 //
                 if(hasPendingData(context,customer_code)){
                     return true;
@@ -5388,15 +5419,63 @@ public class ToolBox_Inf {
         //
         return false;
     }
+    /**
+    * LUCHE - 06/01/2020
+    *
+    * Criado nova versão do metodo hasPendingData, para ao inves de retornar um boolean, retornar
+     *String com lista de customers com dados pendentes de envio.
+    *
+    * @param context - Contexto
+    * @param listDB - Lista de bancos
+    * @return
+     */
+    public static String hasPendingDataV2(Context context, File[] listDB) {
+        String customer_list = null;
+        //
+        if (listDB == null || listDB.length == 0) {
+            return null;
+        }
+        //
+        for (File db : listDB) {
+            String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
+            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
+            //
+            if( customer_code != null && customer_code != -1){
+                //
+                if(hasPendingData(context,customer_code)){
+                     EV_User_CustomerDao customerDao = new EV_User_CustomerDao(
+                         context,
+                         Constant.DB_FULL_BASE,
+                         Constant.DB_VERSION_BASE
+                     );
+                    //
+                    EV_User_Customer evUserCustomer = customerDao.getByString(
+                        new EV_User_Customer_Sql_011(
+                            customer_code
+                        ).toSqlQuery()
+                    );
+                    //
+                    if(evUserCustomer != null) {
+                        customer_list += evUserCustomer.getCustomer_code()+" - "+evUserCustomer.getCustomer_name()+"\n";
+                    }
+                }
+            }
+        }
+        //
+        return customer_list != null ? customer_list.substring(0, customer_list.length() -1) : null ;
+    }
 
     /**
      * LUCHE - 20/12/18
      * Metodo que verifica se existem dados pendentes no banco do customer especificado.
      * São considerados pendentes, itens pendentes de transmissão e N-Form no status IN_PROCESS.
      *
-     * @param context
-     * @param customer_code
-     * @return
+     * LUCHE - 06/01/2020
+     * Revisado adicionando a contagem de itens pendentes dos modulos assets e ticket
+     *
+     * @param context - Context
+     * @param customer_code - Codigo do customer
+     * @return - Verdadeiro se encontrar algum item pendente de envio.
      */
     public static boolean hasPendingData(Context context, Long customer_code){
         if(customer_code != null && customer_code != -1) {
@@ -5521,154 +5600,28 @@ public class ToolBox_Inf {
                     ){
                 return true;
             }
-        }
+            /**
+             * Pendencias Assets
+             */
+            pendencies.clear();
+            //
+            if(!handleAssetsWaitingSync(context,customer_code).equalsIgnoreCase("0")){
+                return true;
+            }
+            //
+            /**
+             * Pendencias Ticket
+             */
+            pendencies.clear();
+            //
+            if(!handleTicketUpdateRequired(context,customer_code).equalsIgnoreCase("0")){
+                return true;
+            }
 
+        }
+        //
         return false;
     }
-
-//    public static boolean hasPendingData(Context context){
-//        boolean pendingData = false;
-//        File[] listDB = getListDB("C_",true);
-//        //
-//        if(listDB == null || listDB.length == 0){
-//            return pendingData;
-//        }
-//        //
-//        for(File db: listDB){
-//            String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
-//            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1])  : -1L;
-//            if(customer_code != null && customer_code != -1) {
-//                /**
-//                 * Pendencia de Serial
-//                 * Banco e Token
-//                 */
-//                //
-//                MD_Product_SerialDao mdProductDao = new MD_Product_SerialDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(customer_code),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//                //
-//
-//                HMAux pendencies = mdProductDao.getByStringHM(
-//                            new Sql_Act005_008(
-//                                    customer_code
-//                            ).toSqlQuery()
-//                    );
-//
-//                if( (pendencies != null
-//                    && pendencies.hasConsistentValue(Sql_Act005_008.BADGE_TO_SEND_QTY)
-//                    && !pendencies.get(Sql_Act005_008.BADGE_TO_SEND_QTY).equalsIgnoreCase("0"))
-//                    || isSerialWithinTokenFile() > 0
-//                ){
-//                    pendingData = true;
-//                    break;
-//                }
-//                /**
-//                 * Pendencias N-Form
-//                 */
-//                pendencies.clear();
-//                //
-//                GE_Custom_Form_LocalDao customFormLocalDao = new GE_Custom_Form_LocalDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(customer_code),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//                //
-//                pendencies =
-//                        customFormLocalDao.getByStringHM(
-//                                new Sql_Act002_001(
-//                                        String.valueOf(customer_code)
-//                                ).toSqlQuery()
-//                        );
-//                //
-//                if(pendencies != null
-//                    && pendencies.hasConsistentValue(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES)
-//                    && !pendencies.get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES).equalsIgnoreCase("0")
-//                ){
-//                    pendingData = true;
-//                    break;
-//                }
-//                //
-//                /**
-//                 * Pendencias S.O
-//                 */
-//                pendencies.clear();
-//                //
-//                SM_SODao soDao = new SM_SODao(
-//                        context,
-//                        ToolBox_Con.customDBPath(customer_code),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//                //
-//                pendencies = soDao.getByStringHM(
-//                        new Sql_Act021_003(
-//                                customer_code
-//                        ).toSqlQuery()
-//                );
-//                //
-//                if((pendencies != null &&
-//                    pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
-//                    !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
-//                   ) || isSoWithinTokenFile() > 0
-//                ){
-//                    pendingData = true;
-//                    break;
-//                }
-//                /**
-//                 * Pendencias Form AP
-//                 */
-//                pendencies.clear();
-//                //
-//                GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(customer_code),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//                //
-//                pendencies = customFormApDao.getByStringHM(
-//                        new Sql_Act005_007(
-//                                String.valueOf(customer_code)
-//                        ).toSqlQuery()
-//                );
-//                //
-//                if(pendencies != null
-//                        && pendencies.hasConsistentValue(Sql_Act005_007.BADGE_TO_SEND_QTY)
-//                        && !pendencies.get(Sql_Act005_007.BADGE_TO_SEND_QTY).equalsIgnoreCase("0")
-//                        ){
-//                    pendingData = true;
-//                    break;
-//                }
-//
-//                /**
-//                 * Pendencias Form AP
-//                 */
-//                pendencies.clear();
-//                //
-//                SO_Pack_Express_LocalDao soPackExpressLocalDao = new SO_Pack_Express_LocalDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(customer_code),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//                //
-//                pendencies = soPackExpressLocalDao.getByStringHM(
-//                        new SO_Pack_Express_Local_Sql_010(
-//                                customer_code
-//                        ).toSqlQuery()
-//                );
-//                //
-//                if(pendencies != null
-//                        && pendencies.hasConsistentValue(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY)
-//                        && !pendencies.get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY).equalsIgnoreCase("0")
-//                ){
-//                    pendingData = true;
-//                    break;
-//                }
-//            }
-//        }
-//        //
-//        return pendingData;
-//    }
 
     /**
      * Metodo que retorna a qtd de S.O dentro do arquivos token de so
@@ -5728,14 +5681,24 @@ public class ToolBox_Inf {
     }
 
     /**
+     * LUCHE - 06/01/2020
+     *
      * Metodo que retorna a qtd de Tickets dentro do arquivos token de Ticket
      *
-     * @return
+     * @return - Qtd de ticket existen no arquivo de token
      */
     public static int getQtyTicketsWithinToken() {
         return getTicketsWithinToken().size();
     }
 
+    /**
+     * LUCHE  - 06/01/2020
+     *
+     * Metodo retorna que a lista de tickets presentes no arquivo json ou lista vazio caso não existam
+     * arquivos json.
+     *
+     * @return - Lista dos ticket presente no arquivo de token
+     */
     public static ArrayList<TK_Ticket> getTicketsWithinToken() {
         ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
         try {
@@ -5756,6 +5719,157 @@ public class ToolBox_Inf {
         }
         //
         return token_ticket_list;
+    }
+
+    /**
+     * LUCHE - 06/01/2020
+     *
+     * Metodo que trata o retorno  do metodo que conta a qtd de TICKETS pendentes de envio.
+     *
+     * @param context - Contexto
+     * @param customer_code
+     * @return - Qty de itens pendentes de envio do modulo N-Ticket
+     */
+    public static String handleTicketUpdateRequired(Context context, Long customer_code) {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getTicketUpdateRequiredCount(context,customer_code);
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    /**
+     * LUCHE - 06/01/2020
+     *
+     * Metodo contabiliza qtd de tickets pendente de envio, incluindo os existentes no arquivo de token
+     *
+     * @param context - Contexto
+     * @param customer_code
+     * @return - Qty de itens pendentes de envio do modulo N-Ticket
+     */
+    private static String getTicketUpdateRequiredCount(Context context, Long customer_code) {
+        TK_TicketDao tk_ticketDao = new TK_TicketDao(context,ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
+        int pendencies=0;
+        //
+        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
+                new Sql_Act005_010(
+                    customer_code
+                )
+            ).toSqlQuery()
+        );
+        //
+        if(ticketUpdateReq != null && ticketUpdateReq.hasConsistentValue(Sql_Act005_010.QTY)
+        ){
+            try {
+                pendencies += Integer.valueOf(ticketUpdateReq.get(Sql_Act005_010.QTY));
+            } catch (Exception e) {
+                pendencies = 0;
+                registerException(CLASS_NAME,e);
+            }
+
+        }
+        //Ticket do token
+        pendencies += ToolBox_Inf.getQtyTicketsWithinToken();
+        //
+        return String.valueOf(pendencies);
+    }
+
+    /**
+     * LUCHE - 06/01/2020
+     *
+     * Metodo que trata o retorno  do metodo que conta a qtd de processo de Assets pendentes de envio.
+     *
+     * Movido originalmente criado na Act005 por Barrionuevo
+     * @param context - Contexto
+     * @param customer_code
+     * @return - Qty de itens pendentes de envio do modulo N-Assets
+     */
+    public static String handleAssetsWaitingSync(Context context, Long customer_code) {
+        String qty;//tratar badges de pendentes.
+        try {
+            qty = getAssetsWaitingSyncCount(context,customer_code);
+            //
+        } catch (Exception e) {
+            qty = "0";
+        }
+        return qty;
+    }
+
+    /**
+     * LUCHE - 06/01/2020
+     *
+     * Metodo busca em todos os processo do Assets itens pendentes de envio e retorno qtd desses itens.
+     * O metodo também contempla itens presentes em arquivos de token
+     *
+     * Movido originalmente criado na Act005 por Barrionuevo
+     *
+     * @param context - Contexto
+     * @param customer_code
+     * @return Qty de itens pendentes de envio do modulo N-Assets
+     */
+    private static String getAssetsWaitingSyncCount(Context context, Long customer_code) {
+        IO_MoveDao assetMoveDao = new IO_MoveDao(context, ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
+        IO_InboundDao assetInboundDao = new IO_InboundDao(context, ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
+        IO_OutboundDao assetOutboundDao = new IO_OutboundDao(context, ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
+        //
+        HMAux moveWaitingSync = assetMoveDao.getByStringHM((
+                new IO_Move_Order_Item_Sql_005(
+                    customer_code,
+                    ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
+                    0
+                )
+            ).toSqlQuery()
+        );
+        int pendencies=0;
+        if (moveWaitingSync != null && moveWaitingSync.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = Integer.valueOf(moveWaitingSync.get(IO_MoveDao.PENDING_QTY));
+            } catch (Exception e) {
+                pendencies = 0;
+                e.printStackTrace();
+            }
+        }
+        //Blind Moves
+        HMAux blindWaitingSync = assetMoveDao.getByStringHM((
+                new IO_Blind_Move_Sql_006(
+                    customer_code
+                )
+            ).toSqlQuery()
+        );
+        //
+        if (blindWaitingSync != null && blindWaitingSync.hasConsistentValue(IO_Blind_MoveDao.PENDING_QTY)) {
+            try {
+                pendencies = pendencies + Integer.valueOf(blindWaitingSync.get(IO_Blind_MoveDao.PENDING_QTY));
+            } catch (Exception e) {
+                //Se exception não faz nada.
+                e.printStackTrace();
+            }
+        }
+        //
+        ArrayList<HMAux> outboundWaitingSync = (ArrayList<HMAux>) assetOutboundDao.query_HM(
+            new IO_Outbound_Sql_013(
+                customer_code
+            ).toSqlQuery()
+        );
+
+        ArrayList<HMAux> inboundWaitingSync = (ArrayList<HMAux>) assetInboundDao.query_HM(
+            new IO_Inbound_Sql_013(
+                customer_code
+            ).toSqlQuery()
+        );
+
+        pendencies =
+            pendencies
+                + outboundWaitingSync.size()
+                + inboundWaitingSync.size()
+                + ToolBox_Inf.countInboundsInTokenFile()
+                + ToolBox_Inf.countOutboundsInTokenFile()
+        ;
+        //
+        return String.valueOf(pendencies);
     }
 
     /**

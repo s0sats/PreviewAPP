@@ -105,6 +105,8 @@
     <string name="alert_move_unsent_data_error_ttl">Imagens não enviadas</string>
     <string name="alert_move_unsent_data_error_msg">Erro ao copiar imagens não enviadas !\nTente novamente !</string>
     <string name="install_app_error_msg">Erro ao atualizar o aplicativo! Tente novamente !</string>
+    <string name="msg_customer_pendencies_list">Clientes :\n</string>
+    <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes de envio.</string>
 
 
 </resources>

@@ -29,7 +29,6 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
@@ -76,11 +75,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
-import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
-import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
-import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
-import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
@@ -93,7 +88,6 @@ import com.namoadigital.prj001.sql.Sql_Act005_006;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
 import com.namoadigital.prj001.sql.Sql_Act005_009;
-import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act012_005;
 import com.namoadigital.prj001.sql.Sql_Act012_006;
 import com.namoadigital.prj001.sql.Sql_Act012_007;
@@ -523,8 +517,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtySerial = "0";
                         }
-                        qtyAssets = handleAssetsWaitingSync();
-                        qtyTicket = handleTicketUpdateRequired();
+                        qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context,  ToolBox_Con.getPreference_Customer_Code(context));
+                        qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context,  ToolBox_Con.getPreference_Customer_Code(context));
                         //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
@@ -535,7 +529,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
                         menu.addInBadge1(qtyTicket);
-                        menu.addInBadge1(ToolBox_Inf.getQtyTicketsWithinToken());
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -759,101 +752,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         return qtdModulos + fakeMenus;
-    }
-
-    private String handleTicketUpdateRequired() {
-        String qty;//tratar badges de pendentes.
-        try {
-            qty = getTicketUpdateRequiredCount();
-            //
-        } catch (Exception e) {
-            qty = "0";
-        }
-        return qty;
-    }
-
-    private String getTicketUpdateRequiredCount() {
-
-        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
-                        new Sql_Act005_010(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        )
-                ).toSqlQuery()
-        );
-        if(ticketUpdateReq != null
-        && ticketUpdateReq.hasConsistentValue(Sql_Act005_010.QTY)){
-            return ticketUpdateReq.get(Sql_Act005_010.QTY);
-        }
-        return "0";
-
-    }
-
-    private String handleAssetsWaitingSync() {
-        String qty;//tratar badges de pendentes.
-        try {
-            qty = getAssetsWaitingSyncCount();
-            //
-        } catch (Exception e) {
-            qty = "0";
-        }
-        return qty;
-    }
-
-    private String getAssetsWaitingSyncCount() {
-        HMAux moveWaitingSync = assetMoveDao.getByStringHM((
-                        new IO_Move_Order_Item_Sql_005(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
-                                0
-                        )
-                ).toSqlQuery()
-        );
-        int pendencies=0;
-        if (moveWaitingSync != null && moveWaitingSync.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
-            try {
-                pendencies = Integer.valueOf(moveWaitingSync.get(IO_MoveDao.PENDING_QTY));
-            } catch (Exception e) {
-                pendencies = 0;
-                e.printStackTrace();
-            }
-        }
-        //Blind Moves
-        HMAux blindWaitingSync = assetMoveDao.getByStringHM((
-                new IO_Blind_Move_Sql_006(
-                    ToolBox_Con.getPreference_Customer_Code(context)
-                )
-            ).toSqlQuery()
-        );
-        //
-        if (blindWaitingSync != null && blindWaitingSync.hasConsistentValue(IO_Blind_MoveDao.PENDING_QTY)) {
-            try {
-                pendencies = pendencies + Integer.valueOf(blindWaitingSync.get(IO_Blind_MoveDao.PENDING_QTY));
-            } catch (Exception e) {
-                //Se exception não faz nada.
-                e.printStackTrace();
-            }
-        }
-        //
-        ArrayList<HMAux> outboundWaitingSync = (ArrayList<HMAux>) assetOutboundDao.query_HM(
-                new IO_Outbound_Sql_013(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-
-        ArrayList<HMAux> inboundWaitingSync = (ArrayList<HMAux>) assetInboundDao.query_HM(
-                new IO_Inbound_Sql_013(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-
-        pendencies =
-            pendencies
-            + outboundWaitingSync.size()
-            + inboundWaitingSync.size()
-            + ToolBox_Inf.countInboundsInTokenFile()
-            + ToolBox_Inf.countOutboundsInTokenFile()
-        ;
-        return String.valueOf(pendencies);
     }
 
     private String handleAssetsPendency() {

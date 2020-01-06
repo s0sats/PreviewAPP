@@ -466,6 +466,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_RETURN_FILENAME = "WS_RETURN_FILENAME";
     public static final String MAIN_RESULT_OK = "OK";
     public static final String MAIN_RESULT_OK_DUP = "OK_DUP";
+    public static final String MAIN_RESULT_UPDATE_REQUIRED = "UPDATE_REQUIRED";
+    public static final String MAIN_RESULT_UPDATE_REQUIRED_WARNING = "UPDATE_REQUIRED_WARNING";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

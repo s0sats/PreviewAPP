@@ -24,6 +24,7 @@ import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,6 +42,8 @@ public class WS_GetCustomer extends IntentService {
     private EV_User_CustomerDao ev_user_customerDao;
     private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
     private GE_Custom_Form_LocalDao customFormLocalDao;
+    //Var que controla se o arquivo zip ja foi baixado
+    private boolean isZipDownloaded = false;
 
     public WS_GetCustomer() {
         super("WS_GetCustomer");
@@ -107,6 +110,32 @@ public class WS_GetCustomer extends IntentService {
                 TGC_Rec.class
         );
 
+        if( statusjump == 0
+            && rec.getLogin().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)
+            && rec.getVersion().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED)
+        ){
+            downloadAndUnpackZip(rec.getZip());
+            //
+            File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
+            //
+            if(files_Users.length > 0){
+                File _file = files_Users[0];
+                //
+                ArrayList<EV_User> users = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<EV_User>>() {
+                    }.getType()
+                );
+                EV_User userInfo = users.get(0);
+                //
+                if(userInfo.getUser_code() == Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+                    rec.setVersion(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED_WARNING);
+                }
+            }
+        }
+
         if (!ToolBox_Inf.processWSCheck_GC(
                 getApplicationContext(),
                 rec.getVersion(),
@@ -118,12 +147,12 @@ public class WS_GetCustomer extends IntentService {
         )) {
             return;
         }
-
-        ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
-
-        ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
-
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user), "", "0");
+        //
+        if(!isZipDownloaded){
+            downloadAndUnpackZip(rec.getZip());
+        }
 
         //Apaga dados da tabela
         ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery() );
@@ -270,6 +299,20 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    /**
+     * LUCHE - 06/01/2019
+     * Metodo que baixa e descompact zip enviado.
+     * @param recZip - Url do arquivo zip
+     * @throws Exception
+     */
+    private void downloadAndUnpackZip(String recZip) throws Exception {
+        ToolBox_Inf.downloadZip(recZip, Constant.ZIP_NAME_FULL);
+        //
+        ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
+        //
+        isZipDownloaded = true;
     }
 
 }
