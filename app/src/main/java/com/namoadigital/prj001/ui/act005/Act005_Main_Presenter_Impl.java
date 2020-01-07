@@ -1503,7 +1503,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void executeTicketSave() {
-        mView.setWsSoProcess(WS_TK_Ticket_Save.class.getName());
+        mView.setWsSoProcess(WS_TK_Ticket_Save.class.getSimpleName());
         //
         Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
         Bundle bundle = new Bundle();

@@ -150,6 +150,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String WS_LIST_ITEM = "ws_list_item";
     public static final String WS_LIST_ITEM_RETURN = "ws_list_item_return";
     public static final String WS_LIST_ITEM_LABEL = "ws_list_item_label";
+    //Constantes para a chave type do hmAux do wsResult
+    public static final String WS_RESULT_TYPE_SERIAL = "SERIAL";
+    public static final String WS_RESULT_TYPE_NFORM = "N-FORM";
+    public static final String WS_RESULT_TYPE_AP = "A.P.";
+    public static final String WS_RESULT_TYPE_SO = "S.O.";
+    public static final String WS_RESULT_TYPE_SO_EXPRESS = "SO_EXPRESS";
+    public static final String WS_RESULT_TYPE_ASSETS = "ASSETS";
+    public static final String WS_RESULT_TYPE_ASSETS_MOVE_PLANNED = "ASSETS_MOVE_PLANNED";
+    public static final String WS_RESULT_TYPE_ASSETS_MOVE = "ASSETS_MOVE";
+    public static final String WS_RESULT_TYPE_ASSETS_INBOUND_ITEM = "ASSETS_INBOUND_ITEM";
+    public static final String WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM = "ASSETS_OUTBOUND_ITEM";
+    public static final String WS_RESULT_TYPE_TICKET = "TICKET";
+    public static final String WS_RESULT_TYPE_GENERAL = "GENERAL";
 
     //toolbar constants
     private static final int TOOLBAR_NAMOA_LOGO = 1;
@@ -342,6 +355,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("lbl_assets_outbound");
         transList.add("lbl_assets_inbound");
         transList.add("lbl_serial_data");
+        transList.add("lbl_ticket");
+        transList.add("lbl_assets");
+        transList.add("alert_ws_assets_error_msg");
+        transList.add("alert_ws_ticket_error_msg");
         //toolbar
         transList.add("toolbar_enable_nfc");
         transList.add("toolbar_cancel_nfc");
@@ -418,8 +435,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_site_no_io_control_msg");
         transList.add("alert_unsent_img_copy_error_ttl");
         transList.add("alert_unsent_img_copy_error_msg");
-        //
-        transList.add("lbl_ticket");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1353,9 +1368,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
-    private void setRes(String label, String status, String final_status) {
+    private void setRes(String type, String label, String status, String final_status) {
         HMAux res = new HMAux();
 
+        res.put("type", type);
         res.put("label", label);
         res.put("status", status);
         res.put("final_status", final_status);
@@ -1405,8 +1421,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //mPresenter.executeSoSave();
 
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "N-FORM");
-                    mHmAux.put("type", "N-FORM");
+                    mHmAux.put("label", WS_RESULT_TYPE_NFORM);
+                    mHmAux.put("type", WS_RESULT_TYPE_NFORM);
                     mHmAux.put("status", "OK");
                     mHmAux.put("final_status", "");
 
@@ -1438,7 +1454,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", "" + productInfo + " - " + pk[1]);
-                    mHmAux.put("type", "SERIAL");
+                    mHmAux.put("type", WS_RESULT_TYPE_SERIAL);
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
                     //
@@ -1473,7 +1489,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
 
                 mHmAux.put("label", res[0]);
-                mHmAux.put("type", "A.P.");
+                mHmAux.put("type", WS_RESULT_TYPE_AP);
                 mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
                 mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
                 //
@@ -1497,7 +1513,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", "" + soInfo + "  -  " + pk[2] + "\n" + pk[1]);
-                    mHmAux.put("type", "SO_EXPRESS");
+                    mHmAux.put("type", WS_RESULT_TYPE_SO_EXPRESS);
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", soInfo + " / " + status);
                     //
@@ -1520,7 +1536,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "S.O.");
+                    mHmAux.put("type", WS_RESULT_TYPE_SO);
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1542,7 +1558,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "S.O.");
+                    mHmAux.put("type", WS_RESULT_TYPE_SO);
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1563,7 +1579,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "ASSETS_MOVE_PLANNED");
+                    mHmAux.put("type", WS_RESULT_TYPE_ASSETS_MOVE_PLANNED);
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1586,7 +1602,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
-                    mHmAux.put("type", "ASSETS_MOVE");
+                    mHmAux.put("type", WS_RESULT_TYPE_ASSETS_MOVE);
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1601,7 +1617,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> inbound_items = mPresenter.processInboundItemSaveReturn(mLink, "ASSETS_INBOUND_ITEM");
+            ArrayList<HMAux> inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
 
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
@@ -1612,7 +1628,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, "ASSETS_OUTBOUND_ITEM");
+            ArrayList<HMAux> outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
 
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
@@ -1638,7 +1654,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, "TICKET");
+            ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, WS_RESULT_TYPE_TICKET);
 
             if(ticket_items != null) {
                 wsResults.addAll(ticket_items);
@@ -1851,32 +1867,37 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("status"));
             //
             switch (item.get("type")) {
-                case "SERIAL":
+                case WS_RESULT_TYPE_SERIAL:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_serial_data"));
                     break;
-                case "A.P.":
+                case WS_RESULT_TYPE_AP:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));
                     break;
-                case "S.O.":
+                case WS_RESULT_TYPE_SO:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so"));
                     break;
-                case "SO_EXPRESS":
+                case WS_RESULT_TYPE_SO_EXPRESS:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
                     break;
-                case "ASSETS_MOVE_PLANNED":
-                case "ASSETS_MOVE":
+                case WS_RESULT_TYPE_ASSETS_MOVE_PLANNED:
+                case WS_RESULT_TYPE_ASSETS_MOVE:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_move"));
                     break;
-                case "ASSETS_INBOUND_ITEM":
+                case WS_RESULT_TYPE_ASSETS_INBOUND_ITEM:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_inbound"));
                     break;
-                case "ASSETS_OUTBOUND_ITEM":
+                case WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets_outbound"));
                     break;
-                case "TICKET":
+                case WS_RESULT_TYPE_ASSETS:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_assets"));
+                    break;
+                case WS_RESULT_TYPE_TICKET:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
                     break;
-
+                case WS_RESULT_TYPE_GENERAL:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("alert_ws_general_error_ttl"));
+                    break;
             }
             //
             gAdapterRes.add(hmAux);
@@ -1918,99 +1939,62 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         });
     }
 
+    /**
+     * LUCHE - 07/01/2020
+     *
+     * Revisado metodo, pois não havia logica por tras. Todas as opções geravam um hmAux que não era
+     * utilizado para nada e setavam o valor de syncAfterSave para false(somente no else final a var não
+     * era resetada o que estava causando problemas ja que estavam falando if's para os modulos assets
+     * e ticket.
+     *
+     * Simplificado metodo para sempre setar syncAfterSave = false e recarregar os menus.
+     *
+     * @param mLink
+     * @param mRequired
+     */
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-            setSyncAfterSave(false);
-        } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
-            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-            setSyncAfterSave(false);
-        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-            setSyncAfterSave(false);
-        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
-            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
-            super.processError_1(mLink, mRequired);
-            setSyncAfterSave(false);
-        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
-            setSyncAfterSave(false);
-        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
-            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-            setSyncAfterSave(false);
-        } else {
-            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItensV2(hmAux_Trans);
-        }
-
-        if (syncAfterSave) {
-            setSyncAfterSave(false);
-            mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-        } else {
-            mPresenter.getMenuItensV2(hmAux_Trans);
-        }
-
-//        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-//            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
-//
-//            enableProgressDialog(
-//                    hmAux_Trans.get("progress_so_save_ttl"),
-//                    hmAux_Trans.get("progress_so_save_msg"),
-//                    hmAux_Trans.get("sys_alert_btn_cancel"),
-//                    hmAux_Trans.get("sys_alert_btn_ok")
-//            );
-//
-//            mPresenter.executeSoSave();
-//
-//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
-//            //
-//            enableProgressDialog(
-//                    hmAux_Trans.get("progress_ap_save_ttl"),
-//                    hmAux_Trans.get("progress_ap_save_msg"),
-//                    hmAux_Trans.get("sys_alert_btn_cancel"),
-//                    hmAux_Trans.get("sys_alert_btn_ok")
-//            );
-//            mPresenter.executeApSave();
-//
-//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-//            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
-//            //
-//            enableProgressDialog(
-//                    hmAux_Trans.get("progress_ap_save_ttl"),
-//                    hmAux_Trans.get("progress_ap_save_msg"),
-//                    hmAux_Trans.get("sys_alert_btn_cancel"),
-//                    hmAux_Trans.get("sys_alert_btn_ok")
-//            );
-//            mPresenter.executeApSave();
-//
+        setSyncAfterSave(false);
+        mPresenter.getMenuItensV2(hmAux_Trans);
+//        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+//            setRes(WS_RESULT_TYPE_SERIAL,hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
+//            setSyncAfterSave(false);
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+//            setRes(WS_RESULT_TYPE_NFORM,hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
+//            setSyncAfterSave(false);
 //        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-//            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
-//            super.processError_1(mLink, mRequired);
-//            //
+//            setRes(WS_RESULT_TYPE_AP,hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
+//            setSyncAfterSave(false);
 //        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
-//            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
+//            setRes(WS_RESULT_TYPE_SO_EXPRESS,hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_express_error_msg"), "");
 //            super.processError_1(mLink, mRequired);
-//            //
-//        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-//            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
-//            super.processError_1(mLink, mRequired);
-//            //
-//            if (syncAfterSave) {
-//                setSyncAfterSave(false);
-//                //
-//                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-//            } else {
-//                mPresenter.getMenuItensV2(hmAux_Trans);
-//            }
-//
+//            setSyncAfterSave(false);
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
+//            setRes(WS_RESULT_TYPE_SO,hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+//            setSyncAfterSave(false);
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+//            setRes(WS_RESULT_TYPE_SO,hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+//            setSyncAfterSave(false);
+//        } else if (
+//            wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())
+//            || wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())
+//            || wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())
+//            || wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())
+//        ) {
+//            setRes(WS_RESULT_TYPE_ASSETS,hmAux_Trans.get("lbl_assets"), hmAux_Trans.get("alert_ws_assets_error_msg"), "");
+//            setSyncAfterSave(false);
+//        } else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
+//            setRes(WS_RESULT_TYPE_TICKET,hmAux_Trans.get("lbl_ticket"), hmAux_Trans.get("alert_ws_ticket_error_msg"), "");
+//            setSyncAfterSave(false);
 //        } else {
-//            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
-//
-//            super.processError_1(mLink, mRequired);
+//            setRes(WS_RESULT_TYPE_GENERAL,hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
+//            setSyncAfterSave(false);
+//        }
+//        //
+//        if (syncAfterSave) {
+//            setSyncAfterSave(false);
+//            mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+//        } else {
 //            mPresenter.getMenuItensV2(hmAux_Trans);
 //        }
     }

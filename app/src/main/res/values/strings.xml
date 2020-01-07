@@ -107,6 +107,6 @@
     <string name="alert_move_unsent_data_error_msg">Error on trying to copy unsent data ! Try to login again !</string>
     <string name="install_app_error_msg">Error on trying app update !\n Please try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
-    <string name="msg_update_required_warning">New version available!\nTo update, please submit pending upload data.</string>
+    <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
 
 </resources>

@@ -153,7 +153,6 @@ public class WS_GetCustomer extends IntentService {
         if(!isZipDownloaded){
             downloadAndUnpackZip(rec.getZip());
         }
-
         //Apaga dados da tabela
         ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery() );
 

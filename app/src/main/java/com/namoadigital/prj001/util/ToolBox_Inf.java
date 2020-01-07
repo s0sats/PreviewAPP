@@ -1044,13 +1044,15 @@ public class ToolBox_Inf {
                 case ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED:
                     if (iStatus == 0) {
                         //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+                        checkNewDbVersion(context,db_version);
+                        //
                         ToolBox.sendBCStatus(
                             context,
                             ConstantBase.PD_TYPE_UPDATE_REQUIRED,
                             context.getString(R.string.msg_update_required),
-                            checkNewDbVersion(context,db_version),
                             s_Link,
-                            "0");
+                            "0"
+                        );
                         return false;
                     } else {
                         break;
@@ -1253,7 +1255,9 @@ public class ToolBox_Inf {
             case "UPDATE_REQUIRED":
                 if (iStatus == 0) {
                     //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), checkNewDbVersion(context,db_version), s_Link, "0");
+                    checkNewDbVersion(context,db_version);
+                    //
+                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
                     return false;
                 } else {
                     return true;
@@ -1360,31 +1364,24 @@ public class ToolBox_Inf {
      *  Caso as duas condições sejam satisfeitas, adiciona msg de PERDA DE DADOS e seta preferencia do
      *  processo de apagar dados de token para 1
      *
+     * LUCHE - 07/01/2020
+     *  Após revisão do update_requied com troca de versão de banco e com dados pendentes,
+     *  não será mais exibida msg em vermelho. Caso seja o msm usr, ele será avisado da nova versão
+     *  e dos dados pendentes e não poderá atualizar o app.
+     *  Esse metodo, agora, serve apenas para identificar a mudança de versão de banco e, nesse caso,
+     *  verificar a necessidade de copiar imagens não enviadas para o dir de unsent imgs
+     *
      * @param context - Contexto
-     * @param db_version - Versão do banco de dados enviada pelo server.
-     * @return
+     * @param db_version - Versão do banco de dados enviada pelo server.*
      */
-    private static HMAux checkNewDbVersion(Context context, Integer db_version){
-        HMAux aux = new HMAux();
-//        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM && hasPendingData(context,getListDB("C_", true))){
-//            //
-//            aux.put(Constant.LIB_DB_VERSION_MSG,context.getString(R.string.msg_not_sent_data_will_be_lost));
-//            ToolBox_Con.setPreference_CleanTokenFiles(context,1);
-//        }
-
+    private static void checkNewDbVersion(Context context, Integer db_version){
         if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
-            //
-            if(hasPendingData(context,getListDB("C_", true))) {
-                aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
-                ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
-            }
             //
             if(hasUnsentImgs(context)){
                 //Se preferencia para checkar backup de imagens pra verdadeiro.
                 ToolBox_Con.setPreference_BkpUnsentImg(context,true);
             }
         }
-        return aux;
     }
 
     /**
@@ -5430,7 +5427,7 @@ public class ToolBox_Inf {
     * @return
      */
     public static String hasPendingDataV2(Context context, File[] listDB) {
-        String customer_list = null;
+        String customer_list = "";
         //
         if (listDB == null || listDB.length == 0) {
             return null;
@@ -5462,7 +5459,7 @@ public class ToolBox_Inf {
             }
         }
         //
-        return customer_list != null ? customer_list.substring(0, customer_list.length() -1) : null ;
+        return !customer_list.equalsIgnoreCase("") ? customer_list.substring(0, customer_list.length() -1) : null ;
     }
 
     /**
