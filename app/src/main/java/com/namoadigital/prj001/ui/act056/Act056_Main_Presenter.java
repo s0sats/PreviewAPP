@@ -253,15 +253,15 @@ public class Act056_Main_Presenter implements Act056_Main_Contract.I_Presenter {
      * @return
      */
     private boolean hasDataToSend() {
-
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         //Selecnio Inbound update_required
         ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) inboundDao.query_HM(
             new IO_Inbound_Sql_009(
-                ToolBox_Con.getPreference_Customer_Code(context)
+                customer_code
             ).toSqlQuery()
         );
         //Poderi simplificar, mas assim acho melhor para entender
-        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsInboundTokenFile())){
+        if( (inboundAux != null && inboundAux.size() > 0) || (ToolBox_Inf.exitsInboundTokenFile(customer_code))){
             return true;
         }
         return false;

@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
@@ -5176,7 +5177,11 @@ public class ToolBox_Inf {
         int qty_file_token;
         int qty_UR;
 
-        File[] files = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+        File[] files =
+            getListOfFiles_v5(
+                ConstantBaseApp.TOKEN_PATH,
+                buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SERIAL_PREFIX)
+            );
 
         if (files != null && files.length > 0) {
             qty_file_token = files.length;
@@ -5497,7 +5502,7 @@ public class ToolBox_Inf {
             if( (pendencies != null
                     && pendencies.hasConsistentValue(Sql_Act005_008.BADGE_TO_SEND_QTY)
                     && !pendencies.get(Sql_Act005_008.BADGE_TO_SEND_QTY).equalsIgnoreCase("0"))
-                    || isSerialWithinTokenFile() > 0
+                    || isSerialWithinTokenFile(customer_code) > 0
                     ){
                 return true;
             }
@@ -5546,7 +5551,7 @@ public class ToolBox_Inf {
             if((pendencies != null &&
                     pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
                     !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
-            ) || isSoWithinTokenFile() > 0
+            ) || isSoWithinTokenFile(customer_code) > 0
                     ){
                 return true;
             }
@@ -5624,10 +5629,15 @@ public class ToolBox_Inf {
      * Metodo que retorna a qtd de S.O dentro do arquivos token de so
      *
      * @return
+     * @param customer_code
      */
-    public static int isSoWithinTokenFile() {
+    public static int isSoWithinTokenFile(long customer_code) {
         try {
-            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            File[] soToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_SO_PREFIX)
+                );
             if (soToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
                 //
@@ -5653,10 +5663,15 @@ public class ToolBox_Inf {
      *
      * @return
      */
-    public static int isSerialWithinTokenFile() {
+    public static int isSerialWithinTokenFile(long customer_code) {
         int qty = 0;
         try {
-            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+            File[] serialToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_SERIAL_PREFIX)
+                );
+
             if (serialToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().serializeNulls().create();
                 //
@@ -5683,9 +5698,10 @@ public class ToolBox_Inf {
      * Metodo que retorna a qtd de Tickets dentro do arquivos token de Ticket
      *
      * @return - Qtd de ticket existen no arquivo de token
+     * @param customer_code
      */
-    public static int getQtyTicketsWithinToken() {
-        return getTicketsWithinToken().size();
+    public static int getQtyTicketsWithinToken(long customer_code) {
+        return getTicketsWithinToken(customer_code).size();
     }
 
     /**
@@ -5695,11 +5711,16 @@ public class ToolBox_Inf {
      * arquivos json.
      *
      * @return - Lista dos ticket presente no arquivo de token
+     * @param customer_code
      */
-    public static ArrayList<TK_Ticket> getTicketsWithinToken() {
+    public static ArrayList<TK_Ticket> getTicketsWithinToken(long customer_code) {
         ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
         try {
-            File[] ticketToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_TICKET_PREFIX);
+            File[] ticketToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_TICKET_PREFIX)
+                );
             if (ticketToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().serializeNulls().create();
                 //
@@ -5769,7 +5790,7 @@ public class ToolBox_Inf {
 
         }
         //Ticket do token
-        pendencies += ToolBox_Inf.getQtyTicketsWithinToken();
+        pendencies += ToolBox_Inf.getQtyTicketsWithinToken(customer_code);
         //
         return String.valueOf(pendencies);
     }
@@ -5862,8 +5883,8 @@ public class ToolBox_Inf {
             pendencies
                 + outboundWaitingSync.size()
                 + inboundWaitingSync.size()
-                + ToolBox_Inf.countInboundsInTokenFile()
-                + ToolBox_Inf.countOutboundsInTokenFile()
+                + ToolBox_Inf.countInboundsInTokenFile(customer_code)
+                + ToolBox_Inf.countOutboundsInTokenFile(customer_code)
         ;
         //
         return String.valueOf(pendencies);
@@ -5872,39 +5893,44 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 30/04/2019
      *
-     * Metodo que verifica se existe arquivo de token e qtd de inbounds dentro
+     * Metodo que verifica se existe arquivo de token de inbound
      *
      * @return
      */
-    public static boolean exitsInboundTokenFile() {
-        boolean existisFile = false;
+    public static boolean exitsInboundTokenFile(long customer_code) {
         try {
-            File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
-            existisFile = inboundToken.length > 0;
+            File[] inboundToken =
+                getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_INBOUND_PREFIX)
+                );
+            //
+            return inboundToken.length > 0;
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
-            existisFile = false;
+            return false;
         }
-        return existisFile;
     }
 
     /**
      * LUCHE - 30/04/2019
      *
-     * Metodo que verifica se existe arquivo de token e qtd de inbounds dentro
+     * Metodo que verifica se existe arquivo de token de outbound
      *
      * @return
      */
-    public static boolean exitsOutboundTokenFile() {
-        boolean existisFile = false;
+    public static boolean exitsOutboundTokenFile(long customer_code) {
         try {
-            File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX);
-            existisFile = outboundToken.length > 0;
+            File[] outboundToken =
+                getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
+                );
+           return outboundToken.length > 0;
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
-            existisFile = false;
+            return false;
         }
-        return existisFile;
     }
 
     /**
@@ -5913,10 +5939,14 @@ public class ToolBox_Inf {
      * Retorna qtd de inbounds no arquivo de token
      * @return
      */
-    public static int countInboundsInTokenFile() {
+    public static int countInboundsInTokenFile(long customer_code) {
         try {
             Gson gsonRec = new GsonBuilder().serializeNulls().create();
-            File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+            File[] inboundToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_INBOUND_PREFIX)
+                );
             if(inboundToken.length > 0) {
                 //
                 T_IO_Inbound_Item_Env inboundList =
@@ -5940,10 +5970,14 @@ public class ToolBox_Inf {
      * Retorna qtd de outbound no arquivo de token
      * @return
      */
-    public static int countOutboundsInTokenFile() {
+    public static int countOutboundsInTokenFile(long customer_code) {
         try {
             Gson gsonRec = new GsonBuilder().serializeNulls().create();
-            File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX);
+            File[] outboundToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
+                );
             if(outboundToken.length > 0) {
                 T_IO_Outbound_Item_Env outboundList =
                     gsonRec.fromJson(
@@ -6138,4 +6172,61 @@ public class ToolBox_Inf {
         //
         return intent;
     }
+
+    //region WS Token Process
+    public static String buildTokenPrefixWithCustomer(Context context,String prefix){
+        return prefix + ToolBox_Con.getPreference_Customer_Code(context) + "_";
+    }
+
+    public static String buildTokenPrefixWithCustomer(long customer_code,String prefix){
+        return prefix + customer_code + "_";
+    }
+
+    public static String buildTokenFileName(Context context,String prefix,String token){
+        return buildTokenPrefixWithCustomer(context,prefix) + token+ ".json";
+    }
+
+    public static String buildTokenFileAbsPath(Context context, String prefix,String token,@NonNull String dirPath){
+        String tokenFileName = "";
+        //
+        if(dirPath != null && !dirPath.isEmpty()){
+            tokenFileName = dirPath + "/"+ buildTokenFileName(context,prefix,token);
+        }
+        //
+        return tokenFileName;
+    }
+
+    public static String buildTokenFileAbsPath(Context context, String prefix, String token){
+        return buildTokenFileAbsPath(context,prefix,token,ConstantBaseApp.TOKEN_PATH);
+    }
+
+    public static boolean checksumJsonToken(String json_token_content, File jsonToken) {
+        String md5Content = ToolBox_Inf.md5(json_token_content);
+        //
+        String md5File = ToolBox_Inf.md5(ToolBox_Inf.getContents(jsonToken));
+        //
+        return md5Content.equals(md5File);
+    }
+
+    public static File saveTokenAsFile(String tokenFileName, String json_token_content) throws IOException {
+        File json_token = new File(tokenFileName);
+        ToolBox_Inf.writeIn(json_token_content, json_token);
+        return json_token;
+    }
+
+    public static File[] checkTokenToSend(Context context, @NonNull String dirPath, String tokenPrefix) {
+        tokenPrefix += ToolBox_Con.getPreference_Customer_Code(context);
+        return ToolBox_Inf.getListOfFiles_v5(dirPath, tokenPrefix);
+    }
+
+    public static boolean deleteFileWithRet(String absolutePath) {
+        File file = new File(absolutePath);
+
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return false;
+        }
+    }
+    //endregion
 }

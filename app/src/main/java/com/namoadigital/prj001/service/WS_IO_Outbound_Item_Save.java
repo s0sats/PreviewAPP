@@ -28,7 +28,7 @@ import java.util.List;
 public class WS_IO_Outbound_Item_Save extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_io_outbound_item_save";
     private IO_OutboundDao outboundDao;
@@ -55,10 +55,10 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            outboundDao = new IO_OutboundDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            outboundItemDao = new IO_Outbound_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            moveDao = new IO_MoveDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            outboundDao = new IO_OutboundDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            outboundItemDao = new IO_Outbound_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            moveDao = new IO_MoveDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
@@ -83,13 +83,20 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
         //
         loadTranslation();
         //
-        //Lista arquivos de token de SO
-        File[] files = checkOutboundTokenToSend();
+        //LUCHE - 08/01/2020
+        //Unificado metodos do processo de envio com token no toolbox_inf após a adição do customer_code
+        //no nome do arquivo
+        //Lista arquivos de token de OUTBOUND
+        File[] files = ToolBox_Inf.checkTokenToSend(
+            getApplicationContext(),
+            ConstantBaseApp.TOKEN_PATH,
+            ConstantBaseApp.TOKEN_OUTBOUND_PREFIX
+        );
         //
         if (files != null && files.length > 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_itens_from_token"), "", "0");
             //
-            file_to_del = files[0].getName();
+            file_to_del = files[0].getAbsolutePath();
             //
             reSend = true;
             //
@@ -99,10 +106,10 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
                             T_IO_Outbound_Item_Env.class
                     );
             //analisar necessida das 3 linhas abaixo
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setReprocess(1);
             headerList = env.getOutbound();
             //
@@ -127,21 +134,29 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
             //
             T_IO_Outbound_Item_Env env = new T_IO_Outbound_Item_Env();
             //
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setOutbound(headerList);
             env.setReprocess(0);
             //
             String json_token_content = gsonRec.toJson(env);
-            File jsonToken = saveTokenAsFile(token, json_token_content);
             //
-            file_to_del = jsonToken.getName();
+            String jsonFileName =
+                ToolBox_Inf.buildTokenFileAbsPath(
+                    getApplicationContext(),
+                    ConstantBaseApp.TOKEN_OUTBOUND_PREFIX,
+                    token
+                );
+            File jsonToken = ToolBox_Inf.saveTokenAsFile(jsonFileName, json_token_content);
+            file_to_del = jsonToken.getAbsolutePath();
+            //
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
-            if (!checksumJsonToken(json_token_content, jsonToken)) {
+            if (!ToolBox_Inf.checksumJsonToken(json_token_content, jsonToken)) {
+                ToolBox_Inf.deleteFileWithRet(file_to_del);
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
@@ -436,7 +451,7 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
             //
         }
         //
-        if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+        if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
             if (reSend) {
                 ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_items_data"), "", "0");
                 //Reseta var de re transmissão.
@@ -459,36 +474,6 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), new HMAux(), actReturn, "0");
     }
-
-    //region Token Methods
-    private boolean checksumJsonToken(String json_token_content, File jsonToken) {
-        String md5Content = ToolBox_Inf.md5(json_token_content);
-        //
-        String md5File = ToolBox_Inf.md5(ToolBox_Inf.getContents(jsonToken));
-        //
-        return md5Content.equals(md5File);
-    }
-
-    private File saveTokenAsFile(String token, String json_token_content) throws Exception {
-        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX + token + ".json");
-        ToolBox_Inf.writeIn(json_token_content, json_token);
-        return json_token;
-    }
-
-    private File[] checkOutboundTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_OUTBOUND_PREFIX);
-    }
-
-    private boolean deleteFile(String path, String name) {
-        File file = new File(path + "/" + name);
-
-        if (file.exists()) {
-            return file.delete();
-        } else {
-            return false;
-        }
-    }
-    //endregion
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();

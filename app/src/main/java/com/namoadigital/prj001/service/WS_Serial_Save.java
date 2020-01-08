@@ -18,11 +18,11 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_014;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +33,7 @@ import java.util.List;
 public class WS_Serial_Save extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_serial_save";
     private String file_to_del = "";
@@ -52,8 +52,8 @@ public class WS_Serial_Save extends IntentService {
         Bundle bundle = intent.getExtras();
         try {
             gson = new GsonBuilder().serializeNulls().create();
-            serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            boolean menu_send_process = bundle.getBoolean(Constant.PROCESS_MENU_SEND, false);
+            serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            boolean menu_send_process = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND, false);
             processWS_Serial_Save(menu_send_process);
 
         } catch (Exception e) {
@@ -75,13 +75,21 @@ public class WS_Serial_Save extends IntentService {
         //
         loadTranslation();
         //
+        //LUCHE - 08/01/2020
+        //Unificado metodos do processo de envio com token no toolbox_inf após a adição do customer_code
+        //no nome do arquivo
+        //
         //Lista arquivos de token de SO
-        File[] files = checkSoTokenToSend();
+        File[] files = ToolBox_Inf.checkTokenToSend(
+            getApplicationContext(),
+            ConstantBaseApp.TOKEN_PATH,
+            ConstantBaseApp.TOKEN_SERIAL_PREFIX
+        );
         //
         if (files != null && files.length > 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_serial_from_token"), "", "0");
             //
-            file_to_del = files[0].getName();
+            file_to_del = files[0].getAbsolutePath();
             //
             so_re_send = true;
             //
@@ -91,10 +99,10 @@ public class WS_Serial_Save extends IntentService {
                             TSerial_Save_Env.class
                     );
             //analisar necessida das 3 linhas abaixo
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             //Carrega lista de Serial
             serialList = env.getSerial();
             //
@@ -123,20 +131,29 @@ public class WS_Serial_Save extends IntentService {
             //
             TSerial_Save_Env env = new TSerial_Save_Env();
             //
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setSerial(serialList);
             //
             String json_token_content = gson.toJson(env);
-            File jsonToken = saveTokenSerialAsFile(token, json_token_content);
             //
-            file_to_del = jsonToken.getName();
+            String jsonFileName = ToolBox_Inf.buildTokenFileAbsPath(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_SERIAL_PREFIX,
+                token
+            );
+            //
+            File jsonToken = ToolBox_Inf.saveTokenAsFile(jsonFileName, json_token_content);
+            file_to_del = jsonToken.getAbsolutePath();
+            //
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
-            if (!checksumJsonToken(json_token_content, jsonToken)) {
+            if (!ToolBox_Inf.checksumJsonToken(json_token_content, jsonToken)) {
+                ToolBox_Inf.deleteFileWithRet(file_to_del);
+                //
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
@@ -193,7 +210,7 @@ public class WS_Serial_Save extends IntentService {
         HMAux hmAuxRet = new HMAux();
         //
         for (MD_Product_Serial serialAux : serialList) {
-            String hmKey = serialAux.getProduct_code() + Constant.MAIN_CONCAT_STRING + serialAux.getSerial_id()+ Constant.MAIN_CONCAT_STRING + serialAux.getSerial_code();
+            String hmKey = serialAux.getProduct_code() + ConstantBaseApp.MAIN_CONCAT_STRING + serialAux.getSerial_id()+ ConstantBaseApp.MAIN_CONCAT_STRING + serialAux.getSerial_code();
             //
             hmAuxRet.put(hmKey, "");
             //
@@ -238,7 +255,7 @@ public class WS_Serial_Save extends IntentService {
                 hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
             } else {
                 //Setar para atualização novamente
-                if(!serialSaveReturn.getRet_status().toUpperCase().equals(Constant.SYS_STATUS_DENIED)) {
+                if(!serialSaveReturn.getRet_status().toUpperCase().equals(ConstantBaseApp.SYS_STATUS_DENIED)) {
                     serialAux.setUpdate_required(1);
                 }else{
                     //Luche - 06/03/2019
@@ -252,7 +269,7 @@ public class WS_Serial_Save extends IntentService {
 
         }
         //Após processamento , apaga arquivo de token
-        if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+        if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
             if (so_re_send) {
                 ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_serial_data"), "", "0");
                 //Reseta var de re transmissão.
@@ -289,35 +306,6 @@ public class WS_Serial_Save extends IntentService {
         }
 
         return serialSaveReturn;
-    }
-
-    private boolean deleteFile(String path, String name) {
-        File file = new File(path + "/" + name);
-
-        if (file.exists()) {
-            return file.delete();
-        } else {
-            return false;
-        }
-    }
-
-
-    private File saveTokenSerialAsFile(String token, String token_content) throws IOException {
-        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX + token + ".json");
-        ToolBox_Inf.writeIn(token_content, json_token);
-        return json_token;
-    }
-
-    private boolean checksumJsonToken(String json_token_content, File jsonToken) {
-        String md5Content = ToolBox_Inf.md5(json_token_content);
-        //
-        String md5File = ToolBox_Inf.md5(ToolBox_Inf.getContents(jsonToken));
-        //
-        return md5Content.equals(md5File);
-    }
-
-    private File[] checkSoTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
     }
 
     private void loadTranslation() {

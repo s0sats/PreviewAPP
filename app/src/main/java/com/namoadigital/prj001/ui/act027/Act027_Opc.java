@@ -25,6 +25,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -577,7 +578,11 @@ public class Act027_Opc extends BaseFragment {
 
     public boolean isSoWithinTokenFile() {
         try {
-            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            File[] soToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    ToolBox_Inf.buildTokenPrefixWithCustomer(context,ConstantBaseApp.TOKEN_SO_PREFIX)
+                );
             if (soToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
                 //

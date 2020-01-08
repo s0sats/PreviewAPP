@@ -41,11 +41,11 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_010;
 import com.namoadigital.prj001.sql.SM_SO_Sql_017;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class WS_SO_Save extends IntentService {
     public static final String SO_NO_EMPTY_LIST = "SO_NO_EMPTY_LIST";
 
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_so_save";
     private SM_SODao soDao;
@@ -85,13 +85,10 @@ public class WS_SO_Save extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-
-
-            // token = ToolBox_Inf.getToken(getApplicationContext());
-            soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            taskFileDao = new SM_SO_Service_Exec_Task_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            taskFileDao = new SM_SO_Service_Exec_Task_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             //
-            so_action = bundle.getString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+            so_action = bundle.getString(ConstantBaseApp.WS_SO_SAVE_SO_ACTION, ConstantBaseApp.SO_ACTION_EXECUTION);
             //
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
@@ -116,13 +113,20 @@ public class WS_SO_Save extends IntentService {
         ArrayList<SM_SO> sos = new ArrayList<>();
         //
         loadTranslation();
+        //LUCHE - 08/01/2020
+        //Unificado metodos do processo de envio com token no toolbox_inf após a adição do customer_code
+        //no nome do arquivo
         //Lista arquivos de token de SO
-        File[] files = checkSoTokenToSend();
+        File[] files = ToolBox_Inf.checkTokenToSend(
+            getApplicationContext(),
+            ConstantBaseApp.TOKEN_PATH,
+            ConstantBaseApp.TOKEN_SO_PREFIX
+        );
         //
         if (files != null && files.length > 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_so_from_token"), "", "0");
             //
-            file_to_del = files[0].getName();
+            file_to_del = files[0].getAbsolutePath();
             //
             so_re_send = true;
             //
@@ -132,11 +136,11 @@ public class WS_SO_Save extends IntentService {
                             TSO_Save_Env.class
                     );
             //analisar necessida das 3 linhas abaixo
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setReprocess(1);
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             //
             callSO_Save_WS(env);
 
@@ -180,22 +184,29 @@ public class WS_SO_Save extends IntentService {
             //
             TSO_Save_Env env = new TSO_Save_Env();
             //
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setSo(sos);
             env.setReprocess(0);
             //
             String json_token_content = gsonRec.toJson(env);
-            File jsonToken = saveTokenSoAsFile(token, json_token_content);
             //
-            file_to_del = jsonToken.getName();
+            String jsonFileName = ToolBox_Inf.buildTokenFileAbsPath(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_SO_PREFIX,
+                token
+            );
+            //
+            File jsonToken = ToolBox_Inf.saveTokenAsFile(jsonFileName, json_token_content);
+            file_to_del = jsonToken.getAbsolutePath();
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
-            if (!checksumJsonToken(json_token_content, jsonToken)) {
-                deleteFile(Constant.TOKEN_PATH, file_to_del);
+            if (!ToolBox_Inf.checksumJsonToken(json_token_content, jsonToken)) {
+                ToolBox_Inf.deleteFileWithRet(file_to_del);
+                //
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
@@ -259,24 +270,6 @@ public class WS_SO_Save extends IntentService {
 
     }
 
-    private boolean checksumJsonToken(String json_token_content, File jsonToken) {
-        String md5Content = ToolBox_Inf.md5(json_token_content);
-        //
-        String md5File = ToolBox_Inf.md5(ToolBox_Inf.getContents(jsonToken));
-        //
-        return md5Content.equals(md5File);
-    }
-
-    private File[] checkSoTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
-    }
-
-    private File saveTokenSoAsFile(String token, String token_content) throws IOException {
-        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX + token + ".json");
-        ToolBox_Inf.writeIn(token_content, json_token);
-        return json_token;
-    }
-
     private void processSOSaveRet(TSO_Save_Rec ret) throws Exception {
         String so_list_ret = "";
         HMAux hmAuxRet = new HMAux();
@@ -288,8 +281,8 @@ public class WS_SO_Save extends IntentService {
             //
             hmAuxRet.put(so_pk, "0");
             //
-            so_list_ret += Constant.MAIN_CONCAT_STRING + so_pk
-                    + Constant.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
+            so_list_ret += ConstantBaseApp.MAIN_CONCAT_STRING + so_pk
+                    + ConstantBaseApp.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
             //
             if (!so_ret.getRet_status().equalsIgnoreCase("OK")) {
                 so_list_ret += ":\n" + so_ret.getRet_msg();
@@ -307,7 +300,7 @@ public class WS_SO_Save extends IntentService {
             }
         }
         //Insere so_list_ret no hmAuxRet
-        hmAuxRet.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), so_list_ret.length()) : "");
+        hmAuxRet.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length(), so_list_ret.length()) : "");
         //
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
@@ -334,7 +327,7 @@ public class WS_SO_Save extends IntentService {
                         );
                         //
                         for (SM_SO_Service_Exec_Task_File taskFile : taskFileList) {
-                            File file = new File(Constant.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
+                            File file = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
                             if (file.exists()) {
                                 taskFile.setFile_url_local(taskFile.getFile_name());
                                 taskFileDao.addUpdateTmp(taskFile);
@@ -346,7 +339,7 @@ public class WS_SO_Save extends IntentService {
                     }
                 }
                 //Após processamento , apaga arquivo de token
-                if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
                     if (so_re_send) {
                         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                         //Reseta var de re transmissão.
@@ -379,7 +372,7 @@ public class WS_SO_Save extends IntentService {
                 }
             }
             //Após processamento , apaga arquivo de token
-            if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+            if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
                 if (so_re_send) {
                     ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                     //Reseta var de re transmissão.
@@ -419,7 +412,7 @@ public class WS_SO_Save extends IntentService {
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        bundle.putLong(ConstantBaseApp.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         mIntentPIC.putExtras(bundle);
         getApplicationContext().sendBroadcast(mIntentPIC);
     }
@@ -427,13 +420,13 @@ public class WS_SO_Save extends IntentService {
     private boolean processFromTo(TSO_Save_Rec.So_From_To so_from_to, ArrayList<SO_Save_Return> so_save_returns) {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_from_to_data"), "", "0");
         //
-        SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+        SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+        GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
         //
-        SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        SM_SO_Product_Event_SketchDao eventSketchDao = new SM_SO_Product_Event_SketchDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+        SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+        SM_SO_Product_Event_SketchDao eventSketchDao = new SM_SO_Product_Event_SketchDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
 
         try {
 
@@ -840,8 +833,8 @@ public class WS_SO_Save extends IntentService {
     private boolean renameTaskFile(String file_name, String new_name) {
 
         try {
-            File from = new File(Constant.CACHE_PATH_PHOTO + "/", file_name);
-            File to = new File(Constant.CACHE_PATH_PHOTO + "/", new_name);
+            File from = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", file_name);
+            File to = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", new_name);
             //
             from.renameTo(to);
         } catch (Exception e) {

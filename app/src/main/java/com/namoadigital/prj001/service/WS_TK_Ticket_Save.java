@@ -26,14 +26,13 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WS_TK_Ticket_Save extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_tk_ticket_save";
     //private String token;
@@ -57,7 +56,7 @@ public class WS_TK_Ticket_Save extends IntentService {
 
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
-            ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
             processTicketSave();
 
@@ -79,13 +78,20 @@ public class WS_TK_Ticket_Save extends IntentService {
     private void processTicketSave() throws Exception {
         //Seleciona traduções
         loadTranslation();
+        //LUCHE - 08/01/2020
+        //Unificado metodos do processo de envio com token no toolbox_inf após a adição do customer_code
+        //no nome do arquivo
         //Lista arquivos de token de Ticket
-        File[] files = checkTicketTokenToSend();
+        File[] files = ToolBox_Inf.checkTokenToSend(
+            getApplicationContext(),
+            ConstantBaseApp.TOKEN_PATH,
+            ConstantBaseApp.TOKEN_TICKET_PREFIX
+        );
         //
         if (files != null && files.length > 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_loading_data_from_token"), "", "0");
             //
-            file_to_del = files[0].getName();
+            file_to_del = files[0].getAbsolutePath();
             //
             reSend = true;
             //
@@ -96,10 +102,10 @@ public class WS_TK_Ticket_Save extends IntentService {
                 );
             //
             ticketToSend = env.getTicket();
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             //
             callWsTicketSave(env);
         }else{
@@ -124,20 +130,28 @@ public class WS_TK_Ticket_Save extends IntentService {
             }
             //
             T_TK_Ticket_Save_Env env = new T_TK_Ticket_Save_Env();
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-            env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setTicket(ticketToSend);
             env.setToken(token);
             //
             String json_token_content = gsonRec.toJson(env);
-            File jsonToken = saveTokenAsFile(token, json_token_content);
-            //
-            file_to_del = jsonToken.getName();
+            String jsonFileName =
+                ToolBox_Inf.buildTokenFileAbsPath(
+                    getApplicationContext(),
+                    ConstantBaseApp.TOKEN_TICKET_PREFIX,
+                    token
+                );
+            File jsonToken = ToolBox_Inf.saveTokenAsFile(jsonFileName, json_token_content);
+            file_to_del = jsonToken.getAbsolutePath();
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
-            if (!checksumJsonToken(json_token_content, jsonToken)) {
+          //  if (!checksumJsonToken(json_token_content, jsonToken)) {
+            if (!ToolBox_Inf.checksumJsonToken(json_token_content, jsonToken)) {
+                ToolBox_Inf.deleteFileWithRet(file_to_del);
+                //
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("generic_token_file_creation_error"), "", "0");
                 return;
             }
@@ -218,7 +232,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                     processTicketRet(retResult.getTicket(),actReturn);
                 }
                 //
-                if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                //if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
                     if (reSend) {
                         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_re_processing_data"), "", "0");
                         //Reseta var de re transmissão.
@@ -317,36 +332,6 @@ public class WS_TK_Ticket_Save extends IntentService {
         //
         return actReturn;
     }
-
-    //region Token Methods
-    private boolean checksumJsonToken(String json_token_content, File jsonToken) {
-        String md5Content = ToolBox_Inf.md5(json_token_content);
-        //
-        String md5File = ToolBox_Inf.md5(ToolBox_Inf.getContents(jsonToken));
-        //
-        return md5Content.equals(md5File);
-    }
-
-    private File saveTokenAsFile(String token, String json_token_content) throws IOException {
-        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_TICKET_PREFIX + token + ".json");
-        ToolBox_Inf.writeIn(json_token_content, json_token);
-        return json_token;
-    }
-
-    private File[] checkTicketTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_TICKET_PREFIX);
-    }
-
-    private boolean deleteFile(String path, String name) {
-        File file = new File(path + "/" + name);
-
-        if (file.exists()) {
-            return file.delete();
-        } else {
-            return false;
-        }
-    }
-    //endregion
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();

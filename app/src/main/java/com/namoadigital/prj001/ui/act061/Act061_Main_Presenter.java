@@ -569,7 +569,14 @@ public class Act061_Main_Presenter implements Act061_Main_Contract.I_Presenter {
 
     private boolean isInboundInTokenFile(int inbound_prefix, int inbound_code) {
         boolean retToken = false;
-        File[] inboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+        File[] inboundToken =
+            ToolBox_Inf.getListOfFiles_v5(
+                ConstantBaseApp.TOKEN_PATH,
+                ToolBox_Inf.buildTokenPrefixWithCustomer(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ConstantBaseApp.TOKEN_INBOUND_PREFIX
+                )
+            );
         if(inboundToken != null && inboundToken.length > 0){
             try {
                 T_IO_Inbound_Item_Env env =

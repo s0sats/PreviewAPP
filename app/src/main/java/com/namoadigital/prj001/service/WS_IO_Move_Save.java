@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -12,7 +13,11 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Move_Return;
+import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
+import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
@@ -22,8 +27,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -276,21 +279,6 @@ public class WS_IO_Move_Save extends IntentService {
             }
         }
         return moveList.size() > 0;
-    }
-
-
-    private File saveTokenMoveAsFile(String token, String token_content) throws IOException {
-        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_MOVE_PREFIX + token + ".json");
-        ToolBox_Inf.writeIn(token_content, json_token);
-        return json_token;
-    }
-
-    private void callIO_Move_WS(T_IO_Move_Save_Env env) {
-
-    }
-
-    private File[] checkMoveTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_MOVE_PREFIX);
     }
 
     private void loadTranslation() {

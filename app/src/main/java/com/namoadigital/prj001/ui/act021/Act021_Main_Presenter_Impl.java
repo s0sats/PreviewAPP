@@ -20,6 +20,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act021_001;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -110,7 +111,12 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         //
         boolean hasTokenFile = false;
         try {
-            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            File[] soToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    ToolBox_Inf.buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SO_PREFIX)
+                );
+
             if (soToken != null && soToken.length > 0) {
                 hasTokenFile = true;
             }

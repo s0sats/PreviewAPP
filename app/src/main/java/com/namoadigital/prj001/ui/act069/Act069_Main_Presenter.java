@@ -11,7 +11,6 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_To_Send;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -118,27 +117,19 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
 
     @Override
     public boolean hasTicketInUpdateRequired() {
-        HMAux auxTickets = ticketDao.getByStringHM(
-            new TK_Ticket_Sql_To_Send(
-                ToolBox_Con.getPreference_Customer_Code(context)
-            ).toSqlQuery()
-        );
-        //
-        if( auxTickets != null
-            && auxTickets.hasConsistentValue(TK_Ticket_Sql_To_Send.BADGE_TO_SEND_QTY)
-        ){
-            try{
-                if(Integer.valueOf(auxTickets.get(TK_Ticket_Sql_To_Send.BADGE_TO_SEND_QTY)) == 0){
-                    return false;
-                }
-            }catch (Exception e){
-                ToolBox_Inf.registerException(getClass().getName(),e);
-                //Retorno é True, pois o true impede de proseguir
-                return true;
-            }
+        try{
+            //Chama metodo do toolbox_inf que verificar pendencia de envio no banco e no arquivo token
+            int sendPendecies = Integer.valueOf(
+                ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
+            );
+            //Se maior que 0, tem ticket pendente de envio
+            return sendPendecies > 0;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            //Retorno é True, pois o true impede de proseguir
+            return true;
         }
-        //
-        return true;
+
     }
 
     @Override

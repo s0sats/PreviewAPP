@@ -255,14 +255,15 @@ public class Act065_Main_Presenter implements Act065_Main_Contract.I_Presenter  
     }
 
     private boolean hasDataToSend() {
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         //Select Outbound update_required
         ArrayList<HMAux> outboundAux = (ArrayList<HMAux>) outboundDao.query_HM(
                 new IO_Outbound_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context)
+                    customer_code
                 ).toSqlQuery()
         );
         //Poderi simplificar, mas assim acho melhor para entender
-        if( (outboundAux != null && outboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile())){
+        if( (outboundAux != null && outboundAux.size() > 0) || (ToolBox_Inf.exitsOutboundTokenFile(customer_code))){
             return true;
         }
         return false;

@@ -29,8 +29,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -57,7 +55,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
-import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -1101,45 +1098,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         });
 
     }
-
-    public void checkSerialSaveNeeds() {
-        /*if(){
-
-        }*/
-    }
-
-    public boolean isSerialWithinTokenFile(long product_code, String serial_id) {
-        try {
-            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
-            if (serialToken.length > 0) {
-                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-                //
-                ArrayList<MD_Product_Serial> token_serial_list =
-                        gsonEnv.fromJson(
-                                ToolBox_Inf.getContents(serialToken[0]),
-                                TSerial_Save_Env.class
-                        ).getSerial();
-                //
-                if (token_serial_list.size() == 0) {
-                    return false;
-                }
-                //
-                for (MD_Product_Serial serial : token_serial_list) {
-                    if (serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                        // && serial.getSo_prefix() == mSm_so.getSo_prefix()
-                        // && serial.getSo_code() == mSm_so.getSo_code()
-                            ) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-        }
-        return false;
-    }
-
-    //endregion
+//endregion
 
     private void loadNFormProductList() {
         nFormProductList = (ArrayList<HMAux>) productDao.query_HM(

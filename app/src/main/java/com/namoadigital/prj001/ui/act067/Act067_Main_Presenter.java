@@ -548,7 +548,15 @@ class Act067_Main_Presenter implements Act067_Main_Contract.I_Presenter{
 
     private boolean isOutboundInTokenFile(int outbound_prefix, int outbound_code) {
         boolean retToken = false;
-        File[] outboundToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_INBOUND_PREFIX);
+        File[] outboundToken =
+            ToolBox_Inf.getListOfFiles_v5(
+                ConstantBaseApp.TOKEN_PATH,
+                ToolBox_Inf.buildTokenPrefixWithCustomer(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ConstantBaseApp.TOKEN_OUTBOUND_PREFIX
+                )
+            );
+
         if(outboundToken != null && outboundToken.length > 0){
             try {
                 Gson gson =  new GsonBuilder().serializeNulls().create();

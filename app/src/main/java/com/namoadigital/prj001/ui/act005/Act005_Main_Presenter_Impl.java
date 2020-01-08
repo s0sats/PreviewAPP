@@ -522,9 +522,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
-                        menu.addInBadge1(ToolBox_Inf.isSoWithinTokenFile());
+                        menu.addInBadge1(ToolBox_Inf.isSoWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
                         menu.addInBadge1(qtySerial);
-                        menu.addInBadge1(ToolBox_Inf.isSerialWithinTokenFile());
+                        menu.addInBadge1(ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
