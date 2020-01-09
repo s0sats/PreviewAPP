@@ -18,7 +18,6 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_009;
-import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -69,23 +68,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                         customer.setSession_app(null);
                     }
                 } else {
-                    //Se existe o banco
-                    //Verifica se existe pendencia e seta propriedade
-                    customFormLocalDao = new GE_Custom_Form_LocalDao(
-                            context,
-                            ToolBox_Con.customDBPath(customer.getCustomer_code()),
-                            Constant.DB_VERSION_CUSTOM
-                    );
-
-                    String pendencies =
-                            customFormLocalDao.getByStringHM(
-                                    new Sql_Act002_001(
-                                            String.valueOf(customer.getCustomer_code())
-                                    ).toSqlQuery()
-                            ).get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES);
-
-                    customer.setPending(Integer.parseInt(pendencies));
-
+                    //LUCHE - 09/01/2020
+                    //Atualizado modo de identificação de itens pendentes de envio pois, identificava
+                    //apenas pendencias  no N_form
+                    //
+                    int pendencies = ToolBox_Inf.hasPendingData(context,customer.getCustomer_code()) ? 1 : 0;
+                    customer.setPending(pendencies);
                 }
             }
 

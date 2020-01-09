@@ -112,6 +112,8 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
                 //03/03/2017  -  Comentado a exibição da qtd
                 // tvTopQty.setVisibility(View.VISIBLE);
                 // tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));
+            }else{
+                iv001.setVisibility(View.GONE);
             }
 
         }

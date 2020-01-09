@@ -22,7 +22,6 @@ import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
-import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -109,7 +108,23 @@ public class WS_GetCustomer extends IntentService {
                 resultado,
                 TGC_Rec.class
         );
-
+        /**
+         * LUCHE - 06/01/2019
+         *
+         * Foi definido que se o usr que esta se logando for diferente
+         * do ultimo usr logado e existirem dados pendentes de envio,
+         * NÃO SERÁ EXIBIDO NENHUMA MSG DE PERDA DE DADOS.
+         *
+         * Também foi defino que em caso de atualização do app, se o usr logando for IGUAL ao ultimo
+         * logado e existirem dados pendentes de envio, o app exibirá msg informando que existe um
+         * nova versão disponivel mas que é necessario enviar os dados antes do de atualizar.
+         * Essa msg possui apenas o botão OK impossibilitando a atualização no login.
+         *
+         */
+        //Se não for "segunda chamada", login OK  e versão UPDATE_REQUIRED,
+        //faz download do zip e verifica se o usuario retornado é igual ao ultimo logado, caso seja
+        //altera rec.Version para UPDATE_REQUIRED_WARNING iniciando o novo fluxo de verificação e
+        //notificação de dados pendentes de envio.
         if( statusjump == 0
             && rec.getLogin().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)
             && rec.getVersion().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED)
@@ -135,7 +150,7 @@ public class WS_GetCustomer extends IntentService {
                 }
             }
         }
-
+        //
         if (!ToolBox_Inf.processWSCheck_GC(
                 getApplicationContext(),
                 rec.getVersion(),
@@ -207,24 +222,6 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
-        //Verificação antiga, só apagava bancos mult
-        // Verifica se novo usr igual ao ultimo logado
-        //Se for diferente apaga os bancos mult
-//        if(userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
-//            boolean del;
-//            File[] files_db = getListDB("C_");
-//
-//            for (File _file : files_db) {
-//                del = _file.delete();
-//            }
-//            //Limpa arquivos de token S.O e Serial
-//            File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
-//            for (File _file : files_token) {
-//                del = _file.delete();
-//            }
-//
-//        }
-
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
 
@@ -247,23 +244,17 @@ public class WS_GetCustomer extends IntentService {
                         customer.setSession_app(null);
                     }
                 }else{
-                    //Se existe o banco
-                    //Verifica se existe pendencia e seta propriedade
-                    customFormLocalDao =  new GE_Custom_Form_LocalDao(
+                    //LUCHE - 09/01/2020
+                    //Atualizado modo de identificação de itens pendentes de envio pois, identificava
+                    //apenas pendencias  no N_form
+                    //
+                    int pendencies =
+                        ToolBox_Inf.hasPendingData(
                             getApplicationContext(),
-                            ToolBox_Con.customDBPath(customer.getCustomer_code()),
-                            Constant.DB_VERSION_CUSTOM
-                    );
-
-                    String pendencies =
-                            customFormLocalDao.getByStringHM(
-                                    new Sql_Act002_001(
-                                            String.valueOf(customer.getCustomer_code())
-                                    ).toSqlQuery()
-                            ).get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES);
-
-                    customer.setPending(Integer.parseInt(pendencies));
-
+                            customer.getCustomer_code()
+                        ) ? 1 : 0;
+                    //
+                    customer.setPending(pendencies);
                 }
             }
             //
