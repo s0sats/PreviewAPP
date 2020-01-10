@@ -232,21 +232,29 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mPresenter.getProductInfo(bundle);
         //
         initFrag();
+        //
         contentMain.setVisibility(View.VISIBLE);
-        if(!bundle_new_serial &&
-                ToolBox_Con.hasForceNotShowSerialInfo(context)) {
-            contentMain.setVisibility(View.INVISIBLE);
-            if (ToolBox_Con.isOnline(context)) {
-
-                //Salva os dados do serial no banco local.
-                mPresenter.updateSerialData(mdProductSerial);
-                //
-                mPresenter.checkFlow();
-            }
-        }
-
+        //
+        checkForHideSerialFlow();
+        //
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * LUCHE - 10/01/2020
+     *
+     * Metodo que concentra a verificação se deve seguir o fluxo do hide serial
+     *
+     */
+    private void checkForHideSerialFlow() {
+        if(!bundle_new_serial &&
+            ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
+            contentMain.setVisibility(View.INVISIBLE);
+            //LUCHE - 10/01/2020
+            //Independentemente de estar ou não online, deve seguir para checkflow
+            mPresenter.checkFlow();
         }
     }
 

@@ -5,19 +5,33 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.*;
-import java.net.*;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -200,6 +214,22 @@ public class ToolBox_Con {
 
     }
 
+    /**
+     * LUCHE - 10/01/2020
+     *
+     * Metodo que remove do arquivo de preferencia a chave passada.
+     *
+     * @param context
+     * @param preferenceKey - Chave da preferencia
+     */
+    public static void removePreference(Context context,String preferenceKey){
+        SharedPreferences sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context);
+        //
+        sharedPreferences.edit().remove(
+            preferenceKey
+        ).apply();
+    }
 
     //region PKG_CLEAN
     public static void setPreference_PKG_CLEAN(Context context, String PKG_CLEAN) {
@@ -234,24 +264,6 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    public static boolean hasForceNotShowSerialInfo(Context context) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-
-        /*
-            Caso usuario tenha o perfil do HIDE_SERIAL_INFO, o checkbox sempre deverah estar checado
-            e desabilitado.
-         */
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.FORCE_NOT_SHOW_SERIAL_INFO)){
-            return true;
-        }
-
-        return sharedPreferences.getBoolean(
-                ConstantBaseApp.FORCE_NOT_SHOW_SERIAL_INFO,
-                false
-        );
-    }
-
     public static boolean getBooleanPreferencesByKey(Context context, String pref_key, boolean default_value) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -261,9 +273,23 @@ public class ToolBox_Con {
                 default_value
         );
     }
-
-
     //endregion
+
+    /**
+     * LUCHE - 10/01/2020
+     */
+    public static boolean getPreference_HideSerialInfo(Context context) {
+        //
+        return getBooleanPreferencesByKey(
+            context,
+            ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO,
+            false
+        );
+    }
+
+    public static void setPreference_HideSerialInfo(Context context, boolean isChecked) {
+        setBooleanPreference(context,ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO,isChecked);
+    }
 
     //region PKG_APK_TYPE
     public static void setPreference_PKG_APP_TYPE(Context context, String PKG_APP_TYPE) {
@@ -1135,9 +1161,10 @@ public class ToolBox_Con {
         ).apply();
         //
         sharedPreferences.edit().putBoolean(
-                Constant.FORCE_NOT_SHOW_SERIAL_INFO,
+                Constant.PREFERENCE_HIDE_SERIAL_INFO,
                 false
         ).apply();
+        //Adicionar reset das preferencias da act054?
         //
         sharedPreferences.edit().putString(
                 "SERVICE",
@@ -1145,26 +1172,14 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    public static void cleanForceNotShowSerialInfoPreference(Context context) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putBoolean(
-                Constant.FORCE_NOT_SHOW_SERIAL_INFO,
-                false
-        ).apply();
-    }
-
     public static void resetCustomerSiteOperationPreferences(Context context) {
-
         ToolBox_Con.setPreference_Customer_Code(context, -1);
         ToolBox_Con.setPreference_Translate_Code(context, "");
         ToolBox_Con.setPreference_Site_Code(context, "-1");
         ToolBox_Con.setPreference_Zone_Code(context, -1);
         ToolBox_Con.setPreference_Operation_Code(context, -1);
         ToolBox_Con.setPreference_Status_Login(context, "");
-        ToolBox_Con.cleanForceNotShowSerialInfoPreference(context);
-
+        ToolBox_Con.setPreference_HideSerialInfo(context,false);
     }
 
     public static String customDBPath(long customer_code) {

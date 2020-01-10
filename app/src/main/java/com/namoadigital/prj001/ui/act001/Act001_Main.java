@@ -20,6 +20,7 @@ import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -80,7 +81,21 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             initActions();
             //23/08/2018
             deleteApkFile();
+            removeDeprecatedPreferences();
         }
+    }
+
+    /**
+     * LUCHE - 10/01/2020
+     *
+     * Criado metodo para remover as preferencias obsoletas.
+     *
+     */
+    private void removeDeprecatedPreferences() {
+        ToolBox_Con.removePreference(
+            context,
+            ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
+        );
     }
 
     /**

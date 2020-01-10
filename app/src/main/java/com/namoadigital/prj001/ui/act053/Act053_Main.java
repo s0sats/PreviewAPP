@@ -179,7 +179,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         //
         initFrag();
         //
-        if(ToolBox_Con.hasForceNotShowSerialInfo(context) && !bundle_new_serial && !avoid_serial_hide){
+        if(ToolBox_Inf.hasForceNotShowSerialInfo(context) && !bundle_new_serial && !avoid_serial_hide){
             contentMain.setVisibility(View.INVISIBLE);
             checkFlow();
         }else{
@@ -595,7 +595,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                     //
                     onBackPressed();
                 }else{
-                    if(ToolBox_Con.hasForceNotShowSerialInfo(context)) {
+                    if(ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
                         callAct062();
                     }
                 }

@@ -8,6 +8,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
         }else if (requesting_act.equals(Constant.ACT021)){
             mView.callAct021(context);
         }else if (requesting_act.equals(Constant.ACT023)
-                && !ToolBox_Con.hasForceNotShowSerialInfo(context)){
+                && !ToolBox_Inf.hasForceNotShowSerialInfo(context)){
             mView.callAct023(context);
         }else if (requesting_act.equals(Constant.ACT005)){
             mView.callAct005(context);

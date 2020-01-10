@@ -31,6 +31,7 @@ import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act050.Act050_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -384,7 +385,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,mdProductSerial);
-        bundle.putBoolean(Constant.HIDE_SERIAL_INFO, false);
+        bundle.putBoolean(ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO, false);
 
         mIntent.putExtras(bundle);
         startActivity(mIntent);

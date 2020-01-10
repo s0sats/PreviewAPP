@@ -195,7 +195,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 do servico de OS.
         */
         if(!bundle_new_serial &&
-                ToolBox_Con.hasForceNotShowSerialInfo(context) && hide_serial_info &&
+                ToolBox_Inf.hasForceNotShowSerialInfo(context) && hide_serial_info &&
                 !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
             contentMain.setVisibility(View.INVISIBLE);
             if(ToolBox_Con.isOnline(context)) {
@@ -205,7 +205,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(ToolBox_Con.hasForceNotShowSerialInfo(context)){
+                        if(ToolBox_Inf.hasForceNotShowSerialInfo(context)){
                             onBackPressed();
                         }
                     }
@@ -324,7 +324,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 bundle_product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "0");
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
                 bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
-                hide_serial_info = bundle.getBoolean(Constant.HIDE_SERIAL_INFO, true);
+                hide_serial_info = bundle.getBoolean(ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO, true);
                 //
                 if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                     mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);

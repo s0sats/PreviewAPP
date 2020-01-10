@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -198,25 +199,8 @@ public class Frg_Serial_Search extends Fragment {
         controls_sta.add(mket_tracking);
         //
         chk_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
-        if (mFragListener.hasHideSerialInfoChk()) {
-            if (!mPresenter.getProfileForHideSerialInfo()
-                && !mPresenter.getProfileForceNotShowSerialInfo()) {
-                chk_hide_serial_info.setVisibility(View.GONE);
-            } else {
-                if (mPresenter.getProfileForHideSerialInfo()) {
-                    chk_hide_serial_info.setVisibility(View.VISIBLE);
-                }
-            }
-            /*
-                13/09/2019 BARRIONUEVO
-                Caso haja o perfil, desabilita a opcao e mantem sempre como verdadeiro a premissa
-                de ocultar os dados do serial
-            */
-            chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
-            chk_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
-        } else {
-            chk_hide_serial_info.setVisibility(View.GONE);
-        }
+        //LUCHE - 10/01/2020
+        configChk();
         //
         btn_option_01 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_01);
         btn_option_02 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_02);
@@ -230,6 +214,34 @@ public class Frg_Serial_Search extends Fragment {
             btn_nfc_reader.setVisibility(View.VISIBLE);
         } else {
             btn_nfc_reader.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * LUCHE - 10/01/2020
+     *
+     * Consolidado logica de configuração do checkbox de hide serial
+     * Modificado logica para que, caso não exista nenhum do profiles de hide serial, o valor da
+     * preferencia seja resetado para false.
+     *
+     */
+    private void configChk() {
+        if (mFragListener.hasHideSerialInfoChk()) {
+            if (!mPresenter.getProfileForHideSerialInfo()
+                && !mPresenter.getProfileForceNotShowSerialInfo()) {
+                chk_hide_serial_info.setVisibility(View.GONE);
+                chk_hide_serial_info.setChecked(false);
+                mPresenter.setChkForHideSerialInfoPreference(false);
+            } else {
+                if (mPresenter.getProfileForHideSerialInfo()) {
+                    chk_hide_serial_info.setVisibility(View.VISIBLE);
+                }
+                chk_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
+            }
+            //Se profile force not show, desabilita o chk
+            chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
+        } else {
+            chk_hide_serial_info.setVisibility(View.GONE);
         }
     }
 
@@ -289,6 +301,14 @@ public class Frg_Serial_Search extends Fragment {
                     setProductDesc(null);
                     setSerialRule(null, null, null);
                 }
+            }
+        });
+        //LUCHE - 10/01/2020
+        //Adicionado set da preferencia ao trocar o valor do checkbox.
+        chk_hide_serial_info.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPresenter.setChkForHideSerialInfoPreference(isChecked);
             }
         });
     }
@@ -360,9 +380,12 @@ public class Frg_Serial_Search extends Fragment {
                         0
                     );
                 } else {
-                    if (mFragListener.hasHideSerialInfoChk()) {
+                    //LUCHE - 10/01/2020
+                    //Comentado o trecho de codigo pois agora a preferencia é salva
+                    //assim que o status do checkbox é alterado.
+                    /*if (mFragListener.hasHideSerialInfoChk()) {
                         mPresenter.setChkForHideSerialInfoPreference(chk_hide_serial_info.isChecked());
-                    }
+                    }*/
                     if (delegate != null) {
                         delegate.onSearchClick(
                             btnAction,

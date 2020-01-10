@@ -103,9 +103,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRG_MOVE_CREATE = "frag_move_create";
 
     public static final String FRG_FAVORITE_LIST = "act050_frag_favorite";
-
-    public static final String HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
-    public static final String FORCE_NOT_SHOW_SERIAL_INFO = "FORCE_NOT_SHOW_SERIAL_INFO";
     public static final String FRAG_SEARCH_PRODUCT_ID_RECOVER = "frag_search_product_id_recover";
     public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
     public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
@@ -380,7 +377,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String PKG_APP_TYPE_DEFAULT;
     public static final String CLEAN_TOKEN_FILE_KEY = "clean_token_file_key";
     public static final String BACKUP_UNSENT_IMG_KEY = "backup_unsent_img_key";
-
+    //Preferencias
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
     public static final String LOGIN_USER_EMAIL = "login_user_email";
@@ -408,6 +405,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOCATION_TYPE = "location_type";
     public static final String LOCATION_LAT = "location_lat";
     public static final String LOCATION_LNG = "location_lng";
+    public static final String PREFERENCE_HIDE_SERIAL_INFO = "preference_hide_serial_info";
+
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
@@ -503,6 +502,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS = "CHANGE_CLASS";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION = "CHANGE_LOCATION";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT = "EDIT";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO = "FORCE_NOT_SHOW_SERIAL_INFO";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";

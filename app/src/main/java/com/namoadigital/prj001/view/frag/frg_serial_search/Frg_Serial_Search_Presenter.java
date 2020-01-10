@@ -17,22 +17,22 @@ public class Frg_Serial_Search_Presenter implements Frg_Serial_Search_Contract.P
 
     @Override
     public void setChkForHideSerialInfoPreference(boolean status) {
-        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.FORCE_NOT_SHOW_SERIAL_INFO, status);
+        ToolBox_Con.setPreference_HideSerialInfo(context, status);
     }
 
     @Override
     public boolean getChkForForceNotShowSerialInfo() {
-        return ToolBox_Con.hasForceNotShowSerialInfo(context);
+        return ToolBox_Inf.hasForceNotShowSerialInfo(context);
     }
 
     @Override
     public boolean getProfileForHideSerialInfo() {
-        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.HIDE_SERIAL_INFO);
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_HIDE_SERIAL_INFO);
     }
 
     @Override
     public boolean getProfileForceNotShowSerialInfo() {
-        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.FORCE_NOT_SHOW_SERIAL_INFO);
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO);
     }
 
     /**

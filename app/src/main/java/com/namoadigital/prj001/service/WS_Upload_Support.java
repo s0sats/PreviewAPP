@@ -49,9 +49,6 @@ public class WS_Upload_Support extends IntentService {
         StringBuilder sb = new StringBuilder();
 
         try{
-
-
-
             String support_msg =  bundle.getString(Constant.WS_SUPPORT_MSG,"");
             String support_contact =  bundle.getString(Constant.WS_SUPPORT_CONTACT,"");
             processUploadSupport(support_msg, support_contact);

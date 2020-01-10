@@ -6229,4 +6229,23 @@ public class ToolBox_Inf {
         }
     }
     //endregion
+
+    /**
+     * LUCHE - 10/01/2020
+     *
+     * Metodo que retorna se o processo de hide serial deve ser usado.
+     *
+     * O metodo leva primeiramente a existencia do profile PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
+     * caso ele exista, ignora o valor da preferencia.
+     * Caso não exista, utilizar o valor da preferencia.
+     * @param context
+     * @return
+     */
+    public static boolean hasForceNotShowSerialInfo(Context context) {
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO)){
+            return true;
+        }
+        //
+        return ToolBox_Con.getPreference_HideSerialInfo(context);
+    }
 }
