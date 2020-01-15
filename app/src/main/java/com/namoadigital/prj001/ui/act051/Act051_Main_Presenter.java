@@ -475,32 +475,46 @@ public class Act051_Main_Presenter implements Act051_Main_Contract.I_Presenter {
 
     @Override
     public boolean hasWaitingSyncPickingPendency() {
-        ArrayList<HMAux> outboundPendency = (ArrayList<HMAux>) ioOutboundDao.query_HM(
+        //LUCHE - 15/01/2020
+        //Adicionado checagem de pendencia de arquivo de token
+        waitingSyncPickingPendency = ToolBox_Inf.countOutboundsInTokenFile(ToolBox_Con.getPreference_Customer_Code(context));
+        //Se não houver pendencia de token, segue para verificação no db
+        if(waitingSyncPickingPendency <= 0) {
+            ArrayList<HMAux> outboundPendency = (ArrayList<HMAux>) ioOutboundDao.query_HM(
                 new IO_Outbound_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context)
+                    ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
-        );
-        if(outboundPendency!= null) {
-            waitingSyncPickingPendency = outboundPendency.size();
-        }else{
-            waitingSyncPickingPendency = 0;
+            );
+            if (outboundPendency != null) {
+                waitingSyncPickingPendency = outboundPendency.size();
+            } else {
+                waitingSyncPickingPendency = 0;
+            }
         }
+        //
         return waitingSyncPickingPendency > 0;
     }
 
     @Override
     public boolean hasWaitingSyncPutAwayPendency() {
-        //Selecnio Inbound update_required
-        ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) ioInboundDao.query_HM(
+        //LUCHE - 15/01/2020
+        //Adicionado checagem de pendencia de arquivo de token
+        waitingSyncPutAwayPendency = ToolBox_Inf.countInboundsInTokenFile(ToolBox_Con.getPreference_Customer_Code(context));
+        //Se não houver pendencia de token, segue para verificação no db
+        if(waitingSyncPutAwayPendency <= 0) {
+            //Selecnio Inbound update_required
+            ArrayList<HMAux> inboundAux = (ArrayList<HMAux>) ioInboundDao.query_HM(
                 new IO_Inbound_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context)
+                    ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
-        );
-        if(inboundAux != null) {
-            waitingSyncPutAwayPendency = inboundAux.size();
-        }else{
-            waitingSyncPutAwayPendency = 0;
+            );
+            if (inboundAux != null) {
+                waitingSyncPutAwayPendency = inboundAux.size();
+            } else {
+                waitingSyncPutAwayPendency = 0;
+            }
         }
+        //
         return waitingSyncPutAwayPendency > 0;
     }
 

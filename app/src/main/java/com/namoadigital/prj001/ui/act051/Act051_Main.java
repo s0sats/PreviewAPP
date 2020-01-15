@@ -551,22 +551,22 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                 progressDialog.dismiss();
                 mPresenter.syncBlindItem();
             }
-            } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
-                mPresenter.processIOItemSaveReturn(mLink, "inbound_move_lbl");
-                progressDialog.dismiss();
-            } else if (wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())) {
-                mPresenter.processIOItemSaveReturn(mLink, "outbound_move_lbl");
-                progressDialog.dismiss();
-            } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
-                progressDialog.dismiss();
-                String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-                try {
-                    if (!moves[0].isEmpty()) {
-                        showResults(moves, false);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        } else if (wsProcess.equals(WS_IO_Inbound_Item_Save.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processIOItemSaveReturn(mLink, "inbound_move_lbl");
+        } else if (wsProcess.equals(WS_IO_Outbound_Item_Save.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processIOItemSaveReturn(mLink, "outbound_move_lbl");
+        } else if (wsProcess.equals(WS_IO_Blind_Move_Save.class.getName())) {
+            progressDialog.dismiss();
+            String moves[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            try {
+                if (!moves[0].isEmpty()) {
+                    showResults(moves, false);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         //ronaldo
     }
@@ -707,7 +707,12 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         //
         builder.setView(view);
         builder.setCancelable(false);
-
+        //LUCHE - 15/01/2020
+        //Movido fechamento da janela para antes da abertura do dialog.
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        //
         final AlertDialog show = builder.show();
 
         /**
@@ -717,10 +722,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
             @Override
             public void onClick(View v) {
                 show.dismiss();
-
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
                 //
                 mPresenter.executeSerialProcessSearch(
                         mProduct_id,
